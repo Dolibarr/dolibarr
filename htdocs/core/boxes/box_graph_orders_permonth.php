@@ -81,6 +81,12 @@ class box_graph_orders_permonth extends ModeleBoxes
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
+		$dir=''; 	// We don't need a path because image file will not be saved into disk
+		$prefix='';
+		$socid=0;
+		if ($user->societe_id) $socid=$user->societe_id;
+		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
+
 		if ($user->rights->commande->lire)
 		{
 			$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
@@ -89,7 +95,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
-			if (GETPOST('DOL_AUTOSET_COOKIE'))
+			$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
+			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
 			{
 				$endyear=GETPOST($param_year,'int');
 				$shownb=GETPOST($param_shownb,'alpha');
@@ -119,9 +126,9 @@ class box_graph_orders_permonth extends ModeleBoxes
 			{
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/ordersnbinyear-".$year.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersnbinyear-'.$year.'.png';
+				$filenamenb = $dir."/".$prefix."ordersnbinyear-".$endyear.".png";
+				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersnbinyear-'.$endyear.'.png';
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
@@ -157,9 +164,9 @@ class box_graph_orders_permonth extends ModeleBoxes
 			{
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 
-				$filenamenb = $dir."/ordersamountinyear-".$year.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersamountinyear-'.$year.'.png';
+				$filenamenb = $dir."/".$prefix."ordersamountinyear-".$endyear.".png";
+				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersamountinyear-'.$endyear.'.png';
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();

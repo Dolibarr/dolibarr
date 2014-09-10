@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=Failed to open file %s
 ErrorCanNotCreateDir=Can not create dir %s
 ErrorCanNotReadDir=Can not read dir %s
 ErrorConstantNotDefined=Parameter %s not defined
-ErrorUnknown=Unkown error
+ErrorUnknown=Unknown error
 ErrorSQL=SQL Error
 ErrorLogoFileNotFound=Logo file '%s' was not found
 ErrorGoToGlobalSetup=Go to 'Company/Foundation' setup to fix this
@@ -666,6 +666,8 @@ SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (ot
 OriginFileName=Original filename
 SetDemandReason=Set source
 ViewPrivateNote=View notes
+XMoreLines=%s line(s) hidden
+
 # Week day
 Monday=Monday
 Tuesday=Tuesday

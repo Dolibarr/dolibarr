@@ -171,6 +171,7 @@ export list="
     --ignore-table=$base.llx_abonne_extrafields 
     --ignore-table=$base.llx_abonne_type
     --ignore-table=$base.llx_abonnement 
+	--ignore-table=$base.llx_bootstrap
 	--ignore-table=$base.llx_bt_namemap
 	--ignore-table=$base.llx_bt_speedlimit
 	--ignore-table=$base.llx_bt_summary

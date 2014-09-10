@@ -416,24 +416,27 @@ if ($mode != 'marketplace')
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)
-        if (! empty($conf->global->$const_name))
+        if (! empty($conf->global->$const_name))	// If module is activated
         {
         	$disableSetup = 0;
 
         	print '<td align="center" valign="middle">';
-
-        	if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
+            if (! empty($objMod->disabled))
+        	{
+        		print $langs->trans("Disabled");
+        	}
+        	else if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
         	{
         		print $langs->trans("Required");
         		if (! empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
-        		print '</td>'."\n";
         	}
         	else
         	{
         		print '<a href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
         		print img_picto($langs->trans("Activated"),'switch_on');
-        		print '</a></td>'."\n";
+        		print '</a>';
         	}
+        	print '</td>'."\n";
 
         	if (! empty($objMod->config_page_url) && !$disableSetup)
         	{
@@ -478,19 +481,25 @@ if ($mode != 'marketplace')
         	}
 
         }
-        else
+        else	// Module not activated
 		{
         	print '<td align="center" valign="middle">';
-
-        	if (! empty($objMod->always_enabled))
+		    if (! empty($objMod->always_enabled))
         	{
         		// Ne devrait pas arriver.
         	}
-
-        	// Module non actif
-        	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-        	print img_picto($langs->trans("Disabled"),'switch_off');
-        	print "</a></td>\n  <td>&nbsp;</td>\n";
+        	else if (! empty($objMod->disabled))
+        	{
+        		print $langs->trans("Disabled");
+        	}
+        	else
+        	{
+	        	// Module non actif
+	        	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+	        	print img_picto($langs->trans("Disabled"),'switch_off');
+	        	print "</a>\n";
+        	}
+        	print "</td>\n  <td>&nbsp;</td>";
         }
 
         print "</tr>\n";

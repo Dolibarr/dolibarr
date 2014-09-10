@@ -257,8 +257,28 @@ class InterfaceDemo
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
+        elseif ($action == 'ORDER_SUPPLIER_CLONE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }      
         elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
         {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'ORDER_SUPPLIER_DELETE')
+        {   
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'ORDER_SUPPLIER_APPROVE')
+        {   
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'ORDER_SUPPLIER_REFUSE')
+        {   
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'ORDER_SUPPLIER_CANCEL')
+        {   
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
@@ -411,6 +431,28 @@ class InterfaceDemo
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
+
+		//Supplier Bill
+		elseif ($action == 'BILL_SUPPLIER_CREATE')
+        {
+             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+		elseif ($action == 'BILL_SUPPLIER_DELETE')
+        {
+             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+		elseif ($action == 'BILL_SUPPLIER_PAYED')
+        {
+             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+		elseif ($action == 'BILL_SUPPLIER_UNPAYED')
+        {
+             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
+        {
+             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
 		elseif ($action == 'LINEBILL_SUPPLIER_CREATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -423,7 +465,7 @@ class InterfaceDemo
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
-        
+ 
         // Payments
         elseif ($action == 'PAYMENT_CUSTOMER_CREATE')
         {

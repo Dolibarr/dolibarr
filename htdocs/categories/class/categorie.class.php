@@ -46,7 +46,7 @@ class Categorie
 	var $label;
 	var $description;
 	var $socid;
-	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member
+	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member, 4=Contact
 	var $import_key;
 
 	var $cats=array();			// Tableau en memoire des categories
@@ -292,6 +292,20 @@ class Categorie
 
 		$this->db->begin();
 
+		/* FIX #1317 : Check for child cat and move up 1 level*/
+		if (! $error)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
+			$sql.= " SET fk_parent = ".$this->fk_parent;
+			$sql.= " WHERE fk_parent = ".$this->id;
+
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
 		if (! $error)
 		{
 			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_societe";
@@ -499,7 +513,7 @@ class Categorie
 		$column_name=$type;
         if ($type=='contact') $column_name='socpeople';
         if ($type=='fournisseur') $column_name='societe';
-        
+
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
 		$sql .= " WHERE fk_categorie = ".$this->id;
 		$sql .= " AND   fk_".$column_name."   = ".$obj->id;
@@ -571,6 +585,49 @@ class Categorie
 		}
 	}
 
+	/**
+	 * check for the presence of an object in a category
+	 *
+	 * @param	string	$type				Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * @param 	int    	$object_id			id of the object to search
+	 * @return 	int   						number of occurrences
+	 */
+	function containsObject($type, $object_id)
+	{
+		$field = ''; $classname = ''; $category_table = ''; $object_table = '';
+		if ($type == 'product') {
+			$field = 'product';
+		}
+		if ($type == 'customer') {
+			$field = 'societe';
+		}
+		if ($type == 'supplier') {
+			$field = 'societe';
+			$category_table = 'fournisseur';
+		}
+		if ($type == 'member') {
+			$field = 'member';
+			$category_table = '';
+		}
+		if ($type == 'contact') {
+			$field = 'socpeople';
+			$category_table = 'contact';
+		}
+		if (empty($category_table)) {
+			$category_table = $field;
+		}
+		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "categorie_" . $category_table;
+		$sql .= " WHERE fk_categorie = " . $this->id . " AND fk_" . $field . " = " . $object_id;
+		dol_syslog(get_class($this)."::containsObject sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			return $this->db->fetch_object($resql)->nb;
+		} else {
+			$this->error=$this->db->error().' sql='.$sql;
+			dol_syslog(get_class($this)."::containsObject ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
 	 * Return childs of a category
@@ -1065,12 +1122,29 @@ class Categorie
 	{
 		$cats = array();
 
-		$table=''; $type='';
-		if ($typeid == 0 || $typeid == 'product')         { $typeid=0; $table='product'; $type='product'; }
-		else if ($typeid == 1 || $typeid == 'supplier')  { $typeid=1; $table='societe'; $type='fournisseur'; }
-		else if ($typeid == 2 || $typeid == 'customer')  { $typeid=2; $table='societe'; $type='societe'; }
-		else if ($typeid == 3 || $typeid == 'member')    { $typeid=3; $table='member';  $type='member'; }
-        else if ($typeid == 4 || $typeid == 'contact')    { $typeid=4; $table='socpeople';  $type='contact'; }
+        $table = '';
+        $type = '';
+        if ($typeid === 0 || $typeid === '0' || $typeid == 'product') {
+            $typeid = 0;
+            $table = 'product';
+            $type = 'product';
+        } else if ($typeid === 1 || $typeid === '1' || $typeid == 'supplier') {
+            $typeid = 1;
+            $table = 'societe';
+            $type = 'fournisseur';
+        } else if ($typeid === 2 || $typeid === '2' || $typeid == 'customer') {
+            $typeid = 2;
+            $table = 'societe';
+            $type = 'societe';
+        } else if ($typeid === 3 || $typeid === '3' || $typeid == 'member') {
+            $typeid = 3;
+            $table = 'member';
+            $type = 'member';
+        } else if ($typeid === 4 || $typeid === '4' || $typeid == 'contact') {
+            $typeid = 4;
+            $table = 'socpeople';
+            $type = 'contact';
+        }
 
 		$sql = "SELECT ct.fk_categorie, c.label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct, ".MAIN_DB_PREFIX."categorie as c";

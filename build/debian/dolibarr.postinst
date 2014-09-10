@@ -13,6 +13,11 @@ set -e
 #          <conflicting-package> <version>
 # for details, see /usr/share/doc/packaging-manual/
 
+if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
+	# Needs to be run outside of functions to have access to parameters
+	. /usr/share/apache2/apache2-maintscript-helper
+fi
+
 setup_empty_conf() {
 	echo Create empty file $config		
     mkdir -p /etc/dolibarr
@@ -37,20 +42,23 @@ enable_install_upgrade_wizard() {
 
 apache_install() {
 	webserver=$1
-	if [ -d /etc/$webserver/conf.d ] && [ ! -e /etc/$webserver/conf.d/dolibarr.conf ]; then
-		echo "Add link for Apache config file"
-		ln -s /etc/$webserver/conf-available/dolibarr.conf /etc/$webserver/conf.d/dolibarr.conf
+	if which a2enconf >/dev/null 2>&1 ;then
+		# a2enconf exists for ubuntu only
+		a2enconf dolibarr
+	else 
+		if [ -d /etc/$webserver/conf.d ] && [ ! -e /etc/$webserver/conf.d/dolibarr.conf ]; then
+			echo "Add link for Apache config file"
+			ln -s /etc/$webserver/conf-available/dolibarr.conf /etc/$webserver/conf.d/dolibarr.conf
+		fi
 	fi
 }
 
 lighttpd_install() {
-	if [ ! -f /etc/lighttpd/conf-available/50-dolibarr.conf ] ; then
-		if which lighty-enable-mod >/dev/null 2>&1 ; then
-			echo "Enable lighttpd link for dolibarr config file"
-			lighty-enable-mod dolibarr fastcgi-php
-		else
-			echo "Lighttpd not installed, skipping"
-		fi
+	if which lighty-enable-mod >/dev/null 2>&1 ; then
+		echo "Enable lighttpd link for dolibarr config file"
+		lighty-enable-mod dolibarr fastcgi-php
+	else
+		echo "Lighttpd not installed, skipping"
 	fi
 }
 
@@ -79,6 +87,12 @@ case "$1" in
 		else
 			echo This is not a first install
 		fi
+
+		# Apache 2 setup
+		if which a2enmod >/dev/null 2>&1 ;then
+			a2enmod alias
+		fi
+		
 		apache_install
 		lighttpd_install
 		
@@ -117,19 +131,19 @@ case "$1" in
 			setup_empty_conf
 		else
 			# File already exist. We add params not found.
-			echo Add new params to overwrite path to use shared libraries/fonts
-			grep -q -c "dolibarr_lib_ADODB_PATH" $config    || [ ! -d "/usr/share/php/adodb" ]  || echo "<?php \$dolibarr_lib_ADODB_PATH='/usr/share/php/adodb'; ?>" >> $config
-			grep -q -c "dolibarr_lib_FPDI_PATH" $config     || [ ! -d "/usr/share/php/fpdi" ]   || echo "<?php \$dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi'; ?>" >> $config
-			#grep -q -c "dolibarr_lib_GEOIP_PATH" $config    || echo "<?php \$dolibarr_lib_GEOIP_PATH=''; ?>" >> $config
-			grep -q -c "dolibarr_lib_NUSOAP_PATH" $config   || [ ! -d "/usr/share/php/nusoap" ] || echo "<?php \$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap'; ?>" >> $config
-			grep -q -c "dolibarr_lib_ODTPHP_PATHTOPCLZIP" $config || [ ! -d "/usr/share/php/libphp-pclzip" ]  || echo "<?php \$dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip'; ?>" >> $config
-			#grep -q -c "dolibarr_lib_PHPEXCEL_PATH" $config || echo "<?php \$dolibarr_lib_PHPEXCEL_PATH=''; ?>" >> $config
-			#grep -q -c "dolibarr_lib_TCPDF_PATH" $config    || echo "<?php \$dolibarr_lib_TCPDF_PATH=''; ?>" >> $config
-			grep -q -c "dolibarr_js_CKEDITOR" $config       || [ ! -d "/usr/share/javascript/ckeditor" ]  || echo "<?php \$dolibarr_js_CKEDITOR='/javascript/ckeditor'; ?>" >> $config
-			grep -q -c "dolibarr_js_JQUERY" $config         || [ ! -d "/usr/share/javascript/jquery" ]    || echo "<?php \$dolibarr_js_JQUERY='/javascript/jquery'; ?>" >> $config
-			grep -q -c "dolibarr_js_JQUERY_UI" $config      || [ ! -d "/usr/share/javascript/jquery-ui" ] || echo "<?php \$dolibarr_js_JQUERY_UI='/javascript/jquery-ui'; ?>" >> $config
-			grep -q -c "dolibarr_js_JQUERY_FLOT" $config    || [ ! -d "/usr/share/javascript/flot" ]      || echo "<?php \$dolibarr_js_JQUERY_FLOT='/javascript/flot'; ?>" >> $config
-			grep -q -c "dolibarr_font_DOL_DEFAULT_TTF_BOLD" $config || echo "<?php \$dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf'; ?>" >> $config			
+			#echo Add new params to overwrite path to use shared libraries/fonts
+			#grep -q -c "dolibarr_lib_ADODB_PATH" $config    || [ ! -d "/usr/share/php/adodb" ]  || echo "<?php \$dolibarr_lib_ADODB_PATH='/usr/share/php/adodb'; ?>" >> $config
+			#grep -q -c "dolibarr_lib_FPDI_PATH" $config     || [ ! -d "/usr/share/php/fpdi" ]   || echo "<?php \$dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi'; ?>" >> $config
+			##grep -q -c "dolibarr_lib_GEOIP_PATH" $config    || echo "<?php \$dolibarr_lib_GEOIP_PATH=''; ?>" >> $config
+			#grep -q -c "dolibarr_lib_NUSOAP_PATH" $config   || [ ! -d "/usr/share/php/nusoap" ] || echo "<?php \$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap'; ?>" >> $config
+			#grep -q -c "dolibarr_lib_ODTPHP_PATHTOPCLZIP" $config || [ ! -d "/usr/share/php/libphp-pclzip" ]  || echo "<?php \$dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip'; ?>" >> $config
+			##grep -q -c "dolibarr_lib_PHPEXCEL_PATH" $config || echo "<?php \$dolibarr_lib_PHPEXCEL_PATH=''; ?>" >> $config
+			##grep -q -c "dolibarr_lib_TCPDF_PATH" $config    || echo "<?php \$dolibarr_lib_TCPDF_PATH=''; ?>" >> $config
+			#grep -q -c "dolibarr_js_CKEDITOR" $config       || [ ! -d "/usr/share/javascript/ckeditor" ]  || echo "<?php \$dolibarr_js_CKEDITOR='/javascript/ckeditor'; ?>" >> $config
+			#grep -q -c "dolibarr_js_JQUERY" $config         || [ ! -d "/usr/share/javascript/jquery" ]    || echo "<?php \$dolibarr_js_JQUERY='/javascript/jquery'; ?>" >> $config
+			#grep -q -c "dolibarr_js_JQUERY_UI" $config      || [ ! -d "/usr/share/javascript/jquery-ui" ] || echo "<?php \$dolibarr_js_JQUERY_UI='/javascript/jquery-ui'; ?>" >> $config
+			#grep -q -c "dolibarr_js_JQUERY_FLOT" $config    || [ ! -d "/usr/share/javascript/flot" ]      || echo "<?php \$dolibarr_js_JQUERY_FLOT='/javascript/flot'; ?>" >> $config
+			#grep -q -c "dolibarr_font_DOL_DEFAULT_TTF_BOLD" $config || echo "<?php \$dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf'; ?>" >> $config			
 		fi
 	
 		db_get dolibarr/reconfigure-webserver

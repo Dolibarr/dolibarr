@@ -178,9 +178,10 @@ class UserGroup extends CommonObject
 	 * 	Return array of users id for group this->id (or all if this->id not defined)
 	 *
 	 * 	@param	string	$excludefilter		Filter to exclude
+	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
 	 * 	@return	array 						Array of users
 	 */
-	function listUsersForGroup($excludefilter='')
+	function listUsersForGroup($excludefilter='', $mode=0)
 	{
 		global $conf, $user;
 
@@ -211,11 +212,15 @@ class UserGroup extends CommonObject
 			{
 				if (! array_key_exists($obj->rowid, $ret))
 				{
-					$newuser=new User($this->db);
-					$newuser->fetch($obj->rowid);
-					$ret[$obj->rowid]=$newuser;
+					if ($mode != 1)
+					{
+						$newuser=new User($this->db);
+						$newuser->fetch($obj->rowid);
+						$ret[$obj->rowid]=$newuser;
+					}
+					else $ret[$obj->rowid]=$obj->rowid;
 				}
-				if (! empty($obj->usergroup_entity))
+				if ($mode != 1 && ! empty($obj->usergroup_entity))
 				{
 					$ret[$obj->rowid]->usergroup_entity[]=$obj->usergroup_entity;
 				}
@@ -584,7 +589,7 @@ class UserGroup extends CommonObject
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."'";
 		$sql.= ",'".$this->db->escape($this->nom)."'";
-		$sql.= ",".$entity;
+		$sql.= ",".$this->db->escape($entity);
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
@@ -635,7 +640,7 @@ class UserGroup extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
 		$sql.= " nom = '" . $this->db->escape($this->nom) . "'";
-		$sql.= ", entity = " . $entity;
+		$sql.= ", entity = " . $this->db->escape($entity);
 		$sql.= ", note = '" . $this->db->escape($this->note) . "'";
 		$sql.= " WHERE rowid = " . $this->id;
 

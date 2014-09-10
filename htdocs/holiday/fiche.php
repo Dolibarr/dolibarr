@@ -237,9 +237,9 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes')
     if($user->rights->holiday->delete)
     {
     	$error=0;
-    	
+
     	$db->begin();
-    	
+
         $cp = new Holiday($db);
         $cp->fetch($id);
 
@@ -251,12 +251,12 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes')
             {
                 $result=$cp->delete($id);
             }
-            else 
+            else
             {
                 $error = $langs->trans('ErrorCantDeleteCP');
             }
         }
-        
+
        	if (! $error)
         {
           	$db->commit();
@@ -265,7 +265,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes')
         }
         else
         {
-        	$db->rollback();	
+        	$db->rollback();
         }
     }
 }
@@ -384,7 +384,7 @@ if($action == 'confirm_valid')
         $verif = $cp->update($user->id);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
-        if ($verif > 0) 
+        if ($verif > 0)
         {
             // Calculcate number of days consummed
             $nbopenedday=num_open_day($cp->date_debut,$cp->date_fin,0,1);
@@ -470,7 +470,7 @@ if ($action == 'confirm_refuse')
             $verif = $cp->update($user->id);
 
             // Si pas d'erreur SQL on redirige vers la fiche de la demande
-            if ($verif > 0) 
+            if ($verif > 0)
             {
                 // To
                 $destinataire = new User($db);
@@ -541,7 +541,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
     if (($cp->statut == 2 || $cp->statut == 3) && ($user->id == $cp->fk_validator || $user->id == $cp->fk_user))
     {
     	$db->begin();
-    	
+
     	$oldstatus = $cp->statut;
         $cp->date_cancel = dol_now();
         $cp->fk_user_cancel = $user->id;
@@ -568,16 +568,16 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
         		$error = $langs->trans('ErrorCantDeleteCP');
         	}
         }
-        
+
         if (! $error)
         {
-        	$db->commit();	
+        	$db->commit();
         }
         else
         {
         	$db->rollback();
         }
-        
+
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
         if (! $error && $result > 0)
         {
@@ -874,7 +874,7 @@ else
             if($user->id == $cp->fk_user || $user->rights->holiday->lire_tous)
             {
 
-                if ($action == 'delete') 
+                if ($action == 'delete')
                 {
                     if($user->rights->holiday->delete)
                     {
@@ -943,8 +943,8 @@ else
                     print $langs->trans($listhalfday[$starthalfday]);
                     print '</td>';
                     print '</tr>';
-                } 
-                else 
+                }
+                else
                 {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
@@ -965,8 +965,8 @@ else
                     print $langs->trans($listhalfday[$endhalfday]);
                     print '</td>';
                     print '</tr>';
-                } 
-                else 
+                }
+                else
                 {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
@@ -1039,7 +1039,7 @@ else
                     $idGroupValid = $cp->getConfCP('userGroup');
 
                     $validator = new UserGroup($db,$idGroupValid);
-                    $valideur = $validator->listUsersForGroup();
+                    $valideur = $validator->listUsersForGroup('',1);
 
                     print '<td>';
                     $form->select_users($cp->fk_validator,"valideur",1,"",0,$valideur,'');

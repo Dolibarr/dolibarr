@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
@@ -197,16 +197,16 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     $tplidx = $pdf->importPage(1);
                 }
 
-				// Complete object by loading several other informations
+				// We get the shipment that is the origin of delivery receipt
 				$expedition=new Expedition($this->db);
-				$result = $expedition->fetch($object->expedition_id);
-
+				$result = $expedition->fetch($object->origin_id);
+				// Now we get the order that is origin of shipment
 				$commande = new Commande($this->db);
 				if ($expedition->origin == 'commande')
 				{
 					$commande->fetch($expedition->origin_id);
 				}
-				$object->commande=$commande;
+				$object->commande=$commande;	// We set order of shipment onto delivery.
 
 
 				$pdf->Open();
@@ -223,15 +223,24 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
 				/*
-				 // Positionne $this->atleastonediscount si on a au moins une remise
-				 for ($i = 0 ; $i < $nblines ; $i++)
-				 {
-				 if ($object->lines[$i]->remise_percent)
-				 {
-				 $this->atleastonediscount++;
-				 }
-				 }
-				 */
+				// Positionne $this->atleastonediscount si on a au moins une remise
+				for ($i = 0 ; $i < $nblines ; $i++)
+				{
+				 	if ($object->lines[$i]->remise_percent)
+				 	{
+				 		$this->atleastonediscount++;
+				 	}
+				}
+ 				if (empty($this->atleastonediscount))
+				{
+					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
+					$this->posxtva+=($this->postotalht - $this->posxdiscount);
+					$this->posxup+=($this->postotalht - $this->posxdiscount);
+					$this->posxqty+=($this->postotalht - $this->posxdiscount);
+					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
+					//$this->postotalht;
+				}
+				*/
 
 				// New page
 				$pdf->AddPage();
@@ -307,7 +316,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     			$pdf->AddPage('','',true);
                     			if (! empty($tplidx)) $pdf->useTemplate($tplidx);
                     			if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-                    			$pdf->setPage($pagenb+1);
+                    			$pdf->setPage($pageposafter+1);
                     		}
                     	}
                     	else
@@ -370,6 +379,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
+						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
@@ -770,9 +780,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			// Client destinataire
 			$posy=42;
+			$posx=102;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY(102,$posy-5);
+			$pdf->SetXY($posx,$posy-5);
 			$pdf->MultiCell(80,5, $outputlangs->transnoentities("DeliveryAddress").":", 0, 'L');
 
 			// If SHIPPING contact defined on order, we use it
@@ -804,7 +816,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if ($this->page_largeur < 210) $widthrecbox=84;	// To work with US executive format
 			$posy=42;
 			$posx=$this->page_largeur-$this->marge_droite-$widthrecbox;
-			//if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0,0,0);

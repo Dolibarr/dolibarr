@@ -47,8 +47,8 @@ abstract class CommonObject
 
     public $array_options=array();
 
-    public $linkedObjectsIds;
-    public $linkedObjects;
+    public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
+    public $linkedObjects;		// Loaded by ->fetchObjectLinked
 
     // No constructor as it is an abstract class
 
@@ -1691,7 +1691,7 @@ abstract class CommonObject
      *	@param  string	$sourcetype		Object source type
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
-     *	@param  string	$clause			OR, AND clause
+     *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
      *	@return	void
      */
     function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
@@ -2083,7 +2083,7 @@ abstract class CommonObject
 
                     foreach ($tab as $key => $value)
                     {
-                    	//Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
+                    	// Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
                         if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
                         {
                             // we can add this attribute to adherent object
@@ -2144,7 +2144,7 @@ abstract class CommonObject
 		$error=0;
 
 		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
-		
+
         if (! empty($this->array_options))
         {
             // Check parameters
@@ -2236,13 +2236,14 @@ abstract class CommonObject
    /**
      * Function to show lines of extrafields with output datas
      *
-     * @param	object	$extrafields	extrafield Object
+     * @param	object	$extrafields	Extrafield Object
      * @param	string	$mode			Show output (view) or input (edit) for extrafield
-	 * @param	array	$params			optionnal parameters
+	 * @param	array	$params			Optionnal parameters
+	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
      *
      * @return string
      */
-    function showOptionals($extrafields,$mode='view',$params=0)
+    function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
     {
 		global $_POST;
 
@@ -2303,14 +2304,14 @@ abstract class CommonObject
 						$label = '<span class="fieldrequired">'.$label.'</span>';
 
 					$out .= '<td>'.$label.'</td>';
-					$out .='<td colspan="'.$colspan.'">';
+					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {
 					case "view":
 						$out .= $extrafields->showOutputField($key,$value);
 						break;
 					case "edit":
-						$out .= $extrafields->showInputField($key,$value);
+						$out .= $extrafields->showInputField($key,$value,'',$keyprefix);
 						break;
 					}
 
@@ -2358,7 +2359,8 @@ abstract class CommonObject
 
 
     /**
-     *  Function to check if an object is used by others
+     *  Function to check if an object is used by others.
+     *  Check is done into this->childtables. There is no check into llx_element_element.
      *
      *  @param	int		$id			Id of object
      *  @return	int					<0 if KO, 0 if not used, >0 if already used
@@ -2862,16 +2864,21 @@ abstract class CommonObject
 				$text=$product_static->getNomUrl(1);
 
 				// Define output language (TODO Does this works ?)
-				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+				if (! empty($conf->global->MAIN_MULTILANGS))
 				{
-					$this->fetch_thirdparty();
+					if (! is_object($this->client))
+					{
+						// TODO Remove this
+						$this->fetch_thirdparty();	// The fetch_thirdparty should be done before calling $object->printObjectLines, not into function called for each line
+					}
+
 					$prod = new Product($this->db);
 					$prod->fetch($line->fk_product);
 
 					$outputlangs = $langs;
 					$newlang='';
 					if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-					if (empty($newlang)) $newlang=$this->client->default_lang;
+					if (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang)) $newlang=$this->client->default_lang;		// For language to language of customer
 					if (! empty($newlang))
 					{
 						$outputlangs = new Translate("",$conf);

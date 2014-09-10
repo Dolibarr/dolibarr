@@ -100,12 +100,12 @@ IfNeedToUseOhterObjectKeepEmpty=Om vissa objekt (faktura, order, ...), som tillh
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projektledare
 TypeContact_project_external_PROJECTLEADER=Projektledare
-TypeContact_project_internal_CONTRIBUTOR=Medarbetare
-TypeContact_project_external_CONTRIBUTOR=Medarbetare
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Medarbetare
+TypeContact_project_external_PROJECTCONTRIBUTOR=Medarbetare
 TypeContact_project_task_internal_TASKEXECUTIVE=Uppgift verkställande
 TypeContact_project_task_external_TASKEXECUTIVE=Uppgift verkställande
-TypeContact_project_task_internal_CONTRIBUTOR=Medarbetare
-TypeContact_project_task_external_CONTRIBUTOR=Medarbetare
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Medarbetare
+TypeContact_project_task_external_TASKCONTRIBUTOR=Medarbetare
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

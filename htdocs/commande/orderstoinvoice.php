@@ -285,7 +285,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 												'HT',
 												0,
 												$product_type,
-												$lines[$i]->rang,
+												$ii,
 												$lines[$i]->special_code,
 												$object->origin,
 												$lines[$i]->rowid,
@@ -373,7 +373,7 @@ if ($action == 'create' && empty($mesgs))
 		$remise_percent 	= $soc->remise_percent;
 	}
 	$remise_absolue 	= 0;
-	$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+	$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
 	$absolute_discount=$soc->getAvailableDiscounts();
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -413,7 +413,7 @@ if ($action == 'create' && empty($mesgs))
 
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
-	$html->select_date(0,'','','','',"add",1,1);
+	$html->select_date('','','','','',"add",1,1);
 	print '</td></tr>';
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
@@ -603,7 +603,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 
 		//SEARCH BUTTON
 		print '</td><td align="right" class="liste_titre">';
-		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 		//ALL/NONE
 		print '<td class="liste_titre" align="center">';

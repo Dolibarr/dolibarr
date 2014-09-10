@@ -328,6 +328,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 			{
 				if (GETPOST('deletephoto'))
 				{
+					require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 					$fileimg=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/'.$object->photo;
 					$dirthumbs=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/thumbs';
 					dol_delete_file($fileimg);
@@ -1272,10 +1273,10 @@ else
 			// Cree un tableau formulaire
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
-			if (! empty($conf->global->ADHERENT_USE_MAILMAN)) {
+			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_MAILMAN)) {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"),'value'=>'');
 			}
-			if (! empty($conf->global->ADHERENT_USE_SPIP))    {
+			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))    {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>'');
 			}
 			print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);

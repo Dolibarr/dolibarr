@@ -165,12 +165,16 @@ print '<center><input type="submit" class="button" value="'.$langs->trans("Save"
 
 print '</form>';
 
+dol_fiche_end();
+
 print '<br>';
+
 
 /*
  * Notifications
  */
 
+/* Disable this, there is no trigger with elementtype 'withdraw'
 if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 {
     $langs->load("mails");
@@ -242,41 +246,43 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     print '</td>';
 
     print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+
+	// List of current notifications for objet_type='withdraw'
+	$sql = "SELECT u.lastname, u.firstname,";
+	$sql.= " nd.rowid, ad.code, ad.label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
+	$sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
+	$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as ad";
+	$sql.= " WHERE u.rowid = nd.fk_user";
+	$sql.= " AND nd.fk_action = ad.rowid";
+	$sql.= " AND u.entity IN (0,".$conf->entity.")";
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+	    $num = $db->num_rows($resql);
+	    $i = 0;
+	    $var = false;
+	    while ($i < $num)
+	    {
+	        $obj = $db->fetch_object($resql);
+	        $var=!$var;
+
+	        print "<tr ".$bc[$var].">";
+	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
+	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+	        print '<td>'.$label.'</td>';
+	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
+	        print '</tr>';
+	        $i++;
+	    }
+	    $db->free($resql);
+	}
+
+	print '</table>';
+	print '</form>';
 }
-// List of current notifications for objet_type='withdraw'
-$sql = "SELECT u.lastname, u.firstname,";
-$sql.= " nd.rowid, ad.code, ad.label";
-$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
-$sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
-$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as ad";
-$sql.= " WHERE u.rowid = nd.fk_user";
-$sql.= " AND nd.fk_action = ad.rowid";
-$sql.= " AND u.entity IN (0,".$conf->entity.")";
-
-$resql = $db->query($sql);
-if ($resql)
-{
-    $num = $db->num_rows($resql);
-    $i = 0;
-    $var = false;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($resql);
-        $var=!$var;
-
-        print "<tr ".$bc[$var].">";
-        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
-        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
-        print '<td>'.$label.'</td>';
-        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
-        print '</tr>';
-        $i++;
-    }
-    $db->free($resql);
-}
-
-print '</table>';
-print '</form>';
+*/
 
 $db->close();
 

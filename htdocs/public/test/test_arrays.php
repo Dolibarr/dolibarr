@@ -4,7 +4,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require '../../main.inc.php';
 
-if (!empty($conf->global->MAIN_FEATURES_LEVEL))
+if (empty($conf->global->MAIN_FEATURES_LEVEL))
 {
 	print "Page available onto dev environment only";
 	exit;
@@ -131,11 +131,8 @@ Example 1 : Table using tags: div.tagtable+div.tagtr+div or div.tagtable+div.tag
 Example 2 : Table using tags: table/thead/tbody/tr/td + dataTable<br>
 
 <script type="text/javascript">
-/*$(document).ready(function(){
-    $('#abc').dataTable();
-});*/
 $(document).ready(function(){
-    $('#def').dataTable();
+    $('#idtableexample2').dataTable();
 });
 
 /*
@@ -179,7 +176,7 @@ $('xxxth').replaceWith(
 */
 </script>
 
-<table id="def">
+<table id="idtableexample2">
 	<thead>
     <tr>
         <th>snake</th>

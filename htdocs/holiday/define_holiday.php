@@ -43,14 +43,17 @@ $action=GETPOST('action');
  */
 
 $form = new Form($db);
+$userstatic=new User($db);
+$holiday = new Holiday($db);
+
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 print_fiche_titre($langs->trans('MenuConfCP'));
 
-$holiday = new Holiday($db);
+$holiday->updateSold();	// Create users into table holiday if they don't exists. TODO Remove if we use field into table user.
+
 $listUsers = $holiday->fetchUsers(false,false);
-$userstatic=new User($db);
 
 // Si il y a une action de mise à jour
 if ($action == 'update' && isset($_POST['update_cp']))
@@ -71,7 +74,7 @@ if ($action == 'update' && isset($_POST['update_cp']))
     $comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
 
     // We add the modification to the log
-    $holiday->addLogCP($user->id,$userID, $langs->trans('ManualUpdate').$comment,$userValue);
+    $holiday->addLogCP($user->id,$userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment,$userValue);
 
     // Update of the days of the employee
     $holiday->updateSoldeCP($userID,$userValue);
@@ -82,7 +85,7 @@ if ($action == 'update' && isset($_POST['update_cp']))
     $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
     $sql.= " WHERE name = 'lastUpdate' and value IS NULL";	// Add value IS NULL to be sure to update only at init.
     dol_syslog('define_holiday update lastUpdate entry sql='.$sql);
-    $result = $db->query($sql);    
+    $result = $db->query($sql);
 
     $mesg='<div class="ok">'.$langs->trans('UpdateConfCPOK').'</div>';
 
@@ -91,21 +94,24 @@ if ($action == 'update' && isset($_POST['update_cp']))
 }
 elseif($action == 'add_event')
 {
-    $error = false;
+    $error = 0;
 
     if(!empty($_POST['list_event']) && $_POST['list_event'] > 0) {
         $event = $_POST['list_event'];
-    } else { $error = true;
+    } else { $error++;
     }
 
     if(!empty($_POST['userCP']) && $_POST['userCP'] > 0) {
         $userCP = $_POST['userCP'];
-    } else { $error = true;
+    } else { $erro++;
     }
 
-    if($error) {
+    if ($error)
+    {
         $message = '<div class="error">'.$langs->trans('ErrorAddEventToUserCP').'</div>';
-    } else {
+    }
+    else
+	{
         $nb_holiday = $holiday->getCPforUser($userCP);
         $add_holiday = $holiday->getValueEventCp($event);
         $new_holiday = $nb_holiday + $add_holiday;

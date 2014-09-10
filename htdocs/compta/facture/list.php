@@ -231,6 +231,15 @@ $sql.= ' ORDER BY ';
 $listfield=explode(',',$sortfield);
 foreach ($listfield as $key => $value) $sql.= $listfield[$key].' '.$sortorder.',';
 $sql.= ' f.rowid DESC ';
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+
 $sql.= $db->plimit($limit+1,$offset);
 //print $sql;
 
@@ -255,7 +264,7 @@ if ($resql)
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
     if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
     if ($search_montant_ttc) $param.='&search_montant_ttc='.$search_montant_ttc;
-    print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
     $i = 0;
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -317,7 +326,7 @@ if ($resql)
     print '<td class="liste_titre" align="right">&nbsp;</td>';
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
     print '<td class="liste_titre" align="right">&nbsp;</td>';
-    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print "</td></tr>\n";
 
     if ($num > 0)

@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,9 +180,10 @@ class pdf_rouget extends ModelePdfExpedition
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
-				if (! empty($object->note_public) || ! empty($object->tracking_number))
+				if (! empty($object->note_public) || (! empty($object->tracking_number) && ! empty($object->shipping_method_id)))
 				{
 					$tab_top = 88;
+					$tab_top_alt = $tab_top;
 
 					// Tracking number
 					if (! empty($object->tracking_number))
@@ -196,7 +198,9 @@ class pdf_rouget extends ModelePdfExpedition
 								$label=$outputlangs->trans("LinkToTrackYourPackage")."<br>";
 								$label.=$outputlangs->trans("SendingMethod".strtoupper($code))." :";
 								$pdf->SetFont('','B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, 4, $this->posxdesc-1, $tab_top-1, $label." ".$object->tracking_url, 0, 1, false, true, 'L');
+								$pdf->writeHTMLCell(60, 7, $this->posxdesc-1, $tab_top-1, $label." ".$object->tracking_url, 0, 1, false, true, 'L');
+
+								$tab_top_alt += 7;
 							}
 						}
 					}
@@ -205,7 +209,7 @@ class pdf_rouget extends ModelePdfExpedition
 					if (! empty($object->note_public))
 					{
 						$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top_alt, dol_htmlentitiesbr($object->note_public), 0, 1);
 					}
 
 					$nexY = $pdf->GetY();
@@ -240,7 +244,7 @@ class pdf_rouget extends ModelePdfExpedition
 					$pageposbefore=$pdf->getPage();
 
 					// Description de la ligne produit
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,150,3,$this->posxdesc,$curY,0,1);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxqtyordered-10,3,$this->posxdesc,$curY,0,1);
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
@@ -264,6 +268,7 @@ class pdf_rouget extends ModelePdfExpedition
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
+						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
@@ -499,7 +504,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSending") ." : ".$object->ref, '', 'R');
 
-		//Date Expedition
+		// Date Expedition
 		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
@@ -525,7 +530,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$origin_id 	= $object->origin_id;
 
 	    // TODO move to external function
-		if ($conf->$origin->enabled)
+		if (! empty($conf->$origin->enabled))
 		{
 			$outputlangs->load('orders');
 
@@ -611,7 +616,7 @@ class pdf_rouget extends ModelePdfExpedition
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
 
 			// Show recipient
 			$widthrecbox=100;

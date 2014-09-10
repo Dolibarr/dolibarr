@@ -24,10 +24,6 @@
 *      \brief      Note card expedition
 */
 
-error_reporting(E_ALL);
-ini_set('display_errors', true);
-ini_set('html_errors', false);
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
@@ -51,21 +47,44 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user, $origin, $origin_id);
 
 $object = new Expedition($db);
-$object->fetch($id);
+if ($id > 0 || ! empty($ref))
+{
+    $object->fetch($id, $ref);
+    $object->fetch_thirdparty();
+
+    if (!empty($object->origin))
+    {
+        $typeobject = $object->origin;
+        $origin = $object->origin;
+        $object->fetch_origin();
+    }
+
+    // Linked documents
+    if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
+    {
+        $objectsrc=new Commande($db);
+        $objectsrc->fetch($object->$typeobject->id);
+    }
+    if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
+    {
+        $objectsrc=new Propal($db);
+        $objectsrc->fetch($object->$typeobject->id);
+    }
+}
 
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($action == 'setnote_public' && $user->rights->facture->creer)
+if ($action == 'setnote_public')
 {
 	$object->fetch($id);
 	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote_private' && $user->rights->facture->creer)
+else if ($action == 'setnote_private')
 {
 	$object->fetch($id);
 	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');

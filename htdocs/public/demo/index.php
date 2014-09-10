@@ -33,11 +33,11 @@ $langs->load("main");
 $langs->load("install");
 $langs->load("other");
 
-$conf->dol_hide_topmenu=GETPOST('dol_hide_topmenu');
-$conf->dol_hide_leftmenu=GETPOST('dol_hide_leftmenu');
-$conf->dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen');
-$conf->dol_no_mouse_hover=GETPOST('dol_no_mouse_hover');
-$conf->dol_use_jmobile=GETPOST('dol_use_jmobile');
+$conf->dol_hide_topmenu=GETPOST('dol_hide_topmenu','int');
+$conf->dol_hide_leftmenu=GETPOST('dol_hide_leftmenu','int');
+$conf->dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen','int');
+$conf->dol_no_mouse_hover=GETPOST('dol_no_mouse_hover','int');
+$conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int');
 
 // Security check
 global $dolibarr_main_demo;
@@ -308,7 +308,7 @@ llxHeaderVierge($langs->trans("DolibarrDemo"), $head);
 
 print "\n";
 
-print '<table style="font-size:14px;" summary="Main table for Dolibarr demos">';
+print '<table style="font-size:14px;" class="centpercent" summary="Main table for Dolibarr demos">';
 
 print '<tr><td>';
 print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></center><br>';

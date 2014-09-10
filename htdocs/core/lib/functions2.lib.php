@@ -536,7 +536,7 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  * @param   Societe		$objsoc			The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode           'next' for next value or 'last' for last value
- * @return 	string					    New value
+ * @return 	string					    New value (numeric) or error message
  */
 function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next')
 {
@@ -551,9 +551,9 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
     // For debugging
     //include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
-    //$mask='{yyyy}-{0000}';
+    //$mask='FA{yy}{mm}-{0000@99}';
     //$date=dol_mktime(12, 0, 0, 1, 1, 1900);
-    //$date=dol_stringtotime('20121001');
+    //$date=dol_stringtotime('20130101');
 
     // Extract value for mask counter, mask raz and mask offset
     if (! preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
@@ -629,7 +629,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if ($maskraz > 0)    // A reset is required
     {
     	if ($maskraz == 99) {
-			$maskraz = date('m');
+			$maskraz = date('m', $date);
 			$resetEveryMonth = true;
 		}
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
@@ -739,7 +739,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $sql.= " FROM ".MAIN_DB_PREFIX.$table;
     $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
     $sql.= " AND ".$field." NOT LIKE '%PROV%'";
-    $sql.= " AND entity IN (".getEntity($table, 1).")";
+    if ($table != 'projet_task') $sql.= " AND entity IN (".getEntity($table, 1).")";
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -798,6 +798,12 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     {
         $counter++;
 
+        // If value for $counter has a length higher than $maskcounter chars
+        if ($counter >= pow(10, dol_strlen($maskcounter)))
+        {
+        	$counter='ErrorMaxNumberReachForThisMask';
+        }
+
         if (! empty($maskrefclient_maskcounter))
         {
             //print "maskrefclient_maskcounter=".$maskrefclient_maskcounter." maskwithnocode=".$maskwithnocode." maskrefclient=".$maskrefclient."\n<br>";
@@ -839,6 +845,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
                 $maskrefclient_counter = $maskrefclient_obj->val;
             }
             else dol_print_error($db);
+
             if (empty($maskrefclient_counter) || preg_match('/[^0-9]/i',$maskrefclient_counter)) $maskrefclient_counter=$maskrefclient_maskoffset;
 			$maskrefclient_counter++;
         }
@@ -1286,6 +1293,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
     $sql.= " WHERE type = '".$type."'";
     $sql.= " AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
 
+    dol_syslog('/core/lib/function2.lib.php::getListOfModels sql='.$sql, LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -1531,4 +1539,127 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 		}
 	}
 	return $ret;
+}
+
+
+/**
+ * Clean corrupted tree (orphelins linked to a not existing parent), record linked to themself and child-parent loop
+ *
+ * @param	DoliDB	$db					Database handler
+ * @param	string	$tabletocleantree	Table to clean
+ * @param	string	$fieldfkparent		Field name that contains id of parent
+ * @return	int							Nb of records fixed/deleted
+ */
+function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
+{
+	$totalnb=0;
+	$listofid=array();
+	$listofparentid=array();
+
+	// Get list of all id in array listofid and all parents in array listofparentid
+	$sql='SELECT rowid, '.$fieldfkparent.' as parent_id FROM '.MAIN_DB_PREFIX.$tabletocleantree;
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			$listofid[]=$obj->rowid;
+			if ($obj->parent_id > 0) $listofparentid[$obj->rowid]=$obj->parent_id;
+			$i++;
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+
+	if (count($listofid))
+	{
+		print 'Code requested to clean tree (may be to solve data corruption), so we check/clean orphelins and loops.'."<br>\n";
+
+		// Check loops on each other
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid";	// So we update only records linked to themself
+		dol_syslog("sql=".$sql);
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$nb=$db->affected_rows($sql);
+			if ($nb > 0)
+			{
+				print '<br>Some record that were parent of themself were cleaned.';
+			}
+
+			$totalnb+=$nb;
+		}
+		//else dol_print_error($db);
+
+		// Check other loops
+		$listofidtoclean=array();
+		foreach($listofparentid as $id => $pid)
+		{
+			// Check depth
+			//print 'Analyse record id='.$id.' with parent '.$pid.'<br>';
+
+			$cursor=$id; $arrayidparsed=array();	// We start from child $id
+			while ($cursor > 0)
+			{
+				$arrayidparsed[$cursor]=1;
+				if ($arrayidparsed[$listofparentid[$cursor]])	// We detect a loop. A record with a parent that was already into child
+				{
+					print 'Found a loop between id '.$id.' - '.$cursor.'<br>';
+					unset($arrayidparsed);
+					$listofidtoclean[$cursor]=$id;
+					break;
+				}
+				$cursor=$listofparentid[$cursor];
+			}
+
+			if (count($listofidtoclean)) break;
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
+		$sql.= " SET ".$fieldfkparent." = 0";
+		$sql.= " WHERE rowid IN (".join(',',$listofidtoclean).")";	// So we update only records detected wrong
+		dol_syslog("sql=".$sql);
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$nb=$db->affected_rows($sql);
+			if ($nb > 0)
+			{
+				// Removed orphelins records
+				print '<br>Some records were detected to have parent that is a child, we set them as root record for id: ';
+				print join(',',$listofidtoclean);
+			}
+
+			$totalnb+=$nb;
+		}
+		//else dol_print_error($db);
+
+		// Check and clean orphelins
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
+		$sql.= " SET ".$fieldfkparent." = 0";
+		$sql.= " WHERE ".$fieldfkparent." NOT IN (".join(',',$listofid).")";	// So we update only records linked to a non existing parent
+		dol_syslog("sql=".$sql);
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$nb=$db->affected_rows($sql);
+			if ($nb > 0)
+			{
+				// Removed orphelins records
+				print '<br>Some orphelins were found and modified to be parent so records are visible again for id: ';
+				print join(',',$listofid);
+			}
+
+			$totalnb+=$nb;
+		}
+		//else dol_print_error($db);
+
+		print '<br>We fixed '.$totalnb.' record(s). Some records may still be corrupted. New check may be required.';
+		return $totalnb;
+	}
 }

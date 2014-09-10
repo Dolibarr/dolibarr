@@ -510,6 +510,12 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 	    return -3;
 	}
 	if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+	if (empty($newmask))	// This should no happen
+	{
+		dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
+		$newmask='0664';	
+	}
+	
 	@chmod($newpathofdestfile, octdec($newmask));
 
 	return 1;
@@ -538,13 +544,13 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
         $newpathofdestfile=dol_osencode($destfile);
 
         $result=@rename($newpathofsrcfile, $newpathofdestfile); // To see errors, remove @
-        if (! $result) 
+        if (! $result)
         {
-        	if ($destexists) 
+        	if ($destexists)
         	{
         		dol_syslog("files.lib.php::dol_move failed. We try to delete first and move after.", LOG_WARNING);
         		// We force delete and try again. Rename function sometimes fails to replace dest file with some windows NTFS partitions.
-        		dol_delete_file($destfile);	
+        		dol_delete_file($destfile);
         		$result=@rename($newpathofsrcfile, $newpathofdestfile); // To see errors, remove @
         	}
         	else dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
@@ -725,6 +731,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 
 	$langs->load("other");
 	$langs->load("errors");
+
+	dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
 
 	if (empty($nohook))
 	{
@@ -1301,7 +1309,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
 	if (empty($entity)) $entity=0;
-	dol_syslog('modulepart='.$modulepart.' original_file= '.$original_file);
+	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file);
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;
 	$sqlprotectagainstexternals='';
@@ -1562,6 +1570,15 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
+	else if ($modulepart == 'project_task')
+	{
+		if ($fuser->rights->projet->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->projet->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+	}
 
 	// Wrapping pour les commandes fournisseurs
 	else if ($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier')
@@ -1784,6 +1801,12 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		}
 		else
 		{
+			if (empty($conf->$modulepart->dir_output))	// modulepart not supported
+			{
+				dol_print_error('','Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
+				exit;
+			}
+
 			$perm=GETPOST('perm');
 			$subperm=GETPOST('subperm');
 			if ($perm || $subperm)

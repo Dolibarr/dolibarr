@@ -189,6 +189,14 @@ else
     $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
     $sql .= ', p.desiredstock';
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
+
+    $nbtotalofrecords = 0;
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	{
+		$result = $db->query($sql);
+		$nbtotalofrecords = $db->num_rows($result);
+	}
+
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
@@ -229,7 +237,8 @@ else
     	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	$param.=isset($type)?"&amp;type=".$type:"";
-    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+
+    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
     	if (! empty($catid))
     	{
@@ -277,7 +286,7 @@ else
     	 	if (empty($conf->global->PRODUIT_MULTIPRICES)) $colspan++;
     	 	if ($user->rights->fournisseur->lire) $colspan++;
     	 	if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) $colspan+=2;
-    	 	
+
     		if (! empty($conf->categorie->enabled))
     		{
     		 	$moreforfilter.=$langs->trans('Categories'). ': ';
@@ -361,17 +370,17 @@ else
     			print '</td>';
     		}
 
-    		print '<td align="center">';  		
+    		print '<td align="center">';
             print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
             print '</td >';
-            
+
             print '<td align="center">';
             print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
             print '</td>';
 
     		print '<td class="liste_titre" align="right">';
-    		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     		print '</td>';
     		print '</tr>';
 
@@ -428,11 +437,15 @@ else
     			if (! empty($conf->service->enabled) && $type != 0)
     			{
     				print '<td align="center">';
-    				if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
-    				elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-    				elseif (preg_match('/([0-9]+)w/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
-    				elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
-    				else print $objp->duration;
+    				if (preg_match('/([0-9]+)[a-z]/i',$objp->duration))
+    				{
+	    				if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
+	    				elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
+	    				elseif (preg_match('/([0-9]+)w/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
+	    				elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
+	    				//elseif (preg_match('/([0-9]+)h/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationHour");
+	    				else print $objp->duration;
+    				}
     				print '</td>';
     			}
 
@@ -492,7 +505,7 @@ else
                 print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
 
                 print '<td>&nbsp;</td>';
-                
+
                 print "</tr>\n";
     			$i++;
     		}
@@ -501,7 +514,7 @@ else
     		$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     		$param.=isset($type)?"&amp;type=".$type:"";
-    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
 
     		$db->free($resql);
 

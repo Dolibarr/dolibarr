@@ -60,12 +60,13 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 	$timespent_durationmin = GETPOST('timespent_durationmin','int');
 	if (empty($timespent_durationhour) && empty($timespent_durationmin))
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")).'</div>';
+		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")),'errors');
 		$error++;
 	}
 	if (empty($_POST["userid"]))
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorUserNotAffectedToTask').'</div>';
+		$langs->load("errors");
+		setEventMessage($langs->trans('ErrorUserNotAssignedToTask'),'errors');
 		$error++;
 	}
 
@@ -82,11 +83,12 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 		$result=$object->addTimeSpent($user);
 		if ($result >= 0)
 		{
-
+			setEventMessage($langs->trans("RecordSaved"));
 		}
 		else
 		{
-			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+			setEventMessage($langs->trans($object->error),'errors');
+			$error++;
 		}
 	}
 	else
@@ -101,7 +103,7 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 
 	if (empty($_POST["new_durationhour"]) && empty($_POST["new_durationmin"]))
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")).'</div>';
+		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")),'errors');
 		$error++;
 	}
 
@@ -120,11 +122,12 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 		$result=$object->updateTimeSpent($user);
 		if ($result >= 0)
 		{
-
+			setEventMessage($langs->trans("RecordSaved"));
 		}
 		else
 		{
-			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+			setEventMessage($langs->trans($object->error),'errors');
+			$error++;
 		}
 	}
 	else
@@ -141,7 +144,8 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->c
 	if (!$result)
 	{
 		$langs->load("errors");
-		$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+		setEventMessage($langs->trans($object->error),'errors');
+		$error++;
 		$action='';
 	}
 }
@@ -184,6 +188,8 @@ if ($id > 0 || ! empty($ref))
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
+		$object->project = dol_clone($projectstatic);
+
 		$userWrite = $projectstatic->restrictedProjectArea($user,'write');
 
 		if ($withproject)
@@ -214,7 +220,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
 			// Thirdparty
-			print '<tr><td>'.$langs->trans("Company").'</td><td>';
+			print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 			if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td>';
@@ -278,7 +284,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Third party
-			print '<td>'.$langs->trans("Company").'</td><td>';
+			print '<td>'.$langs->trans("ThirdParty").'</td><td>';
 			if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td></tr>';
@@ -322,9 +328,13 @@ if ($id > 0 || ! empty($ref))
 
 			// Contributor
 			print '<td class="nowrap">';
-			$contactoftask=$object->getListContactId('internal');
+			$restrictaddtimetocontactoftask=0;
+			if (empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS))
+			{
+				$restrictaddtimetocontactoftask=$object->getListContactId('internal');
+			}
 			print img_object('','user');
-			print $form->select_dolusers($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$contactoftask);
+			print $form->select_dolusers($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$restrictaddtimetocontactoftask);	// Note: If user is not allowed it will be disabled into combo list and userid not posted
 			print '</td>';
 
 			// Note

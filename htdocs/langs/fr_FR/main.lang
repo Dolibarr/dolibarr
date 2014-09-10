@@ -7,7 +7,7 @@ DIRECTION=ltr
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
-SeparatorThousand=None
+SeparatorThousand= 
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
@@ -666,6 +666,7 @@ SaveUploadedFileWithMask=Sauver le fichier sur le serveur sous le nom "<strong>%
 OriginFileName=nom du fichier source
 SetDemandReason=Définir l'origine
 ViewPrivateNote=Voir notes
+XMoreLines=%s ligne(s) non affichée(s)
 
 # Week day
 Monday=Lundi

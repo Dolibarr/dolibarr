@@ -200,6 +200,15 @@ if ($search_user > 0)
 }
 
 $sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+
 $sql.= $db->plimit($limit + 1,$offset);
 
 //print $sql;
@@ -245,7 +254,7 @@ if ($resql)
 	if ($search_sale > 0) $param.='&search_sale='.$search_sale;
 
 	$num = $db->num_rows($resql);
-	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
+	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	$i = 0;
 
 	// Lignes des champs de filtre
@@ -301,7 +310,7 @@ if ($resql)
 	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td align="right" class="liste_titre">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td></tr>';
 
 	$var=true;
@@ -325,7 +334,7 @@ if ($resql)
 		print '</td>';
 
 		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && max($db->jdate($objp->date_valid),$db->jdate($objp->date_livraison)) < ($now - $conf->commande->client->warning_delay))
+		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && max($db->jdate($objp->date_commande),$db->jdate($objp->date_livraison)) < ($now - $conf->commande->client->warning_delay))
 			print img_picto($langs->trans("Late"),"warning");
 		if(!empty($objp->note_private))
 		{

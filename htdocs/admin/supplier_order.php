@@ -42,6 +42,7 @@ accessforbidden();
 
 $type=GETPOST('type', 'alpha');
 $value=GETPOST('value', 'alpha');
+$label = GETPOST('label','alpha');
 $action=GETPOST('action', 'alpha');
 
 $specimenthirdparty=new Societe($db);
@@ -367,9 +368,14 @@ foreach ($dirmodels as $reldir)
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
 
+	                require_once $dir.'/'.$file;
+	                $module = new $classname($db, new CommandeFournisseur($db));
+
                     $var=!$var;
                     print "<tr ".$bc[$var].">\n";
-                    print "<td>".$name."</td>\n";
+                    print "<td>";
+	                print (empty($module->name)?$name:$module->name);
+	                print "</td>\n";
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db,$specimenthirdparty);

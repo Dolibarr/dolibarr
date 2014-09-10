@@ -70,7 +70,6 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 $fontlist='helvetica,arial,tahoma,verdana';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 //'/theme/auguria/img/menus/trtitle.png';
 $img_liste_titre=dol_buildpath($path.'/theme/'.$theme.'/img/menus/trtitle.png',1);
-$img_head=dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1);
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
 $dol_hide_leftmenu=$conf->dol_hide_leftmenu;
@@ -472,6 +471,7 @@ form#login img  {width:auto; height:auto; opacity:.7;}
 form#login img#img_logo {
 	width:190px;
 	max-width:190px;
+	max-height:100px;
 	height:auto;
 	border-radius:6px;
 	padding:6px;
@@ -588,6 +588,10 @@ div.login {
 	vertical-align: top;
 	padding: 0px 0px 0px 8px !important;
 	height: 16px;
+}
+
+#securitycode {
+	min-width: 60px;
 }
 
 img.login, img.printer, img.entity {
@@ -1515,6 +1519,8 @@ table.valid {
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 .ui-datepicker-title {
     margin:0 !important;

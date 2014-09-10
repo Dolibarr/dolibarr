@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -305,6 +305,7 @@ function ajax_combobox($htmlname, $event=array(), $minLengthToAutocomplete=0)
 	global $conf;
 
 	if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
+	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 
 	/* Some properties for combobox:
 	minLengthToAutocomplete: 2,
@@ -357,6 +358,13 @@ function ajax_combobox($htmlname, $event=array(), $minLengthToAutocomplete=0)
 							}
 						});
 						$("select#" + htmlname).html(response.value);
+						if (response.num) {
+							var selecthtml_str = response.value;
+							var selecthtml_dom=$.parseHTML(selecthtml_str);
+							$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+						} else {
+							$("#inputautocomplete"+htmlname).val("");
+						}
 					});
 		}
 	});';
@@ -372,9 +380,10 @@ function ajax_combobox($htmlname, $event=array(), $minLengthToAutocomplete=0)
  * 	@param	array	$input			Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  * 	@param	int		$entity			Entity to set
  *  @param	int		$revertonoff	Revert on/off
+ *  @param	bool	$strict			Use only "disabled" with delConstant and "enabled" with setConstant
  * 	@return	void
  */
-function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0)
+function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0, $strict=0)
 {
 	global $conf, $langs;
 
@@ -382,11 +391,12 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0)
 
 	$out= "\n<!-- Ajax code to switch constant ".$code." -->".'
 	<script type="text/javascript">
-		$(function() {
+		$(document).ready(function() {
 			var input = '.json_encode($input).';
 			var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
 			var code = \''.$code.'\';
 			var entity = \''.$entity.'\';
+			var strict = \''.$strict.'\';
 			var yesButton = "'.dol_escape_js($langs->transnoentities("Yes")).'";
 			var noButton = "'.dol_escape_js($langs->transnoentities("No")).'";
 
@@ -395,9 +405,9 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0)
 				if (input.alert && input.alert.set) {
 					if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
 					if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
-					confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton);
+					confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict);
 				} else {
-					setConstant(url, code, input, entity);
+					setConstant(url, code, input, entity, strict);
 				}
 			});
 
@@ -406,9 +416,9 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0)
 				if (input.alert && input.alert.del) {
 					if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
 					if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
-					confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton);
+					confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict);
 				} else {
-					delConstant(url, code, input, entity);
+					delConstant(url, code, input, entity, strict);
 				}
 			});
 		});

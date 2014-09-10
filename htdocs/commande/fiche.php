@@ -1,34 +1,34 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
-* Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
-* Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
-* Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
-* Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
-* Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
-* Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
-* Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
-* Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
+ * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/commande/fiche.php
-*	\ingroup    commande
-*	\brief      Page to show customer order
-*/
+ *	\ingroup    commande
+ *	\brief      Page to show customer order
+ */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -112,6 +112,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 	{
 		if ($object->id > 0)
 		{
+			//Because createFromClone modifies the object, we must clone it so that we can restore it later
+			$orig = dol_clone($object);
+
 			$result=$object->createFromClone($socid);
 			if ($result > 0)
 			{
@@ -120,7 +123,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 			}
 			else
 			{
-				$mesg='<div class="error">'.$object->error.'</div>';
+				setEventMessage($object->error, 'errors');
+				$object = $orig;
 				$action='';
 			}
 		}
@@ -140,7 +144,7 @@ else if ($action == 'reopen' && $user->rights->commande->creer)
 		}
 		else
 		{
-			$mesg='<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -154,9 +158,8 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->comm
 		header('Location: index.php');
 		exit;
 	}
-	else
-	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+	else {
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -187,7 +190,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -445,6 +448,10 @@ else if ($action == 'add' && $user->rights->commande->creer)
 else if ($action == 'classifybilled' && $user->rights->commande->creer)
 {
 	$ret=$object->classifyBilled();
+
+	if ($ret < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 // Positionne ref commande client
@@ -568,10 +575,12 @@ else if ($action == 'setnote_private' && $user->rights->commande->creer)
 else if ($action == 'addline' && $user->rights->commande->creer)
 {
 	$langs->load('errors');
-	$error = false;
+	$error = 0;
 
 	// Set if we used free entry or predefined product
-	if (GETPOST('addline_libre'))
+	if (GETPOST('addline_libre')
+			|| (GETPOST('dp_desc') && ! GETPOST('addline_libre') && ! GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+			)
 	{
 		$predef='';
 		$idprod=0;
@@ -579,7 +588,9 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		$price_ht = GETPOST('price_ht');
 		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 	}
-	if (GETPOST('addline_predefined'))
+	if (GETPOST('addline_predefined')
+			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+			)
 	{
 		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 		$idprod=GETPOST('idprod', 'int');
@@ -599,7 +610,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
 	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline,$predef);
 	//Unset extrafield
 	if (is_array($extralabelsline))
 	{
@@ -613,12 +624,12 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && ($qty < 0))
 	{
 		setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
-		$error = true;
+		$error++;
 	}
 	if (empty($idprod) && GETPOST('type') < 0)
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
-		$error = true;
+		$error++;
 	}
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
 	{
@@ -628,19 +639,19 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 	if ($qty == '')
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
-		$error = true;
+		$error++;
 	}
 	if (empty($idprod) && empty($product_desc))
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
-		$error = true;
+		$error++;
 	}
 
 	if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod)))
 	{
 		// Clean parameters
-		$date_start=dol_mktime(0, 0, 0, GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
-		$date_end=dol_mktime(0, 0, 0, GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), 0, GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), 0, GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 		$price_base_type = (GETPOST('price_base_type', 'alpha')?GETPOST('price_base_type', 'alpha'):'HT');
 
 		// Ecrase $pu par celui du produit
@@ -675,6 +686,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 					$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
 					$price_min = $prod->multiprices_min[$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
+					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
 				}
 				else
 				{
@@ -859,8 +872,8 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 	// Clean parameters
 	$date_start='';
 	$date_end='';
-	$date_start=dol_mktime(0, 0, 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-	$date_end=dol_mktime(0, 0, 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+	$date_end=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 	$description=dol_htmlcleanlastbr(GETPOST('product_desc'));
 	$pu_ht=GETPOST('price_ht');
 	$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
@@ -998,8 +1011,18 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
 {
 	$idwarehouse=GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 	{
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
@@ -1034,8 +1057,18 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer)
 {
 	$idwarehouse=GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 	{
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
@@ -1072,15 +1105,27 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer)
 else if ($action == 'confirm_shipped' && $confirm == 'yes' && $user->rights->commande->cloturer)
 {
 	$result = $object->cloture($user);
-	if ($result < 0) $mesgs=$object->errors;
+	if ($result < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider)
 {
 	$idwarehouse=GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 	{
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
@@ -1093,6 +1138,10 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->comm
 	if (! $error)
 	{
 		$result = $object->cancel($idwarehouse);
+
+		if ($result < 0) {
+			setEventMessage($object->error, 'errors');
+		}
 	}
 }
 
@@ -1544,7 +1593,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
 			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
-			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
 			$datedelivery		= (!empty($objectsrc->date_livraison)?$objectsrc->date_livraison:'');
 
@@ -1563,7 +1612,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
 		$remise_absolue     = 0;
-		$dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+		$dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 		$projectid          = 0;
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
@@ -1639,7 +1688,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	if (empty($datedelivery))
 	{
 		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) $datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-		else $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+		else $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 	}
 	$form->select_date($datedelivery,'liv_','','','',"crea_commande",1,1);
 	print "</td></tr>";
@@ -1868,8 +1917,19 @@ else
 				$text.='<br>';
 				$text.=$notify->confirmMessage('ORDER_VALIDATE',$object->socid);
 			}
+
+		    $qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
 			$formquestion=array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -1878,7 +1938,7 @@ else
 				//'text' => $langs->trans("ConfirmClone"),
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone','idwarehouse','',1)));
 			}
 
 			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
@@ -1887,9 +1947,19 @@ else
 		// Confirm back to draft status
 		if ($action == 'modif')
 		{
+			$qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
 			$text=$langs->trans('ConfirmUnvalidateOrder',$object->ref);
 			$formquestion=array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -1898,7 +1968,7 @@ else
 				//'text' => $langs->trans("ConfirmClone"),
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone','idwarehouse','',1)));
 			}
 
 			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnvalidateOrder'), $text, 'confirm_modif', $formquestion, "yes", 1, 220);
@@ -1915,12 +1985,22 @@ else
 
 		/*
 		 * Confirmation de l'annulation
-		*/
+		 */
 		if ($action == 'cancel')
 		{
+			$qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
 			$text=$langs->trans('ConfirmCancelOrder',$object->ref);
 			$formquestion=array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -1929,7 +2009,7 @@ else
 				//'text' => $langs->trans("ConfirmClone"),
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone','idwarehouse','',1)));
 			}
 
 			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $text, 'confirm_cancel', $formquestion, 0, 1);
@@ -1937,7 +2017,7 @@ else
 
 		/*
 		 * Confirmation de la suppression d'une ligne produit
-		*/
+		 */
 		if ($action == 'ask_deleteline')
 		{
 			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
@@ -2483,15 +2563,15 @@ else
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 				}
 
-
 				// Create bill and Classify billed
-				if (! empty($conf->facture->enabled) && $object->statut > 0  && ! $object->billed)
+				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed"
+				if ($object->statut > 0  && ! $object->billed)
 				{
-					if ($user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))
+					if (! empty($conf->facture->enabled) && $user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
 					}
-					if ($user->rights->commande->creer && $object->statut > 2 && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && empty($conf->global->WORsKFLOW_BILL_ON_SHIPMENT))
+					if ($user->rights->commande->creer && $object->statut > 2 && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a></div>';
 					}

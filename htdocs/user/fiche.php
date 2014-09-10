@@ -8,7 +8,7 @@
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,20 +178,21 @@ if ($action == 'add' && $canadduser)
 
     if (! $message)
     {
-        $object->lastname		= GETPOST("lastname");
-        $object->firstname	    = GETPOST("firstname");
-        $object->login		    = GETPOST("login");
-        $object->admin		    = GETPOST("admin");
-        $object->office_phone	= GETPOST("office_phone");
-        $object->office_fax	    = GETPOST("office_fax");
+        $object->lastname		= GETPOST("lastname",'alpha');
+        $object->firstname	    = GETPOST("firstname",'alpha');
+        $object->login		    = GETPOST("login",'alpha');
+        $object->admin		    = GETPOST("admin",'alpha');
+        $object->office_phone	= GETPOST("office_phone",'alpha');
+        $object->office_fax	    = GETPOST("office_fax",'alpha');
         $object->user_mobile	= GETPOST("user_mobile");
-        $object->skype    	  = GETPOST("skype");
-        $object->email		    = GETPOST("email");
-        $object->job			= GETPOST("job");
+        $object->skype          = GETPOST("skype");
+        $object->email		    = GETPOST("email",'alpha');
+        $object->job			= GETPOST("job",'alpha');
         $object->signature	    = GETPOST("signature");
         $object->accountancy_code = GETPOST("accountancy_code");
         $object->note			= GETPOST("note");
         $object->ldap_sid		= GETPOST("ldap_sid");
+        $object->fk_user        = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
 
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -199,6 +200,7 @@ if ($action == 'add' && $canadduser)
         // If multicompany is off, admin users must all be on entity 0.
         if (! empty($conf->multicompany->enabled))
         {
+        	$entity=GETPOST('entity','int');
         	if (! empty($_POST["superadmin"]))
         	{
         		$object->entity = 0;
@@ -209,12 +211,12 @@ if ($action == 'add' && $canadduser)
         	}
         	else
         	{
-        		$object->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+        		$object->entity = (empty($entity) ? 0 : $entity);
         	}
         }
         else
         {
-        	$object->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+        	$object->entity = (empty($entity) ? 0 : $entity);
         }
 
         $db->begin();
@@ -315,19 +317,19 @@ if ($action == 'update' && ! $_POST["cancel"])
 
             $object->oldcopy=dol_clone($object);
 
-            $object->lastname	= GETPOST("lastname");
-            $object->firstname	= GETPOST("firstname");
-            $object->login		= GETPOST("login");
+            $object->lastname	= GETPOST("lastname",'alpha');
+            $object->firstname	= GETPOST("firstname",'alpha');
+            $object->login		= GETPOST("login",'alpha');
             $object->pass		= GETPOST("password");
             $object->admin		= empty($user->admin)?0:GETPOST("admin"); // A user can only be set admin by an admin
-            $object->office_phone=GETPOST("office_phone");
-            $object->office_fax	= GETPOST("office_fax");
+            $object->office_phone=GETPOST("office_phone",'alpha');
+            $object->office_fax	= GETPOST("office_fax",'alpha');
             $object->user_mobile= GETPOST("user_mobile");
-            $object->skype    =GETPOST("skype");
-            $object->email		= GETPOST("email");
-            $object->job		= GETPOST("job");
+            $object->skype    	= GETPOST("skype");
+            $object->email		= GETPOST("email",'alpha');
+            $object->job		= GETPOST("job",'alpha');
             $object->signature	= GETPOST("signature");
-			      $object->accountancy_code	= GETPOST("accountancy_code");
+            $object->accountancy_code	= GETPOST("accountancy_code");
             $object->openid		= GETPOST("openid");
             $object->fk_user    = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
 
@@ -383,8 +385,8 @@ if ($action == 'update' && ! $_POST["cancel"])
 	            	$contact->fetch($contactid);
 
 	            	$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-	            	$sql.= " SET fk_socpeople=".$contactid;
-	            	if ($contact->socid) $sql.=", fk_societe=".$contact->socid;
+	            	$sql.= " SET fk_socpeople=".$db->escape($contactid);
+	            	if ($contact->socid) $sql.=", fk_societe=".$db->escape($contact->socid);
 	            	$sql.= " WHERE rowid=".$object->id;
             	}
             	else
@@ -864,7 +866,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print '<input size="20" type="text" name="office_fax" value="'.GETPOST('office_fax').'">';
     }
     print '</td></tr>';
-    
+
     // Skype
     if (! empty($conf->skype->enabled))
     {
@@ -1189,7 +1191,7 @@ else
             print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
             print '<td>'.dol_print_phone($object->office_fax,'',0,0,1).'</td>';
             print '</tr>'."\n";
-            
+
             // Skype
             if (! empty($conf->skype->enabled))
             {
@@ -1299,19 +1301,23 @@ else
             }
 
             // Multicompany
-            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            // TODO This should be done with hook formObjectOption
+            if (is_object($mc))
             {
-            	print '<tr><td valign="top">'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
-            	if ($object->admin && ! $object->entity)
-            	{
-            		print $langs->trans("AllEntities");
-            	}
-            	else
-            	{
-            		$mc->getInfo($object->entity);
-            		print $mc->label;
-            	}
-            	print "</td></tr>\n";
+	            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+	            {
+	            	print '<tr><td valign="top">'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
+	            	if ($object->admin && ! $object->entity)
+	            	{
+	            		print $langs->trans("AllEntities");
+	            	}
+	            	else
+	            	{
+	            		$mc->getInfo($object->entity);
+	            		print $mc->label;
+	            	}
+	            	print "</td></tr>\n";
+	            }
             }
 
           	// Other attributes
@@ -1808,7 +1814,7 @@ else
                 }
                 print '</td></tr>';
             }
-            
+
             // EMail
             print "<tr>".'<td valign="top"'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
             print '<td>';
@@ -1873,19 +1879,23 @@ else
             print "</tr>\n";
 
 			// Accountancy code
-            print "<tr>";
-            print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';
-            print '<td>';
-            if ($caneditfield)
+            if (! empty($conf->global->USER_ENABLE_ACCOUNTANCY_CODE))	// For the moment field is not used so must not appeared.
             {
-                print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+	            print "<tr>";
+	            print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+	            print '<td>';
+	            if ($caneditfield)
+	            {
+	                print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+	            }
+	            else
+	            {
+	                print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
+	                print $object->accountancy_code;
+	            }
+	            print '</td>';
+	            print "</tr>";
             }
-            else
-            {
-                print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
-                print $object->accountancy_code;
-            }
-            print '</td>';
 
             // Status
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';

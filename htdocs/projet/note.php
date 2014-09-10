@@ -115,7 +115,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
 		// Third party
-		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 		if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
 		else print'&nbsp;';
 		print '</td></tr>';

@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -125,7 +125,10 @@ class ImportTest extends PHPUnit_Framework_TestCase
     {
         $file=dirname(__FILE__).'/Example_import_company_1.csv';
 
-        //if (! preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i','2012-03-23')) print 'eeeeeeeeeeee';
+        // TODO
+        // Run import on file and check the record with field "auto" are filled
+        // according to option
+
 
 		return true;
     }

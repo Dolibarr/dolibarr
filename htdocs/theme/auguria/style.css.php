@@ -545,11 +545,15 @@ form#login {
 	background-image: -ms-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
 	background-image: linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
 }
+#securitycode {
+	min-width: 60px;
+}
 #img_securitycode {
 	border: 1px solid #DDDDDD;
 }
 #img_logo {
 	max-width: 200px;
+	max-height: 100px;
 }
 
 div.login_block {
@@ -1038,7 +1042,6 @@ div.tabsAction {
 
 
 a.tabTitle {
-    background: <? echo empty($dol_use_jmobile)?'#5088A9':'auto'; ?>;
     color: #888;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
@@ -1046,9 +1049,6 @@ a.tabTitle {
     margin: 0px 6px;
     text-decoration: none;
     white-space: nowrap;
-    border-<?php print $right; ?>: 1px solid #555555;
-    border-<?php print $left; ?>: 1px solid #D8D8D8;
-    border-top: 1px solid #D8D8D8;
 }
 
 a.tab:link {
@@ -1726,6 +1726,8 @@ opacity: 1;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 .ui-datepicker-trigger {
 	vertical-align: middle;

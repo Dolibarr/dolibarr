@@ -267,6 +267,7 @@ class pdf_merou extends ModelePdfExpedition
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
+						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
@@ -474,7 +475,7 @@ class pdf_merou extends ModelePdfExpedition
 		else
 		{
 			$text=$this->emetteur->name;
-			$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($text), 0, 'L');
+			$pdf->MultiCell(70, 3, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
 		//*********************Entete****************************
@@ -601,8 +602,7 @@ class pdf_merou extends ModelePdfExpedition
 			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 		}
 
-		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
-
+		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,((!empty($object->contact))?$object->contact:null),$usecontact,'targetwithdetails');
 
 		$blDestX=$blExpX+55;
 		$blW=50;

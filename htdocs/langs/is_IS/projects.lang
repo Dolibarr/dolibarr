@@ -100,12 +100,12 @@ IfNeedToUseOhterObjectKeepEmpty=Ef sumir hlutir (nótum röð ...), sem tilheyra
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leiðtogi
 TypeContact_project_external_PROJECTLEADER=Project leiðtogi
-TypeContact_project_internal_CONTRIBUTOR=Framlög
-TypeContact_project_external_CONTRIBUTOR=Framlög
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Framlög
+TypeContact_project_external_PROJECTCONTRIBUTOR=Framlög
 TypeContact_project_task_internal_TASKEXECUTIVE=Verkefni framkvæmdastjóri
 TypeContact_project_task_external_TASKEXECUTIVE=Verkefni framkvæmdastjóri
-TypeContact_project_task_internal_CONTRIBUTOR=Framlög
-TypeContact_project_task_external_CONTRIBUTOR=Framlög
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Framlög
+TypeContact_project_task_external_TASKCONTRIBUTOR=Framlög
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

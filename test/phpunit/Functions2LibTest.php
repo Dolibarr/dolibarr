@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/FunctionsTest.php
+ *      \file       test/phpunit/Functions2LibTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
 
@@ -48,7 +48,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class Functions2Test extends PHPUnit_Framework_TestCase
+class Functions2LibTest extends PHPUnit_Framework_TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -128,20 +128,20 @@ class Functions2Test extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertEquals('νεο',$result);
     }
-    
+
     /**
      * isValidMailDomain
-     * 
+     *
      * @return void
      */
     public function testIsValidMailDomain()
     {
-    	
+
     }
 
     /**
      * isValidURL
-     * 
+     *
      * @return	void
      */
     public function testIsValidUrl()

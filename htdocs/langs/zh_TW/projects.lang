@@ -100,12 +100,12 @@ IfNeedToUseOhterObjectKeepEmpty=如果某些對象（發票，訂單，...），
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=項目負責人
 TypeContact_project_external_PROJECTLEADER=項目負責人
-TypeContact_project_internal_CONTRIBUTOR=投稿
-TypeContact_project_external_CONTRIBUTOR=投稿
+TypeContact_project_internal_PROJECTCONTRIBUTOR=投稿
+TypeContact_project_external_PROJECTCONTRIBUTOR=投稿
 TypeContact_project_task_internal_TASKEXECUTIVE=執行任務
 TypeContact_project_task_external_TASKEXECUTIVE=執行任務
-TypeContact_project_task_internal_CONTRIBUTOR=投稿
-TypeContact_project_task_external_CONTRIBUTOR=投稿
+TypeContact_project_task_internal_TASKCONTRIBUTOR=投稿
+TypeContact_project_task_external_TASKCONTRIBUTOR=投稿
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

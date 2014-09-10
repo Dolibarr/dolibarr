@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
@@ -110,7 +110,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 		//if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
-		$this->posxpicture=$this->posxtva - 16;	// width of images
+		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?16:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxpicture-=20;
@@ -233,6 +233,15 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$this->atleastonediscount++;
 					}
 				}
+				if (empty($this->atleastonediscount))
+				{
+					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
+					$this->posxtva+=($this->postotalht - $this->posxdiscount);
+					$this->posxup+=($this->postotalht - $this->posxdiscount);
+					$this->posxqty+=($this->postotalht - $this->posxdiscount);
+					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
+					//$this->postotalht;
+				}
 
 				// New page
 				$pdf->AddPage();
@@ -307,7 +316,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 								$pdf->AddPage('','',true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-								$pdf->setPage($pagenb+1);
+								$pdf->setPage($pageposafter+1);
 							}
 						}
 						else
@@ -401,6 +410,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
+						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
@@ -899,6 +909,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$outputlangs->load("bills");
 		$outputlangs->load("orders");
 		$outputlangs->load("companies");
+		$outputlangs->load("sendings");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -969,19 +980,21 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
         $posy+=5;
 		$pdf->SetXY($posx,$posy);
-		if ($object->date_commande)
+		if (! empty($object->date_commande))
 		{
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date_commande,"day",false,$outputlangs,true), '', 'R');
-			$pdf->MultiCell(190, 3, $outputlangs->transnoentities("DateDeliveryPlanned")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{
 			$pdf->SetTextColor(255,0,0);
-			$pdf->MultiCell(100, 3, strtolower($outputlangs->transnoentities("OrderToProcess")), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
 		}
 
-		$posy+=2;
+		$pdf->SetTextColor(0,0,60);
+		if (! empty($object->date_livraison)) $pdf->MultiCell(190, 3, $outputlangs->transnoentities("DateDeliveryPlanned")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
+
+		$posy+=5;
 		$pdf->SetTextColor(0,0,60);
 
 		// Show list of linked objects
@@ -1082,7 +1095,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_ORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
 	}
 
 }

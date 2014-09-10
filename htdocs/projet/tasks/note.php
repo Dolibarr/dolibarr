@@ -52,6 +52,8 @@ if ($id > 0 || ! empty($ref))
 	{
 		$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+
+		$object->project = dol_clone($projectstatic);
 	}
 	else
 	{
@@ -142,7 +144,7 @@ if ($object->id > 0)
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
 		// Company
-		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td>';
@@ -194,7 +196,7 @@ if ($object->id > 0)
 		print '</td></tr>';
 
 		// Third party
-		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
 		else print'&nbsp;';
 		print '</td></tr>';

@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,7 +195,8 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 	else
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans($object->error), 'errors');
+		if (count($object->errors) > 0) setEventMessage($object->errors, 'errors');
+		else setEventMessage($langs->trans($object->error), 'errors');
 	}
 }
 
@@ -549,7 +550,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 					$interface=new Interfaces($db);
 					$result=$interface->run_triggers('PROPAL_SENTBYMAIL',$object,$user,$langs,$conf);
 					if ($result < 0) {
-						$error++; $this->errors=$interface->errors;
+						$error++; $object->errors=$interface->errors;
 					}
 					// Fin appel triggers
 
@@ -637,7 +638,9 @@ else if ($action == "setabsolutediscount" && $user->rights->propal->creer)
 else if (($action == 'addline' || $action == 'addline_predef') && $user->rights->propal->creer)
 {
 	// Set if we used free entry or predefined product
-	if (GETPOST('addline_libre'))
+	if (GETPOST('addline_libre')
+			|| (GETPOST('dp_desc') && ! GETPOST('addline_libre') && ! GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+			)
 	{
 		$predef='';
 		$idprod=0;
@@ -645,7 +648,9 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		$price_ht = GETPOST('price_ht');
 		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 	}
-	if (GETPOST('addline_predefined'))
+	if (GETPOST('addline_predefined')
+			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+			)
 	{
 		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 		$idprod=GETPOST('idprod', 'int');
@@ -665,7 +670,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
 	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline,$predef);
 	//Unset extrafield
 	if (is_array($extralabelsline))
 	{
@@ -733,6 +738,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 					$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
 					$price_min = $prod->multiprices_min[$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
+					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
 				}
 				else
 				{
@@ -949,7 +956,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	}
 
 	// Define special_code for special lines
-	$special_code=0;
+	$special_code=GETPOST('special_code');
 	if (! GETPOST('qty')) $special_code=3;
 
 	// Check minimum price
@@ -1364,7 +1371,7 @@ if ($action == 'create')
 
 	// Date
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
-	$form->select_date('','','','','',"addprop");
+	$form->select_date('','','','','',"addprop",1,1);
 	print '</td></tr>';
 
 	// Validaty duration
@@ -1403,8 +1410,7 @@ if ($action == 'create')
 	}
 	else
 	{
-		$datepropal=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
-		$form->select_date($datepropal,'liv_','','','',"addprop");
+		$form->select_date(-1,'liv_','','','',"addprop",1,1);
 	}
 	print '</td></tr>';
 
@@ -1458,7 +1464,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="createmode" value="empty">';
 	}
 
-	print '<table>';
+	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '<table>';
 	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE))
 	{
 		// For backward compatibility
@@ -1529,14 +1535,11 @@ if ($action == 'create')
 				print '<td><input type="text" size="2" name="remise'.$i.'" value="'.$soc->remise_percent.'">%</td>';
 				print '</tr>';
 			}
-
 			print "</table>";
-
 		}
 		print '</td></tr>';
 	}
-	print '</table>';
-	print '<br>';
+	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '</table><br>';
 
 	$langs->load("bills");
 	print '<center>';
@@ -1677,28 +1680,22 @@ else
 	if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	print '. ';
-	$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
-	$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
-	$absolute_discount=price2num($absolute_discount,'MT');
-	$absolute_creditnote=price2num($absolute_creditnote,'MT');
-	if ($absolute_discount)
-	{
-		if ($object->statut > 0)
-		 {
-			print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
-
-		}
-		else
-		{
+	$absolute_discount = $soc->getAvailableDiscounts('', 'fk_facture_source IS NULL');
+	$absolute_creditnote = $soc->getAvailableDiscounts('', 'fk_facture_source IS NOT NULL');
+	$absolute_discount = price2num($absolute_discount, 'MT');
+	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
+	if ($absolute_discount) {
+		if ($object->statut > 0) {
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 0, 0, -1, $conf->currency));
+		} else {
 			// Remise dispo de type non avoir
 			$filter='fk_facture_source IS NULL';
 			print '<br>';
 			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
 		}
 	}
-	if ($absolute_creditnote)
-	{
-		print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'. ';
+	if ($absolute_creditnote) {
+		print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote, 0, $langs, 0, 0, -1, $conf->currency)) . '. ';
 	}
 	if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 	print '</td></tr>';

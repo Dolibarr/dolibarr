@@ -118,7 +118,7 @@ if (empty($reshook))
             $object->particulier       = GETPOST("private");
 
             $object->name              = dolGetFirstLastname(GETPOST('firstname'),GETPOST('nom')?GETPOST('nom'):GETPOST('name'));
-            $object->civilite_id       = GETPOST('civilite_id');
+            $object->civility_id       = GETPOST('civilite_id');
             // Add non official properties
             $object->name_bis          = GETPOST('name')?GETPOST('name'):GETPOST('nom');
             $object->firstname         = GETPOST('firstname');
@@ -414,12 +414,12 @@ if (empty($reshook))
 
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                	dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
-                	if (! $this->db->query($sql))
+                	dol_syslog(get_class($object)."::delete sql=".$sql, LOG_DEBUG);
+                	if (! $object->db->query($sql))
                 	{
                 		$error++;
-                		$this->error .= $this->db->lasterror();
-                		dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
+                		$object->error .= $object->db->lasterror();
+                		dol_syslog(get_class($object)."::delete erreur -1 ".$object->error, LOG_ERR);
                 	}
                 }
 
@@ -1423,7 +1423,7 @@ else
             print '<tr class="hideonsmartphone">';
             print '<td>'.$langs->trans("Logo").'</td>';
             print '<td colspan="3">';
-            if ($object->logo) print $form->showphoto('societe',$object,50);
+            if ($object->logo) print $form->showphoto('societe',$object);
             $caneditfield=1;
             if ($caneditfield)
             {
@@ -1497,7 +1497,7 @@ else
         print '</tr>';
 
         // Logo+barcode
-        $rowspan=4;
+        $rowspan=6;
         if (! empty($conf->global->SOCIETE_USEPREFIX)) $rowspan++;
         if (! empty($object->client)) $rowspan++;
         if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire)) $rowspan++;
@@ -1507,9 +1507,9 @@ else
         if ($showlogo || $showbarcode)
         {
             $htmllogobar.='<td rowspan="'.$rowspan.'" style="text-align: center;" width="25%">';
-            if ($showlogo)   $htmllogobar.=$form->showphoto('societe',$object,50);
+            if ($showlogo)   $htmllogobar.=$form->showphoto('societe',$object);
             if ($showlogo && $showbarcode) $htmllogobar.='<br><br>';
-            if ($showbarcode) $htmllogobar.=$form->showbarcode($object,50);
+            if ($showbarcode) $htmllogobar.=$form->showbarcode($object);
             $htmllogobar.='</td>';
         }
 
@@ -1588,12 +1588,12 @@ else
         if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
 
         // EMail
-        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print dol_print_email($object->email,0,$object->id,'AC_EMAIL');
         print '</td></tr>';
 
         // Web
-        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print dol_print_url($object->url);
         print '</td></tr>';
 
@@ -1826,7 +1826,7 @@ else
         else
 		{
         	$langs->load("mails");
-       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEmail")).'">'.$langs->trans('SendMail').'</a></div>';
+       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
         }
 
         if ($user->rights->societe->creer)
@@ -1851,85 +1851,85 @@ else
 
 		if ($action == 'presend')
 		{
-        		/*
-				 * Affiche formulaire mail
-				 */
+			/*
+			 * Affiche formulaire mail
+			*/
 
-				// By default if $action=='presend'
-				$titreform='SendMail';
-				$topicmail='';
-				$action='send';
-				$modelmail='thirdparty';
+			// By default if $action=='presend'
+			$titreform='SendMail';
+			$topicmail='';
+			$action='send';
+			$modelmail='thirdparty';
 
-				print '<br>';
-				print_titre($langs->trans($titreform));
+			print '<br>';
+			print_titre($langs->trans($titreform));
 
-				// Cree l'objet formulaire mail
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				$formmail->fromtype = 'user';
-				$formmail->fromid   = $user->id;
-				$formmail->fromname = $user->getFullName($langs);
-				$formmail->frommail = $user->email;
-				$formmail->withfrom=1;
-				$formmail->withtopic=1;
-				$liste=array();
-				foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-				$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
-				$formmail->withtofree=0;
-				$formmail->withtocc=$liste;
-				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-				$formmail->withfile=2;
-				$formmail->withbody=1;
-				$formmail->withdeliveryreceipt=1;
-				$formmail->withcancel=1;
-				// Tableau des substitutions
-				$formmail->substit['__SIGNATURE__']=$user->signature;
-				$formmail->substit['__PERSONALIZED__']='';
-				$formmail->substit['__CONTACTCIVNAME__']='';
+			// Cree l'objet formulaire mail
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			$formmail->fromtype = 'user';
+			$formmail->fromid   = $user->id;
+			$formmail->fromname = $user->getFullName($langs);
+			$formmail->frommail = $user->email;
+			$formmail->withfrom=1;
+			$formmail->withtopic=1;
+			$liste=array();
+			foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value) $liste[$key]=$value;
+			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
+			$formmail->withtofree=0;
+			$formmail->withtocc=$liste;
+			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+			$formmail->withfile=2;
+			$formmail->withbody=1;
+			$formmail->withdeliveryreceipt=1;
+			$formmail->withcancel=1;
+			// Tableau des substitutions
+			$formmail->substit['__SIGNATURE__']=$user->signature;
+			$formmail->substit['__PERSONALIZED__']='';
+			$formmail->substit['__CONTACTCIVNAME__']='';
 
-				//Find the good contact adress
-				/*
-				$custcontact='';
-				$contactarr=array();
-				$contactarr=$object->liste_contact(-1,'external');
+			//Find the good contact adress
+			/*
+			$custcontact='';
+			$contactarr=array();
+			$contactarr=$object->liste_contact(-1,'external');
 
-				if (is_array($contactarr) && count($contactarr)>0)
-				{
-					foreach($contactarr as $contact)
-					{
-						if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
+			if (is_array($contactarr) && count($contactarr)>0)
+			{
+			foreach($contactarr as $contact)
+			{
+			if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
 
-							require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
-							$contactstatic=new Contact($db);
-							$contactstatic->fetch($contact['id']);
-							$custcontact=$contactstatic->getFullName($langs,1);
-						}
-					}
+			$contactstatic=new Contact($db);
+			$contactstatic->fetch($contact['id']);
+			$custcontact=$contactstatic->getFullName($langs,1);
+			}
+			}
 
-					if (!empty($custcontact)) {
-						$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-					}
-				}*/
+			if (!empty($custcontact)) {
+			$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+			}
+			}*/
 
 
-				// Tableau des parametres complementaires du post
-				$formmail->param['action']=$action;
-				$formmail->param['models']=$modelmail;
-				$formmail->param['socid']=$object->id;
-				$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
+			// Tableau des parametres complementaires du post
+			$formmail->param['action']=$action;
+			$formmail->param['models']=$modelmail;
+			$formmail->param['socid']=$object->id;
+			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
 
-				// Init list of files
-				if (GETPOST("mode")=='init')
-				{
-					$formmail->clear_attached_files();
-					$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-				}
+			// Init list of files
+			if (GETPOST("mode")=='init')
+			{
+				$formmail->clear_attached_files();
+				$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
+			}
 
-				$formmail->show_form();
+			$formmail->show_form();
 
-				print '<br>';
+			print '<br>';
 		}
 		else
 		{
@@ -1937,7 +1937,6 @@ else
 	        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
 	        {
 				print '<div class="fichecenter"><div class="fichethirdleft">';
-	        	//print '<table width="100%"><tr><td valign="top" width="50%">';
 	            print '<a name="builddoc"></a>'; // ancre
 
 	            /*

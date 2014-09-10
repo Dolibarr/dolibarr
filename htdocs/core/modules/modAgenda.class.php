@@ -23,15 +23,15 @@
 
 /**
  *		\defgroup   agenda     Module agenda
- *      \brief      Module pour gerer l'agenda et actions
+ *      \brief      Module to manage agenda and events
  *      \file       htdocs/core/modules/modAgenda.class.php
  *      \ingroup    agenda
- *      \brief      Fichier de description et activation du module agenda
+ *      \brief      File of class to describe and enable/disable module Agenda
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Classe de description et activation du module Adherent
+ *	Class to describe and enable/disable module Agenda
  */
 class modAgenda extends DolibarrModules
 {
@@ -368,7 +368,7 @@ class modAgenda extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]="ExportDataset_event1";
 		$this->export_permission[$r]=array(array("agenda","export"));
-		$this->export_fields_array[$r]=array('a.id'=>'IdAgenda','a.label'=>'Actions','a.datep'=>'DateActionStart',
+		$this->export_fields_array[$r]=array('a.id'=>'IdAgenda','a.label'=>'Title','a.datep'=>'DateActionStart',
 		'a.datea'=>'DateActionEnd','a.percent'=>'PercentDone','a.fk_user_author'=>'ActionAskedBy','a.fk_user_action'=>'ActionAffectedTo',
 		'a.fk_user_done'=>"ActionDoneBy","a.priority"=>"Priority","a.fulldayevent"=>"EventOnFullDay","a.location"=>"Location",
 		"a.fk_soc"=>"ThirdParty","a.fk_contact"=>"ThirdPartyContact","a.fk_action"=>"Type");

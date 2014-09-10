@@ -649,11 +649,15 @@ form#login {
 	background-image: -ms-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
 	background-image: linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
 }
+#securitycode {
+	min-width: 60px;
+}
 #img_securitycode {
 	border: 1px solid #DDDDDD;
 }
 #img_logo {
 	max-width: 200px;
+	max-height: 100px;
 }
 
 div.login_block {
@@ -967,7 +971,6 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.png',1); ?>) !important;
     background-repeat: repeat-x !important;
     border: 1px solid #BBB !important;
 }
@@ -1303,7 +1306,7 @@ span.tabspan {
 
 div.divButAction { margin-bottom: 1.4em; }
 
-.butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
+.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family: <?php print $fontlist ?>;
 	font-weight: bold;
 	/*background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/bg_btnBlue.jpg',1); ?>) repeat-x;*/
@@ -1346,7 +1349,7 @@ div.divButAction { margin-bottom: 1.4em; }
 
 .butActionRefused {
     background: #FFe7ec;
-	color: #666;
+	color: #aaa !important;
 }
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
@@ -1603,6 +1606,7 @@ tr.pair td.nohover {
     -webkit-box-shadow: 4px 4px 4px #DDD;
     box-shadow: 4px 4px 4px #DDD;
     margin-bottom: 8px !important;*/
+    background: #FFFFFF;
     border: 1px solid #AAA;
     text-align: center;
     border-radius: 5px;
@@ -1815,6 +1819,8 @@ border-radius:6px;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 .ui-datepicker-trigger {
 	vertical-align: middle;

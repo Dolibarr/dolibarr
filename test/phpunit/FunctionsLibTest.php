@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/FunctionsTest.php
+ *      \file       test/phpunit/FunctionsLibTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 
@@ -48,7 +48,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FunctionsTest extends PHPUnit_Framework_TestCase
+class FunctionsLibTest extends PHPUnit_Framework_TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -168,18 +168,36 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $input='xxx <b>yyy</b> zzz';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
-        $input='xxx<br>';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
         $input='text with <div>some div</div>';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
         $input='text with HTML &nbsp; entities';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
+        $input='xxx<br>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br >';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br style="eee">';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br style="eee" >';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='<h2>abc</h2>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
 
         // False
         $input='xxx < br>';
+        $after=dol_textishtml($input);
+        $this->assertFalse($after);
+        $input='xxx <email@email.com>';	// <em> is html, <em... is not
+        $after=dol_textishtml($input);
+        $this->assertFalse($after);
+        $input='xxx <brstyle="ee">';
         $after=dol_textishtml($input);
         $this->assertFalse($after);
     }
@@ -207,6 +225,53 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
         return true;
     }
+
+    /**
+     * testDolConcat
+     *
+     * @return boolean
+     */
+    public function testDolConcat()
+    {
+        $text1="A string 1"; $text2="A string 2";	// text 1 and 2 are text, concat need only \n
+        $after=dol_concatdesc($text1, $text2);
+        $this->assertEquals("A string 1\nA string 2",$after);
+
+        $text1="A<br>string 1"; $text2="A string 2";	// text 1 is html, concat need <br>\n
+        $after=dol_concatdesc($text1, $text2);
+        $this->assertEquals("A<br>string 1<br>\nA string 2",$after);
+
+        $text1="A string 1"; $text2="A <b>string</b> 2";	// text 2 is html, concat need <br>\n
+        $after=dol_concatdesc($text1, $text2);
+        $this->assertEquals("A string 1<br>\nA <b>string</b> 2",$after);
+
+        return true;
+    }
+
+
+    /**
+     * testDolStringNohtmltag
+     *
+     * @return boolean
+     */
+    public function testDolStringNohtmltag()
+    {
+        $text="A\nstring\n";
+        $after=dol_string_nohtmltag($text,0);
+        $this->assertEquals("A\nstring",$after,"test1");
+
+        $text="A <b>string<b>\n\nwith html tag and '<' chars<br>\n";
+        $after=dol_string_nohtmltag($text, 0);
+        $this->assertEquals("A string\n\nwith html tag and '<' chars",$after,"test2");
+
+        $text="A <b>string<b>\n\nwith tag with < chars<br>\n";
+        $after=dol_string_nohtmltag($text, 1);
+        $this->assertEquals("A string with tag with < chars",$after,"test3");
+
+        return true;
+    }
+
+
 
     /**
      * testDolHtmlEntitiesBr
@@ -466,16 +531,16 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
     public function testVerifCond()
     {
         $verifcond=verifCond('1==1');
-        $this->assertTrue($verifcond);
+        $this->assertTrue($verifcond,'Test a true comparison');
 
         $verifcond=verifCond('1==2');
-        $this->assertFalse($verifcond);
+        $this->assertFalse($verifcond,'Test a false comparison');
 
         $verifcond=verifCond('$conf->facture->enabled');
-        $this->assertTrue($verifcond);
+        $this->assertTrue($verifcond,'Test that conf property of a module report true when enabled');
 
         $verifcond=verifCond('$conf->moduledummy->enabled');
-        $this->assertFalse($verifcond);
+        $this->assertFalse($verifcond,'Test that conf property of a module report false when disabled');
 
         $verifcond=verifCond('');
         $this->assertTrue($verifcond);

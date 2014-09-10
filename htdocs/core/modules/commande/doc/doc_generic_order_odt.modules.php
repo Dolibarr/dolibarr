@@ -140,6 +140,16 @@ class doc_generic_order_odt extends ModelePDFCommandes
 			$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
 		}
 
+		// Retrieve extrafields
+		if(is_array($object->array_options) && count($object->array_options))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+			$extralabels = $extrafields->fetch_name_optionals_label('commande',true);
+			$object->fetch_optionals($object->id,$extralabels);
+
+			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key='object',$outputlangs);
+		}
 		return $resarray;
 	}
 
@@ -208,7 +218,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
 			else
 			{
-				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
+				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
 			}
 		}
@@ -218,33 +228,23 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
 
 		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
-		$texte.= '<table><tr><td>';
+		$texte.= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->COMMANDE_ADDON_PDF_ODT_PATH;
 		$texte.= '</textarea>';
-		$texte.= '</td>';
-		$texte.= '<td align="center">&nbsp; ';
+		$texte.= '</div><div style="display: inline-block; vertical-align: middle;">';
 		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
-		$texte.= '</td>';
-		$texte.= '</tr>';
-		$texte.= '</table>';
-
+		$texte.= '<br></div></div>';
+		
 		// Scan directories
 		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
 		$texte.= '</td>';
 
-
-		$texte.= '<td valign="top" rowspan="2">';
+		$texte.= '<td valign="top" rowspan="2" class="hideonsmartphone">';
 		$texte.= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte.= '</td>';
 		$texte.= '</tr>';
-
-		/*$texte.= '<tr>';
-		 $texte.= '<td align="center">';
-		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
-		$texte.= '</td>';
-		$texte.= '</tr>';*/
 
 		$texte.= '</table>';
 		$texte.= '</form>';

@@ -363,7 +363,8 @@ class FormOther
         $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
         $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
-        if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.fk_societe = ".($user->societe_id?$user->societe_id:0);
+        if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.rowid = ".$user->id;
+        if (! empty($user->societe_id)) $sql_usr.=" AND u.fk_societe = ".$user->societe_id;
         // Add existing sales representatives of thirdparty of external user
         if (empty($user->rights->user->user->lire) && $user->societe_id)
         {
@@ -424,16 +425,17 @@ class FormOther
     /**
      *	Return list of project and tasks
      *
-     *	@param  int		$selectedtask   	Pre-selected task
-     *  @param  int		$projectid       Project id
-     * 	@param  string	$htmlname    	Name of html select
-     * 	@param	int		$modeproject		1 to restrict on projects owned by user
-     * 	@param	int		$modetask		1 to restrict on tasks associated to user
-     * 	@param	int		$mode			0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-     *  @param  int		$useempty        0=Allow empty values
+     *	@param  int		$selectedtask   		Pre-selected task
+     *  @param  int		$projectid				Project id
+     * 	@param  string	$htmlname    			Name of html select
+     * 	@param	int		$modeproject			1 to restrict on projects owned by user
+     * 	@param	int		$modetask				1 to restrict on tasks associated to user
+     * 	@param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+     *  @param  int		$useempty       		0=Allow empty values
+     *  @param	int		$disablechildoftaskid	1=Disable task that are child of the provided task id
      *  @return	void
      */
-    function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0)
+    function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0, $disablechildoftaskid=0)
     {
         global $user, $langs;
 
@@ -448,7 +450,7 @@ class FormOther
             if ($useempty) print '<option value="0">&nbsp;</option>';
             $j=0;
             $level=0;
-            $this->_pLineSelect($j, 0, $tasksarray, $level, $selectedtask, $projectid);
+            $this->_pLineSelect($j, 0, $tasksarray, $level, $selectedtask, $projectid, $disablechildoftaskid);
             print '</select>';
         }
         else
@@ -458,17 +460,18 @@ class FormOther
     }
 
     /**
-     * Write all lines of a project (if parent = 0)
+     * Write lines of a project (all lines of a project if parent = 0)
      *
      * @param 	int		&$inc					Cursor counter
-     * @param 	int		$parent					Id parent
-     * @param 	Object	$lines					Line object
+     * @param 	int		$parent					Id of parent task we want to see
+     * @param 	array	$lines					Array of task lines
      * @param 	int		$level					Level
      * @param 	int		$selectedtask			Id selected task
      * @param 	int		$selectedproject		Id selected project
+     * @param	int		$disablechildoftaskid	1=Disable task that are child of the provided task id
      * @return	void
      */
-    private function _pLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selectedproject=0)
+    private function _pLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selectedproject=0, $disablechildoftaskid=0)
     {
         global $langs, $user, $conf;
 
@@ -477,14 +480,16 @@ class FormOther
         $numlines=count($lines);
         for ($i = 0 ; $i < $numlines ; $i++)
         {
-            if ($lines[$i]->fk_parent == $parent)
+        	if ($lines[$i]->fk_parent == $parent)
             {
                 $var = !$var;
 
+				//var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);		// $lines[$i]->id may be empty if project has no lines
+
                 // Break on a new project
-                if ($parent == 0)
+                if ($parent == 0)	// We are on a task at first level
                 {
-                    if ($lines[$i]->fk_project != $lastprojectid)
+                    if ($lines[$i]->fk_project != $lastprojectid)	// Break found on project
                     {
                         if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="disabled">----------</option>';
                         print '<option value="'.$lines[$i]->fk_project.'_0"';
@@ -507,11 +512,22 @@ class FormOther
                     }
                 }
 
+                $newdisablechildoftaskid=$disablechildoftaskid;
+
                 // Print task
-                if ($lines[$i]->id > 0)
+                if (isset($lines[$i]->id))		// We use isset because $lines[$i]->id may be null if project has no task and are on root project (tasks may be caught by a left join). We enter here only if '0' or >0
                 {
+                	// Check if we must disable entry
+                	$disabled=0;
+                	if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_parent == $disablechildoftaskid)))
+                	{
+               			$disabled++;
+               			if ($lines[$i]->fk_parent == $disablechildoftaskid) $newdisablechildoftaskid=$lines[$i]->id;	// If task is child of a disabled parent, we will propagate id to disable next child too
+                	}
+
                     print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
-                    if ($lines[$i]->id == $selectedtask) print ' selected="selected"';
+                    if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected="selected"';
+                    if ($disabled) print ' disabled="disabled"';
                     print '>';
                     print $langs->trans("Project").' '.$lines[$i]->projectref;
                     if (empty($lines[$i]->public))
@@ -532,7 +548,7 @@ class FormOther
                 }
 
                 $level++;
-                if ($lines[$i]->id) $this->_pLineSelect($inc, $lines[$i]->id, $lines, $level, $selectedtask, $selectedproject);
+                if ($lines[$i]->id) $this->_pLineSelect($inc, $lines[$i]->id, $lines, $level, $selectedtask, $selectedproject, $newdisablechildoftaskid);
                 $level--;
             }
         }
@@ -1040,7 +1056,7 @@ class FormOther
             	$emptybox->showBox(array(),array());
             }
             print "</div>\n";
-            print "<!-- End box container -->\n";
+            print "<!-- End box left container -->\n";
 
             print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -1071,7 +1087,7 @@ class FormOther
             	$emptybox->showBox(array(),array());
             }
             print "</div>\n";
-            print "<!-- End box container -->\n";
+            print "<!-- End box right container -->\n";
 
             print '</div></div>';
             print "\n";

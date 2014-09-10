@@ -204,9 +204,9 @@ class Project extends CommonObject
             $sql.= ", fk_soc = " . ($this->socid > 0 ? $this->socid : "null");
             $sql.= ", fk_statut = " . $this->statut;
             $sql.= ", public = " . ($this->public ? 1 : 0);
-            $sql.= ", datec=" . ($this->date_c != '' ? $this->db->idate($this->date_c) : 'null');
-            $sql.= ", dateo=" . ($this->date_start != '' ? $this->db->idate($this->date_start) : 'null');
-            $sql.= ", datee=" . ($this->date_end != '' ? $this->db->idate($this->date_end) : 'null');
+            $sql.= ", datec=" . ($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');
+            $sql.= ", dateo=" . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
+            $sql.= ", datee=" . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
             $sql.= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this)."::Update sql=" . $sql, LOG_DEBUG);
@@ -247,8 +247,9 @@ class Project extends CommonObject
                 		$newdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($this->ref);
                 		if (file_exists($olddir))
                 		{
-                			$res=@dol_move($olddir, $newdir);
-                			if (! $res)
+							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+							$res=dol_move($olddir, $newdir);
+							if (! $res)
                 			{
                 				$this->error='ErrorFailToMoveDir';
                 				$error++;
@@ -262,6 +263,7 @@ class Project extends CommonObject
             else
             {
                 $this->error = $this->db->lasterror();
+                $this->errors[] = $this->error;
                 dol_syslog(get_class($this)."::Update error -2 " . $this->error, LOG_ERR);
                 $result = -2;
             }
@@ -481,26 +483,46 @@ class Project extends CommonObject
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (!$resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
         $sql.= " WHERE fk_projet=" . $this->id;
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (!$resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet";
         $sql.= " WHERE rowid=" . $this->id;
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (!$resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
         $sql.= " WHERE fk_object=" . $this->id;
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
-        if ($resql)
+        if (empty($error))
         {
             // We remove directory
             $projectref = dol_sanitizeFileName($this->ref);
@@ -512,34 +534,40 @@ class Project extends CommonObject
                     $res = @dol_delete_dir_recursive($dir);
                     if (!$res)
                     {
-                        $this->error = 'ErrorFailToDeleteDir';
-                        $this->db->rollback();
-                        return 0;
+                        $this->errors[] = 'ErrorFailToDeleteDir';
+                        $error++;
                     }
                 }
             }
 
             if (!$notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('PROJECT_DELETE', $this, $user, $langs, $conf);
-                if ($result < 0)
-                {
-                    $error++;
-                    $this->errors = $interface->errors;
-                }
-                // End call triggers
+            	// Call triggers
+            	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+            	$interface = new Interfaces($this->db);
+            	$result = $interface->run_triggers('PROJECT_DELETE', $this, $user, $langs, $conf);
+            	if ($result < 0)
+            	{
+            		$error++;
+            		foreach ($interface->errors as $errmsg ) {
+            			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+            			$this->errors[] =$errmsg;
+            		}
+            	}
+            	// End call triggers
             }
+        }
 
-            dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+        if (empty($error)) {
             $this->db->commit();
             return 1;
         }
         else
         {
-            $this->error = $this->db->lasterror();
+        	foreach ( $this->errors as $errmsg ) {
+				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			}
             dol_syslog(get_class($this) . "::delete " . $this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
@@ -1278,66 +1306,6 @@ class Project extends CommonObject
 	    	return -1;
 	    }
 	    return $result;
-	}
-
-	/**
-	 * Clean tasks not linked to an existing parent
-	 *
-	 * @return	int				Nb of records deleted
-	 */
-	function clean_orphelins()
-	{
-		$nb=0;
-
-		// There is orphelins. We clean that
-		$listofid=array();
-
-		// Get list of all id in array listofid
-		$sql='SELECT rowid FROM '.MAIN_DB_PREFIX.'projet_task';
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num && $i < 100)
-			{
-				$obj = $this->db->fetch_object($resql);
-				$listofid[]=$obj->rowid;
-				$i++;
-			}
-		}
-		else
-		{
-			dol_print_error($this->db);
-		}
-
-		if (count($listofid))
-		{
-			print 'Code asked to check and clean orphelins.';
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql.= " SET fk_task_parent = 0";
-			$sql.= " WHERE fk_task_parent NOT IN (".join(',',$listofid).")";	// So we update only records linked to a non existing parent
-
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$nb=$this->db->affected_rows($sql);
-
-				if ($nb > 0)
-				{
-					// Removed orphelins records
-					print 'Some orphelins were found and modified to be parent so records are visible again: ';
-					print join(',',$listofid);
-				}
-				
-				return $nb;
-			}
-			else
-			{
-				return -1;
-			}
-		}
 	}
 
 

@@ -137,7 +137,6 @@ function invoice_admin_prepare_head($object)
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
-
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'invoice_admin','remove');
 
 	return $head;

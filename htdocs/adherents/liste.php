@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -183,16 +183,17 @@ if ($resql)
 	if ($type > 0)
 	{
 		$membertype=new AdherentType($db);
-		$result=$membertype->fetch($_REQUEST["type"]);
+		$result=$membertype->fetch(GETPOST("type"));
 		$titre.=" (".$membertype->libelle.")";
 	}
 
 	$param="";
-	if (isset($_GET["statut"]))       $param.="&statut=".$statut;
+	if ($statut != "") $param.="&statut=".$statut;
 	if ($search_nom)   $param.="&search_nom=".$search_nom;
 	if ($search_login) $param.="&search_login=".$search_login;
 	if ($search_email) $param.="&search_email=".$search_email;
 	if ($filter)       $param.="&filter=".$filter;
+	if ($type > 0)     $param.="&type=".$type;
 	print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	if ($sall)
@@ -200,7 +201,7 @@ if ($resql)
 		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
 	}
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	// Filter on categories
@@ -256,9 +257,9 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td align="right" colspan="2" class="liste_titre">';
-	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '&nbsp; ';
-	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 
 	print "</tr>\n";

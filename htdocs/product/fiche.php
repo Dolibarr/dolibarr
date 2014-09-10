@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -389,7 +389,7 @@ if (empty($reshook))
 
         if ($result > 0)
         {
-            header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($object->ref));
+            header('Location: '.DOL_URL_ROOT.'/product/liste.php?type='.$object->type.'&delprod='.urlencode($object->ref));
             exit;
         }
         else
@@ -800,11 +800,11 @@ else
         print '</td></tr>';
 
         // Other attributes
-        $parameters=array('colspan' => ' colspan="2"');
+        $parameters=array('colspan' => 0);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-        	print $object->showOptionals($extrafields,'edit');
+        	print $object->showOptionals($extrafields,'edit',$parameters);
         }
 
         // Note (private, no output on invoices, propales...)
@@ -870,7 +870,7 @@ else
 
             $type = $langs->trans('Product');
             if ($object->isservice()) $type = $langs->trans('Service');
-            print_fiche_titre($langs->trans('Modify').' '.$type.' : '.$object->ref, "");
+            print_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
 
             // Main official, simple, and not duplicated code
             print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">'."\n";
@@ -881,10 +881,10 @@ else
             print '<table class="border allwidth">';
 
             // Ref
-            print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="128" value="'.$object->ref.'"></td></tr>';
+            print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
 
             // Label
-            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" maxlength="255" value="'.$object->libelle.'"></td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
 
             // Status
             print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';

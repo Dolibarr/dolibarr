@@ -116,15 +116,24 @@ class pdf_strato extends ModelePDFContract
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("contracts");
+		$outputlangs->load("interventions");
 
 		if ($conf->contrat->dir_output)
 		{
             $object->fetch_thirdparty();
 
-			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->contrat->dir_output;
-			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
-			$file = $dir . "/" . $objectref . ".pdf";
+			// Definition of $dir and $file
+			if ($object->specimen)
+			{
+				$dir = $conf->contrat->dir_output;
+				$file = $dir . "/SPECIMEN.pdf";
+			}
+			else
+			{
+				$objectref = dol_sanitizeFileName($object->ref);
+				$dir = $conf->contrat->dir_output . "/" . $objectref;
+				$file = $dir . "/" . $objectref . ".pdf";
+			}
 
 			if (! file_exists($dir))
 			{

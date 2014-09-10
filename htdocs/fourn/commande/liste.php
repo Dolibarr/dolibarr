@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,12 +114,23 @@ if ($sall)
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
-if (GETPOST('statut'))
+//Required triple check because statut=0 means draft filter
+if (GETPOST('statut', 'int') !== '')
 {
 	$sql .= " AND fk_statut =".GETPOST('statut','int');
 }
 
 $sql.= " ORDER BY $sortfield $sortorder ";
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+
+
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -133,7 +145,7 @@ if ($resql)
 	if ($search_nom)   $param.="&search_nom=".$search_nom;
 	if ($search_user)  $param.="&search_user=".$search_user;
 	if ($search_ttc)   $param.="&search_ttc=".$search_ttc;
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -152,7 +164,7 @@ if ($resql)
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$suser.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$sttc.'"></td>';
 	print '<td colspan="2" class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print '</tr>';
 

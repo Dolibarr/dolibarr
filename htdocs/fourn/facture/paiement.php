@@ -96,7 +96,7 @@ if ($action == 'add_paiement')
     {
         // Si module bank actif, un compte est obligatoire lors de la saisie
         // d'un paiement
-        if (! $_POST['accountid'])
+        if ($_POST['accountid'] <= 0)
         {
         	setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), 'errors');
             $error++;
@@ -191,7 +191,7 @@ if ($action == 'create' || $action == 'add_paiement')
     $object->fetch($facid);
 
     $datefacture=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-    $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
+    $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
 
     $sql = 'SELECT s.nom, s.rowid as socid,';
     $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total';
@@ -298,13 +298,16 @@ if ($action == 'create' || $action == 'add_paiement')
 	                        $objp = $db->fetch_object($resql);
 	                        $var=!$var;
 	                        print '<tr '.$bc[$var].'>';
-	                        print '<td><a href="fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->ref;
-	                        print '</a></td>';
+	                        print '<td>';
+	                        $invoicesupplierstatic->ref=$objp->ref;
+	                        $invoicesupplierstatic->id=$objp->facid;
+	                        print $invoicesupplierstatic->getNomUrl(1);
+	                        print '</td>';
 	                        print '<td>'.$objp->ref_supplier.'</td>';
 	                        if ($objp->df > 0 )
 	                        {
 	                            print '<td align="center">';
-	                            print dol_print_date($db->jdate($objp->df)).'</td>';
+	                            print dol_print_date($db->jdate($objp->df), 'day').'</td>';
 	                        }
 	                        else
 	                        {
@@ -396,7 +399,7 @@ if (empty($action))
     {
         $sql .= ' AND p.rowid='.$db->escape($search_ref);
     }
-    if (! empty($search_account))
+    if (! empty($search_account) && $search_account > 0)
     {
         $sql .= ' AND b.fk_account='.$db->escape($search_account);
     }
@@ -463,7 +466,7 @@ if (empty($action))
         print '</td>';
         print '<td align="right">';
         print '<input class="fat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
-        print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+        print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" alt="'.$langs->trans("Search").'">';
         print '</td>';
         print "</tr>\n";
 

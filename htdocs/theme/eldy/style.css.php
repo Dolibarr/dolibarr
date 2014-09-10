@@ -183,7 +183,7 @@ if ($tmpval <= 360) { $colortextbackvmenu='FFF'; }
 else { $colortextbackvmenu='444'; }
 $tmppart=explode(',',$colorbacktitle1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
-if ($tmpval <= 360) { $colortexttitle='FFF'; $colorshadowtitle='000'; }
+if ($tmpval <= 360) { $colortexttitle='FFF'; $colorshadowtitle='888'; }
 else { $colortexttitle='444'; $colorshadowtitle='FFF'; }
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
@@ -444,7 +444,7 @@ td.showDragHandle {
 	float: none;
 	vertical-align: top;
 }
-#id-<?php echo $right; ?> {
+#id-right {	/* This must stay id-right ant not be replaced with echo $right */
 	width: 100%;
 }
 
@@ -477,7 +477,7 @@ div.fichehalfright {
 	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 .containercenter {
@@ -510,7 +510,7 @@ div#tmenu_tooltip {
 	display:none;
 <?php } else { ?>
 	height: <?php print ($heightmenu2+1); ?>px;
-	padding-right: 100px;
+	padding-<?php echo $right; ?>: 100px;
 	background: <?php echo $colorbackvmenu; ?>;
 	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
     <?php if ($usecss3) { ?>
@@ -681,7 +681,7 @@ div.mainmenu.click2dial {
 }
 
 div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1) ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1) ?>);
 }
 
 div.mainmenu.commercial {
@@ -862,11 +862,15 @@ div#login_left, div#login_right {
 table.login_table tr td table.none tr td {
 	padding: 2px;
 }
+#securitycode {
+	min-width: 60px;
+}
 #img_securitycode {
 	border: 1px solid #DDDDDD;
 }
 #img_logo {
 	max-width: 200px;
+	max-height: 100px;
 }
 
 div.login_block {
@@ -2269,6 +2273,8 @@ li.cal_event       { border: none; list-style-type: none; }
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
+.ui-widget-content { border: solid 1px rgba(0,0,0,.3); background: #fff; }
+
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1) ?>) right center no-repeat; }
 .ui-autocomplete {
 	       position:absolute;
@@ -2277,7 +2283,7 @@ li.cal_event       { border: none; list-style-type: none; }
 	       background-color:white;
 	       border:1px solid #888;
 	       margin:0px;
-	       padding:0px;
+/*	       padding:0px; This make combo crazy */
 	     }
 .ui-autocomplete ul {
 	       list-style-type:none;
@@ -2482,7 +2488,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 {
     line-height: 1em !important;
 }
-.ui-autocomplete-input { margin: 0; padding: 1px; }
+.ui-autocomplete-input { margin: 0; padding: 2px; }
 
 
 /* ============================================================================== */

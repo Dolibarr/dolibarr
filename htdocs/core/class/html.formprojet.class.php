@@ -77,7 +77,7 @@ class FormProjets
 		$sql.= " WHERE p.entity = ".$conf->entity;
 		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
-		$sql.= " ORDER BY p.title ASC";
+		$sql.= " ORDER BY p.ref ASC";
 
 		dol_syslog(get_class($this)."::select_projects sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -113,6 +113,7 @@ class FormProjets
 						else
 						{
 							$disabled=0;
+							$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
 							if (! $obj->fk_statut > 0)
 							{
 								$disabled=1;
@@ -134,8 +135,8 @@ class FormProjets
 								if ($disabled) $resultat.=' disabled="disabled"';
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
-								$resultat.='>'.$labeltoshow;
-								if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,$maxlength);
+								$resultat.='>';
+								$resultat.=$labeltoshow;
 								$resultat.='</option>';
 							}
 							$out.= $resultat;
@@ -163,10 +164,12 @@ class FormProjets
 	 *    Build Select List of element associable to a project
 	 *
 	 *    @param	string	$table_element		Table of the element to update
+	 *    @param	int		$socid				socid to filter
 	 *    @return	string						The HTML select list of element
 	 */
-	function select_element($table_element)
+	function select_element($table_element,$socid=0)
 	{
+		global $conf;
 
 		$projectkey="fk_projet";
 		switch ($table_element)
@@ -191,9 +194,10 @@ class FormProjets
 
 		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element;
 		$sql.= " WHERE ".$projectkey." is null";
-		if (!empty($this->societe->id)) {
-			$sql.= " AND fk_soc=".$this->societe->id;
+		if (!empty($socid)) {
+			$sql.= " AND fk_soc=".$socid;
 		}
+		$sql.= ' AND entity='.getEntity('project');
 		$sql.= " ORDER BY ref DESC";
 
 		dol_syslog(get_class($this).'::select_element sql='.$sql,LOG_DEBUG);
@@ -217,6 +221,10 @@ class FormProjets
 			return $sellist ;
 
 			$this->db->free($resql);
+		}else {
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this) . "::select_element " . $this->error, LOG_ERR);
+			return -1;
 		}
 	}
 

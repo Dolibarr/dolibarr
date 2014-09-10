@@ -303,11 +303,13 @@ if (($action=="create") || ($action=="edit"))
 
 	print "<tr><td>";
 	print $langs->trans('CronHourStart')."</td><td>";
-	if(!empty($object->datestart)){
+	if(!empty($object->datestart))
+	{
 		$form->select_date($object->datestart,'datestart',1,1,'',"cronform");
 	}
-	else{
-		$form->select_date(dol_now(),'datestart',1,1,'',"cronform");
+	else
+	{
+		$form->select_date('','datestart',1,1,'',"cronform");
 	}
 	print "</td>";
 	print "<td>";

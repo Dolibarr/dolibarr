@@ -183,7 +183,7 @@ if ($action == 'add')
 
 /*
  * Build a receiving receipt
-*/
+ */
 else if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
 {
     $result = $object->create_delivery($user);
@@ -235,8 +235,9 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expe
         exit;
     }
     else
-    {
-        $mesg = $object->error;
+	{
+		$langs->load("errors");
+        setEventMessage($langs->trans($object->error),'errors');
     }
 }
 
@@ -455,7 +456,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('SHIPPING_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
-                            $error++; $this->errors=$interface->errors;
+                            $error++; $object->errors=$interface->errors;
                         }
                         // Fin appel triggers
 

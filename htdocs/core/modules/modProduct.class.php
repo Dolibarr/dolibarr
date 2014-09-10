@@ -254,15 +254,15 @@ class modProduct extends DolibarrModules
 		$this->export_label[$r]="ProductsMultiPrice";	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("produit","export"));
 		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",
-			'pr.price_base_type'=>"PriceLevelPriceBase",'pr.price_level'=>"PriceLevel",
-			'pr.price'=>"PriceLevelUnitPriceHT",'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
-			'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
-			'pr.tva_tx'=>'PriceLevelVATRate',
+			'pr.price_base_type'=>"PriceBase",'pr.price_level'=>"PriceLevel",
+			'pr.price'=>"HT",'pr.price_ttc'=>"TTC",
+			'pr.price_min'=>"MinPriceHT",'pr.price_min_ttc'=>"MinPriceTTC",
+			'pr.tva_tx'=>'VAT',
 			'pr.date_price'=>'DateCreation');
 		$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",
 			'pr.price_base_type'=>"product",'pr.price_level'=>"product",'pr.price'=>"product",
 			'pr.price_ttc'=>"product",
-			'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
+			'pr.price_min'=>"product",'pr.price_min_ttc'=>"product",
 			'pr.tva_tx'=>'product',
 			'pr.date_price'=>"product");
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -273,8 +273,6 @@ class modProduct extends DolibarrModules
 
 		// Import product multiprice
 		//--------
-		$r=0;
-
 		$r++;
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
 		$this->import_label[$r]="ProductsMultiPrice";	// Translation key
@@ -282,11 +280,11 @@ class modProduct extends DolibarrModules
 		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('pr'=>MAIN_DB_PREFIX.'product_price');
 		$this->import_tables_creator_array[$r]=array('pr'=>'fk_user_author');	// Fields to store import user id
-		$this->import_fields_array[$r]=array('pr.fk_product'=>"ProductRowid*",
-			'pr.price_base_type'=>"PriceLevelPriceBase",'pr.price_level'=>"PriceLevel",
-			'pr.price'=>"PriceLevelUnitPriceHT",'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
-			'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
-			'pr.tva_tx'=>'PriceLevelVATRate',
+		$this->import_fields_array[$r]=array('pr.fk_product'=>"Id*",
+			'pr.price_base_type'=>"PriceBase",'pr.price_level'=>"PriceLevel",
+			'pr.price'=>"HT",'pr.price_ttc'=>"TTC",
+			'pr.price_min'=>"MinPriceHT",'pr.price_min_ttc'=>"MinPriceTTC",
+			'pr.tva_tx'=>'VAT',
 			'pr.date_price'=>'DateCreation*');
 		$this->import_regex_array[$r]=array('pr.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
 		$this->import_examplevalues_array[$r]=array('pr.fk_product'=>"1",

@@ -118,7 +118,10 @@ abstract class CommonDocGenerator
             'mycompany_idprof5'=>$mysoc->idprof5,
             'mycompany_idprof6'=>$mysoc->idprof6,
         	'mycompany_vatnumber'=>$mysoc->tva_intra,
-            'mycompany_note'=>$mysoc->note
+            // Only private not exists for "mysoc"
+        	'mycompany_note'=>$mysoc->note_private
+            //'mycompany_note_private'=>$mysoc->note_private,
+        	//'mycompany_note_public'=>$mysoc->note_public,
         );
     }
 
@@ -260,7 +263,7 @@ abstract class CommonDocGenerator
 	    	$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
     		$array_key.'_total_ttc'=>price2num($object->total_ttc),
 	    	$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
-    			
+
 	    	$array_key.'_vatrate'=>vatrate($object->tva),
 	    	$array_key.'_note_private'=>$object->note,
 	    	$array_key.'_note'=>$object->note_public,
@@ -314,7 +317,7 @@ abstract class CommonDocGenerator
     	'line_date_end'=>$line->date_end
     	);
     }
-	
+
     /**
      * Define array with couple substitution key => substitution value
      *

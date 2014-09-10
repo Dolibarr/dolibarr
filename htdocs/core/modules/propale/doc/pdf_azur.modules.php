@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013 Juanjo Menent	    <jmenent@2byte.es>
@@ -153,7 +153,7 @@ class pdf_azur extends ModelePDFPropales
 		$outputlangs->load("products");
 
 		$nblignes = count($object->lines);
-		
+
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray=array();
 		if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
@@ -161,7 +161,7 @@ class pdf_azur extends ModelePDFPropales
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
 				if (empty($object->lines[$i]->fk_product)) continue;
-				
+
 				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
 
@@ -185,7 +185,7 @@ class pdf_azur extends ModelePDFPropales
 		if ($conf->propal->dir_output)
 		{
 			$object->fetch_thirdparty();
-			
+
 			// $deja_regle = 0;
 
 			// Definition of $dir and $file
@@ -254,6 +254,15 @@ class pdf_azur extends ModelePDFPropales
 						$this->atleastonediscount++;
 					}
 				}
+				if (empty($this->atleastonediscount))
+				{
+					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
+					$this->posxtva+=($this->postotalht - $this->posxdiscount);
+					$this->posxup+=($this->postotalht - $this->posxdiscount);
+					$this->posxqty+=($this->postotalht - $this->posxdiscount);
+					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
+					//$this->postotalht;
+				}
 
 				// New page
 				$pdf->AddPage();
@@ -320,7 +329,7 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->AddPage('','',true);
 						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-						$pdf->setPage($pagenb+1);
+						$pdf->setPage($pageposbefore+1);
 
 						$curY = $tab_top_newpage;
 						$showpricebeforepagebreak=0;
@@ -358,7 +367,7 @@ class pdf_azur extends ModelePDFPropales
 								$pdf->AddPage('','',true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-								$pdf->setPage($pagenb+1);
+								$pdf->setPage($pageposafter+1);
 							}
 						}
 						else
@@ -375,6 +384,7 @@ class pdf_azur extends ModelePDFPropales
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
+
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
@@ -456,6 +466,7 @@ class pdf_azur extends ModelePDFPropales
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
+						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
@@ -607,7 +618,7 @@ class pdf_azur extends ModelePDFPropales
 		$posxval=52;
 
         // Show shipping date
-        if ($object->date_livraison)
+        if (! empty($object->date_livraison))
 		{
             $outputlangs->load("sendings");
 			$pdf->SetFont('','B', $default_font_size - 2);

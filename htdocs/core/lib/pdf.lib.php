@@ -130,7 +130,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	if (empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->PDF_SECURITY_ENCRYPTION))
 	{
 		/* Permission supported by TCPDF
-		 - print : Print the document;
+		- print : Print the document;
 		- modify : Modify the contents of the document by operations other than those controlled by 'fill-forms', 'extract' and 'assemble';
 		- copy : Copy or otherwise extract text and graphics from the document;
 		- annot-forms : Add or modify text annotations, fill in interactive form fields, and, if 'modify' is also set, create or modify interactive form fields (including signature fields);
@@ -145,8 +145,8 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		// For TCPDF, we specify permission we want to block
 		$pdfrights = array('modify','copy');
 
-		$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-		$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
+		$pdfuserpass = ''; // Password for the end user
+		$pdfownerpass = NULL; // Password of the owner, created randomly if not defined
 		$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 	}
 	else
@@ -160,8 +160,8 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	{
 		// Declare here a class to overwrite FPDI to add method writeHTMLCell
 		/**
-		*	This class if a enhanced FPDI class that support method writeHTMLCell
-		*/
+		 *	This class if a enhanced FPDI class that support method writeHTMLCell
+		 */
 		class FPDI_DolExtended extends FPDI
         {
 			/**
@@ -258,7 +258,7 @@ function pdf_getPDFFontSize($outputlangs)
 
 
 /**
- * Return height to use for Logo onot PDF
+ * Return height to use for Logo onto PDF
  *
  * @param	string		$logo		Full path to logo file to use
  * @param	bool		$url		Image with url (true or false)
@@ -287,11 +287,10 @@ function pdf_getHeightForLogo($logo, $url = false)
  *   	@param  Societe		$targetcompany		Target company object
  *      @param  Contact		$targetcontact		Target contact object
  * 		@param	int			$usecontact			Use contact instead of company
- * 		@param	int			$mode				Address type
- * 		@param	Societe		$deliverycompany	Delivery company object
+ * 		@param	int			$mode				Address type ('source', 'target', 'targetwithdetails')
  * 		@return	string							String with full address
  */
-function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$targetcontact='',$usecontact=0,$mode='source',$deliverycompany='')
+function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$targetcontact='',$usecontact=0,$mode='source')
 {
 	global $conf;
 
@@ -311,7 +310,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 		if (empty($conf->global->MAIN_PDF_DISABLESOURCEDETAILS))
 		{
-			// Tel
+			// Phone
 			if ($sourcecompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->phone);
 			// Fax
 			if ($sourcecompany->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($sourcecompany->fax);
@@ -322,7 +321,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		}
 	}
 
-	if ($mode == 'target')
+	if ($mode == 'target' || $mode == 'targetwithdetails')
 	{
 		if ($usecontact)
 		{
@@ -341,11 +340,13 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 				$stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
 			}
 
-
-			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
+			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails')
 			{
-				// Tel
-				if ($targetcontact->phone_pro) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($targetcontact->phone_pro);
+				// Phone
+				if (! empty($targetcontact->phone_pro) || ! empty($targetcontact->phone_mobile)) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ";
+				if (! empty($targetcontact->phone_pro)) $stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_pro);
+				if (! empty($targetcontact->phone_pro) && ! empty($targetcontact->phone_mobile)) $stringaddress .= " / ";
+				if (! empty($targetcontact->phone_mobile)) $stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_mobile);
 				// Fax
 				if ($targetcontact->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
 				// EMail
@@ -360,10 +361,13 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			// Country
 			if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
 
-			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
+			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails')
 			{
-				// Tel
-				if ($targetcompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($targetcompany->phone);
+				// Phone
+				if (! empty($targetcompany->phone) || ! empty($targetcompany->phone_mobile)) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ";
+				if (! empty($targetcompany->phone)) $stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone);
+				if (! empty($targetcompany->phone) && ! empty($targetcompany->phone_mobile)) $stringaddress .= " / ";
+				if (! empty($targetcompany->phone_mobile)) $stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone_mobile);
 				// Fax
 				if ($targetcompany->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcompany->fax);
 				// EMail
@@ -406,16 +410,6 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		}
 	}
 
-	if ($mode == 'delivery')	// for a delivery address (address + phone/fax)
-	{
-		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($deliverycompany))."\n";
-
-		// Tel
-		if ($deliverycompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($deliverycompany->phone);
-		// Fax
-		if ($deliverycompany->fax) $stringaddress .= ($stringaddress ? ($deliverycompany->phone ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($deliverycompany->fax);
-	}
-
 	return $stringaddress;
 }
 
@@ -433,9 +427,11 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 	global $conf;
 
 	// Add a background image on document
-	if (! empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))
+	if (! empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))		// Warning, this option make TCPDF generation beeing crazy and some content disappeared behin the image
 	{
-		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, 0, 0, 0, $page_height);
+        $pdf->SetAutoPageBreak(0,0);	// Disable auto pagebreak before adding image
+		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X)?$conf->global->MAIN_USE_BACKGROUND_ON_PDF_X:0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y)?$conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y:0), 0, $page_height);
+        $pdf->SetAutoPageBreak(1,0);	// Restore pagebreak
 	}
 }
 
@@ -446,7 +442,7 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
  *      @param  Translate	$outputlangs	Object lang
  *      @param  int		    $h		        Height of PDF
  *      @param  int		    $w		        Width of PDF
- *      @param  string	    $unit           Unit of height (mmn, pt, ...)
+ *      @param  string	    $unit           Unit of height (mm, pt, ...)
  *      @param  string		$text           Text to show
  *      @return	void
  */
@@ -782,7 +778,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$pdf->SetFont('','',7);
 	$pdf->SetDrawColor(224,224,224);
 
-	// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
+	// The start of the bottom of this page footer is positioned according to # of lines
 	$freetextheight=0;
 	if ($line)	// Free text
 	{
@@ -799,7 +795,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	if ($line)	// Free text
 	{
 		$pdf->SetXY($dims['lm'],-$posy);
-		$pdf->MultiCell($width, 3, $line, 0, $align, 0);
+		$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 		$posy-=$freetextheight;
 	}
 
@@ -839,12 +835,12 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	}
 
 	// Show page nb only on iso languages (so default Helvetica font)
-	if (pdf_getPDFFont($outputlangs) == 'Helvetica')
+	if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica')
 	{
 		$pdf->SetXY(-20,-$posy);
 		//print 'xxx'.$pdf->PageNo().'-'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
-		if (empty($conf->global->MAIN_USE_FPDF)) $pdf->MultiCell(11, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
-		else $pdf->MultiCell(11, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
+		if (empty($conf->global->MAIN_USE_FPDF)) $pdf->MultiCell(13, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+		else $pdf->MultiCell(13, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
 	}
 
 	return $marginwithfooter;
@@ -900,7 +896,7 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$al
  *  @param  int				$posx				Pos x
  *  @param  int				$posy				Pos y
  *  @param  int				$hideref       		Hide reference
- *  @param  int				$hidedesc            Hide description
+ *  @param  int				$hidedesc           Hide description
  * 	@param	int				$issupplierline		Is it a line for a supplier object ?
  * 	@return	void
  */
@@ -957,7 +953,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		if (! empty($conf->global->MAIN_MULTILANGS) && ($outputlangs->defaultlang != $langs->defaultlang))
 		{
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && $label == $prodser->label)     $label=$prodser->multilangs[$outputlangs->defaultlang]["label"];
-			
+
 			//Manage HTML entities description test
 			//Cause $prodser->description is store with htmlentities but $desc no
 			$needdesctranslation=false;
@@ -1013,7 +1009,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	// If line linked to a product
 	if ($idprod)
 	{
-		// On ajoute la ref
+		// We add ref
 		if ($prodser->ref)
 		{
 			$prefix_prodserv = "";
@@ -1032,10 +1028,10 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 
 			if (empty($hideref))
 			{
-				if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')';   // Show local ref and supplier ref
+				if ($issupplierline) $ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
 				else $ref_prodserv = $prodser->ref; // Show local ref only
 
-				$ref_prodserv .= " - ";
+				if (! empty($libelleproduitservice)) $ref_prodserv .= " - ";
 			}
 
 			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;

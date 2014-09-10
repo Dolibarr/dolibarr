@@ -60,7 +60,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 
     $account->fetch($id);
 
-	$account->socid           = $soc->id;
+    $account->socid           = $soc->id;
 
 	$account->bank            = $_POST["bank"];
 	$account->label           = $_POST["label"];
@@ -84,6 +84,12 @@ if ($action == 'update' && ! $_POST["cancel"])
 	}
 	else
 	{
+		// If this account is the default bank account, we disable others
+		if ($account->default_rib)
+		{
+			$account->setAsDefault($id);	// This will make sure there is only one default rib
+		}
+
 		$url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
         header('Location: '.$url);
         exit;
