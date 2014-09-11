@@ -507,9 +507,14 @@ else
 			 */
 			print '<div class="tabsAction">';
 
+			if ($object->statut == 0 && $user->rights->facture->creer)
+			{
+			    	echo '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+			}
+			
 			if ($object->statut == 0 && $user->rights->facture->supprimer)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 			}
 
 			print '</div>';
@@ -569,10 +574,17 @@ else
 
 					print '<td align="right">'.price($objp->total).'</td>'."\n";
 
-                    echo '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
-                    echo  $langs->trans("CreateBill"),'</a></td>';
-						
-					print "</tr>\n";
+					echo '<td align="center">';
+					if ($user->rights->facture->creer)
+					{
+                        echo '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
+                        echo  $langs->trans("CreateBill"),'</a>';
+					}
+					else 
+					{
+					    echo "&nbsp;";
+					}
+					echo "</td></tr>\n";
 					$i++;
 				}
 			}
