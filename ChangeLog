@@ -18,6 +18,7 @@ For users:
 - Fix: Iban was used instead of Bic into SEPA file.
 - Fix: Must unaccent strings into SEPA file.
 - Fix: Extrafield feature select from table should try to translate multiple column when not needed 
+- New: Direct invoice creation from predefined invoice
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
