@@ -656,7 +656,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
 
     $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.skype, p.statut ";
-    $sql .= ", p.civilite as civility_id, p.address, p.zip, p.town";
+    $sql .= ", p.civility as civility_id, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     if ($search_status!='' && $search_status != '-1') $sql .= " AND p.statut = ".$db->escape($search_status);

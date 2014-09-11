@@ -175,6 +175,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			if (file_exists($dir))
 			{
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 				$nblines = count($object->lines);
 
 				// Create pdf instance
@@ -358,7 +369,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					//$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
 					$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 3, $object->lines[$i]->qty_shipped, 0, 'R');
-					
+
 					// Remaining to ship
 					$pdf->SetXY($this->posxremainingqty, $curY);
 					$qtyRemaining = $object->lines[$i]->qty_asked - $object->commande->expeditions[$object->lines[$i]->fk_origin_line];
@@ -613,7 +624,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell($this->posxcomm - $this->posxdesc,2, $outputlangs->transnoentities("Designation"),'','L');
 		}
-	
+
 		// Modif SEB pour avoir une col en plus pour les commentaires clients
 		$pdf->line($this->posxcomm, $tab_top, $this->posxcomm, $tab_top + $tab_height);
 		if (empty($hidetop)) {
@@ -863,7 +874,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'DELIVERY_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		$showdetails=0;
+		return pdf_pagefoot($pdf,$outputlangs,'DELIVERY_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }

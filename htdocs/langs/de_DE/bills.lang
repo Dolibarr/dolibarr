@@ -85,6 +85,7 @@ ClassifyPaid=Als 'bezahlt' markieren
 ClassifyPaidPartially=Als 'teilweise bezahlt' markieren
 ClassifyCanceled=Als 'storniert' markieren
 ClassifyClosed=Als 'geschlossen' markieren
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Erstelle Rechnung
 AddBill=Rechnung/Gutschrift erstellen
 AddToDraftInvoices=Zu Rechnungsentwurf hinzufügen
@@ -197,8 +198,8 @@ Rest=Ausstehend
 AmountExpected=Höhe der Forderung
 ExcessReceived=Erhaltener Überschuss
 EscompteOffered=Rabatt angeboten (Skonto)
-SendBillRef=Sende Rechnung %s
-SendReminderBillRef=Rechnung senden %s (Zahlungserinnerung)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Daueraufträge
 StandingOrder=Dauerauftrag
 NoDraftBills=Keine Rechnungsentwürfe
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Insgesamt zwei neue Rabatt muss gleich zu d
 ConfirmRemoveDiscount=Sind Sie sicher, dass Sie möchten, entfernen Sie diesen Rabatt?
 RelatedBill=Ähnliche Rechnung
 RelatedBills=Ähnliche Rechnungen
+LatestRelatedBill=Letzte ähnliche Rechnung
+WarningBillExist=Achtung, es existiert bereits mindestens eine Rechnung
 
 # PaymentConditions
 PaymentConditionShortRECEP=Prompt
@@ -315,7 +318,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% im Voraus, 50%% bei Lieferung
 FixAmount=Fester Betrag
 VarAmount=Variabler Betrag (%% tot.)
-
 # PaymentType
 PaymentTypeVIR=Banküberweisung
 PaymentTypeShortVIR=Banküberweisung
@@ -397,7 +399,7 @@ ToMakePaymentBack=Rückzahlung
 ListOfYourUnpaidInvoices=Liste aller unbezahlten Rechnungen
 NoteListOfYourUnpaidInvoices=Bitte beachten: Diese Liste enthält nur Rechnungen an Partner, bei denen Sie als Vertreter angegeben sind.
 RevenueStamp=Revenue stamp
-YouMustCreateInvoiceFromThird=This option is only available when creating invoice from tab "customer" of thirdparty
+YouMustCreateInvoiceFromThird=Diese Option steht nur zur Verfügung, wenn eine Rechnung vom Reiter "Kunde" eines Partners aus erstellt wird
 PDFCrabeDescription=Rechnungs-Modell Crabe. Eine vollständige Rechnung (Empfohlene Vorlage)
 TerreNumRefModelDesc1=Liefert eine Nummer mit dem Format %syymm-nnnn für Standard-Rechnungen und %syymm-nnnn für Gutschriften, wobei yy=Jahr, mm=Monat und nnnn eine lückenlose Folge ohne Überlauf auf 0 ist
 MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

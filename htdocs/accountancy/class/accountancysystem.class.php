@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2014 Olivier Geffroy       <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014 Alexandre Spangaro    <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,20 +18,18 @@
  */
 
 /**
- *	\file       htdocs/accountancy/class/accountancysystem.class.php
- * 	\ingroup    accounting
- * 	\brief      File of class to manage accountancy systems
+ * \file		htdocs/accountancy/class/accountancysystem.class.php
+ * \ingroup		Accounting Expert
+ * \brief		File of class to manage accountancy systems
  */
 
-
-/**	\class 		AccountancySystem
- *	\brief 		Classe to manage accountancy systems
+/**
+ * Class to manage accountancy systems
  */
 class AccountancySystem
 {
 	var $db;
 	var $error;
-
 	var $rowid;
 	var $fk_pcg_version;
 	var $pcg_type;
@@ -38,57 +38,47 @@ class AccountancySystem
 	var $account_number;
 	var $account_parent;
 
-
 	/**
-	 *	Constructor
+	 * Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 * @param DoliDB $db handler
 	 */
-	function __construct($db)
-	{
+	function __construct($db) {
 		$this->db = $db;
 	}
 
-
 	/**
-	 *  Insert accountancy system name into database
+	 * Insert accountancy system name into database
 	 *
-	 *  @param  	User	$user 	User making insert
-	 *  @return		int				<0 if KO, Id of line if OK
+	 * @param User $user making insert
+	 * @return int if KO, Id of line if OK
 	 */
-	function create($user)
-	{
-		$now=dol_now();
+	function create($user) {
+		$now = dol_now();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_system";
-		$sql.= " (date_creation, fk_user_author, numero,intitule)";
-		$sql.= " VALUES ('".$this->db->idate($now)."',".$user->id.",'".$this->numero."','".$this->intitule."')";
+		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_system";
+		$sql .= " (date_creation, fk_user_author, numero,intitule)";
+		$sql .= " VALUES (" . $this->db->idate($now) . "," . $user->id . ",'" . $this->numero . "','" . $this->intitule . "')";
 
+		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_system");
+		if ($resql) {
+			$id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_system");
 
-			if ($id > 0)
-			{
+			if ($id > 0) {
 				$this->id = $id;
 				$result = $this->id;
-			}
-			else
-			{
-				$result = -2;
-				$this->error="AccountancySystem::Create Erreur $result";
+			} else {
+				$result = - 2;
+				$this->error = "AccountancySystem::Create Erreur $result";
 				dol_syslog($this->error, LOG_ERR);
 			}
-		}
-		else
-		{
-			$result = -1;
-			$this->error="AccountancySystem::Create Erreur $result";
+		} else {
+			$result = - 1;
+			$this->error = "AccountancySystem::Create Erreur $result";
 			dol_syslog($this->error, LOG_ERR);
 		}
 
 		return $result;
 	}
-
 }

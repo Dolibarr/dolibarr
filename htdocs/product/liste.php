@@ -326,12 +326,14 @@ else
     		print '<td class="liste_titre" align="left">';
     		print '<input class="flat" type="text" name="snom" size="12" value="'.$snom.'">';
     		print '</td>';
+    		// Barcode
     		if (! empty($conf->barcode->enabled))
     		{
     			print '<td class="liste_titre">';
     			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.$sbarcode.'">';
     			print '</td>';
     		}
+    		// Date modification
     		print '<td class="liste_titre">';
     		print '&nbsp;';
     		print '</td>';
@@ -370,15 +372,6 @@ else
     			print '&nbsp;';
     			print '</td>';
     		}
-    		else
-    		{
-    			print '<td class="liste_titre">';
-    			print '&nbsp;';
-    			print '</td>';
-    			print '<td class="liste_titre">';
-    			print '&nbsp;';
-    			print '</td>';
-    		}
 
     		print '<td align="center">';
             print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
@@ -388,7 +381,7 @@ else
             print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
             print '</td>';
 
-    		print '<td class="liste_titre" align="right">';
+    		print '<td class="liste_titre nowrap" align="right">';
     		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     		print '</td>';

@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel2007
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.7.6, 2011-02-27
+ * @version    1.7.8, 2012-10-12
  */
 
 
@@ -31,18 +31,19 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel2007
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_WriterPart
 {
 	/**
 	 * Write content types to XML format
 	 *
-	 * @param 	PHPExcel $pPHPExcel
+	 * @param 	PHPExcel	$pPHPExcel
+	 * @param	boolean		$includeCharts	Flag indicating if we should include drawing details for charts
 	 * @return 	string 						XML Output
 	 * @throws 	Exception
 	 */
-	public function writeContentTypes(PHPExcel $pPHPExcel = null)
+	public function writeContentTypes(PHPExcel $pPHPExcel = null, $includeCharts = FALSE)
 	{
 		// Create XML writer
 		$objWriter = null;
@@ -99,7 +100,7 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 			);
 
 			$customPropertyList = $pPHPExcel->getProperties()->getCustomProperties();
-			if (count($customPropertyList) > 0) {
+			if (!empty($customPropertyList)) {
 				$this->_writeOverrideContentType(
 					$objWriter, '/docProps/custom.xml', 'application/vnd.openxmlformats-officedocument.custom-properties+xml'
 				);
@@ -119,11 +120,26 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
 			);
 
 			// Add worksheet relationship content types
+			$chart = 1;
 			for ($i = 0; $i < $sheetCount; ++$i) {
-				if ($pPHPExcel->getSheet($i)->getDrawingCollection()->count() > 0) {
+				$drawings = $pPHPExcel->getSheet($i)->getDrawingCollection();
+				$drawingCount = count($drawings);
+				$chartCount = ($includeCharts) ? $pPHPExcel->getSheet($i)->getChartCount() : 0;
+
+				//	We need a drawing relationship for the worksheet if we have either drawings or charts
+				if (($drawingCount > 0) || ($chartCount > 0)) {
 					$this->_writeOverrideContentType(
 						$objWriter, '/xl/drawings/drawing' . ($i + 1) . '.xml', 'application/vnd.openxmlformats-officedocument.drawing+xml'
 					);
+				}
+
+				//	If we have charts, then we need a chart relationship for every individual chart
+				if ($chartCount > 0) {
+					for ($c = 0; $c < $chartCount; ++$c) {
+						$this->_writeOverrideContentType(
+							$objWriter, '/xl/charts/chart' . $chart++ . '.xml', 'application/vnd.openxmlformats-officedocument.drawingml.chart+xml'
+						);
+					}
 				}
 			}
 

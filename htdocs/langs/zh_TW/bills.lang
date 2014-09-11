@@ -85,6 +85,7 @@ ClassifyPaid=分類'有償'
 ClassifyPaidPartially=分類薪部分'
 ClassifyCanceled=分類'遺棄'
 ClassifyClosed=分類'關閉'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=建立發票
 AddBill=新增發票(invoice)或票據(credit note)
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=索賠額
 ExcessReceived=收到過剩
 EscompteOffered=折扣額（任期前付款）
-SendBillRef=%s的發送發票
-SendReminderBillRef=發送發票的%s（提醒）
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=常年訂單
 StandingOrder=長期訂單
 NoDraftBills=沒有任何發票(invoice)草案
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=兩個新的折扣總額必須等於原來�
 ConfirmRemoveDiscount=你確定要刪除此折扣？
 RelatedBill=相關發票
 RelatedBills=有關發票
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=即時
@@ -315,7 +318,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% in advance, 50%% on delivery
 FixAmount=Fix amount
 VarAmount=Variable amount (%% tot.)
-
 # PaymentType
 PaymentTypeVIR=銀行存款
 PaymentTypeShortVIR=銀行存款

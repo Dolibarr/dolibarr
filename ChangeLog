@@ -5,6 +5,9 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Can filter on status on interventions.
+- New: Add help info of field type into dictionary of payment types.
+- New: Add proposals into referer page of thirdparty.
 - New: On contact list can set filter on both active and not active (no more exclusive select). 
 - New: Each user can include its own external ics calendar into dolibarr agenda view.
 - New: Intervention documents are now available in ECM module.
@@ -45,6 +48,8 @@ For users:
 - New: Enable supplier price log table
 - New: [ task #1204 ] add a External reference to contract
 - New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
+- New: Optimize size of image static resources.
+- Upgrade phpexcel lib to 1.7.8
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -63,11 +68,15 @@ For users:
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 
+New experimental module:
+- New: Module Accounting Expert to manage accountancy 
+
 For translators:
 - Update language files.
 - New: When a translation is not available we always jump to en_US and only en_US.
 
 For developers:
+- New: Add a css style "cursorpointer".
 - New: Select list of users can return user into hierarchy.
 - New: getBrowserInfo can return type of layout of browser (classic/phone/tablet)
 - New: Add hook "searchAgendaFrom".
@@ -80,6 +89,9 @@ For developers:
 - New: Added hook "formConfirm" and "doActions" for supplier invoice card
 - New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card
 - New: renamed table llx_c_pays to llx_c_country & libelle field to label
+- Qual: Renamed table llx_c_civilite into llx_c_civility
+		field civilite into label in the same table
+		and field civilite into civility in other table
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -87,9 +99,25 @@ Dolibarr better:
 - Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
 - Some field into database wwere renamed from "libelle" to "label".
 - Table llx_c_pays were renamed into llx_c_country.  
-- Trigger PROJECT_BUILDDOC is removed. Building a doc is not a business event. For action after 
-  creation of a pdf, hook "afterPDFCreation" must be used instead.
+- Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
+  creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
+
  
+***** ChangeLog for 3.6.1 compared to 3.6.* *****
+For users:
+- Fix: Can upload files on services.
+- Fix: sql errors on updat fichinter.
+- Fix: debian script syntax error.
+- Fix: error "menu param is not inside list" into pos module.
+- Fix: Salary payments are not reflected on the reporting sheets.
+- Fix: Unsubscribe emailing not working.
+- Fix: Trigger on create category call failed because user is not passed on card.
+- Fix: list event view lost type event filter.
+- Fix: Save also code event.
+- Fix: VAT payment - Add control on field date value.
+- Fix: Salaries payment - Field date value is now required and add control on it.
+- Fix: Iban was used instead of Bic into SEPA file.
+- Fix: Must unaccent strings into SEPA file.
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
@@ -221,9 +249,11 @@ Fix: Link product, In list view and label product.
 Fix: visible task into area "time" for "My task" must limit task to tasks i am assigned to.
 Fix: When disabled, all fields to add time into task line must be disabled.
 Fix: Missing include files.lib.php in some pages that use dol_delete_recursive
-Fix: Missing include files.lib.php in some pages ti use dol_delete_recursive.
 Fix: [ bug #1558 ] Product/service edit page title shows new Ref instead of old ref.
 Fix: [ bug #1553 ] Saving User displays setup removes menu.
+Fix: [ bug #1544 ] Can remove date from invoice
+Fix: list event view lost type event filter
+Fix: Add code save on create event
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.

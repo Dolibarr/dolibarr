@@ -14,13 +14,11 @@
 -- To make pk to be auto increment (mysql):    VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres): VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
 -- To set a field as NULL:                     VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
--- To set a field as defailt NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
+-- To set a field as default NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
-
-ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
 
 -- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
 ALTER TABLE llx_c_typent ADD COLUMN fk_country integer NULL AFTER libelle;
@@ -29,17 +27,42 @@ INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang)
 
 INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
 
-
 ALTER TABLE llx_user ADD COLUMN fk_user_creat integer AFTER tms;
 ALTER TABLE llx_user ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
 
+-- Add module accounting Expert
+ALTER TABLE llx_bookkeeping RENAME TO llx_accounting_bookkeeping; -- To update old user of module Accounting Expert
+ 
+
+CREATE TABLE llx_accounting_bookkeeping 
+(
+  rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  doc_date			date NOT NULL,
+  doc_type			varchar(30) NOT NULL,	-- facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
+  doc_ref			varchar(30) NOT NULL,	-- facture_client/reglement_client/... reference number
+  fk_doc			integer NOT NULL,		-- facture_client/reglement_client/... rowid
+  fk_docdet			integer NOT NULL,		-- facture_client/reglement_client/... line rowid
+  code_tiers		varchar(24),			-- code tiers
+  numero_compte		varchar(32) DEFAULT NULL,
+  label_compte		varchar(128) NOT NULL,
+  debit				double NOT NULL,
+  credit			double NOT NULL,
+  montant			double NOT NULL,
+  sens				varchar(1) DEFAULT NULL,
+  fk_user_author	integer NOT NULL,
+  import_key		varchar(14),
+  code_journal		varchar(10) DEFAULT NULL,
+  piece_num		integer NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
+ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT NULL AFTER account_number;
 
 ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_accountingaccount add column datec datetime NOT NULL AFTER entity;
 ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
 ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
 ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;
-
 
 -- Drop old table
 DROP TABLE llx_compta;
@@ -61,7 +84,8 @@ ALTER TABLE llx_product MODIFY COLUMN accountancy_code_buy varchar(32);
 ALTER TABLE llx_user MODIFY COLUMN accountancy_code varchar(32);
 
 
-ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT NULL AFTER account_number;
+ALTER TABLE llx_user ADD COLUMN weeklyhours double(16,8);
+
 
 ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_date;
 
@@ -76,7 +100,7 @@ ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_a
 -- Change on table c_pays
 ALTER TABLE llx_c_pays RENAME TO llx_c_country;
 
-ALTER TABLE llx_c_country CHANGE libelle label VARCHAR(50);
+ALTER TABLE llx_c_country CHANGE COLUMN libelle label VARCHAR(50);
 
 ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_pays FOREIGN KEY (fk_pays) REFERENCES llx_c_country (rowid);
 ALTER TABLE llx_c_regions ADD CONSTRAINT fk_c_regions_fk_pays FOREIGN KEY (fk_pays) REFERENCES llx_c_country (rowid);
@@ -101,6 +125,7 @@ ALTER TABLE llx_product MODIFY COLUMN fk_barcode_type INTEGER NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_barcode_type SET DEFAULT NULL;
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
+UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type NOT IN (SELECT rowid from llx_c_barcode_type);
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
 
 
@@ -974,13 +999,34 @@ CREATE TABLE llx_holiday_types (
   nbCongesEveryMonth varchar(255) NOT NULL
 ) ENGINE=innodb;
 
-ALTER TABLE llx_c_type_fees CHANGE libelle label VARCHAR(30);
-ALTER TABLE llx_c_type_fees ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER label;
+-- Change on table c_civilite
+ALTER TABLE llx_c_civilite DROP INDEX uk_c_civilite;
+ALTER TABLE llx_c_civilite RENAME TO llx_c_civility;
+ALTER TABLE llx_c_civility CHANGE COLUMN civilite label VARCHAR(50);
+ALTER TABLE llx_c_civility ADD UNIQUE INDEX uk_c_civility(code);
+ALTER TABLE llx_adherent CHANGE COLUMN civilite civility VARCHAR(6);
+ALTER TABLE llx_socpeople CHANGE COLUMN civilite civility VARCHAR(6);
+ALTER TABLE llx_user CHANGE COLUMN civilite civility VARCHAR(6);
 
+ALTER TABLE llx_c_type_fees CHANGE COLUMN libelle label VARCHAR(30);
+ALTER TABLE llx_c_type_fees ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER label;
 
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_element (fk_element);
 
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_task (fk_task);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_date (task_date);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_datehour);
+
+
+-- add extrafield on ficheinter lines
+CREATE TABLE llx_fichinterdet_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_fichinterdet_extrafields ADD INDEX idx_ficheinterdet_extrafields (fk_object);
+
 

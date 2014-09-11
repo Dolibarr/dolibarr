@@ -85,6 +85,7 @@ ClassifyPaid=Classify 'Paid'
 ClassifyPaidPartially=Classify 'Paid partially'
 ClassifyCanceled=Classify 'Abandoned'
 ClassifyClosed=Classify 'Closed'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Create Invoice
 AddBill=Add invoice or credit note
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=Amount claimed
 ExcessReceived=Excess received
 EscompteOffered=Discount offered (payment before term)
-SendBillRef=Send invoice %s
-SendReminderBillRef=Send invoice %s (reminder)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Standing orders
 StandingOrder=Standing order
 NoDraftBills=No draft invoices
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Total of two new discount must be equal to 
 ConfirmRemoveDiscount=Are you sure you want to remove this discount ?
 RelatedBill=Related invoice
 RelatedBills=Related invoices
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Immediate

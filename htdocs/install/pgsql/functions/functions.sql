@@ -83,6 +83,7 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_extrafields FOR EACH
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_facture FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_facture_fourn FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_fichinter FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_fichinterdet_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_livraison FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_localtax FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_menu FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();

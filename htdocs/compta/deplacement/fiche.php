@@ -76,6 +76,24 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
     }
 }
 
+else if ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
+{
+    $object->fetch($id);
+    if ($object->statut == 1)
+    {
+        $result = $object->setStatut(2);
+        if ($result > 0)
+        {
+            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+            exit;
+        }
+        else
+        {
+	        setEventMessage($object->error, 'errors');
+        }
+    }
+}
+
 else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer)
 {
     $result=$object->delete($id);
@@ -491,11 +509,23 @@ else if ($id)
 
             /*
              * Barre d'actions
-            */
+             */
 
             print '<div class="tabsAction">';
 
-            if ($object->statut == 0) 	// if blocked...
+            if ($object->statut < 2) 	// if not refunded
+            {
+	            if ($user->rights->deplacement->creer)
+	            {
+	                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+	            }
+	            else
+	            {
+	                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
+	            }
+            }
+
+            if ($object->statut == 0) 	// if draft
             {
                 if ($user->rights->deplacement->creer)
                 {
@@ -507,14 +537,18 @@ else if ($id)
                 }
             }
 
-            if ($user->rights->deplacement->creer)
+            if ($object->statut == 1) 	// if validated
             {
-                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+                if ($user->rights->deplacement->creer)
+                {
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=classifyrefunded&id='.$id.'">'.$langs->trans('ClassifyRefunded').'</a>';
+                }
+                else
+                {
+                    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ClassifyRefunded').'</a>';
+                }
             }
-            else
-            {
-                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
-            }
+
             if ($user->rights->deplacement->supprimer)
             {
                 print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';

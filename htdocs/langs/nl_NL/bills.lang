@@ -85,6 +85,7 @@ ClassifyPaid=Klassificeer 'betaald'
 ClassifyPaidPartially=Classificeer 'gedeeltelijk betaald'
 ClassifyCanceled=Classificeer 'verlaten'
 ClassifyClosed=Classificeer 'Gesloten'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Creëer Factuur
 AddBill=Toevoegen factuur of creditnota
 AddToDraftInvoices=Toevoegen aan aanmaak factuur
@@ -197,8 +198,8 @@ Rest=Hangende
 AmountExpected=Gevorderde bedrag
 ExcessReceived=Overbetaling
 EscompteOffered=Korting aangeboden (betaling vóór termijn)
-SendBillRef=Stuur factuur %s
-SendReminderBillRef=Stuur factuur %s (herinnering)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Doorlopende opdrachten
 StandingOrder=Doorlopende opdracht
 NoDraftBills=Geen conceptfacturen
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Totaal van de twee nieuwe korting moet geli
 ConfirmRemoveDiscount=Weet u zeker dat u van deze korting wilt verwijderen?
 RelatedBill=Gerelateerde factuur
 RelatedBills=Gerelateerde facturen
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Direct

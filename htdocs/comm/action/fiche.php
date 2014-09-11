@@ -55,6 +55,10 @@ $contactid=GETPOST('contactid','int');
 $origin=GETPOST('origin','alpha');
 $originid=GETPOST('originid','int');
 
+$fulldayevent=GETPOST('fullday');
+$datep=dol_mktime($fulldayevent?'00':GETPOST("aphour"), $fulldayevent?'00':GETPOST("apmin"), 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
+$datef=dol_mktime($fulldayevent?'23':GETPOST("p2hour"), $fulldayevent?'59':GETPOST("p2min"), $fulldayevent?'59':'0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
+
 // Security check
 $socid = GETPOST('socid','int');
 $id = GETPOST('id','int');
@@ -63,6 +67,7 @@ $result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|
 if ($user->societe_id && $socid) $result = restrictedArea($user,'societe',$socid);
 
 $error=GETPOST("error");
+$donotclearsession=0;
 
 $cactioncomm = new CActionComm($db);
 $object = new ActionComm($db);
@@ -82,6 +87,19 @@ $hookmanager->initHooks(array('actioncard'));
  * Actions
  */
 
+if (GETPOST('addassignedtouser'))
+{
+	// Add a new user
+	if (GETPOST('affectedto') > 0)
+	{
+		$assignedtouser=array();
+		if (!empty($_SESSION['assignedtouser'])) $assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
+		$assignedtouser[GETPOST('affectedto')]=array('transparency'=>GETPOST('transparency'),'mandatory'=>1);
+		$_SESSION['assignedtouser']=dol_json_encode($assignedtouser);
+	}
+	$donotclearsession=1;
+	$action='create';
+}
 // Add action
 if ($action == 'add_action')
 {
@@ -104,12 +122,11 @@ if ($action == 'add_action')
 		exit;
 	}
 
-    $fulldayevent=GETPOST('fullday');
     $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):GETPOST("percentage");	// If status is -1 or 100, percentage is not defined and we must use status
 
     // Clean parameters
-	$datep=dol_mktime($fulldayevent?'00':$_POST["aphour"], $fulldayevent?'00':$_POST["apmin"], 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
-	$datef=dol_mktime($fulldayevent?'23':$_POST["p2hour"], $fulldayevent?'59':$_POST["p2min"], $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
+	$datep=dol_mktime($fulldayevent?'00':GETPOST("aphour"), $fulldayevent?'00':GETPOST("apmin"), 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
+	$datef=dol_mktime($fulldayevent?'23':GETPOST("p2hour"), $fulldayevent?'59':GETPOST("p2min"), $fulldayevent?'59':'0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
 
 	// Check parameters
 	if (! $datef && $percentage == 100)
@@ -393,17 +410,17 @@ if ($action == 'mupdate')
     $object->fetch($id);
     $shour = dol_print_date($object->datep,"%H");
     $smin = dol_print_date($object->datep, "%M");
-    
+
     $newdate=GETPOST('newdate','alpha');
     if (empty($newdate) || strpos($newdate,'dayevent_') != 0 )
     {
-       header("Location: ".$backtopage);        
+       header("Location: ".$backtopage);
         exit;
     }
 
     $datep=dol_mktime($shour, $smin, 0, substr($newdate,13,2), substr($newdate,15,2), substr($newdate,9,4));
     if ($datep!=$object->datep)
-    { 
+    {
         if (!empty($object->datef))
         {
             $object->datef+=$datep-$object->datep;
@@ -414,19 +431,21 @@ if ($action == 'mupdate')
         {
             setEventMessage($object->error,'errors');
             setEventMessage($object->errors,'errors');
-        }              
+        }
     }
     if (! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
     }
-    else 
+    else
     {
         $action='';
     }
-    
+
 }
+
+
 /*
  * View
  */
@@ -514,18 +533,19 @@ if ($action == 'create')
 	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
-    print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
+    print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
 
 	// Date start
-	$datep=$object->datep;
+	$datep=($datep?$datep:$object->datep);
 	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
 	print '<tr><td width="30%" class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
 	if (GETPOST("afaire") == 1) $form->select_date($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
 	else if (GETPOST("afaire") == 2) $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
 	else $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 	print '</td></tr>';
+
 	// Date end
-	$datef=$object->datef;
+	$datef=($datef?$datef:$object->datef);
     if (GETPOST('datef','int',1)) $datef=dol_stringtotime(GETPOST('datef','int',1),0);
 	print '<tr><td><span id="dateend"'.(GETPOST("actioncode") == 'AC_RDV'?' class="fieldrequired"':'').'>'.$langs->trans("DateActionEnd").'</span></td><td>';
 	if (GETPOST("afaire") == 1) $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
@@ -537,29 +557,29 @@ if ($action == 'create')
 	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent=-1;
-	if (isset($_GET['status']) || isset($_POST['status']))
-	{
-		$percent=GETPOST('status');
-	}
-	else if (isset($_GET['percentage']) || isset($_POST['percentage']))
-	{
-		$percent=GETPOST('percentage');
-	}
+	if (isset($_GET['status']) || isset($_POST['status'])) $percent=GETPOST('status');
+	else if (isset($_GET['percentage']) || isset($_POST['percentage'])) $percent=GETPOST('percentage');
 	else
 	{
-		if (GETPOST("afaire") == 1) $percent=0;
-		else if (GETPOST("afaire") == 2) $percent=100;
+		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent='0';
+		else if (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent=100;
 	}
 	$formactions->form_select_status_action('formaction',$percent,1,'complete');
 	print '</td></tr>';
 
     // Location
-    print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$object->location.'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
 
 	// Assigned to
 	$var=false;
 	print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id),'affectedto',1);
+	if (empty($donotclearsession))
+	{
+		$assignedtouser=GETPOST("affectedtouser")?GETPOST("affectedtouser"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id);
+		$_SESSION['assignedtouser']=dol_json_encode(array($assignedtouser=>array('transparency'=>1,'mandatory'=>1)));
+	}
+	//print $form->select_dolusers_forevent('affectedto',1);
+	print $form->select_dolusers(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id),'affectedto',1);
 	print '</td></tr>';
 
 	print '</table>';
@@ -577,7 +597,7 @@ if ($action == 'create')
 	if ($conf->global->AGENDA_ENABLE_DONEBY)
 	{
 		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
-		$form->select_users(GETPOST("doneby")?GETPOST("doneby"):(! empty($object->userdone->id) && $percent==100?$object->userdone->id:0),'doneby',1);
+		print $form->select_dolusers(GETPOST("doneby")?GETPOST("doneby"):(! empty($object->userdone->id) && $percent==100?$object->userdone->id:0),'doneby',1);
 		print '</td></tr>';
 	}
 
@@ -650,7 +670,7 @@ if ($action == 'create')
     // Description
     print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$object->note),'',240,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_7,90);
+    $doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$object->note),'',180,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_6,90);
     $doleditor->Create();
     print '</td></tr>';
 
@@ -935,7 +955,7 @@ if ($id > 0)
 		else print dol_print_date($object->datep,'day');
 		if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td>';
-		print '<td rowspan="4" align="center" valign="middle" width="180">'."\n";
+		print '<td rowspan="5" align="center" valign="middle" width="180">'."\n";
         print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="show_month">';
@@ -963,6 +983,15 @@ if ($id > 0)
         //print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
         print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
         print '</form>'."\n";
+        print '<form name="listactionsfilterperuser" action="'.DOL_URL_ROOT.'/comm/action/peruser.php" method="POST">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="show_peruser">';
+        print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
+        print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
+        print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+        //print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
+        print '</form>'."\n";
         print '</td>';
 		print '</tr>';
 
@@ -982,7 +1011,7 @@ if ($id > 0)
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="2">'.$object->location.'</td></tr>';
 
 		// Assigned to
-		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 		if ($object->usertodo->id > 0) print $object->usertodo->getNomUrl(1);
 		print '</td></tr>';
 

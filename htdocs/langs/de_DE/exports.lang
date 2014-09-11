@@ -125,7 +125,7 @@ BankAccountNumber=Kontonummer
 BankAccountNumberKey=Schlüssel
 SpecialCode=Spezialcode
 ExportStringFilter=%% erlaubt die Ersetzung eines oder mehrerer Zeichen im Text
-ExportDateFilter='YYYY' 'YYYYMM' 'YYYYMMDD': filtert nach einem Jahr/Monat/Tag<br>'YYYY+YYYY' 'YYYYMM+YYYYMM' 'YYYYMMDD+YYYYMMDD': filtert über einen Bereich von Jahren/Monaten/Tagen<br>'&gt;YYYY' '&gt;YYYYMM' '&gt;YYYYMMDD': filtert auf die folgenden Jahre/Monate/Tage<br>'&lt;YYYY' '&lt;YYYYMM' '&lt;YYYYMMDD': filtert auf die vorhergehenden Jahre/Monate/Tage
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD : filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD : filters on all previous years/months/days
 ExportNumericFilter='NNNNN' filtert genau einen Wert<br>'NNNNN+NNNNN' filtert einen Wertebereich<br>'&gt;NNNNN' filtert nach kleineren Werten<br>'&gt;NNNNN' filtert nach größeren Werten
 ## filters
 SelectFilterFields=Wenn Sie nach bestimmten Werten filtern wollen, geben Sie diese Werte hier ein.

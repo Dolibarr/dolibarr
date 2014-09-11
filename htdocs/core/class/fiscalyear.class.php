@@ -54,7 +54,7 @@ class Fiscalyear
 	function __construct($db)
 	{
 		$this->db = $db;
-		
+
 		$this->statuts_short = array(0 => 'Opened', 1 => 'Closed');
         $this->statuts = array(0 => 'Opened', 1 => 'Closed');
 
@@ -70,9 +70,9 @@ class Fiscalyear
 	function create($user)
 	{
 		global $conf;
-		
+
 		$error = 0;
-		
+
 		$now=dol_now();
 
 		$this->db->begin();
@@ -88,7 +88,7 @@ class Fiscalyear
 		$sql.= ") VALUES (";
 		$sql.= " '".$this->label."'";
 		$sql.= ", '".$this->db->idate($this->date_start)."'";
-		$sql.= ", '".$this->db->idate($this->date_end)."'";
+		$sql.= ", ".($this->date_end ? "'".$this->db->idate($this->date_end)."'":"null");
 		$sql.= ", ".$this->statut;
 		$sql.= ", ".$conf->entity;
 		$sql.= ", '".$this->db->idate($now)."'";
@@ -109,19 +109,19 @@ class Fiscalyear
 			}
 			else
 			{
-				$this->error=$this->db->error();
+				$this->error=$this->db->lasterror();
 				$this->db->rollback();
 				return $result;
 			}
 		}
 		else
 		{
-			$this->error=$this->db->error()." sql=".$sql;
+			$this->error=$this->db->lasterror()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *	Update record
 	 *
@@ -138,15 +138,15 @@ class Fiscalyear
             $this->error='ErrorBadParameter';
             return -1;
         }
-        
+
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_fiscalyear";
 		$sql .= " SET label = '".$this->label."'";
 		$sql .= ", date_start = '".$this->db->idate($this->date_start)."'";
-		$sql .= ", date_end = '".$this->db->idate($this->date_end)."'";
+		$sql .= ", date_end = ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= ", statut = '".$this->statut."'";
-		$sql .= ", datec = " . ($this->datec != '' ? $this->db->idate($this->datec) : 'null');
+		$sql .= ", datec = " . ($this->datec != '' ? "'".$this->db->idate($this->datec)."'" : 'null');
 		$sql .= ", fk_user_modif = " . $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -160,11 +160,12 @@ class Fiscalyear
 		else
 		{
 			$this->error=$this->db->lasterror();
+			dol_syslog($this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
 	}
-	
+
 	/**
 	* Load an object from database
 	*
@@ -194,11 +195,11 @@ class Fiscalyear
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
-	
+
    /**
 	*	Delete record
 	*
@@ -220,12 +221,12 @@ class Fiscalyear
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * Give a label from a status
 	 *
@@ -238,7 +239,7 @@ class Fiscalyear
 	}
 
 	/**
-	 *  Give a label from a status 
+	 *  Give a label from a status
 	 *
 	 *  @param	int		$statut     Id status
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
@@ -277,7 +278,7 @@ class Fiscalyear
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut8');
 		}
 	}
-	
+
 	/**
 	 * Information on record
 	 *

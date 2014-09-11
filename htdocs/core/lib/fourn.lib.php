@@ -29,7 +29,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function facturefourn_prepare_head($object)
 {
@@ -92,7 +92,7 @@ function facturefourn_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function ordersupplier_prepare_head($object)
 {

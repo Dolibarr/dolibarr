@@ -194,7 +194,7 @@ class CommandeFournisseur extends CommonOrder
             $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
             $this->db->free($resql);
-            
+
             // Retreive all extrafield
             // fetch optionals attributes and labels
             require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
@@ -210,7 +210,8 @@ class CommandeFournisseur extends CommonOrder
             $sql.= " l.tva_tx, l.remise_percent, l.subprice,";
             $sql.= " l.localtax1_tx, l. localtax2_tx, l.total_localtax1, l.total_localtax2,";
             $sql.= " l.total_ht, l.total_tva, l.total_ttc,";
-            $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc";
+            $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc,";
+            $sql.= " l.date_start, l.date_end";
             $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
             $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
             $sql.= " WHERE l.fk_commande = ".$this->id;
@@ -257,6 +258,9 @@ class CommandeFournisseur extends CommonOrder
                     $line->product_ref         = $objp->product_ref;     // Internal reference
                     $line->ref_fourn           = $objp->ref_supplier;    // TODO deprecated
                     $line->ref_supplier        = $objp->ref_supplier;    // Reference supplier
+
+                    $line->date_start          = $this->db->jdate($objp->date_start);
+                    $line->date_end            = $this->db->jdate($objp->date_end);
 
                     $this->lines[$i]      = $line;
 
@@ -427,8 +431,8 @@ class CommandeFournisseur extends CommonOrder
     /**
      *  Return label of the status of object
      *
-     *  @param	int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label
-     *  @return string        		Label
+	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+     *  @return 	string        			Label
      */
     function getLibStatut($mode=0)
     {
@@ -658,7 +662,7 @@ class CommandeFournisseur extends CommonOrder
                 {
 					// Call trigger
 					$result=$this->call_trigger('ORDER_SUPPLIER_APPROVE',$user);
-					if ($result < 0) $error++;            
+					if ($result < 0) $error++;
 					// End call triggers
                 }
 
@@ -722,7 +726,7 @@ class CommandeFournisseur extends CommonOrder
                         $error++;
                         $this->db->rollback();
                     }
-                    else 
+                    else
                     	$this->db->commit();
 					// End call triggers
                 }
@@ -774,7 +778,7 @@ class CommandeFournisseur extends CommonOrder
 
 				// Call trigger
 				$result=$this->call_trigger('ORDER_SUPPLIER_CANCEL',$user);
-				if ($result < 0) $error++;            
+				if ($result < 0) $error++;
 				// End call triggers
 
                 if ($error == 0)
@@ -967,7 +971,7 @@ class CommandeFournisseur extends CommonOrder
 	                {
 						// Call trigger
 						$result=$this->call_trigger('ORDER_SUPPLIER_CREATE',$user);
-						if ($result < 0)            
+						if ($result < 0)
 	                    {
 	                        $this->db->rollback();
 	                        return -1;
@@ -1037,7 +1041,7 @@ class CommandeFournisseur extends CommonOrder
 
 			// Call trigger
 			$result=$this->call_trigger('ORDER_SUPPLIER_CLONE',$user);
-			if ($result < 0) $error++;            
+			if ($result < 0) $error++;
 			// End call triggers
         }
 
@@ -1216,7 +1220,7 @@ class CommandeFournisseur extends CommonOrder
                     global $conf, $langs, $user;
 					// Call trigger
 					$result=$this->call_trigger('LINEORDER_SUPPLIER_CREATE',$user);
-					if ($result < 0)        
+					if ($result < 0)
                     {
                         $this->db->rollback();
                         return -1;
@@ -1285,7 +1289,7 @@ class CommandeFournisseur extends CommonOrder
                     global $conf, $langs, $user;
 					// Call trigger
 					$result=$this->call_trigger('LINEORDER_SUPPLIER_DISPATCH',$user);
-					if ($result < 0)        
+					if ($result < 0)
                     {
                         $this->db->rollback();
                         return -1;
@@ -1347,6 +1351,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function deleteline($idline, $notrigger=0)
     {
+        global $user,$langs,$conf;
         if ($this->statut == 0)
         {
         	$this->db->begin();
@@ -1355,7 +1360,7 @@ class CommandeFournisseur extends CommonOrder
 			{
 				// Call trigger
 				$result=$this->call_trigger('LINEORDER_SUPPLIER_DELETE',$user);
-				if ($result < 0) $error++;            
+				if ($result < 0) $error++;
 				// End call triggers
 			}
 
@@ -1403,7 +1408,7 @@ class CommandeFournisseur extends CommonOrder
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error = 0;
-        
+
         // Call trigger
         $result=$this->call_trigger('ORDER_SUPPLIER_DELETE',$user);
         if ($result < 0)
@@ -1412,7 +1417,7 @@ class CommandeFournisseur extends CommonOrder
         	return -1;
         }
         // End call triggers
-        
+
 
         $this->db->begin();
 
@@ -1720,9 +1725,11 @@ class CommandeFournisseur extends CommonOrder
      *	@param		int		$info_bits			Miscellaneous informations
      *	@param		int		$type				Type of line (0=product, 1=service)
      *  @param		int		$notrigger			Disable triggers
+     *  @param      timestamp   $date_start     Date start of service
+     *  @param      timestamp   $date_end       Date end of service
      *	@return    	int             			< 0 if error, > 0 if ok
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false, $date_start='', $date_end='')
     {
     	global $mysoc;
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type");
@@ -1783,10 +1790,8 @@ class CommandeFournisseur extends CommonOrder
 			$sql.= ",localtax1_type='".$localtax1_type."'";
 			$sql.= ",localtax2_type='".$localtax2_type."'";
             $sql.= ",qty='".price2num($qty)."'";
-            /*if ($date_end) { $sql.= ",date_start='$date_end'"; }
-            else { $sql.=',date_start=null'; }
-            if ($date_end) { $sql.= ",date_end='$date_end'"; }
-            else { $sql.=',date_end=null'; }*/
+            $sql.= ",date_start=".(! empty($date_start)?"'".$this->db->idate($date_start)."'":"null");
+            $sql.= ",date_end=".(! empty($date_end)?"'".$this->db->idate($date_end)."'":"null");
             $sql.= ",info_bits='".$info_bits."'";
             $sql.= ",total_ht='".price2num($total_ht)."'";
             $sql.= ",total_tva='".price2num($total_tva)."'";
@@ -1807,7 +1812,7 @@ class CommandeFournisseur extends CommonOrder
                     global $conf, $langs, $user;
 					// Call trigger
 					$result=$this->call_trigger('LINEORDER_SUPPLIER_UPDATE',$user);
-					if ($result < 0)        
+					if ($result < 0)
                     {
                         $this->db->rollback();
                         return -1;
@@ -1951,8 +1956,8 @@ class CommandeFournisseur extends CommonOrder
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-				
-				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date; 
+
+				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
                 if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->fournisseur->warning_delay)) $this->nbtodolate++;
             }
             return 1;
@@ -2007,7 +2012,7 @@ class CommandeFournisseur extends CommonOrder
 /**
  *  Classe de gestion des lignes de commande
  */
-class CommandeFournisseurLigne
+class CommandeFournisseurLigne extends CommonOrderLine
 {
     // From llx_commandedet
     var $qty;
@@ -2028,6 +2033,8 @@ class CommandeFournisseurLigne
     var $total_ttc;
     var $info_bits;
     var $special_code;
+    var $date_start;
+    var $date_end;
 
     // From llx_product
     var $libelle;       // Label produit
@@ -2060,7 +2067,8 @@ class CommandeFournisseurLigne
         $sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
         $sql.= ' cd.total_localtax1, cd.total_localtax2,';
-        $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+        $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
+        $sql.= ' cd.date_start, cd.date_end';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
         $sql.= ' WHERE cd.rowid = '.$rowid;
@@ -2090,6 +2098,9 @@ class CommandeFournisseurLigne
             $this->ref	            = $objp->product_ref;
             $this->product_libelle  = $objp->product_libelle;
             $this->product_desc     = $objp->product_desc;
+
+            $this->date_start       = $this->db->jdate($objp->date_start);
+            $this->date_end         = $this->db->jdate($objp->date_end);
 
             $this->db->free($result);
             return 1;

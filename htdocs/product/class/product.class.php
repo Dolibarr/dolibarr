@@ -9,6 +9,7 @@
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014 	   Philippe Grand 		<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -429,7 +430,7 @@ class Product extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('PRODUCT_CREATE',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
 			}
 
@@ -601,7 +602,7 @@ class Product extends CommonObject
                 foreach ($this->stock_warehouse as $idW => $ObjW)
                 {
                     $qty_batch = 0;
-                    foreach ($ObjW->detail_batch as $detail)    
+                    foreach ($ObjW->detail_batch as $detail)
                     {
                         $qty_batch += $detail->qty;
                     }
@@ -614,12 +615,12 @@ class Product extends CommonObject
                         $ObjBatch->qty = $ObjW->real - $qty_batch;
                         $ObjBatch->fk_product_stock = $ObjW->id;
                         if ($ObjBatch->create($user,1) < 0)
-                        { 
+                        {
                             $error++;
                             $this->errors=$ObjBatch->errors;
                         }
                     }
-                }    
+                }
             }
 	        // For automatic creation
 	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
@@ -698,7 +699,7 @@ class Product extends CommonObject
 				{
                     // Call trigger
                     $result=$this->call_trigger('PRODUCT_MODIFY',$user);
-                    if ($result < 0) { $error++; }            
+                    if ($result < 0) { $error++; }
                     // End call triggers
 				}
 
@@ -795,7 +796,7 @@ class Product extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('PRODUCT_DELETE',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
 			}
 
@@ -819,7 +820,7 @@ class Product extends CommonObject
     				}
     			}
 			}
-            
+
 			// Delete product
 			if (! $error)
 			{
@@ -1205,7 +1206,7 @@ class Product extends CommonObject
 		if ($newvat == '') $newvat=$this->tva_tx;
 		if (! empty($newminprice) && ($newminprice > $newprice))
 		{
-			$this->error='ErrorPricCanBeLowerThanMinPrice';
+			$this->error='ErrorPriceCantBeLowerThanMinPrice';
 			return -1;
 		}
 
@@ -1256,7 +1257,7 @@ class Product extends CommonObject
 			$localtax2=get_localtax($newvat,2);
 			if (empty($localtax1)) $localtax1=0;	// If = '' then = 0
 			if (empty($localtax2)) $localtax2=0;	// If = '' then = 0
-			
+
 			$this->db->begin();
 
 			// Ne pas mettre de quote sur les numeriques decimaux.
@@ -1297,13 +1298,13 @@ class Product extends CommonObject
 
                 // Call trigger
                 $result=$this->call_trigger('PRODUCT_PRICE_MODIFY',$user);
-                if ($result < 0) 
-                { 
+                if ($result < 0)
+                {
                 	$this->db->rollback();
                 	return -1;
-                }            
+                }
                 // End call triggers
-                
+
                 $this->db->commit();
 			}
 			else
@@ -1422,8 +1423,8 @@ class Product extends CommonObject
 				$this->entity					= $obj->entity;
 
 				$this->db->free($resql);
-				
-				
+
+
 				// Retreive all extrafield for thirdparty
 				// fetch optionals attributes and labels
 				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
@@ -3512,5 +3513,39 @@ class Product extends CommonObject
 				return -1;
 			}
 		}
+	}
+
+	/**
+     * Return minimum product recommended price
+     *
+	 * @return	int			Minimum recommanded price that is higher price among all suppliers * PRODUCT_MINIMUM_RECOMMENDED_PRICE
+     */
+	function min_recommended_price()
+	{
+		global $conf;
+
+		$maxpricesupplier=0;
+
+		if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			$product_fourn = new ProductFournisseur($this->db);
+			$product_fourn_list = $product_fourn->list_product_fournisseur_price($this->id, '', '');
+
+			if (is_array($product_fourn_list) && count($product_fourn_list)>0)
+			{
+				foreach($product_fourn_list as $productfourn)
+				{
+					if ($productfourn->fourn_unitprice > $maxpricesupplier)
+					{
+						$maxpricesupplier = $productfourn->fourn_unitprice;
+					}
+				}
+
+				$maxpricesupplier *= $conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE;
+			}
+		}
+
+		return $maxpricesupplier;
 	}
 }

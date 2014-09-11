@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/fichinter/fiche.php
- *	\brief      Fichier fiche intervention
+ *	\brief      Page of intervention
  *	\ingroup    ficheinter
  */
 
@@ -63,6 +63,7 @@ $confirm	= GETPOST('confirm','alpha');
 $mesg		= GETPOST('msg','alpha');
 $origin=GETPOST('origin','alpha');
 $originid=(GETPOST('originid','int')?GETPOST('originid','int'):GETPOST('origin_id','int')); // For backward compatibility
+$note_public = GETPOST('note_public');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -196,6 +197,13 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 				$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 			}
 
+			// Extrafields
+			$extrafields = new ExtraFields($db);
+			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+
+	        $object->array_options = $array_option;
+
 			$id = $object->create($user);
 
 			if ($id > 0)
@@ -211,7 +219,11 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 				{
 					$srcobject->fetch_thirdparty();
 					$lines = $srcobject->lines;
-					if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+					if (empty($lines) && method_exists($srcobject,'fetch_lines'))
+					{
+						$srcobject->fetch_lines();
+						$lines = $srcobject->lines;
+					}
 
 					$fk_parent_line=0;
 					$num=count($lines);
@@ -266,12 +278,20 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							    $duration = 0;
 							}
 
+							$predef = '';
+							// Extrafields
+							$extrafieldsline = new ExtraFields($db);
+							$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+							$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+
+
 		                    $result = $object->addline(
 								$user,
 		                        $id,
 		                        $desc,
 					            $date_intervention,
-                 				$duration
+                 				$duration,
+                 				$array_option
 		                    );
 
 							if ($result < 0)
@@ -298,6 +318,13 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	    }
 	    else
 	    {
+	    	// Extrafields
+			$extrafields = new ExtraFields($db);
+			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+
+	        $object->array_options = $array_option;
+
 			$result = $object->create($user);
 	        if ($result > 0)
 	        {
@@ -306,7 +333,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	        else
 	        {
 	            $langs->load("errors");
-	            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+	            setEventMessages($object->error, $object->errors, 'errors');
 	            $action = 'create';
 	        }
         }
@@ -433,12 +460,19 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
 		$date_intervention = dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
 		$duration = convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int'));
 
+
+		// Extrafields
+		$extrafieldsline = new ExtraFields($db);
+		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+
         $result=$object->addline(
 			$user,
             $id,
             $desc,
             $date_intervention,
-            $duration
+            $duration,
+            $array_option
         );
 
 		// Define output language
@@ -524,6 +558,13 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
     $objectline->datei		= $date_inter;
     $objectline->desc		= $desc;
     $objectline->duration	= $duration;
+
+	// Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$objectline->array_options = $array_option;
+
 	$result = $objectline->update($user);
     if ($result < 0)
     {
@@ -927,15 +968,19 @@ if ($action == 'create')
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
 			$objectsrc->fetch(GETPOST('originid'));
-			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
+			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))
+			{
+				$objectsrc->fetch_lines();
+				$lines = $objectsrc->lines;
+			}
 			$objectsrc->fetch_thirdparty();
 
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 
 			$soc = $objectsrc->client;
 
-			$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
-			$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
+			$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private')));
+			$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public'));
 
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(-1,'external',1);
@@ -943,8 +988,6 @@ if ($action == 'create')
 	}
 	else {
 		$projectid = GETPOST('projectid','int');
-		$note_private = '';
-		$note_public = '';
 	}
 
 	if (! $conf->global->FICHEINTER_ADDON)
@@ -981,7 +1024,7 @@ if ($action == 'create')
 		// Description (must be a textarea and not html must be allowed (used in list view)
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" cols="80" rows="'.ROWS_3.'"></textarea>';
+		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
 		print '</td></tr>';
 
 		// Project
@@ -1178,10 +1221,13 @@ else if ($id > 0 || ! empty($ref))
 	// Third party
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
-	// Duration
-	print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-	print '<td>'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
-	print '</tr>';
+	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+	{
+		// Duration
+		print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
+		print '<td>'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '</tr>';
+	}
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
 	print '<tr><td valign="top">';
@@ -1309,7 +1355,7 @@ else if ($id > 0 || ! empty($ref))
 				else
 				{
 					print $extrafields->showOutputField($key,$value);
-					if ($object->statut == 0 && $user->rights->ficheinter->creer) print ' &nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
+					if (($object->statut == 0 || $object->statut == 1) && $user->rights->ficheinter->creer) print ' &nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
 				}
 				print '</td></tr>'."\n";
 			}
@@ -1433,6 +1479,18 @@ else if ($id > 0 || ! empty($ref))
 					}
 
 					print '</tr>';
+
+					$line = new FichinterLigne($db);
+					$line->fetch($objp->rowid);
+
+					$extrafieldsline = new ExtraFields($db);
+					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
+
+					$line->fetch_optionals($line->rowid, $extralabelslines);
+
+					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>5));
+
+
 				}
 
 				// Line in update mode
@@ -1461,6 +1519,17 @@ else if ($id > 0 || ! empty($ref))
 					print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 					print '</tr>' . "\n";
+
+					$line = new FichinterLigne($db);
+					$line->fetch($objp->rowid);
+
+					$extrafieldsline = new ExtraFields($db);
+					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
+					$line->fetch_optionals($line->rowid, $extralabelslines);
+
+					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
+
+
 				}
 
 				$i++;
@@ -1512,6 +1581,15 @@ else if ($id > 0 || ! empty($ref))
 				print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
 				print '</tr>';
 
+				//Line extrafield
+
+				$lineadd = new FichinterLigne($db);
+
+				$extrafieldsline = new ExtraFields($db);
+				$extralabelslines=$extrafieldsline->fetch_name_optionals_label($lineadd->table_element);
+
+				print $lineadd->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
+
 				if (! $num) print '</table>';
 			}
 
@@ -1547,7 +1625,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Modify
-			if ($object->statut == 1 && $user->rights->ficheinter->creer && empty($conf->global->FICHINTER_DISABLE_DETAILS))
+			if ($object->statut == 1 && $user->rights->ficheinter->creer)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=modify"';
 				print '>'.$langs->trans("Modify").'</a></div>';

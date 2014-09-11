@@ -62,7 +62,6 @@ class Project extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        $this->societe = new Societe($db);
 
         $this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
         $this->statuts = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
@@ -254,7 +253,7 @@ class Project extends CommonObject
                     $result = 1;
                 }
                 else
-                {
+              {
                     $this->db->rollback();
                     $result = -1;
                 }
@@ -982,6 +981,7 @@ class Project extends CommonObject
 
 		// Load source object
 		$clone_project->fetch($fromid);
+		$clone_project->fetch_thirdparty();
 
 		$orign_dt_start=$clone_project->date_start;
 		$orign_project_ref=$clone_project->ref;
@@ -1009,7 +1009,7 @@ class Project extends CommonObject
 
         	require_once DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.'.php';
         	$modProject = new $obj;
-        	$defaultref = $modProject->getNextValue($clone_project->societe->id,$clone_project);
+        	$defaultref = $modProject->getNextValue(is_object($clone_project->thirdparty)?$clone_project->thirdparty->id:0,$clone_project);
     	}
 
     	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';

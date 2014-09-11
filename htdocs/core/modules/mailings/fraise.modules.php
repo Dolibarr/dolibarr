@@ -166,7 +166,7 @@ class mailing_fraise extends MailingTargets
         // La requete doit retourner: id, email, fk_contact, name, firstname
         $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, ";
         $sql.= " a.lastname, a.firstname,";
-        $sql.= " a.datefin, a.civilite as civility_id, a.login, a.societe";	// Other fields
+        $sql.= " a.datefin, a.civility as civility_id, a.login, a.societe";	// Other fields
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
         $sql.= " WHERE a.email <> ''";     // Note that null != '' is false
         $sql.= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";

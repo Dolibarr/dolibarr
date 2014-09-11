@@ -57,12 +57,89 @@ if( ! $user->rights->resource->read)
 $object=new Resource($db);
 
 $hookmanager->initHooks(array('element_resource'));
-
-
 $object->available_resources = array('resource');
 
-$parameters=array('resource_id'=>$available_resources);
+// Get parameters
+$id				= GETPOST('id','int');
+$action			= GETPOST('action','alpha');
+$mode			= GETPOST('mode','alpha');
+$lineid			= GETPOST('lineid','int');
+$element 		= GETPOST('element','alpha');
+$element_id		= GETPOST('element_id','int');
+$resource_id 	= GETPOST('fk_resource','int');
+$resource_type	= GETPOST('resource_type','alpha');
+$busy 			= GETPOST('busy','int');
+$mandatory 		= GETPOST('mandatory','int');
+
+if($action == 'add_element_resource' && !GETPOST('cancel'))
+{
+	$objstat = fetchObjectByElement($element_id,$element);
+	$res = $objstat->add_element_resource($resource_id,$resource_type,$busy,$mandatory);
+	if($res > 0)
+	{
+		setEventMessage($langs->trans('ResourceLinkedWithSuccess'),'mesgs');
+		header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$element_id);
+		exit;
+	}
+	else
+	{
+		setEventMessage($langs->trans('ErrorWhenLinkingResource'),'errors');
+		header("Location: ".$_SERVER['PHP_SELF'].'?mode=add&resource_type='.$resource_type.'&element='.$element.'&element_id='.$element_id);
+		exit;
+	}
+}
+
+// Update ressource
+if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel') )
+{
+	$res = $object->fetch_element_resource($lineid);
+	if($res)
+	{
+		$object->busy = $busy;
+		$object->mandatory = $mandatory;
+
+		$result = $object->update_element_resource($user);
+
+		if ($result >= 0)
+		{
+			setEventMessage($langs->trans('RessourceLineSuccessfullyUpdated'));
+			Header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
+			exit;
+		}
+		else {
+			setEventMessage($object->error,'errors');
+		}
+	}
+}
+
+// Delete a resource linked to an element
+if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && GETPOST('confirm') == 'yes')
+{
+	$res = $object->fetch(GETPOST('id'));
+	if($res)
+	{
+		$result = $object->delete_resource($lineid,$element);
+
+		if ($result >= 0)
+		{
+			setEventMessage($langs->trans('RessourceLineSuccessfullyDeleted'));
+			Header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
+			exit;
+		}
+		else {
+			setEventMessage($object->error,'errors');
+		}
+	}
+	else
+	{
+		setEventMessage($object->error,'errors');
+	}
+}
+
+$parameters=array('resource_id'=>resource_id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
+
 
 $parameters=array('resource_id'=>$resource_id);
 $reshook=$hookmanager->executeHooks('getElementResources',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks

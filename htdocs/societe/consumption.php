@@ -130,10 +130,16 @@ if ($object->client)
 	$obj = $db->fetch_object($resql);
 	$nbFactsClient = $obj->nb;
 	$thirdTypeArray['customer']=$langs->trans("customer");
+<<<<<<< HEAD
 	if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal']=$langs->transnoentitiesnoconv('Proposals');
 	if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->transnoentitiesnoconv('Orders');
 	if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
 	if ($conf->ficheinter>enabled && $user->rights->ficheinter->lire) $elementTypeArray['fichinter']=$langs->transnoentitiesnoconv('Interventions');
+=======
+	if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->trans('Orders');
+	if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal']=$langs->trans('Proposals');
+	if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->trans('Invoices');
+>>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 }
 
 if ($object->fournisseur)
@@ -198,6 +204,19 @@ if ($type_element == 'invoice')
 	$doc_number='f.facnumber';
 	$thirdTypeSelect='customer';
 }
+if ($type_element == 'propal')
+{
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+	$documentstatic=new Propal($db);
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as datePrint, ';
+	$tables_from = MAIN_DB_PREFIX."propal as c,".MAIN_DB_PREFIX."propaldet as d";
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where.= " AND d.fk_propal = c.rowid";
+	$where.= " AND c.entity = ".$conf->entity;
+	$datePrint = 'c.datep';
+	$doc_number='c.ref';
+	$thirdTypeSelect='customer';
+}
 if ($type_element == 'order')
 {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -208,19 +227,6 @@ if ($type_element == 'order')
 	$where.= " AND d.fk_commande = c.rowid";
 	$where.= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.datef';
-	$doc_number='c.ref';
-	$thirdTypeSelect='customer';
-}
-if ($type_element == 'propal')
-{
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-	$documentstatic=new Propal($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as dateprint, ';
-	$tables_from = MAIN_DB_PREFIX."propal as c,".MAIN_DB_PREFIX."propaldet as d";
-	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
-	$where.= " AND d.fk_propal = c.rowid";
-	$where.= " AND c.entity = ".$conf->entity;
-	$dateprint = 'c.datep';
 	$doc_number='c.ref';
 	$thirdTypeSelect='customer';
 }

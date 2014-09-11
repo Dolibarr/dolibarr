@@ -112,7 +112,6 @@ if ($action == 'add')
     $classname = ucfirst($object->origin);
     $objectsrc = new $classname($db);
     $objectsrc->fetch($object->origin_id);
-    //$object->fetch_lines();
 
     $object->socid					= $objectsrc->socid;
     $object->ref_customer			= $objectsrc->ref_client;
@@ -241,7 +240,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
     $object->fetch_thirdparty();
 
     $result = $object->valid($user);
-    
+
     if ($result < 0)
     {
 		$langs->load("errors");
@@ -706,7 +705,7 @@ if ($action == 'create')
             print '<td colspan="3">';
             $expe->fetch_delivery_methods();
             print $form->selectarray("shipping_method_id",$expe->meths,GETPOST('shipping_method_id','int'),1,0,0,"",1);
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print "</td></tr>\n";
 
             // Tracking number
@@ -725,7 +724,6 @@ if ($action == 'create')
              * Lignes de commandes
              */
 
-            //$lines = $object->fetch_lines(1);
             $numAsked = count($object->lines);
 
             print '<script type="text/javascript" language="javascript">
@@ -1270,7 +1268,7 @@ else if ($id || $ref)
 			print '<input type="hidden" name="action" value="setshipping_method_id">';
 			$object->fetch_delivery_methods();
 			print $form->selectarray("shipping_method_id",$object->meths,$object->shipping_method_id,1,0,0,"",1);
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
@@ -1581,7 +1579,7 @@ else if ($id || $ref)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($ref,'/'));
 		$file=$fileparams['fullname'];
-		
+
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';

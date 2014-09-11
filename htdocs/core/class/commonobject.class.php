@@ -48,7 +48,7 @@ abstract class CommonObject
     public $array_options=array();
 
     public $thirdparty;
-     
+
     public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
     public $linkedObjects;		// Loaded by ->fetchObjectLinked
 
@@ -383,7 +383,7 @@ abstract class CommonObject
         $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id, ec.fk_c_type_contact";    // This field contains id of llx_socpeople or id of llx_user
         if ($source == 'internal') $sql.=", '-1' as socid";
         if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid";
-        $sql.= ", t.civilite as civility, t.lastname as lastname, t.firstname, t.email";
+        $sql.= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
         $sql.= ", tc.source, tc.element, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
         $sql.= ", ".MAIN_DB_PREFIX."element_contact ec";
@@ -2784,7 +2784,7 @@ abstract class CommonObject
 		// Price HT
 		print '<td align="right" width="80"><label for="price_ht">'.$langs->trans('PriceUHT').'</label></td>';
 
-		if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<td align="right" width="80">&nbsp;</td>';
+		if ($inputalsopricewithtax) print '<td align="right" width="80">&nbsp;</td>';
 
 		// Qty
 		print '<td align="right" width="50"><label for="qty">'.$langs->trans('Qty').'</label></td>';
