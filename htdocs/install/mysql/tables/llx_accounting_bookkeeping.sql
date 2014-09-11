@@ -35,5 +35,5 @@ CREATE TABLE llx_accounting_bookkeeping
   fk_user_author	integer NOT NULL,
   import_key		varchar(14),
   code_journal		varchar(10) DEFAULT NULL,
-  piece_num		integer NOT NULL
+  piece_num			integer NOT NULL
 ) ENGINE=innodb;

@@ -264,7 +264,7 @@ if ($action == 'writeBookKeeping') {
 			$bookkeeping->fk_docdet = $val["fk_bank"];
 			$bookkeeping->code_tiers = $tabcompany[$key]['code_client'];
 			$bookkeeping->numero_compte = $k;
-			$bookkeeping->label_compte = $compte->intitule;
+			$bookkeeping->label_compte = $compte->label;
 			$bookkeeping->montant = ($mt < 0 ? - $mt : $mt);
 			$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 			$bookkeeping->debit = ($mt >= 0 ? $mt : 0);

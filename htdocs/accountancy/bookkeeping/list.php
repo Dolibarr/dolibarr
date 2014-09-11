@@ -91,9 +91,9 @@ else if ($action == 'export_csv') {
 
 else {
 	
-	llxHeader('', $langs->trans("Accounting") . ' - ' . $langs->trans("Bookkeeping"));
+	llxHeader('', $langs->trans("Bookkeeping"));
 	
-	/*
+/*
  * List
  */
 	

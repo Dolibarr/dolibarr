@@ -182,15 +182,7 @@ class modAccounting extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
-		$this->rights[$r][0] = 50401;		// TODO Goal of this permission compared to others ???
-		$this->rights[$r][1] = 'Access_accountancy';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'access';
-		$this->rights[$r][5] = '';
-		$r++;
-
-		$this->rights[$r][0] = 50402;
+		$this->rights[$r][0] = 50401;
 		$this->rights[$r][1] = 'Read ventilation';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
@@ -198,7 +190,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = 'read';
 		$r++;
 
-		$this->rights[$r][0] = 50403;
+		$this->rights[$r][0] = 50402;
 		$this->rights[$r][1] = 'Dispatched ventilation';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
