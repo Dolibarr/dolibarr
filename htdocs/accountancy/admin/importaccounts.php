@@ -61,7 +61,7 @@ if ($_POST["action"] == 'import') {
 				
 				$accounting = new AccountingAccount($db);
 				
-				$monLabel = GETPOST('intitule' . $maLigneCochee);
+				$monLabel = GETPOST('label' . $maLigneCochee);
 				$monParentAccount = GETPOST('AccountParent' . $maLigneCochee);
 				$monType = GETPOST('pcgType' . $maLigneCochee);
 				$monSubType = GETPOST('pcgSubType' . $maLigneCochee);
@@ -146,7 +146,7 @@ if ($result) {
 		print '</td>';
 		
 		print '<td align="left">';
-		print '<input name="intitule" size="30" value="">';
+		print '<input name="label" size="30" value="">';
 		print '</td>';
 		
 		// Colonne choix du compte
@@ -164,7 +164,7 @@ if ($result) {
 		
 		// Colonne choix ligne a ventiler
 		
-		$checked = ('intitule' == 'O') ? ' checked=checked' : '';
+		$checked = ('label' == 'O') ? ' checked=checked' : '';
 		
 		print '<td align="center">';
 		print '<input type="checkbox" name="mesCasesCochees[]" ' . $checked . ' value="' . $objp->accounting . '"/>';

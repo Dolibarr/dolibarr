@@ -69,7 +69,20 @@ For users:
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 
 New experimental module:
-- New: Module Accounting Expert to manage accountancy 
+- New: Module Accounting Expert to manage accountancy
+		Special Thanks to developpers :
+			Olivier Geffroy
+			Alexandre Spangaro
+			Ari Elbaz
+			Florian Henry
+			Juanjo Menent
+		
+		And to the contributors :
+			Jeff Info				2000 euros
+			Nord Anim		 		 120 euros
+			Hydroflex		 		 120 euros
+			Asysteo			 		 120 euros
+			Fournisseur médical		 120 euros
 
 For translators:
 - Update language files.
