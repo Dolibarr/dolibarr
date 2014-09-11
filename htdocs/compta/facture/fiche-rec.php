@@ -569,22 +569,9 @@ else
 
 					print '<td align="right">'.price($objp->total).'</td>'."\n";
 
-					if (! $objp->paye)
-					{
-						if ($objp->fk_statut == 0)
-						{
-							print '<td align="right">'.$langs->trans("Draft").'</td>';
-						}
-						else
-						{
-							print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/list.php?filtre=paye:0,fk_statut:1">'.$langs->trans("Validated").'</a></td>';
-						}
-					}
-					else
-					{
-						print '<td>&nbsp;</td>';
-					}
-
+                    echo '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
+                    echo  $langs->trans("CreateBill"),'</a></td>';
+						
 					print "</tr>\n";
 					$i++;
 				}
