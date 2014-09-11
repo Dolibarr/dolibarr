@@ -976,7 +976,7 @@ class ExtraFields
 				// Several field into label (eq table:code|libelle:rowid)
 				$fields_label = explode('|',$InfoFieldList[1]);
 
-				if(is_array($fields_label))
+				if(is_array($fields_label) && count($fields_label)>1)
 				{
 					foreach ($fields_label as $field_toshow)
 					{
