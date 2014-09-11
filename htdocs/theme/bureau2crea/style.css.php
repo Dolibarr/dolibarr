@@ -585,6 +585,9 @@ form#login {
 	background-image: -ms-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
 	background-image: linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
 }
+#securitycode {
+	min-width: 60px;
+}
 #img_securitycode {
 	border: 1px solid #DDDDDD;
 }
