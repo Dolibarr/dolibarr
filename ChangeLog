@@ -17,6 +17,7 @@ For users:
 - Fix: Salaries payment - Field date value is now required and add control on it.
 - Fix: Iban was used instead of Bic into SEPA file.
 - Fix: Must unaccent strings into SEPA file.
+- New: Direct invoice creation from predefined invoice
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
