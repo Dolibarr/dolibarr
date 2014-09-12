@@ -115,12 +115,17 @@ class FormProjets
 						{
 							$disabled=0;
 							$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
-							if (! $obj->fk_statut > 0)
+							if ($obj->fk_statut == 0)
 							{
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("Draft");
 							}
-							if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+							else if ($obj->fk_statut == 2)
+							{
+								$disabled=1;
+								$labeltoshow.=' - '.$langs->trans("Closed");
+							}
+							else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
 							{
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
