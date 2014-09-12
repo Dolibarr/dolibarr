@@ -689,7 +689,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 			if (empty($project_year_filter) || !ctype_digit($project_year_filter)) { //
 				$project_year_filter = date("Y");
 			}
-			$sql.= " AND (YEAR(p.datec) <= ".$project_year_filter." AND YEAR(p.datee) >= ".$project_year_filter.")";
+			$sql.= " AND (p.datee IS NULL OR YEAR(p.dateo) <= ".$project_year_filter.") AND (p.datee IS NULL OR YEAR(p.datee) >= ".$project_year_filter.")";
 		}
 	}
 	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut";
