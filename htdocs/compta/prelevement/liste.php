@@ -78,19 +78,19 @@ $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($search_line)
 {
-    $sql.= " AND pl.rowid = '".$search_line."'";
+    $sql.= " AND pl.rowid = '".$db->escape($search_line)."'";
 }
 if ($search_bon)
 {
-    $sql.= " AND p.ref LIKE '%".$search_bon."%'";
+    $sql.= " AND p.ref LIKE '%".$db->escape($search_bon)."%'";
 }
 if ($search_code)
 {
-    $sql.= " AND s.code_client LIKE '%".$search_code."%'";
+    $sql.= " AND s.code_client LIKE '%".$db->escape($search_code)."%'";
 }
 if ($search_societe)
 {
-    $sql .= " AND s.nom LIKE '%".$search_societe."%'";
+    $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
 }
 $sql.=$db->order($sortfield,$sortorder);
 $sql.=$db->plimit($conf->liste_limit+1, $offset);
@@ -104,7 +104,7 @@ if ($result)
     $urladd = "&amp;statut=".$statut;
     $urladd .= "&amp;search_bon=".$search_bon;
 
-    print_barre_liste($langs->trans("WithdrawalsLines"), $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
+    print_barre_liste($langs->trans("WithdrawalsLines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
 
     print"\n<!-- debut table -->\n";
     print '<table class="liste" width="100%">';

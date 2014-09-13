@@ -118,24 +118,24 @@ if ($type > 0)
 }
 if (isset($_GET["statut"]) || isset($_POST["statut"]))
 {
-	$sql.=" AND d.statut in (".$statut.")";     // Peut valoir un nombre ou liste de nombre separes par virgules
+	$sql.=" AND d.statut in (".$db->escape($statut).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
 }
 if ($search_ref)
 {
-	if (is_numeric($search_ref)) $sql.= " AND (d.rowid = ".$search_ref.")";
+	if (is_numeric($search_ref)) $sql.= " AND (d.rowid = ".$db->escape($search_ref).")";
 	else $sql.=" AND 1 = 2";    // Always wrong
 }
 if ($search_lastname)
 {
-	$sql.= " AND (d.firstname LIKE '%".$search_lastname."%' OR d.lastname LIKE '%".$search_lastname."%')";
+	$sql.= " AND (d.firstname LIKE '%".$db->escape($search_lastname)."%' OR d.lastname LIKE '%".$db->escape($search_lastname)."%')";
 }
 if ($search_login)
 {
-	$sql.= " AND d.login LIKE '%".$search_login."%'";
+	$sql.= " AND d.login LIKE '%".$db->escape($search_logi)."%'";
 }
 if ($search_email)
 {
-	$sql.= " AND (d.email LIKE '%".$search_email."%')";
+	$sql.= " AND (d.email LIKE '%".$db->escape($search_email)."%')";
 }
 if ($filter == 'uptodate')
 {

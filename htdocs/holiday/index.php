@@ -51,7 +51,7 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 
 $search_ref      = GETPOST('search_ref');
 $month_create    = GETPOST('month_create');
@@ -249,7 +249,7 @@ if ($id > 0)
 }
 else {
 	print '</div>';
-} 
+}
 
 print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<table class="noborder" width="100%;">';
@@ -299,7 +299,7 @@ if($user->rights->holiday->lire_tous)
     $form->select_users($search_valideur,"search_valideur",1,"",0,$valideurarray,'');
     print '</td>';
 }
-else 
+else
 {
     print '<td class="liste_titre">&nbsp;</td>';
 }

@@ -907,7 +907,7 @@ class BonPrelevement extends CommonObject
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
                 $sql.= " ref, entity, datec";
                 $sql.= ") VALUES (";
-                $sql.= "'".$ref."'";
+                $sql.= "'".$this->db->escape($ref)."'";
                 $sql.= ", ".$conf->entity;
                 $sql.= ", '".$this->db->idate($now)."'";
                 $sql.= ")";
