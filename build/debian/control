@@ -39,10 +39,10 @@ Description: Web based software to manage a company or foundation
  It's a web software you can install as a standalone program or on any web
  hosting provider to use it from anywhere with any web browser.
  .
- Dolibarr was designed to be easy to use. Only the features that you need are 
- visible, depending on which modules were activated.
+ Dolibarr was designed to be easy to use. Only the features that you need
+ are visible, depending on which modules were activated.
  .
- Most common used modules are:
+ This is an example of most common used modules:
  .
  Customers, Suppliers or Prospects directory,
  Contacts directory,
@@ -66,6 +66,6 @@ Description: Web based software to manage a company or foundation
  Wizards to export and import data,
  LDAP connectivity,
  PDF exports,
- And a lot of more modules...
+ And a lot more modules...
  .
  You can also add third parties external modules or develop yours.
