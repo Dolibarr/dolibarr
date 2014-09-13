@@ -101,6 +101,10 @@ class User extends CommonObject
 
 	var $accountancy_code;				// Accountancy code in prevision of the complete accountancy module
 	var $thm;							// Average cost of employee
+	var $tjm;							// Average cost of employee
+	var $salary;						// Monthly salary
+	var $salaryextra;					// Monthly salary extra
+	var $weeklyhours;					// Weekly hours
 
 
 	/**
@@ -156,6 +160,10 @@ class User extends CommonObject
 		$sql.= " u.openid as openid,";
 		$sql.= " u.accountancy_code,";
 		$sql.= " u.thm,";
+		$sql.= " u.tjm,";
+		$sql.= " u.salary,";
+		$sql.= " u.salaryextra,";
+		$sql.= " u.weeklyhours,";
 		$sql.= " u.ref_int, u.ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
@@ -219,6 +227,10 @@ class User extends CommonObject
 				$this->entity		= $obj->entity;
 				$this->accountancy_code		= $obj->accountancy_code;
 				$this->thm			= $obj->thm;
+				$this->tjm			= $obj->tjm;
+				$this->salary		= $obj->salary;
+				$this->salaryextra	= $obj->salaryextra;
+				$this->weeklyhours	= $obj->weeklyhours;
 
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->datem				= $this->db->jdate($obj->datem);
@@ -1156,11 +1168,15 @@ class User extends CommonObject
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
-		$sql.= ", thm = ".(isset($this->thm)?$this->thm:"null");	// If not set, we use null
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
 		$sql.= ", fk_user = ".($this->fk_user > 0?"'".$this->db->escape($this->fk_user)."'":"null");
+		if (isset($this->thm) || $this->thm != '')                 $sql.= ", thm= ".($this->thm != ''?"'".$this->db->escape($this->thm)."'":"null");
+		if (isset($this->tjm) || $this->tjm != '')                 $sql.= ", tjm= ".($this->tjm != ''?"'".$this->db->escape($this->tjm)."'":"null");
+		if (isset($this->salary) || $this->salary != '')           $sql.= ", salary= ".($this->salary != ''?"'".$this->db->escape($this->salary)."'":"null");
+		if (isset($this->salaryextra) || $this->salaryextra != '') $sql.= ", salaryextra= ".($this->salaryextra != ''?"'".$this->db->escape($this->salaryextra)."'":"null");
+		$sql.= ", weeklyhours= ".($this->weeklyhours != ''?"'".$this->db->escape($this->weeklyhours)."'":"null");
 		$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -2217,7 +2233,7 @@ class User extends CommonObject
 
 		// Init this->parentof that is array(id_son=>id_parent, ...)
 		$this->load_parentof();
-		
+
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.login, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
