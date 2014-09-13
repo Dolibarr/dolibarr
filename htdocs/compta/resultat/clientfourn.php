@@ -539,21 +539,22 @@ if ($mysoc->tva_assuj == 'franchise')	// Non assujeti
     print '</tr>';
 }
 
+
 /*
  * Salaries
  */
 
-print '<tr><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';    
-$sql = "SELECT p.label as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount, u.firstname, u.lastname, p.fk_user";
+print '<tr><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
+$sql = "SELECT u.rowid, u.firstname, u.lastname, p.fk_user, p.label as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
 $sql.= " WHERE p.entity = ".$conf->entity;
 if (! empty($date_start) && ! empty($date_end))
 	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-	
-$sql.= " GROUP BY u.rowid";
+
+$sql.= " GROUP BY u.rowid, u.firstname, u.lastname, p.fk_user, p.label, dm";
 $sql.= " ORDER BY u.firstname";
-    
+
 dol_syslog("get payment salaries sql=".$sql);
 $result=$db->query($sql);
 $subtotal_ht = 0;
@@ -576,9 +577,9 @@ if ($result)
 
             $var = !$var;
             print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-            
+
             print "<td>".$langs->trans("Salaries")." <a href=\"".DOL_URL_ROOT."/compta/salaries/index.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
-            
+
             if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
             print '<td align="right">'.price(-$obj->amount).'</td>';
             print '</tr>';
