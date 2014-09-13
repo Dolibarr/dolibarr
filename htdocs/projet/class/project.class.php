@@ -299,7 +299,7 @@ class Project extends CommonObject
         }
         else if (! empty($ref))
         {
-        	$sql.= " WHERE ref='".$ref."'";
+        	$sql.= " WHERE ref='".$this->db->escape($ref)."'";
         	$sql.= " AND entity IN (".getEntity('project').")";
         }
 
