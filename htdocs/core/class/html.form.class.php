@@ -595,7 +595,7 @@ class Form
 
         $sql = "SELECT c.code, c.label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
-        $sql.= " ORDER BY lower(c.libelle) ASC";
+        //$sql.= " ORDER BY c.label ASC";				  // No sort here, sort must be done after translation
 
         dol_syslog(get_class($this).'::load_cache_types_fees', LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -613,6 +613,9 @@ class Form
                 $this->cache_types_fees[$obj->code] = $label;
                 $i++;
             }
+
+			asort($this->cache_types_fees);
+
             return $num;
         }
         else
@@ -800,7 +803,11 @@ class Form
 
             // Construct $out and $outarray
             $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">'."\n";
-            if ($showempty) $out.= '<option value="-1"></option>'."\n";
+
+            $textifempty=' ';
+            if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='&nbsp;';
+            if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
+
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -1262,6 +1269,49 @@ class Form
             dol_print_error($this->db);
         }
 
+        return $out;
+    }
+
+
+    /**
+     *	Return select list of users. Selected users are stored into session.
+     *
+     *  @param  string	$htmlname       Field name in form
+     *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *  @param  array	$exclude        Array list of users id to exclude
+     * 	@param	int		$disabled		If select list must be disabled
+     *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
+     * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
+     *  @param	int		$force_entity	0 or Id of environment to force
+     *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
+     *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+     *  @param	string	$morefilter		Add more filters into sql request
+     * 	@return	string					HTML select string
+     *  @see select_dolgroups
+     */
+    function select_dolusers_forevent($htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='')
+    {
+        global $conf,$user,$langs;
+
+        $userstatic=new User($this->db);
+
+        // Method with no ajax
+        //$out.='<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		$out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
+		$out.='<input type="submit" class="button" name="addassignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+		$assignedtouser=array();
+		if (!empty($_SESSION['assignedtouser'])) $assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
+		if (count($assignedtouser)) $out.='<br>';
+		foreach($assignedtouser as $key => $value)
+		{
+			$userstatic->fetch($key);
+			$out.=$userstatic->getNomUrl(1);
+			//$out.=' '.($value['mandatory']?$langs->trans("Mandatory"):$langs->trans("Optional"));
+			//$out.=' '.($value['transparency']?$langs->trans("Busy"):$langs->trans("NotBusy"));
+			$out.='<br>';
+		}
+
+		//$out.='</form>';
         return $out;
     }
 
@@ -2340,8 +2390,8 @@ class Form
         dol_syslog(get_class($this)."::select_type_paiements ".$selected.", ".$htmlname.", ".$filtertype.", ".$format,LOG_DEBUG);
 
         $filterarray=array();
-        if ($filtertype == 'CRDT')  	$filterarray=array(0,2);
-        elseif ($filtertype == 'DBIT') 	$filterarray=array(1,2);
+        if ($filtertype == 'CRDT')  	$filterarray=array(0,2,3);
+        elseif ($filtertype == 'DBIT') 	$filterarray=array(1,2,3);
         elseif ($filtertype != '' && $filtertype != '-1') $filterarray=explode(',',$filtertype);
 
         $this->load_cache_types_paiements();
@@ -3189,12 +3239,13 @@ class Form
     /**
      *    Affiche formulaire de selection des modes de reglement
      *
-     *    @param	string	$page        Page
-     *    @param    int		$selected    Id mode pre-selectionne
-     *    @param    string	$htmlname    Name of select html field
+     *    @param	string	$page        	Page
+     *    @param    int		$selected    	Id mode pre-selectionne
+     *    @param    string	$htmlname    	Name of select html field
+     *    @param  	string	$filtertype		To filter on field type in llx_c_paiement (array('code'=>xx,'label'=>zz))
      *    @return	void
      */
-    function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id')
+    function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id', $filtertype='')
     {
         global $langs;
         if ($htmlname != "none")
@@ -3204,7 +3255,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_types_paiements($selected,$htmlname);
+            $this->select_types_paiements($selected,$htmlname,$filtertype);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -3924,32 +3975,35 @@ class Form
 
     /**
      *	Return a HTML select string, built from an array of key+value.
+     *  Note: Do not use returned string into a langs->trans function, content may be entity encoded twice.
      *
      *	@param	string	$htmlname       Name of html select area
      *	@param	array	$array          Array with key+value
      *	@param	string	$id             Preselected key
-     *	@param	int		$show_empty     1 si il faut ajouter une valeur vide dans la liste, 0 sinon
+     *	@param	int		$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;').
      *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int		$value_as_key   1 to use value as key
-     *	@param  string	$option         Valeur de l'option en fonction du type choisi
+     *	@param  string	$moreparam      Add more parameters onto the select tag
      *	@param  int		$translate		Translate and encode value
      * 	@param	int		$maxlen			Length maximum for labels
      * 	@param	int		$disabled		Html select box is disabled
      *  @param	int		$sort			'ASC' or 'DESC' =Sort on label, '' or 'NONE'=Do not sort
      *  @param	string	$morecss		Add more class to css styles
-     * 	@return	string					HTML select string
+     * 	@return	string					HTML select string.
      */
-    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='')
+    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='')
     {
-        global $langs;
+        global $conf, $langs;
 
         if ($value_as_key) $array=array_combine($array, $array);
 
-        $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
+        $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($moreparam?$moreparam:'').'>';
 
         if ($show_empty)
         {
-            $out.='<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+        	$textforempty=' ';
+        	if (! empty($conf->use_javascript_ajax)) $textforempty='&nbsp;';	// If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
+            $out.='<option value="-1"'.($id==-1?' selected="selected"':'').'>'.$textforempty.'</option>'."\n";
         }
 
         if (is_array($array))
@@ -3972,11 +4026,11 @@ class Form
 
                 if ($key_in_label)
                 {
-                    $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($value,$maxlen):$value));
+                    $selectOptionValue = dol_escape_htmltag($key.' - '.($maxlen?dol_trunc($value,$maxlen):$value));
                 }
                 else
                 {
-                    $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($value,$maxlen):$value);
+                    $selectOptionValue = dol_escape_htmltag($maxlen?dol_trunc($value,$maxlen):$value);
                     if ($value == '' || $value == '-') $selectOptionValue='&nbsp;';
                 }
                 $out.=$selectOptionValue;

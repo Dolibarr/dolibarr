@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("companies");
+$langs->load("bills");
 $langs->load("interventions");
 
 $socid=GETPOST('socid','int');
@@ -54,11 +55,14 @@ $limit = $conf->liste_limit;
 $search_ref=GETPOST('search_ref','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_desc=GETPOST('search_desc','alpha');
+$search_status=GETPOST('search_status');
 
 
 /*
  *	View
  */
+
+$form = new Form($db);
 
 llxHeader();
 
@@ -83,11 +87,14 @@ if ($search_company) {
 if ($search_desc) {
     $sql .= natural_search(array('f.description', 'fd.description'), $search_desc);
 }
+if ($search_status != '' && $search_status >= 0) {
+    $sql .= ' AND f.fk_statut = '.$search_status;
+}
 if (! $user->rights->societe->client->voir && empty($socid))
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 	$sql.= " AND s.rowid = " . $socid;
-$sql.= " ORDER BY ".$sortfield." ".$sortorder;
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
 $result=$db->query($sql);
@@ -100,7 +107,7 @@ if ($result)
 	$urlparam="&amp;socid=$socid";
 	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num);
 
-	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
@@ -130,7 +137,11 @@ if ($result)
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+	print '<td class="liste_titre" align="right">';
+	$liststatus=array('0'=>$langs->trans("Draft"), '1'=>$langs->trans("Validated"), '2'=>$langs->trans("Billed"));
+	print $form->selectarray('search_status', $liststatus, GETPOST('search_status'), 1);
+	print '<input class="liste_titre" align="right" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '</td>';
 	print "</tr>\n";
 
 	$companystatic=new Societe($db);

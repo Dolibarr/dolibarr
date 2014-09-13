@@ -71,5 +71,6 @@ create table llx_user
   fk_barcode_type	integer      DEFAULT 0,
   accountancy_code  varchar(32) NULL,
   nb_holiday		integer DEFAULT 0,
-  salary			double(24,8)
+  salary			double(24,8),
+  weeklyhours		double(16,8)
 )ENGINE=innodb;

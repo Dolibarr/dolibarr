@@ -508,7 +508,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function security_prepare_head()
 {

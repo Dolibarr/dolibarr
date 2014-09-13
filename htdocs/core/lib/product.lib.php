@@ -29,7 +29,7 @@
  *
  * @param   Object	$object		Object related to tabs
  * @param	User	$user		Object user
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function product_prepare_head($object, $user)
 {

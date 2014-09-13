@@ -298,6 +298,9 @@ class DoliDBPgsql extends DoliDB
             $line=str_replace(' LIKE \'',' ILIKE \'',$line);
             $line=str_replace(' LIKE BINARY \'',' LIKE \'',$line);
 
+            // Replace INSERT IGNORE into INSERT
+            $line=preg_replace('/^INSERT IGNORE/','INSERT',$line);
+
 			// Delete using criteria on other table must not declare twice the deleted table
 			// DELETE FROM tabletodelete USING tabletodelete, othertable -> DELETE FROM tabletodelete USING othertable
 			if (preg_match('/DELETE FROM ([a-z_]+) USING ([a-z_]+), ([a-z_]+)/i',$line,$reg))

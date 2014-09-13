@@ -252,7 +252,11 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	            {
 	                $srcobject->fetch_thirdparty();
 					$lines = $srcobject->lines;
-	                if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+	                if (empty($lines) && method_exists($srcobject,'fetch_lines'))
+	                {
+	                	$srcobject->fetch_lines();
+	                	$lines = $srcobject->lines;
+	                }
 
 	                $fk_parent_line=0;
 	                $num=count($lines);
@@ -339,7 +343,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	    }
 	    else
 	    {
-	    	
+
 	    	// Fill array 'array_options' with data from add form
 	    	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 
@@ -717,7 +721,7 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		$error ++;
 
 	if (! $error) {
-		
+
 			$result = $object->insertExtraFields();
 			if ($result < 0) {
 				$error ++;
@@ -735,7 +739,7 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		setEventMessage($object->errors,'errors');
 	}
 	$object->ref_customer=GETPOST('ref_customer','alpha');
-	
+
 	$result = $object->update($user);
 	if ($result < 0) {
 		setEventMessage($object->errors,'errors');
@@ -750,7 +754,7 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		setEventMessage($object->errors,'errors');
 	}
 	$object->ref=GETPOST('ref','alpha');
-	
+
 	$result = $object->update($user);
 	if ($result < 0) {
 		setEventMessage($object->errors,'errors');
@@ -921,7 +925,7 @@ if ($action == 'create')
     	$tmpcode='<input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
     }
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$tmpcode.'</td></tr>';
-	
+
 	// Ref Int
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
 	print '<td colspan="2"><input type="text" siez="5" name="ref_customer" id="ref_customer" value="'.GETPOST('ref_customer','alpha').'"></td></tr>';
@@ -999,7 +1003,7 @@ if ($action == 'create')
     // Other attributes
     $parameters=array('objectsrc' => $objectsrc,'colspan' => ' colspan="3"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-    
+
     // Other attributes
     if (empty($reshook) && ! empty($extrafields->attribute_label)) {
     	print $object->showOptionals($extrafields, 'edit');
@@ -1181,7 +1185,7 @@ else
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        
+
         $res = $object->fetch_optionals($object->id, $extralabels);
         if (empty($reshook) && ! empty($extrafields->attribute_label)) {
         	foreach ($extrafields->attribute_label as $key => $label) {
@@ -1201,16 +1205,16 @@ else
         			if (in_array($extrafields->attribute_type [$key], array('date','datetime'))) {
         				$value = isset($_POST ["options_" . $key]) ? dol_mktime($_POST ["options_" . $key . "hour"], $_POST ["options_" . $key . "min"], 0, $_POST ["options_" . $key . "month"], $_POST ["options_" . $key . "day"], $_POST ["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
         			}
-        
+
         			if ($action == 'edit_extras' && $user->rights->commande->creer && GETPOST('attribute') == $key) {
         				print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formcontract">';
         				print '<input type="hidden" name="action" value="update_extras">';
         				print '<input type="hidden" name="attribute" value="' . $key . '">';
         				print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
         				print '<input type="hidden" name="id" value="' . $object->id . '">';
-        
+
         				print $extrafields->showInputField($key, $value);
-        
+
         				print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
         				print '</form>';
         			} else {
@@ -1222,9 +1226,9 @@ else
         		}
         	}
         }
-        
-        
-        
+
+
+
 
         print "</table>";
 

@@ -1216,10 +1216,11 @@ class BonPrelevement extends CommonObject
 
 
     /**
-     *	Generate a withdrawal file. Generation Formats:
-     *   European countries: SEPA
-     *   Others: Warning message
-     *	File is generated with name this->filename
+     * Generate a withdrawal file.
+     * Generation Formats:
+     * - Europe: SEPA (France: CFONB no more supported, Spain:  AEB19 if external module EsAEB is enabled)
+     * - Others countries: Warning message
+     * File is generated with name this->filename
      *
      *	@return		int			0 if OK, <0 if KO
      */
@@ -1340,7 +1341,7 @@ class BonPrelevement extends CommonObject
 			fputs($this->file, '		</PmtInf>'.$CrLf);
 			fputs($this->file, '	</CstmrDrctDbtInitn>'.$CrLf);
 			fputs($this->file, '</Document>'.$CrLf);
-			
+
 			$sql = "SELECT pl.amount";
 			$sql.= " FROM";
 			$sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
@@ -1349,14 +1350,14 @@ class BonPrelevement extends CommonObject
 			$sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
 			$sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
 			$sql.= " AND pf.fk_facture = f.rowid";
-			
+
 			//Lines
 			$i = 0;
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
 				$num = $this->db->num_rows($resql);
-			
+
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -1504,7 +1505,7 @@ class BonPrelevement extends CommonObject
      *	@param	string		$row_bic			rib.bic AS bic,
      *	@param	string		$row_datec			soc.datec,
      *	@param	string		$row_drum			soc.rowid AS drum
-     *	@return	void
+     *	@return	string							Return string with SEPA part DrctDbtTxInf
      */
     function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_facnumber, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum)
     {
@@ -1528,15 +1529,15 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR .='				</DrctDbtTx>'.$CrLf;
 		$XML_DEBITOR .='				<DbtrAgt>'.$CrLf;
 		$XML_DEBITOR .='					<FinInstnId>'.$CrLf;
-		$XML_DEBITOR .='						<BIC>'.$row_iban.'</BIC>'.$CrLf;
+		$XML_DEBITOR .='						<BIC>'.$row_bic.'</BIC>'.$CrLf;
 		$XML_DEBITOR .='					</FinInstnId>'.$CrLf;
 		$XML_DEBITOR .='				</DbtrAgt>'.$CrLf;
 		$XML_DEBITOR .='				<Dbtr>'.$CrLf;
-		$XML_DEBITOR .='					<Nm>'.strtoupper($row_nom).'</Nm>'.$CrLf;
+		$XML_DEBITOR .='					<Nm>'.strtoupper(dol_string_unaccent($row_nom)).'</Nm>'.$CrLf;
 		$XML_DEBITOR .='					<PstlAdr>'.$CrLf;
 		$XML_DEBITOR .='						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
 		$XML_DEBITOR .='						<AdrLine>'.strtr($row_adr, array(CHR(13) => ", ", CHR(10) => "")).'</AdrLine>'.$CrLf;
-		$XML_DEBITOR .='						<AdrLine>'.$row_zip.' '.$row_town.'</AdrLine>'.$CrLf;
+		$XML_DEBITOR .='						<AdrLine>'.dol_string_unaccent($row_zip.' '.$row_town).'</AdrLine>'.$CrLf;
 		$XML_DEBITOR .='					</PstlAdr>'.$CrLf;
 		$XML_DEBITOR .='				</Dbtr>'.$CrLf;
 		$XML_DEBITOR .='				<DbtrAcct>'.$CrLf;
@@ -1619,7 +1620,8 @@ class BonPrelevement extends CommonObject
     }
 
     /**
-     *	Write sender of request (me)
+     *	Write sender of request (me).
+     *  Note: The tag PmtInf is opened here but closed into caller
      *
      *	@param	string	$configuration	conf
      *	@param	date	$ladate			Date

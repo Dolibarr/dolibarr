@@ -100,7 +100,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 	if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	
+
 	$langs->load('bills');
 	$langs->load('products');
 	$langs->load('main');
@@ -216,13 +216,17 @@ if (($action == 'create' || $action == 'add') && !$error)
 							$result=$objectsrc->fetch($orders_id[$ii]);
 							if ($result > 0)
 							{
-								if ($closeOrders) 
+								if ($closeOrders)
 								{
 									$objectsrc->classifyBilled();
 									$objectsrc->setStatut(3);
 								}
 								$lines = $objectsrc->lines;
-								if (empty($lines) && method_exists($objectsrc,'fetch_lines'))  $lines = $objectsrc->fetch_lines();
+								if (empty($lines) && method_exists($objectsrc, 'fetch_lines'))
+								{
+									$objectsrc->fetch_lines();
+									$lines = $objectsrc->lines;
+								}
 								$fk_parent_line=0;
 								$num=count($lines);
 								for ($i=0;$i<$num;$i++)

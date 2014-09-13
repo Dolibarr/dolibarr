@@ -391,7 +391,7 @@ if ($resql)
 
 		// Delivery date
 		print '<td align="right">';
-		print dol_print_date($db->jdate($objp->date_delivery), 'day');
+		print dol_print_date($db->jdate($objp->date_livraison), 'day');
 		print '</td>';
 
 		// Amount HT

@@ -85,6 +85,7 @@ ClassifyPaid=Klassificera &quot;Betalda&quot;
 ClassifyPaidPartially=Klassificera &quot;Betalda delvis&quot;
 ClassifyCanceled=Klassificera &quot;svikna&quot;
 ClassifyClosed=Klassificera &quot;sluten&quot;
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Skapa faktura
 AddBill=Lägg faktura eller kreditnota
 AddToDraftInvoices=Lägg till faktura-utkast
@@ -197,8 +198,8 @@ Rest=Avvaktande
 AmountExpected=Yrkade beloppet
 ExcessReceived=Överskott fått
 EscompteOffered=Rabatterna (betalning innan terminen)
-SendBillRef=Skicka faktura %s
-SendReminderBillRef=Skicka faktura %s (påminnelse)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Stående order
 StandingOrder=Stående order
 NoDraftBills=Inget förslag fakturor
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Totalt för två nya rabatt måste vara lik
 ConfirmRemoveDiscount=Är du säker på att du vill ta bort denna rabatt?
 RelatedBill=Relaterade faktura
 RelatedBills=Relaterade fakturor
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Omedelbar

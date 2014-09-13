@@ -759,7 +759,7 @@ class FormFile
 
 			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-			$var=true;
+			$var=false;
 			foreach($filearray as $key => $file)      // filearray must be only files here
 			{
 				if ($file['name'] != '.'
@@ -1160,7 +1160,7 @@ class FormFile
                 print '</td>';
                 print '<td align="center">' . dol_print_date(dol_now(), "dayhour", "tzuser") . '</td>';
                 print '<td align="right"></td>';
-                print '<td align="right" colspan="2">';
+                print '<td align="right">';
                 print '<input type="submit" name="save" class="button" value="' . dol_escape_htmltag($langs->trans('Save')) . '">';
                 print '<input type="submit" name="cancel" class="button" value="' . dol_escape_htmltag($langs->trans('Cancel')) . '">';
                 print '</td>';
@@ -1175,7 +1175,7 @@ class FormFile
                 print '<td align="right"></td>';
                 print '<td align="center">' . dol_print_date($link->datea, "dayhour", "tzuser") . '</td>';
                 print '<td align="center"></td>';
-                print '<td align="right" colspan="2">';
+                print '<td align="right">';
                 print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id . $param . '" class="editfilelink" >' . img_edit() . '</a>';	// id= is included into $param
                 if ($permtodelete) {
                     print ' &nbsp; <a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id . $param . '" class="deletefilelink">' . img_delete() . '</a>';	// id= is included into $param
@@ -1188,7 +1188,7 @@ class FormFile
         }
         if ($nboflinks == 0)
         {
-            print '<tr ' . $bc[$var] . '><td colspan="4">';
+            print '<tr ' . $bc[$var] . '><td colspan="5">';
             print $langs->trans("NoLinkFound");
             print '</td></tr>';
         }

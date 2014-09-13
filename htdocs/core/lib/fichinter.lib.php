@@ -28,7 +28,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function fichinter_prepare_head($object)
 {
@@ -127,7 +127,7 @@ function fichinter_admin_prepare_head()
     $h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinterdet_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
     $head[$h][2] = 'attributesdet';
     $h++;
 

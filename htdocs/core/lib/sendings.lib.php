@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function shipping_prepare_head($object)
 {
@@ -85,7 +85,7 @@ function shipping_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function delivery_prepare_head($object)
 {

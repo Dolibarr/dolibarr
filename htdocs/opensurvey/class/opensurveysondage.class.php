@@ -149,7 +149,7 @@ class Opensurveysondage extends CommonObject
 
                 // Call trigger
                 $result=$this->call_trigger('OPENSURVEY_CREATE',$user);
-                if ($result < 0) $error++;          
+                if ($result < 0) $error++;
                 // End call triggers
 			}
         }
@@ -343,7 +343,7 @@ class Opensurveysondage extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('OPENSURVEY_DELETE',$user);
-                if ($result < 0) $error++;          
+                if ($result < 0) $error++;
                 // End call triggers
 			}
 		}
@@ -387,7 +387,7 @@ class Opensurveysondage extends CommonObject
 	/**
 	 * Return array of lines
 	 *
-	 * @return 	array	Array of lines
+	 * @return 	int		<0 if KO, >0 if OK
 	 */
 	function fetch_lines()
 	{
@@ -413,7 +413,7 @@ class Opensurveysondage extends CommonObject
 
 		$this->lines=$ret;
 
-		return $this->lines;
+		return count($this->lines);
 	}
 
 	/**

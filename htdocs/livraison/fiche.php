@@ -185,7 +185,7 @@ if ($action == 'builddoc')	// En get ou en post
 	$object = new Livraison($db);
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-	
+
 	// Save last template used to generate document
 	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
@@ -317,7 +317,8 @@ if ($action == 'create')
 		 */
 		print '<br><table class="noborder" width="100%">';
 
-		$lines = $commande->fetch_lines(1);
+		$commande->fetch_lines(1);
+		$lines = $commande->lines;
 
 		// Lecture des livraisons deja effectuees
 		$commande->livraison_array();
@@ -515,7 +516,7 @@ else
 			if (($delivery->origin == 'shipment' || $delivery->origin == 'expedition') && $delivery->origin_id > 0)
 			{
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/liste.php">'.$langs->trans("BackToList").'</a>';
-				
+
 				// Ref
 				print '<tr><td width="20%">'.$langs->trans("RefSending").'</td>';
 				print '<td colspan="3">';
@@ -523,8 +524,8 @@ else
 				//print $form->showrefnav($expedition, 'refshipment', $linkback, 1, 'ref', 'ref');
 				print $form->showrefnav($expedition, 'refshipment', $linkback, 0, 'ref', 'ref');
 				print '</td></tr>';
-			}			
-				
+			}
+
 			// Ref
 			print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">'.$delivery->ref.'</td></tr>';

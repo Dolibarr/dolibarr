@@ -137,13 +137,13 @@ class modService extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]="Services";	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("service","export"));
-		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",'p.tva_tx'=>'VATRate','p.tosell'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
+		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",'p.tva_tx'=>'VATRate','p.tosell'=>"OnSell",'p.tobuy'=>"OnBuy",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
 		if (! empty($conf->stock->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('p.stock'=>'Stock'));
 		//$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.price_base_type'=>"Text",'p.price'=>"Number",'p.price_ttc'=>"Number",'p.tva_tx'=>'Number','p.tosell'=>"Boolean",'p.duration'=>"Duree",'p.datec'=>'Date','p.tms'=>'Date');
-		$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.price_base_type'=>"Text",'p.price'=>"Number",'p.price_ttc'=>"Number",'p.tva_tx'=>'Number','p.tosell'=>"Boolean",'p.duration'=>"Duree",'p.datec'=>'Date','p.tms'=>'Date');
-		if (! empty($conf->stock->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_fields_array[$r],array('p.stock'=>'Number'));
+		$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.price_base_type'=>"Text",'p.price'=>"Number",'p.price_ttc'=>"Number",'p.tva_tx'=>'Number','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.duration'=>"Duree",'p.datec'=>'Date','p.tms'=>'Date');
+		if (! empty($conf->stock->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.stock'=>'Number'));
 		if (! empty($conf->barcode->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.barcode'=>'Text'));
-		$this->export_entities_array[$r]=array('p.rowid'=>"service",'p.ref'=>"service",'p.label'=>"service",'p.description'=>"service",'p.accountancy_code_sell'=>'service','p.note'=>"service",'p.price_base_type'=>"service",'p.price'=>"service",'p.price_ttc'=>"service",'p.tva_tx'=>"service",'p.tosell'=>"service",'p.duration'=>"service",'p.datec'=>"service",'p.tms'=>"service");
+		$this->export_entities_array[$r]=array('p.rowid'=>"service",'p.ref'=>"service",'p.label'=>"service",'p.description'=>"service",'p.accountancy_code_sell'=>'service','p.note'=>"service",'p.price_base_type'=>"service",'p.price'=>"service",'p.price_ttc'=>"service",'p.tva_tx'=>"service",'p.tosell'=>"service",'p.tobuy'=>"service",'p.duration'=>"service",'p.datec'=>"service",'p.tms'=>"service");
 		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.stock'=>'service'));
 		if (! empty($conf->barcode->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.barcode'=>'service'));
 		// Add extra fields
@@ -182,6 +182,7 @@ class modService extends DolibarrModules
 					'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
 					'pr.tva_tx'=>'PriceLevelVATRate',
 					'pr.date_price'=>'DateCreation');
+				//$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.length'=>"Number",'p.surface'=>"Number",'p.volume'=>"Number",'p.weight'=>"Number",'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Number",'p.price_ttc'=>"Number",'p.tva_tx'=>'Number','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date');
 				$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",
 					'pr.price_base_type'=>"product",'pr.price_level'=>"product",'pr.price'=>"product",
 					'pr.price_ttc'=>"product",

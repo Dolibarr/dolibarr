@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014		Alexandre Spangaro	 <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,7 @@ class modSalaries extends DolibarrModules
 		$this->dirs = array("/salaries/temp");
 
 		// Config pages
-		$this->config_page_url = array();
+		$this->config_page_url = array('salaries.php');
 
 		// Dependances
 		$this->depends = array();
@@ -76,6 +77,16 @@ class modSalaries extends DolibarrModules
 
 		// Constants
 		$this->const = array();
+		$this->const[0] = array(
+				"SALARIES_ACCOUNTING_ACCOUNT_PAYMENT",
+				"chaine",
+				"421"
+		);
+		$this->const[1] = array(
+				"SALARIES_ACCOUNTING_ACCOUNT_CHARGE",
+				"chaine",
+				"641"
+		);
 
 		// Boxes
 		$this->boxes = array();

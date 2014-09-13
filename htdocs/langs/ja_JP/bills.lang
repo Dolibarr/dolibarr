@@ -85,6 +85,7 @@ ClassifyPaid=分類 '有料'
 ClassifyPaidPartially='は部分的に有料 &quot;に分類
 ClassifyCanceled=&quot;放棄&quot;を分類する
 ClassifyClosed=&quot;クローズ&quot;を分類する
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=請求書を作成します。
 AddBill=請求書やクレジットメモを追加
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=量が主張
 ExcessReceived=過剰は、受信した
 EscompteOffered=提供される割引（用語の前にお支払い）
-SendBillRef=請求書%sを送る
-SendReminderBillRef=請求書%s（リマインダー）を送信
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=立っている受注
 StandingOrder=立っているため、
 NoDraftBills=いいえドラフトの請求なし
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=二つの新しい割引の合計は元の�
 ConfirmRemoveDiscount=この割引を削除してよろしいですか？
 RelatedBill=関連する請求書
 RelatedBills=関連する請求書
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=即時の

@@ -240,7 +240,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Ref").'</td>';
+	print '<tr><td valign="top" class="fieldrequired"  width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$account->ref).'" maxlength="12"></td></tr>';
 
 	// Label
@@ -306,11 +306,15 @@ if ($action == 'create')
 	$doleditor=new DolEditor('account_comment',$account->comment,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
 	$doleditor->Create();
 	print '</td></tr>';
+	
+	print '</table>';
+
+	print '<br>';
+
+	print '<table class="border" width="100%">';
 
 	// Sold
-	print '<tr><td colspan="4"><b>'.$langs->trans("InitialBankBalance").'...</b></td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("InitialBankBalance").'</td>';
+	print '<tr><td valign="top" width="25%">'.$langs->trans("InitialBankBalance").'</td>';
 	print '<td colspan="3"><input size="12" type="text" class="flat" name="solde" value="'.($_POST["solde"]?$_POST["solde"]:price2num($account->solde)).'"></td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("Date").'</td>';
@@ -332,12 +336,12 @@ if ($action == 'create')
 	// Accountancy code
     if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
     {
-        print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountancyCode").'</td>';
+        print '<tr><td valign="top" class="fieldrequired"  width="25%">'.$langs->trans("AccountancyCode").'</td>';
         print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
     }
     else
     {
-        print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+        print '<tr><td valign="top"  width="25%">'.$langs->trans("AccountancyCode").'</td>';
         print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
     }
 
@@ -506,8 +510,7 @@ else
         $account->fetch(GETPOST('id','int'));
 
         print_fiche_titre($langs->trans("EditFinancialAccount"));
-        print "<br>";
-
+        
         if ($conf->use_javascript_ajax)
         {
             print "\n".'<script type="text/javascript" language="javascript">';
@@ -528,7 +531,7 @@ else
         print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Ref").'</td>';
+		print '<tr><td valign="top" class="fieldrequired" width="25%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.(isset($_POST["ref"])?$_POST["ref"]:$account->ref).'"></td></tr>';
 
 		// Label
@@ -611,29 +614,34 @@ else
 		$doleditor=new DolEditor('account_comment',(isset($_POST["account_comment"])?$_POST["account_comment"]:$account->comment),'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
 		$doleditor->Create();
 		print '</td></tr>';
+		
+		print '</table>';
+
+		print '<br>';
+		print '<table class="border" width="100%">';
 
 		// Accountancy code
         if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
         {
-            print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountancyCode").'</td>';
+            print '<tr><td valign="top" class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
             print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
         }
         else
         {
-            print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+            print '<tr><td valign="top" width="25%">'.$langs->trans("AccountancyCode").'</td>';
             print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
         }
 
 		// Accountancy journal
-        print '<tr><td valign="top">'.$langs->trans("AccountancyJournalCode").'</td>';
+        print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
         print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$account->accountancy_journal).'"></td></tr>';
+		
+		print '</table>';
 
-        print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Modify").'" type="submit" class="button">';
-        print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';
-        print '</td></tr>';
-        print '</table>';
+		print '<center><br><input value="'.$langs->trans("Modify").'" type="submit" class="button">';
+		print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button"></center>';
 
-        print '</form>';
+		print '</form>';
 	}
 
 }

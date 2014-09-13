@@ -174,7 +174,7 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 * 	Return array of users id for group this->id (or all if this->id not defined)
+	 * 	Return array of User objects for group this->id (or all if this->id not defined)
 	 *
 	 * 	@param	string	$excludefilter		Filter to exclude
 	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
@@ -546,7 +546,7 @@ class UserGroup extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('GROUP_DELETE',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
             // End call triggers
 
 			$this->db->commit();
@@ -579,7 +579,7 @@ class UserGroup extends CommonObject
 		if (! empty($conf->multicompany->enabled) && $conf->entity == 1) $entity=$this->entity;
 
 		$this->db->begin();
-		
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (";
 		$sql.= "datec";
 		$sql.= ", nom";
@@ -602,7 +602,7 @@ class UserGroup extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('GROUP_CREATE',$user);
-                if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                if ($result < 0) { $error++; $this->db->rollback(); return -1; }
                 // End call triggers
 			}
 
@@ -636,7 +636,7 @@ class UserGroup extends CommonObject
 		}
 
 		$this->db->begin();
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
 		$sql.= " nom = '" . $this->db->escape($this->nom) . "'";
 		$sql.= ", entity = " . $this->db->escape($entity);
@@ -651,11 +651,11 @@ class UserGroup extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('GROUP_MODIFY',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
 			}
 
-			if (! $error) 
+			if (! $error)
 			{
 			    $this->db->commit();
 			    return 1;
