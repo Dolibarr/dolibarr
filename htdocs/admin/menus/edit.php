@@ -317,7 +317,7 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td><td>';
     if ($parent_rowid)
     {
-        print 'Left';
+        print $langs->trans('Left');
         print '<input type="hidden" name="type" value="left">';
     }
     else
