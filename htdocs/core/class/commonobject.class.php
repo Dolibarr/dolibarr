@@ -1053,7 +1053,6 @@ abstract class CommonObject
         }
     }
 
-
     /**
      *  Save a new position (field rang) for details lines.
      *  You can choose to set position for lines with already a position or lines without any position defined.
