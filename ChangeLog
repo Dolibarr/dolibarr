@@ -27,6 +27,7 @@ Fix: Add code save on create event.
 Fix: SQL injection.
 Fix: [ bug #1589 ] Menu type in "Edit menu" page is not translated
 Fix: [ bug #1591 ] Linked object block shows Total HT/TTC even if not having permission to read them
+Fix: [ bug #1577 ] When creating new Private individual third, selected third type is ignored
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.
