@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@@2byte.es>
- * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2014 Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -253,17 +253,22 @@ if ($id > 0 || ! empty($ref))
 	//Total pages
 	$totalPages = ceil($total_lines/$viewline);
 
-	if ($page > 0)
-	{
-		$limitsql = ($totalPages - $page) * $viewline;
-		if ($limitsql < $viewline) $limitsql = $viewline;
-		$nbline = $limitsql;
-	}
-	else
-	{
+	if ($totalPages == 0) {
 		$page = 0;
-		$limitsql = $nbline;
+	} else {
+
+		if ($page > 0) {
+			$limitsql = ($totalPages - $page) * $viewline;
+			if ($limitsql < $viewline) {
+				$limitsql = $viewline;
+			}
+			$nbline = $limitsql;
+		} else {
+			$page = 0;
+			$limitsql = $nbline;
+		}
 	}
+
 	//print $limitsql.'-'.$page.'-'.$viewline;
 
 	// Onglets
