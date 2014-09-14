@@ -25,6 +25,7 @@ Fix: [ bug #1544 ] Can remove date from invoice.
 Fix: list event view lost type event filter.
 Fix: Add code save on create event.
 Fix: SQL injection.
+Fix: [ bug #1591 ] Linked object block shows Total HT/TTC even if not having permission to read them
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.
