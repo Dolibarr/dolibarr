@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin          <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent          <jmenent@2byte.es>
+ * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,18 @@ class PaiementFourn extends Paiement
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
 
 	/**
+	 * Label of payment type
+	 * @var string
+	 */
+	public $type_libelle;
+
+	/**
+	 * Code of Payment type
+	 * @var string
+	 */
+	public $type_code;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -74,7 +87,7 @@ class PaiementFourn extends Paiement
 	function fetch($id)
 	{
 		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank,';
-		$sql.= ' c.libelle as paiement_type,';
+		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
@@ -95,6 +108,7 @@ class PaiementFourn extends Paiement
 				$this->bank_line      = $obj->fk_bank;
 				$this->montant        = $obj->amount;
 				$this->note           = $obj->note;
+				$this->type_code      = $obj->paiement_code;
 				$this->type_libelle   = $obj->paiement_type;
 				$this->statut         = $obj->statut;
 				$error = 1;
