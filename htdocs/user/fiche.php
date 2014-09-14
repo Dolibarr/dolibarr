@@ -942,7 +942,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td>';
     print "</tr>\n";
 
-	if ($conf->salaries->enabled)
+	if ($conf->salaries->enabled && ! empty($user->rights->salaries->read))
 	{
 		$langs->load("salaries");
 
@@ -1268,7 +1268,7 @@ else
             print '</td>';
             print "</tr>\n";
 
-            if ($conf->salaries->enabled)
+            if ($conf->salaries->enabled && ! empty($user->rights->salaries->read))
             {
             	$langs->load("salaries");
 
@@ -1957,11 +1957,11 @@ else
             print '</td>';
             print "</tr>\n";
 
-            $langs->load("salaries");
-
-            if ($conf->salaries->enabled)
+            if ($conf->salaries->enabled && ! empty($user->rights->salaries->read))
             {
-			    // THM
+            	$langs->load("salaries");
+
+            	// THM
 			    print '<tr><td valign="top">'.$langs->trans("THM").'</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
