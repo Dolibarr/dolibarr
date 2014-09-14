@@ -30,6 +30,7 @@ Fix: [ bug #1591 ] Linked object block shows Total HT/TTC even if not having per
 Fix: [ bug #1577 ] When creating new Private individual third, selected third type is ignored
 Fix: [ bug #1555 ] Update accountancy code of products does not throw PRODUCT_MODIFY trigger
 Fix: [ bug #1548 ] Supplier payment card shows type in French
+Fix: [ bug #1546 ] Incorrect page number when searching in the list of bank transactions
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.
