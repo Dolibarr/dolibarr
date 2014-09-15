@@ -209,7 +209,6 @@ if ($type)   $param.="&type=".$type;
 if ($action == 'show_day' || $action == 'show_week' || $action == 'show_month' || $action != 'show_peruser') $param.='&action='.$action;
 $param.="&maxprint=".$maxprint;
 
-
 $prev = dol_get_first_day_week($day, $month, $year);
 $prev_year  = $prev['prev_year'];
 $prev_month = $prev['prev_month'];
