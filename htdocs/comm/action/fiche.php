@@ -616,7 +616,7 @@ if ($action == 'create')
 		$societe = new Societe($db);
 		$societe->fetch(GETPOST('socid','int'));
 		print $societe->getNomUrl(1);
-		print '<input type="hidden" name="socid" value="'.GETPOST('socid','int').'">';
+		print '<input type="hidden" id="socid" name="socid" value="'.GETPOST('socid','int').'">';
 	}
 	else
 	{

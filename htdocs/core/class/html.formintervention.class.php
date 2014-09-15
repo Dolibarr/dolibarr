@@ -64,7 +64,6 @@ class FormIntervention
 		$sql = 'SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut';
 		$sql.= ' FROM '.MAIN_DB_PREFIX .'fichinter as f';
 		$sql.= " WHERE f.entity = ".$conf->entity;
-		//if ($contratListId) $sql.= " AND c.rowid IN (".$contratListId.")";
 		if ($socid != '')
 		{
 			if ($socid == '0') $sql.= " AND (f.fk_soc = 0 OR f.fk_soc IS NULL)";
@@ -75,7 +74,7 @@ class FormIntervention
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$out.='<select class="flat" name="'.$htmlname.'">';
+			$out.='<select id="interventionid" class="flat" name="'.$htmlname.'">';
 			if ($showempty) $out.='<option value="0">&nbsp;</option>';
 			$num = $db->num_rows($resql);
 			$i = 0;
@@ -92,8 +91,6 @@ class FormIntervention
 					else
 					{
 						$labeltoshow=dol_trunc($obj->ref,18);
-						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
-						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
 						{
 							$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
@@ -120,8 +117,6 @@ class FormIntervention
 							{
 								$resultat='<option value="'.$obj->rowid.'"';
 								if ($disabled) $resultat.=' disabled="disabled"';
-								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
-								//else $labeltoshow.=' ('.$langs->trans("Private").')';
 								$resultat.='>'.$labeltoshow;
 								$resultat.='</option>';
 							}
