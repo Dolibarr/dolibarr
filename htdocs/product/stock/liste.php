@@ -31,12 +31,12 @@ $langs->load("stocks");
 // Security check
 $result=restrictedArea($user,'stock');
 
-$sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
-$snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
+$sref=GETPOST("sref");;
+$snom=GETPOST("snom");
+$sall=GETPOST("sall");
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
 if (! $sortfield) $sortfield="e.label";
 if (! $sortorder) $sortorder="ASC";
 $page = $_GET["page"];
@@ -50,13 +50,13 @@ $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " WHERE e.entity = ".$conf->entity;
 if ($sref)
 {
-    $sql.= " AND e.label like '%".$sref."%'";
+    $sql.= " AND e.label like '%".$db->escape($sref)."%'";
 }
 if ($sall)
 {
-    $sql.= " AND (e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.town like '%".$sall."%')";
+    $sql.= " AND (e.description like '%".$db->escape($sall)."%' OR e.lieu like '%".$db->escape($sall)."%' OR e.address like '%".$db->escape($sall)."%' OR e.town like '%".$db->escape($sall)."%')";
 }
-$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);

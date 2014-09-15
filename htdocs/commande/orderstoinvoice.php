@@ -45,7 +45,7 @@ $langs->load('companies');
 if (! $user->rights->facture->creer)
 	accessforbidden();
 
-$id				= (GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility
+$id				= (GETPOST('id')?GETPOST('id','int'):GETPOST("facid"));  // For backward compatibility
 $ref			= GETPOST('ref','alpha');
 $action			= GETPOST('action','alpha');
 $confirm		= GETPOST('confirm','alpha');

@@ -299,7 +299,7 @@ class Project extends CommonObject
         }
         else if (! empty($ref))
         {
-        	$sql.= " WHERE ref='".$ref."'";
+        	$sql.= " WHERE ref='".$this->db->escape($ref)."'";
         	$sql.= " AND entity IN (".getEntity('project').")";
         }
 
@@ -988,7 +988,7 @@ class Project extends CommonObject
 
 		$error=0;
 
-		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_file=".$clone_file." clone_note=".$clone_note);
+		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note);
 
 		$now = dol_mktime(0,0,0,idate('m',dol_now()),idate('d',dol_now()),idate('Y',dol_now()));
 
@@ -1146,6 +1146,8 @@ class Project extends CommonObject
 			//Duplicate task
 			if ($clone_task)
 			{
+				require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
+
 				$taskstatic = new Task($this->db);
 
 				// Security check

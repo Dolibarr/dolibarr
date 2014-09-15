@@ -2039,7 +2039,7 @@ abstract class CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
         if (! empty($id))  $sql.= " AND rowid = ".$id;
-        if (! empty($ref)) $sql.= " AND ref = '".$ref."'";
+        if (! empty($ref)) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 
         $resql = $this->db->query($sql);
         if ($resql)
