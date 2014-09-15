@@ -265,7 +265,6 @@ class FormActions
 
        	if ($selected == 'manual') $selected='AC_OTH';
        	if ($selected == 'auto')   $selected='AC_OTH_AUTO';
-       	if (empty($selected) && ! empty($conf->global->AGENDA_DEFAULT_TYPE)) $selected=$conf->global->AGENDA_DEFAULT_TYPE;
 
         print $form->selectarray($htmlname, $arraylist, $selected);
         if ($user->admin && empty($onlyautoornot) && empty($hideinfohelp)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
