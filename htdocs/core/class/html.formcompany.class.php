@@ -520,7 +520,7 @@ class FormCompany
 	 *  @param  string		$htmlname       Name of HTML form
 	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
-     *  @param	array		$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	array		$events			More js events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @param	string		$moreparam		String with more param to add into url when noajax search is used.
 	 * 	@return int 						The selected third party ID
 	 */
@@ -573,13 +573,13 @@ class FormCompany
 								var obj = '.json_encode($events).';
 				    			$.each(obj, function(key,values) {
 				    				if (values.method.length) {
-				    					getMethod'.$htmlname.'(values);
+				    					runJsCodeForEvent'.$htmlname.'(values);
 				    				}
 								});
                 			});
 
 							// Function used to execute events when search_htmlname change
-							function getMethod'.$htmlname.'(obj) {
+							function runJsCodeForEvent'.$htmlname.'(obj) {
 								var id = $("#'.$htmlname.'").val();
 								var method = obj.method;
 								var url = obj.url;
@@ -612,8 +612,8 @@ class FormCompany
                 }
 
 				print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
-				print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-				print '<td class="nobordernopadding">';
+				//print '<table class="nobordernopadding"><tr class="nobordernopadding">';
+				//print '<td class="nobordernopadding">';
 				if ($obj->rowid == 0)
 				{
 					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="" '.$htmloption.' />';
@@ -623,10 +623,10 @@ class FormCompany
 					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
 				}
 				print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php','',$minLength);
-				print '</td>';
-				print '</tr>';
-				print '</table>';
-				print "\n";
+				//print '</td>';
+				//print '</tr>';
+				//print '</table>';
+				//print "\n";
 				return $socid;
 			}
 			else
