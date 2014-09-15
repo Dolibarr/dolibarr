@@ -181,14 +181,7 @@ if (empty($reshook))
 
         $object->forme_juridique_code  = GETPOST('forme_juridique_code', 'int');
         $object->effectif_id           = GETPOST('effectif_id', 'int');
-        if (GETPOST("private") == 1)
-        {
-            $object->typent_id         = dol_getIdFromCode($db,'TE_PRIVATE','c_typent');
-        }
-        else
-        {
-            $object->typent_id         = GETPOST('typent_id', 'int');
-        }
+        $object->typent_id             = GETPOST('typent_id');
 
         $object->client                = GETPOST('client', 'int');
         $object->fournisseur           = GETPOST('fournisseur', 'int');
@@ -1112,7 +1105,7 @@ else
 
 	        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
-	         
+
             // Load object modCodeTiers
             $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
             if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
@@ -1148,9 +1141,9 @@ else
             {
                 $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
             }
-            
+
             $object->oldcopy=dol_clone($object);
-            
+
             if (GETPOST('nom'))
             {
                 // We overwrite with values if posted
@@ -1182,7 +1175,7 @@ else
                 $object->barcode				= GETPOST('barcode', 'san_alpha');
                 $object->forme_juridique_code	= GETPOST('forme_juridique_code', 'int');
                 $object->default_lang			= GETPOST('default_lang', 'san_alpha');
-                
+
                 $object->tva_assuj				= GETPOST('assujtva_value', 'int');
                 $object->tva_intra				= GETPOST('tva_intra', 'san_alpha');
                 $object->status					= GETPOST('status', 'int');
@@ -1269,7 +1262,7 @@ else
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="socid" value="'.$object->id.'">';
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
-            
+
             print '<table class="border" width="100%">';
 
             // Name
