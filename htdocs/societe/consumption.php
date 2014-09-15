@@ -429,15 +429,17 @@ if ($sql_select)
 
 			} else {
 
-				//if (! empty($objp->fk_parent_line)) echo img_picto('', 'rightarrow');
-				if ($type==1) $text = img_object($langs->trans('Service'),'service');
-				else $text = img_object($langs->trans('Product'),'product');
+				if (! empty($objp->label) || ! empty($objp->description))
+				{
+					if ($type==1) $text = img_object($langs->trans('Service'),'service');
+					else $text = img_object($langs->trans('Product'),'product');
 
-				if (! empty($objp->label)) {
-					$text.= ' <strong>'.$objp->label.'</strong>';
-					echo $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i,0,'');
-				} else {
-					echo $text.' '.dol_htmlentitiesbr($objp->description);
+					if (! empty($objp->label)) {
+						$text.= ' <strong>'.$objp->label.'</strong>';
+						echo $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i,0,'');
+					} else {
+						echo $text.' '.dol_htmlentitiesbr($objp->description);
+					}
 				}
 
 				// Show range
