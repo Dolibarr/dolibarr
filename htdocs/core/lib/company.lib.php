@@ -106,7 +106,7 @@ function societe_prepare_head($object)
 
     if ($user->societe_id == 0)
     {
-        if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled))
+        if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fichinter->enabled) || ! empty($conf->fournisseur->enabled))
         {
 	        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 	        $head[$h][1] = $langs->trans("Referers");

@@ -180,8 +180,9 @@ if ($type_element == 'fichinter')
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 	$documentstatic=new Fichinter($db);
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, ';
-	$tables_from = MAIN_DB_PREFIX."fichinter as f,".MAIN_DB_PREFIX."fichinterdet as d";
-	$where = " WHERE d.fk_fichinter = f.rowid AND f.entity = ".$conf->entity;
+	$tables_from = MAIN_DB_PREFIX."fichinter as f LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as d ON d.fk_fichinter = f.rowid";	// Must use left join to work also with option that disable usage of lines.
+	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where.= " AND f.entity = ".$conf->entity;
 	$dateprint = 'f.datec';
 	$doc_number='f.ref';
 }
@@ -275,7 +276,7 @@ if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$sref."%'";
 if ($sprod_fulldescr) $sql.= " AND (d.description LIKE '%".$sprod_fulldescr."%' OR p.label LIKE '%".$sprod_fulldescr."%')";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
-
+//print $sql;
 
 // Define type of elements
 $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), 2);
