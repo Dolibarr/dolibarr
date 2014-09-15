@@ -864,20 +864,20 @@ class Propal extends CommonObject
                         {
                             // Call trigger
                             $result=$this->call_trigger('PROPAL_CREATE',$user);
-                            if ($result < 0) { $error++; }            
+                            if ($result < 0) { $error++; }
                             // End call triggers
                         }
                     }
                     else
-                    {
-                        $this->error=$this->db->error();
+					{
+                        $this->error=$this->db->lasterror();
                         $error++;
                     }
                 }
             }
             else
-            {
-                $this->error=$this->db->error();
+			{
+                $this->error=$this->db->lasterror();
                 $error++;
             }
 
@@ -895,7 +895,7 @@ class Propal extends CommonObject
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             $this->db->rollback();
             return -1;
         }
@@ -1011,7 +1011,7 @@ class Propal extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('PROPAL_CLONE',$user);
-            if ($result < 0) { $error++; }            
+            if ($result < 0) { $error++; }
             // End call triggers
         }
 
@@ -1331,7 +1331,7 @@ class Propal extends CommonObject
                 {
                     // Call trigger
                     $result=$this->call_trigger('PROPAL_VALIDATE',$user);
-                    if ($result < 0) { $error++; }            
+                    if ($result < 0) { $error++; }
                     // End call triggers
                 }
 
@@ -1669,7 +1669,7 @@ class Propal extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('PROPAL_REOPEN',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
 			}
 		}
@@ -1677,8 +1677,8 @@ class Propal extends CommonObject
 		// Commit or rollback
 		if ($error)
 		{
-		    if (!empty($this->errors)) 
-		    { 
+		    if (!empty($this->errors))
+		    {
     			foreach($this->errors as $errmsg)
     			{
     				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
@@ -1751,7 +1751,7 @@ class Propal extends CommonObject
 
                 // Call trigger
                 $result=$this->call_trigger('PROPAL_CLOSE_SIGNED',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
             }
             else
@@ -1773,7 +1773,7 @@ class Propal extends CommonObject
 
                 // Call trigger
                 $result=$this->call_trigger('PROPAL_CLOSE_REFUSED',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
             }
             if ( ! $error )
@@ -2040,7 +2040,7 @@ class Propal extends CommonObject
         {
             // Call trigger
             $result=$this->call_trigger('PROPAL_DELETE',$user);
-            if ($result < 0) { $error++; }            
+            if ($result < 0) { $error++; }
             // End call triggers
         }
 
@@ -2520,7 +2520,7 @@ class Propal extends CommonObject
 		{
 	            $file = $conf->global->PROPALE_ADDON.".php";
 	            $classname = $conf->global->PROPALE_ADDON;
-	
+
 	            // Include file with class
 	            foreach ($conf->file->dol_document_root as $dirroot)
 	            {
@@ -2926,10 +2926,10 @@ class PropaleLigne  extends CommonObject
                 // Call trigger
                 $result=$this->call_trigger('LINEPROPAL_INSERT',$user);
                 if ($result < 0)
-                { 
+                {
                     $this->db->rollback();
-                    return -1; 
-                }            
+                    return -1;
+                }
                 // End call triggers
             }
 
@@ -2976,10 +2976,10 @@ class PropaleLigne  extends CommonObject
             // Call trigger
             $result=$this->call_trigger('LINEPROPAL_DELETE',$user);
             if ($result < 0)
-            { 
+            {
                 $this->db->rollback();
                 return -1;
-            }            
+            }
             // End call triggers
 
             $this->db->commit();
@@ -3085,11 +3085,11 @@ class PropaleLigne  extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('LINEPROPAL_UPDATE',$user);
-                if ($result < 0)            
-                { 
+                if ($result < 0)
+                {
                     $this->db->rollback();
                     return -1;
-                }            
+                }
                 // End call triggers
             }
 

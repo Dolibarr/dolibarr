@@ -351,7 +351,6 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 				}
 
 				$id = $object->create($user);
-
 				if ($id > 0)
 				{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
@@ -435,11 +434,11 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 							if ($reshook < 0)
 								$error ++;
 						} else {
-							$mesgs [] = $srcobject->error;
+							setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 							$error ++;
 						}
 				} else {
-					$mesgs [] = $object->error;
+					setEventMessages($object->error, $object->errors, 'errors');
 					$error ++;
 				}
 			} 			// Standard creation
@@ -448,23 +447,29 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 				$id = $object->create($user);
 			}
 
-			if ($id > 0) {
+			if ($id > 0)
+			{
 				// Insertion contact par defaut si defini
-				if (GETPOST('contactidp') > 0) {
+				if (GETPOST('contactidp') > 0)
+				{
 					$result = $object->add_contact(GETPOST('contactidp'), 'CUSTOMER', 'external');
-					if ($result < 0) {
-						$error ++;
+					if ($result < 0)
+					{
+						$error++;
 						setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
 					}
 				}
 
-				if (! $error) {
+				if (! $error)
+				{
 					$db->commit();
 
-					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+					{
 						// Define output language
 						$outputlangs = $langs;
-						if (! empty($conf->global->MAIN_MULTILANGS)) {
+						if (! empty($conf->global->MAIN_MULTILANGS))
+						{
 							$outputlangs = new Translate("", $conf);
 							$newlang = (GETPOST('lang_id') ? GETPOST('lang_id') : $object->thirdparty->default_lang);
 							$outputlangs->setDefaultLang($newlang);
@@ -475,13 +480,18 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 
 					header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
 					exit();
-				} else {
-					$db->rollback();
 				}
-			} else {
-				dol_print_error($db, $object->error);
+				else
+				{
+					$db->rollback();
+					$action='create';
+				}
+			}
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
-				exit();
+				$action='create';
 			}
 		}
 	}

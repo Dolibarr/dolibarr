@@ -3460,6 +3460,7 @@ abstract class CommonObject
     	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     	$interface=new Interfaces($this->db);
     	$result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
+
     	if ($result < 0)
     	{
     		if (!empty($this->errors))
@@ -3471,6 +3472,7 @@ abstract class CommonObject
     			$this->errors=$interface->errors;
     		}
     	}
+
     	return $result;
     }
 

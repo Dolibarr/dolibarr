@@ -605,7 +605,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 	if ($ret < 0) $error ++;
 
-		// Replacement invoice
+	// Replacement invoice
 	if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
 	{
 		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -716,10 +716,11 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 			}
 
-            if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0) {
-
+            if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0)
+            {
                 $facture_source = new Facture($db); // fetch origin object if not previously defined
-                if($facture_source->fetch($object->fk_facture_source)>0) {
+                if ($facture_source->fetch($object->fk_facture_source)>0)
+                {
                     $totalpaye = $facture_source->getSommePaiement();
                     $totalcreditnotes = $facture_source->getSumCreditNotesUsed();
                     $totaldeposits = $facture_source->getSumDepositsUsed();
@@ -1061,9 +1062,9 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	{
 		$db->rollback();
 		$action = 'create';
-		$_GET ["origin"] = $_POST["origin"];
-		$_GET ["originid"] = $_POST["originid"];
-		setEventMessage($object->error, 'errors');
+		$_GET["origin"] = $_POST["origin"];
+		$_GET["originid"] = $_POST["originid"];
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
