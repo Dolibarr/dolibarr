@@ -101,7 +101,7 @@ if (GETPOST('addassignedtouser'))
 	$action='create';
 }
 // Add action
-if ($action == 'add_action')
+if ($action == 'add')
 {
 	$error=0;
 
@@ -317,7 +317,7 @@ if ($action == 'update')
         $apmin=GETPOST('apmin');
         $p2hour=GETPOST('p2hour');
         $p2min=GETPOST('p2min');
-		$percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):GETPOST("percentage");	// If status is -1 or 100, percentage is not defined and we must use status
+		$percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
 
 	    // Clean parameters
 		if ($aphour == -1) $aphour='0';
@@ -345,6 +345,7 @@ if ($action == 'update')
 		$object->pnote       = $_POST["note"];
 		$object->fk_element	 = $_POST["fk_element"];
 		$object->elementtype = $_POST["elementtype"];
+
 		if (! $datef && $percentage == 100)
 		{
 			$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
@@ -512,7 +513,7 @@ if ($action == 'create')
 
 	print '<form name="formaction" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="add_action">';
+	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
 	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));

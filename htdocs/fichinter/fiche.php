@@ -1643,6 +1643,20 @@ else if ($id > 0 || ! empty($ref))
 				else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
 			}
 
+			// Event agenda
+			if (! empty($conf->global->FICHINTER_ADDLINK_TO_EVENT))
+			{
+				if (! empty($conf->agenda->enabled) && $object->statut > 0)
+				{
+					$langs->load("agenda");
+					if ($object->statut < 2)
+					{
+						if ($user->rights->agenda->myactions->create) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddEvent").'</a></div>';
+						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddEvent").'</a></div>';
+					}
+				}
+			}
+
 			// Proposal
 			if (! empty($conf->propal->enabled) && $object->statut > 0)
 			{

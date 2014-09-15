@@ -187,6 +187,7 @@ class FormActions
         	print '<th class="liste_titre">'.$langs->trans('Action').'</th>';
         	print '<th class="liste_titre">'.$langs->trans('Date').'</th>';
         	print '<th class="liste_titre">'.$langs->trans('By').'</th>';
+        	print '<th class="liste_titre" align="right">'.$langs->trans('Status').'</th>';
         	print '</tr>';
         	print "\n";
 
@@ -204,7 +205,15 @@ class FormActions
         		print '<tr '.$bc[$var].'>';
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
-        		print '<td>'.dol_print_date($action->datep,'day').'</td>';
+        		print '<td>'.dol_print_date($action->datep,'dayhour');
+        		if ($action->datef)
+        		{
+	        		$tmpa=dol_getdate($action->datep);
+	        		$tmpb=dol_getdate($action->datef);
+	        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) print '-'.dol_print_date($action->datef,'hour');
+	        		else print '-'.dol_print_date($action->datef,'dayhour');
+        		}
+        		print '</td>';
         		print '<td>';
         		if (! empty($action->author->id))
         		{
@@ -212,6 +221,12 @@ class FormActions
         			$userstatic->firstname = $action->author->firstname;
         			$userstatic->lastname = $action->author->lastname;
         			print $userstatic->getNomUrl(1);
+        		}
+        		print '</td>';
+        		print '<td align="right">';
+        		if (! empty($action->author->id))
+        		{
+        			print $action->getLibStatut(3);
         		}
         		print '</td>';
         		print '</tr>';
