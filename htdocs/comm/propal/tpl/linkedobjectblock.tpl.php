@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011  Regis Houssin <regis.houssin@capnetworks.com>
- * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2013       Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,8 @@
 
 <?php
 
+global $user;
+
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
@@ -52,17 +55,23 @@ foreach($linkedObjectBlock as $object)
 	<a href="<?php echo DOL_URL_ROOT.'/comm/propal.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowPropal"),"propal").' '.$object->ref; ?></a></td>
 	<td><?php echo $object->ref_client; ?></td>
 	<td align="center"><?php echo dol_print_date($object->date,'day'); ?></td>
-	<td align="right"><?php echo price($object->total_ht); ?></td>
+	<td align="right"><?php
+		if ($user->rights->propale->lire) {
+			$total = $total + $object->total_ht;
+			echo price($object->total_ht);
+		} ?></td>
 	<td align="right"><?php echo $object->getLibStatut(3); ?></td>
 </tr>
 <?php
-$total = $total + $object->total_ht;
 }
 
 ?>
 <tr class="liste_total">
 	<td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
-	<td align="right"><?php echo price($total); ?></td>
+	<td align="right"><?php
+		if ($user->rights->propale->lire) {
+			echo price($total);
+		} ?></td>
 	<td>&nbsp;</td>
 </tr>
 </table>
