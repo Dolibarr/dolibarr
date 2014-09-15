@@ -27,6 +27,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 /**
  *	Class to generate event report
@@ -59,6 +61,7 @@ class CommActionRapport
 	{
 		global $conf,$langs;
 		$langs->load("commercial");
+		$langs->load("projects");
 
 		$this->db = $db;
 		$this->description = "";
@@ -197,9 +200,9 @@ class CommActionRapport
 		$y++;
 		$pdf->SetFont('','',8);
 
-		$sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
+		$sql = "SELECT s.nom as thirdparty, s.rowid as socid, s.client,";
 		$sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
-		$sql.= " a.fk_contact, a.note, a.percent as percent, a.label,";
+		$sql.= " a.fk_contact, a.note, a.percent as percent, a.label, a.fk_project,";
 		$sql.= " c.code, c.libelle,";
 		$sql.= " u.login";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
@@ -208,6 +211,9 @@ class CommActionRapport
 		$sql.= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($this->year,$this->month,false))."'";
 		$sql.= " AND '".$this->db->idate(dol_get_last_day($this->year,$this->month,false))."'";
 		$sql.= " ORDER BY a.datep DESC";
+
+		$eventstatic=new ActionComm($this->db);
+		$projectstatic=new Project($this->db);
 
 		dol_syslog(get_class($this)."::_page", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -221,6 +227,11 @@ class CommActionRapport
 			{
 				$obj = $this->db->fetch_object($resql);
 
+				$eventstatic->id=$obj->id;
+				$eventstatic->percentage=$obj->percentage;
+				$eventstatic->fulldayevent=$obj->fulldayevent;
+				$eventstatic->punctual=$obj->punctual;
+
 				$y = max($y, $pdf->GetY(), $y0, $y1, $y2, $y3);
 
 				// Calculate height of text
@@ -228,6 +239,16 @@ class CommActionRapport
 				if (! preg_match('/^'.preg_quote($obj->label).'/',$obj->note)) $text=$obj->label."\n";
 				$text.=$obj->note;
 				$text=dol_trunc(dol_htmlentitiesbr_decode($text),150);
+				// Add status to text
+				$text.="\n";
+				$status=dol_htmlentitiesbr_decode($eventstatic->getLibStatut(1,1));
+				$text.=$status;
+				if ($obj->fk_project > 0)
+				{
+					$projectstatic->fetch($obj->fk_project);
+					$text.=($status?' - ':'').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode($projectstatic->getNomUrl(0, 'nolink'));
+				}
+
 				//print 'd'.$text; exit;
 				$nboflines=dol_nboflines($text);
 				$heightlinemax=max(2*$height,$nboflines*$height);
@@ -249,7 +270,7 @@ class CommActionRapport
 
 				// Third party
 				$pdf->SetXY(26, $y);
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->societe),32), 0, 'L', 0);
+				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->thirdparty),32), 0, 'L', 0);
 				$y1 = $pdf->GetY();
 
 				// Action code

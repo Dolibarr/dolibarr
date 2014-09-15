@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: PDF event report show project and status of event.
 - New: Can filter on status on interventions.
 - New: Add help info of field type into dictionary of payment types.
 - New: Add proposals into referer page of thirdparty.

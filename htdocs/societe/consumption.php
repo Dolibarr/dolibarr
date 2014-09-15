@@ -179,7 +179,7 @@ if ($type_element == 'fichinter')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 	$documentstatic=new Fichinter($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."fichinter as f LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as d ON d.fk_fichinter = f.rowid";	// Must use left join to work also with option that disable usage of lines.
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND f.entity = ".$conf->entity;
@@ -190,7 +190,7 @@ if ($type_element == 'invoice')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$documentstatic=new Facture($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.facnumber as doc_number, f.type as doc_type, f.datef as dateprint, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.facnumber as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture = f.rowid";
@@ -203,7 +203,7 @@ if ($type_element == 'propal')
 {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$documentstatic=new Propal($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as datePrint, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as datePrint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."propal as c,".MAIN_DB_PREFIX."propaldet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_propal = c.rowid";
@@ -216,7 +216,7 @@ if ($type_element == 'order')
 {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 	$documentstatic=new Commande($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."commande as c,".MAIN_DB_PREFIX."commandedet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_commande = c.rowid";
@@ -229,7 +229,7 @@ if ($type_element == 'supplier_invoice')
 { 	// Supplier : Show products from invoices.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$documentstatic=new FactureFournisseur($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as dateprint, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as dateprint, f.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."facture_fourn_det as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture_fourn = f.rowid";
@@ -241,7 +241,7 @@ if ($type_element == 'supplier_order')
 { 	// Supplier : Show products from orders.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	$documentstatic=new CommandeFournisseur($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_commande = c.rowid";
@@ -296,6 +296,7 @@ print '<table class="liste" width="100%">'."\n";
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'doc_number','',$param,'align="left"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'dateprint','',$param,'align="center" width="150"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_status','',$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
 // Filters
@@ -306,6 +307,8 @@ print '</td>';
 print '<td class="liste_titre">'; // date
 print $formother->select_month($month?$month:-1,'month',1);
 $formother->select_year($year?$year:-1,'year',1, 20, 1);
+print '</td>';
+print '<td class="liste_titre" align="center">';
 print '</td>';
 print '<td class="liste_titre" align="left">';
 print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
@@ -323,15 +326,25 @@ if ($sql_select)
 	$i = 0;
 	while (($objp = $db->fetch_object($resql)) && $i < $conf->liste_limit )
 	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
-		print '<td class="nobordernopadding nowrap" width="100">';
 		$documentstatic->id=$objp->doc_id;
 		$documentstatic->ref=$objp->doc_number;
 		$documentstatic->type=$objp->type;
+		$documentstatic->fk_statut=$objp->status;
+		$documentstatic->fk_status=$objp->status;
+		$documentstatic->statut=$objp->status;
+		$documentstatic->status=$objp->status;
+
+		$var=!$var;
+		print "<tr ".$bc[$var].">";
+		print '<td class="nobordernopadding nowrap" width="100">';
 		print $documentstatic->getNomUrl(1);
 		print '</td>';
 		print '<td align="center" width="80">'.dol_print_date($db->jdate($objp->dateprint),'day').'</td>';
+
+		// Status
+		print '<td align="center">';
+		print $documentstatic->getLibStatut(2);
+		print '</td>';
 
 		print '<td>';
 

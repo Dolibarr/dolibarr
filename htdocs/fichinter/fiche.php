@@ -1627,8 +1627,10 @@ else if ($id > 0 || ! empty($ref))
 			// Modify
 			if ($object->statut == 1 && $user->rights->ficheinter->creer)
 			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=modify"';
-				print '>'.$langs->trans("Modify").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=modify">';
+				if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) print $langs->trans("Modify");
+				else print $langs->trans("SetToDraft");
+				print '</a></div>';
 			}
 
 			// Send
