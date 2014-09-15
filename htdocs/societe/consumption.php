@@ -130,16 +130,10 @@ if ($object->client)
 	$obj = $db->fetch_object($resql);
 	$nbFactsClient = $obj->nb;
 	$thirdTypeArray['customer']=$langs->trans("customer");
-<<<<<<< HEAD
 	if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal']=$langs->transnoentitiesnoconv('Proposals');
 	if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->transnoentitiesnoconv('Orders');
 	if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
 	if ($conf->ficheinter>enabled && $user->rights->ficheinter->lire) $elementTypeArray['fichinter']=$langs->transnoentitiesnoconv('Interventions');
-=======
-	if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->trans('Orders');
-	if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal']=$langs->trans('Proposals');
-	if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->trans('Invoices');
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 }
 
 if ($object->fournisseur)
