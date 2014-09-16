@@ -409,14 +409,14 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Merou
         $localobject->modelpdf='merou';
-        $result=expedition_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+        $result= $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
 
         // Rouget
         $localobject->modelpdf='rouget';
-        $result=expedition_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+        $result= $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
