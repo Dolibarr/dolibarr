@@ -47,6 +47,8 @@ abstract class CommonObject
 
     public $array_options=array();
 
+    public $thirdparty;
+
     public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
     public $linkedObjects;		// Loaded by ->fetchObjectLinked
 
@@ -381,7 +383,7 @@ abstract class CommonObject
         $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id, ec.fk_c_type_contact";    // This field contains id of llx_socpeople or id of llx_user
         if ($source == 'internal') $sql.=", '-1' as socid";
         if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid";
-        $sql.= ", t.civilite as civility, t.lastname as lastname, t.firstname, t.email";
+        $sql.= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
         $sql.= ", tc.source, tc.element, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
         $sql.= ", ".MAIN_DB_PREFIX."element_contact ec";
@@ -596,10 +598,10 @@ abstract class CommonObject
     {
         global $conf;
 
-        if (empty($this->socid) && empty($this->fk_soc)) return 0;
+        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty)) return 0;
 
         $thirdparty = new Societe($this->db);
-        $result=$thirdparty->fetch(isset($this->socid)?$this->socid:$this->fk_soc);
+        $result=$thirdparty->fetch(isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty));
         $this->client = $thirdparty;  // deprecated
         $this->thirdparty = $thirdparty;
 
@@ -1138,7 +1140,6 @@ abstract class CommonObject
             return 0;
         }
     }
-
 
     /**
      *  Save a new position (field rang) for details lines.
@@ -2083,7 +2084,7 @@ abstract class CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
         if (! empty($id))  $sql.= " AND rowid = ".$id;
-        if (! empty($ref)) $sql.= " AND ref = '".$ref."'";
+        if (! empty($ref)) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -2782,7 +2783,7 @@ abstract class CommonObject
 		// Price HT
 		print '<td align="right" width="80"><label for="price_ht">'.$langs->trans('PriceUHT').'</label></td>';
 
-		if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<td align="right" width="80">&nbsp;</td>';
+		if ($inputalsopricewithtax) print '<td align="right" width="80">&nbsp;</td>';
 
 		// Qty
 		print '<td align="right" width="50"><label for="qty">'.$langs->trans('Qty').'</label></td>';
@@ -3458,6 +3459,7 @@ abstract class CommonObject
     	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     	$interface=new Interfaces($this->db);
     	$result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
+
     	if ($result < 0)
     	{
     		if (!empty($this->errors))
@@ -3469,6 +3471,7 @@ abstract class CommonObject
     			$this->errors=$interface->errors;
     		}
     	}
+
     	return $result;
     }
 

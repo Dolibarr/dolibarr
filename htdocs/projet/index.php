@@ -156,7 +156,7 @@ print '</div></div></div>';
 // Tasks for all resources of all opened projects and time spent for each task/resource
 print '<div class="fichecenter">';
 
-$sql = "SELECT p.title, p.rowid as projectid, t.label, t.rowid as taskid, u.rowid as userid, t.planned_workload, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
+$sql = "SELECT p.ref, p.title, p.rowid as projectid, t.label, t.rowid as taskid, u.rowid as userid, t.planned_workload, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
@@ -216,7 +216,13 @@ if ( $resql )
 
 			print "<tr ".$bc[$var].">";
 			print '<td>'.$username.'</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->projectid.'">'.$obj->title.'</a></td>';
+			print '<td>';
+			$projectstatic->id=$obj->projectid;
+			$projectstatic->ref=$obj->ref;
+			$projectstatic->title=$obj->title;
+			print $projectstatic->getNomUrl(1,'',16);
+			//print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
+			print '</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($obj->dateo)).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datee)).'</td>';

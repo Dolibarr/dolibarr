@@ -38,6 +38,7 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
    die("Disconnection does not work when connection was made in mode ".$_SESSION["dol_authmode"]);
 }
 
+global $conf, $langs, $user;
 
 // Appel des triggers
 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';

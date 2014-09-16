@@ -48,6 +48,7 @@
 function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals=array(), $actioncode='', $usergroupid='')
 {
 	global $conf, $user, $langs, $db, $hookmanager;
+	global $begin_h, $end_h, $begin_d, $end_d;
 
 	// Filters
 	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
@@ -73,17 +74,18 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		//print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
 		//print $form->select_dolusers($filtera, 'userasked', 1, '', ! $canedit);
 		//print ' &nbsp; '.$langs->trans("or") . ' ';
-		print $langs->trans("ActionsForUser").' &nbsp; ';
+		print $langs->trans("ActionAffectedTo").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone">';
-		//print ' &nbsp;';
+		//print $langs->trans("User");
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
 		if (! empty($conf->use_javascript_ajax))
 		{
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			print ajax_combobox('usertodo');
 		}
-		print ' &nbsp; '.$langs->trans("or") . ' ';
-		print $langs->trans("ActionsForUsersGroup").' &nbsp; ';
+		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' ';
+		else print '<br>';
+		print $langs->trans("Group").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
 		if (! empty($conf->use_javascript_ajax))
 		{
@@ -136,6 +138,26 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $langs->trans("Project").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone">';
 		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 64);
+		print '</td></tr>';
+	}
+
+	if ($canedit && $action == 'show_peruser')
+	{
+		// Filter on hours
+		print '<tr>';
+		print '<td class="nowrap">'.$langs->trans("WorkingTimeRange").'</td>';
+		print "<td class='nowrap maxwidthonsmartphone'>";
+		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23"> - ';
+		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
+		print ' '.$langs->trans("H");
+		print '</td></tr>';
+
+		// Filter on days
+		print '<tr>';
+		print '<td class="nowrap">'.$langs->trans("WorkingDaysRange").'</td>';
+		print "<td class='nowrap maxwidthonsmartphone'>";
+		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7"> - ';
+		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
 		print '</td></tr>';
 	}
 
@@ -359,7 +381,7 @@ function show_array_last_actions_done($max=5)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function agenda_prepare_head()
 {
@@ -404,7 +426,7 @@ function agenda_prepare_head()
  * Prepare array with list of tabs
  *
  * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function actions_prepare_head($object)
 {
@@ -479,14 +501,14 @@ function calendars_prepare_head($param)
     $head[$h][2] = 'cardday';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/listactions.php'.($param?'?'.$param:'');
-    $head[$h][1] = $langs->trans("ViewList");
-    $head[$h][2] = 'cardlist';
-    $h++;
-
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($param?'?'.$param:'');
     $head[$h][1] = $langs->trans("ViewPerUser");
     $head[$h][2] = 'cardperuser';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/listactions.php'.($param?'?'.$param:'');
+    $head[$h][1] = $langs->trans("ViewList");
+    $head[$h][2] = 'cardlist';
     $h++;
 
 	$object=new stdClass();

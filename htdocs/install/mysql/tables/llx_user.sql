@@ -34,7 +34,7 @@ create table llx_user
   pass              varchar(32),
   pass_crypted      varchar(128),
   pass_temp         varchar(32),			    -- temporary password when asked for forget password
-  civilite          varchar(6),
+  civility          varchar(6),
   lastname          varchar(50),
   firstname         varchar(50),
   address           varchar(255),                        		-- user personal address
@@ -71,5 +71,9 @@ create table llx_user
   fk_barcode_type	integer      DEFAULT 0,
   accountancy_code  varchar(32) NULL,
   nb_holiday		integer DEFAULT 0,
-  salary			double(24,8)
+  thm				double(24,8),
+  tjm				double(24,8),
+  salary			double(24,8),
+  salaryextra		double(24,8),
+  weeklyhours		double(16,8)
 )ENGINE=innodb;

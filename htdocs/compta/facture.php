@@ -249,18 +249,23 @@ else if ($action == 'setmode' && $user->rights->facture->creer) {
 		dol_print_error($db, $object->error);
 }
 
-else if ($action == 'setinvoicedate' && $user->rights->facture->creer) {
+else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$old_date_lim_reglement = $object->date_lim_reglement;
-	$object->date = dol_mktime(12, 0, 0, $_POST['invoicedatemonth'], $_POST['invoicedateday'], $_POST['invoicedateyear']);
+	$date = dol_mktime(12, 0, 0, $_POST['invoicedatemonth'], $_POST['invoicedateday'], $_POST['invoicedateyear']);
+	if (empty($date))
+	{
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
+	    header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id.'&action=editinvoicedate');
+	    exit;
+	}
+    $object->date=$date;
 	$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-	if ($new_date_lim_reglement > $old_date_lim_reglement)
-		$object->date_lim_reglement = $new_date_lim_reglement;
-	if ($object->date_lim_reglement < $object->date)
-		$object->date_lim_reglement = $object->date;
+	if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
+	if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 	$result = $object->update($user);
-	if ($result < 0)
-		dol_print_error($db, $object->error);
+	if ($result < 0) dol_print_error($db, $object->error);
 }
 
 else if ($action == 'setconditions' && $user->rights->facture->creer) {
@@ -268,18 +273,14 @@ else if ($action == 'setconditions' && $user->rights->facture->creer) {
 	$object->cond_reglement_code = 0; // To clean property
 	$object->cond_reglement_id = 0; // To clean property
 	$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-	if ($result < 0)
-		dol_print_error($db, $object->error);
+	if ($result < 0) dol_print_error($db, $object->error);
 
 	$old_date_lim_reglement = $object->date_lim_reglement;
 	$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-	if ($new_date_lim_reglement > $old_date_lim_reglement)
-		$object->date_lim_reglement = $new_date_lim_reglement;
-	if ($object->date_lim_reglement < $object->date)
-		$object->date_lim_reglement = $object->date;
+	if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
+	if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 	$result = $object->update($user);
-	if ($result < 0)
-		dol_print_error($db, $object->error);
+	if ($result < 0) dol_print_error($db, $object->error);
 }
 
 else if ($action == 'setpaymentterm' && $user->rights->facture->creer) {
@@ -604,7 +605,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 	if ($ret < 0) $error ++;
 
-		// Replacement invoice
+	// Replacement invoice
 	if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
 	{
 		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -715,10 +716,11 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 			}
 
-            if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0) {
-
+            if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0)
+            {
                 $facture_source = new Facture($db); // fetch origin object if not previously defined
-                if($facture_source->fetch($object->fk_facture_source)>0) {
+                if ($facture_source->fetch($object->fk_facture_source)>0)
+                {
                     $totalpaye = $facture_source->getSommePaiement();
                     $totalcreditnotes = $facture_source->getSumCreditNotesUsed();
                     $totaldeposits = $facture_source->getSumDepositsUsed();
@@ -744,7 +746,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	}
 
 	// Standard invoice or Deposit invoice created from a Predefined invoice
-	if (($_POST['type'] == 0 || $_POST['type'] == 3) && $_POST['fac_rec'] > 0)
+	if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && $_POST['fac_rec'] > 0)
 	{
 		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		if (empty($dateinvoice))
@@ -773,7 +775,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	}
 
 	// Standard or deposit or proforma invoice
-	if (($_POST['type'] == 0 || $_POST['type'] == 3 || $_POST['type'] == 4) && $_POST['fac_rec'] <= 0)
+	if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT || $_POST['type'] == Facture::TYPE_PROFORMA) && $_POST['fac_rec'] <= 0)
 	{
 		if (GETPOST('socid', 'int') < 1)
 		{
@@ -852,7 +854,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 				if ($id > 0)
 				{
 					// If deposit invoice
-					if ($_POST['type'] == 3)
+					if ($_POST['type'] == Facture::TYPE_DEPOSIT)
 					{
 						$typeamount = GETPOST('typedeposit', 'alpha');
 						$valuedeposit = GETPOST('valuedeposit', 'int');
@@ -932,12 +934,19 @@ else if ($action == 'add' && $user->rights->facture->creer)
 						if ($result > 0)
 						{
 							$lines = $srcobject->lines;
-							if (empty($lines) && method_exists($srcobject, 'fetch_lines')) $lines = $srcobject->fetch_lines();
+							if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
+							{
+								$srcobject->fetch_lines();
+								$lines = $srcobject->lines;
+							}
 
 							$fk_parent_line=0;
 							$num=count($lines);
 							for ($i=0;$i<$num;$i++)
 							{
+								// Don't add lines with qty 0 when coming from a shipment including all order lines
+								if($srcobject->element == 'shipping' && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS && $lines[$i]->qty == 0) continue;
+
 								$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
 								$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 
@@ -1053,9 +1062,9 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	{
 		$db->rollback();
 		$action = 'create';
-		$_GET ["origin"] = $_POST["origin"];
-		$_GET ["originid"] = $_POST["originid"];
-		setEventMessage($object->error, 'errors');
+		$_GET["origin"] = $_POST["origin"];
+		$_GET["originid"] = $_POST["originid"];
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -1156,12 +1165,12 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 				// We define price for product
 				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
 				{
-					$pu_ht = $prod->multiprices [$object->thirdparty->price_level];
-					$pu_ttc = $prod->multiprices_ttc [$object->thirdparty->price_level];
-					$price_min = $prod->multiprices_min [$object->thirdparty->price_level];
-					$price_base_type = $prod->multiprices_base_type [$object->thirdparty->price_level];
-					$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-					$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
+					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
+					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+					//$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+					//$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 				}
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
@@ -2212,7 +2221,7 @@ if ($action == 'create')
 
 	// Payment mode
 	print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
-	$form->select_types_paiements(isset($_POST['mode_reglement_id']) ? $_POST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id');
+	$form->select_types_paiements(isset($_POST['mode_reglement_id']) ? $_POST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id', 'CRDT');
 	print '</td></tr>';
 
     // Bank Account
@@ -2304,7 +2313,16 @@ if ($action == 'create')
 		elseif ($newclassname == 'Fichinter')
 			$newclassname = 'Intervention';
 
-		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
+		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1);
+		//We check if Origin document has already an invoice attached to it
+		$objectsrc->fetchObjectLinked($originid,'','','facture');
+		$cntinvoice=count($objectsrc->linkedObjects['facture']);
+		if ($cntinvoice>=1)
+		{
+		    setEventMessage('WarningBillExist','warnings');
+		    echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['facture'])->getNomUrl(1).')';
+		}
+		echo '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1
@@ -3164,10 +3182,13 @@ if ($action == 'create')
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id');
-	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->mode_reglement_id, 'none');
+	if ($action == 'editmode')
+	{
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT');
+	}
+	else
+	{
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'none', 'CRDT');
 	}
 	print '</td></tr>';
 

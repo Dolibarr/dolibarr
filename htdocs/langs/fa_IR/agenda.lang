@@ -7,9 +7,10 @@ Agendas= برنامه
 Calendar= تقویم
 Calendars= تقویم
 LocalAgenda=تقویم محلی
-AffectedTo= واگذار شده به
-DoneBy= انجام شده توسط
-Events= رویدادها
+AffectedTo=واگذار شده به
+DoneBy=انجام شده توسط
+Event=Event
+Events=رویدادها
 EventsNb=تعداد حوادث
 MyEvents=رویدادهای من
 OtherEvents=رویدادهای دیگر
@@ -17,23 +18,23 @@ ListOfActions=فهرست وقایع
 Location=محل
 EventOnFullDay=رویداد در تمام طول روز (بازدید کنندگان)
 SearchAnAction= جستجو یک رویداد / کار
-MenuToDoActions= همه رویدادها ناقص
-MenuDoneActions= همه رویدادها خاتمه یافته
-MenuToDoMyActions= رویدادهای ناقص من
-MenuDoneMyActions= رویدادهای خاتمه من
-ListOfEvents= فهرست وقایع Dolibarr
+MenuToDoActions=همه رویدادها ناقص
+MenuDoneActions=همه رویدادها خاتمه یافته
+MenuToDoMyActions=رویدادهای ناقص من
+MenuDoneMyActions=رویدادهای خاتمه من
+ListOfEvents=فهرست وقایع Dolibarr
 ActionsAskedBy=رویدادهای گزارش شده توسط
 ActionsToDoBy=رویدادهای اختصاص یافته به
 ActionsDoneBy=رویدادهای انجام شده توسط
-ActionsForUser=Events for user
-ActionsForUsersGroup=Events for all users of group
+ActionsForUser=رویدادهای ها برای کاربر
+ActionsForUsersGroup=رویدادها برای همه کاربران گروه
 AllMyActions= همه رویدادها من / وظایف
 AllActions= همه رویدادها / وظایف
 ViewList=مشاهده لیست
 ViewCal=مشاهده ماه
 ViewDay=نمای روز
 ViewWeek=مشاهده هفته
-ViewPerUser=Per user
+ViewPerUser=Per user view
 ViewWithPredefinedFilters= نمایش با فیلترهای از پیش تعریف شده
 AutoActions= پر کردن خودکار
 AgendaAutoActionDesc= تعریف اینجا رویدادی که می خواهید Dolibarr برای ایجاد به طور خودکار یک رویداد در دستور کار. اگر چیزی (به طور پیش فرض) انتخاب شود، فقط اقدامات تجاری خواهد شد در دستور کار گنجانده شده است.
@@ -58,7 +59,7 @@ SupplierInvoiceSentByEMail=تامین کننده فاکتور٪ s ارسال ب�
 ShippingSentByEMail=حمل و نقل٪ s ارسال با ایمیل
 ShippingValidated= حمل و نقل از٪ s معتبر
 InterventionSentByEMail=مداخله٪ s ارسال با ایمیل
-InterventionClassifiedBilled=Intervention %s classified as Billed
+InterventionClassifiedBilled=مداخله٪ s در طبقه بندی گونه که اعلام شده
 NewCompanyToDolibarr= شخص ثالث ایجاد شده
 DateActionPlannedStart= تاریخ شروع برنامه ریزی شده
 DateActionPlannedEnd= تاریخ پایان برنامه ریزی شده
@@ -75,12 +76,15 @@ AgendaShowBirthdayEvents=نمایش تماس های تولد را
 AgendaHideBirthdayEvents=مخفی کردن تماس های تولد را
 Busy=مشغول
 ExportDataset_event1=فهرست رویدادی دستور کار
-
+DefaultWorkingDays=Default working days range in week (Example: 1-5, 1-6)
+DefaultWorkingHours=Default working hours in day (Example: 9-18)
 # External Sites ical
 ExportCal=تقویم صادرات
 ExtSites=واردات تقویم خارجی
-ExtSitesEnableThisTool=نمایش تقویم های خارجی را در دستور کار
+ExtSitesEnableThisTool=Show external calendars (defined into global setup) into agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=شماره تقویم
 AgendaExtNb=تقویم توجه از٪ s
 ExtSiteUrlAgenda=فایل مقرون URL برای دسترسی به.
 ExtSiteNoLabel=بدون شرح
+WorkingTimeRange=Working time range
+WorkingDaysRange=Working days range

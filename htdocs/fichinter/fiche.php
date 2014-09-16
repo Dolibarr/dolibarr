@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/fichinter/fiche.php
- *	\brief      Fichier fiche intervention
+ *	\brief      Page of intervention
  *	\ingroup    ficheinter
  */
 
@@ -63,6 +63,7 @@ $confirm	= GETPOST('confirm','alpha');
 $mesg		= GETPOST('msg','alpha');
 $origin=GETPOST('origin','alpha');
 $originid=(GETPOST('originid','int')?GETPOST('originid','int'):GETPOST('origin_id','int')); // For backward compatibility
+$note_public = GETPOST('note_public');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -196,6 +197,13 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 				$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 			}
 
+			// Extrafields
+			$extrafields = new ExtraFields($db);
+			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+
+	        $object->array_options = $array_option;
+
 			$id = $object->create($user);
 
 			if ($id > 0)
@@ -211,7 +219,11 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 				{
 					$srcobject->fetch_thirdparty();
 					$lines = $srcobject->lines;
-					if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+					if (empty($lines) && method_exists($srcobject,'fetch_lines'))
+					{
+						$srcobject->fetch_lines();
+						$lines = $srcobject->lines;
+					}
 
 					$fk_parent_line=0;
 					$num=count($lines);
@@ -266,12 +278,20 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							    $duration = 0;
 							}
 
+							$predef = '';
+							// Extrafields
+							$extrafieldsline = new ExtraFields($db);
+							$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+							$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+
+
 		                    $result = $object->addline(
 								$user,
 		                        $id,
 		                        $desc,
 					            $date_intervention,
-                 				$duration
+                 				$duration,
+                 				$array_option
 		                    );
 
 							if ($result < 0)
@@ -298,6 +318,13 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	    }
 	    else
 	    {
+	    	// Extrafields
+			$extrafields = new ExtraFields($db);
+			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+
+	        $object->array_options = $array_option;
+
 			$result = $object->create($user);
 	        if ($result > 0)
 	        {
@@ -306,7 +333,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	        else
 	        {
 	            $langs->load("errors");
-	            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+	            setEventMessages($object->error, $object->errors, 'errors');
 	            $action = 'create';
 	        }
         }
@@ -433,12 +460,19 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
 		$date_intervention = dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
 		$duration = convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int'));
 
+
+		// Extrafields
+		$extrafieldsline = new ExtraFields($db);
+		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+
         $result=$object->addline(
 			$user,
             $id,
             $desc,
             $date_intervention,
-            $duration
+            $duration,
+            $array_option
         );
 
 		// Define output language
@@ -471,7 +505,22 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
 // Classify Billed
 else if ($action == 'classifybilled' && $user->rights->ficheinter->creer)
 {
-	$result=$object->setBilled();
+	$result=$object->setStatut(2);
+	if ($result > 0)
+	{
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		exit;
+	}
+	else
+	{
+		$mesg='<div class="error">'.$object->error.'</div>';
+	}
+}
+
+// Classify Billed
+else if ($action == 'classifyunbilled' && $user->rights->ficheinter->creer)
+{
+	$result=$object->setStatut(1);
 	if ($result > 0)
 	{
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -485,7 +534,7 @@ else if ($action == 'classifybilled' && $user->rights->ficheinter->creer)
 
 /*
  *  Mise a jour d'une ligne d'intervention
-*/
+ */
 else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('save','alpha') == $langs->trans("Save"))
 {
 	$objectline = new FichinterLigne($db);
@@ -509,6 +558,13 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
     $objectline->datei		= $date_inter;
     $objectline->desc		= $desc;
     $objectline->duration	= $duration;
+
+	// Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$objectline->array_options = $array_option;
+
 	$result = $objectline->update($user);
     if ($result < 0)
     {
@@ -912,15 +968,19 @@ if ($action == 'create')
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
 			$objectsrc->fetch(GETPOST('originid'));
-			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
+			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))
+			{
+				$objectsrc->fetch_lines();
+				$lines = $objectsrc->lines;
+			}
 			$objectsrc->fetch_thirdparty();
 
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 
 			$soc = $objectsrc->client;
 
-			$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
-			$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
+			$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private')));
+			$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public'));
 
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(-1,'external',1);
@@ -928,8 +988,6 @@ if ($action == 'create')
 	}
 	else {
 		$projectid = GETPOST('projectid','int');
-		$note_private = '';
-		$note_public = '';
 	}
 
 	if (! $conf->global->FICHEINTER_ADDON)
@@ -966,7 +1024,7 @@ if ($action == 'create')
 		// Description (must be a textarea and not html must be allowed (used in list view)
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" cols="80" rows="'.ROWS_3.'"></textarea>';
+		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
 		print '</td></tr>';
 
 		// Project
@@ -1163,10 +1221,13 @@ else if ($id > 0 || ! empty($ref))
 	// Third party
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
-	// Duration
-	print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-	print '<td>'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
-	print '</tr>';
+	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+	{
+		// Duration
+		print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
+		print '<td>'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '</tr>';
+	}
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
 	print '<tr><td valign="top">';
@@ -1289,19 +1350,19 @@ else if ($id > 0 || ! empty($ref))
 
 					print $extrafields->showInputField($key,$value);
 
-					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+					print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				}
 				else
 				{
 					print $extrafields->showOutputField($key,$value);
-					if ($object->statut == 0 && $user->rights->ficheinter->creer) print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
+					if (($object->statut == 0 || $object->statut == 1) && $user->rights->ficheinter->creer) print ' &nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
 				}
 				print '</td></tr>'."\n";
 			}
 		}
 	}
 
-	print "</table><br>";
+	print "</table>";
 
 	print '</form>';
 
@@ -1319,196 +1380,231 @@ else if ($id > 0 || ! empty($ref))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
 
-
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($action == 'editline')
-	{
-		print '<input type="hidden" name="action" value="updateline">';
-		print '<input type="hidden" name="line_id" value="'.GETPOST('line_id','int').'">';
-	}
-	else
-	{
-		print '<input type="hidden" name="action" value="addline">';
-	}
-
-	// Intervention lines
-	$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
-	$sql.= ' ft.date as date_intervention';
-	$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
-	$sql.= ' WHERE ft.fk_fichinter = '.$object->id;
-	$sql.= ' ORDER BY ft.rang ASC, ft.rowid';
-
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i = 0;
-
-		if ($num)
+ 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+ 	{
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		if ($action == 'editline')
 		{
-			print '<br>';
-			print '<table class="noborder" width="100%">';
-
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans('Description').'</td>';
-			print '<td align="center">'.$langs->trans('Date').'</td>';
-			print '<td align="right">'.$langs->trans('Duration').'</td>';
-			print '<td width="48" colspan="3">&nbsp;</td>';
-			print "</tr>\n";
+			print '<input type="hidden" name="action" value="updateline">';
+			print '<input type="hidden" name="line_id" value="'.GETPOST('line_id','int').'">';
 		}
-		$var=true;
-		while ($i < $num)
+		else
 		{
-			$objp = $db->fetch_object($resql);
-			$var=!$var;
+			print '<input type="hidden" name="action" value="addline">';
+		}
 
-			// Ligne en mode visu
-			if ($action != 'editline' || GETPOST('line_id','int') != $objp->rowid)
+		// Intervention lines
+		$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
+		$sql.= ' ft.date as date_intervention';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
+		$sql.= ' WHERE ft.fk_fichinter = '.$object->id;
+		$sql.= ' ORDER BY ft.rang ASC, ft.rowid';
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+
+			if ($num)
 			{
-				print '<tr '.$bc[$var].'>';
-				print '<td>';
-				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-				print dol_htmlentitiesbr($objp->description);
+				print '<br>';
+				print '<table class="noborder" width="100%">';
 
-				// Date
-				print '<td align="center" width="150">'.dol_print_date($db->jdate($objp->date_intervention),'dayhour').'</td>';
+				print '<tr class="liste_titre">';
+				print '<td>'.$langs->trans('Description').'</td>';
+				print '<td align="center">'.$langs->trans('Date').'</td>';
+				print '<td align="right">'.$langs->trans('Duration').'</td>';
+				print '<td width="48" colspan="3">&nbsp;</td>';
+				print "</tr>\n";
+			}
+			$var=true;
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($resql);
+				$var=!$var;
 
-				// Duration
-				print '<td align="right" width="150">'.convertSecondToTime($objp->duree).'</td>';
-
-				print "</td>\n";
-
-
-				// Icone d'edition et suppression
-				if ($object->statut == 0  && $user->rights->ficheinter->creer)
+				// Ligne en mode visu
+				if ($action != 'editline' || GETPOST('line_id','int') != $objp->rowid)
 				{
-					print '<td align="center">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;line_id='.$objp->rowid.'#'.$objp->rowid.'">';
-					print img_edit();
-					print '</a>';
-					print '</td>';
-					print '<td align="center">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ask_deleteline&amp;line_id='.$objp->rowid.'">';
-					print img_delete();
-					print '</a></td>';
-					if ($num > 1)
+					print '<tr '.$bc[$var].'>';
+					print '<td>';
+					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+					print dol_htmlentitiesbr($objp->description);
+
+					// Date
+					print '<td align="center" width="150">'.dol_print_date($db->jdate($objp->date_intervention),'dayhour').'</td>';
+
+					// Duration
+					print '<td align="right" width="150">'.convertSecondToTime($objp->duree).'</td>';
+
+					print "</td>\n";
+
+
+					// Icone d'edition et suppression
+					if ($object->statut == 0  && $user->rights->ficheinter->creer)
 					{
 						print '<td align="center">';
-						if ($i > 0)
-						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=up&amp;line_id='.$objp->rowid.'">';
-							print img_up();
-							print '</a>';
-						}
-						if ($i < $num-1)
-						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=down&amp;line_id='.$objp->rowid.'">';
-							print img_down();
-							print '</a>';
-						}
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;line_id='.$objp->rowid.'#'.$objp->rowid.'">';
+						print img_edit();
+						print '</a>';
 						print '</td>';
+						print '<td align="center">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ask_deleteline&amp;line_id='.$objp->rowid.'">';
+						print img_delete();
+						print '</a></td>';
+						if ($num > 1)
+						{
+							print '<td align="center">';
+							if ($i > 0)
+							{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=up&amp;line_id='.$objp->rowid.'">';
+								print img_up();
+								print '</a>';
+							}
+							if ($i < $num-1)
+							{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=down&amp;line_id='.$objp->rowid.'">';
+								print img_down();
+								print '</a>';
+							}
+							print '</td>';
+						}
 					}
-				}
-				else
-				{
-					print '<td colspan="3">&nbsp;</td>';
+					else
+					{
+						print '<td colspan="3">&nbsp;</td>';
+					}
+
+					print '</tr>';
+
+					$line = new FichinterLigne($db);
+					$line->fetch($objp->rowid);
+
+					$extrafieldsline = new ExtraFields($db);
+					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
+
+					$line->fetch_optionals($line->rowid, $extralabelslines);
+
+					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>5));
+
+
 				}
 
-				print '</tr>';
+				// Line in update mode
+				if ($object->statut == 0 && $action == 'editline' && $user->rights->ficheinter->creer && GETPOST('line_id','int') == $objp->rowid)
+				{
+					print '<tr '.$bc[$var].'>';
+					print '<td>';
+					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+
+					// Editeur wysiwyg
+					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+					$doleditor=new DolEditor('np_desc',$objp->description,'',164,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
+					$doleditor->Create();
+					print '</td>';
+
+					// Date d'intervention
+					print '<td align="center" class="nowrap">';
+					$form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
+					print '</td>';
+
+					// Duration
+					print '<td align="right">';
+					$form->select_duration('duration',$objp->duree);
+					print '</td>';
+
+					print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
+					print '</tr>' . "\n";
+
+					$line = new FichinterLigne($db);
+					$line->fetch($objp->rowid);
+
+					$extrafieldsline = new ExtraFields($db);
+					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
+					$line->fetch_optionals($line->rowid, $extralabelslines);
+
+					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
+
+
+				}
+
+				$i++;
 			}
 
-			// Line in update mode
-			if ($object->statut == 0 && $action == 'editline' && $user->rights->ficheinter->creer && GETPOST('line_id','int') == $objp->rowid)
-			{
-				print '<tr '.$bc[$var].'>';
-				print '<td>';
-				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+			$db->free($resql);
 
-				// Editeur wysiwyg
+			// Add new line
+			if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline' && empty($conf->global->FICHINTER_DISABLE_DETAILS))
+			{
+				if (! $num) print '<br><table class="noborder" width="100%">';
+
+				print '<tr class="liste_titre">';
+				print '<td>';
+				print '<a name="add"></a>'; // ancre
+				print $langs->trans('Description').'</td>';
+				print '<td align="center">'.$langs->trans('Date').'</td>';
+				print '<td align="right">'.$langs->trans('Duration').'</td>';
+
+				print '<td colspan="4">&nbsp;</td>';
+				print "</tr>\n";
+
+				$var=false;
+
+				print '<tr '.$bc[$var].">\n";
+				print '<td>';
+				// editeur wysiwyg
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('np_desc',$objp->description,'',164,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
+				$doleditor=new DolEditor('np_desc',GETPOST('np_desc','alpha'),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
 				$doleditor->Create();
 				print '</td>';
 
-				// Date d'intervention
+				// Date intervention
 				print '<td align="center" class="nowrap">';
-				$form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
+				$now=dol_now();
+				$timearray=dol_getdate($now);
+				if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+				else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
+				$form->select_date($timewithnohour,'di',1,1,0,"addinter");
 				print '</td>';
 
 				// Duration
 				print '<td align="right">';
-				$form->select_duration('duration',$objp->duree);
+				$selectmode='select';
+				if (! empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) $selectmode='text';
+				$form->select_duration('duration', (!GETPOST('durationhour','int') && !GETPOST('durationmin','int'))?3600:(60*60*GETPOST('durationhour','int')+60*GETPOST('durationmin','int')), 0, $selectmode, 1);
 				print '</td>';
 
-				print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-				print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
-				print '</tr>' . "\n";
+				print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
+				print '</tr>';
+
+				//Line extrafield
+
+				$lineadd = new FichinterLigne($db);
+
+				$extrafieldsline = new ExtraFields($db);
+				$extralabelslines=$extrafieldsline->fetch_name_optionals_label($lineadd->table_element);
+
+				print $lineadd->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
+
+				if (! $num) print '</table>';
 			}
 
-			$i++;
+			if ($num) print '</table>';
 		}
-
-		$db->free($resql);
-
-		// Add new line
-		if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline' && empty($conf->global->FICHINTER_DISABLE_DETAILS))
+		else
 		{
-			if (! $num) print '<br><table class="noborder" width="100%">';
-
-			print '<tr class="liste_titre">';
-			print '<td>';
-			print '<a name="add"></a>'; // ancre
-			print $langs->trans('Description').'</td>';
-			print '<td align="center">'.$langs->trans('Date').'</td>';
-			print '<td align="right">'.$langs->trans('Duration').'</td>';
-
-			print '<td colspan="4">&nbsp;</td>';
-			print "</tr>\n";
-
-			$var=false;
-
-			print '<tr '.$bc[$var].">\n";
-			print '<td>';
-			// editeur wysiwyg
-			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor('np_desc',GETPOST('np_desc','alpha'),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
-			$doleditor->Create();
-			print '</td>';
-
-			// Date intervention
-			print '<td align="center" class="nowrap">';
-			$now=dol_now();
-			$timearray=dol_getdate($now);
-			if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
-			else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
-			$form->select_date($timewithnohour,'di',1,1,0,"addinter");
-			print '</td>';
-
-			// Duration
-			print '<td align="right">';
-			$selectmode='select';
-			if (! empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) $selectmode='text';
-			$form->select_duration('duration', (!GETPOST('durationhour','int') && !GETPOST('durationmin','int'))?3600:(60*60*GETPOST('durationhour','int')+60*GETPOST('durationmin','int')), 0, $selectmode, 1);
-			print '</td>';
-
-			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
-			print '</tr>';
-
-			if (! $num) print '</table>';
+			dol_print_error($db);
 		}
 
-		if ($num) print '</table>';
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+		print '</form>'."\n";
+ 	}
 
-	print '</form>'."\n";
+	dol_fiche_end();
 
-	print '</div>';
 	print "\n";
 
 
@@ -1531,8 +1627,10 @@ else if ($id > 0 || ! empty($ref))
 			// Modify
 			if ($object->statut == 1 && $user->rights->ficheinter->creer)
 			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=modify"';
-				print '>'.$langs->trans("Modify").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=modify">';
+				if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) print $langs->trans("Modify");
+				else print $langs->trans("SetToDraft");
+				print '</a></div>';
 			}
 
 			// Send
@@ -1543,6 +1641,20 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
 				}
 				else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
+			}
+
+			// Event agenda
+			if (! empty($conf->global->FICHINTER_ADDLINK_TO_EVENT))
+			{
+				if (! empty($conf->agenda->enabled) && $object->statut > 0)
+				{
+					$langs->load("agenda");
+					if ($object->statut < 2)
+					{
+						if ($user->rights->agenda->myactions->create) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'&amp;backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddEvent").'</a></div>';
+						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddEvent").'</a></div>';
+					}
+				}
 			}
 
 			// Proposal
@@ -1571,6 +1683,10 @@ else if ($id > 0 || ! empty($ref))
 					if ($object->statut != 2)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a></div>';
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifyunbilled">'.$langs->trans("ClassifyUnBilled").'</a></div>';
 					}
 				}
 			}

@@ -645,6 +645,7 @@ OptionalFieldsSetup=Extra attributes setup
 URLPhoto=URL of photo/logo
 SetLinkToThirdParty=Link to another third party
 CreateDraft=Create draft
+SetToDraft=Back to draft
 ClickToEdit=Click to edit
 ObjectDeleted=Object %s deleted
 ByCountry=By country

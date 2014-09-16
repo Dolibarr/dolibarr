@@ -200,6 +200,12 @@ if ($action == 'add' && $canadduser)
         $object->ldap_sid		= GETPOST("ldap_sid");
         $object->fk_user        = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
 
+        $object->thm            = GETPOST("thm")!=''?GETPOST("thm"):'';
+        $object->tjm            = GETPOST("tjm")!=''?GETPOST("tjm"):'';
+        $object->salary         = GETPOST("salary")!=''?GETPOST("salary"):'';
+        $object->salaryextra    = GETPOST("salaryextra")!=''?GETPOST("salaryextra"):'';
+        $object->weeklyhours    = GETPOST("weeklyhours")!=''?GETPOST("weeklyhours"):'';
+
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
@@ -338,6 +344,12 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->accountancy_code	= GETPOST("accountancy_code");
             $object->openid		= GETPOST("openid");
             $object->fk_user    = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
+
+	        $object->thm            = GETPOST("thm")!=''?GETPOST("thm"):'';
+	        $object->tjm            = GETPOST("tjm")!=''?GETPOST("tjm"):'';
+	        $object->salary         = GETPOST("salary")!=''?GETPOST("salary"):'';
+	        $object->salaryextra    = GETPOST("salaryextra")!=''?GETPOST("salaryextra"):'';
+	        $object->weeklyhours    = GETPOST("weeklyhours")!=''?GETPOST("weeklyhours"):'';
 
             // Fill array 'array_options' with data from add form
         	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -614,7 +626,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 				$conf->global->LDAP_FIELD_LOGIN_SAMBA,
 				$conf->global->LDAP_FIELD_PASSWORD,
 				$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
-        $conf->global->LDAP_FIELD_PHONE,
+				$conf->global->LDAP_FIELD_PHONE,
 				$conf->global->LDAP_FIELD_FAX,
 				$conf->global->LDAP_FIELD_MOBILE,
 				$conf->global->LDAP_FIELD_SKYPE,
@@ -930,6 +942,39 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td>';
     print "</tr>\n";
 
+	if ($conf->salaries->enabled && ! empty($user->rights->salaries->read))
+	{
+		$langs->load("salaries");
+
+	    // THM
+	    print '<tr><td valign="top">'.$langs->trans("THM").'</td>';
+	    print '<td>';
+	    print '<input size="8" type="text" name="thm" value="'.GETPOST('thm').'">';
+	    print '</td>';
+	    print "</tr>\n";
+
+	    // TJM
+	    print '<tr><td valign="top">'.$langs->trans("TJM").'</td>';
+	    print '<td>';
+	    print '<input size="8" type="text" name="tjm" value="'.GETPOST('tjm').'">';
+	    print '</td>';
+	    print "</tr>\n";
+
+	    // Salary
+	    print '<tr><td valign="top">'.$langs->trans("Salary").'</td>';
+	    print '<td>';
+	    print '<input size="8" type="text" name="salary" value="'.GETPOST('salary').'">';
+	    print '</td>';
+	    print "</tr>\n";
+	}
+
+    // Weeklyhours
+    print '<tr><td valign="top">'.$langs->trans("WeeklyHours").'</td>';
+    print '<td>';
+    print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
+    print '</td>';
+    print "</tr>\n";
+
     // Note
     print '<tr><td valign="top">';
     print $langs->trans("Note");
@@ -1222,6 +1267,39 @@ else
             }
             print '</td>';
             print "</tr>\n";
+
+            if ($conf->salaries->enabled && ! empty($user->rights->salaries->read))
+            {
+            	$langs->load("salaries");
+
+	            // THM
+			    print '<tr><td valign="top">'.$langs->trans("THM").'</td>';
+			    print '<td>';
+			    print ($object->thm!=''?price($object->thm,'',$langs,1,-1,-1,$conf->currency):'');
+			    print '</td>';
+			    print "</tr>\n";
+
+	            // TJM
+			    print '<tr><td valign="top">'.$langs->trans("TJM").'</td>';
+			    print '<td>';
+			    print ($object->tjm!=''?price($object->tjm,'',$langs,1,-1,-1,$conf->currency):'');
+			    print '</td>';
+			    print "</tr>\n";
+
+			    // Salary
+			    print '<tr><td valign="top">'.$langs->trans("Salary").'</td>';
+			    print '<td>';
+			    print ($object->salary!=''?price($object->salary,'',$langs,1,-1,-1,$conf->currency):'');
+			    print '</td>';
+			    print "</tr>\n";
+            }
+
+		    // Weeklyhours
+		    print '<tr><td valign="top">'.$langs->trans("WeeklyHours").'</td>';
+		    print '<td>';
+			print price2num($object->weeklyhours);
+		    print '</td>';
+		    print "</tr>\n";
 
 			// Accountancy code
 			if (! empty($conf->global->USER_ENABLE_ACCOUNTANCY_CODE))	// For the moment field is not used so must not appeared.
@@ -1879,7 +1957,40 @@ else
             print '</td>';
             print "</tr>\n";
 
-			// Accountancy code
+            if ($conf->salaries->enabled && ! empty($user->rights->salaries->read))
+            {
+            	$langs->load("salaries");
+
+            	// THM
+			    print '<tr><td valign="top">'.$langs->trans("THM").'</td>';
+			    print '<td>';
+			    print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
+			    print '</td>';
+			    print "</tr>\n";
+
+			    // TJM
+			    print '<tr><td valign="top">'.$langs->trans("TJM").'</td>';
+			    print '<td>';
+			    print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
+			    print '</td>';
+			    print "</tr>\n";
+
+			    // Salary
+			    print '<tr><td valign="top">'.$langs->trans("Salary").'</td>';
+			    print '<td>';
+			    print '<input size="8" type="text" name="salary" value="'.price2num(GETPOST('salary')?GETPOST('salary'):$object->salary).'">';
+			    print '</td>';
+			    print "</tr>\n";
+            }
+
+		    // Weeklyhours
+		    print '<tr><td valign="top">'.$langs->trans("WeeklyHours").'</td>';
+		    print '<td>';
+		    print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
+		    print '</td>';
+		    print "</tr>\n";
+
+		    // Accountancy code
             if (! empty($conf->global->USER_ENABLE_ACCOUNTANCY_CODE))	// For the moment field is not used so must not appeared.
             {
 	            print "<tr>";

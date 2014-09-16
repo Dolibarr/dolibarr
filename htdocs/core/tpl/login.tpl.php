@@ -25,8 +25,12 @@ if (GETPOST('dol_optimize_smallscreen')) $conf->dol_optimize_smallscreen=1;
 if (GETPOST('dol_no_mouse_hover')) $conf->dol_no_mouse_hover=1;
 if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
 
+// If we force to use jmobile, then we reenable javascript
+if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
+
 $arrayofjs=array('/core/js/dst.js'.(empty($conf->dol_use_jmobile)?'':'?version='.urlencode(DOL_VERSION)));					// Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $titleofloginpage=$langs->trans('Login').' '.$title;	// title is defined by dol_loginfunction in security2.lib.php
+
 print top_htmlhead('',$titleofloginpage,0,0,$arrayofjs);
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
@@ -62,7 +66,7 @@ $(document).ready(function () {
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
 <table class="login_table_title center" summary="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
+<tr class="vmenu"><td align="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
 </table>
 <br>
 
@@ -212,7 +216,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 
 <!-- authentication mode = <?php echo $main_authentication ?> -->
 <!-- cookie name used for this session = <?php echo $session_name ?> -->
-<!-- urlfrom in this session = <?php echo $_SESSION["urlfrom"] ?> -->
+<!-- urlfrom in this session = <?php echo isset($_SESSION["urlfrom"])?$_SESSION["urlfrom"]:''; ?> -->
 
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 

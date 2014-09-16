@@ -85,6 +85,7 @@ ClassifyPaid=Liigita 'Makstud'
 ClassifyPaidPartially=Liigita 'Osaliselt makstud'
 ClassifyCanceled=Liigita 'Hüljatud'
 ClassifyClosed=Liigita 'Suletud'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Loo arve
 AddBill=Lisa arve või kreeditarve
 AddToDraftInvoices=Lisa arve mustandile
@@ -197,8 +198,8 @@ Rest=Ootel
 AmountExpected=Väidetav väärtus
 ExcessReceived=Liigne saadud
 EscompteOffered=Soodustus pakutud (makse enne tähtaega)
-SendBillRef=Saada arve %s
-SendReminderBillRef=Saada arve %s (meeldetuletus)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Püsikorraldused
 StandingOrder=Püsikorraldus
 NoDraftBills=Arvete mustandeid ei ole
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Kahe uue allahindluse summa peab olema võr
 ConfirmRemoveDiscount=Kas oled täiesti kindel, et soovid selle allahindluse eemaldada?
 RelatedBill=Seotud arve
 RelatedBills=Seotud arved
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Kohene

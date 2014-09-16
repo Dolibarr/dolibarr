@@ -92,7 +92,7 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-	print_barre_liste($langs->trans("Actions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("Actions"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
 
 	$i = 0;
 	print '<table class="noborder" width="100%">';

@@ -191,7 +191,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
     	{
     	    $file = $prefix."_".$modele.".modules.php";
 
-    		// We check the model location 
+    		// We check the model location
 	        $file=dol_buildpath($reldir."core/modules/expedition/doc/".$file,0);
     		if (file_exists($file))
     		{
@@ -222,15 +222,6 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 			// we delete preview files
         	//require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			//dol_delete_preview($object);
-
-			// Calls triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('SHIPPING_BUILDDOC',$object,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $obj->errors=$interface->errors;
-			}
-			// End calls triggers
 
 			return 1;
 		}

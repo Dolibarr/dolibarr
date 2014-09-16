@@ -27,7 +27,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function user_prepare_head($object)
 {
@@ -70,6 +70,14 @@ function user_prepare_head($object)
     $head[$h][1] = $langs->trans("UserGUISetup");
     $head[$h][2] = 'guisetup';
     $h++;
+
+    if (! empty($conf->agenda->enabled))
+    {
+	    $head[$h][0] = DOL_URL_ROOT.'/user/agenda_extsites.php?id='.$object->id;
+	    $head[$h][1] = $langs->trans("ExtSites");
+	    $head[$h][2] = 'extsites';
+	    $h++;
+    }
 
     if (! empty($conf->clicktodial->enabled))
     {
@@ -170,7 +178,7 @@ function group_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function user_admin_prepare_head()
 {

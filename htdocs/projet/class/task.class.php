@@ -205,7 +205,7 @@ class Task extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
         $sql.= " WHERE ";
         if (!empty($ref)) {
-        	$sql.="t.ref = '".$ref."'";
+        	$sql.="t.ref = '".$this->db->escape($ref)."'";
         }else {
         	$sql.="t.rowid = ".$id;
         }
@@ -349,6 +349,7 @@ class Task extends CommonObject
     {
 
         global $conf, $langs;
+        require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
         $error=0;
 

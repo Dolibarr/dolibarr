@@ -85,6 +85,7 @@ ClassifyPaid=Klassificere "betales"
 ClassifyPaidPartially=Klassificere 'betales delvist'
 ClassifyCanceled=Klassificere 'Abandoned "
 ClassifyClosed=Klassificere "lukket"
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Opret Faktura
 AddBill=Tilføj faktura eller kreditnota
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=Beløb hævdede
 ExcessReceived=Trop Peru
 EscompteOffered=Rabat (betaling før sigt)
-SendBillRef=Send faktura %s
-SendReminderBillRef=Send faktura %s (påmindelse)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Stående ordrer
 StandingOrder=Stående ordre
 NoDraftBills=Nr. udkast til fakturaer
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Total af to nye rabatten skal svare til de 
 ConfirmRemoveDiscount=Er du sikker på du vil fjerne denne rabat?
 RelatedBill=Relaterede faktura
 RelatedBills=Relaterede fakturaer
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Omgående
@@ -315,7 +318,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% in advance, 50%% on delivery
 FixAmount=Fix amount
 VarAmount=Variable amount (%% tot.)
-
 # PaymentType
 PaymentTypeVIR=Bankindskud
 PaymentTypeShortVIR=Bankindskud

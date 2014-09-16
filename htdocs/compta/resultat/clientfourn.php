@@ -600,6 +600,7 @@ else
 {
     dol_print_error($db);
 }
+
 /*
  * Dunning
 */

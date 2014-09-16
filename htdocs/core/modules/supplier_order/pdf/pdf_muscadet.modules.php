@@ -192,6 +192,17 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			if (file_exists($dir))
 			{
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
@@ -490,7 +501,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 				$pdf->Output($file,'F');
 
-
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
@@ -701,7 +711,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			foreach( $this->localtax1 as $localtax_type => $localtax_rate )
 			{
 				if (in_array((string) $localtax_type, array('2','4','6'))) continue;
-		
+
 				foreach( $localtax_rate as $tvakey => $tvaval )
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0
@@ -733,7 +743,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			foreach( $this->localtax2 as $localtax_type => $localtax_rate )
 			{
 				if (in_array((string) $localtax_type, array('2','4','6'))) continue;
-			
+
 				foreach( $localtax_rate as $tvakey => $tvaval )
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0
@@ -1105,7 +1115,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_ORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		$showdetails=0;
+		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_ORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }

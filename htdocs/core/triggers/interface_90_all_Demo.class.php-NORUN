@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
+/* Copyright (C) 2005-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014 Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,6 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'ORDER_CLONE':
 		    case 'ORDER_VALIDATE':
 		    case 'ORDER_DELETE':
-		    case 'ORDER_BUILDDOC':
 		    case 'ORDER_SENTBYMAIL':
 		    case 'ORDER_CLASSIFY_BILLED':
 		    case 'LINEORDER_INSERT':
@@ -134,7 +133,6 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'ORDER_SUPPLIER_REFUSE':
 		    case 'ORDER_SUPPLIER_CANCEL':
 		    case 'ORDER_SUPPLIER_SENTBYMAIL':
-		    case 'ORDER_SUPPLIER_BUILDDOC':
 		    case 'LINEORDER_SUPPLIER_DISPATCH':
 		    case 'LINEORDER_SUPPLIER_CREATE':
 		    case 'LINEORDER_SUPPLIER_UPDATE':
@@ -144,7 +142,6 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'PROPAL_CLONE':
 		    case 'PROPAL_MODIFY':
 		    case 'PROPAL_VALIDATE':
-		    case 'PROPAL_BUILDDOC':
 		    case 'PROPAL_SENTBYMAIL':
 		    case 'PROPAL_CLOSE_SIGNED':
 		    case 'PROPAL_CLOSE_REFUSED':
@@ -169,7 +166,6 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'BILL_MODIFY':
 		    case 'BILL_VALIDATE':
 		    case 'BILL_UNVALIDATE':
-		    case 'BILL_BUILDDOC':
 		    case 'BILL_SENTBYMAIL':
 		    case 'BILL_CANCEL':
 		    case 'BILL_DELETE':
@@ -244,7 +240,6 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'SHIPPING_VALIDATE':
 		    case 'SHIPPING_SENTBYMAIL':
 		    case 'SHIPPING_DELETE':
-		    case 'SHIPPING_BUILDDOC':
 		        dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			    break;
 			    

@@ -85,6 +85,7 @@ ClassifyPaid=Označi kao plaćeno
 ClassifyPaidPartially=Označi kao djelomično plaćeno
 ClassifyCanceled=Označi kao napušteno
 ClassifyClosed=Označi kao zatvoreno
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Izradi račun
 AddBill=Dodaj račun ili bonifikaciju
 AddToDraftInvoices=Dodati u skice računa
@@ -197,8 +198,8 @@ Rest=U toku
 AmountExpected=Utvrđen iznos
 ExcessReceived=Previše primljeno
 EscompteOffered=Ponuđen je popust (za plaćanje prije dospijeća)
-SendBillRef=Pošalji račun %s
-SendReminderBillRef=Pošalji račun %s (podsjetnik)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Otvorene narudžbe
 StandingOrder=Otvorene narudžbe
 NoDraftBills=Nema skica računa
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Total of two new discount must be equal to 
 ConfirmRemoveDiscount=Jeste li sigurni da želite ukloniti ovaj popust?
 RelatedBill=Povezani račun
 RelatedBills=Povezani račun
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Odmah

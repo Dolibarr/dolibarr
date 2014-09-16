@@ -85,6 +85,7 @@ ClassifyPaid=تصنيف 'مدفوع'
 ClassifyPaidPartially=تصنيف 'مدفوع جزئيا'
 ClassifyCanceled=تصنيف 'المهجورة'
 ClassifyClosed=تصنيف 'مغلقة'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=إنشاء الفاتورة
 AddBill=تضيف المذكرة الائتمان أو فاتورة
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=المبلغ المطالب به
 ExcessReceived=تلقى الزائدة
 EscompteOffered=عرض الخصم (الدفع قبل الأجل)
-SendBillRef=ارسال الفاتورة ٪ ق
-SendReminderBillRef=ارسال الفاتورة ٪ ق (تذكرة)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=أوامر دائمة
 StandingOrder=من أجل الوقوف
 NoDraftBills=أي مشروع الفواتير
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=مجموعه جديدتين الخصم يج
 ConfirmRemoveDiscount=هل أنت متأكد من أنك تريد إزالة هذا الخصم؟
 RelatedBill=الفاتورة ذات الصلة
 RelatedBills=الفواتير ذات الصلة
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=فورا

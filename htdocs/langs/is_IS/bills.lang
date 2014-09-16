@@ -85,6 +85,7 @@ ClassifyPaid=Flokka 'Greiddur'
 ClassifyPaidPartially=Flokka 'Greiddur hluta'
 ClassifyCanceled=Flokka 'Yfirgefinn'
 ClassifyClosed=Lokað Flokka '
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Búa til reikning
 AddBill=Bæta við reikning eða inneign athugið
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=Upphæð krafa
 ExcessReceived=Umfram borist
 EscompteOffered=Afsláttur í boði (greiðsla fyrir tíma)
-SendBillRef=Senda reikning %s
-SendReminderBillRef=Senda reikning %s  (áminning)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Standandi pantanir
 StandingOrder=Standandi pöntun
 NoDraftBills=Nei drög reikninga
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Samtals tvö ný afsláttur verður jafn up
 ConfirmRemoveDiscount=Ertu viss um að þú viljir fjarlægja þetta afslætti?
 RelatedBill=Svipaðir Reikningar
 RelatedBills=Svipaðir reikningum
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Skjótur

@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -63,7 +62,6 @@ class Project extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        $this->societe = new Societe($db);
 
         $this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
         $this->statuts = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
@@ -255,7 +253,7 @@ class Project extends CommonObject
                     $result = 1;
                 }
                 else
-                {
+              {
                     $this->db->rollback();
                     $result = -1;
                 }
@@ -298,7 +296,7 @@ class Project extends CommonObject
         }
         else if (! empty($ref))
         {
-        	$sql.= " WHERE ref='".$ref."'";
+        	$sql.= " WHERE ref='".$this->db->escape($ref)."'";
         	$sql.= " AND entity IN (".getEntity('project').")";
         }
 
@@ -741,7 +739,7 @@ class Project extends CommonObject
      *
      * 	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
      * 	@param	string	$option			Variant ('', 'nolink')
-     * 	@param	int		$addlabel		0=Default, 1=Add label into string
+     * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      * 	@return	string					Chaine avec URL
      */
     function getNomUrl($withpicto=0, $option='', $addlabel=0)
@@ -773,7 +771,7 @@ class Project extends CommonObject
 
         if ($withpicto) $result.=($lien . img_object($label, $picto) . $lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$lien . $this->ref . $lienfin . (($addlabel && $this->title) ? ' - ' . $this->title : '');
+        if ($withpicto != 2) $result.=$lien . $this->ref . $lienfin . (($addlabel && $this->title) ? ' - ' . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;
     }
 
@@ -886,7 +884,7 @@ class Project extends CommonObject
         $projects = array();
         $temp = array();
 
-        $sql = "SELECT DISTINCT p.rowid, p.ref";
+        $sql = "SELECT ".(($mode == 0 || $mode == 1) ? "DISTINCT " : "")."p.rowid, p.ref";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet as p";
         if ($mode == 0 || $mode == 1)
         {
@@ -973,7 +971,7 @@ class Project extends CommonObject
 
 		$error=0;
 
-		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_file=".$clone_file." clone_note=".$clone_note);
+		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note);
 
 		$now = dol_mktime(0,0,0,idate('m',dol_now()),idate('d',dol_now()),idate('Y',dol_now()));
 
@@ -983,6 +981,7 @@ class Project extends CommonObject
 
 		// Load source object
 		$clone_project->fetch($fromid);
+		$clone_project->fetch_thirdparty();
 
 		$orign_dt_start=$clone_project->date_start;
 		$orign_project_ref=$clone_project->ref;
@@ -1010,7 +1009,7 @@ class Project extends CommonObject
 
         	require_once DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.'.php';
         	$modProject = new $obj;
-        	$defaultref = $modProject->getNextValue($clone_project->societe->id,$clone_project);
+        	$defaultref = $modProject->getNextValue(is_object($clone_project->thirdparty)?$clone_project->thirdparty->id:0,$clone_project);
     	}
 
     	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
@@ -1131,6 +1130,8 @@ class Project extends CommonObject
 			//Duplicate task
 			if ($clone_task)
 			{
+				require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
+
 				$taskstatic = new Task($this->db);
 
 				// Security check

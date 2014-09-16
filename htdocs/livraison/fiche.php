@@ -46,7 +46,7 @@ $langs->load('orders');
 
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
-$backtourl=GETPOST('backtourl');
+$backtopage=GETPOST('backtopage');
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -150,7 +150,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	if ($result > 0)
 	{
 		$db->commit();
-		if (! empty($backtourl)) header("Location: ".$backtourl);
+		if (! empty($backtopage)) header("Location: ".$backtopage);
 		else header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
 		exit;
 	}
@@ -185,7 +185,7 @@ if ($action == 'builddoc')	// En get ou en post
 	$object = new Livraison($db);
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-	
+
 	// Save last template used to generate document
 	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
@@ -317,7 +317,8 @@ if ($action == 'create')
 		 */
 		print '<br><table class="noborder" width="100%">';
 
-		$lines = $commande->fetch_lines(1);
+		$commande->fetch_lines(1);
+		$lines = $commande->lines;
 
 		// Lecture des livraisons deja effectuees
 		$commande->livraison_array();
@@ -492,7 +493,7 @@ else
 			if ($action == 'delete')
 			{
 				$expedition_id = GETPOST("expid");
-				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&expid='.$expedition_id.'&backtourl='.urlencode($backtourl),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$delivery->ref),'confirm_delete','','',1);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$delivery->ref),'confirm_delete','','',1);
 
 			}
 
@@ -515,7 +516,7 @@ else
 			if (($delivery->origin == 'shipment' || $delivery->origin == 'expedition') && $delivery->origin_id > 0)
 			{
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/liste.php">'.$langs->trans("BackToList").'</a>';
-				
+
 				// Ref
 				print '<tr><td width="20%">'.$langs->trans("RefSending").'</td>';
 				print '<td colspan="3">';
@@ -523,8 +524,8 @@ else
 				//print $form->showrefnav($expedition, 'refshipment', $linkback, 1, 'ref', 'ref');
 				print $form->showrefnav($expedition, 'refshipment', $linkback, 0, 'ref', 'ref');
 				print '</td></tr>';
-			}			
-				
+			}
+
 			// Ref
 			print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">'.$delivery->ref.'</td></tr>';
@@ -738,7 +739,7 @@ else
 				{
 					if ($conf->expedition_bon->enabled)
 					{
-						print '<a class="butActionDelete" href="fiche.php?id='.$delivery->id.'&amp;expid='.$delivery->origin_id.'&amp;action=delete&amp;backtourl='.urlencode(DOL_URL_ROOT.'/expedition/fiche.php?id='.$delivery->origin_id).'">'.$langs->trans("Delete").'</a>';
+						print '<a class="butActionDelete" href="fiche.php?id='.$delivery->id.'&amp;expid='.$delivery->origin_id.'&amp;action=delete&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/fiche.php?id='.$delivery->origin_id).'">'.$langs->trans("Delete").'</a>';
 					}
 					else
 					{
