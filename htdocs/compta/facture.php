@@ -10,6 +10,7 @@
  * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014	   Teddy Andreotti		 <125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3331,7 +3332,7 @@ if ($action == 'create')
 		print '		if(arguments.length > 0){';
 		print '         if(arguments[0] == 1){';
 		print '				$("#prod_entry_mode_free").click();';
-		print '				$("#dp_desc").val(arguments[1]);';
+		print '				$("#dp_desc").val(atob(arguments[1]));';
 		print '				$("#qty").val(Number(arguments[2]));';
 		print '				$("#remise_percent").val(Number(arguments[3]));';
 		print '				$("#price_ht").val(Number(arguments[4]));';
@@ -3340,12 +3341,13 @@ if ($action == 'create')
 		print '     	}';
 		print '         else if(arguments[0] == 2){';
 		print '             $("#prod_entry_mode_predef").click();';
-		print '				$("#dp_desc").val(arguments[1]);';
+		print '				$("#dp_desc").val(atob(arguments[1]));';
 		print '				$("#qty").val(Number(arguments[2]));';
 		print '				$("#remise_percent").val(Number(arguments[3]));';
 		print '				$("#idprod").val(Number(arguments[4]));';
 		print '     	}';
 		print '     }';
+		print '     return false;';
 		print '	}';
 		print '</script>';
 	}

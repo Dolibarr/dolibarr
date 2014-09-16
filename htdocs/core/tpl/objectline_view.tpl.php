@@ -23,17 +23,6 @@
  */
 ?>
 <?php $coldisplay=0; ?>
-
-<?php
-	echo ".<br />";
-	echo $line->ref . "</br>";
-	echo $line->product_type . "</br>";
-	echo $line->description . "</br>";
-	var_dump(htmlspecialchars($line->description,  ENT_QUOTES));
-	echo "&quot;";
-	echo "------------------<br />";
-
-?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
@@ -164,32 +153,26 @@
 			if(!empty($line->ref)){
 				// produit prédefini
 				$string_argument = "'2'";
-				$string_argument .= ", '".addslashes(htmlspecialchars($line->description))."'";
+				$descclean = str_replace($line->product_desc ."\n", "",$line->description);
+				$string_argument .= ", '".base64_encode($descclean)."'";
 				$string_argument .= ", '".$line->qty."'";
 				$string_argument .= ", '".$line->remise_percent."'";
 				$string_argument .= ", '".$line->fk_product."'";
-				?>
-				<td align="center"><?php $coldisplay++; ?>
-					<a href="" class="dupdup" onclick="autofillnewproduct(<?php echo $string_argument; ?>); return false;" >
-						<?php echo img_picto("Dupliquer",'split.png'); ?>
-					</a>
-				</td>
-
-				<?php
 			}else{
 				//ligne libre
 				$string_argument = "'1'";
-				$string_argument .= ", '".addslashes(htmlspecialchars($line->description))."'";
+				$string_argument .= ", '".base64_encode($line->description)."'";
 				$string_argument .= ", '".$line->qty."'";
 				$string_argument .= ", '".$line->remise_percent."'";
 				$string_argument .= ", '".$line->subprice."'";
 				$string_argument .= ", '".$line->tva_tx."'";
 				$string_argument .= ", '".$line->product_type."'";
-			?>
-				<td align="center"><?php $coldisplay++; ?>
-
-				</td>
-			<?php }	?>
+			 }	?>
+			<td align="center"><?php $coldisplay++; ?>
+				<a href="" class="dupdup" onclick="autofillnewproduct(<?php echo $string_argument; ?>); return false;" >
+					<?php echo img_picto("Dupliquer",'split.png'); ?>
+				</a>
+			</td>
 	<?php } ?>
 
 	<td align="center"><?php $coldisplay++; ?>
