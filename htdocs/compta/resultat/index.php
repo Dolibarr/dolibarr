@@ -494,8 +494,8 @@ if ($result)
 		{
 			$obj = $db->fetch_object($result);
 
-			if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
-			$encaiss[$obj->dm] += $obj->amount;
+			if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
+			$decaiss[$obj->dm] += $obj->amount;
 
 			if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
 			$decaiss_ttc[$obj->dm] += $obj->amount;
@@ -533,8 +533,8 @@ if ($result)
 		{
 			$obj = $db->fetch_object($result);
 
-			if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
-			$decaiss[$obj->dm] += $obj->amount;
+			if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
+			$encaiss[$obj->dm] += $obj->amount;
 
 			if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
 			$encaiss_ttc[$obj->dm] += $obj->amount;
