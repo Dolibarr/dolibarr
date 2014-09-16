@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 if (!$user->rights->opensurvey->read) accessforbidden();
 
 $action=GETPOST('action');
-$id=GETPOST('id');
+$id=GETPOST('id','alpha');
 $numsondage= $id;
 $surveytitle=GETPOST('surveytitle');
 $status=GETPOST('status');

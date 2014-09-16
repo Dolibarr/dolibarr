@@ -61,7 +61,7 @@ License: GPL-3+
 Files: htdocs/includes/adodbtime/*
 Copyright: 2003-2005, John Lim
            unknown, jackbbs
-License: BSD
+License: BSD-3-Clause
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
  are met:
@@ -272,7 +272,7 @@ Comment:
 
 Files: htdocs/includes/jquery/plugins/flot/*
 Copyright: Flot team
-License: Public Domain
+License: Public-Domain
  This work is not subject to copyright in any jurisdiction
 Comment:
  Those files are not shipped in the binary package because we configure
