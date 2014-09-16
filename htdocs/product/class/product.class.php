@@ -547,7 +547,7 @@ class Product extends CommonObject
 					if (file_exists($olddir))
 					{
 						include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-						$res=dol_move($olddir, $newdir);
+						$res=@dol_move($olddir, $newdir);
 						if (! $res)
 						{
 							$this->error='ErrorFailToMoveDir';
@@ -594,7 +594,6 @@ class Product extends CommonObject
 	function delete($id=0)
 	{
 		global $conf,$user,$langs;
-		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -1512,17 +1511,19 @@ class Product extends CommonObject
 		$sql.= " COUNT(ed.rowid) as nb_rows, SUM(ed.qty) as qty";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 		$sql.= ", ".MAIN_DB_PREFIX."commandedet as cd";
+		$sql.= ", ".MAIN_DB_PREFIX."commande as c";
 		$sql.= ", ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE e.rowid = ed.fk_expedition";
+		$sql.= " AND c.rowid = cd.fk_commande";
 		$sql.= " AND e.fk_soc = s.rowid";
 		$sql.= " AND e.entity = ".$conf->entity;
 		$sql.= " AND ed.fk_origin_line = cd.rowid";
 		$sql.= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND e.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND e.fk_soc = ".$socid;
-		if ($filtrestatut <> '') $sql.= " AND e.fk_statut in (".$filtrestatut.")";
+		if ($filtrestatut <> '') $sql.= " AND c.fk_statut in (".$filtrestatut.")";
 
 		$result = $this->db->query($sql);
 		if ( $result )
@@ -1532,6 +1533,48 @@ class Product extends CommonObject
 			$this->stats_expedition['nb']=$obj->nb;
 			$this->stats_expedition['rows']=$obj->nb_rows;
 			$this->stats_expedition['qty']=$obj->qty?$obj->qty:0;
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Charge tableau des stats réception fournisseur pour le produit/service
+	 *
+	 *  @param    int	$socid       	Id societe pour filtrer sur une societe
+	 *  @param    int	$filtrestatut  	Id statut pour filtrer sur un statut
+	 *  @return   array       			Tableau des stats
+	 */
+	function load_stats_reception($socid=0,$filtrestatut='')
+	{
+		global $conf,$user;
+
+		$sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_customers, COUNT(DISTINCT cf.rowid) as nb,";
+		$sql.= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd";
+		$sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE cf.rowid = fd.fk_commande";
+		$sql.= " AND cf.fk_soc = s.rowid";
+		$sql.= " AND cf.entity = ".$conf->entity;
+		$sql.= " AND fd.fk_product = ".$this->id;
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if ($socid > 0)	$sql.= " AND cf.fk_soc = ".$socid;
+		if ($filtrestatut <> '') $sql.= " AND cf.fk_statut in (".$filtrestatut.")";
+
+		$result = $this->db->query($sql);
+		if ( $result )
+		{
+			$obj=$this->db->fetch_object($result);
+			$this->stats_reception['suppliers']=$obj->nb_customers;
+			$this->stats_reception['nb']=$obj->nb;
+			$this->stats_reception['rows']=$obj->nb_rows;
+			$this->stats_reception['qty']=$obj->qty?$obj->qty:0;
 			return 1;
 		}
 		else
@@ -2599,7 +2642,7 @@ class Product extends CommonObject
 	 *
 	 *    @return     int             < 0 if KO, > 0 if OK
 	 */
-	function load_stock()
+	function load_stock($virtual=true)
 	{
 		$this->stock_reel = 0;
 		$this->stock_warehouse = array();
@@ -2630,12 +2673,55 @@ class Product extends CommonObject
 				}
 			}
 			$this->db->free($result);
+			if($virtual) $this->load_virtual_stock();
 			return 1;
 		}
 		else
 		{
 			$this->error=$this->db->lasterror();
 			return -1;
+		}
+	}
+	
+	/**
+	 *    Load information about virtual stock of a product
+	 *
+	 *    @return     int             < 0 if KO, > 0 if OK
+	 */
+	function load_virtual_stock()
+	{
+		global $conf;
+		
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
+		{
+			$stock_commande_client=$stock_commande_fournisseur=0;
+			$stock_sending_client=$stock_reception_fournisseur=0;
+
+			if (! empty($conf->commande->enabled))
+			{
+				$result=$this->load_stats_commande(0,'1,2');
+				if ($result < 0) dol_print_error($db,$this->error);
+				$stock_commande_client=$this->stats_commande['qty'];
+			}
+			if (! empty($conf->expedition->enabled))
+			{
+				$result=$this->load_stats_sending(0,'1,2');
+				if ($result < 0) dol_print_error($db,$this->error);
+				$stock_sending_client=$this->stats_expedition['qty'];
+			}
+			if (! empty($conf->fournisseur->enabled))
+			{
+				$result=$this->load_stats_commande_fournisseur(0,'3,4');
+				if ($result < 0) dol_print_error($db,$this->error);
+				$stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
+				
+				$result=$this->load_stats_reception(0,'3,4');
+				if ($result < 0) dol_print_error($db,$this->error);
+				$stock_reception_fournisseur=$this->stats_reception['qty'];
+			}
+
+			$this->stock_theorique=$this->stock_reel-($stock_commande_client-$stock_sending_client)+($stock_commande_fournisseur-$stock_reception_fournisseur);
+			//echo $this->stock_theorique.' = '.$this->stock_reel.' - ('.$stock_commande_client.' - '.$stock_sending_client.') + ('.$stock_commande_fournisseur.' - '.$stock_reception_fournisseur.')';
 		}
 	}
 
@@ -2848,15 +2934,15 @@ class Product extends CommonObject
     							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
     							if ($photo_vignette && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i', $photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
     							{
-    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
+    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
     							}
     							if ($user->rights->produit->creer || $user->rights->service->creer)
     							{
     								// Link to resize
-    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
     			               		// Link to delete
-    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
     								$return.= img_delete().'</a>';
     							}
     						}
@@ -2876,10 +2962,10 @@ class Product extends CommonObject
     							if ($user->rights->produit->creer || $user->rights->service->creer)
     							{
     								// Link to resize
-    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
     			               		// Link to delete
-    			               		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+    			               		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
     								$return.= img_delete().'</a>';
     							}
     						}
