@@ -990,7 +990,7 @@ if ($action == 'create')
             $numprojet=$formproject->select_projects($soc->id,GETPOST('projectid','int'),'projectid');
             if ($numprojet==0)
             {
-                print ' &nbsp; <a href="'.DOL_DOCUMENT_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+                print ' &nbsp; <a href="'.dol_buildpath('/projet/fiche.php',1).'?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
             }
             print '</td></tr>';
         }
