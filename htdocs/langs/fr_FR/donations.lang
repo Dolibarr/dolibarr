@@ -38,3 +38,4 @@ FrenchOptions=Options éligibles en France
 DONATION_ART200=Les dons ou versements reçus sont éligibles à l'article 200 du CGI
 DONATION_ART238=Les dons ou versements reçus sont éligibles à l'article 238bis du CGI
 DONATION_ART885=Les dons ou versements reçus sont éligibles à l'article 885-0 V bis A du CGI
+MinimumAmount=Le montant minimum du don est de %s
