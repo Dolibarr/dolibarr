@@ -7,6 +7,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2339,6 +2340,105 @@ class ContratLigne extends CommonObject
 		}
 	}
 
+	/**
+	 *  Create a contract document on disk using template defined into CONTRACT_ADDON_PDF
+	 *
+	 *  @param	string		$modele			force le modele a utiliser ('' par defaut)
+	 *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param  int			$hidedetails    Hide details of lines
+	 *  @param  int			$hidedesc       Hide description
+	 *  @param  int			$hideref        Hide ref
+	 *  @return int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$langs,$user,$hookmanager;
+
+		$langs->load("contracts");
+
+		$error=0;
+
+		$srctemplatepath='';
+
+		// Positionne modele sur le nom du modele de contrat a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->CONTRACT_ADDON_PDF))
+			{
+				$modele = $conf->global->CONTRACT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'strato';
+			}
+		}
+
+		// If selected modele is a filename template (then $modele="modelname:filename")
+		$tmp=explode(':',$modele,2);
+		if (! empty($tmp[1]))
+		{
+			$modele=$tmp[0];
+			$srctemplatepath=$tmp[1];
+		}
+
+		// Search template files
+		$file=''; $classname=''; $filefound=0;
+		$dirmodels=array('/');
+		if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+		foreach($dirmodels as $reldir)
+		{
+			foreach(array('doc','pdf') as $prefix)
+			{
+				$file = $prefix."_".$modele.".modules.php";
+
+				// On verifie l'emplacement du modele
+				$file=dol_buildpath($reldir."core/modules/contract/doc/".$file,0);
+				if (file_exists($file))
+				{
+					$filefound=1;
+					$classname=$prefix.'_'.$modele;
+					break;
+				}
+			}
+			if ($filefound) break;
+		}
+
+		// Charge le modele
+		if ($filefound)
+		{
+			require_once $file;
+
+			$obj = new $classname($this->db);
+
+			// We save charset_output to restore it because write_file can change it if needed for
+			// output format that does not support UTF8.
+			$sav_charset_output=$outputlangs->charset_output;
+			if ($obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
+			{
+				$outputlangs->charset_output=$sav_charset_output;
+
+				// We delete old preview
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				dol_delete_preview($this);
+
+				// Success in building document. We build meta file.
+				dol_meta_create($this);
+
+				return 1;
+			}
+			else
+			{
+				$outputlangs->charset_output=$sav_charset_output;
+				dol_print_error($this->db,"contract_pdf_create Error: ".$obj->error);
+				return 0;
+			}
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
+			return 0;
+		}
+	}
 }
 
 
