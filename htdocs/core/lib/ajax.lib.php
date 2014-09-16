@@ -311,7 +311,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.
  *
  * @param	string	$htmlname					Name of html select field
- * @param	array	$events						Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+ * @param	array	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
  * @return	string								Return html string to convert a select field into a combo
  */
@@ -344,13 +344,13 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
     			var obj = '.json_encode($events).';
     			$.each(obj, function(key,values) {
     				if (values.method.length) {
-    					getMethod(values);
+    					runJsCodeForEvent(values);
     				}
 				});
 			}
 		});
 
-		function getMethod(obj) {
+		function runJsCodeForEvent(obj) {
 			var id = $("#'.$htmlname.'").val();
 			var method = obj.method;
 			var url = obj.url;
@@ -382,6 +382,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 						} else {
 							$("#inputautocomplete"+htmlname).val("");
 						}
+						$("select#" + htmlname).change();	/* Trigger event change */
 					});
 		}
 

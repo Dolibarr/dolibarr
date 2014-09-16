@@ -796,7 +796,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param      User	$user			Object user who modify
 	 *	@param      string	$description    description
-	 *	@return     int						<0 if ko, >0 if ok
+	 *	@return     int						<0 if KO, >0 if OK
 	 */
 	function set_description($user, $description)
 	{
@@ -808,7 +808,6 @@ class Fichinter extends CommonObject
 			$sql.= " SET description = '".$this->db->escape($description)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
-			$sql.= " AND fk_statut = 0";
 
 			if ($this->db->query($sql))
 			{

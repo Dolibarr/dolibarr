@@ -51,7 +51,7 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 
 $search_ref      = GETPOST('search_ref');
 $month_create    = GETPOST('month_create');

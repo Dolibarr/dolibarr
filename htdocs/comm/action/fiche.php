@@ -101,7 +101,7 @@ if (GETPOST('addassignedtouser'))
 	$action='create';
 }
 // Add action
-if ($action == 'add_action')
+if ($action == 'add')
 {
 	$error=0;
 
@@ -317,7 +317,7 @@ if ($action == 'update')
         $apmin=GETPOST('apmin');
         $p2hour=GETPOST('p2hour');
         $p2min=GETPOST('p2min');
-		$percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):GETPOST("percentage");	// If status is -1 or 100, percentage is not defined and we must use status
+		$percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
 
 	    // Clean parameters
 		if ($aphour == -1) $aphour='0';
@@ -345,6 +345,7 @@ if ($action == 'update')
 		$object->pnote       = $_POST["note"];
 		$object->fk_element	 = $_POST["fk_element"];
 		$object->elementtype = $_POST["elementtype"];
+
 		if (! $datef && $percentage == 100)
 		{
 			$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
@@ -512,7 +513,7 @@ if ($action == 'create')
 
 	print '<form name="formaction" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="add_action">';
+	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
 	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
@@ -547,6 +548,10 @@ if ($action == 'create')
 	// Date end
 	$datef=($datef?$datef:$object->datef);
     if (GETPOST('datef','int',1)) $datef=dol_stringtotime(GETPOST('datef','int',1),0);
+	if (empty($datef) && ! empty($datep) && ! empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS))
+	{
+		$datef=dol_time_plus_duree($datep, $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS, 'h');
+	}
 	print '<tr><td><span id="dateend"'.(GETPOST("actioncode") == 'AC_RDV'?' class="fieldrequired"':'').'>'.$langs->trans("DateActionEnd").'</span></td><td>';
 	if (GETPOST("afaire") == 1) $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 	else if (GETPOST("afaire") == 2) $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
@@ -612,7 +617,7 @@ if ($action == 'create')
 		$societe = new Societe($db);
 		$societe->fetch(GETPOST('socid','int'));
 		print $societe->getNomUrl(1);
-		print '<input type="hidden" name="socid" value="'.GETPOST('socid','int').'">';
+		print '<input type="hidden" id="socid" name="socid" value="'.GETPOST('socid','int').'">';
 	}
 	else
 	{

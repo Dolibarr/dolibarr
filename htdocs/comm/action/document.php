@@ -105,9 +105,14 @@ if ($object->id > 0)
 	$author->fetch($object->author->id);
 	$object->author=$author;
 
-	if ($object->contact->id) $object->fetch_contact($object->contact->id);
+	if ($object->contact->id > 0) $object->fetch_contact($object->contact->id);
+	if ($object->usertodo->id > 0) { $tmpuser=new User($db); $res=$tmpuser->fetch($object->usertodo->id); $object->usertodo=$tmpuser; }
 
 	$head=actions_prepare_head($object);
+
+	$now=dol_now();
+	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+	
 	dol_fiche_head($head, 'documents', $langs->trans("Action"),0,'action');
 
 	// Affichage fiche action en mode visu
@@ -138,7 +143,7 @@ if ($object->id > 0)
 	else print dol_print_date($object->datep,'day');
 	if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 	print '</td>';
-	print '<td rowspan="4" align="center" valign="middle" width="180">'."\n";
+	print '<td rowspan="5" align="center" valign="middle" width="180">'."\n";
 	print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="show_month">';
@@ -146,7 +151,7 @@ if ($object->id > 0)
 	print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 	print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 	//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-	print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" style="width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+	print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
 	print '</form>'."\n";
 	print '<form name="listactionsfilterweek" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -155,7 +160,7 @@ if ($object->id > 0)
 	print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 	print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 	//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-	print img_picto($langs->trans("ViewCal"),'object_calendarweek').' <input type="submit" style="width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
+	print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
 	print '</form>'."\n";
 	print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -164,9 +169,18 @@ if ($object->id > 0)
 	print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 	print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 	//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-	print img_picto($langs->trans("ViewCal"),'object_calendarday').' <input type="submit" style="width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
+	print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
 	print '</form>'."\n";
-	print '</td>';
+    print '<form name="listactionsfilterperuser" action="'.DOL_URL_ROOT.'/comm/action/peruser.php" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="show_peruser">';
+    print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
+    print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
+    print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+    //print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+    print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
+    print '</form>'."\n";
+    print '</td>';
 	print '</tr>';
 
 	// Date end
@@ -184,7 +198,11 @@ if ($object->id > 0)
 	// Location
 	print '<tr><td>'.$langs->trans("Location").'</td><td colspan="2">'.$object->location.'</td></tr>';
 
-
+	// Assigned to
+	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
+	if ($object->usertodo->id > 0) print $object->usertodo->getNomUrl(1);
+	print '</td></tr>';
+	
 	print '</table><br><br><table class="border" width="100%">';
 
 

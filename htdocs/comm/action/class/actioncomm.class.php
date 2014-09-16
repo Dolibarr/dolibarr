@@ -466,6 +466,8 @@ class ActionComm extends CommonObject
         $sql.= ", fk_user_mod = '".$user->id."'";
         $sql.= ", fk_user_action=".($this->usertodo->id > 0 ? "'".$this->usertodo->id."'":"null");
         $sql.= ", fk_user_done=".($this->userdone->id > 0 ? "'".$this->userdone->id."'":"null");
+        if (! empty($this->fk_element)) $sql.= ", fk_element=".($this->fk_element?$this->fk_element:"null");
+        if (! empty($this->elementtype)) $sql.= ", elementtype=".($this->elementtype?"'".$this->elementtype."'":"null");
         $sql.= " WHERE id=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
