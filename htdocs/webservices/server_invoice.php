@@ -528,7 +528,7 @@ function createInvoice($authentication,$invoice)
         {
             // $key can be 'line' or '0','1',...
             $newline=new FactureLigne($db);
-            $newline->type=$line['type'];
+            $newline->product_type=$line['type'];
             $newline->desc=$line['desc'];
             $newline->fk_product=$line['fk_product'];
             $newline->tva_tx=$line['vat_rate'];
