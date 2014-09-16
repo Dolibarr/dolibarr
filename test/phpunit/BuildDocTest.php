@@ -274,7 +274,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Einstein
         $localobject->modelpdf='einstein';
-        $result=commande_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
