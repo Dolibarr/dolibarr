@@ -129,7 +129,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 	{
         $ret=$object->fetch($id);    // Reload to get new records
-	    $result=delivery_order_pdf_create($db, $object,$_REQUEST['model'],$outputlangs);
+	    $result= $object->generateDocument($_REQUEST['model'],$outputlangs);
 	}
    	if ($result < 0)
    	{
@@ -202,7 +202,7 @@ if ($action == 'builddoc')	// En get ou en post
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 	{
 	    $ret=$object->fetch($id);    // Reload to get new records
-    	$result=delivery_order_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+		$result= $object->generateDocument($object->modelpdf, $outputlangs);
 	}
 	if ($result < 0)
 	{
