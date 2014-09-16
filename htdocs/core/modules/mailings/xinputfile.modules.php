@@ -196,7 +196,7 @@ class mailing_xinputfile extends MailingTargets
 					return -1;
 				}
 
-				dol_syslog(get_class($this)."::add_to_target mailing ".$cpt." targets found");
+				dol_syslog(__METHOD__ . " mailing ".$cpt." targets found");
 			}
 			else
 			{

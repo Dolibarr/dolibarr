@@ -170,7 +170,7 @@ class Propal extends CommonObject
 
         if (! $qty) $qty = 1;
 
-        dol_syslog(get_class($this)."::add_product $idproduct, $qty, $remise_percent");
+        dol_syslog(__METHOD__ . " $idproduct, $qty, $remise_percent");
         if ($idproduct > 0)
         {
             $prod=new Product($this->db);
@@ -318,7 +318,7 @@ class Propal extends CommonObject
     {
     	global $mysoc;
 
-        dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
+        dol_syslog(__METHOD__ . " propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
@@ -488,7 +488,7 @@ class Propal extends CommonObject
     {
         global $conf,$user,$langs, $mysoc;
 
-        dol_syslog(get_class($this)."::updateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
+        dol_syslog(__METHOD__ . " $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
@@ -603,7 +603,7 @@ class Propal extends CommonObject
         }
         else
         {
-            dol_syslog(get_class($this)."::updateline Erreur -2 Propal en mode incompatible pour cette action");
+            dol_syslog(__METHOD__ . " Erreur -2 Propal en mode incompatible pour cette action");
             return -2;
         }
     }
@@ -663,14 +663,14 @@ class Propal extends CommonObject
         if (empty($this->availability_id)) $this->availability_id=0;
         if (empty($this->demand_reason_id)) $this->demand_reason_id=0;
 
-        dol_syslog(get_class($this)."::create");
+        dol_syslog(__METHOD__);
 
         // Check parameters
         $result=$this->fetch_thirdparty();
         if ($result < 0)
         {
             $this->error="Failed to fetch company";
-            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
             return -3;
         }
 
@@ -681,7 +681,7 @@ class Propal extends CommonObject
 			if ($result > 0)
 			{
 				$this->error='ErrorRefAlreadyExists';
-				dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
+				dol_syslog(__METHOD__ . " ".$this->error,LOG_WARNING);
 				$this->db->rollback();
 				return -1;
 			}
@@ -690,7 +690,7 @@ class Propal extends CommonObject
         if (empty($this->date))
         {
             $this->error="Date of proposal is required";
-            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
             return -4;
         }
 
@@ -753,7 +753,7 @@ class Propal extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -764,7 +764,7 @@ class Propal extends CommonObject
                 $this->ref='(PROV'.$this->id.')';
                 $sql = 'UPDATE '.MAIN_DB_PREFIX."propal SET ref='".$this->ref."' WHERE rowid=".$this->id;
 
-                dol_syslog(get_class($this)."::create", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $resql=$this->db->query($sql);
                 if (! $resql) $error++;
 
@@ -884,7 +884,7 @@ class Propal extends CommonObject
             if (! $error)
             {
                 $this->db->commit();
-                dol_syslog(get_class($this)."::create done id=".$this->id);
+                dol_syslog(__METHOD__ . " done id=".$this->id);
                 return $this->id;
             }
             else
@@ -1072,7 +1072,7 @@ class Propal extends CommonObject
         if ($ref) $sql.= " AND p.ref='".$this->db->escape($ref)."'";
         else $sql.= " AND p.rowid=".$rowid;
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1324,7 +1324,7 @@ class Propal extends CommonObject
             $sql.= " fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-            dol_syslog(get_class($this).'::valid', LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             if ($this->db->query($sql))
             {
                 if (! $notrigger)
@@ -1348,7 +1348,7 @@ class Propal extends CommonObject
 						$dirdest = $conf->propal->dir_output.'/'.$newref;
 						if (file_exists($dirsource))
 						{
-							dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+							dol_syslog(__METHOD__ . " rename dir ".$dirsource." into ".$dirdest);
 
 							if (@rename($dirsource, $dirdest))
 							{
@@ -1396,7 +1396,7 @@ class Propal extends CommonObject
         if (empty($date))
         {
             $this->error='ErrorBadParameter';
-            dol_syslog(get_class($this)."::set_date ".$this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -1405,7 +1405,7 @@ class Propal extends CommonObject
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = '".$this->db->idate($date)."'";
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-            dol_syslog(get_class($this)."::set_date", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             if ($this->db->query($sql) )
             {
                 $this->date = $date;
@@ -1469,7 +1469,7 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_date_livraison Erreur SQL");
+                dol_syslog(__METHOD__ . " Erreur SQL");
                 return -1;
             }
         }
@@ -1498,7 +1498,7 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_availability Erreur SQL");
+                dol_syslog(__METHOD__ . " Erreur SQL");
                 return -1;
             }
         }
@@ -1527,7 +1527,7 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_demand_reason Erreur SQL");
+                dol_syslog(__METHOD__ . " Erreur SQL");
                 return -1;
             }
         }
@@ -1658,7 +1658,7 @@ class Propal extends CommonObject
 
     	$this->db->begin();
 
-		dol_syslog(get_class($this)."::reopen", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
@@ -1681,7 +1681,7 @@ class Propal extends CommonObject
 		    {
     			foreach($this->errors as $errmsg)
     			{
-    				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+    				dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
     				$this->error.=($this->error?', '.$errmsg:$errmsg);
     			}
 		    }
@@ -1982,7 +1982,7 @@ class Propal extends CommonObject
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE rowid IN (".implode(',',$linkedInvoices).")";
 
-            dol_syslog(get_class($this)."::InvoiceArrayList", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
 
             if ($resql)
@@ -2104,14 +2104,14 @@ class Propal extends CommonObject
                     		{
                     			$error++;
                     			$errorflag=-4;
-                    			dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+                    			dol_syslog(__METHOD__ . " erreur ".$errorflag." ".$this->error, LOG_ERR);
                     		}
                     	}
                     }
 
                     if (! $error)
                     {
-                        dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
+                        dol_syslog(__METHOD__ . " $this->id by $user->id", LOG_DEBUG);
                         $this->db->commit();
                         return 1;
                     }
@@ -2618,7 +2618,7 @@ class Propal extends CommonObject
         $sql.= ' WHERE pt.fk_propal = '.$this->id;
         $sql.= ' ORDER BY pt.rang ASC, pt.rowid';
 
-        dol_syslog(get_class($this).'::getLinesArray', LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2905,7 +2905,7 @@ class PropaleLigne  extends CommonObject
         $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
         $sql.= ')';
 
-        dol_syslog(get_class($this).'::insert', LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -2969,7 +2969,7 @@ class PropaleLigne  extends CommonObject
         		if ($result < 0)
         		{
         			$error++;
-        			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+        			dol_syslog(__METHOD__ . " error -4 ".$this->error, LOG_ERR);
         		}
         	}
 
@@ -3067,7 +3067,7 @@ class PropaleLigne  extends CommonObject
         $sql.= " , date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

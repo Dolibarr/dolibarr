@@ -87,7 +87,7 @@ class Project extends CommonObject
         if (!trim($this->ref))
         {
             $this->error = 'ErrorFieldsRequired';
-            dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
+            dol_syslog(__METHOD__ . " error -1 ref null", LOG_ERR);
             return -1;
         }
 
@@ -119,7 +119,7 @@ class Project extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -204,7 +204,7 @@ class Project extends CommonObject
             $sql.= ", datee=" . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
             $sql.= " WHERE rowid = " . $this->id;
 
-            dol_syslog(get_class($this)."::Update", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -263,13 +263,13 @@ class Project extends CommonObject
                 $this->error = $this->db->lasterror();
                 $this->errors[] = $this->error;
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::Update error -2 " . $this->error, LOG_ERR);
+                dol_syslog(__METHOD__ . " error -2 " . $this->error, LOG_ERR);
                 $result = -2;
             }
         }
         else
         {
-            dol_syslog(get_class($this)."::Update ref null");
+            dol_syslog(__METHOD__ . " ref null");
             $result = -1;
         }
 
@@ -300,7 +300,7 @@ class Project extends CommonObject
         	$sql.= " AND entity IN (".getEntity('project').")";
         }
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -403,7 +403,7 @@ class Project extends CommonObject
         if (! $sql) return -1;
 
         //print $sql;
-        dol_syslog(get_class($this)."::get_element_list", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -463,7 +463,7 @@ class Project extends CommonObject
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
         $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
 
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (!$resql)
         {
@@ -474,7 +474,7 @@ class Project extends CommonObject
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
         $sql.= " WHERE fk_projet=" . $this->id;
 
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (!$resql)
         {
@@ -485,7 +485,7 @@ class Project extends CommonObject
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet";
         $sql.= " WHERE rowid=" . $this->id;
 
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (!$resql)
         {
@@ -496,7 +496,7 @@ class Project extends CommonObject
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
         $sql.= " WHERE fk_object=" . $this->id;
 
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
@@ -532,7 +532,7 @@ class Project extends CommonObject
                     if (! empty($interface->errors))
                     {
                 		foreach ($interface->errors as $errmsg ) {
-                			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+                			dol_syslog(__METHOD__ . " " . $errmsg, LOG_ERR);
                 			$this->errors[] =$errmsg;
                 		}
                     }
@@ -550,10 +550,10 @@ class Project extends CommonObject
        {
         	foreach ( $this->errors as $errmsg )
         	{
-				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
-            dol_syslog(get_class($this) . "::delete " . $this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -580,7 +580,7 @@ class Project extends CommonObject
             $sql.= " WHERE rowid = " . $this->id;
             $sql.= " AND entity = " . $conf->entity;
 
-            dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -599,7 +599,7 @@ class Project extends CommonObject
                 {
                     $this->db->rollback();
                     $this->error = join(',', $this->errors);
-                    dol_syslog(get_class($this)."::setValid " . $this->error, LOG_ERR);
+                    dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
                     return -1;
                 }
             }
@@ -634,7 +634,7 @@ class Project extends CommonObject
             $sql.= " AND entity = " . $conf->entity;
             $sql.= " AND fk_statut = 1";
 
-            dol_syslog(get_class($this)."::setClose", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -653,7 +653,7 @@ class Project extends CommonObject
                 {
                     $this->db->rollback();
                     $this->error = join(',', $this->errors);
-                    dol_syslog(get_class($this)."::setClose " . $this->error, LOG_ERR);
+                    dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
                     return -1;
                 }
             }
@@ -1192,7 +1192,7 @@ class Project extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
+				dol_syslog(__METHOD__ . " nbError: ".$error." error : " . $this->error, LOG_ERR);
 				return -1;
 			}
 
@@ -1231,7 +1231,7 @@ class Project extends CommonObject
 	    	// Fetch only if update of date will be made
 	    	if ((!empty($tasktoshiftdate->date_start)) || (!empty($tasktoshiftdate->date_end)))
 	    	{
-	    		//dol_syslog(get_class($this)."::shiftTaskDate to_update", LOG_DEBUG);
+	    		//dol_syslog(__METHOD__ . " to_update", LOG_DEBUG);
 	    		$to_update=true;
 		    	$task = new Task($this->db);
 		    	$result = $task->fetch($tasktoshiftdate->id);
@@ -1295,7 +1295,7 @@ class Project extends CommonObject
 			$sql.= " WHERE rowid=".$ElementSelectId;
 		}
 
-		dol_syslog(get_class($this)."::update_element", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (!$resql) {
 			$this->error=$this->db->lasterror();

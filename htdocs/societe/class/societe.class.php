@@ -388,7 +388,7 @@ class Societe extends CommonObject
         if (empty($this->fournisseur)) $this->fournisseur=0;
         $this->import_key = trim($this->import_key);
 
-        dol_syslog(get_class($this)."::create ".$this->name);
+        dol_syslog(__METHOD__ . " ".$this->name);
 
         // Check parameters
         if (! empty($conf->global->SOCIETE_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -422,7 +422,7 @@ class Societe extends CommonObject
             $sql.= ", 0";
             $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null").")";
 
-            dol_syslog(get_class($this)."::create", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $result=$this->db->query($sql);
             if ($result)
             {
@@ -452,13 +452,13 @@ class Societe extends CommonObject
 
                 if (! $error)
                 {
-                    dol_syslog(get_class($this)."::Create success id=".$this->id);
+                    dol_syslog(__METHOD__ . " success id=".$this->id);
                     $this->db->commit();
                     return $this->id;
                 }
                 else
                 {
-                    dol_syslog(get_class($this)."::Create echec update ".$this->error, LOG_ERR);
+                    dol_syslog(__METHOD__ . " echec update ".$this->error, LOG_ERR);
                     $this->db->rollback();
                     return -3;
                 }
@@ -484,7 +484,7 @@ class Societe extends CommonObject
         else
        {
             $this->db->rollback();
-            dol_syslog(get_class($this)."::Create fails verify ".join(',',$this->errors), LOG_WARNING);
+            dol_syslog(__METHOD__ . " fails verify ".join(',',$this->errors), LOG_WARNING);
             return -3;
         }
     }
@@ -519,7 +519,7 @@ class Societe extends CommonObject
         {
             $this->error = $contact->error;
             $this->errors = $contact->errors;
-            dol_syslog(get_class($this)."::create_individual ERROR:" . $this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " ERROR:" . $this->error, LOG_ERR);
         }
 
         return $result;
@@ -617,7 +617,7 @@ class Societe extends CommonObject
 
 		$error=0;
 
-        dol_syslog(get_class($this)."::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
+        dol_syslog(__METHOD__ . " id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
         $now=dol_now();
 
@@ -724,7 +724,7 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            dol_syslog(get_class($this)."::update verify ok or not done");
+            dol_syslog(__METHOD__ . " verify ok or not done");
 
             $sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
             $sql .= "nom = '" . $this->db->escape($this->name) ."'"; // Required
@@ -810,7 +810,7 @@ class Societe extends CommonObject
             $sql .= " WHERE rowid = '" . $id ."'";
 
 
-            dol_syslog(get_class($this)."::Update", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -828,7 +828,7 @@ class Societe extends CommonObject
 	            	{
 		            	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-		            	dol_syslog(get_class($this)."::update update linked member");
+		            	dol_syslog(__METHOD__ . " update linked member");
 
 		            	$lmember=new Adherent($this->db);
 		            	$result=$lmember->fetch(0, 0, $this->id);
@@ -847,7 +847,7 @@ class Societe extends CommonObject
 		            		if ($result < 0)
 		            		{
 		            			$this->error=$lmember->error;
-		            			dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
+		            			dol_syslog(__METHOD__ . " ".$this->error,LOG_ERR);
 		            			$error++;
 		            		}
 		            	}
@@ -887,7 +887,7 @@ class Societe extends CommonObject
 
                 if (! $error)
                 {
-                    dol_syslog(get_class($this)."::Update success");
+                    dol_syslog(__METHOD__ . " success");
                     $this->db->commit();
                     return 1;
                 }
@@ -916,7 +916,7 @@ class Societe extends CommonObject
         else
        {
             $this->db->rollback();
-            dol_syslog(get_class($this)."::Update fails verify ".join(',',$this->errors), LOG_WARNING);
+            dol_syslog(__METHOD__ . " fails verify ".join(',',$this->errors), LOG_WARNING);
             return -3;
         }
     }
@@ -978,7 +978,7 @@ class Societe extends CommonObject
         if ($idprof4) $sql .= " WHERE s.idprof4 = '".$this->db->escape($idprof4)."' AND s.entity IN (".getEntity($this->element, 1).")";
 
         $resql=$this->db->query($sql);
-        dol_syslog(get_class($this)."::fetch ".$sql);
+        dol_syslog(__METHOD__ . " ".$sql);
         if ($resql)
         {
             $num=$this->db->num_rows($resql);
@@ -1236,7 +1236,7 @@ class Societe extends CommonObject
 
         $entity=isset($this->entity)?$this->entity:$conf->entity;
 
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $error = 0;
 
         // Test if child exists
@@ -1281,7 +1281,7 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -1294,12 +1294,12 @@ class Societe extends CommonObject
             {
                 $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 $sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
                     $this->error .= $this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
+                    dol_syslog(__METHOD__ . " erreur -1 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -1308,7 +1308,7 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::Delete", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -1323,7 +1323,7 @@ class Societe extends CommonObject
             	if ($result < 0)
             	{
             		$error++;
-            		dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+            		dol_syslog(__METHOD__ . " error -3 ".$this->error, LOG_ERR);
             	}
             }
 
@@ -1332,7 +1332,7 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
                 $sql.= " WHERE rowid = " . $id;
-                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -1412,7 +1412,7 @@ class Societe extends CommonObject
             return -2;
         }
 
-        dol_syslog(get_class($this)."::set_remise_client ".$remise.", ".$note.", ".$user->id);
+        dol_syslog(__METHOD__ . " ".$remise.", ".$note.", ".$user->id);
 
         if ($this->id)
         {
@@ -1629,7 +1629,7 @@ class Societe extends CommonObject
 
             if (! $this->db->query($sql) )
             {
-                dol_syslog(get_class($this)."::add_commercial Erreur");
+                dol_syslog(__METHOD__ . " Erreur");
             }
         }
     }
@@ -1650,7 +1650,7 @@ class Societe extends CommonObject
 
             if (! $this->db->query($sql) )
             {
-                dol_syslog(get_class($this)."::del_commercial Erreur");
+                dol_syslog(__METHOD__ . " Erreur");
             }
         }
     }
@@ -2048,7 +2048,7 @@ class Societe extends CommonObject
             $this->code_client = $mod->getNextValue($objsoc,$type);
             $this->prefixCustomerIsRequired = $mod->prefixIsRequired;
 
-            dol_syslog(get_class($this)."::get_codeclient code_client=".$this->code_client." module=".$module);
+            dol_syslog(__METHOD__ . " code_client=".$this->code_client." module=".$module);
         }
     }
 
@@ -2077,7 +2077,7 @@ class Societe extends CommonObject
 
             $this->code_fournisseur = $mod->getNextValue($objsoc,$type);
 
-            dol_syslog(get_class($this)."::get_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$module);
+            dol_syslog(__METHOD__ . " code_fournisseur=".$this->code_fournisseur." module=".$module);
         }
     }
 
@@ -2103,7 +2103,7 @@ class Societe extends CommonObject
 
             $mod = new $module();
 
-            dol_syslog(get_class($this)."::codeclient_modifiable code_client=".$this->code_client." module=".$module);
+            dol_syslog(__METHOD__ . " code_client=".$this->code_client." module=".$module);
             if ($mod->code_modifiable_null && ! $this->code_client) return 1;
             if ($mod->code_modifiable_invalide && $this->check_codeclient() < 0) return 1;
             if ($mod->code_modifiable) return 1;	// A mettre en dernier
@@ -2137,7 +2137,7 @@ class Societe extends CommonObject
 
             $mod = new $module();
 
-            dol_syslog(get_class($this)."::codefournisseur_modifiable code_founisseur=".$this->code_fournisseur." module=".$module);
+            dol_syslog(__METHOD__ . " code_founisseur=".$this->code_fournisseur." module=".$module);
             if ($mod->code_modifiable_null && ! $this->code_fournisseur) return 1;
             if ($mod->code_modifiable_invalide && $this->check_codefournisseur() < 0) return 1;
             if ($mod->code_modifiable) return 1;	// A mettre en dernier
@@ -2175,7 +2175,7 @@ class Societe extends CommonObject
 
             $mod = new $module();
 
-           	dol_syslog(get_class($this)."::check_codeclient code_client=".$this->code_client." module=".$module);
+           	dol_syslog(__METHOD__ . " code_client=".$this->code_client." module=".$module);
            	$result = $mod->verif($this->db, $this->code_client, $this, 0);
             return $result;
         }
@@ -2210,7 +2210,7 @@ class Societe extends CommonObject
 
             $mod = new $module();
 
-            dol_syslog(get_class($this)."::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$module);
+            dol_syslog(__METHOD__ . " code_fournisseur=".$this->code_fournisseur." module=".$module);
             $result = $mod->verif($this->db, $this->code_fournisseur, $this, 1);
             return $result;
         }
@@ -2288,7 +2288,7 @@ class Societe extends CommonObject
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
             $sql.= " SET parent = ".($id > 0 ? $id : "null");
             $sql.= " WHERE rowid = " . $this->id;
-			dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -2701,7 +2701,7 @@ class Societe extends CommonObject
             $sql.= " SET fk_soc=".$this->id;
             $sql.= " WHERE rowid=".$member->id;
 
-            dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -2719,7 +2719,7 @@ class Societe extends CommonObject
         else
         {
             // $this->error deja positionne
-            dol_syslog(get_class($this)."::create_from_member - 2 - ".$this->error." - ".join(',',$this->errors), LOG_ERR);
+            dol_syslog(__METHOD__ . " - 2 - ".$this->error." - ".join(',',$this->errors), LOG_ERR);
 
             $this->db->rollback();
             return $result;
@@ -2956,7 +2956,7 @@ class Societe extends CommonObject
 			$sql.= " fk_prospectlevel='".$this->fk_prospectlevel."'";
 			$sql.= ",fk_user_modif='".$user->id."'";
 			$sql.= " WHERE rowid = ".$this->id;
-			dol_syslog(get_class($this)."::set_prospect_level", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -3039,7 +3039,7 @@ class Societe extends CommonObject
 			$sql.= ",fk_user_modif='".$user->id."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_commnucation_level", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -3073,7 +3073,7 @@ class Societe extends CommonObject
 			$sql.= " outstanding_limit= '".($outstanding!=''?$outstanding:'null')."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_outstanding", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{

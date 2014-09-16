@@ -162,12 +162,12 @@ class Menubase
         $sql.= " '".$this->user."'";
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
-            dol_syslog(get_class($this)."::create record added has rowid=".$this->id, LOG_DEBUG);
+            dol_syslog(__METHOD__ . " record added has rowid=".$this->id, LOG_DEBUG);
 
             return $this->id;
         }
@@ -231,7 +231,7 @@ class Menubase
         $sql.= " usertype='".$this->user."'";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
@@ -275,7 +275,7 @@ class Menubase
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -327,7 +327,7 @@ class Menubase
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
@@ -512,7 +512,7 @@ class Menubase
 
 //$tmp1=dol_microtime_float();
 //print '>>> 1 0<br>';
-        dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
+        dol_syslog(__METHOD__ . " mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {

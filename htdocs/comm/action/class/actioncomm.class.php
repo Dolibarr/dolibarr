@@ -203,7 +203,7 @@ class ActionComm extends CommonObject
         $sql.= $conf->entity;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::add", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -288,7 +288,7 @@ class ActionComm extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
         $sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -365,7 +365,7 @@ class ActionComm extends CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
         $sql.= " WHERE id=".$this->id;
 
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $res=$this->db->query($sql);
         if ($res < 0) {
         	$this->error=$this->db->lasterror();
@@ -378,7 +378,7 @@ class ActionComm extends CommonObject
           	if ($result < 0)
            	{
            		$error++;
-           		dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+           		dol_syslog(__METHOD__ . " error -3 ".$this->error, LOG_ERR);
            	}
         }
 
@@ -470,7 +470,7 @@ class ActionComm extends CommonObject
         if (! empty($this->elementtype)) $sql.= ", elementtype=".($this->elementtype?"'".$this->elementtype."'":"null");
         $sql.= " WHERE id=".$this->id;
 
-        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
 
@@ -507,7 +507,7 @@ class ActionComm extends CommonObject
             else
             {
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::update ".join(',',$this->errors),LOG_ERR);
+                dol_syslog(__METHOD__ . " ".join(',',$this->errors),LOG_ERR);
                 return -2;
             }
         }
@@ -546,7 +546,7 @@ class ActionComm extends CommonObject
         }
         if (! empty($filter)) $sql.= $filter;
 
-        dol_syslog(get_class()."::getActions", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -632,7 +632,7 @@ class ActionComm extends CommonObject
         $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
         $sql.= ' WHERE a.id = '.$id;
 
-        dol_syslog(get_class($this)."::info", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -814,7 +814,7 @@ class ActionComm extends CommonObject
         require_once (DOL_DOCUMENT_ROOT ."/core/lib/date.lib.php");
         require_once (DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php");
 
-        dol_syslog(get_class($this)."::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
+        dol_syslog(__METHOD__ . " Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
         // Check parameters
         if (empty($format)) return -1;
@@ -844,7 +844,7 @@ class ActionComm extends CommonObject
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay))
             {
-                dol_syslog(get_class($this)."::build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
+                dol_syslog(__METHOD__ . " file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
                 $buildfile = false;
             }
         }
@@ -918,7 +918,7 @@ class ActionComm extends CommonObject
             $sql.= " ORDER by datep";
             //print $sql;exit;
 
-            dol_syslog(get_class($this)."::build_exportfile select events", LOG_DEBUG);
+            dol_syslog(__METHOD__ . " select events", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1003,14 +1003,14 @@ class ActionComm extends CommonObject
                 else
                 {
                 	$this->error='Failed to rename '.$outputfiletmp.' into '.$outputfile;
-                    dol_syslog(get_class($this)."::build_exportfile ".$this->error, LOG_ERR);
+                    dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
                     dol_delete_file($outputfiletmp,0,1);
                     $result=-1;
                 }
             }
             else
             {
-                dol_syslog(get_class($this)."::build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
+                dol_syslog(__METHOD__ . " build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
                 dol_delete_file($outputfiletmp,0,1);
                 $langs->load("errors");
                 $this->error=$langs->trans("ErrorFailToCreateFile",$outputfile);

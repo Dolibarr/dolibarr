@@ -124,7 +124,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
 		$sql.= " AND entity IN (".getEntity('societe', 1).")";
 
-		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -144,7 +144,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
 		else $num = sprintf("%04s",$max+1);
 
-		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
+		dol_syslog(__METHOD__ . " return ".$prefix.$yymm."-".$num);
 		return $prefix.$yymm."-".$num;
 	}
 
@@ -204,7 +204,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 			}
 		}
 
-		dol_syslog(get_class($this)."::verif type=".$type." result=".$result);
+		dol_syslog(__METHOD__ . " type=".$type." result=".$result);
 		return $result;
 	}
 
@@ -226,7 +226,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$sql.= " AND entity IN (".getEntity('societe', 1).")";
 		if ($soc->id > 0) $sql.= " AND rowid <> ".$soc->id;
 
-		dol_syslog(get_class($this)."::verif_dispo", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{

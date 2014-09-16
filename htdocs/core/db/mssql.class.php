@@ -67,7 +67,7 @@ class DoliDBMssql extends DoliDB
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error="Mssql PHP functions for using MSSql driver are not available in this version of PHP";
-			dol_syslog(get_class($this)."::DoliDBMssql : MSsql PHP functions for using MSsql driver are not available in this version of PHP",LOG_ERR);
+			dol_syslog(__METHOD__ . " : MSsql PHP functions for using MSsql driver are not available in this version of PHP",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -76,7 +76,7 @@ class DoliDBMssql extends DoliDB
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
-			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect, wrong host parameters",LOG_ERR);
+			dol_syslog(__METHOD__ . " : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -95,7 +95,7 @@ class DoliDBMssql extends DoliDB
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=mssql_get_last_message();
-			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
+			dol_syslog(__METHOD__ . " : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
 		}
 
 		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
@@ -113,7 +113,7 @@ class DoliDBMssql extends DoliDB
 				$this->database_name = '';
 				$this->ok = 0;
 				$this->error=$this->error();
-				dol_syslog(get_class($this)."::DoliDBMssql : Erreur Select_db ".$this->error,LOG_ERR);
+				dol_syslog(__METHOD__ . " : Erreur Select_db ".$this->error,LOG_ERR);
 			}
 		}
 		else
@@ -161,7 +161,7 @@ class DoliDBMssql extends DoliDB
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		dol_syslog(get_class($this)."::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
+		dol_syslog(__METHOD__ . " host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
 		$newhost=$host;
 		if ($port) $newhost.=':'.$port;
 		$this->db  = @mssql_connect($newhost, $login, $passwd);
@@ -208,7 +208,7 @@ class DoliDBMssql extends DoliDB
     {
         if ($this->db)
         {
-          if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
+          if ($this->transaction_opened > 0) dol_syslog(__METHOD__ . " Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
           $this->connected=0;
           return mssql_close($this->db);
         }
@@ -373,8 +373,8 @@ class DoliDBMssql extends DoliDB
 				$this->lasterror = $this->error();
 				$this->lasterrno = $row["code"];
 
-				dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
-				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
+				dol_syslog(__METHOD__ . " SQL Error query: ".$query, LOG_ERR);
+				dol_syslog(__METHOD__ . " SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
 			}
 			$this->lastquery=$query;
 			$this->_results = $ret;

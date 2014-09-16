@@ -76,7 +76,7 @@ class Export
 	{
 		global $langs,$conf,$mysoc;
 
-		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
+		dol_syslog(__METHOD__ . " user=".$user->id." filter=".$filter);
 
         $var=true;
         $i=0;
@@ -182,7 +182,7 @@ class Export
 									$this->array_export_sql_order[$i]=$module->export_sql_order[$r];
 									//$this->array_export_sql[$i]=$module->export_sql[$r];
 
-									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".(! empty($module->export_fields_code[$r])?count($module->export_fields_code[$r]):''));
+									dol_syslog(__METHOD__ . " loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".(! empty($module->export_fields_code[$r])?count($module->export_fields_code[$r]):''));
 									$i++;
 									//	          }
 								}
@@ -478,7 +478,7 @@ class Export
 		$indice=0;
 		asort($array_selected);
 
-		dol_syslog(get_class($this)."::".__FUNCTION__." ".$model.", ".$datatoexport.", ".implode(",", $array_selected));
+		dol_syslog(__METHOD__ . " ".$model.", ".$datatoexport.", ".implode(",", $array_selected));
 
 		// Check parameters or context properties
 		if (empty($this->array_export_fields) || ! is_array($this->array_export_fields))
@@ -519,7 +519,7 @@ class Export
 
 		// Run the sql
 		$this->sqlusedforexport=$sql;
-		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -704,7 +704,7 @@ class Export
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -729,7 +729,7 @@ class Export
 		{
 			foreach($this->errors as $errmsg)
 			{
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();

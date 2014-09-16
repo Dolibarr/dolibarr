@@ -70,7 +70,7 @@ class AccountingAccount
 				$sql .= " account_number = '" . $account_number . "'";
 			}
 
-			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
+			dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
@@ -160,7 +160,7 @@ class AccountingAccount
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
@@ -186,7 +186,7 @@ class AccountingAccount
 		// Commit or rollback
 		if ($error) {
 			foreach ( $this->errors as $errmsg ) {
-				dol_syslog(get_class($this) . "::create " . $errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			$this->db->rollback();
@@ -221,7 +221,7 @@ class AccountingAccount
 
 		$sql .= " WHERE rowid = " . $this->id;
 
-		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();
@@ -248,7 +248,7 @@ class AccountingAccount
 		$sql .= "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facture_fourn_det";
 		$sql .= " WHERE  fk_code_ventilation=" . $this->id . ")";
 
-		dol_syslog(get_class($this) . "::checkUsage sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -301,7 +301,7 @@ class AccountingAccount
 				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accountingaccount";
 				$sql .= " WHERE rowid=" . $this->id;
 
-				dol_syslog(get_class($this) . "::delete sql=" . $sql);
+				dol_syslog(__METHOD__ . " sql=" . $sql);
 				$resql = $this->db->query($sql);
 				if (! $resql) {
 					$error ++;
@@ -312,7 +312,7 @@ class AccountingAccount
 			// Commit or rollback
 			if ($error) {
 				foreach ( $this->errors as $errmsg ) {
-					dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+					dol_syslog(__METHOD__ . " " . $errmsg, LOG_ERR);
 					$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 				}
 				$this->db->rollback();
@@ -338,7 +338,7 @@ class AccountingAccount
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'accountingaccount as a';
 		$sql .= ' WHERE a.rowid = ' . $id;
 
-		dol_syslog(get_class($this) . '::info sql=' . $sql);
+		dol_syslog(__METHOD__ . " sql=" . $sql);
 		$result = $this->db->query($sql);
 
 		if ($result) {
@@ -383,7 +383,7 @@ class AccountingAccount
 			$sql .= "SET active = '0'";
 			$sql .= " WHERE rowid = ".$this->db->escape($id);
 
-			dol_syslog(get_class($this) . "::desactivate sql=" . $sql, LOG_DEBUG);
+			dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 
 			if ($result) {
@@ -415,7 +415,7 @@ class AccountingAccount
 		$sql .= "SET active = '1'";
 		$sql .= " WHERE rowid = ".$this->db->escape($id);
 
-		dol_syslog(get_class($this) . "::activate sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();

@@ -83,7 +83,7 @@ class ProductFournisseur extends Product
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
         $sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
 
-        dol_syslog(get_class($this)."::remove_fournisseur", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql2=$this->db->query($sql);
         if (! $resql2)
         {
@@ -119,7 +119,7 @@ class ProductFournisseur extends Product
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
         $sql.= " WHERE rowid = ".$rowid;
 
-        dol_syslog(get_class($this)."::remove_product_fournisseur_price", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -199,7 +199,7 @@ class ProductFournisseur extends Product
 			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
 			// TODO Add price_base_type and price_ttc
 
-			dol_syslog(get_class($this).'::update_buyprice', LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -232,7 +232,7 @@ class ProductFournisseur extends Product
 	        	// Delete price for this quantity
 	        	$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
           		$sql.= " WHERE fk_soc = ".$fourn->id." AND ref_fourn = '".$this->db->escape($ref_fourn)."' AND quantity = ".$qty." AND entity = ".$conf->entity;
-				dol_syslog(get_class($this).'::update_buyprice', LOG_DEBUG);
+				dol_syslog(__METHOD__, LOG_DEBUG);
 	        	$resql=$this->db->query($sql);
 				if ($resql)
 		  		{
@@ -257,7 +257,7 @@ class ProductFournisseur extends Product
 		            $sql.= $conf->entity;
 		            $sql.=")";
 
-		            dol_syslog(get_class($this)."::update_buyprice", LOG_DEBUG);
+		            dol_syslog(__METHOD__, LOG_DEBUG);
 		            if (! $this->db->query($sql))
 		            {
 		                $error++;
@@ -330,7 +330,7 @@ class ProductFournisseur extends Product
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
 
-        dol_syslog(get_class($this)."::fetch_product_fournisseur_price", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -388,7 +388,7 @@ class ProductFournisseur extends Product
         $sql.= " AND pfp.fk_product = ".$prodid;
         if (empty($sortfield)) $sql.= " ORDER BY s.nom, pfp.quantity, pfp.price";
         else $sql.= $this->db->order($sortfield,$sortorder);
-        dol_syslog(get_class($this)."::list_product_fournisseur_price", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -476,7 +476,7 @@ class ProductFournisseur extends Product
         $sql.= " ORDER BY pfp.unitprice";
         $sql.= $this->db->plimit(1);
 
-        dol_syslog(get_class($this)."::find_min_price_product_fournisseur", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $resql = $this->db->query($sql);
         if ($resql)

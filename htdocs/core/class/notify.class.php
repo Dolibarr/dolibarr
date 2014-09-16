@@ -133,7 +133,7 @@ class Notify
 
         $langs->load("other");
 
-		dol_syslog(get_class($this)."::send action=".$action.", socid=".$socid.", texte=".$texte.", objet_type=".$objet_type.", objet_id=".$objet_id.", file=".$file);
+		dol_syslog(__METHOD__ . " action=".$action.", socid=".$socid.", texte=".$texte.", objet_type=".$objet_type.", objet_id=".$objet_id.", file=".$file);
 
 		$sql = "SELECT s.nom, c.email, c.rowid as cid, c.lastname, c.firstname,";
 		$sql.= " a.rowid as adid, a.label, a.code, n.rowid";

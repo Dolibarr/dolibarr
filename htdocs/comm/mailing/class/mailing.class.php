@@ -198,7 +198,7 @@ class Mailing extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
 		$sql.= " WHERE m.rowid = ".$rowid;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -239,13 +239,13 @@ class Mailing extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::fetch Erreur -1");
+				dol_syslog(__METHOD__ . " Erreur -1");
 				return -1;
 			}
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::fetch Erreur -2");
+			dol_syslog(__METHOD__ . " Erreur -2");
 			return -2;
 		}
 	}
@@ -331,7 +331,7 @@ class Mailing extends CommonObject
 				$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles ";
 				$sql.= " WHERE fk_mailing = ".$fromid;
 				
-				dol_syslog(get_class($this)."::createFromClone", LOG_DEBUG);
+				dol_syslog(__METHOD__, LOG_DEBUG);
 				$result=$this->db->query($sql);
 				if ($result)
 				{

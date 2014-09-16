@@ -119,7 +119,7 @@ class PaymentTerm // extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
+	   	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -146,7 +146,7 @@ class PaymentTerm // extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -185,7 +185,7 @@ class PaymentTerm // extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+    	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -234,7 +234,7 @@ class PaymentTerm // extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
         $sql.= " WHERE t.code = 'RECEP'";
 
-    	dol_syslog(get_class($this)."::getDefaultId", LOG_DEBUG);
+    	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -299,7 +299,7 @@ class PaymentTerm // extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -324,7 +324,7 @@ class PaymentTerm // extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -355,7 +355,7 @@ class PaymentTerm // extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -380,7 +380,7 @@ class PaymentTerm // extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();

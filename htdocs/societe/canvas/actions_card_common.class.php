@@ -213,7 +213,7 @@ abstract class ActionsCardCommon
                     {
                         if ($this->object->particulier)
                         {
-                            dol_syslog(get_class($this)."::doActions This thirdparty is a personal people",LOG_DEBUG);
+                            dol_syslog(__METHOD__ . " This thirdparty is a personal people",LOG_DEBUG);
                             $contact=new Contact($this->db);
 
                             $contact->civility_id   = $this->object->civility_id;

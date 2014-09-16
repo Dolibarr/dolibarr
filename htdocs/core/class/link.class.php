@@ -76,7 +76,7 @@ class Link extends CommonObject
         }
         $this->url = trim($this->url);
 
-        dol_syslog(get_class($this)."::create ".$this->url);
+        dol_syslog(__METHOD__ . " ".$this->url);
 
         // Check parameters
         if (empty($this->url)) {
@@ -93,7 +93,7 @@ class Link extends CommonObject
         $sql .= ", '" . $this->objecttype . "'";
         $sql .= ", " . $this->objectid . ")";
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "links");
@@ -109,13 +109,13 @@ class Link extends CommonObject
 
             if (! $error)
             {
-                dol_syslog(get_class($this)."::Create success id=" . $this->id);
+                dol_syslog(__METHOD__ . " success id=" . $this->id);
                 $this->db->commit();
                 return $this->id;
             }
             else
             {
-                dol_syslog(get_class($this)."::Create echec update " . $this->error, LOG_ERR);
+                dol_syslog(__METHOD__ . " echec update " . $this->error, LOG_ERR);
                 $this->db->rollback();
                 return -3;
             }
@@ -153,7 +153,7 @@ class Link extends CommonObject
         $langs->load("errors");
         $error=0;
 
-        dol_syslog(get_class($this)."::Update id = " . $this->id . " call_trigger = " . $call_trigger);
+        dol_syslog(__METHOD__ . " id = " . $this->id . " call_trigger = " . $call_trigger);
 
         // Check parameters
         if (empty($this->url))
@@ -179,7 +179,7 @@ class Link extends CommonObject
         $sql .= ", objectid = " . $this->objectid;
         $sql .= " WHERE rowid = '" . $this->id ."'";
 
-        dol_syslog(get_class($this)."::update sql = " .$sql);
+        dol_syslog(__METHOD__ . " sql = " .$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -193,7 +193,7 @@ class Link extends CommonObject
 
             if (! $error)
             {
-                dol_syslog(get_class($this) . "::Update success");
+                dol_syslog(__METHOD__ . " success");
                 $this->db->commit();
                 return 1;
             } else {
@@ -244,12 +244,12 @@ class Link extends CommonObject
             $sql .= " ORDER BY " . $sortfield . " " . $sortorder;
         }
 
-        dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
             $num = $this->db->num_rows($resql);
-            dol_syslog(get_class($this)."::fetchAll " . $num . "records", LOG_DEBUG);
+            dol_syslog(__METHOD__ . " " . $num . "records", LOG_DEBUG);
             if ($num > 0)
             {
                 while ($obj = $this->db->fetch_object($resql))
@@ -292,7 +292,7 @@ class Link extends CommonObject
         $sql .= " WHERE rowid = " . $rowid;
         if($conf->entity != 0) $sql .= " AND entity = " . $conf->entity;
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -326,7 +326,7 @@ class Link extends CommonObject
     {
         global $user, $langs, $conf;
 
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $error = 0;
 
         // Call trigger
@@ -340,7 +340,7 @@ class Link extends CommonObject
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "links";
         $sql.= " WHERE rowid = " . $this->id;
 
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if (! $this->db->query($sql))
         {
             $error++;

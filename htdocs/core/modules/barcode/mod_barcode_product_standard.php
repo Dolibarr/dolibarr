@@ -218,7 +218,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 			}
 		}
 
-		dol_syslog(get_class($this)."::verif type=".$thirdparty_type." result=".$result);
+		dol_syslog(__METHOD__ . " type=".$thirdparty_type." result=".$result);
 		return $result;
 	}
 

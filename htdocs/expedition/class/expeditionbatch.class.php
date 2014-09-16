@@ -69,7 +69,7 @@ class ExpeditionLigneBatch extends CommonObject
         $sql.= MAIN_DB_PREFIX."product_stock as e on t.fk_product_stock=e.rowid ";
         $sql.= " WHERE t.rowid = ".(int) $id_stockdluo;
 
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+    	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -134,7 +134,7 @@ class ExpeditionLigneBatch extends CommonObject
 		} else {
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();

@@ -68,7 +68,7 @@ class MouvementStock extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$error = 0;
-		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price label=$label");
+		dol_syslog(__METHOD__ . " start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price label=$label");
 
 		// Clean parameters
 		if (empty($price)) $price=0;
@@ -112,7 +112,7 @@ class MouvementStock extends CommonObject
 			$sql.= " '".$origintype."'";
 			$sql.= ")";
 
-			dol_syslog(get_class($this)."::_create", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -137,7 +137,7 @@ class MouvementStock extends CommonObject
 				$sql = "SELECT rowid, reel, pmp FROM ".MAIN_DB_PREFIX."product_stock";
 				$sql.= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
 
-				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
+				dol_syslog(__METHOD__, LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -201,7 +201,7 @@ class MouvementStock extends CommonObject
 					$sql.= " (".$newpmpwarehouse.", ".$qty.", ".$entrepot_id.", ".$fk_product.")";
 				}
 
-				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
+				dol_syslog(__METHOD__, LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
@@ -227,7 +227,7 @@ class MouvementStock extends CommonObject
 				// May be this request is better:
 				// UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
-				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
+				dol_syslog(__METHOD__, LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
@@ -266,7 +266,7 @@ class MouvementStock extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			dol_syslog(get_class($this)."::_create error code=".$error, LOG_ERR);
+			dol_syslog(__METHOD__ . " error code=".$error, LOG_ERR);
 			return -6;
 		}
 	}
@@ -294,7 +294,7 @@ class MouvementStock extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere = ".$idProduct;
 
-		dol_syslog(get_class($this)."::_createSubProduct", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -407,7 +407,7 @@ class MouvementStock extends CommonObject
 		$sql.= ' WHERE fk_product = '.$productidselected;
 		$sql.= " AND datem < '".$this->db->idate($datebefore)."'";
 		
-		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -443,11 +443,11 @@ class MouvementStock extends CommonObject
 				$vbatchnumber = $dluo['batchnumber'];
 				$result = $pdluo->find($vfk_product_stock,$veatby,$vsellby,$vbatchnumber);
 			} else {
-				dol_syslog(get_class($this)."::_create_batch array param dluo must contain at least key fk_product_stock".$error, LOG_ERR);
+				dol_syslog(__METHOD__ . " array param dluo must contain at least key fk_product_stock".$error, LOG_ERR);
 				$result = -1;
 			}
 		} else {
-			dol_syslog(get_class($this)."::_create_batch error invalid param dluo".$error, LOG_ERR);
+			dol_syslog(__METHOD__ . " error invalid param dluo".$error, LOG_ERR);
 			$result =  -1;
 		}
 

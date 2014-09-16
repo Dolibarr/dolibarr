@@ -73,14 +73,14 @@ abstract class Stats
 			}
 			else
 			{
-				dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
+				dol_syslog(__METHOD__ . " cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
 		
 		// Load file into $data
 		if ($foundintocache)    // Cache file found and is not too old
 		{
-			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
+			dol_syslog(__METHOD__ . " read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		}
 		else
@@ -109,7 +109,7 @@ abstract class Stats
 		// Save cache file
 		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
 		{
-			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
+			dol_syslog(__METHOD__ . " save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
 			fwrite($fp, json_encode($data));
@@ -164,14 +164,14 @@ abstract class Stats
         	}
         	else
         	{
-        		dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
+        		dol_syslog(__METHOD__ . " cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
         	}
         }
 
         // Load file into $data
         if ($foundintocache)    // Cache file found and is not too old
         {
-        	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
+        	dol_syslog(__METHOD__ . " read data from cache file ".$newpathofdestfile." ".$filedate.".");
         	$data = json_decode(file_get_contents($newpathofdestfile), true);
         }
         else
@@ -200,7 +200,7 @@ abstract class Stats
 		// Save cache file
 		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
 		{
-			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
+			dol_syslog(__METHOD__ . " save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
 			fwrite($fp, json_encode($data));
@@ -287,14 +287,14 @@ abstract class Stats
         	}
         	else
         	{
-        		dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
+        		dol_syslog(__METHOD__ . " cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
         	}
         }
 
         // Load file into $data
         if ($foundintocache)    // Cache file found and is not too old
         {
-        	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
+        	dol_syslog(__METHOD__ . " read data from cache file ".$newpathofdestfile." ".$filedate.".");
         	$data = json_decode(file_get_contents($newpathofdestfile), true);
         }
         else
@@ -306,7 +306,7 @@ abstract class Stats
 		// Save cache file
 		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
 		{
-			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
+			dol_syslog(__METHOD__ . " save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
 			fwrite($fp, json_encode($data));
@@ -334,7 +334,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -364,7 +364,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -400,7 +400,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -451,7 +451,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -499,7 +499,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -548,7 +548,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

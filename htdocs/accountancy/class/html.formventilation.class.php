@@ -59,7 +59,7 @@ class FormVentilation extends Form
 
 		$out = '<SELECT name="' . $htmlname . '">';
 
-		dol_syslog(get_class($this) . "::select_bookkeeping_importkey sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -79,7 +79,7 @@ class FormVentilation extends Form
 			}
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::select_bookkeeping_importkey " . $this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 			return - 1;
 		}
 
@@ -111,7 +111,7 @@ class FormVentilation extends Form
 		$sql .= " AND aa.active = 1";
 		$sql .= " ORDER BY aa.account_number";
 
-		dol_syslog(get_class($this) . "::select_account sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 
@@ -142,7 +142,7 @@ class FormVentilation extends Form
 			$out .= '</select>';
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::select_account " . $this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 			return - 1;
 		}
 		$this->db->free($resql);
@@ -171,7 +171,7 @@ class FormVentilation extends Form
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " ORDER BY pcg_type";
 
-		dol_syslog(get_class($this) . "::select_pcgtype sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 
@@ -198,7 +198,7 @@ class FormVentilation extends Form
 			$out .= '</select>';
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::select_pcgtype " . $this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 			return - 1;
 		}
 		$this->db->free($resql);
@@ -227,7 +227,7 @@ class FormVentilation extends Form
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " ORDER BY pcg_subtype";
 
-		dol_syslog(get_class($this) . "::select_pcgsubtype sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 
@@ -254,7 +254,7 @@ class FormVentilation extends Form
 			$out .= '</select>';
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::select_pcgsubtype " . $this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 			return - 1;
 		}
 		$this->db->free($resql);

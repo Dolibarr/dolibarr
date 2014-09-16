@@ -76,11 +76,11 @@ abstract class CommonObject
 		else if ($ref_ext) $sql.= " WHERE ref_ext = '".$db->escape($ref_ext)."'";
 		else {
 			$error='ErrorWrongParameters';
-			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
+			dol_print_error(__METHOD__ . " ".$error, LOG_ERR);
 			return -1;
 		}
 
-		dol_syslog(get_class()."::isExistingObject", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -166,19 +166,19 @@ abstract class CommonObject
         global $user,$conf,$langs;
 
 
-        dol_syslog(get_class($this)."::add_contact $fk_socpeople, $type_contact, $source");
+        dol_syslog(__METHOD__ . " $fk_socpeople, $type_contact, $source");
 
         // Check parameters
         if ($fk_socpeople <= 0)
         {
             $this->error=$langs->trans("ErrorWrongValueForParameter","1");
-            dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error,LOG_ERR);
             return -1;
         }
         if (! $type_contact)
         {
             $this->error=$langs->trans("ErrorWrongValueForParameter","2");
-            dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error,LOG_ERR);
             return -2;
         }
 
@@ -214,7 +214,7 @@ abstract class CommonObject
         $sql.= "'".$this->db->idate($datecreate)."'";
         $sql.= ", 4, '". $id_type_contact . "' ";
         $sql.= ")";
-        dol_syslog(get_class($this)."::add_contact", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -314,7 +314,7 @@ abstract class CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
         $sql.= " WHERE rowid =".$rowid;
 
-        dol_syslog(get_class($this)."::delete_contact", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             if (! $notrigger)
@@ -354,7 +354,7 @@ abstract class CommonObject
         $sql.= " WHERE element_id =".$this->id;
         $sql.= " AND fk_c_type_contact IN (".$listId.")";
 
-        dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             return 1;
@@ -398,7 +398,7 @@ abstract class CommonObject
         if ($statut >= 0) $sql.= " AND ec.statut = '".$statut."'";
         $sql.=" ORDER BY t.lastname ASC";
 
-        dol_syslog(get_class($this)."::liste_contact", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -453,7 +453,7 @@ abstract class CommonObject
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element = '".$this->element."'";
 
-        dol_syslog(get_class($this)."::swapContactStatus", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -555,7 +555,7 @@ abstract class CommonObject
         $sql.= " AND tc.active = 1";
         if ($status) $sql.= " AND ec.statut = ".$status;
 
-        dol_syslog(get_class($this)."::getIdContact", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -627,7 +627,7 @@ abstract class CommonObject
     {
         global $conf;
 
-        dol_syslog(get_class($this).'::fetch_barcode this->element='.$this->element.' this->barcode_type='.$this->barcode_type);
+        dol_syslog(__METHOD__ . ' this->element='.$this->element.' this->barcode_type='.$this->barcode_type);
 
         $idtype=$this->barcode_type;
         if (empty($idtype) && $idtype != '0')	// If type of barcode no set, we try to guess. If set to '0' it means we forced to have type remain not defined
@@ -644,7 +644,7 @@ abstract class CommonObject
                 $sql = "SELECT rowid, code, libelle as label, coder";
                 $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
                 $sql.= " WHERE rowid = ".$idtype;
-                dol_syslog(get_class($this).'::fetch_barcode', LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $resql = $this->db->query($sql);
             	if ($resql)
                 {
@@ -730,7 +730,7 @@ abstract class CommonObject
         $sql.= " WHERE ".$field." = '".$key."'";
         $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this).'::fetchObjectFrom', LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -756,7 +756,7 @@ abstract class CommonObject
         $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
         $sql.= " WHERE rowid = ".$id;
 
-        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -796,7 +796,7 @@ abstract class CommonObject
         if (is_object($user)) $sql.=", fk_user_modif = ".$user->id;
         $sql.= " WHERE ".$id_field." = ".$id;
 
-        dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -825,7 +825,7 @@ abstract class CommonObject
 
         if (! $this->table_element)
         {
-            dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
+            dol_print_error('',__METHOD__ . " was called on objet with property table_element not defined", LOG_ERR);
             return -1;
         }
 
@@ -913,7 +913,7 @@ abstract class CommonObject
     {
         if (! $this->table_element)
         {
-            dol_syslog(get_class($this)."::setProject was called on objet with property table_element not defined",LOG_ERR);
+            dol_syslog(__METHOD__ . " was called on objet with property table_element not defined",LOG_ERR);
             return -1;
         }
 
@@ -922,7 +922,7 @@ abstract class CommonObject
         else $sql.= ' SET fk_projet = NULL';
         $sql.= ' WHERE rowid = '.$this->id;
 
-        dol_syslog(get_class($this)."::setProject", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             $this->fk_project = $projectid;
@@ -943,7 +943,7 @@ abstract class CommonObject
      */
     function setPaymentMethods($id)
     {
-    	dol_syslog(get_class($this).'::setPaymentMethods('.$id.')');
+    	dol_syslog(__METHOD__ . '('.$id.')');
     	if ($this->statut >= 0 || $this->element == 'societe')
     	{
     		// TODO uniformize field name
@@ -962,14 +962,14 @@ abstract class CommonObject
     		}
     		else
     		{
-    			dol_syslog(get_class($this).'::setPaymentMethods Erreur '.$sql.' - '.$this->db->error());
+    			dol_syslog(__METHOD__ . ' Erreur '.$sql.' - '.$this->db->error());
     			$this->error=$this->db->error();
     			return -1;
     		}
     	}
     	else
     	{
-    		dol_syslog(get_class($this).'::setPaymentMethods, status of the object is incompatible');
+    		dol_syslog(__METHOD__ . ', status of the object is incompatible');
     		$this->error='Status of the object is incompatible '.$this->statut;
     		return -2;
     	}
@@ -983,7 +983,7 @@ abstract class CommonObject
      */
     function setPaymentTerms($id)
     {
-    	dol_syslog(get_class($this).'::setPaymentTerms('.$id.')');
+    	dol_syslog(__METHOD__ . '('.$id.')');
     	if ($this->statut >= 0 || $this->element == 'societe')
     	{
     		// TODO uniformize field name
@@ -1003,14 +1003,14 @@ abstract class CommonObject
     		}
     		else
     		{
-    			dol_syslog(get_class($this).'::setPaymentTerms Erreur '.$sql.' - '.$this->db->error());
+    			dol_syslog(__METHOD__ . ' Erreur '.$sql.' - '.$this->db->error());
     			$this->error=$this->db->error();
     			return -1;
     		}
     	}
     	else
     	{
-    		dol_syslog(get_class($this).'::setPaymentTerms, status of the object is incompatible');
+    		dol_syslog(__METHOD__ . ', status of the object is incompatible');
     		$this->error='Status of the object is incompatible '.$this->statut;
     		return -2;
     	}
@@ -1038,7 +1038,7 @@ abstract class CommonObject
     	else
     	{
     		$this->error=$this->db->error();
-    		dol_syslog(get_class($this).'::setDeliveryAddress Erreur '.$sql.' - '.$this->error);
+    		dol_syslog(__METHOD__ . ' Erreur '.$sql.' - '.$this->error);
     		return -1;
     	}
     }
@@ -1053,11 +1053,11 @@ abstract class CommonObject
     function setShippingMethod($shipping_method_id)
     {
         if (! $this->table_element) {
-            dol_syslog(get_class($this)."::setShippingMethod was called on objet with property table_element not defined",LOG_ERR);
+            dol_syslog(__METHOD__ . " was called on objet with property table_element not defined",LOG_ERR);
             return -1;
         }
         if ($shipping_method_id<0) $shipping_method_id='NULL';
-        dol_syslog(get_class($this).'::setShippingMethod('.$shipping_method_id.')');
+        dol_syslog(__METHOD__ . '('.$shipping_method_id.')');
 
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " SET fk_shipping_method = ".$shipping_method_id;
@@ -1067,7 +1067,7 @@ abstract class CommonObject
             $this->shipping_method_id = ($shipping_method_id=='NULL')?null:$shipping_method_id;
             return 1;
         } else {
-            dol_syslog(get_class($this).'::setShippingMethod Error ', LOG_DEBUG);
+            dol_syslog(__METHOD__ . ' Error ', LOG_DEBUG);
             $this->error=$this->db->error();
             return 0;
         }
@@ -1085,7 +1085,7 @@ abstract class CommonObject
     {
         if (! $this->table_element)
         {
-            dol_syslog(get_class($this)."::setDocModel was called on objet with property table_element not defined",LOG_ERR);
+            dol_syslog(__METHOD__ . " was called on objet with property table_element not defined",LOG_ERR);
             return -1;
         }
 
@@ -1097,7 +1097,7 @@ abstract class CommonObject
         // if ($this->element == 'facture') $sql.= " AND fk_statut < 2";
         // if ($this->element == 'propal')  $sql.= " AND fk_statut = 0";
 
-        dol_syslog(get_class($this)."::setDocModel", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1121,11 +1121,11 @@ abstract class CommonObject
     function setBankAccount($fk_account)
     {
         if (! $this->table_element) {
-            dol_syslog(get_class($this)."::setBankAccount was called on objet with property table_element not defined",LOG_ERR);
+            dol_syslog(__METHOD__ . " was called on objet with property table_element not defined",LOG_ERR);
             return -1;
         }
         if ($fk_account<0) $fk_account='NULL';
-        dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
+        dol_syslog(__METHOD__ . '('.$fk_account.')');
 
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " SET fk_account = ".$fk_account;
@@ -1135,7 +1135,7 @@ abstract class CommonObject
             $this->fk_account = ($fk_account=='NULL')?null:$fk_account;
             return 1;
         } else {
-            dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
+            dol_syslog(__METHOD__ . ' Error '.$sql.' - '.$this->db->error());
             $this->error=$this->db->error();
             return 0;
         }
@@ -1154,12 +1154,12 @@ abstract class CommonObject
     {
         if (! $this->table_element_line)
         {
-            dol_syslog(get_class($this)."::line_order was called on objet with property table_element_line not defined",LOG_ERR);
+            dol_syslog(__METHOD__ . " was called on objet with property table_element_line not defined",LOG_ERR);
             return -1;
         }
         if (! $this->fk_element)
         {
-            dol_syslog(get_class($this)."::line_order was called on objet with property fk_element not defined",LOG_ERR);
+            dol_syslog(__METHOD__ . " was called on objet with property fk_element not defined",LOG_ERR);
             return -1;
         }
 
@@ -1170,7 +1170,7 @@ abstract class CommonObject
 		if (! $renum) $sql.= ' AND rang = 0';
 		if ($renum) $sql.= ' AND rang <> 0';
 
-		dol_syslog(get_class($this)."::line_order", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1190,7 +1190,7 @@ abstract class CommonObject
 			if ($fk_parent_line) $sql.= ' AND fk_parent_line IS NULL';
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 
-			dol_syslog(get_class($this)."::line_order search all parent lines", LOG_DEBUG);
+			dol_syslog(__METHOD__ . " search all parent lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1242,7 +1242,7 @@ abstract class CommonObject
 		$sql.= ' AND fk_parent_line = '.$id;
 		$sql.= ' ORDER BY rang ASC';
 
-		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id."", LOG_DEBUG);
+		dol_syslog(__METHOD__ . " search children lines for line ".$id."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1310,7 +1310,7 @@ abstract class CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
 
-		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if (! $this->db->query($sql))
 		{
 			dol_print_error($this->db);
@@ -1404,7 +1404,7 @@ abstract class CommonObject
         $sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
         $sql.= ' WHERE rowid ='.$rowid;
 
-        dol_syslog(get_class($this)."::getRangOfLine", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1447,7 +1447,7 @@ abstract class CommonObject
             $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
             $sql.= ' AND fk_parent_line = '.$fk_parent_line;
 
-            dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -1468,7 +1468,7 @@ abstract class CommonObject
             $sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
             $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 
-            dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -1488,7 +1488,7 @@ abstract class CommonObject
     {
         if (! $this->table_element)
         {
-            dol_syslog(get_class($this)."::update_ref_ext was called on objet with property table_element not defined", LOG_ERR);
+            dol_syslog(__METHOD__ . " was called on objet with property table_element not defined", LOG_ERR);
             return -1;
         }
 
@@ -1496,7 +1496,7 @@ abstract class CommonObject
         $sql.= " SET ref_ext = '".$this->db->escape($ref_ext)."'";
         $sql.= " WHERE ".(isset($this->table_rowid)?$this->table_rowid:'rowid')." = ". $this->id;
 
-        dol_syslog(get_class($this)."::update_ref_ext", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             $this->ref_ext = $ref_ext;
@@ -1520,12 +1520,12 @@ abstract class CommonObject
     {
     	if (! $this->table_element)
     	{
-    		dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
+    		dol_syslog(__METHOD__ . " was called on objet with property table_element not defined", LOG_ERR);
     		return -1;
     	}
 		if (! in_array($suffix,array('','_public','_private')))
 		{
-    		dol_syslog(get_class($this)."::upate_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
+    		dol_syslog(__METHOD__ . " Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
 			return -2;
 		}
 
@@ -1533,7 +1533,7 @@ abstract class CommonObject
     	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
     	$sql.= " WHERE rowid =". $this->id;
 
-    	dol_syslog(get_class($this)."::update_note", LOG_DEBUG);
+    	dol_syslog(__METHOD__, LOG_DEBUG);
     	if ($this->db->query($sql))
     	{
     		if ($suffix == '_public') $this->note_public = $note;
@@ -1607,7 +1607,7 @@ abstract class CommonObject
         }
         $sql.= ' ORDER by rowid';	// We want to be sure to always use same order of line to not change lines differently when option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND is used
 
-        dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1707,7 +1707,7 @@ abstract class CommonObject
                 $sql .= ' WHERE rowid = '.$this->id;
 
                 //print "xx".$sql;
-                dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $resql=$this->db->query($sql);
                 if (! $resql)
                 {
@@ -1758,7 +1758,7 @@ abstract class CommonObject
         $sql.= ", '".$this->element."'";
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::add_object_linked", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql))
 	  	{
 	  		$this->db->commit();
@@ -1835,7 +1835,7 @@ abstract class CommonObject
         $sql .= ' ORDER BY sourcetype';
         //print $sql;
 
-        dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1960,7 +1960,7 @@ abstract class CommonObject
     		$sql.= " AND sourcetype = '".$this->element."'";
     	}
 
-    	dol_syslog(get_class($this)."::updateObjectLinked", LOG_DEBUG);
+    	dol_syslog(__METHOD__, LOG_DEBUG);
     	if ($this->db->query($sql))
     	{
     		return 1;
@@ -2013,7 +2013,7 @@ abstract class CommonObject
 			$sql.= " (fk_target = ".$this->id." AND targettype = '".$this->element."')";
 		}
 
-		dol_syslog(get_class($this)."::deleteObjectLinked", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			return 1;
@@ -2047,7 +2047,7 @@ abstract class CommonObject
         $sql.= " SET ".$fieldstatus." = ".$status;
         $sql.= " WHERE rowid=".$elementId;
 
-        dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
         	$this->db->commit();
@@ -2155,7 +2155,7 @@ abstract class CommonObject
             $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
             $sql.= " WHERE fk_object = ".$rowid;
 
-            dol_syslog(get_class($this)."::fetch_optionals", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -2203,7 +2203,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
-		dol_syslog(get_class($this)."::deleteExtraFields delete", LOG_DEBUG);
+		dol_syslog(__METHOD__ . " delete", LOG_DEBUG);
 		$resql=$this->db->query($sql_del);
 		if (! $resql)
 		{
@@ -2273,7 +2273,7 @@ abstract class CommonObject
             $this->db->begin();
 
             $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
-            dol_syslog(get_class($this)."::insertExtraFields delete", LOG_DEBUG);
+            dol_syslog(__METHOD__ . " delete", LOG_DEBUG);
             $this->db->query($sql_del);
             $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
             foreach($this->array_options as $key => $value)
@@ -2302,7 +2302,7 @@ abstract class CommonObject
             }
             $sql.=")";
 
-            dol_syslog(get_class($this)."::insertExtraFields insert", LOG_DEBUG);
+            dol_syslog(__METHOD__ . " insert", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if (! $resql)
             {
@@ -2510,7 +2510,7 @@ abstract class CommonObject
             if ($predefined == 3 && $val->fk_product > 0 && $val->product_type==1) $qualified=1;
             if ($qualified) $nb++;
         }
-        dol_syslog(get_class($this).'::hasProductsOrServices we found '.$nb.' qualified lines of products/servcies');
+        dol_syslog(__METHOD__ . ' we found '.$nb.' qualified lines of products/servcies');
         return $nb;
     }
 
@@ -2527,7 +2527,7 @@ abstract class CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."det";
         $sql.= " WHERE ".$this->fk_element." = ".$this->id;
 
-        dol_syslog(get_class($this).'::getTotalDiscount', LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2568,7 +2568,7 @@ abstract class CommonObject
     	$sql.= " SET extraparams = ".(! empty($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
     	$sql.= " WHERE rowid = ".$this->id;
 
-    	dol_syslog(get_class($this)."::setExtraParameters", LOG_DEBUG);
+    	dol_syslog(__METHOD__, LOG_DEBUG);
     	$resql = $this->db->query($sql);
     	if (! $resql)
     	{
@@ -3373,7 +3373,7 @@ abstract class CommonObject
 		$sql.= ", '".$mandatory."'";
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::add_element_resource", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			$this->db->commit();
@@ -3405,7 +3405,7 @@ abstract class CommonObject
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
 	    $sql.= " WHERE rowid =".$rowid;
 
-	    dol_syslog(get_class($this)."::delete_resource", LOG_DEBUG);
+	    dol_syslog(__METHOD__, LOG_DEBUG);
 	    if ($this->db->query($sql))
 	    {
 	        if (! $notrigger)

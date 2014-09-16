@@ -142,19 +142,19 @@ class BonPrelevement extends CommonObject
                 else
                 {
                     $result = -1;
-                    dol_syslog(get_class($this)."::AddFacture Erreur $result");
+                    dol_syslog(__METHOD__ . " Erreur $result");
                 }
             }
             else
             {
                 $result = -2;
-                dol_syslog(get_class($this)."::AddFacture Erreur $result");
+                dol_syslog(__METHOD__ . " Erreur $result");
             }
         }
         else
         {
             $result = -3;
-            dol_syslog(get_class($this)."::AddFacture Erreur $result");
+            dol_syslog(__METHOD__ . " Erreur $result");
         }
 
         return $result;
@@ -234,7 +234,7 @@ class BonPrelevement extends CommonObject
             }
             else
             {
-                dol_syslog(get_class($this)."::addline Error -2");
+                dol_syslog(__METHOD__ . " Error -2");
                 $result = -2;
             }
 
@@ -279,7 +279,7 @@ class BonPrelevement extends CommonObject
         $sql.= " WHERE p.rowid = ".$rowid;
         $sql.= " AND p.entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -308,7 +308,7 @@ class BonPrelevement extends CommonObject
             }
             else
             {
-                dol_syslog(get_class($this)."::Fetch Erreur aucune ligne retournee");
+                dol_syslog(__METHOD__ . " Erreur aucune ligne retournee");
                 return -1;
             }
         }
@@ -339,7 +339,7 @@ class BonPrelevement extends CommonObject
             $result=$this->db->query($sql);
             if (! $result)
             {
-                dol_syslog(get_class($this)."::set_credite Erreur 1");
+                dol_syslog(__METHOD__ . " Erreur 1");
                 $error++;
             }
 
@@ -352,7 +352,7 @@ class BonPrelevement extends CommonObject
                 for ($i = 0; $i < $num; $i++)
                 {
                     /* Tag invoice as payed */
-                    dol_syslog(get_class($this)."::set_credite set_paid fac ".$facs[$i]);
+                    dol_syslog(__METHOD__ . " set_paid fac ".$facs[$i]);
                     $fac = new Facture($this->db);
                     $fac->fetch($facs[$i]);
                     $result = $fac->set_paid($user);
@@ -368,7 +368,7 @@ class BonPrelevement extends CommonObject
 
                 if (! $this->db->query($sql))
                 {
-                    dol_syslog(get_class($this)."::set_credite Erreur 1");
+                    dol_syslog(__METHOD__ . " Erreur 1");
                     $error++;
                 }
             }
@@ -384,14 +384,14 @@ class BonPrelevement extends CommonObject
             else
             {
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::set_credite ROLLBACK ");
+                dol_syslog(__METHOD__ . " ROLLBACK ");
 
                 return -1;
             }
         }
         else
         {
-            dol_syslog(get_class($this)."::set_credite Ouverture transaction SQL impossible ");
+            dol_syslog(__METHOD__ . " Ouverture transaction SQL impossible ");
             return -2;
         }
     }
@@ -454,7 +454,7 @@ class BonPrelevement extends CommonObject
                         $paiement_id = $paiement->create($user);
                         if ($paiement_id < 0)
                         {
-                            dol_syslog(get_class($this)."::set_credite AddPayment Error");
+                            dol_syslog(__METHOD__ . " AddPayment Error");
                             $error++;
                         }
                         else
@@ -462,7 +462,7 @@ class BonPrelevement extends CommonObject
                             $result=$paiement->addPaymentToBank($user,'payment','(WithdrawalPayment)',$bankaccount,'','');
                             if ($result < 0)
                             {
-                                dol_syslog(get_class($this)."::set_credite AddPaymentToBank Error");
+                                dol_syslog(__METHOD__ . " AddPaymentToBank Error");
                                 $error++;
                             }
                         }
@@ -474,14 +474,14 @@ class BonPrelevement extends CommonObject
 
                         if (! $this->db->query($sql))
                         {
-                            dol_syslog(get_class($this)."::set_credite Update lines Error");
+                            dol_syslog(__METHOD__ . " Update lines Error");
                             $error++;
                         }
 
                     }
                     else
                     {
-                        dol_syslog(get_class($this)."::set_infocredit Update Bons Error");
+                        dol_syslog(__METHOD__ . " Update Bons Error");
                         $error++;
                     }
 
@@ -502,7 +502,7 @@ class BonPrelevement extends CommonObject
                 }
                 else
                 {
-                    dol_syslog(get_class($this)."::set_infocredit 1025 Open SQL transaction impossible ");
+                    dol_syslog(__METHOD__ . " 1025 Open SQL transaction impossible ");
                     return -1025;
                 }
             }
@@ -532,7 +532,7 @@ class BonPrelevement extends CommonObject
 
         $error = 0;
 
-        dol_syslog(get_class($this)."::set_infotrans Start",LOG_INFO);
+        dol_syslog(__METHOD__ . " Start",LOG_INFO);
         if ($this->db->begin())
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
@@ -567,7 +567,7 @@ class BonPrelevement extends CommonObject
             else
             {
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::set_infotrans ROLLBACK", LOG_ERR);
+                dol_syslog(__METHOD__ . " ROLLBACK", LOG_ERR);
 
                 return -1;
             }
@@ -575,7 +575,7 @@ class BonPrelevement extends CommonObject
         else
         {
 
-            dol_syslog(get_class($this)."::set_infotrans Ouverture transaction SQL impossible", LOG_CRIT);
+            dol_syslog(__METHOD__ . " Ouverture transaction SQL impossible", LOG_CRIT);
             return -2;
         }
     }
@@ -633,7 +633,7 @@ class BonPrelevement extends CommonObject
         }
         else
         {
-            dol_syslog(get_class($this)."::getListInvoices Erreur");
+            dol_syslog(__METHOD__ . " Erreur");
         }
 
         return $arr;
@@ -671,7 +671,7 @@ class BonPrelevement extends CommonObject
         else
         {
             $error = 1;
-            dol_syslog(get_class($this)."::SommeAPrelever Erreur -1");
+            dol_syslog(__METHOD__ . " Erreur -1");
             dol_syslog($this->db->error());
         }
     }
@@ -702,7 +702,7 @@ class BonPrelevement extends CommonObject
         //if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
         //if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
-	    dol_syslog(get_class($this)."::SommeAPrelever");
+	    dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
 
         if ( $resql )
@@ -715,7 +715,7 @@ class BonPrelevement extends CommonObject
         }
         else
         {
-            $this->error=get_class($this)."::SommeAPrelever Erreur -1 sql=".$this->db->error();
+            $this->error=__METHOD__ . " Erreur -1 sql=".$this->db->error();
             return -1;
         }
     }
@@ -734,7 +734,7 @@ class BonPrelevement extends CommonObject
     {
         global $conf,$langs;
 
-        dol_syslog(get_class($this)."::Create banque=$banque agence=$agence");
+        dol_syslog(__METHOD__ . " banque=$banque agence=$agence");
 
         require_once (DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
         require_once (DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
@@ -776,7 +776,7 @@ class BonPrelevement extends CommonObject
             //if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
             //if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
-            dol_syslog(get_class($this)."::Create", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -893,7 +893,7 @@ class BonPrelevement extends CommonObject
                 $sql.= " WHERE ref LIKE '".$ref."%'";
                 $sql.= " AND entity = ".$conf->entity;
 
-                dol_syslog(get_class($this)."::Create", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $resql = $this->db->query($sql);
 
                 if ($resql)
@@ -919,7 +919,7 @@ class BonPrelevement extends CommonObject
                 $sql.= ", '".$this->db->idate($now)."'";
                 $sql.= ")";
 
-                dol_syslog(get_class($this)."::Create", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $resql = $this->db->query($sql);
 
                 if ($resql)
@@ -980,7 +980,7 @@ class BonPrelevement extends CommonObject
                         $sql.= ", fk_prelevement_bons = ".$prev_id;
                         $sql.= " WHERE rowid = ".$fac[1];
 
-                        dol_syslog(get_class($this)."::Create", LOG_DEBUG);
+                        dol_syslog(__METHOD__, LOG_DEBUG);
                         $resql=$this->db->query($sql);
                         if (! $resql)
                         {
@@ -1037,7 +1037,7 @@ class BonPrelevement extends CommonObject
             $sql.= " WHERE rowid = ".$prev_id;
             $sql.= " AND entity = ".$conf->entity;
 
-            dol_syslog(get_class($this)."::Create", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
             {
@@ -1207,7 +1207,7 @@ class BonPrelevement extends CommonObject
             else
             {
                 $result = -1;
-                dol_syslog(get_class($this)."::AddNotification Error $result");
+                dol_syslog(__METHOD__ . " Error $result");
             }
         }
 
@@ -1231,7 +1231,7 @@ class BonPrelevement extends CommonObject
 
         $result = 0;
 
-        dol_syslog(get_class($this)."::Generate build file ".$this->filename);
+        dol_syslog(__METHOD__ . " build file ".$this->filename);
 
         $this->file = fopen($this->filename,"w");
 

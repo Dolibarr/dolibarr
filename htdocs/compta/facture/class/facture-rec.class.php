@@ -494,7 +494,7 @@ class FactureRec extends Facture
 			$sql.= ", ".$rang;
 			$sql.= ", ".$special_code.")";
 
-			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				$this->id=$facid;

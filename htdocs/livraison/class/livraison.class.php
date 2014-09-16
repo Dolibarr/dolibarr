@@ -238,7 +238,7 @@ class Livraison extends CommonObject
 		$sql.= " ".($description?"'".$this->db->escape($description)."'":"null").",";
 		$sql.= $qty.")";
 
-		dol_syslog(get_class($this)."::create_line", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if (! $this->db->query($sql) )
 		{
 			$error++;
@@ -268,7 +268,7 @@ class Livraison extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
 		$sql.= " WHERE l.rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -312,7 +312,7 @@ class Livraison extends CommonObject
 			else
 			{
 				$this->error='Delivery with id '.$id.' not found sql='.$sql;
-				dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
+				dol_syslog(__METHOD__ . ' Error '.$this->error, LOG_ERR);
 				return -2;
 			}
 		}
@@ -334,7 +334,7 @@ class Livraison extends CommonObject
 		global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		dol_syslog(get_class($this)."::valid begin");
+		dol_syslog(__METHOD__ . " begin");
 
 		$this->db->begin();
 
@@ -408,7 +408,7 @@ class Livraison extends CommonObject
 							$dirdest = $conf->expedition->dir_output.'/receipt/'.$newref;
 							if (file_exists($dirsource))
 							{
-								dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
+								dol_syslog(__METHOD__ . " rename dir ".$dirsource." into ".$dirdest);
 
 								if (@rename($dirsource, $dirdest))
 								{
@@ -428,7 +428,7 @@ class Livraison extends CommonObject
 							$this->statut = 1;
 						}
 
-						dol_syslog(get_class($this)."::valid ok");
+						dol_syslog(__METHOD__ . " ok");
 					}
 					else
 					{
@@ -442,7 +442,7 @@ class Livraison extends CommonObject
 		else
 		{
 			$this->error="Non autorise";
-			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -452,7 +452,7 @@ class Livraison extends CommonObject
 		if ($result < 0)
 		{
 			$this->db->rollback();
-			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
 			return -1;
 		}
 		else
@@ -677,7 +677,7 @@ class Livraison extends CommonObject
 		$sql.= " WHERE ld.fk_origin_line = cd.rowid";
 		$sql.= " AND ld.fk_livraison = ".$this->id;
 
-		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -907,7 +907,7 @@ class Livraison extends CommonObject
 			$sql.= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_date_livraison", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{

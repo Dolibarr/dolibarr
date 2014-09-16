@@ -93,7 +93,7 @@ class Fichinter extends CommonObject
 	{
 		global $conf, $user, $langs;
 
-		dol_syslog(get_class($this)."::create ref=".$this->ref);
+		dol_syslog(__METHOD__ . " ref=".$this->ref);
 
 		// Check parameters
 		if (! empty($this->ref))	// We check that ref is not already used
@@ -102,7 +102,7 @@ class Fichinter extends CommonObject
 			if ($result > 0)
 			{
 				$this->error='ErrorRefAlreadyExists';
-				dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
+				dol_syslog(__METHOD__ . " ".$this->error,LOG_WARNING);
 				$this->db->rollback();
 				return -1;
 			}
@@ -112,7 +112,7 @@ class Fichinter extends CommonObject
 		if ($this->socid <= 0)
 		{
 			$this->error='ErrorBadParameterForFunc';
-			dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
+			dol_syslog(__METHOD__ . " ".$this->error,LOG_ERR);
 			return -1;
 		}
 
@@ -152,7 +152,7 @@ class Fichinter extends CommonObject
 		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -163,7 +163,7 @@ class Fichinter extends CommonObject
 				$this->ref='(PROV'.$this->id.')';
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."fichinter SET ref='".$this->ref."' WHERE rowid=".$this->id;
 
-				dol_syslog(get_class($this)."::create", LOG_DEBUG);
+				dol_syslog(__METHOD__, LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql) $error++;
 			}
@@ -203,7 +203,7 @@ class Fichinter extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=join(',',$this->errors);
-				dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
+				dol_syslog(__METHOD__ . " ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
@@ -242,7 +242,7 @@ class Fichinter extends CommonObject
 		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 
@@ -283,7 +283,7 @@ class Fichinter extends CommonObject
 		if ($ref) $sql.= " WHERE f.ref='".$this->db->escape($ref)."'";
 		else $sql.= " WHERE f.rowid=".$rowid;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -407,7 +407,7 @@ class Fichinter extends CommonObject
 			$sql.= " AND entity = ".$conf->entity;
 			$sql.= " AND fk_statut = 0";
 
-			dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -430,7 +430,7 @@ class Fichinter extends CommonObject
 					$dirdest = $conf->ficheinter->dir_output.'/'.$snum;
 					if (file_exists($dirsource))
 					{
-						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+						dol_syslog(__METHOD__ . " rename dir ".$dirsource." into ".$dirdest);
 
 						if (@rename($dirsource, $dirdest))
 						{
@@ -469,7 +469,7 @@ class Fichinter extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				dol_syslog(get_class($this)."::setValid ".$this->error,LOG_ERR);
+				dol_syslog(__METHOD__ . " ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
@@ -869,7 +869,7 @@ class Fichinter extends CommonObject
 	 */
 	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_option='')
 	{
-		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
+		dol_syslog(__METHOD__ . " $fichinterid, $desc, $date_intervention, $duration");
 
 		if ($this->statut == 0)
 		{
@@ -953,7 +953,7 @@ class Fichinter extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.=' WHERE fk_fichinter = '.$this->id .' ORDER BY rang ASC' ;
 
-		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1282,7 +1282,7 @@ class FichinterLigne extends CommonObjectLine
 
 		if ($this->statut == 0)
 		{
-			dol_syslog(get_class($this)."::deleteline lineid=".$this->rowid);
+			dol_syslog(__METHOD__ . " lineid=".$this->rowid);
 			$this->db->begin();
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->rowid;

@@ -160,7 +160,7 @@ class ExportExcel extends ModeleExports
 		    $outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
 		}
 
-		dol_syslog(get_class($this)."::open_file file=".$file);
+		dol_syslog(__METHOD__ . " file=".$file);
         $this->file=$file;
 
 		$ret=1;

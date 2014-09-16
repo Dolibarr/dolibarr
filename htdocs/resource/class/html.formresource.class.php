@@ -160,7 +160,7 @@ class FormResource
 
     	$resourcestat = new Resource($this->db);
 
-    	dol_syslog(get_class($this)."::select_types_resource ".$selected.", ".$htmlname.", ".$filtertype.", ".$format,LOG_DEBUG);
+    	dol_syslog(__METHOD__ . " ".$selected.", ".$htmlname.", ".$filtertype.", ".$format,LOG_DEBUG);
 
     	$filterarray=array();
 

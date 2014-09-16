@@ -91,7 +91,7 @@ class Skeleton_Class extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
+	   	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -116,7 +116,7 @@ class Skeleton_Class extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__ . " " . $errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -149,7 +149,7 @@ class Skeleton_Class extends CommonObject
         if ($ref) $sql.= " WHERE t.ref = '".$ref."'";
         else $sql.= " WHERE t.rowid = ".$id;
 
-    	dol_syslog(get_class($this)."::fetch");
+    	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -203,7 +203,7 @@ class Skeleton_Class extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update");
+		dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -226,7 +226,7 @@ class Skeleton_Class extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -273,7 +273,7 @@ class Skeleton_Class extends CommonObject
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mytable";
     		$sql.= " WHERE rowid=".$this->id;
 
-    		dol_syslog(get_class($this)."::delete");
+    		dol_syslog(__METHOD__, LOG_DEBUG);
     		$resql = $this->db->query($sql);
         	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
@@ -283,7 +283,7 @@ class Skeleton_Class extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();

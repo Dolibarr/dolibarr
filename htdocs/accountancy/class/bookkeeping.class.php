@@ -75,7 +75,7 @@ class BookKeeping
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 		$sql .= " WHERE rowid = '" . $id . "'";
 
-		dol_syslog(get_class($this) . "fetch sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -100,7 +100,7 @@ class BookKeeping
 		else
 		{
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch " . $this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 			return - 1;
 		}
 
@@ -119,7 +119,7 @@ class BookKeeping
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 		$sql .= " WHERE piece_num = '" . $piecenum . "'";
 
-		dol_syslog(get_class($this) . "fetch_per_mvt sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -131,7 +131,7 @@ class BookKeeping
 			$this->doc_type = $obj->doc_type;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_per_mvt " . $this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 			return - 1;
 		}
 
@@ -146,7 +146,7 @@ class BookKeeping
 	function getNextNumMvt() {
 		$sql = "SELECT MAX(piece_num)+1 as max FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 
-		dol_syslog(get_class($this) . "getNextNumMvt sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result)
@@ -158,7 +158,7 @@ class BookKeeping
 		else
 		{
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::getNextNumMvt " . $this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}
@@ -178,7 +178,7 @@ class BookKeeping
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 		$sql .= " WHERE piece_num = '" . $piecenum . "'";
 
-		dol_syslog(get_class($this) . "fetch_all_per_mvt sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 
@@ -207,7 +207,7 @@ class BookKeeping
 			}
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_per_mvt " . $this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 			return - 1;
 		}
 
@@ -233,7 +233,7 @@ class BookKeeping
 		$sql .= " AND fk_docdet = " . $this->fk_docdet;
 		$sql .= " AND numero_compte = '" . $this->numero_compte . "'";
 
-		dol_syslog(get_class($this) . ":: create sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -247,27 +247,27 @@ class BookKeeping
 				$sqlnum .= " AND fk_docdet = '" . $this->fk_docdet . "'";
 				$sqlnum .= " AND doc_ref = '" . $this->doc_ref . "'";
 
-				dol_syslog(get_class($this) . ":: create sqlnum=" . $sqlnum, LOG_DEBUG);
+				dol_syslog(__METHOD__ . " sqlnum=" . $sqlnum, LOG_DEBUG);
 				$resqlnum = $this->db->query($sqlnum);
 				if ($resqlnum)
 				{
 					$objnum = $this->db->fetch_object($resqlnum);
 					$this->piece_num = $objnum->piece_num;
 				}
-				dol_syslog(get_class($this) . ":: create this->piece_num=" . $this->piece_num, LOG_DEBUG);
+				dol_syslog(__METHOD__ . " this->piece_num=" . $this->piece_num, LOG_DEBUG);
 				if (empty($this->piece_num))
 				{
 					$sqlnum = "SELECT MAX(piece_num)+1 as maxpiecenum";
 					$sqlnum .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 
-					dol_syslog(get_class($this) . ":: create sqlnum=" . $sqlnum, LOG_DEBUG);
+					dol_syslog(__METHOD__ . " sqlnum=" . $sqlnum, LOG_DEBUG);
 					$resqlnum = $this->db->query($sqlnum);
 					if ($resqlnum) {
 						$objnum = $this->db->fetch_object($resqlnum);
 						$this->piece_num = $objnum->maxpiecenum;
 					}
 				}
-				dol_syslog(get_class($this) . ":: create this->piece_num=" . $this->piece_num, LOG_DEBUG);
+				dol_syslog(__METHOD__ . " this->piece_num=" . $this->piece_num, LOG_DEBUG);
 				if (empty($this->piece_num)) {
 					$this->piece_num = 1;
 				}
@@ -284,7 +284,7 @@ class BookKeeping
 				$sql .= $this->debit . "," . $this->credit . "," . $this->montant . ",'" . $this->sens . "'," . $user->id . ", '";
 				$sql .= $this->date_create . "','" . $this->code_journal . "'," . $this->piece_num . ")";
 
-				dol_syslog(get_class($this) . ":: create sql=" . $sql, LOG_DEBUG);
+				dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_bookkeeping");
@@ -335,7 +335,7 @@ class BookKeeping
 		// Commit or rollback
 		if ($error) {
 			foreach ( $this->errors as $errmsg ) {
-				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			$this->db->rollback();
@@ -435,7 +435,7 @@ class BookKeeping
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this) . "::create_std sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
@@ -461,7 +461,7 @@ class BookKeeping
 		// Commit or rollback
 		if ($error) {
 			foreach ( $this->errors as $errmsg ) {
-				dol_syslog(get_class($this) . "::create_std " . $errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			$this->db->rollback();
@@ -543,7 +543,7 @@ class BookKeeping
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
@@ -567,7 +567,7 @@ class BookKeeping
 		// Commit or rollback
 		if ($error) {
 			foreach ( $this->errors as $errmsg ) {
-				dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			$this->db->rollback();
@@ -607,7 +607,7 @@ class BookKeeping
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 			$sql .= " WHERE rowid=" . $this->id;
 
-			dol_syslog(get_class($this) . "::delete sql=" . $sql);
+			dol_syslog(__METHOD__ . " sql=" . $sql);
 			$resql = $this->db->query($sql);
 			if (! $resql) {
 				$error ++;
@@ -618,7 +618,7 @@ class BookKeeping
 		// Commit or rollback
 		if ($error) {
 			foreach ( $this->errors as $errmsg ) {
-				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			$this->db->rollback();
@@ -647,7 +647,7 @@ class BookKeeping
 
 		$resql = $this->db->query($sql);
 
-		dol_syslog(get_class($this) . "::export_bookkeping sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->linesexport = array ();
@@ -682,7 +682,7 @@ class BookKeeping
 		else
 		{
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::export_bookkeping " . $this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}

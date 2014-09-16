@@ -189,8 +189,8 @@ class MailingTargets    // This can't be abstract as it is used for some method
         	}
         }
 
-        dol_syslog(get_class($this)."::add_to_target: sql ".$sql,LOG_DEBUG);
-        dol_syslog(get_class($this)."::add_to_target: mailing ".$j." targets added");
+        dol_syslog(__METHOD__ . ": sql ".$sql,LOG_DEBUG);
+        dol_syslog(__METHOD__ . ": mailing ".$j." targets added");
 
         //Update the status to show thirdparty mail that don't want to be contacted anymore'
         $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
@@ -199,7 +199,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
         $sql .= " AND source_type='thirdparty'";
         $result=$this->db->query($sql);
 
-        dol_syslog(get_class($this)."::add_to_target: mailing update status to display thirdparty mail that do not want to be contacted sql:".$sql);
+        dol_syslog(__METHOD__ . ": mailing update status to display thirdparty mail that do not want to be contacted sql:".$sql);
 
         //Update the status to show contact mail that don't want to be contacted anymore'
         $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
@@ -209,7 +209,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
         $sql .= " AND source_type='contact'";
         $result=$this->db->query($sql);
 
-        dol_syslog(get_class($this)."::add_to_target: mailing update status to display contact mail that do not want to be contacted sql:".$sql);
+        dol_syslog(__METHOD__ . ": mailing update status to display contact mail that do not want to be contacted sql:".$sql);
 
 
         $this->update_nb($mailing_id);

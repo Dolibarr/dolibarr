@@ -215,7 +215,7 @@ class CommActionRapport
 		$eventstatic=new ActionComm($this->db);
 		$projectstatic=new Project($this->db);
 
-		dol_syslog(get_class($this)."::_page", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

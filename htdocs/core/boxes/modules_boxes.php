@@ -141,7 +141,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b";
 		$sql.= " WHERE b.entity = ".$conf->entity;
 		$sql.= " AND b.rowid = ".$rowid;
-		dol_syslog(get_class($this)."::fetch rowid=".$rowid);
+		dol_syslog(__METHOD__ . " rowid=".$rowid);
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -185,7 +185,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		$bcx[1] = 'class="box_impair"';
 		$var = false;
 
-		dol_syslog(get_class($this).'::showBox');
+		dol_syslog(__METHOD__);
 
 		// Define nbcol and nblines of the box to show
 		$nbcol=0;

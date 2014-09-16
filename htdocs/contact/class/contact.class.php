@@ -155,7 +155,7 @@ class Contact extends CommonObject
         $sql.= " ".(! empty($this->import_key)?"'".$this->import_key."'":"null");
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -197,7 +197,7 @@ class Contact extends CommonObject
             else
             {
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+                dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
                 return -2;
             }
 		}
@@ -206,7 +206,7 @@ class Contact extends CommonObject
 			$this->error=$this->db->lasterror();
 
 			$this->db->rollback();
-			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -274,7 +274,7 @@ class Contact extends CommonObject
 		$sql .= ", no_email=".($this->no_email?"'".$this->no_email."'":"0");
 		$sql .= " WHERE rowid=".$this->db->escape($id);
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -315,7 +315,7 @@ class Contact extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
+				dol_syslog(__METHOD__ . " Error ".$this->error,LOG_ERR);
 				$this->db->rollback();
 				return -$error;
 			}
@@ -438,7 +438,7 @@ class Contact extends CommonObject
 		if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql.= " WHERE rowid=".$this->db->escape($id);
 
-		dol_syslog(get_class($this)."::update_perso this->birthday=".$this->birthday." -", LOG_DEBUG);
+		dol_syslog(__METHOD__ . " this->birthday=".$this->birthday." -", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
@@ -517,7 +517,7 @@ class Contact extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		$sql.= " WHERE c.rowid = ". $id;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -655,7 +655,7 @@ class Contact extends CommonObject
 		$sql.=" AND fk_socpeople = ". $this->id;
 		$sql.=" GROUP BY tc.element";
 
-		dol_syslog(get_class($this)."::load_ref_elements", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -706,7 +706,7 @@ class Contact extends CommonObject
 			$sql.= " WHERE ec.fk_socpeople=".$this->id;
 			$sql.= " AND ec.fk_c_type_contact=tc.rowid";
 			$sql.= " AND tc.source='external'";
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -719,7 +719,7 @@ class Contact extends CommonObject
 
 					$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 					$sqldel.=" WHERE rowid = ".$obj->rowid;
-					dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+					dol_syslog(__METHOD__, LOG_DEBUG);
 					$result = $this->db->query($sqldel);
 					if (! $result)
 					{
@@ -741,7 +741,7 @@ class Contact extends CommonObject
 		{
 			// Remove category
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -755,7 +755,7 @@ class Contact extends CommonObject
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
 			$sql .= " WHERE rowid=".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
@@ -851,7 +851,7 @@ class Contact extends CommonObject
 		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
 		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
 
-		dol_syslog(get_class($this)."::getNbOfEMailings", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$resql=$this->db->query($sql);
 
@@ -1055,7 +1055,7 @@ class Contact extends CommonObject
 		$sql.= " WHERE rowid = ".$this->id;
 		$result = $this->db->query($sql);
 
-		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($result)
 		{
             // Call trigger

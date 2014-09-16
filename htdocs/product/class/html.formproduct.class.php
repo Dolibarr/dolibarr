@@ -76,7 +76,7 @@ class FormProduct
 		$sql.= " AND e.statut = 1";
 		$sql.= " ORDER BY e.label";
 
-		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -116,7 +116,7 @@ class FormProduct
 	{
 		global $langs,$user;
 
-		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filtertype, $empty, $disabled, $fk_product",LOG_DEBUG);
+		dol_syslog(__METHOD__ . " $selected, $htmlname, $filtertype, $empty, $disabled, $fk_product",LOG_DEBUG);
 
 		$this->loadWarehouses($fk_product);
 		$nbofwarehouses=count($this->cache_warehouses);

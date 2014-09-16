@@ -68,7 +68,7 @@ class Translate
 	{
 		global $conf;
 
-		//dol_syslog(get_class($this)."::setDefaultLang srclang=".$srclang,LOG_DEBUG);
+		//dol_syslog(__METHOD__ . " srclang=".$srclang,LOG_DEBUG);
 
 		// If a module ask to force a priority on langs directories (to use its own lang files)
 		if (! empty($conf->global->MAIN_FORCELANGDIR))
@@ -166,7 +166,7 @@ class Translate
 		// Check parameters
 		if (empty($domain))
 		{
-			dol_print_error('',get_class($this)."::Load ErrorWrongParameters");
+			dol_print_error('',__METHOD__ . " ErrorWrongParameters");
 			exit;
 		}
 		if ($this->defaultlang == 'none_NONE') return 0;    // Special language code to not translate keys
@@ -206,7 +206,7 @@ class Translate
 
 			$filelangexists=is_file($file_lang_osencoded);
 
-			//dol_syslog(get_class($this).'::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' newdomain='.$domain.' modulename='.$modulename.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
+			//dol_syslog(__METHOD__ . ' Try to read for alt='.$alt.' langofdir='.$langofdir.' newdomain='.$domain.' modulename='.$modulename.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
 
 			if ($filelangexists)
 			{
@@ -676,7 +676,7 @@ class Translate
 		$sql = "SELECT ".$fieldlabel." as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 		$sql.= " WHERE ".$fieldkey." = '".($keyforselect?$keyforselect:$key)."'";
-		dol_syslog(get_class($this).'::getLabelFromKey', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -755,7 +755,7 @@ class Translate
 		if (! empty($currency_code)) $sql.=" AND code_iso = '".$currency_code."'";
 		//$sql.= " ORDER BY code_iso ASC"; // Not required, a sort is done later
 
-		dol_syslog(get_class($this).'::loadCacheCurrencies', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{

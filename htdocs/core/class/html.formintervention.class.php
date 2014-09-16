@@ -70,7 +70,7 @@ class FormIntervention
 			else $sql.= " AND f.fk_soc = ".$socid;
 		}
 
-		dol_syslog(get_class($this)."::select_intervention", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{

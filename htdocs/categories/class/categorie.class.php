@@ -90,7 +90,7 @@ class Categorie extends CommonObject
 			if ($label) $sql.= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category',1).")";
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -161,7 +161,7 @@ class Categorie extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this).'::create', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (";
 		$sql.= "fk_parent,";
 		$sql.= " label,";
@@ -188,7 +188,7 @@ class Categorie extends CommonObject
 		$sql.= $conf->entity;
 		$sql.= ")";
 
-		dol_syslog(get_class($this).'::create', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res)
 		{
@@ -286,7 +286,7 @@ class Categorie extends CommonObject
 		$sql .= ", fk_parent = ".$this->fk_parent;
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 
@@ -341,7 +341,7 @@ class Categorie extends CommonObject
         // Clean parameters
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 
-		dol_syslog(get_class($this)."::remove");
+		dol_syslog(__METHOD__);
 
 		$this->db->begin();
 
@@ -430,7 +430,7 @@ class Categorie extends CommonObject
 						if ($result < 0)
 						{
 							$error++;
-							dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+							dol_syslog(__METHOD__ . " erreur " . $this->error, LOG_ERR);
 						}
 					}
 				}
@@ -482,7 +482,7 @@ class Categorie extends CommonObject
 		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$column_name.")";
 		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
 
-		dol_syslog(get_class($this).'::add_type', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			if (! empty($conf->global->CATEGORIE_RECURSIV_ADD))
@@ -490,7 +490,7 @@ class Categorie extends CommonObject
 				$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'categorie';
 				$sql.= " WHERE rowid = ".$this->id;
 
-				dol_syslog(get_class($this)."::add_type", LOG_DEBUG);
+				dol_syslog(__METHOD__, LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -588,7 +588,7 @@ class Categorie extends CommonObject
 		$sql .= " WHERE fk_categorie = ".$this->id;
 		$sql .= " AND   fk_".$column_name."   = ".$obj->id;
 
-		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			// Save object we want to unlink category off into category instance to provide information to trigger
@@ -646,7 +646,7 @@ class Categorie extends CommonObject
 		$sql.= " AND c.fk_categorie = ".$this->id;
 		$sql.= " AND c.fk_".$field." = o.rowid";
 
-		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -698,7 +698,7 @@ class Categorie extends CommonObject
 		}
 		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "categorie_" . $category_table;
 		$sql .= " WHERE fk_categorie = " . $this->id . " AND fk_" . $field . " = " . $object_id;
-		dol_syslog(get_class($this)."::containsObject", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return $this->db->fetch_object($resql)->nb;
@@ -755,7 +755,7 @@ class Categorie extends CommonObject
 		$sql.= " WHERE fk_parent != 0";
 		$sql.= " AND entity IN (".getEntity('category',1).")";
 
-		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -806,7 +806,7 @@ class Categorie extends CommonObject
 		$sql.= " WHERE c.entity IN (".getEntity('category',1).")";
 		$sql.= " AND c.type = ".$type;
 
-		dol_syslog(get_class($this)."::get_full_arbo get category list", LOG_DEBUG);
+		dol_syslog(__METHOD__ . " get category list", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -828,7 +828,7 @@ class Categorie extends CommonObject
 		}
 
 		// We add the fullpath property to each elements of first level (no parent exists)
-		dol_syslog(get_class($this)."::get_full_arbo call to build_path_from_id_categ", LOG_DEBUG);
+		dol_syslog(__METHOD__ . " call to build_path_from_id_categ", LOG_DEBUG);
 		foreach($this->cats as $key => $val)
 		{
 			//print 'key='.$key.'<br>'."\n";
@@ -853,7 +853,7 @@ class Categorie extends CommonObject
             }
         }
 
-		dol_syslog(get_class($this)."::get_full_arbo dol_sort_array", LOG_DEBUG);
+		dol_syslog(__METHOD__ . " dol_sort_array", LOG_DEBUG);
 		$this->cats=dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
 
 		//$this->debug_cats();
@@ -870,12 +870,12 @@ class Categorie extends CommonObject
 	 */
 	function build_path_from_id_categ($id_categ,$protection=1000)
 	{
-		dol_syslog(get_class($this)."::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
 		if (! empty($this->cats[$id_categ]['fullpath']))
 		{
 			// Already defined
-			dol_syslog(get_class($this)."::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
+			dol_syslog(__METHOD__ . " fullpath and fulllabel already defined", LOG_WARNING);
 			return;
 		}
 
@@ -1000,7 +1000,7 @@ class Categorie extends CommonObject
 		$sql.= " AND c.fk_parent = ".$this->fk_parent;
 		$sql.= " AND c.label = '".$this->db->escape($this->label)."'";
 
-		dol_syslog(get_class($this)."::already_exists", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1014,11 +1014,11 @@ class Categorie extends CommonObject
 				 */
 				if($obj[0] > 0 && $obj[0] != $this->id)
 				{
-					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." exist rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+					dol_syslog(__METHOD__ . " category with name=".$this->label." exist rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
 					return 1;
 				}
 			}
-			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+			dol_syslog(__METHOD__ . " no category with same name=".$this->label." rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
 			return 0;
 		}
 		else
@@ -1162,7 +1162,7 @@ class Categorie extends CommonObject
 		$sql.= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
 		$sql.= " AND c.entity IN (".getEntity('category',1).")";
 
-		dol_syslog(get_class($this).'::containing', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res)
 		{
@@ -1463,7 +1463,7 @@ class Categorie extends CommonObject
 	                $sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label);
 	                $sql2.= "','".$this->db->escape($this->multilangs["$key"]["description"])."')";
 	            }
-	            dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
+	            dol_syslog(__METHOD__, LOG_DEBUG);
 	            if (! $this->db->query($sql2))
 	            {
 	                $this->error=$this->db->lasterror();
@@ -1488,7 +1488,7 @@ class Categorie extends CommonObject
 
 	            // on ne sauvegarde pas des champs vides
 	            if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
-	                dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
+	                dol_syslog(__METHOD__, LOG_DEBUG);
 	            if (! $this->db->query($sql2))
 	            {
 	                $this->error=$this->db->lasterror();
@@ -1549,7 +1549,7 @@ class Categorie extends CommonObject
     {
         global $user,$langs,$conf;
 
-        dol_syslog(get_class($this)."::initAsSpecimen");
+        dol_syslog(__METHOD__);
 
         // Initialise parametres
         $this->id=0;
