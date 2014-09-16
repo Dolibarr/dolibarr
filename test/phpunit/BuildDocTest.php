@@ -329,7 +329,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Azur
         $localobject->modelpdf='azur';
-        $result=propale_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
