@@ -247,7 +247,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Canelle
         $localobject->modelpdf='canelle';
-        $result=supplier_invoice_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
@@ -302,7 +302,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Muscadet
         $localobject->modelpdf='muscadet';
-        $result=supplier_order_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+        $result= $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";

@@ -475,7 +475,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
 
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 	            $outputlangs = $langs;
-            	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	            $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             	if ($result	<= 0)
             	{
             		dol_print_error($db,$result);
@@ -699,7 +699,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
     	}
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
-        	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	        $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         	if ($result	<= 0)
         	{
         		dol_print_error($db,$result);
@@ -776,7 +776,7 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-        	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	        $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         	if ($result	<= 0)
         	{
         		dol_print_error($db,$result);
@@ -1016,7 +1016,7 @@ elseif ($action == 'builddoc')
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    $result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
@@ -2348,7 +2348,7 @@ else
             // Build document if it not exists
             if (! $file || ! is_readable($file))
             {
-                $result=supplier_invoice_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	            $result = $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                 if ($result <= 0)
                 {
                     dol_print_error($db,$result);

@@ -352,7 +352,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     			$outputlangs->setDefaultLang($newlang);
     		}
 
-    		supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		    $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     	}
 
 		unset($_POST ['prod_entry_mode']);
@@ -448,7 +448,7 @@ else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($object->id);    // Reload to get new records
-            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
     }
     else
@@ -473,7 +473,7 @@ else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->r
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($object->id);    // Reload to get new records
-            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
     }
     else
@@ -504,7 +504,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($object->id);    // Reload to get new records
-            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
     }
     else
@@ -550,7 +550,7 @@ else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fou
         if ($result > 0)
         {
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-                supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	            $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             }
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
             exit;
@@ -582,7 +582,7 @@ else if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fo
     if ($result > 0)
     {
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
         header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
         exit;
@@ -689,7 +689,9 @@ else if ($action == 'up'	&& $user->rights->fournisseur->commande->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	    $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    }
     header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#'.$_GET['rowid']));
     exit;
 }
@@ -703,7 +705,9 @@ else if ($action == 'down' && $user->rights->fournisseur->commande->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	    $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    }
     header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#'.$_GET['rowid']));
     exit;
 }
@@ -721,7 +725,7 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang(GETPOST('lang_id'));
     }
-    $result=supplier_order_pdf_create($db, $object,$object->modelpdf,$outputlangs, $hidedetails, $hidedesc, $hideref);
+    $result= $object->generateDocument($object->modelpdf,$outputlangs, $hidedetails, $hidedesc, $hideref);
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
@@ -2033,7 +2037,7 @@ elseif (! empty($object->id))
 		// Build document if it not exists
 		if (! $file || ! is_readable($file))
 		{
-			$result=supplier_order_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result= $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
 				dol_print_error($db,$result);
