@@ -82,7 +82,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->option_modereg = 0;                 // Affiche mode reglement
 		$this->option_condreg = 0;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
-		$this->option_multilang = 0;               // Dispo en plusieurs langues
+		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
 		// Get source company
