@@ -1213,7 +1213,7 @@ function dol_print_reduction($reduction,$langs)
     $string = '';
     if ($reduction == 100)
     {
-        $string = $langs->trans("Offered");
+        $string = $langs->transnoentities("Offered");
     }
     else
     {
