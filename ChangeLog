@@ -53,6 +53,8 @@ For users:
 - New: Optimize size of image static resources.
 - New: Add hourly and daily amount on user card. Add weekly working hours and salary on user card.
 - New: Content of predefined email come firstly from table llx_c_email_template, then translation key. 
+- New: Add option MAIN_GENERATE_INVOICES_WITH_PICTURE to show picture 
+       onto PDF like MAIN_GENERATE_PROPOSALS_WITH_PICTURE dir for proposals.
 - Upgrade phpexcel lib to 1.7.8
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
