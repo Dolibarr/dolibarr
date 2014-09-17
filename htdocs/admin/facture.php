@@ -261,6 +261,24 @@ if ($action == 'setforcedate')
     }
 }
 
+if ($action == 'setZipBills')
+{
+	$ZipBills = GETPOST('ZipBills','alpha');
+
+	$res = dolibarr_set_const($db, "FAC_AFF_ZIP_BILLS",$ZipBills,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+	if (! $error)
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
+	}
+}
+
 
 /*
  * View
@@ -726,6 +744,21 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 $var=true;
+
+// Add Zip bill download
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="setZipBills" />';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("setZipBills");
+print '</td><td width="60" align="center">';
+print $form->selectyesno("ZipBills",$conf->global->FAC_AFF_ZIP_BILLS,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print "</td></tr>\n";
+print '</form>';
+
 
 // Force date validation
 $var=! $var;
