@@ -114,9 +114,9 @@ if ($result)
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$urlparam,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$urlparam,'',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 	{
+		print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
 		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
 	}
@@ -131,9 +131,10 @@ if ($result)
 	print '</td><td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_desc" value="'.$search_desc.'" size="12">';
 	print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
     if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 	{
+		// Desc of line
+		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
@@ -166,9 +167,9 @@ if ($result)
 		print $companystatic->getNomUrl(1,'',44);
 		print '</td>';
         print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
-		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
 		if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 		{
+			print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
 			print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
 			print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
 		}
