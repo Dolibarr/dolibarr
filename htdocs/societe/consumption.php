@@ -241,7 +241,7 @@ $typeElementString = $form->selectarray("type_element",$elementTypeArray,GETPOST
 $button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 $param="&amp;sref=".$sref."&amp;month=".$month."&amp;year=".$year."&amp;sprod_fulldescr=".$sprod_fulldescr."&amp;socid=".$socid."&amp;type_element=".$type_element;
 
-print_barre_liste($langs->trans('ProductsIntoElements', $typeElementString.' '.$button), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
+print_barre_liste($langs->transnoentitiesnoconv('ProductsIntoElements', $typeElementString.' '.$button), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
 
 if ($sql_select)
 {
