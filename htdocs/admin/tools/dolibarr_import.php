@@ -94,7 +94,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
     ?>
     <div class="formelementrow">
         <input type="radio" name="what" value="mysql" id="radio_dump_postgresql"<?php echo ($radio_dump=='postgresql_options'?' checked':''); ?> />
-        <label for="radio_dump_postgresql">PostgreSQL Restore (pg_restore)</label>
+        <label for="radio_dump_postgresql">PostgreSQL Restore (pg_restore or psql)</label>
     </div>
     <?php
     }
@@ -170,6 +170,9 @@ else if ($label == 'PostgreSQL')
     }*/
     $paramcrypted.=" -W";
     $paramclear.=" -W";
+    // With psql:
+    $paramcrypted.=" -f";
+    $paramclear.=" -f";
 
     echo $langs->trans("ImportPostgreSqlDesc");
     print '<br>';
