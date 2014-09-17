@@ -1046,7 +1046,7 @@ class Propal extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.entity = ".$conf->entity;
-        if ($ref) $sql.= " AND p.ref='".$ref."'";
+        if ($ref) $sql.= " AND p.ref='".$this->db->escape($ref)."'";
         else $sql.= " AND p.rowid=".$rowid;
 
         dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);

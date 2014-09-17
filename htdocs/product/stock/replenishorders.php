@@ -72,13 +72,8 @@ $sproduct = GETPOST('sproduct', 'int');
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
 
-if (!$sortorder) {
-    $sortorder = 'DESC';
-}
-
-if (!$sortfield) {
-    $sortfield = 'cf.date_creation';
-}
+if (!$sortorder) $sortorder = 'DESC';
+if (!$sortfield) $sortfield = 'cf.date_creation';
 
 $offset = $conf->liste_limit * $page ;
 
@@ -146,7 +141,7 @@ if (GETPOST('statut', 'int')) {
 }
 $sql .= ' GROUP BY cf.rowid, cf.ref, cf.date_creation, cf.fk_statut';
 $sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
-$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder  . ' ';
+$sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($conf->liste_limit+1, $offset);
 $resql = $db->query($sql);
 if ($resql)
@@ -317,7 +312,7 @@ if ($resql)
          '</form>';
 
     $db->free($resql);
-    
+
     dol_fiche_end();
 }
 else

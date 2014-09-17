@@ -26,7 +26,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 $action=GETPOST('action');
-$id=GETPOST('id');
+$id=GETPOST('id','alpha');
 $numsondage=substr($id, 0, 16);
 
 if (! $sortorder) $sortorder="ASC";
@@ -47,9 +47,9 @@ if ($action == 'delete_confirm')
 	$db->begin();
 
 	$object=new Opensurveysondage($db);
-	
+
 	$result=$object->delete($user,'',$numsondageadmin);
-	
+
 	$db->commit();
 }
 

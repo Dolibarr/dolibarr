@@ -2352,7 +2352,7 @@ if ($action == 'create')
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
+	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id, 'mode_reglement_id', 'CRDT');
 	print '</td></tr>';
 
 	// Project
@@ -3356,11 +3356,11 @@ else if ($id > 0 || ! empty($ref))
 	print '</td><td colspan="3">';
 	if ($action == 'editmode')
 	{
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT');
 	}
 	else
 	{
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'none', 'CRDT');
 	}
 	print '</td></tr>';
 

@@ -21,7 +21,16 @@ Fix: When disabled, all fields to add time into task line must be disabled.
 Fix: Missing include files.lib.php in some pages to use dol_delete_recursive.
 Fix: [ bug #1558 ] Product/service edit page title shows new Ref instead of old ref.
 Fix: [ bug #1553 ] Saving User displays setup removes menu.
-Fix: [ bug #1544 ] Can remove date from invoice
+Fix: [ bug #1544 ] Can remove date from invoice.
+Fix: list event view lost type event filter.
+Fix: Add code save on create event.
+Fix: SQL injection.
+Fix: [ bug #1589 ] Menu type in "Edit menu" page is not translated
+Fix: [ bug #1591 ] Linked object block shows Total HT/TTC even if not having permission to read them
+Fix: [ bug #1577 ] When creating new Private individual third, selected third type is ignored
+Fix: [ bug #1555 ] Update accountancy code of products does not throw PRODUCT_MODIFY trigger
+Fix: [ bug #1548 ] Supplier payment card shows type in French
+Fix: [ bug #1546 ] Incorrect page number when searching in the list of bank transactions
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.

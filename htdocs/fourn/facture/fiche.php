@@ -1279,12 +1279,12 @@ if ($action == 'create')
 
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
+	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
+	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id, 'mode_reglement_id', 'DBIT');
 	print '</td></tr>';
 
 	// Public note
@@ -1732,11 +1732,11 @@ else
 		print '</td><td colspan="2">';
 		if ($action == 'editmode')
 		{
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'DBIT');
 		}
 		else
 		{
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none', 'DBIT');
 		}
 		print '</td></tr>';
 

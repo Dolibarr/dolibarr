@@ -93,7 +93,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
 	if ($object->fetch($id))
 	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
+	    $result=$object->swapContactStatus(GETPOST('ligne','int'));
 	}
 	else
 	{
@@ -105,7 +105,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer)
 if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->projet->creer)
 {
 	$object->fetch($id);
-	$result = $object->delete_contact($_GET["lineid"]);
+	$result = $object->delete_contact(GETPOST("lineid"));
 
 	if ($result >= 0)
 	{

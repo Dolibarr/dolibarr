@@ -41,9 +41,9 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 if (!$user->rights->projet->lire) accessforbidden();
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = isset($_GET["page"])? $_GET["page"]:$_POST["page"];
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 

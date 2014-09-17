@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$type=isset($_GET["type"])?$_GET["type"]:(isset($_POST["type"])?$_POST["type"]:'');
+$type=GETPOST("type",'int');
 if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only
 if ($type =='' && !$user->rights->service->lire) $type='0';	// Force global page on product page only
 
@@ -261,7 +261,7 @@ else
 
 
 // TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
-// Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover": 
+// Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagment" method and "cash accounting" method
 if ($conf->global->MAIN_FEATURES_LEVEL)
 {
@@ -283,8 +283,8 @@ $db->close();
 function activitytrim($product_type)
 {
 	global $conf,$langs,$db;
-	
-	// We display the last 3 years 
+
+	// We display the last 3 years
 	$yearofbegindate=date('Y',dol_time_plus_duree(time(), -3, "y"));
 
 	// breakdown by quarter
@@ -311,7 +311,7 @@ function activitytrim($product_type)
 		$trim4=0;
 		$lgn = 0;
 		$num = $db->num_rows($result);
-		
+
 		if ($num > 0 )
 		{
 			print '<br>';
@@ -353,7 +353,7 @@ function activitytrim($product_type)
 				$trim3=0;
 				$trim4=0;
 			}
-			
+
 			if ($objp->mois == "01" || $objp->mois == "02" || $objp->mois == "03")
 				$trim1 += $objp->Mnttot;
 
