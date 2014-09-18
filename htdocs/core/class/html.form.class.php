@@ -1297,7 +1297,7 @@ class Form
 
         // Method with no ajax
         //$out.='<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		$out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
+		$out=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
 		$out.='<input type="submit" class="button" name="addassignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		$assignedtouser=array();
 		if (!empty($_SESSION['assignedtouser'])) $assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
