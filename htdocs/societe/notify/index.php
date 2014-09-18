@@ -94,7 +94,7 @@ if ($result)
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
-		print "<td><a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
+		print "<td><a href=\"card.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
 		print "<td>".dolGetFirstLastname($obj->firstname, $obj->lastname)."</td>\n";
 		print "<td>".$obj->titre."</td>\n";
 		print "</tr>\n";

@@ -164,10 +164,10 @@ if ($id > 0 || ! empty($ref))
 					$var=!$var;
 
 					print "<tr ".$bc[$var].">";
-					print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->commandeid.'">'.img_object($langs->trans("ShowOrder"),"order").' ';
+					print '<td><a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$objp->commandeid.'">'.img_object($langs->trans("ShowOrder"),"order").' ';
 					print $objp->ref;
 					print "</a></td>\n";
-					print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+					print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";
 					print "<td align=\"center\">";
 					print dol_print_date($db->jdate($objp->date_commande))."</td>";

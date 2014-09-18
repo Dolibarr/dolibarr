@@ -176,9 +176,9 @@ if ($result) {
 			print '&nbsp;';
 		print '</td>';
 		
-		// print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->ref.'</a></td>';
+		// print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.$objp->ref.'</a></td>';
 		
-		// print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->ref_supplier.'</a></td>';
+		// print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.$objp->ref_supplier.'</a></td>';
 		
 		print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';
 		

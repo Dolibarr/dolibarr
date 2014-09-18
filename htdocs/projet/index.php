@@ -222,7 +222,7 @@ if ( $resql )
 			$projectstatic->ref=$obj->ref;
 			$projectstatic->title=$obj->title;
 			print $projectstatic->getNomUrl(1,'',16);
-			//print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
+			//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
 			print '</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($obj->dateo)).'</td>';

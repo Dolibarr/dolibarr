@@ -2699,7 +2699,7 @@ class Commande extends CommonOrder
         $result='';
 
         if (! empty($conf->expedition->enabled) && ($option == 1 || $option == 2)) $url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
-        else $url = DOL_URL_ROOT.'/commande/fiche.php?id='.$this->id;
+        else $url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;
 
         if ($short) return $url;
 

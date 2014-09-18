@@ -642,7 +642,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 		if ($user->rights->categorie->creer)
 		{
 			print '<td align="right">';
-			print '<a href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
+			print '<a href="'.DOL_URL_ROOT.'/categories/card.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
 			print $langs->trans("CreateCat").' ';
 			print img_picto($langs->trans("Create"),'filenew');
 			print "</a>";

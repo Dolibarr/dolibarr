@@ -76,14 +76,14 @@ if ($result)
       $var=!$var;
       print "<tr ".$bc[$var].">";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td>';
       print '<td>'.stripslashes(nl2br($objp->description)).'</td>';
 
       print '<td align="right">';
       print price($objp->price);
       print '</td>';
 
-      print '<td align="right"><a href="fiche.php?id='.$objp->rowid.'">';
+      print '<td align="right"><a href="card.php?id='.$objp->rowid.'">';
       print img_edit();
       print '</a></td>';
 

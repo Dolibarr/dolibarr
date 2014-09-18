@@ -1171,7 +1171,7 @@ class Expedition extends CommonObject
 
 		$result='';
 
-		$url = DOL_URL_ROOT.'/expedition/fiche.php?id='.$this->id;
+		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
 		if ($short) return $url;
 

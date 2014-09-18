@@ -96,7 +96,7 @@ if ($resql)
         $objp = $db->fetch_object($resql);
         $var=!$var;
         print "<tr ".$bc[$var].">";
-        print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
         print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
         print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
         print '<td align="right">'.price($objp->amount).'</td>';
@@ -104,7 +104,7 @@ if ($resql)
 
         if ($objp->statut == 0)
         {
-            print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
+            print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
         }
         else
         {

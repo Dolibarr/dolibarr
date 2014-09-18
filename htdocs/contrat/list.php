@@ -152,12 +152,12 @@ if ($resql)
         $obj = $db->fetch_object($resql);
         $var=!$var;
         print '<tr '.$bc[$var].'>';
-        print '<td class="nowrap"><a href="fiche.php?id='.$obj->cid.'">';
+        print '<td class="nowrap"><a href="card.php?id='.$obj->cid.'">';
         print img_object($langs->trans("ShowContract"),"contract").' '.(isset($obj->ref) ? $obj->ref : $obj->cid) .'</a>';
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
         print '<td>'.$obj->ref_customer.'</td>';
-        print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+        print '<td><a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
         //print '<td align="center">'.dol_print_date($obj->datec).'</td>';
         print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat)).'</td>';
         //print '<td align="center">'.$staticcontrat->LibStatut($obj->statut,3).'</td>';

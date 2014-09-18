@@ -336,7 +336,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		    // Product
 		     $fullname=$name[$key];
 		    if ($key >= 0) {
-			$linkname='<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$fullname.'</a>';
+			$linkname='<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$fullname.'</a>';
 		    } else {
 			$linkname=$langs->trans("PaymentsNotLinkedToProduct");
 		    }

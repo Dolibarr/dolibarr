@@ -1775,7 +1775,7 @@ class User extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($withpicto)
@@ -1800,12 +1800,12 @@ class User extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($option == 'xxx')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 			$lienfin='</a>';
 		}
 

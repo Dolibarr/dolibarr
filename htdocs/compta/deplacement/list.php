@@ -134,7 +134,7 @@ if ($resql)
         $var=!$var;
         print '<tr '.$bc[$var].'>';
         // Id
-        print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$obj->rowid.'</a></td>';
+        print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$obj->rowid.'</a></td>';
         // Type
         print '<td>'.$langs->trans($obj->type).'</td>';
         // Date

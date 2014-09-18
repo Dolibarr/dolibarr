@@ -250,7 +250,7 @@ if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
 			}
 			$x_both[$my_paye_rate]['paye']['links'] = '';
 			foreach($x_paye[$my_paye_rate]['facid'] as $id=>$dummy){
-				$x_both[$my_paye_rate]['paye']['links'] .= '<a href="../../fourn/facture/fiche.php?facid='.$x_paye[$my_paye_rate]['facid'][$id].'" title="'.$x_paye[$my_paye_rate]['facnum'][$id].'">..'.substr($x_paye[$my_paye_rate]['facnum'][$id],-2).'</a> ';
+				$x_both[$my_paye_rate]['paye']['links'] .= '<a href="../../fourn/facture/card.php?facid='.$x_paye[$my_paye_rate]['facid'][$id].'" title="'.$x_paye[$my_paye_rate]['facnum'][$id].'">..'.substr($x_paye[$my_paye_rate]['facnum'][$id],-2).'</a> ';
 			}
 		}
 		//now we have an array (x_both) indexed by rates for coll and paye

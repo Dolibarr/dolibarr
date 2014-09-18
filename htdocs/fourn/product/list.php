@@ -132,7 +132,7 @@ if ($resql)
 	if ($num == 1 && (GETPOST("mode") == 'search'))
 	{
 		$objp = $db->fetch_object($resql);
-		header("Location: ".DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
+		header("Location: ".DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
 		exit;
 	}
 

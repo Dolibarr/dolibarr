@@ -2976,7 +2976,7 @@ if ($action == 'create')
 				$objp = $db->fetch_object($result);
 				$var = ! $var;
 				print '<tr ' . $bc [$var] . '><td>';
-				print '<a href="' . DOL_URL_ROOT . '/compta/paiement/fiche.php?id=' . $objp->rowid . '">' . img_object($langs->trans('ShowPayment'), 'payment') . ' ';
+				print '<a href="' . DOL_URL_ROOT . '/compta/paiement/card.php?id=' . $objp->rowid . '">' . img_object($langs->trans('ShowPayment'), 'payment') . ' ';
 				print dol_print_date($db->jdate($objp->dp), 'day') . '</a></td>';
 				$label = ($langs->trans("PaymentType" . $objp->payment_code) != ("PaymentType" . $objp->payment_code)) ? $langs->trans("PaymentType" . $objp->payment_code) : $objp->payment_label;
 				print '<td>' . $label . ' ' . $objp->num_paiement . '</td>';

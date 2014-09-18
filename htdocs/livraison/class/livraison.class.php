@@ -648,7 +648,7 @@ class Livraison extends CommonObject
 		$urlOption='';
 
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='sending';

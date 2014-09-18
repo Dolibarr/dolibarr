@@ -155,16 +155,16 @@ if ($result)
         print $bon->LibStatut($obj->statut,2);
         print "&nbsp;";
 
-        print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
+        print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
         print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
         print img_object($langs->trans("ShowBill"),"bill");
           print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
         print '</a></td>';
 
-        print '<td><a href="fiche.php?id='.$obj->rowid.'">'.$obj->nom."</a></td>\n";
+        print '<td><a href="card.php?id='.$obj->rowid.'">'.$obj->nom."</a></td>\n";
 
-        print '<td align="center"><a href="fiche.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
+        print '<td align="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
 
         print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 

@@ -36,7 +36,7 @@ function bank_prepare_head($object)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT . '/compta/bank/fiche.php?id=' . $object->id;
+    $head[$h][0] = DOL_URL_ROOT . '/compta/bank/card.php?id=' . $object->id;
     $head[$h][1] = $langs->trans("AccountCard");
     $head[$h][2] = 'bankname';
     $h++;

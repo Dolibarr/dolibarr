@@ -104,7 +104,7 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
             print "<tr ".$bc[$var].">";
-            print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
+            print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
 			// Location
             print '<td>'.$objp->lieu.'</td>';
             // PMP value

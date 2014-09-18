@@ -1402,7 +1402,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $companylink=' ('.$thirdpartystatic->getNomUrl('','').')';
 	        $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 	    }
-	    $logintext='<div class="login"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
+	    $logintext='<div class="login"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'"';
 	    $logintext.=$target?(' target="'.$target.'"'):'';
 	    $logintext.='>'.$user->login.'</a>';
 	    if ($user->societe_id) $logintext.=$companylink;

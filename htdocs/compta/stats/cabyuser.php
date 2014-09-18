@@ -348,7 +348,7 @@ if (count($amount)) {
         // Third party
         $fullname=$name[$key];
         if ($key >= 0) {
-            $linkname='<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowUser"),'user').' '.$fullname.'</a>';
+            $linkname='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$key.'">'.img_object($langs->trans("ShowUser"),'user').' '.$fullname.'</a>';
         } else {
             $linkname=$langs->trans("PaymentsNotLinkedToUser");
         }

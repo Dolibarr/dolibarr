@@ -139,7 +139,7 @@ if ($object->id > 0)
 
     if (! empty($conf->agenda->enabled))
     {
-        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create">'.$langs->trans("AddAction").'</a></div>';
+        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create">'.$langs->trans("AddAction").'</a></div>';
     }
 
     print '</div>';

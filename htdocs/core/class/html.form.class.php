@@ -2843,7 +2843,7 @@ class Form
 
 		// JQUI method dialog is broken with jmobile, we use standard HTML.
 		// Note: When using dol_use_jmobile or no js, you must also check code for button use a GET url with action=xxx and check that you also output the confirm code when action=xxx
-		// See page product/fiche.php for example
+		// See page product/card.php for example
         if (! empty($conf->dol_use_jmobile)) $useajax=0;
 		if (empty($conf->use_javascript_ajax)) $useajax=0;
 
@@ -3027,7 +3027,7 @@ class Form
             {
                 $projet = new Project($this->db);
                 $projet->fetch($selected);
-                //print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$selected.'">'.$projet->title.'</a>';
+                //print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
                 print $projet->getNomUrl(0,'',1);
             }
             else
@@ -3360,7 +3360,7 @@ class Form
             {
             	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
                 print '<font class="error">Cette societe n\'a pas de contact, veuillez en cr�er un avant de faire votre proposition commerciale</font><br>';
-                print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$addcontact.'</a>';
+                print '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$addcontact.'</a>';
             }
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';

@@ -916,7 +916,7 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr ".$bc[$var]."><td>".dol_print_date($obj->da,"day")."</td>";
-		print "<td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
+		print "<td><a href=\"action/card.php\">$obj->libelle $obj->label</a></td></tr>";
 		$i++;
 	}
 	$db->free($resql);

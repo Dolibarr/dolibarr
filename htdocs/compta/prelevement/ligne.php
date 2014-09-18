@@ -131,7 +131,7 @@ if ($id)
 		print '<table class="border" width="100%">';
 
 		print '<tr><td width="20%">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
-		print '<a href="fiche.php?id='.$lipre->bon_rowid.'">'.$lipre->bon_ref.'</a></td></tr>';
+		print '<a href="card.php?id='.$lipre->bon_rowid.'">'.$lipre->bon_ref.'</a></td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>';
@@ -307,7 +307,7 @@ if ($id)
 
 			print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
 			print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
 
 			print '<td align="right">'.price($obj->total_ttc)."</td>\n";

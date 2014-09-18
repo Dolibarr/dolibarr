@@ -213,8 +213,8 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
                     else $invoiceid=$facid;
                 }
             }
-            if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$invoiceid;
-            else $loc = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement_id;
+            if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$invoiceid;
+            else $loc = DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$paiement_id;
             header('Location: '.$loc);
             exit;
         }
@@ -556,7 +556,7 @@ if (empty($action))
             print '<tr '.$bc[$var].'>';
 
             // Ref payment
-            print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
+            print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
 
             // Date
             print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";

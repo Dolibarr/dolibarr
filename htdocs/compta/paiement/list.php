@@ -218,7 +218,7 @@ if ($resql)
         if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
         {
             print '<td align="right">';
-            if ($objp->statut == 0) print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">';
+            if ($objp->statut == 0) print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">';
             print $paymentstatic->LibStatut($objp->statut,5);
             if ($objp->statut == 0) print '</a>';
             print '</td>';

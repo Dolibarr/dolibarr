@@ -294,7 +294,7 @@ if ($resql)
 		print "</td>\n";
 
 		// Lastname
-		print "<td><a href=\"fiche.php?rowid=$objp->rowid\">";
+		print "<td><a href=\"card.php?rowid=$objp->rowid\">";
 		print ((! empty($objp->lastname) || ! empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
 		print (((! empty($objp->lastname) || ! empty($objp->firstname)) && ! empty($companyname)) ? ' / ' : '');
 		print (! empty($companyname) ? dol_trunc($companyname, 32) : '');
@@ -348,16 +348,16 @@ if ($resql)
 		print '<td align="center">';
 		if ($user->rights->adherent->creer)
 		{
-			print "<a href=\"fiche.php?rowid=".$objp->rowid."&action=edit&backtopage=1\">".img_edit()."</a>";
+			print "<a href=\"card.php?rowid=".$objp->rowid."&action=edit&backtopage=1\">".img_edit()."</a>";
 		}
 		print '&nbsp;';
 		if ($user->rights->adherent->supprimer && $objp->statut == -1)
 		{
-			print "<a href=\"fiche.php?rowid=".$objp->rowid."&action=delete&backtopage=1\">".img_picto($langs->trans("Delete"),'disable.png')."</a>";
+			print "<a href=\"card.php?rowid=".$objp->rowid."&action=delete&backtopage=1\">".img_picto($langs->trans("Delete"),'disable.png')."</a>";
 		}
 		if ($user->rights->adherent->supprimer && $objp->statut == 1)
 		{
-			print "<a href=\"fiche.php?rowid=".$objp->rowid."&action=resign&backtopage=1\">".img_picto($langs->trans("Resiliate"),'disable.png')."</a>";
+			print "<a href=\"card.php?rowid=".$objp->rowid."&action=resign&backtopage=1\">".img_picto($langs->trans("Resiliate"),'disable.png')."</a>";
 		}
 		print "</td>";
 

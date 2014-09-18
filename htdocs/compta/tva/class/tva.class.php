@@ -571,7 +571,7 @@ class Tva extends CommonObject
 					}
 
                     // Update links
-                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/compta/tva/fiche.php?id=', "(VATPayment)", "payment_vat");
+                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/compta/tva/card.php?id=', "(VATPayment)", "payment_vat");
                     if ($result < 0)
                     {
                     	$this->error=$acc->error;
@@ -639,7 +639,7 @@ class Tva extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/tva/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='payment';

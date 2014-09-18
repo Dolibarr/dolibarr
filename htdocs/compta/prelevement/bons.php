@@ -104,7 +104,7 @@ if ($result)
       print $bon->LibStatut($obj->statut,2);
       print "&nbsp;";
 
-      print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
+      print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
       print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 

@@ -101,10 +101,10 @@ if ($resql)
 			print $shipment->getNomUrl(1);
 			print "</td>";
 			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->nom.'</a>';
 			print '</td>';
 			print '<td>';
-			if ($obj->commande_id) print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
+			if ($obj->commande_id) print '<a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
 			print '</td></tr>';
 			$i++;
 		}
@@ -253,9 +253,9 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print '<tr '.$bc[$var].'><td width="20%"><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' ';
+			print '<tr '.$bc[$var].'><td width="20%"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' ';
 			print $obj->ref.'</a></td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
 			print '<td>';
 			if ($obj->commande_id)
 			{

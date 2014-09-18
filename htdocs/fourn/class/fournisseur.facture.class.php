@@ -1438,7 +1438,7 @@ class FactureFournisseur extends CommonInvoice
         }
         else
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id.'">';
             $lienfin='</a>';
         }
         $label=$langs->trans("ShowInvoice").': '.$this->ref;

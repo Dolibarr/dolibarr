@@ -111,7 +111,7 @@ if ($result)
 		print price($objp->price);
 		print '</td>';
 
-		print '<td align="right"><a href="fiche.php?id='.$objp->rowid.'">';
+		print '<td align="right"><a href="card.php?id='.$objp->rowid.'">';
 		print img_edit();
 		print '</a></td>';
 

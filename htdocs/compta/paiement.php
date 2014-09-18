@@ -237,7 +237,7 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
             }
         }
         if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/compta/facture.php?facid='.$invoiceid;
-        else $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+        else $loc = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id;
         header('Location: '.$loc);
         exit;
     }

@@ -711,7 +711,7 @@ class Don extends CommonObject
 
         $result='';
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/dons/fiche.php?rowid='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/dons/card.php?rowid='.$this->id.'">';
         $lienfin='</a>';
 
         $picto='generic';
