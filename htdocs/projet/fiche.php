@@ -259,8 +259,8 @@ if (empty($reshook))
 		{
 	    	$db->commit();
 
-			if (GETPOST('socid','int') > 0) $object->societe->fetch(GETPOST('socid','int'));
-			else unset($object->societe);
+			if (GETPOST('socid','int') > 0) $object->thirdparty->fetch(GETPOST('socid','int'));
+			else unset($object->thirdparty);
 	    }
 	}
 
@@ -488,7 +488,6 @@ else
      * Show or edit
      */
 
-    if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
     $res=$object->fetch_optionals($object->id,$extralabels);
 
     // To verify role of users
@@ -562,7 +561,7 @@ else
 
         // Customer
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-        $text=$form->select_company($object->societe->id,'socid','',1,1);
+        $text=$form->select_company($object->thirdparty->id,'socid','',1,1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
         print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
         print '</td></tr>';
@@ -633,7 +632,7 @@ else
 
         // Third party
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-        if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
+        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1);
         else print'&nbsp;';
         print '</td></tr>';
 
