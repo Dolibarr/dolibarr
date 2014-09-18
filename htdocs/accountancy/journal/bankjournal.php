@@ -137,16 +137,17 @@ if ($result) {
 	$tabpay = array ();
 	$tabbq = array ();
 	$tabtp = array ();
-	$tabcompany[$obj->rowid] = array (
-			'id' => $obj->socid,
-			'name' => $obj->name,
-			'code_client' => $obj->code_compta
-	);
 	$tabtype = array ();
 
 	$i = 0;
 	while ( $i < $num ) {
 		$obj = $db->fetch_object($result);
+
+		$tabcompany[$obj->rowid] = array (
+			'id' => $obj->socid,
+			'name' => $obj->name,
+			'code_client' => $obj->code_compta
+		);
 
 		// Controls
 		$compta_bank = $obj->account_number;
