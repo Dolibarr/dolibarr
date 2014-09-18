@@ -617,7 +617,7 @@ if (is_array($usernames)) {
 
 			// Show days of the current week
 			$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
-			$tmparray = dol_getdate($curtime, 'fast');
+			$tmparray = dol_getdate($curtime, true);
 			$tmpday = $tmparray['mday'];
 			$tmpmonth = $tmparray['mon'];
 			$tmpyear = $tmparray['year'];
@@ -625,7 +625,7 @@ if (is_array($usernames)) {
 			$style = 'cal_current_month';
 			if ($iter_day == 6) $style .= ' cal_other_month';
 			$today = 0;
-			$todayarray = dol_getdate($now, 'fast');
+			$todayarray = dol_getdate($now, true);
 			if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $month && $todayarray['year'] == $year) $today = 1;
 			if ($today) $style = 'cal_today_peruser';
 
