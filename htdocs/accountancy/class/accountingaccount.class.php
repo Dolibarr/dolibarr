@@ -107,6 +107,7 @@ class AccountingAccount extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
+		$now = dol_now();
 
 		// Clean parameters
 		if (isset($this->fk_pcg_version))
