@@ -9,6 +9,7 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014      Teddy Andreotti 		 <125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -356,6 +357,13 @@ if ($resql)
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
             print '<td class="nobordernopadding nowrap">';
+
+			$filename=dol_sanitizeFileName($objp->facnumber); // move here, need value for checkbox
+			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
+			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
+			if(file_exists($filedir)) {
+				print "<input type='checkbox' id='billforzip' value='$filename'>";
+			}
             print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
             print $objp->increment;
             print '</td>';
@@ -367,10 +375,8 @@ if ($resql)
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$objp->facid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
 				print '</span>';
 			}
-            $filename=dol_sanitizeFileName($objp->facnumber);
-            $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
-            $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
-            print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
+
+			print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 			print '</td>';
             print '</tr>';
             print '</table>';
