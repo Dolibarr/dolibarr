@@ -49,10 +49,11 @@ $hookmanager->initHooks(array('projectcard'));
 
 $object = new Project($db);
 $extrafields = new ExtraFields($db);
-$object->fetch($id,$ref);
-if ($object->id > 0)
+if ($id > 0 || ! empty($ref))
 {
+	$object->fetch($id,$ref);
 	$object->fetch_thirdparty();
+	$id=$object->id;
 }
 
 // Security check
