@@ -164,7 +164,6 @@ if ($resql) {
 		header('Content-Disposition: attachment;filename=export_csv.csv');
 
 		$obj = $db->fetch_object($resql);
-		$var = ! $var;
 
 		print '"' . $obj->compta . '",';
 		print '"' . $obj->address . '",';
