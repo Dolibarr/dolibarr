@@ -1407,7 +1407,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, label, description, url, note, customcode, fk_country, price, price_ttc,";
+		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
@@ -1432,6 +1432,7 @@ class Product extends CommonObject
 
 				$this->id						= $obj->rowid;
 				$this->ref						= $obj->ref;
+				$this->ref_ext					= $obj->ref_ext;
 				$this->libelle					= $obj->label;		// TODO deprecated
 				$this->label					= $obj->label;
 				$this->description				= $obj->description;
