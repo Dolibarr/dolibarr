@@ -20,6 +20,9 @@
 
 
 
+ALTER TABLE llx_fichinter ADD COLUMN ref_ext 	varchar(255);
+
+
 -- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
 ALTER TABLE llx_c_typent ADD COLUMN fk_country integer NULL AFTER libelle;
 
