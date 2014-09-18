@@ -120,7 +120,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$hookmanager=new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+		$parameters=array('outputlangs'=>$outputlangs);
 		global $action;
 		$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
