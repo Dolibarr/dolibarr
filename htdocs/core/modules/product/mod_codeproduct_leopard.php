@@ -63,11 +63,12 @@ class mod_codeproduct_leopard extends ModeleProductCode
 
 	/**		Return description of module
 	 *
-	 * 		@param	string	$langs		Object langs
+	 * 		@param	Translate	$langs	Object langs
 	 * 		@return string      		Description of module
 	 */
 	function info($langs)
 	{
+		$langs->load("companies");
 		return $langs->trans("LeopardNumRefModelDesc");
 	}
 
@@ -120,4 +121,3 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	}
 }
 
-?>

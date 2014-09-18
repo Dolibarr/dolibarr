@@ -62,7 +62,6 @@ $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ");
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-//$object->getCanvas($id);
 $canvas=GETPOST("canvas");
 $objcanvas='';
 if (! empty($canvas))
@@ -244,7 +243,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Ref"),"reassort.php", "p.ref",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label",$param,"","",$sortfield,$sortorder);
 	if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("MininumStock"),"reassort.php", "p.seuil_stock_alerte",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("StockLimit"),"reassort.php", "p.seuil_stock_alerte",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DesiredStock"),"reassort.php", "p.desiredstock",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
 	// TODO Add info of running suppliers/customers orders
@@ -362,4 +361,3 @@ else
 
 llxFooter();
 $db->close();
-?>

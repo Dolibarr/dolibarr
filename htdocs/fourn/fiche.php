@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,9 @@ $object = new Fournisseur($db);
 /*
  * Action
  */
+
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 if ($action == 'setsupplieraccountancycode')
 {
@@ -166,38 +169,26 @@ if ($object->fetch($id))
 	print '</tr>';
 
 	// Local Taxes
-	//TODO: Place into a function to control showing by country or study better option
-	if($mysoc->country_code=='ES')
+	if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
 	{
-		if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-		{
-			print '<tr><td class="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
-			print yn($object->localtax1_assuj);
-			print '</td></tr>';
-			print '<tr><td class="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
-			print yn($object->localtax2_assuj);
-			print '</td></tr>';
-		}
-		elseif($mysoc->localtax1_assuj=="1")
-		{
-			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-			print yn($object->localtax1_assuj);
-			print '</td></tr>';
-		}
-		elseif($mysoc->localtax2_assuj=="1")
-		{
-			print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-			print yn($object->localtax2_assuj);
-			print '</td></tr>';
-		}
-
-		if ($mysoc->localtax2_assuj!="1")
-		{
-			print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
-			print yn($object->localtax2_assuj);
-			print '</td><tr>';
-		}
-
+		print '<tr><td class="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
+		print yn($object->localtax1_assuj);
+		print '</td></tr>';
+		print '<tr><td class="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
+		print yn($object->localtax2_assuj);
+		print '</td></tr>';
+	}
+	elseif($mysoc->localtax1_assuj=="1")
+	{
+		print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+		print yn($object->localtax1_assuj);
+		print '</td></tr>';
+	}
+	elseif($mysoc->localtax2_assuj=="1")
+	{
+		print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+		print yn($object->localtax2_assuj);
+		print '</td></tr>';
 	}
 
     // TVA Intra
@@ -312,6 +303,7 @@ if ($object->fetch($id))
 		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 		$sql.= " WHERE p.fk_soc =".$object->id;
+		$sql.= " AND p.entity =".$conf->entity;
 		$sql.= " ORDER BY p.date_commande DESC";
 		$sql.= " ".$db->plimit($MAXLIST);
 		$resql=$db->query($sql);
@@ -380,6 +372,7 @@ if ($object->fetch($id))
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn';
 		$sql.= ' WHERE f.fk_soc = '.$object->id;
+		$sql.= " AND f.entity =".$conf->entity;
 		$sql.= ' GROUP BY f.rowid,f.libelle,f.ref_supplier,f.fk_statut,f.datef,f.total_ttc,f.paye';
 		$sql.= ' ORDER BY f.datef DESC';
 		$resql=$db->query($sql);
@@ -495,4 +488,3 @@ else
 llxFooter();
 
 $db->close();
-?>

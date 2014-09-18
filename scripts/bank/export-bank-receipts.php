@@ -59,7 +59,7 @@ $error=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 if (! isset($argv[3]) || ! $argv[3]) {
@@ -445,4 +445,3 @@ else
 $db->close();
 
 exit($ret);
-?>

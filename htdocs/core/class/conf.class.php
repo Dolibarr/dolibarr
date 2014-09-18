@@ -77,7 +77,7 @@ class Conf
 	 */
 	function __construct()
 	{
-		// Avoid warnings when filling this->xxx
+		// Properly declare multi-modules objects.
 		$this->file				= new stdClass();
 		$this->db				= new stdClass();
 		$this->global			= new stdClass();
@@ -88,7 +88,11 @@ class Conf
 		$this->browser			= new stdClass();
 		$this->multicompany		= new stdClass();
 
+		//! Charset for HTML output and for storing data in memory
+		$this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
+
 		// First level object
+		// TODO Remove this part.
 		$this->expedition_bon	= new stdClass();
 		$this->livraison_bon	= new stdClass();
 		$this->fournisseur		= new stdClass();
@@ -104,9 +108,6 @@ class Conf
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
 		$this->mailing			= new stdClass();
-
-		//! Charset for HTML output and for storing data in memory
-		$this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
 	}
 
 
@@ -119,6 +120,8 @@ class Conf
 	 */
 	function setValues($db)
 	{
+		global $conf;
+
 		dol_syslog(get_class($this)."::setValues");
 
 		/*
@@ -223,22 +226,6 @@ class Conf
 			if ($ret) $mc = new ActionsMulticompany($db);
 		}
 
-		// Second or others levels object
-		$this->propal->cloture				= new stdClass();
-		$this->propal->facturation			= new stdClass();
-		$this->commande->client				= new stdClass();
-		$this->commande->fournisseur		= new stdClass();
-		$this->facture->client				= new stdClass();
-		$this->facture->fournisseur			= new stdClass();
-		$this->fournisseur->commande 		= new stdClass();
-		$this->fournisseur->facture			= new stdClass();
-		$this->contrat->services			= new stdClass();
-		$this->contrat->services->inactifs	= new stdClass();
-		$this->contrat->services->expires	= new stdClass();
-		$this->adherent->cotisation			= new stdClass();
-		$this->bank->rappro					= new stdClass();
-		$this->bank->cheque					= new stdClass();
-
 		// Clean some variables
 		if (empty($this->global->MAIN_MENU_STANDARD)) $this->global->MAIN_MENU_STANDARD="eldy_menu.php";
 		if (empty($this->global->MAIN_MENUFRONT_STANDARD)) $this->global->MAIN_MENUFRONT_STANDARD="eldy_menu.php";
@@ -332,10 +319,15 @@ class Conf
 		$this->livraison_bon->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
 
 		// Module fournisseur
-		$this->fournisseur->commande->dir_output=$rootfordata."/fournisseur/commande";
-		$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
-		$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
-		$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+		if (! empty($this->fournisseur))
+		{
+			$this->fournisseur->commande=new stdClass();
+			$this->fournisseur->commande->dir_output=$rootfordata."/fournisseur/commande";
+			$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
+			$this->fournisseur->facture=new stdClass();
+			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
+			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+		}
 
 		// Module product/service
 		$this->product->multidir_output=array($this->entity => $rootfordata."/produit");
@@ -447,6 +439,19 @@ class Conf
         if (empty($this->global->TAX_MODE_BUY_SERVICE))  $this->global->TAX_MODE_BUY_SERVICE='payment';
 
 		// Delay before warnings
+		// Avoid strict errors. TODO: Replace xxx->warning_delay with a property ->warning_delay_xxx
+		$this->propal->cloture				= new stdClass();
+		$this->propal->facturation			= new stdClass();
+		$this->commande->client				= new stdClass();
+		$this->commande->fournisseur		= new stdClass();
+		$this->facture->client				= new stdClass();
+		$this->facture->fournisseur			= new stdClass();
+		$this->contrat->services			= new stdClass();
+		$this->contrat->services->inactifs	= new stdClass();
+		$this->contrat->services->expires	= new stdClass();
+		$this->adherent->cotisation			= new stdClass();
+		$this->bank->rappro					= new stdClass();
+		$this->bank->cheque					= new stdClass();
 		$this->actions->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
 		$this->commande->client->warning_delay=(isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_ORDERS_TO_PROCESS:2)*24*60*60;
 		$this->commande->fournisseur->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS:7)*24*60*60;
@@ -459,6 +464,10 @@ class Conf
 		$this->adherent->cotisation->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
 		$this->bank->rappro->warning_delay=(isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE)?$this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE:0)*24*60*60;
 		$this->bank->cheque->warning_delay=(isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT)?$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT:0)*24*60*60;
+
+		// For modules that want to disable top or left menu
+		if (! empty($this->global->MAIN_HIDE_TOP_MENU)) $this->dol_hide_topmenu=$this->global->MAIN_HIDE_TOP_MENU;
+		if (! empty($this->global->MAIN_HIDE_LEFT_MENU)) $this->dol_hide_leftmenu=$this->global->MAIN_HIDE_LEFT_MENU;
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;
@@ -496,4 +505,3 @@ class Conf
 	}
 }
 
-?>

@@ -562,7 +562,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					if (!empty($project->fk_soc)) $socid = $project->fk_soc;
 
 					$tmparray=$this->get_substitutionarray_tasks($object,$outputlangs);
-					complete_substitutions_array($tmparray, $outputlangs, $task);
+					complete_substitutions_array($tmparray, $outputlangs, $object);
 					foreach($tmparray as $key => $val)
 					{
 						try
@@ -682,7 +682,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$listtasksfiles = $odfHandler->setSegment('tasksfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
-					$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$','name',SORT_ASC,1);
+					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
 
 
 					foreach ($filearray as $filedetail)
@@ -724,7 +724,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$listlines = $odfHandler->setSegment('projectfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
-					$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$','name',SORT_ASC,1);
+					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
 
 
 					foreach ($filearray as $filedetail)
@@ -816,9 +816,31 @@ class doc_generic_task_odt extends ModelePDFTask
 				}
 
 
+				// Call the beforeODTSave hook
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				
+				
 				// Write new file
-				$odfHandler->saveToDisk($file);
-
+				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+					try {
+						$odfHandler->exportAsAttachedPDF($file);
+					}catch (Exception $e){
+						$this->error=$e->getMessage();
+						return -1;
+					}
+				}
+				else {
+					try {
+						$odfHandler->saveToDisk($file);
+					}catch (Exception $e){
+						$this->error=$e->getMessage();
+						return -1;
+					}
+				}
+								
+				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -837,4 +859,3 @@ class doc_generic_task_odt extends ModelePDFTask
 	}
 
 }
-?>

@@ -25,7 +25,6 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
@@ -44,9 +43,9 @@ $result=restrictedArea($user,'produit|service');
 //checks if a product has been ordered
 
 $action = GETPOST('action','alpha');
-$id_product = GETPOST('productid', 'productid');
-$id_sw = GETPOST('id_sw', 'id_sw');
-$id_tw = GETPOST('id_tw', 'id_tw');
+$id_product = GETPOST('productid', 'int');
+$id_sw = GETPOST('id_sw', 'int');
+$id_tw = GETPOST('id_tw', 'int');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 
@@ -65,7 +64,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 $listofdata=array();
-if (! empty($_SESSION['massstockmove'])) $listofdata=dol_json_decode($_SESSION['massstockmove'],true);
+if (! empty($_SESSION['massstockmove'])) $listofdata=json_decode($_SESSION['massstockmove'],true);
 
 
 /*
@@ -106,7 +105,7 @@ if ($action == 'addline')
 		if (count(array_keys($listofdata)) > 0) $id=max(array_keys($listofdata)) + 1;
 		else $id=1;
 		$listofdata[$id]=array('id'=>$id, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw);
-		$_SESSION['massstockmove']=dol_json_encode($listofdata);
+		$_SESSION['massstockmove']=json_encode($listofdata);
 
 		unset($id_product);
 		//unset($id_sw);
@@ -118,7 +117,7 @@ if ($action == 'addline')
 if ($action == 'delline' && $idline != '')
 {
 	if (! empty($listofdata[$idline])) unset($listofdata[$idline]);
-	if (count($listofdata) > 0) $_SESSION['massstockmove']=dol_json_encode($listofdata);
+	if (count($listofdata) > 0) $_SESSION['massstockmove']=json_encode($listofdata);
 	else unset($_SESSION['massstockmove']);
 }
 
@@ -252,7 +251,6 @@ print '<table class="liste" width="100%">';
 
 print '<tr class="liste_titre">';
 print getTitleFieldOfList($langs->trans('ProductRef'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
-print getTitleFieldOfList($langs->trans('ProductLabel'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
 print getTitleFieldOfList($langs->trans('WarehouseSource'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
 print getTitleFieldOfList($langs->trans('WarehouseTarget'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
 print getTitleFieldOfList($langs->trans('Qty'),0,$_SERVER["PHP_SELF"],'',$param,'','align="center" class="tagtd"',$sortfield,$sortorder);
@@ -262,10 +260,18 @@ print '</tr>';
 
 print '<tr '.$bc[$var].'>';
 // Product
-print '<td colspan="2">';
+print '<td>';
 $filtertype=0;
 if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype='';
-print $form->select_produits($id_product,'productid',$filtertype);
+if ($conf->global->PRODUIT_LIMIT_SIZE <= 0)
+{
+	$limit='';
+}
+else
+{
+	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
+}
+print $form->select_produits($id_product,'productid',$filtertype,$limit);
 print '</td>';
 // In warehouse
 print '<td>';
@@ -333,7 +339,7 @@ print '<table class="border" width="100%">';
 	print '<input type="text" name="label" size="80" value="'.dol_escape_htmltag($labelmovement).'">';
 	print '</td>';
 	print '</tr>';
-print '</table>';
+print '</table><br>';
 
 print '<div class="center"><input class="button" type="submit" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
 
@@ -343,4 +349,3 @@ print '</form>';
 llxFooter();
 
 $db->close();
-?>

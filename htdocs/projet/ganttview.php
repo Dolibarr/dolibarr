@@ -38,9 +38,10 @@ $mine = ($mode == 'mine' ? 1 : 0);
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
-if ($ref)
+if ($id > 0 || ! empty($ref))
 {
-    $object->fetch(0,$ref);
+    $object->fetch($id,$ref);
+    $object->fetch_thirdparty();
     $id=$object->id;
 }
 
@@ -69,7 +70,6 @@ $formother=new FormOther($db);
 $userstatic=new User($db);
 $companystatic=new Societe($db);
 $task = new Task($db);
-$object = new Project($db);
 
 $arrayofcss=array('/includes/jsgantt/jsgantt.css');
 
@@ -86,9 +86,6 @@ llxHeader("",$langs->trans("Tasks"),$help_url,'',0,0,$arrayofjs,$arrayofcss);
 
 if ($id > 0 || ! empty($ref))
 {
-	$object->fetch($id,$ref);
-	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
-
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
 	$userWrite  = $object->restrictedProjectArea($user,'write');
@@ -122,8 +119,8 @@ if ($id > 0 || ! empty($ref))
 
     print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Company").'</td><td>';
-    if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+    print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+    if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
     else print '&nbsp;';
     print '</td>';
     print '</tr>';
@@ -136,6 +133,17 @@ if ($id > 0 || ! empty($ref))
 
     // Statut
     print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+
+   	// Date start
+	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+	print dol_print_date($object->date_start,'day');
+	print '</td></tr>';
+
+	// Date end
+	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+	print dol_print_date($object->date_end,'day');
+	print '</td></tr>';
+
 
     print '</table>';
 
@@ -161,7 +169,7 @@ if ($user->rights->projet->all->creer || $user->rights->projet->creer)
 }
 else
 {
-    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
+    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
 }
 
 print '</div>';
@@ -184,8 +192,8 @@ if (count($tasksarray)>0)
 
 	// Show Gant diagram from $taskarray using JSGantt
 
-	$dateformat=$langs->trans("FormatDateShort");				// Used by include ganttchart.php later
-	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.php later
+	$dateformat=$langs->trans("FormatDateShort");				// Used by include ganttchart.inc.php later
+	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.inc.php later
 	$array_contacts=array();
 	$tasks=array();
 	$project_dependencies=array();
@@ -244,7 +252,7 @@ if (count($tasksarray)>0)
 	{
 	    //var_dump($_SESSION);
 		print '<div id="tabs" class="ganttcontainer" style="border: 1px solid #ACACAC;">'."\n";
-		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.php';
+		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.inc.php';
 		print '</div>'."\n";
 	}
 	else
@@ -262,4 +270,3 @@ else
 llxFooter();
 
 $db->close();
-?>

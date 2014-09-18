@@ -62,7 +62,7 @@ llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Margins"),$help_ur
 
 if ($socid > 0)
 {
-    $societe = new Societe($db, $socid);
+    $societe = new Societe($db);
     $societe->fetch($socid);
 
     /*
@@ -147,7 +147,7 @@ if ($socid > 0)
 		// TODO: calculate total to display then restore pagination
 		//$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
-		dol_syslog('margin:tabs:thirdpartyMargins.php sql='.$sql,LOG_DEBUG);
+		dol_syslog('margin:tabs:thirdpartyMargins.php', LOG_DEBUG);
 		$result = $db->query($sql);
 		if ($result)
 		{
@@ -232,7 +232,7 @@ if ($socid > 0)
 				$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
 				$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
 			}
-			print '<tr '.$bc[$var].' style="border-top: 1px solid #ccc; font-weight: bold">';
+			print '<tr class="liste_total">';
 			print '<td colspan=2>'.$langs->trans('TotalMargin')."</td>";
 			print "<td align=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
 			print "<td align=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";

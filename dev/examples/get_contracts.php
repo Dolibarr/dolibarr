@@ -81,4 +81,3 @@ print_r($listofcontractsforcompany);
 $db->close();
 
 return $error;
-?>

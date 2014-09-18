@@ -79,13 +79,14 @@ MailtoEMail=Hyper σύνδεσμο σε email
 ActivateCheckRead=Επιτρέπετε τη χρήση του "Unsubcribe" σύνδεσμου
 ActivateCheckReadKey=Κλειδί χρήσης για την κρυπτογράφηση του URL για "Διαβάστε Παραλαβή" και "Διαγραφή" χαρακτηριστικό
 EMailSentToNRecipients=EMail αποστέλλονται στους παραλήπτες %s.
-# EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
-# MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
-# SendRemind=Send reminder by EMails
-# RemindSent=%s reminder(s) sent
-# AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
-# NoRemindSent=No EMail reminder sent
-# ResultOfMassSending=Result of mass EMail reminders sending
+XTargetsAdded=<b>%s</b> παραλήπτες που προστέθηκαν στο κατάλογο των στόχων
+EachInvoiceWillBeAttachedToEmail=Ένα έγγραφο χρησιμοποιώντας το προεπιλεγμένο τιμολόγιο θα δημιουργηθεί και θα επισυνάπτεται σε κάθε email.
+MailTopicSendRemindUnpaidInvoices=Υπενθύμιση του τιμολογίου %s (%s)
+SendRemind=Αποστολή υπενθύμισης με EMails
+RemindSent=%s υπενθύμιση (εις) αποστέλλονται
+AllRecipientSelectedForRemind=Όλοι Πελ./Προμ. έχουν επιλεγεί και αν ένα email έχει οριστεί (υπόψη ότι ένα μήνυμα ανά τιμολόγιο θα αποσταλεί)
+NoRemindSent=Τα  EMail να αποσταλούν χωρίς υπενθύμιση
+ResultOfMassSending=Αποτέλεσμα της μαζικής αποστολής email υπενθύμισης
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Επαφές για όλα τα στοιχεία (πελάτης, προοπτική, προμηθευτής, ...)
@@ -94,13 +95,11 @@ MailingModuleDescFundationMembers=Foundation members with emails
 MailingModuleDescEmailsFromFile=EMails from a text file (email;name;surname;comments)
 MailingModuleDescEmailsFromUser=E-mail από την είσοδο του χρήστη (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=Στοιχεία με emails (ανά κατηγορία)
-# MailingModuleDescDolibarrContractsLinesExpired=Third parties with expired contract's lines
+MailingModuleDescDolibarrContractsLinesExpired=Πελ./Προμ. με ληγμένες γραμμές συμβολαίων
 MailingModuleDescContactsByCompanyCategory=Επαφές των τρίτων (από τρίτη κατηγορία μέρη)
 MailingModuleDescContactsByCategory=Επαφές/διευθύνσεις Πέλ./Προμ. κατά κατηγορία
 MailingModuleDescMembersCategories=Τα ιδρυτικά μέλη (ανά κατηγορία)
 MailingModuleDescContactsByFunction=Επαφές των τρίτων (από τη θέση / λειτουργία)
-
-
 LineInFile=Σειρά %s στο αρχείο
 RecipientSelectionModules=Ορίζονται αιτήματα για την επιλογή του παραλήπτη
 MailSelectedRecipients=Επιλεγμένοι αποδέκτες
@@ -121,6 +120,7 @@ TargetsReset=Εκκαθάριση λίστας
 ToClearAllRecipientsClickHere=Κάντε κλικ εδώ για να καταργήσετε τη λίστα παραληπτών για αυτό το ηλεκτρονικό ταχυδρομείο
 ToAddRecipientsChooseHere=Προσθέστε παραλήπτες επιλέγοντας από τις λίστες
 NbOfEMailingsReceived=Μαζικές αποστολές έλαβαν
+NbOfEMailingsSend=Μαζική αλληλογραφία αποστέλλεται
 IdRecord=ID record
 DeliveryReceipt=Απόδειξη παράδοσης
 YouCanUseCommaSeparatorForSeveralRecipients=Μπορείτε να χρησιμοποιήσετε το <b>κόμμα</b> σαν διαχωριστή για να καθορίσετε πολλούς παραλήπτες.
@@ -128,7 +128,6 @@ TagCheckMail=Παρακολούθηση άνοιγμα της αλληλογρα
 TagUnsubscribe=link διαγραφής
 TagSignature=Υπογραφή αποστολής χρήστη
 TagMailtoEmail=Email του παραλήπτη
-
 # Module Notifications
 Notifications=Notifications
 NoNotificationsWillBeSent=Δεν υπάρχουν ειδοποιήσεις μέσω ηλεκτρονικού ταχυδρομείου που έχουν προγραμματιστεί για αυτό το συμβάν και την εταιρεία

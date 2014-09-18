@@ -74,7 +74,7 @@ $form = new Form($db);
 llxHeader('',$langs->trans("Margins").' - '.$langs->trans("Agents"));
 
 $text=$langs->trans("Margins");
-print_fiche_titre($text);
+//print_fiche_titre($text);
 
 // Show tabs
 $head=marges_prepare_head($user);
@@ -144,7 +144,7 @@ $sql.=$db->order($sortfield,$sortorder);
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
-dol_syslog('margin::agentMargins.php sql='.$sql,LOG_DEBUG);
+dol_syslog('margin::agentMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {

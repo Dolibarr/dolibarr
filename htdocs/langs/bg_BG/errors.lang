@@ -135,6 +135,8 @@ ErrorWarehouseMustDiffers=Source and target warehouses must differs
 ErrorBadFormat=Bad format!
 ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
+ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
+
 # Warnings
 WarningMandatorySetupNotComplete=Задължителни параметри на настройката все още не са определени
 WarningSafeModeOnCheckExecDir=Внимание, PHP опция <b>защитният режим</b> е включен, така че командата трябва да бъдат съхранени в директория, декларирани с параметър PHP <b>safe_mode_exec_dir.</b>
@@ -151,3 +153,4 @@ WarningCloseAlways=Внимание, затваряне се прави, дор�
 WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
 WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
 WarningNotRelevant=Irrelevant operation for this dataset
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.

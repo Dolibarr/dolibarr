@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=HRM area
 UserCard=Užívateľ karty
 ContactCard=Kontaktné karty
 GroupCard=Skupina karta
@@ -86,7 +87,7 @@ MyInformations=Moje údaje
 ExportDataset_user_1=Dolibarr užívateľov a vlastnosti
 DomainUser=%s užívateľ domény
 Reactivate=Reaktivácia
-CreateInternalUserDesc=Táto forma umožňuje vytvori užívateľovi, interná vašej spoločnosti / nadácie. Pre vytvorenie externých používateľov (zákazník, dodávateľ, ...), použite tlačidlo &quot;Create Dolibarr užívateľa&quot; od tretej strany karty kontaktu.
+CreateInternalUserDesc=This form allows you to create an user internal to your company/foundation. To create an external user (customer, supplier, ...), use the button 'Create Dolibarr user' from third party's contact card.
 InternalExternalDesc=<b>Interný</b> užívateľ je užívateľ, ktorý je súčasťou vašej firme / nadácie. <br> <b>Externý</b> užívateľ je zákazník, dodávateľ alebo iný. <br><br> V oboch prípadoch oprávnenia definuje práva na Dolibarr tiež externé užívateľ môže mať inú ponuku než správcu interného užívateľa (pozri Domov - Nastavenie - Zobrazenie)
 PermissionInheritedFromAGroup=Povolenie udelené, pretože dedia z jednej zo skupiny užívateľov.
 Inherited=Zdedený

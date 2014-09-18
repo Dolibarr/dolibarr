@@ -169,4 +169,3 @@ if ($messagetoshow)
 
 
 llxFooter();
-?>

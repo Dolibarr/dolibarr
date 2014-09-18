@@ -89,6 +89,8 @@ ListOfServicesToExpireWithDuration=Lista servicii care expiră în %s zile
 ListOfServicesToExpireWithDurationNeg=Lista serviciilor expirate de mai bine de %s zile
 ListOfServicesToExpire=Lista  servicii care expiră
 NoteListOfYourExpiredServices=Această listă conține numai serviciile pentru terții la care sunteţi reprezentant de vânzării.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Reprezentant vanzari de semnare a contractului

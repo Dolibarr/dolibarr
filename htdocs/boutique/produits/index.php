@@ -86,4 +86,3 @@ else
 $dbosc->close();
 
 llxFooter();
-?>

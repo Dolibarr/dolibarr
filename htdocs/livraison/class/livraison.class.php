@@ -54,8 +54,6 @@ class Livraison extends CommonObject
 	var $note_public;
 	var $note_private;
 
-	var $expedition_id;
-
 	var $date_delivery;    // Date really received
 	var $date_creation;
 	var $date_valid;
@@ -130,7 +128,7 @@ class Livraison extends CommonObject
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
 		$sql.= ")";
 
-		dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
+		dol_syslog("Livraison::create", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -142,7 +140,7 @@ class Livraison extends CommonObject
 			$sql.= "SET ref = '".$this->db->escape($numref)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
+			dol_syslog("Livraison::create", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -150,7 +148,7 @@ class Livraison extends CommonObject
 				{
 					$commande = new Commande($this->db);
 					$commande->id = $this->commande_id;
-					$this->lines = $commande->fetch_lines();
+					$commande->fetch_lines();
 				}
 
 
@@ -197,7 +195,6 @@ class Livraison extends CommonObject
 				{
 					$error++;
 					$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-					dol_syslog("Livraison::create Error -3 ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -3;
 				}
@@ -206,7 +203,6 @@ class Livraison extends CommonObject
 			{
 				$error++;
 				$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-				dol_syslog("Livraison::create Error -2 ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -215,7 +211,6 @@ class Livraison extends CommonObject
 		{
 			$error++;
 			$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
-			dol_syslog("Livraison::create Error -1 ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -243,7 +238,7 @@ class Livraison extends CommonObject
 		$sql.= " ".($description?"'".$this->db->escape($description)."'":"null").",";
 		$sql.= $qty.")";
 
-		dol_syslog(get_class($this)."::create_line sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create_line", LOG_DEBUG);
 		if (! $this->db->query($sql) )
 		{
 			$error++;
@@ -273,7 +268,7 @@ class Livraison extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
 		$sql.= " WHERE l.rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -323,7 +318,6 @@ class Livraison extends CommonObject
 		}
 		else
 		{
-			dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -440,7 +434,6 @@ class Livraison extends CommonObject
 					{
 						$this->db->rollback();
 						$this->error=$this->db->error()." - sql=$sql";
-						dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 						return -1;
 					}
 				}
@@ -453,15 +446,12 @@ class Livraison extends CommonObject
 			return -1;
 		}
 
-		// Appel des triggers
-		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-		$interface = new Interfaces($this->db);
-		$result = $interface->run_triggers('DELIVERY_VALIDATE', $this, $user, $langs, $conf);
-		// Fin appel triggers
+        // Call trigger
+        $result=$this->call_trigger('DELIVERY_VALIDATE',$user);
+        // End call triggers
 		if ($result < 0)
 		{
 			$this->db->rollback();
-			$this->error = $interface->errors;
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -611,14 +601,14 @@ class Livraison extends CommonObject
 						}
 					}
 
-					// Call triggers
-					include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('DELIVERY_DELETE',$this,$user,$langs,$conf);
-					if ($result < 0) {
-						$error++; $this->errors=$interface->errors;
-					}
-					// End call triggers
+                    // Call trigger
+                    $result=$this->call_trigger('DELIVERY_DELETE',$user);
+                    if ($result < 0)
+                    {
+                        $this->db->rollback();
+                        return -4;
+                    }
+                    // End call triggers
 
 					return 1;
 				}
@@ -679,7 +669,7 @@ class Livraison extends CommonObject
 	{
 		$this->lines = array();
 
-		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped,";
+		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped, ld.fk_origin_line, ";
 		$sql.= " cd.qty as qty_asked, cd.label as custom_label,";
 		$sql.= " p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
@@ -687,7 +677,7 @@ class Livraison extends CommonObject
 		$sql.= " WHERE ld.fk_origin_line = cd.rowid";
 		$sql.= " AND ld.fk_livraison = ".$this->id;
 
-		dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -711,6 +701,7 @@ class Livraison extends CommonObject
 				$line->product_ref		= $obj->product_ref;		// Product ref
 				$line->product_desc		= $obj->product_desc;		// Product description
 				$line->product_type		= $obj->fk_product_type;
+				$line->fk_origin_line 	= $obj->fk_origin_line;
 
 				$line->price			= $obj->price;
 				$line->total_ht			= $obj->total_ht;
@@ -807,7 +798,7 @@ class Livraison extends CommonObject
 		$this->specimen=1;
 		$this->socid = 1;
 		$this->date_delivery = $now;
-		$this->note_public='Pulbic note';
+		$this->note_public='Public note';
 		$this->note_private='Private note';
 
 		$i=0;
@@ -897,7 +888,6 @@ class Livraison extends CommonObject
 		else
 		{
 			$this->error=$this->db->error()." - sql=$sqlSourceLine";
-			dol_syslog(get_class($this)."::getRemainingDelivered ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -917,7 +907,7 @@ class Livraison extends CommonObject
 			$sql.= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_date_livraison sql=".$sql,LOG_DEBUG);
+			dol_syslog(get_class($this)."::set_date_livraison", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -927,7 +917,6 @@ class Livraison extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
@@ -970,5 +959,3 @@ class LivraisonLigne
 	}
 
 }
-
-?>

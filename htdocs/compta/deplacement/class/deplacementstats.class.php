@@ -162,4 +162,3 @@ class DeplacementStats extends Stats
 	}
 }
 
-?>

@@ -23,4 +23,4 @@ GoodStatusDeclaration=He rebut la mercaderia en bon estat,
 Deliverer=Destinatari :
 Sender=Orige
 Recipient=Destinatari
-# ErrorStockIsNotEnough=There's not enough stock
+ErrorStockIsNotEnough=There's not enough stock

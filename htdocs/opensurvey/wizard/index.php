@@ -56,4 +56,3 @@ print '<p>'.$langs->trans("OrganizeYourMeetingEasily").'</p>
 llxFooter();
 
 $db->close();
-?>

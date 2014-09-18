@@ -31,7 +31,7 @@ if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 
 require '../main.inc.php';
 
-$country=GETPOST('pays', 'alpha');
+$country=GETPOST('country', 'alpha');
 
 
 /*
@@ -49,16 +49,16 @@ print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY
 
 dol_syslog(join(',',$_POST));
 
-// Generation liste des pays
+// Generate list of countries
 if (! empty($country))
 {
 	global $langs;
 	$langs->load("dict");
 
-	$sql = "SELECT rowid, code, libelle, active";
-	$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-	$sql.= " WHERE active = 1 AND libelle LIKE '%" . $db->escape(utf8_decode($country)) . "%'";
-	$sql.= " ORDER BY libelle ASC";
+	$sql = "SELECT rowid, code, label, active";
+	$sql.= " FROM ".MAIN_DB_PREFIX."c_country";
+	$sql.= " WHERE active = 1 AND label LIKE '%" . $db->escape(utf8_decode($country)) . "%'";
+	$sql.= " ORDER BY label ASC";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -68,7 +68,7 @@ if (! empty($country))
 		{
 			print '<li>';
 			// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-			print ($country->code && $langs->trans("Country".$country->code)!="Country".$country->code?$langs->trans("Country".$country->code):($country->libelle!='-'?$country->libelle:'&nbsp;'));
+			print ($country->code && $langs->trans("Country".$country->code)!="Country".$country->code?$langs->trans("Country".$country->code):($country->label!='-'?$country->label:'&nbsp;'));
 			print '<span class="informal" style="display:none">'.$country->rowid.'-idcache</span>';
 			print '</li>';
 		}
@@ -76,4 +76,3 @@ if (! empty($country))
 	}
 }
 
-?>

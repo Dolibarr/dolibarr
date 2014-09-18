@@ -32,6 +32,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	var $version='dolibarr';
 	var $error = '';
 	var $nom = 'Magre';
+	var $code_auto=1;
 
 	/**
 	 *	Return default description of numbering model
@@ -130,4 +131,3 @@ class mod_contract_magre extends ModelNumRefContracts
 
 }
 
-?>

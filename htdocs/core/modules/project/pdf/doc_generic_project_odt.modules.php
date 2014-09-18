@@ -707,7 +707,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$listtasksfiles = $listlines->__get('tasksfiles');
 
 						$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref).'/'.dol_sanitizeFileName($task->ref);
-						$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$','name',SORT_ASC,1);
+						$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
 
 
 						foreach ($filearray as $filedetail)
@@ -746,7 +746,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 					$listlines = $odfHandler->setSegment('projectfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
-					$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$','name',SORT_ASC,1);
+					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
 
 					foreach ($filearray as $filedetail)
 					{
@@ -1019,6 +1019,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 					}
 				}
 
+				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -1037,4 +1039,3 @@ class doc_generic_project_odt extends ModelePDFProjects
 	}
 
 }
-?>

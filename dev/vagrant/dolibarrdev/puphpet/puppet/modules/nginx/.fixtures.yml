@@ -1,0 +1,3 @@
+fixtures:
+  symlinks:
+    nginx: "#{source_dir}"

@@ -21,7 +21,8 @@
  *	\brief      validation.php
  */
 
+$form=new Form($db);
+
 // Affichage des templates
 require ('tpl/validation1.tpl.php');
 
-?>

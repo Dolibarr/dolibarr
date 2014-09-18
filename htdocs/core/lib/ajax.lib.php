@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,16 +25,17 @@
 
 
 /**
- *	Get value of an HTML field, do Ajax process and show result.
+ *	Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: /societe/ajaxcompanies.php).
  *  The HTML field must be an input text with id=search_$htmlname.
+ *  This use the jQuery "autocomplete" function.
  *
  *  @param	string	$selected           Preselecte value
  *	@param	string	$htmlname           HTML name of input field
- *	@param	string	$url                Url for request: /chemin/fichier.php
+ *	@param	string	$url                Url for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
- *  @param	array	$ajaxoptions		Multiple options array (Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *  @param	array	$ajaxoptions		Multiple options array (Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done)
  *	@return string              		Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
@@ -59,7 +60,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 						$("#'.$htmlname.'").trigger("change");
 					});
 					// Check when keyup
-					$("input#search_'.$htmlname.'").onDelayedKeyup({ handler: function() {
+					$("input#search_'.$htmlname.'").keyup(function() {
 							//console.log(\'keyup\');
 						    if ($(this).val().length == 0)
 						    {
@@ -93,31 +94,34 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 	    							});
 	    						}
 						    }
-						}
                     });
     				$("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
     						$.get("'.$url.($urloption?'?'.$urloption:'').'", { '.$htmlname.': request.term }, function(data){
-								response($.map( data, function( item ) {
-									if (autoselect == 1 && data.length == 1) {
-										$("#search_'.$htmlname.'").val(item.value);
-										$("#'.$htmlname.'").val(item.key).trigger("change");
-									}
-									var label = item.label.toString();
-									var update = {};
-									if (options.update) {
-										$.each(options.update, function(key, value) {
-											update[key] = item[value];
-										});
-									}
-									var textarea = {};
-									if (options.update_textarea) {
-										$.each(options.update_textarea, function(key, value) {
-											textarea[key] = item[value];
-										});
-									}
-									return { label: label, value: item.value, id: item.key, update: update, textarea: textarea, disabled: item.disabled }
-								}));
+								if (data != null)
+								{
+									response($.map( data, function(item) {
+										if (autoselect == 1 && data.length == 1) {
+											$("#search_'.$htmlname.'").val(item.value);
+											$("#'.$htmlname.'").val(item.key).trigger("change");
+										}
+										var label = item.label.toString();
+										var update = {};
+										if (options.update) {
+											$.each(options.update, function(key, value) {
+												update[key] = item[value];
+											});
+										}
+										var textarea = {};
+										if (options.update_textarea) {
+											$.each(options.update_textarea, function(key, value) {
+												textarea[key] = item[value];
+											});
+										}
+										return { label: label, value: item.value, id: item.key, update: update, textarea: textarea, disabled: item.disabled }
+									}));
+								}
+								else console.error("Error: Ajax url '.$url.($urloption?'?'.$urloption:'').' has returned an empty page. Should be an empty json array.");
 							}, "json");
 						},
 						dataType: "json",
@@ -130,9 +134,12 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     							if (ui.item.disabled) {
     								$("#" + options.option_disabled).attr("disabled", "disabled");
     								if (options.error) {
-    									$.jnotify(options.error, "error", true);
+    									$.jnotify(options.error, "error", true);		// Output with jnotify the error message
     								}
-    							} else {
+    								if (options.warning) {
+    									$.jnotify(options.warning, "warning", false);		// Output with jnotify the warning message
+    								}
+							} else {
     								$("#" + options.option_disabled).removeAttr("disabled");
     							}
     						}
@@ -180,25 +187,28 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 }
 
 /**
- *	Get value of field, do Ajax process and return result
+ *	Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: core/ajax/ziptown.php).
+ *  The Ajax page can also returns several values (json format) to fill several input fields.
+ *  The HTML field must be an input text with id=$htmlname.
+ *  This use the jQuery "autocomplete" function.
  *
- *	@param	string	$htmlname           Name of field
- *	@param	string	$fields				other fields to autocomplete
- *	@param	string	$url                Chemin du fichier de reponse : /chemin/fichier.php
+ *	@param	string	$htmlname           HTML name of input field
+ *	@param	string	$fields				Other fields to autocomplete
+ *	@param	string	$url                URL for ajax request : /chemin/fichier.php
  *	@param	string	$option				More parameters on URL request
  *	@param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *	@param	int		$autoselect			Automatic selection if just one value
  *	@return string              		Script
  */
-function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,$autoselect=0)
+function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLength=2, $autoselect=0)
 {
 	$script = '<!-- Autocomplete -->'."\n";
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
 					var fields = '.json_encode($fields).';
-					var length = fields.length;
+					var nboffields = fields.length;
 					var autoselect = '.$autoselect.';
-					//alert(fields + " " + length);
+					//alert(fields + " " + nboffields);
 
     				jQuery("input#'.$htmlname.'").autocomplete({
     					dataType: "json",
@@ -212,7 +222,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 										if (item.states) {
 											jQuery("#state_id").html(item.states);
 										}
-										for (i=0;i<length;i++) {
+										for (i=0;i<nboffields;i++) {
 											if (item[fields[i]]) {   // If defined
                                                 //alert(item[fields[i]]);
 											    jQuery("#" + fields[i]).val(item[fields[i]]);
@@ -224,8 +234,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 							});
     					},
     					select: function( event, ui ) {
-
-    						for (i=0;i<length;i++) {
+    						for (i=0;i<nboffields;i++) {
     							//alert(fields[i] + " = " + ui.item[fields[i]]);
 								if (fields[i]=="selectcountry_id")
 								{
@@ -272,7 +281,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 {
 	global $langs;
 
-	$msg.= '<div id="dialog-info" title="'.dol_escape_htmltag($title).'">';
+	$msg= '<div id="dialog-info" title="'.dol_escape_htmltag($title).'">';
 	$msg.= $message;
 	$msg.= '</div>'."\n";
     $msg.= '<script type="text/javascript">
@@ -302,7 +311,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.
  *
  * @param	string	$htmlname					Name of html select field
- * @param	array	$events						Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+ * @param	array	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
  * @return	string								Return html string to convert a select field into a combo
  */
@@ -328,29 +337,31 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 	width: "500px" */
 
 	$msg = '<script type="text/javascript">
-    $(function() {
+	$(document).ready(function() {
     	$("#'.$htmlname.'").combobox({
     		minLengthToAutocomplete : '.$minLengthToAutocomplete.',
     		selected : function(event,ui) {
     			var obj = '.json_encode($events).';
     			$.each(obj, function(key,values) {
     				if (values.method.length) {
-    					getMethod(values);
+    					runJsCodeForEvent(values);
     				}
 				});
 			}
 		});
 
-		function getMethod(obj) {
+		function runJsCodeForEvent(obj) {
 			var id = $("#'.$htmlname.'").val();
 			var method = obj.method;
 			var url = obj.url;
 			var htmlname = obj.htmlname;
+			var showempty = obj.showempty;
     		$.getJSON(url,
 					{
 						action: method,
 						id: id,
-						htmlname: htmlname
+						htmlname: htmlname,
+						showempty: showempty
 					},
 					function(response) {
 						$.each(obj.params, function(key,action) {
@@ -364,9 +375,17 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 							}
 						});
 						$("select#" + htmlname).html(response.value);
+						if (response.num) {
+							var selecthtml_str = response.value;
+							var selecthtml_dom=$.parseHTML(selecthtml_str);
+							$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+						} else {
+							$("#inputautocomplete"+htmlname).val("");
+						}
+						$("select#" + htmlname).change();	/* Trigger event change */
 					});
 		}
-	
+
 	});'."\n";
     $msg.= "</script>\n";
 
@@ -380,54 +399,63 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
  * 	@param	array	$input			Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  * 	@param	int		$entity			Entity to set
  *  @param	int		$revertonoff	Revert on/off
+ *  @param	bool	$strict			Use only "disabled" with delConstant and "enabled" with setConstant
  * 	@return	void
  */
-function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0)
+function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0, $strict=0)
 {
 	global $conf, $langs;
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
 
-	$out= "\n<!-- Ajax code to switch constant ".$code." -->".'
-	<script type="text/javascript">
-		$(document).ready(function() {
-			var input = '.json_encode($input).';
-			var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
-			var code = \''.$code.'\';
-			var entity = \''.$entity.'\';
-			var yesButton = "'.dol_escape_js($langs->transnoentities("Yes")).'";
-			var noButton = "'.dol_escape_js($langs->transnoentities("No")).'";
+	if (empty($conf->use_javascript_ajax))
+	{
+		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	}
+	else
+	{
+		$out= "\n<!-- Ajax code to switch constant ".$code." -->".'
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var input = '.json_encode($input).';
+				var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
+				var code = \''.$code.'\';
+				var entity = \''.$entity.'\';
+				var strict = \''.$strict.'\';
+				var yesButton = "'.dol_escape_js($langs->transnoentities("Yes")).'";
+				var noButton = "'.dol_escape_js($langs->transnoentities("No")).'";
 
-			// Set constant
-			$("#set_" + code).click(function() {
-				if (input.alert && input.alert.set) {
-					if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
-					if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
-					confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton);
-				} else {
-					setConstant(url, code, input, entity);
-				}
+				// Set constant
+				$("#set_" + code).click(function() {
+					if (input.alert && input.alert.set) {
+						if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
+						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
+						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict);
+					} else {
+						setConstant(url, code, input, entity);
+					}
+				});
+
+				// Del constant
+				$("#del_" + code).click(function() {
+					if (input.alert && input.alert.del) {
+						if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
+						if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
+						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict);
+					} else {
+						delConstant(url, code, input, entity);
+					}
+				});
 			});
+		</script>'."\n";
 
-			// Del constant
-			$("#del_" + code).click(function() {
-				if (input.alert && input.alert.del) {
-					if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
-					if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
-					confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton);
-				} else {
-					delConstant(url, code, input, entity);
-				}
-			});
-		});
-	</script>'."\n";
-
-	$out.= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
-	$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.($revertonoff?img_picto($langs->trans("Enabled"),'switch_on'):img_picto($langs->trans("Disabled"),'switch_off')).'</span>';
-	$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.($revertonoff?img_picto($langs->trans("Disabled"),'switch_off'):img_picto($langs->trans("Enabled"),'switch_on')).'</span>';
-	$out.="\n";
+		$out.= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
+		$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.($revertonoff?img_picto($langs->trans("Enabled"),'switch_on'):img_picto($langs->trans("Disabled"),'switch_off')).'</span>';
+		$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.($revertonoff?img_picto($langs->trans("Disabled"),'switch_off'):img_picto($langs->trans("Enabled"),'switch_on')).'</span>';
+		$out.="\n";
+	}
 
 	return $out;
 }
 
-?>

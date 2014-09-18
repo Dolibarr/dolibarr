@@ -149,4 +149,3 @@ function php_quote($val)
     return $res_val;
 }
 
-?>

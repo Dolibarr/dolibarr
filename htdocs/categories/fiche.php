@@ -31,9 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("categories");
 
-$extrafields = new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-
 // Security check
 $socid=GETPOST('socid','int');
 if (!$user->rights->categorie->lire) accessforbidden();
@@ -63,6 +60,9 @@ if ($origin)
 if ($catorigin && $type == 0) $idCatOrigin = $catorigin;
 
 $object = new Categorie($db);
+
+$extrafields = new ExtraFields($db);
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 /*
  *	Actions
@@ -131,14 +131,14 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	if (! $object->label)
 	{
 		$error++;
-		$errors[] = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
 		$action = 'create';
 	}
 
 	// Create category in database
 	if (! $error)
 	{
-		$result = $object->create();
+		$result = $object->create($user);
 		if ($result > 0)
 		{
 			$action = 'confirmed';
@@ -224,8 +224,6 @@ if ($user->rights->categorie->creer)
 
 		print_fiche_titre($langs->trans("CreateCat"));
 
-		dol_htmloutput_errors('',$errors);
-
 		print '<table width="100%" class="border">';
 
 		// Ref
@@ -244,7 +242,7 @@ if ($user->rights->categorie->creer)
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 		print $form->select_all_categories($type, $catorigin);
 		print '</td></tr>';
-		
+
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
@@ -267,4 +265,3 @@ if ($user->rights->categorie->creer)
 llxFooter();
 
 $db->close();
-?>

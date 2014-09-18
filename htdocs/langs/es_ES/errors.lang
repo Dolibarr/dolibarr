@@ -133,8 +133,11 @@ ErrorPHPNeedModule=Error, su PHP debe tener instalado el módulo <b>%s</b> para 
 ErrorOpenIDSetupNotComplete=Ha configurado Dolibarr para aceptar la autentificación OpenID, pero la URL del servicio OpenID no se encuentra definida en la constante %s
 ErrorWarehouseMustDiffers=El almacén de origen y destino deben de ser diferentes
 ErrorBadFormat=¡El formato es erróneo!
-ErrorPaymentDateLowerThanInvoiceDate=La fecha de pago (%s) no puede ser anterior a la fecha (%s) de la factura %s.
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, este miembro aún no está enlazado a un tercero. Enlace el miembro a un tercero existente o cree un tercero nuevo antes de crear la suscripción con la factura.
+ErrorThereIsSomeDeliveries=Error, hay entregas vinculadas a este envío. No se puede eliminar.
+ErrorCantDeletePaymentReconciliated=No se puede eliminar un pago que ha generado una transacción bancaria que se encuentra conciliada
+ErrorCantDeletePaymentSharedWithPayedInvoice=No se puede eliminar un pago de varias factura con alguna factura con estado Pagada
+
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos
 WarningSafeModeOnCheckExecDir=Atención, está activada la opción PHP <b>safe_mode</b>, el comando deberá estar dentro de un directorio declarado dentro del parámetro php <b>safe_mode_exec_dir</b>.
@@ -151,3 +154,5 @@ WarningCloseAlways=Aviso, el cierre es realizado aunque la cantidad total difier
 WarningUsingThisBoxSlowDown=Atención, el uso de este panel provoca serias ralentizaciones en las páginas  que muestran este panel.
 WarningClickToDialUserSetupNotComplete=La configuración de ClickToDial para su cuenta de usuario no está completa (vea la pestaña ClickToDial en su ficha de usuario)
 WarningNotRelevant=Operación irrelevante para este conjunto de datos
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funcionalidad desactivada cuando la configuración de visualización es optimizada para personas ciegas o navegadores de texto.
+WarningPaymentDateLowerThanInvoiceDate=La fecha de pago (%s) es anterior a la fecha (%s) de la factura %s.

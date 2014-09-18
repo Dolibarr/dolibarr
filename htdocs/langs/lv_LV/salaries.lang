@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - users
-Salary=Salary
-Salaries=Salaries
-Employee=Employee
-NewSalaryPayment=New salary payment
-SalaryPayment=Salary payment
-SalariesPayments=Salaries payments
-ShowSalaryPayment=Show salary payment
+Salary=Alga
+Salaries=Algas
+Employee=Darbinieks
+NewSalaryPayment=Jauna algas izmaksa
+SalaryPayment=Algas maksājums
+SalariesPayments=Algu maksājumi
+ShowSalaryPayment=Rādīt algu maksājumus

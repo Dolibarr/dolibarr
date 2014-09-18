@@ -101,4 +101,3 @@ header("Content-Type: text/x-vcard; name=\"".$filename."\"");
 
 print $output;
 
-?>

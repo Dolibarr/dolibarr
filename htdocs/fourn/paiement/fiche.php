@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2006-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,6 @@ $langs->load('banks');
 $langs->load('companies');
 $langs->load("suppliers");
 
-$mesg='';
-
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
@@ -61,7 +59,7 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
     }
     else
     {
-        $mesg='<div class="error">'.$object->error.'</div>';
+	    setEventMessage($object->error, 'errors');
         $db->rollback();
     }
 }
@@ -80,7 +78,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 		$db->rollback();
 	}
 }
@@ -98,22 +96,22 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->fournisse
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 		$db->rollback();
 	}
 }
 
-if ($action == 'setnum' && ! empty($_POST['num_paiement']))
+if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 {
 	$object->fetch($id);
     $res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
-		$mesg = '<div class="ok">'.$langs->trans('PaymentNumberUpdateSucceeded').'</div>';
+		$setEventMessage($langs->trans('PaymentNumberUpdateSucceeded'));
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans('PaymentNumberUpdateFailed').'</div>';
+		setEventMessage($langs->trans('PaymentNumberUpdateFailed'), 'errors');
 	}
 }
 
@@ -124,11 +122,11 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
-		$mesg = '<div class="ok">'.$langs->trans('PaymentDateUpdateSucceeded').'</div>';
+		setEventMessage($langs->trans('PaymentDateUpdateSucceeded'));
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans('PaymentDateUpdateFailed').'</div>';
+		setEventMessage($langs->trans('PaymentDateUpdateFailed'), 'errors');
 	}
 }
 
@@ -180,7 +178,8 @@ if ($result > 0)
     print '</td></tr>';
 
 	// Payment mode
-	print '<tr><td valign="top" colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$object->type_libelle.'</td></tr>';
+	$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
+	print '<tr><td valign="top" colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
 
 	// Payment numero
     print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
@@ -228,8 +227,6 @@ if ($result > 0)
     }
 
 	print '</table>';
-
-	dol_htmloutput_mesg($mesg);
 
 	print '<br>';
 
@@ -344,4 +341,3 @@ dol_fiche_end();
 llxFooter();
 
 $db->close();
-?>

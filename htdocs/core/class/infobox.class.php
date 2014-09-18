@@ -23,12 +23,19 @@
  */
 
 /**
- *	Class to manage boxes on pages
+ *	Class to manage boxes on pages. This is an utility class (all is static)
  */
 class InfoBox
 {
-	static $listOfPages = array(0=>'Home');       // Nom des positions 0=Home, 1=...
-
+	/**
+	 * Name of positions 0=Home, 1=...
+	 *
+	 * @return	array		Array with list of zones
+	 */
+	static function getListOfPagesForBoxes()
+	{
+		return array(0=>'Home');
+	}
 
     /**
      *  Return array of boxes qualified for area and user
@@ -73,7 +80,7 @@ class InfoBox
             }
         }
 
-        dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')." sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')."", LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -137,12 +144,12 @@ class InfoBox
                             	$arrayelem=explode('|',$moduleelem);
                             	$tmpenabled=0;	// $tmpenabled is used for the '|' test (OR)
                             	foreach($arrayelem as $module)
-                            	{ 
+                            	{
     	                        	$tmpmodule=preg_replace('/@[^@]+/','',$module);
-    	                        	if (! empty($conf->$tmpmodule->enabled)) $tmpenabled=1; 
+    	                        	if (! empty($conf->$tmpmodule->enabled)) $tmpenabled=1;
                             		//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
                             	}
-                            	if (empty($tmpenabled))	// We found at least one module required that disabled 
+                            	if (empty($tmpenabled))	// We found at least one module required that disabled
         	                    {
         	                    	$enabled=0;
         	                    	break;
@@ -150,7 +157,7 @@ class InfoBox
                             }
                         }
                         //print '=>'.$boxname.'-enabled='.$enabled.'<br>';
-                        
+
                         //print 'xx module='.$module.' enabled='.$enabled;
                         if ($enabled) $boxes[]=$box;
                         else unset($box);
@@ -163,7 +170,6 @@ class InfoBox
         {
             //dol_print_error($db);
             $error=$db->lasterror();
-            dol_syslog(get_class()."::listBoxes Error ".$error, LOG_ERR);
         }
 
         return $boxes;
@@ -201,7 +207,7 @@ class InfoBox
         $tab[$confuserzone]=1;
         if (dol_set_user_param($db, $conf, $user, $tab) < 0)
         {
-            $this->error=$db->lasterror();
+            $error=$db->lasterror();
             $db->rollback();
             return -3;
         }
@@ -212,7 +218,7 @@ class InfoBox
         $sql.= " AND fk_user = ".$userid;
         $sql.= " AND position = ".$zone;
 
-        dol_syslog(get_class()."::saveboxorder sql=".$sql);
+        dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
         $result = $db->query($sql);
         if ($result)
         {
@@ -243,7 +249,7 @@ class InfoBox
                         $sql.= " ".$conf->entity;
                         $sql.= ")";
 
-                        dol_syslog(get_class()."::saveboxorder sql=".$sql);
+                        dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
                         $result = $db->query($sql);
                         if ($result < 0)
                         {
@@ -276,4 +282,3 @@ class InfoBox
 
 }
 
-?>

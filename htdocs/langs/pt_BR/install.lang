@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Clique aqui para mostrar/editar parametros avançado
 
 #########
 # upgrade
-#########
 MigrationFixData=Correção para dados não normalizados
 MigrationOrder=Migração de dados para os clientes "ordens
 MigrationSupplierOrder=Migração de dados de Fornecedores' ordens
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Atualizar tempo gasto em sgundos
 MigrationActioncommElement=Atualizar dados nas ações
 MigrationPaymentMode=Migração de dados para o modo de pagamento
 MigrationCategorieAssociation=Migração de categorias
+
+ShowNotAvailableOptions=Mostrar as opções não disponíveis
+HideNotAvailableOptions=Esconder as opção não disponível

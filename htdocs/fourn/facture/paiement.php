@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,8 +106,8 @@ if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='ye
 	            if ($datepaye && ($datepaye < $tmpinvoice->date))
 	            {
 	            	$langs->load("errors");
-	                $error++;
-	                setEventMessage($langs->transnoentities("ErrorPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye,'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), 'errors');
+	                //$error++;
+	                setEventMessage($langs->transnoentities("WarningPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye,'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), 'warnings');
 	            }
             }
 
@@ -243,7 +244,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $object->fetch($facid);
 
     $datefacture=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-    $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
+    $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
 
     $sql = 'SELECT s.nom, s.rowid as socid,';
     $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total';
@@ -328,9 +329,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                {
 	                    $i = 0;
 	                    print '<br>';
-
 	                    print $langs->trans('Invoices').'<br>';
-	                    print '<table class="noborder" width="100%">';
+
+						if(!empty($conf->global->FAC_AUTO_FILLJS)){
+							//Add js for AutoFill
+							print "\n".'<script type="text/javascript" language="javascript">';
+							print ' $(document).ready(function () {';
+							print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
+											$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value"));
+										});';
+							print '	});'."\n";
+							print '	</script>'."\n";
+						}
+						print '<table class="noborder" width="100%">';
 	                    print '<tr class="liste_titre">';
 	                    print '<td>'.$langs->trans('Ref').'</td>';
 	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
@@ -370,8 +381,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
 	                        print '<td align="center">';
 	                        $namef = 'amount_'.$objp->facid;
+							if(!empty($conf->global->FAC_AUTO_FILLJS))
+								print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->total_ttc - $objp->am)."'");
 	                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
-	                        print "</td></tr>\n";
+							print "</td></tr>\n";
 	                        $total+=$objp->total_ht;
 	                        $total_ttc+=$objp->total_ttc;
 	                        $totalrecu+=$objp->am;
@@ -468,7 +481,7 @@ if (empty($action))
     {
         $sql .= ' AND p.rowid='.$db->escape($search_ref);
     }
-    if (! empty($search_account))
+    if (! empty($search_account) && $search_account > 0)
     {
         $sql .= ' AND b.fk_account='.$db->escape($search_account);
     }
@@ -502,9 +515,6 @@ if (empty($action))
         $paramlist.=(! empty($search_amount)?"&search_amount=".$search_amount:"");
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, 'paiement.php',$paramlist,$sortfield,$sortorder,'',$num);
-
-        if ($mesg) dol_htmloutput_mesg($mesg);
-        if ($errmsg) dol_htmloutput_errors($errmsg);
 
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         print '<table class="noborder" width="100%">';
@@ -587,4 +597,3 @@ if (empty($action))
 $db->close();
 
 llxFooter();
-?>

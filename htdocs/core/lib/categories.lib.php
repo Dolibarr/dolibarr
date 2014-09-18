@@ -27,7 +27,7 @@
  *
  * @param   Object	$object		Object related to tabs
  * @param	string	$type		Type of category
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function categories_prepare_head($object,$type)
 {
@@ -46,6 +46,11 @@ function categories_prepare_head($object,$type)
 	$head[$h][0] = DOL_URL_ROOT.'/categories/photos.php?id='.$object->id.'&amp;type='.$type;
 	$head[$h][1] = $langs->trans("Photos");
 	$head[$h][2] = 'photos';
+	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
+	$head[$h][1] = $langs->trans("Translation");
+	$head[$h][2] = 'translation';
 	$h++;
 
     // Show more tabs from modules
@@ -88,12 +93,11 @@ function categoriesadmin_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'categoriesadmin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'categoriesadmin');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'categoriesadmin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'categoriesadmin','remove');
 
 	return $head;
 }
 
 
-?>

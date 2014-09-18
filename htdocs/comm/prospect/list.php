@@ -177,7 +177,7 @@ if ($action == 'cstc')
 $formother=new FormOther($db);
 $form=new Form($db);
 
-$sql = "SELECT s.rowid, s.nom, s.zip, s.town, s.datec, s.datea, s.status as status, s.code_client, s.client,";
+$sql = "SELECT s.rowid, s.nom, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -233,7 +233,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= " ORDER BY $sortfield $sortorder, s.nom ASC";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-dol_syslog('comm/prospect/list.php sql='.$sql,LOG_DEBUG);
+dol_syslog('comm/prospect/list.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -466,4 +466,3 @@ else
 
 llxFooter();
 $db->close();
-?>

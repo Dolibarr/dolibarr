@@ -1,9 +1,11 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014		Alexandre Spangaro	 <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +67,7 @@ class modSalaries extends DolibarrModules
 		$this->dirs = array("/salaries/temp");
 
 		// Config pages
-		$this->config_page_url = array();
+		$this->config_page_url = array('salaries.php');
 
 		// Dependances
 		$this->depends = array();
@@ -73,10 +75,20 @@ class modSalaries extends DolibarrModules
 		$this->conflictwith = array();
 		$this->langfiles = array("salaries");
 
-		// Constantes
+		// Constants
 		$this->const = array();
+		$this->const[0] = array(
+				"SALARIES_ACCOUNTING_ACCOUNT_PAYMENT",
+				"chaine",
+				"421"
+		);
+		$this->const[1] = array(
+				"SALARIES_ACCOUNTING_ACCOUNT_CHARGE",
+				"chaine",
+				"641"
+		);
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions
@@ -93,15 +105,15 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][5] = '';
 
 		$r++;
-		$this->rights[$r][0] = 511;
+		$this->rights[$r][0] = 512;
 		$this->rights[$r][1] = 'Create/modify salaries';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'create';
+		$this->rights[$r][4] = 'write';
 		$this->rights[$r][5] = '';
 
 		$r++;
-		$this->rights[$r][0] = 512;
+		$this->rights[$r][0] = 514;
 		$this->rights[$r][1] = 'Delete salaries';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
@@ -109,7 +121,7 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][5] = '';
 
 		$r++;
-		$this->rights[$r][0] = 515;
+		$this->rights[$r][0] = 517;
 		$this->rights[$r][1] = 'Export salaries';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
@@ -150,7 +162,7 @@ class modSalaries extends DolibarrModules
 	{
 		global $conf;
 
-		// Nettoyage avant activation
+		// Clean before activation
 		$this->remove($options);
 
 		$sql = array();
@@ -174,4 +186,3 @@ class modSalaries extends DolibarrModules
     }
 
 }
-?>

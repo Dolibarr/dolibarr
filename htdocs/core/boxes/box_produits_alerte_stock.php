@@ -173,4 +173,3 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 }
 
-?>

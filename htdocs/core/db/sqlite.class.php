@@ -34,9 +34,9 @@ class DoliDBSqlite extends DoliDB
     //! Database type
     public $type='sqlite';
     //! Database label
-    static $label='PDO Sqlite';
+    const LABEL='PDO Sqlite';
     //! Version min database
-    static $versionmin=array(3,0,0);
+    const VERSIONMIN='3.0.0';
 	//! Resultset of last query
 	private $_results;
 
@@ -369,55 +369,6 @@ class DoliDBSqlite extends DoliDB
     }
 
     /**
-     * Validate a database transaction
-     *
-     * @param	string	$log		Add more log to default log line
-     * @return	int         		1 if validation is OK or transaction level no started, 0 if ERROR
-     */
-    function commit($log='')
-    {
-		dol_syslog('',0,-1);
-    	if ($this->transaction_opened<=1)
-        {
-            $ret=$this->query("COMMIT");
-            if ($ret)
-            {
-                $this->transaction_opened=0;
-                dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
-            }
-            return $ret;
-        }
-        else
-       {
-       		$this->transaction_opened--;
-            return 1;
-        }
-    }
-
-    /**
-     *	Annulation d'une transaction et retour aux anciennes valeurs
-     *
-     * 	@param	string	$log		Add more log to default log line
-     * 	@return	int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
-     */
-    function rollback($log='')
-    {
-		dol_syslog('',0,-1);
-    	if ($this->transaction_opened<=1)
-        {
-            $ret=$this->query("ROLLBACK");
-            $this->transaction_opened=0;
-            dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
-            return $ret;
-        }
-        else
-        {
-            $this->transaction_opened--;
-            return 1;
-        }
-    }
-
-    /**
      * 	Execute a SQL request and return the resultset
      *
      * 	@param	string	$query			SQL query string
@@ -438,7 +389,9 @@ class DoliDBSqlite extends DoliDB
 		$query=$this->convertSQLFromMysql($query,$type);
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
-		// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
+	    dol_syslog('sql='.$query, LOG_DEBUG);
+
+	    // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
         try {
             //$ret = $this->db->exec($query);
             $ret = $this->db->query($query);        // $ret is a PDO object
@@ -456,8 +409,16 @@ class DoliDBSqlite extends DoliDB
                 $this->lastqueryerror = $query;
                 $this->lasterror = $this->error();
                 $this->lasterrno = $this->errno();
-                if (preg_match('/[0-9]/',$this->lasterrno)) dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno." ".$this->lasterror, LOG_WARNING);
-                else dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+
+	            dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+
+	            $errormsg = get_class($this)."::query SQL Error message: ".$this->lasterror;
+
+				if (preg_match('/[0-9]/',$this->lasterrno)) {
+                    $errormsg .= ' ('.$this->lasterrno.')';
+                }
+
+	            dol_syslog($errormsg, LOG_ERR);
             }
             $this->lastquery=$query;
             $this->_results = $ret;
@@ -558,24 +519,6 @@ class DoliDBSqlite extends DoliDB
         // Si resultset en est un, on libere la memoire
         if (is_object($resultset)) $resultset->closeCursor();
     }
-
-
-	/**
-     *	Define limits and offset of request
-     *
-     *	@param	int		$limit      Maximum number of lines returned (-1=conf->liste_limit, 0=no limit)
-     *	@param	int		$offset     Numero of line from where starting fetch
-     *	@return	string      		String with SQL syntax to add a limit and offset
-	 */
-    function plimit($limit=0,$offset=0)
-    {
-        global $conf;
-        if (empty($limit)) return "";
-        if ($limit < 0) $limit=$conf->liste_limit;
-        if ($offset > 0) return " LIMIT $offset,$limit ";
-        else return " LIMIT $limit ";
-    }
-
 
 	/**
 	 *	Escape a string to insert data
@@ -1037,7 +980,6 @@ class DoliDBSqlite extends DoliDB
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 
@@ -1046,21 +988,19 @@ class DoliDBSqlite extends DoliDB
         $sql.= " VALUES ('".$this->escape($dolibarr_main_db_host)."','".$this->escape($dolibarr_main_db_name)."','".addslashes($dolibarr_main_db_user)."'";
         $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
-        dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql);
+        dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 
         $sql="FLUSH Privileges";
 
-        dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql);
+        dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 
@@ -1196,4 +1136,3 @@ class DoliDBSqlite extends DoliDB
     }
 }
 
-?>

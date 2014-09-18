@@ -68,7 +68,7 @@ if ($action == 'setstocklimit')
     $product = new Product($db);
     $result=$product->fetch($id);
     $product->seuil_stock_alerte=$stocklimit;
-    $result=$product->update($product->id,$user,1,0,1);
+    $result=$product->update($product->id,$user,0,'update');
     if ($result < 0)
     	setEventMessage($product->error, 'errors');
     $action='';
@@ -80,7 +80,7 @@ if ($action == 'setdesiredstock')
     $product = new Product($db);
     $result=$product->fetch($id);
     $product->desiredstock=$desiredstock;
-    $result=$product->update($product->id,$user,1,0,1);
+    $result=$product->update($product->id,$user,0,'update');
     if ($result < 0)
     	setEventMessage($product->error, 'errors');
     $action='';
@@ -153,6 +153,11 @@ if ($action == "correct_stock" && ! $cancel)
 			{
 	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$product->id);
 				exit;
+			}
+			else
+			{
+			    setEventMessage($product->error,'errors');
+			    $action='correction';
 			}
 		}
 	}
@@ -254,6 +259,8 @@ if ($id > 0 || $ref)
 		$picto=($product->type==1?'service':'product');
 		dol_fiche_head($head, 'stock', $titre, 0, $picto);
 
+		dol_htmloutput_events();
+
 		$form = new Form($db);
 
 		print '<table class="border" width="100%">';
@@ -321,23 +328,6 @@ if ($id > 0 || $ref)
 		// If stock if stock increment is done on real sending
 		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 		{
-			$stock_commande_client=$stock_commande_fournisseur=0;
-
-			if (! empty($conf->commande->enabled))
-			{
-				$result=$product->load_stats_commande(0,'1,2');
-				if ($result < 0) dol_print_error($db,$product->error);
-				$stock_commande_client=$product->stats_commande['qty'];
-			}
-			if (! empty($conf->fournisseur->enabled))
-			{
-				$result=$product->load_stats_commande_fournisseur(0,'3');
-				if ($result < 0) dol_print_error($db,$product->error);
-				$stock_commande_fournisseur=$product->stats_commande_fournisseur['qty'];
-			}
-
-			$product->stock_theorique=$product->stock_reel-($stock_commande_client+$stock_sending_client)+$stock_commande_fournisseur;
-
 			// Stock theorique
 			print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
 			print "<td>".$product->stock_theorique;
@@ -360,7 +350,7 @@ if ($id > 0 || $ref)
 			if (! empty($conf->commande->enabled))
 			{
 				if ($found) print '<br>'; else $found=1;
-				print $langs->trans("CustomersOrdersRunning").': '.($stock_commande_client+$stock_sending_client);
+				print $langs->trans("CustomersOrdersRunning").': '.($product->stats_commande['qty']-$product->stats_sendings['qty']);
 				$result=$product->load_stats_commande(0,'0');
 				if ($result < 0) dol_print_error($db,$product->error);
 				print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
@@ -372,7 +362,7 @@ if ($id > 0 || $ref)
 			if (! empty($conf->fournisseur->enabled))
 			{
 				if ($found) print '<br>'; else $found=1;
-				print $langs->trans("SuppliersOrdersRunning").': '.$stock_commande_fournisseur;
+				print $langs->trans("SuppliersOrdersRunning").': '.($product->stats_commande_fournisseur['qty']-$product->stats_reception['qty']);
 				$result=$product->load_stats_commande_fournisseur(0,'0,1,2');
 				if ($result < 0) dol_print_error($db,$product->error);
 				print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
@@ -678,4 +668,3 @@ print "</table>";
 llxFooter();
 
 $db->close();
-?>

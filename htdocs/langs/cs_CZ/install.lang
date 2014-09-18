@@ -206,3 +206,6 @@ MigrationProjectTaskTime=Čas aktualizace v sekundách
 MigrationActioncommElement=Aktualizovat údaje na činnostech
 MigrationPaymentMode=Migrace dat platebního režimu
 MigrationCategorieAssociation=Migrace kategorií
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

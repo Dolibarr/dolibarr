@@ -99,4 +99,3 @@ print "***** Finished *****\n";
 $db->close();
 
 return $error;
-?>

@@ -109,7 +109,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 		if ($action == 'create' || $action == 'edit')
 		{
-			$this->tpl['select_civility'] = $formcompany->select_civility(GETPOST('civilite_id'));
+			$this->tpl['select_civility'] = $formcompany->select_civility(GETPOST('civility_id'));
 		}
 		else
 		{
@@ -141,4 +141,3 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 }
 
-?>

@@ -124,4 +124,3 @@ else
 $dbosc->close();
 
 llxFooter();
-?>

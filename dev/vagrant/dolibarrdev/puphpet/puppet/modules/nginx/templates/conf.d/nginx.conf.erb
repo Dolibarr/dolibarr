@@ -1,0 +1,55 @@
+user <%= scope.lookupvar('nginx::config::nx_daemon_user') %>;
+worker_processes <%= @worker_processes %>;
+worker_rlimit_nofile <%= @worker_rlimit_nofile %>;
+
+error_log  <%= @nginx_error_log %>;
+pid        <%= scope.lookupvar('nginx::params::nx_pid')%>;
+
+events {
+  worker_connections <%= @worker_connections -%>;
+<% if scope.lookupvar('nginx::params::nx_multi_accept') == 'on' %>multi_accept on;<% end -%>
+<% if scope.lookupvar('nginx::params::nx_events_use') %>use <%= scope.lookupvar('nginx::params::nx_events_use')%>;<% end -%>
+}
+
+http {
+  include       <%= scope.lookupvar('nginx::params::nx_conf_dir') %>/mime.types;
+  default_type  application/octet-stream;
+
+  access_log  <%= @http_access_log %>;
+
+  sendfile    <%= scope.lookupvar('nginx::params::nx_sendfile')%>;
+
+  server_tokens <%= @server_tokens %>;
+
+  types_hash_max_size <%= scope.lookupvar('nginx::params::nx_types_hash_max_size')%>;
+  types_hash_bucket_size <%= scope.lookupvar('nginx::params::nx_types_hash_bucket_size')%>;
+
+  server_names_hash_bucket_size <%= @names_hash_bucket_size %>;
+  server_names_hash_max_size <%= @names_hash_max_size %>;
+
+  keepalive_timeout  <%= scope.lookupvar('nginx::params::nx_keepalive_timeout')%>;
+  tcp_nodelay        <%= scope.lookupvar('nginx::params::nx_tcp_nodelay')%>;
+
+<% if @gzip == 'on' %>
+  gzip         on;
+  gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+<% end -%>
+
+<% if @proxy_cache_path -%>
+  proxy_cache_path    <%= @proxy_cache_path %> levels=<%= @proxy_cache_levels %> keys_zone=<%= @proxy_cache_keys_zone %> max_size=<%= @proxy_cache_max_size %> inactive=<%= @proxy_cache_inactive %>;
+<% end -%>
+
+<% if @http_cfg_append -%><% @http_cfg_append.sort_by{|k,v| k}.each do |key,value| -%>
+  <%= key %> <%= value %>;
+<% end -%>
+<% end -%>
+
+  include <%= scope.lookupvar('nginx::params::nx_conf_dir') %>/conf.d/*.conf;
+  include <%= scope.lookupvar('nginx::params::nx_conf_dir') %>/sites-enabled/*;
+
+}
+<% if scope.lookupvar('nginx::mail') %>
+mail {
+  include <%= scope.lookupvar('nginx::params::nx_conf_dir') %>/conf.mail.d/*.conf;
+}
+<% end -%>

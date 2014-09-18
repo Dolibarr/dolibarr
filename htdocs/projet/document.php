@@ -46,9 +46,9 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 $result=restrictedArea($user,'projet',$id,'');
 
 $object = new Project($db);
-$object->fetch($id,$ref);
-if ($object->id > 0)
+if ($id > 0 || ! empty($ref))
 {
+	$object->fetch($id,$ref);
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 }
@@ -85,8 +85,6 @@ if ($object->id > 0)
 {
 	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
-
     // To verify role of users
     //$userAccess = $object->restrictedProjectArea($user,'read');
     $userWrite  = $object->restrictedProjectArea($user,'write');
@@ -97,7 +95,7 @@ if ($object->id > 0)
 	dol_fiche_head($head, 'document', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
 
 	// Files list constructor
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -123,8 +121,8 @@ if ($object->id > 0)
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
 	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td>';
-	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+	if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td></tr>';
 
@@ -157,4 +155,3 @@ else
 llxFooter();
 
 $db->close();
-?>

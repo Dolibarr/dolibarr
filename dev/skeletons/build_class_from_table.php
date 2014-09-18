@@ -254,11 +254,11 @@ foreach($property as $key => $prop)
 		$varprop.="\t\t\$sql.= \" ";
 		if ($prop['istime'])
 		{
-			$varprop.='".(! isset($this->'.$prop['field'].') || dol_strlen($this->'.$prop['field'].')==0?\'NULL\':$this->db->idate(';
+			$varprop.='".(! isset($this->'.$prop['field'].') || dol_strlen($this->'.$prop['field'].')==0?\'NULL\':"\'".$this->db->idate(';
 			$varprop.="\$this->".$prop['field']."";
-			$varprop.='))."';
+			$varprop.=')."\'")."';
 			if ($i < count($property)) $varprop.=",";
-			$varprop.="\";";
+			$varprop.='";';
 		}
 		elseif ($prop['ischar'])
 		{
@@ -470,4 +470,3 @@ else $error++;
 
 print "You can now rename generated files by removing the 'out.' prefix in their name and store them into directory /yourmodule/class.\n";
 return $error;
-?>

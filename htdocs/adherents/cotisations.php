@@ -63,7 +63,7 @@ llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Modu
 
 if ($msg)	print $msg.'<br>';
 
-// Liste des cotisations
+// List of subscriptions
 $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe,";
 $sql.= " c.rowid as crowid, c.cotisation,";
 $sql.= " c.dateadh,";
@@ -75,7 +75,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql.= " WHERE d.rowid = c.fk_adherent";
 if (isset($date_select) && $date_select != '')
 {
-    $sql.= " AND dateadh LIKE '$date_select%'";
+    $sql.= " AND c.dateadh LIKE '".$date_select."%'";
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
@@ -231,4 +231,3 @@ else
 $db->close();
 
 llxFooter();
-?>

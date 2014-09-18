@@ -105,7 +105,6 @@ if ($action == 'add' || GETPOST("modify"))
         if ($result1 && $result2)
         {
             $db->commit();
-	  		//$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
         }
@@ -171,7 +170,6 @@ if ($_POST["delete"])
         if ($result1 && $result2)
         {
             $db->commit();
-	  		//$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
             header("Location: external_rss.php");
             exit;
         }
@@ -229,7 +227,7 @@ $sql ="SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
 $sql.=" WHERE file = 'box_external_rss.php'";
 $sql.=" ORDER BY note";
 
-dol_syslog("select rss boxes sql=".$sql,LOG_DEBUG);
+dol_syslog("select rss boxes", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -325,4 +323,3 @@ else
 $db->close();
 
 llxFooter();
-?>

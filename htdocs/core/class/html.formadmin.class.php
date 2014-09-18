@@ -180,7 +180,7 @@ class FormAdmin
 			$newprefix=$tab[0];
 			if ($newprefix=='1' && ($conf->global->MAIN_FEATURES_LEVEL < 1)) continue;
 			if ($newprefix=='2' && ($conf->global->MAIN_FEATURES_LEVEL < 2)) continue;
-			if (! empty($conf->browser->firefox) && $newprefix != $oldprefix)	// Add separators
+			if ($newprefix != $oldprefix)	// Add separators
 			{
 				// Affiche titre
 				print '<option value="-1" disabled="disabled">';
@@ -199,9 +199,9 @@ class FormAdmin
     /**
      *  Return combo list of available menu families
      *
-     *  @param	string	$selected        Menu pre-selected
-     *  @param  string	$htmlname        Name of html select
-     *  @param	string	$dirmenuarray    Directories to scan
+     *  @param	string		$selected        Menu pre-selected
+     *  @param	string		$htmlname        Name of html select
+     *  @param	string[]	$dirmenuarray    Directories to scan
      *  @return	void
      */
     function select_menu_families($selected, $htmlname, $dirmenuarray)
@@ -384,4 +384,3 @@ class FormAdmin
 		return $out;
 	}
 }
-?>

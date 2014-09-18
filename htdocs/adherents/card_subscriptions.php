@@ -52,7 +52,6 @@ $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 $adht = new AdherentType($db);
 $errmsg='';
-$errmsgs=array();
 
 $defaultdelay=1;
 $defaultdelayunit='y';
@@ -83,6 +82,12 @@ if ($rowid)
     $caneditfieldmember=$user->rights->adherent->creer;
 }
 
+// PDF
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+
+
 
 
 /*
@@ -102,7 +107,7 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 		{
 			$langs->load("errors");
 			$errmsg=$langs->trans($company->error);
-			$errmsgs=$company->errors;
+			setEventMessage($company->errors, 'errors');
 		}
 		else
 		{
@@ -123,7 +128,7 @@ if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights
         if ($_POST["userid"] != $user->id && $_POST["userid"] != $object->user_id)
         {
             $error++;
-            $mesg='<div class="error">'.$langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly").'</div>';
+            setEventMessage($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), 'errors');
         }
     }
 
@@ -132,7 +137,7 @@ if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights
         if ($_POST["userid"] != $object->user_id)  // If link differs from currently in database
         {
             $result=$object->setUserId($_POST["userid"]);
-            if ($result < 0) dol_print_error($object->db,$object->error);
+            if ($result < 0) dol_print_error('',$object->error);
             $_POST['action']='';
             $action='';
         }
@@ -159,14 +164,14 @@ if ($action == 'setsocid')
                     $thirdparty=new Societe($db);
                     $thirdparty->fetch(GETPOST('socid','int'));
                     $error++;
-                    $mesg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name).'</div>';
+	                setEventMessage($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name), 'errors');
                 }
             }
 
             if (! $error)
             {
                 $result=$object->setThirdPartyId(GETPOST('socid','int'));
-                if ($result < 0) dol_print_error($object->db,$object->error);
+                if ($result < 0) dol_print_error('',$object->error);
                 $_POST['action']='';
                 $action='';
             }
@@ -276,7 +281,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         {
             $error++;
             $errmsg=$object->error;
-            $errmsgs=$object->errors;
+	        setEventMessage($object->errors, 'errors');
         }
 
         if (! $error)
@@ -301,7 +306,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         $sql ="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid;
                         $sql.=" WHERE rowid=".$crowid;
 
-                        dol_syslog("card_subscriptions::cotisation sql=".$sql);
+                        dol_syslog("card_subscriptions::cotisation", LOG_DEBUG);
                         $resql = $db->query($sql);
                         if (! $resql)
                         {
@@ -337,7 +342,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 	{
                 		$langs->load("errors");
                 		$errmsg=$langs->trans("ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst");
-                		$error++;	
+                		$error++;
                 	}
                 }
                 if (! $error)
@@ -349,7 +354,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                    $error++;
 	                }
                 }
-                
+
                 if (! $error)
                 {
 	                // Create draft invoice
@@ -367,7 +372,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                }
 	                $invoice->socid=$object->fk_soc;
 	                $invoice->date=$datecotisation;
-	
+
 	                $result=$invoice->create($user);
 	                if ($result <= 0)
 	                {
@@ -375,7 +380,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                    $error++;
 	                }
                 }
-                
+
                 if (! $error)
                 {
 	                // Add line to draft invoice
@@ -392,11 +397,19 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                    $errmsg=$invoice->error;
 	                    $error++;
 	                }
-	
+                }
+
+                if (! $error)
+                {
 	                // Validate invoice
 	                $result=$invoice->validate($user);
+   	                if ($result <= 0)
+	                {
+	                    $errmsg=$invoice->error;
+	                    $error++;
+	                }
                 }
-                
+
                 // Add payment onto invoice
                 if ($option == 'bankviainvoice' && $accountid)
                 {
@@ -404,7 +417,6 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
                     require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
-                    // Creation de la ligne paiement
                     $amounts[$invoice->id] = price2num($cotisation);
                     $paiement = new Paiement($db);
                     $paiement->datepaye     = $paymentdate;
@@ -415,7 +427,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 
                     if (! $error)
                     {
-                        $paiement_id = $paiement->create($user);
+	                    // Create payment line for invoice
+                    	$paiement_id = $paiement->create($user);
                         if (! $paiement_id > 0)
                         {
                             $errmsg=$paiement->error;
@@ -425,26 +438,53 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 
                     if (! $error)
                     {
+                    	// Add transaction into bank account
                         $bank_line_id=$paiement->addPaymentToBank($user,'payment','(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
                         if (! ($bank_line_id > 0))
                         {
                             $errmsg=$paiement->error;
-                            $errmsgs=$paiement->errors;
+	                        setEventMessage($paiement->errors, 'errors');
                             $error++;
                         }
                     }
 
                     if (! $error)
                     {
-                        // Update fk_bank for subscriptions
+                        // Update fk_bank into subscription table
                         $sql = 'UPDATE '.MAIN_DB_PREFIX.'cotisation SET fk_bank='.$bank_line_id;
                         $sql.= ' WHERE rowid='.$crowid;
-                        dol_syslog('sql='.$sql);
-                        $result = $db->query($sql);
+
+	                    $result = $db->query($sql);
                         if (! $result)
                         {
                             $error++;
                         }
+                    }
+
+                    if (! $error)
+                    {
+                        // Set invoice as paid
+                    	$invoice->set_paid($user);
+                    }
+
+                    if (! $error)
+                    {
+						// Define output language
+						$outputlangs = $langs;
+						$newlang = '';
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+							$newlang = $_REQUEST['lang_id'];
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+							$newlang = $customer->default_lang;
+						if (! empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+						}
+                    	// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
+						//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+							facture_pdf_create($db, $invoice, $invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+
                     }
                 }
             }
@@ -648,7 +688,7 @@ if ($rowid)
     dol_fiche_end();
 
 
-    dol_htmloutput_errors($errmsg,$errmsgs);
+    dol_htmloutput_errors($errmsg);
 
 
     /*
@@ -681,7 +721,7 @@ if ($rowid)
         $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe,";
         $sql.= " c.rowid as crowid, c.cotisation,";
         $sql.= " c.datec,";
-        $sql.= " c.dateadh,";
+        $sql.= " c.dateadh as dateh,";
         $sql.= " c.datef,";
         $sql.= " c.fk_bank,";
         $sql.= " b.rowid as bid,";
@@ -724,7 +764,7 @@ if ($rowid)
                 $cotisationstatic->id=$objp->crowid;
                 print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
-                print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
+                print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
                 print '<td align="right">'.price($objp->cotisation).'</td>';
                 if (! empty($conf->banque->enabled))
@@ -832,7 +872,8 @@ if ($rowid)
 			$name = $object->getFullName($langs);
 			if (! empty($name))
 			{
-				if ($object->societe) $name.=' ('.$object->societe.')';
+				if ($object->morphy == 'mor' && ! empty($object->societe)) $name=$object->societe.' ('.$name.')';
+				else if ($object->societe) $name.=' ('.$object->societe.')';
 			}
 			else
 			{
@@ -1060,4 +1101,3 @@ else
 llxFooter();
 
 $db->close();
-?>

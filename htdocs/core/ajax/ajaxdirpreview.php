@@ -149,11 +149,11 @@ if ($type == 'directory')
     $formfile=new FormFile($db);
 
     $maxlengthname=40;
-    $excludefiles = array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$');
+    $excludefiles = array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview\.png)$','^temp$','^payments$','^CVS$','^thumbs$');
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined, we are in automatic ecm.
-    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project');
+    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user');
 
     // TODO change for multicompany sharing
     // Auto area for suppliers invoices
@@ -184,6 +184,10 @@ if ($type == 'directory')
     else if ($module == 'tax') $upload_dir = $conf->tax->dir_output;
     // Auto area for projects
     else if ($module == 'project') $upload_dir = $conf->projet->dir_output;
+    // Auto area for interventions
+    else if ($module == 'fichinter') $upload_dir = $conf->ficheinter->dir_output;
+    // Auto area for users
+    else if ($module == 'user') $upload_dir = $conf->user->dir_output;
 
     if (in_array($module, $automodules))
     {
@@ -203,15 +207,15 @@ if ($type == 'directory')
         if ($section === '0')
         {
             $filearray=array();
-            $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         }
-        else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','\.meta$','^temp$','^CVS$'),$sortfield, $sorting,1);
+        else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
 
         if ($section)
         {
             $param.='&section='.$section;
             $textifempty = $langs->trans('NoFileFound');
         }
+        else if ($section === '0') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
 
         $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
@@ -253,4 +257,3 @@ if ($section)
 
 // Close db if mode is not noajax
 if ((! isset($mode) || $mode != 'noajax') && is_object($db)) $db->close();
-?>

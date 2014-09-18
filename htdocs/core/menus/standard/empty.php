@@ -115,6 +115,7 @@ class MenuManager
 			$this->menu->add("/admin/modules.php", $langs->trans("Modules"),1);
 			$this->menu->add("/admin/menus.php", $langs->trans("Menus"),1);
 			$this->menu->add("/admin/ihm.php", $langs->trans("GUISetup"),1);
+			$this->menu->add("/admin/fiscalyear.php", $langs->trans("Fiscalyear"),1);
 			$this->menu->add("/admin/boxes.php", $langs->trans("Boxes"),1);
 			$this->menu->add("/admin/delais.php",$langs->trans("Alerts"),1);
 			$this->menu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"),1);
@@ -123,6 +124,7 @@ class MenuManager
 			$this->menu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
 			$this->menu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
 			$this->menu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionarySetup"),1);
+			if (! empty($conf->accounting->enabled)) $this->menu->add("/accountancy/admin/account.php", $langs->trans("Chartofaccounts"),1);
 			$this->menu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
 
 			// ***** END *****
@@ -300,7 +302,7 @@ function print_start_menu_entry_empty($idsel,$classname,$showmode)
  */
 function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $classname, $atarget)
 {
-	global $conf;
+	global $conf,$langs;
 
 	if ($showmode == 1)
 	{
@@ -347,4 +349,3 @@ function print_end_menu_array_empty()
 	print "\n";
 }
 
-?>

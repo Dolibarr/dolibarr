@@ -420,4 +420,3 @@ clearstatcache();
 dolibarr_install_syslog("--- install/etape5.php Dolibarr setup finished", LOG_INFO);
 
 pFooter(1,$setuplang);
-?>

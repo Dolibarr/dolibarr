@@ -39,7 +39,7 @@ ErrorBadParameters=Halvad parameetrid
 ErrorBadValueForParameter=Vale väärtus '%s' parameetri jaoks ebaõige '%s'
 ErrorBadImageFormat=Pildifaili vorming ei ole toetatud
 ErrorBadDateFormat=Väärtus '%s' on vales kuupäeva vormingus
-ErrorWrongDate=Date is not correct!
+ErrorWrongDate=Kuupäev pole korrektne!
 ErrorFailedToWriteInDir=Ei suutnud kirjutada kausta %s
 ErrorFoundBadEmailInFile=Failis on %s real ebaõige e-posti aadressi süntaks (näiteks on rida %s aadress=%s)
 ErrorUserCannotBeDelete=Kasutajat ei ole võimalik kustutada. Võib-olla on see mõne Dolibarri olemiga seotud
@@ -132,9 +132,11 @@ ErrorPaymentModeDefinedToWithoutSetup=Makseviis on seatud tüübile %s, kuid Arv
 ErrorPHPNeedModule=Viga: selle võimaluse kasutamiseks peab PHPs olema võimaldatud moodul <b>%s</b>.
 ErrorOpenIDSetupNotComplete=Dolibarri seadistusfail lubab OpenIDga autentimist, ent konstandis %s ei ole OpenID teenuse URL määratletud
 ErrorWarehouseMustDiffers=Lähteladu ja sihtladu peavad olema erinevad
-ErrorBadFormat=Bad format!
+ErrorBadFormat=Vigane vorming!
 ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
+ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
+
 # Warnings
 WarningMandatorySetupNotComplete=Kohustuslikud seadistusparameetrid on määratlemata
 WarningSafeModeOnCheckExecDir=Hoiatus: PHP direktiiv <b>safe_mode</b> on sisse lülitatud, seega peab käsk olema salvestatud PHP parameetris <b>safe_mode_exec_dir</b> deklareeritud kausta.
@@ -151,3 +153,4 @@ WarningCloseAlways=Hoiatus: sulgemine toimub isegi siis, kui lähte- ja sihtelem
 WarningUsingThisBoxSlowDown=Hoiatus: selle kasti kasutamine muudab kõik seda kasti kasutavad lehed märgatavalt aeglaseks.
 WarningClickToDialUserSetupNotComplete=Sinu kasutaja ClickToDial info seadistamine ei ole lõpetatud (vaata oma kasutaja kaardi ClickToDial sakki).
 WarningNotRelevant=Selle andmehulga juures ei ole see tegevus otstarbekas
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.

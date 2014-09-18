@@ -112,7 +112,6 @@ if ($action == 'add')
     $classname = ucfirst($object->origin);
     $objectsrc = new $classname($db);
     $objectsrc->fetch($object->origin_id);
-    //$object->fetch_lines();
 
     $object->socid					= $objectsrc->socid;
     $object->ref_customer			= $objectsrc->ref_client;
@@ -144,7 +143,7 @@ if ($action == 'add')
 				$j++;
 				$batch="batchl".$i."_".$j;
 				$qty = "qtyl".$i.'_'.$j;
-				
+
 			}
 			$batch_line[$i]['detail']=$sub_qty;
 			$batch_line[$i]['qty']=$subtotalqty;
@@ -163,7 +162,7 @@ if ($action == 'add')
         {
             $qty = "qtyl".$i;
 			if (! isset($batch_line[$i])) {
-				if (GETPOST($qty,'int') > 0)
+				if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 				{
 					$ent = "entl".$i;
 					$idl = "idl".$i;
@@ -221,7 +220,7 @@ if ($action == 'add')
 
 /*
  * Build a receiving receipt
-*/
+ */
 else if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
 {
     $result = $object->create_delivery($user);
@@ -242,25 +241,33 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
 
     $result = $object->valid($user);
 
-    // Define output language
-    $outputlangs = $langs;
-    $newlang='';
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-    if (! empty($newlang))
-    {
-        $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang($newlang);
-    }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-    {
-        $ret=$object->fetch($id);    // Reload to get new records
-        $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
-    }
     if ($result < 0)
     {
-        dol_print_error($db,$result);
-        exit;
+		$langs->load("errors");
+        setEventMessage($langs->trans($object->error),'errors');
+    }
+    else
+    {
+        // Define output language
+        $outputlangs = $langs;
+        $newlang='';
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+        if (! empty($newlang))
+        {
+            $outputlangs = new Translate("",$conf);
+            $outputlangs->setDefaultLang($newlang);
+        }
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+        {
+            $ret=$object->fetch($id);    // Reload to get new records
+            $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
+        }
+        if ($result < 0)
+        {
+            dol_print_error($db,$result);
+            exit;
+        }
     }
 }
 
@@ -273,8 +280,9 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expe
         exit;
     }
     else
-    {
-        $mesg = $object->error;
+	{
+		$langs->load("errors");
+        setEventMessage($langs->trans($object->error),'errors');
     }
 }
 
@@ -312,9 +320,15 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 
     if ($action == 'settrackingnumber')		$object->tracking_number = trim(GETPOST('trackingnumber','alpha'));
     if ($action == 'settrackingurl')		$object->tracking_url = trim(GETPOST('trackingurl','int'));
-    if ($action == 'settrueWeight')			$object->trueWeight = trim(GETPOST('trueWeight','int'));
+    if ($action == 'settrueWeight')	{
+    	$object->trueWeight = trim(GETPOST('trueWeight','int'));
+		$object->weight_units = GETPOST('weight_units','int');
+    }
     if ($action == 'settrueWidth')			$object->trueWidth = trim(GETPOST('trueWidth','int'));
-    if ($action == 'settrueHeight')			$object->trueHeight = trim(GETPOST('trueHeight','int'));
+    if ($action == 'settrueHeight'){
+    				$object->trueHeight = trim(GETPOST('trueHeight','int'));
+					$object->size_units = GETPOST('size_units','int');
+	}
     if ($action == 'settrueDepth')			$object->trueDepth = trim(GETPOST('trueDepth','int'));
     if ($action == 'setshipping_method_id')	$object->shipping_method_id = trim(GETPOST('shipping_method_id','int'));
 
@@ -493,7 +507,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('SHIPPING_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
-                            $error++; $this->errors=$interface->errors;
+                            $error++; $object->errors=$interface->errors;
                         }
                         // Fin appel triggers
 
@@ -691,7 +705,7 @@ if ($action == 'create')
             print '<td colspan="3">';
             $expe->fetch_delivery_methods();
             print $form->selectarray("shipping_method_id",$expe->meths,GETPOST('shipping_method_id','int'),1,0,0,"",1);
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print "</td></tr>\n";
 
             // Tracking number
@@ -710,7 +724,6 @@ if ($action == 'create')
              * Lignes de commandes
              */
 
-            //$lines = $object->fetch_lines(1);
             $numAsked = count($object->lines);
 
             print '<script type="text/javascript" language="javascript">
@@ -856,7 +869,7 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-				if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_array($product->stock_warehouse[GETPOST('entrepot_id','int')]))) 
+                if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_object($product->stock_warehouse[GETPOST('entrepot_id','int')])))
 				{
 	                // Quantity to send
 	                print '<td align="center">';
@@ -867,7 +880,7 @@ if ($action == 'create')
 	                }
 	                else print $langs->trans("NA");
 	                print '</td>';
-	
+
 	                // Stock
 	                if (! empty($conf->stock->enabled))
 	                {
@@ -894,9 +907,9 @@ if ($action == 'create')
 	                    }
 	                    print '</td>';
 	                }
-	
+
 	                print "</tr>\n";
-	
+
 	                // Show subproducts of product
 					if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
 					{
@@ -929,7 +942,7 @@ if ($action == 'create')
 						print '<tr><td colspan="3" ></td><td align="center">';
 						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.min($defaultqty,$substock).'">';
 						print '</td>';
-						
+
 						print '<td align="left">';
 						print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
 						print $langs->trans("DetailBatchFormat", dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->batch, $dbatch->qty);
@@ -1141,15 +1154,32 @@ else if ($id || $ref)
 		}
 		else
 		{
-			print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhourtext') : '&nbsp;';
+			print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhour') : '&nbsp;';
 		}
 		print '</td>';
 		print '</tr>';
 
 		// Weight
 		print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-		print $form->editfieldval("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer);
-		print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
+
+		if($action=='edittrueWeight') {
+
+			print '<form name="settrueweight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input name="action" value="settrueWeight" type="hidden">';
+			print '<input name="id" value="'.$object->id.'" type="hidden">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text">';
+			print $formproduct->select_measuring_units("weight_units","weight",$object->weight_units);
+			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+			print '</form>';
+
+		}
+		else {
+			print $object->trueWeight;
+			print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
+		}
+
 		if ($totalWeight > 0)
 		{
 			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
@@ -1166,8 +1196,26 @@ else if ($id || $ref)
 
 		// Height
 		print '<tr><td>'.$form->editfieldkey("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-		print $form->editfieldval("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer);
-		print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units,"size"):'';
+		if($action=='edittrueHeight') {
+
+			print '<form name="settrueHeight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input name="action" value="settrueHeight" type="hidden">';
+			print '<input name="id" value="'.$object->id.'" type="hidden">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text">';
+			print $formproduct->select_measuring_units("size_units","size",$object->size_units);
+			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+			print '</form>';
+
+		}
+		else {
+			print $object->trueHeight;
+			print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units,"size"):'';
+
+		}
+
+
 		print '</td></tr>';
 
 		// Depth
@@ -1220,7 +1268,7 @@ else if ($id || $ref)
 			print '<input type="hidden" name="action" value="setshipping_method_id">';
 			$object->fetch_delivery_methods();
 			print $form->selectarray("shipping_method_id",$object->meths,$object->shipping_method_id,1,0,0,"",1);
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
@@ -1389,7 +1437,7 @@ else if ($id || $ref)
 			}
 
 			// Batch number managment
-			if (! empty($conf->productbatch->enabled)) {  
+			if (! empty($conf->productbatch->enabled)) {
 				if (isset($lines[$i]->detail_batch) ) {
 					print '<td align="center">';
 					$detail = '';
@@ -1532,20 +1580,24 @@ else if ($id || $ref)
 		$fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($ref,'/'));
 		$file=$fileparams['fullname'];
 
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+			$newlang = $_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+			$newlang = $object->client->default_lang;
+
+		if (!empty($newlang))
+		{
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang($newlang);
+			$outputlangs->load('sendings');
+		}
+
 		// Build document if it not exists
 		if (! $file || ! is_readable($file))
 		{
-			// Define output language
-			$outputlangs = $langs;
-			$newlang='';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-			if (! empty($newlang))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-
 			$result=expedition_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
@@ -1562,6 +1614,7 @@ else if ($id || $ref)
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 		$formmail->fromtype = 'user';
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
@@ -1572,7 +1625,7 @@ else if ($id || $ref)
 		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-		$formmail->withtopic=$langs->trans('SendShippingRef','__SHIPPINGREF__');
+		$formmail->withtopic=$outputlangs->trans('SendShippingRef','__SHIPPINGREF__');
 		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
@@ -1646,4 +1699,3 @@ else if ($id || $ref)
 llxFooter();
 
 $db->close();
-?>

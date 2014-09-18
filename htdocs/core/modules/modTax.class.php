@@ -173,4 +173,3 @@ class modTax extends DolibarrModules
     }
 
 }
-?>

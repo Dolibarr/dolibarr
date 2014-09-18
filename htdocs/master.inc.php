@@ -9,6 +9,7 @@
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,18 +161,21 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = GETPOST("entity",'int');
 	}
-	else if (defined('DOLENTITY') && is_int(DOLENTITY))				// For public page with MultiCompany module
+	else if (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
 	{
 		$conf->entity = DOLENTITY;
 	}
-	else if (!empty($_COOKIE['DOLENTITY']))							// For other application with MultiCompany module
+	else if (!empty($_COOKIE['DOLENTITY']))						// For other application with MultiCompany module (TODO: We should remove this. entity to use should never be stored into client side)
 	{
 		$conf->entity = $_COOKIE['DOLENTITY'];
 	}
-	else if (! empty($conf->multicompany->force_entity) && is_int($conf->multicompany->force_entity)) // To force entity in login page
+	else if (! empty($conf->multicompany->force_entity) && is_numeric($conf->multicompany->force_entity)) // To force entity in login page
 	{
 		$conf->entity = $conf->multicompany->force_entity;
 	}
+
+	// Sanitize entity
+	if (! is_numeric($conf->entity)) $conf->entity=1;
 
 	//print "Will work with data into entity instance number '".$conf->entity."'";
 
@@ -241,10 +245,7 @@ $hookmanager=new HookManager($db);
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 
-// We force feature to help debug
-//$conf->global->MAIN_JS_ON_PAYMENT=0;
 
 // We force FPDF
 if (! empty($dolibarr_pdf_force_fpdf)) $conf->global->MAIN_USE_FPDF=$dolibarr_pdf_force_fpdf;
 
-?>

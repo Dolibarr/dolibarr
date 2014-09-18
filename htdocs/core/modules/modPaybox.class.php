@@ -207,4 +207,3 @@ class modPayBox extends DolibarrModules
 
 }
 
-?>

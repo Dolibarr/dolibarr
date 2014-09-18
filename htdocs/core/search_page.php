@@ -65,6 +65,7 @@ $nbofsearch=0;
 $hookmanager->initHooks(array('searchform'));
 
 // Define $searchform
+$searchform = '';
 // TODO Mutualize code here with function left_menu into main.inc.php page
 if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
 {
@@ -126,4 +127,3 @@ print '</div>';
 print '</body></html>'."\n";
 
 $db->close();
-?>

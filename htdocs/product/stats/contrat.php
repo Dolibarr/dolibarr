@@ -70,7 +70,7 @@ if ($id > 0 || ! empty($ref))
 {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
-	
+
 	$parameters=array('id'=>$id);
 	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
 	$error=$hookmanager->error; $errors=$hookmanager->errors;
@@ -83,7 +83,7 @@ if ($id > 0 || ! empty($ref))
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==1?'service':'product');
 		dol_fiche_head($head, 'referers', $titre, 0, $picto);
-		
+
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
 
 		print '<table class="border" width="100%">';
@@ -135,7 +135,7 @@ if ($id > 0 || ! empty($ref))
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid) $sql.= " AND s.rowid = ".$socid;
 		$sql.= " GROUP BY c.rowid, c.date_contrat, c.statut, s.nom, s.rowid, s.code_client";
-		$sql.= " ORDER BY $sortfield $sortorder";
+		$sql.= $db->order($sortfield, $sortorder);
 		$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
 		$result = $db->query($sql);
@@ -205,4 +205,3 @@ else
 
 llxFooter();
 $db->close();
-?>

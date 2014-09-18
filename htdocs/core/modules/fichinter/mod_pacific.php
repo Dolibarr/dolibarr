@@ -65,14 +65,14 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 */
 	function canBeActivated()
 	{
-		global $langs,$conf;
+		global $langs,$conf,$db;
 
 		$langs->load("bills");
 
 		$fayymm=''; $max='';
 
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql.= " WHERE ref like '".$this->prefix."____-%'";
 		$sql.= " WHERE entity = ".$conf->entity;
@@ -108,7 +108,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 		// D'abord on recupere la valeur max
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -124,7 +124,9 @@ class mod_pacific extends ModeleNumRefFicheinter
 		//$date=time();
 		$date=$object->datec;
 		$yymm = strftime("%y%m",$date);
-		$num = sprintf("%04s",$max+1);
+
+    	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+    	else $num = sprintf("%04s",$max+1);
 
 		return $this->prefix.$yymm."-".$num;
 	}
@@ -143,4 +145,3 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 }
 
-?>

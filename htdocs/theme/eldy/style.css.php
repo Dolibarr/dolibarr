@@ -125,12 +125,12 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
     //$conf->global->THEME_ELDY_BACKBODY='#ffffff url('.$img_head.') 0 0 no-repeat;';
     $conf->global->THEME_ELDY_BACKBODY='#fcfcfc;';
-    $conf->global->THEME_ELDY_LINEIMPAIR1='242,242,242';
-    $conf->global->THEME_ELDY_LINEIMPAIR2='248,248,248';
-    $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
-    $conf->global->THEME_ELDY_LINEPAIR1='255,255,255';
-    $conf->global->THEME_ELDY_LINEPAIR2='255,255,255';
+    $conf->global->THEME_ELDY_LINEPAIR1='242,242,242';
+    $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
     $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
+    $conf->global->THEME_ELDY_LINEIMPAIR1='255,255,255';
+    $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
+    $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='50,50,130';
 	if ($dol_use_jmobile)
 	{
@@ -179,7 +179,7 @@ if ($tmpval <= 360) { $colortextbackvmenu='FFF'; }
 else { $colortextbackvmenu='444'; }
 $tmppart=explode(',',$colorbacktitle1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
-if ($tmpval <= 360) { $colortexttitle='FFF'; $colorshadowtitle='000'; }
+if ($tmpval <= 360) { $colortexttitle='FFF'; $colorshadowtitle='888'; }
 else { $colortexttitle='444'; $colorshadowtitle='FFF'; }
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
@@ -207,6 +207,8 @@ print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
 print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
 print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
 print 'dol_use_jmobile='.$dol_use_jmobile."\n";
+print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
+print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
 print '*/'."\n";
 
 if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
@@ -241,6 +243,10 @@ a:hover { text-decoration: underline; color: #000000;}
 
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
+}
+textarea.cke_source:focus
+{
+	box-shadow: none;
 }
 
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
@@ -393,7 +399,9 @@ th .button {
 .nounderline {
     text-decoration: none;
 }
-
+.cursorpointer {
+	cursor: pointer;
+}
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -458,25 +466,25 @@ div.fichecenter {
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
 div.fichethirdleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 35%;\n"; } ?>
-	<?php if (! empty($conf->dol_optimize_smallscreen)) { print "padding-bottom: 6px;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 35%;\n"; } ?>
+	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$right.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 65%;\n"; } ?>
-	<?php if (! empty($conf->dol_optimize_smallscreen)) { print "padding-bottom: 6px\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 65%;\n"; } ?>
+	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
 div.fichehalfleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$right.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-".$left.": 16px;\n"; }
+	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 .containercenter {
@@ -490,18 +498,9 @@ margin : 0px auto;
 /* ============================================================================== */
 
 <?php
-if (! empty($conf->dol_optimize_smallscreen))
-{
-	$minwidthtmenu=0;
-	$heightmenu=19;
-	$heightmenu2=19;
-}
-else
-{
-	$minwidthtmenu=66;
-	$heightmenu=52;
-	$heightmenu2=40;
-}
+$minwidthtmenu=66;
+$heightmenu=52;
+$heightmenu2=40;
 ?>
 
 div#tmenu_tooltip {
@@ -579,7 +578,6 @@ ul.tmenu {	/* t r b l */
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-    /* height: <?php print $heightmenu; ?>px; */
 	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
 }
 ul.tmenu li {
@@ -601,8 +599,10 @@ li.tmenu, li.tmenusel {
 	<?php print $minwidthtmenu?'min-width: '.$minwidthtmenu.'px;':''; ?>
 	text-align: center;
 	vertical-align: bottom;
+	<?php if (empty($conf->global->MAIN_MENU_INVERT)) { ?>
 	float: <?php print $left; ?>;
     height: <?php print $heightmenu; ?>px;
+    <?php } ?>
 	position:relative;
 	display: block;
 	padding: 0px 0px 2px 0px;
@@ -621,11 +621,13 @@ li.tmenusel, li.tmenu:hover {
 .tmenuend .tmenuleft { width: 0px; }
 div.tmenuleft
 {
-	width: 5px;
 	float: <?php print $left; ?>;
-    height: <?php print $heightmenu+4; ?>px;
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 0 no-repeat;
 	margin-top: 0px;
+	<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
+	width: 5px;
+	height: <?php print $heightmenu+4; ?>px;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 0 no-repeat;
+	<?php } ?>
 }
 div.tmenucenter
 {
@@ -638,7 +640,6 @@ div.tmenucenter
 .mainmenuaspan
 {
 	padding-right: 4px;
-	/*text-shadow: 1px 1px 1px #DDD;*/
 }
 
 div.mainmenu {
@@ -650,7 +651,8 @@ div.mainmenu {
 	min-width: 40px;
 }
 
-<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
+/* Do not load menu img if hidden to save bandwidth */
+<?php if (empty($dol_hide_topmenu)) { ?>
 
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1) ?>);
@@ -680,7 +682,7 @@ div.mainmenu.click2dial {
 }
 
 div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1) ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1) ?>);
 }
 
 div.mainmenu.commercial {
@@ -783,7 +785,7 @@ foreach($mainmenuusedarray as $val)
 		$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic.".png",1);
 		$found=1;
 		if ($generic < 4) $generic++;
-		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
+		print "/* A mainmenu entry but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 	}
 	if ($found)
 	{
@@ -796,7 +798,7 @@ foreach($mainmenuusedarray as $val)
 ?>
 
 <?php
-}	// End test if not phone
+}	// End test if $dol_hide_topmenu
 ?>
 
 .tmenuimage {
@@ -853,7 +855,7 @@ form#login {
 }
 div#login_left, div#login_right {
 	display: inline-block;
-	min-width: 250px;
+	min-width: 245px;
 	padding-top: 10px;
 	text-align: center;
 	vertical-align: middle;
@@ -861,11 +863,15 @@ div#login_left, div#login_right {
 table.login_table tr td table.none tr td {
 	padding: 2px;
 }
+#securitycode {
+	min-width: 60px;
+}
 #img_securitycode {
 	border: 1px solid #DDDDDD;
 }
 #img_logo {
 	max-width: 200px;
+	max-height: 100px;
 }
 
 div.login_block {
@@ -1649,11 +1655,10 @@ table.noborder, table.formdoc, div.noborder {
 	border-bottom-style: solid;
 
 	margin: 0px 0px 2px 0px;
-	/*padding: 1px 2px 1px 2px;*/
 
-	-moz-box-shadow: 3px 3px 4px #DDD;
-	-webkit-box-shadow: 3px 3px 4px #DDD;
-	box-shadow: 3px 3px 4px #DDD;
+	-moz-box-shadow: 2px 2px 4px #DDD;
+	-webkit-box-shadow: 2px 2px 4px #DDD;
+	box-shadow: 2px 2px 4px #DDD;
 
 	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
@@ -1724,6 +1729,86 @@ table.liste td {
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 
+
+/* Prepare to remove class pair - impair
+.noborder > tbody > tr:nth-child(even) td {
+	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
+	margin-bottom: 1px;
+	color: #202020;
+	min-height: 18px;
+}
+
+.noborder > tbody > tr:nth-child(odd) td {
+	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
+	margin-bottom: 1px;
+	color: #202020;
+}
+*/
+
+.impair:hover {
+<?php if ($colorbacklineimpairhover) { if ($usecss3) { ?>
+	background: rgb(<?php echo $colorbacklineimpairhover; ?>);
+<?php } else { ?>
+	background: #fafafa;
+<?php } } ?>
+	border: 0px;
+}
+
+.impair, .nohover .impair:hover, tr.impair td.nohover {
+<?php if ($usecss3) { ?>
+	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%) !important;
+	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%) !important;
+	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%) !important;
+	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%) !important;
+	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%) !important;
+<?php } else { ?>
+	background: #eaeaea !important;
+<?php } ?>
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
+	margin-bottom: 1px;
+	color: #202020;
+	min-height: 18px; /* seems to not be used */
+}
+
+td.nohover, .pair:hover {
+<?php if ($colorbacklinepairhover) { if ($usecss3) { ?>
+	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
+<?php } else { ?>
+	background: #fafafa !important;
+<?php } }?>
+	border: 0px;
+}
+
+.pair, .nohover .pair:hover, tr.pair td.nohover {
+<?php if ($usecss3) { ?>
+	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+<?php } else { ?>
+	background: #ffffff !important;
+<?php } ?>
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
+	margin-bottom: 1px;
+	color: #202020;
+}
+
+
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
 	height: 26px !important;
@@ -1776,67 +1861,20 @@ input.liste_titre {
     border: 0px;
 }
 
-tr.liste_total, form.liste_total {
+.noborder tr.liste_total, .noborder tr.liste_total td, tr.liste_total, form.liste_total {
 	background: #F0F0F0;
 }
-tr.liste_total td, form.liste_total div {
+.noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
     border-top: 1px solid #DDDDDD;
     color: #332266;
     font-weight: normal;
     white-space: nowrap;
 }
 
-.impair:hover {
-<?php if ($colorbacklineimpairhover) { if ($usecss3) { ?>
-	background: rgb(<?php echo $colorbacklineimpairhover; ?>);
-<?php } else { ?>
-	background: #fafafa;
-<?php } } ?>
-	border: 0px;
-}
 
-.impair, .nohover .impair:hover, tr.impair td.nohover {
-<?php if ($usecss3) { ?>
-	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-<?php } else { ?>
-	background: #eaeaea;
-<?php } ?>
-	font-family: <?php print $fontlist ?>;
-	border: 0px;
-	margin-bottom: 1px;
-	color: #202020;
-	min-height: 18px; /* seems to not be used */
+.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
+	background: none;
 }
-
-.pair:hover {
-<?php if ($colorbacklinepairhover) { if ($usecss3) { ?>
-	background: rgb(<?php echo $colorbacklinepairhover; ?>);
-<?php } else { ?>
-	background: #fafafa;
-<?php } }?>
-	border: 0px;
-}
-
-.pair, .nohover .pair:hover, tr.pair td.nohover {
-<?php if ($usecss3) { ?>
-	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-<?php } else { ?>
-	background: #ffffff;
-<?php } ?>
-	font-family: <?php print $fontlist ?>;
-	border: 0px;
-	margin-bottom: 1px;
-	color: #202020;
-}
-
 
 /* Disable shadows */
 .noshadow {
@@ -2069,6 +2107,44 @@ div.titre {
 #tablesubscribe { width: 100%; }
 
 
+/*
+ * Effect Postit
+ */
+.effectpostit
+{
+  position: relative;
+}
+.effectpostit:before, .effectpostit:after
+{
+  z-index: -1;
+  position: absolute;
+  content: "";
+  bottom: 15px;
+  left: 10px;
+  width: 50%;
+  top: 80%;
+  max-width:300px;
+  background: #777;
+  -webkit-box-shadow: 0 15px 10px #777;
+  -moz-box-shadow: 0 15px 10px #777;
+  box-shadow: 0 15px 10px #777;
+  -webkit-transform: rotate(-3deg);
+  -moz-transform: rotate(-3deg);
+  -o-transform: rotate(-3deg);
+  -ms-transform: rotate(-3deg);
+  transform: rotate(-3deg);
+}
+.effectpostit:after
+{
+  -webkit-transform: rotate(3deg);
+  -moz-transform: rotate(3deg);
+  -o-transform: rotate(3deg);
+  -ms-transform: rotate(3deg);
+  transform: rotate(3deg);
+  right: 10px;
+  left: auto;
+}
+
 
 
 /* ============================================================================== */
@@ -2238,19 +2314,29 @@ td.hidden {
 
 table.cal_month    { border-spacing: 0px; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
+.cal_current_month_peruserleft { border-top: 0; border-left: solid 3px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
+.cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
 .cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
+.cal_other_month_peruserleft { border-top: 0; border-left: solid 3px #6C7C7B !important; border-right: 0; }
 .cal_current_month_right { border-right: solid 1px #E0E0E0; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
 .cal_other_month   { opacity: 0.6; background: #EAEAEA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { opacity: 0.6; background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 3px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser { background: #FFFFFF; border-right: solid 1px #6C7C7B; border-top: solid 1px #A0A0A0; border-bottom: solid 1px #A0A0A0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_peruserleft { background: #FFFFFF; border-left: solid 3px #6C7C7B; border-top: solid 1px #A0A0A0; border-right: solid 1px #6C7C7B; border-bottom: solid 1px #A0A0A0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
+.cal_peruser       { padding: 0px; }
+.peruser_busy      { background: #CC8888; }
+.peruser_notbusy   { background: #EEDDDD; }
 table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 6px; border-radius: 6px;
 						-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
 						moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
 						box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
 						background: -webkit-gradient(linear, left top, left bottom, from(#006aac), to(#00438d));
+						min-height: 20px;
 						}
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 ul.cal_event       { padding-right: 2px; padding-top: 1px; border: none; list-style-type: none; margin: 0 auto; padding-left: 0px; padding-start: 0px; -khtml-padding-start: 0px; -o-padding-start: 0px; -moz-padding-start: 0px; -webkit-padding-start: 0px; }
@@ -2259,11 +2345,13 @@ li.cal_event       { border: none; list-style-type: none; }
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
-
+.cal_event_busy      { }
 
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
+
+.ui-widget-content { border: solid 1px rgba(0,0,0,.3); background: #fff !important; }
 
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1) ?>) right center no-repeat; }
 .ui-autocomplete {
@@ -2478,13 +2566,17 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 {
     line-height: 1em !important;
 }
-.ui-autocomplete-input { margin: 0; }
+.ui-autocomplete-input { margin: 0; padding: 2px; }
 
 
 /* ============================================================================== */
 /*  CKEditor                                                                      */
 /* ============================================================================== */
 
+.cke_editable
+{
+	margin: 5px !important;
+}
 .cke_editor table, .cke_editor tr, .cke_editor td
 {
     border: 0px solid #FF0000 !important;
@@ -2522,6 +2614,41 @@ a.cke_dialog_ui_button
 .template-upload {
     height: 72px !important;
 }
+
+
+/* ============================================================================== */
+/*  Holiday                                                                       */
+/* ============================================================================== */
+
+#types .btn {
+    cursor: pointer;
+}
+
+#types .btn-primary {
+    font-weight: bold;
+}
+
+#types form {
+    padding: 20px;
+}
+
+#types label {
+    display:inline-block;
+    width:100px;
+    margin-right: 20px;
+    padding: 4px;
+    text-align: right;
+    vertical-align: top;
+}
+
+#types input.text, #types textarea {
+    width: 400px;
+}
+
+#types textarea {
+    height: 100px;
+}
+
 
 
 /* ============================================================================== */
@@ -2688,11 +2815,24 @@ div.dolEventError h1, div.dolEventError h2 {
 .sorting_desc { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc.png',1); ?>') no-repeat center right; }
 .sorting_asc_disabled  { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_asc_disabled',1); ?>') no-repeat center right; }
 .sorting_desc_disabled { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc_disabled',1); ?>') no-repeat center right; }
-
+.paginate_disabled_previous:hover, .paginate_enabled_previous:hover, .paginate_disabled_next:hover, .paginate_enabled_next:hover
+{
+	font-weight: normal;
+}
+.paginate_enabled_previous:hover, .paginate_enabled_next:hover
+{
+	text-decoration: underline !important;
+}
 
 /* For jquery plugin combobox */
 /* Disable this. It breaks wrapping of boxes
 .ui-corner-all { white-space: nowrap; } */
+
+.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled, .paginate_button_disabled {
+	opacity: .35;
+	filter: Alpha(Opacity=35);
+	background-image: none;
+}
 
 
 /* ============================================================================== */
@@ -2871,4 +3011,3 @@ border-top-right-radius: 6px;
 
 <?php
 if (is_object($db)) $db->close();
-?>

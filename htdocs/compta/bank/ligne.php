@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
@@ -99,7 +99,7 @@ if ($user->rights->banque->modifier && $action == "update")
 
 	if ($ac->courant == 2 && $_POST['value'] != 'LIQ')
 	{
-		$mesg = '<div class="error">'.$langs->trans("ErrorCashAccountAcceptsOnlyCashMoney").'</div>';
+		setEventMessage($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), 'errors');
 		$error++;
 	}
 
@@ -141,7 +141,7 @@ if ($user->rights->banque->modifier && $action == "update")
 		$result = $db->query($sql);
 		if ($result)
 		{
-			$mesg=$langs->trans("RecordSaved");
+			setEventMessage($langs->trans("RecordSaved"));
 			$db->commit();
 		}
 		else
@@ -161,7 +161,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
     // Check parameters
     if ($rappro && empty($num_rel))
     {
-        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountStatement"));
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountStatement")), 'errors');
         $error++;
     }
 
@@ -175,11 +175,11 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
         else $sql.=", rappro = ".$rappro;
         $sql.= " WHERE rowid = ".$rowid;
 
-        dol_syslog("ligne.php sql=".$sql, LOG_DEBUG);
+        dol_syslog("ligne.php", LOG_DEBUG);
         $result = $db->query($sql);
         if ($result)
         {
-            $mesg=$langs->trans("RecordSaved");
+	        setEventMessage($langs->trans("RecordSaved"));
             $db->commit();
         }
         else
@@ -235,8 +235,6 @@ $tabs = array(
 
 dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account');
 
-dol_htmloutput_mesg($mesg);
-
 $sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,";
 $sql.= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account, b.fk_bordereau as receiptid,";
 $sql.= " b.emetteur,b.banque";
@@ -267,7 +265,7 @@ if ($result)
         if ($action == 'delete_categ')
         {
             print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
-            
+
         }
 
         print '<form name="update" method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'">';
@@ -341,6 +339,12 @@ if ($result)
                     print $langs->trans("VATPayment");
                     print '</a>';
                 }
+                else if ($links[$key]['type']=='payment_salary') {
+                    print '<a href="'.DOL_URL_ROOT.'/compta/salaries/fiche.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowPaymentSalary'),'payment').' ';
+                    print $langs->trans("SalaryPayment");
+                    print '</a>';
+                }
                 else if ($links[$key]['type']=='member') {
                     print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowMember'),'user').' ';
@@ -351,6 +355,12 @@ if ($result)
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowTransaction'),'payment').' ';
                     print $langs->trans("TransactionOnTheOtherAccount");
+                    print '</a>';
+                }
+                else if ($links[$key]['type']=='user') {
+                    print '<a href="'.DOL_URL_ROOT.'/user/fiche?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowUser'),'user').' ';
+                    print $langs->trans("User");
                     print '</a>';
                 }
                 else {
@@ -628,4 +638,3 @@ print "</table>";
 llxFooter();
 
 $db->close();
-?>

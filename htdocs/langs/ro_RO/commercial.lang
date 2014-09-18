@@ -71,6 +71,7 @@ ActionAC_FAX=Trimitere fax
 ActionAC_PROP=Trimitere  propunere pe mail
 ActionAC_EMAIL=Trimitere email
 ActionAC_RDV=Întâlniri
+ActionAC_INT=Intervention on site
 ActionAC_FAC=Trimitere factura client pe mail
 ActionAC_REL=Retrimitere factura client  (memento)
 ActionAC_CLO=Închide

@@ -8,7 +8,6 @@ NotActiveModCP=Trebuie să activaţi modulul de concedii pentru a vedea această
 NotConfigModCP=Trebuie să configuraţi modulul de concedii pentru a vedea această pagină.Pentru aceasta , <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> clic aici </ a>.
 NoCPforUser=Nu aveţi o cerere de concediu.
 AddCP=Aplică pentru concediu
-CPErrorSQL=O eroare SQL întâlnită
 Employe=Angajat
 DateDebCP=Dată început
 DateFinCP=Dată sfărşit
@@ -34,7 +33,6 @@ ReturnCP=Înapoi la pagina precedentă
 ErrorUserViewCP=Dvs nu aveti dreptul de a citi aceata cerere de concediu.
 InfosCP=Informaţii ale cererii de concediu
 InfosWorkflowCP=Flux de lucru Informatii
-DateCreateCP=Dată creare
 RequestByCP=Solicitat de
 TitreRequestCP=Foaia concediilor
 NbUseDaysCP=Numărul de zile de concediu consumate
@@ -130,7 +128,6 @@ ErrorMailNotSend=O eroare a intervenit la trimiterea mailului :
 NoCPforMonth=Niciun concediu această lună.
 nbJours=Număr zile
 TitleAdminCP=Configurarea Concediilor
-
 #Messages
 Hello=Salut
 HolidaysToValidate=Concedii validate
@@ -143,10 +140,10 @@ HolidaysRefused=Concedii respinse
 HolidaysRefusedBody=Cererea dvs pentru concediu  pentru %s la %s a fost respinsă pentru următoul motiv:
 HolidaysCanceled=Concedii anulate
 HolidaysCanceledBody=Cererea dvs pentru concediu  pentru %s la %s a fost anulată.
-
-Permission20001=Citeşte/crează/modifică concediile lor.
-Permission20002=Citeşte/modifică toate cererile de concediu
-Permission20003=Şterge cererile lor de concediu
-Permission20004=Definire concedii utilizatori
+Permission20000=Read you own holidays
+Permission20001=Create/modify your holidays
+Permission20002=Create/modify holidays for everybody
+Permission20003=Delete holidays requests
+Permission20004=Setup users holidays
 Permission20005=Revezi logurile ale concediilor modificate
-Permission20006=Acces raport concedii lunare
+Permission20006=Read holidays monthly report

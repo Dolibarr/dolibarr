@@ -124,7 +124,7 @@ if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_typ
 $sql.= $db->order("datem","DESC");
 $sql.= $db->plimit($max,0);
 
-dol_syslog("Index:list stock movements sql=".$sql, LOG_DEBUG);
+dol_syslog("Index:list stock movements", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -169,4 +169,3 @@ print '</div></div></div>';
 llxFooter();
 
 $db->close();
-?>

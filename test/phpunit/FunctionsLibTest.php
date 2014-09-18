@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 
@@ -168,18 +168,36 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='xxx <b>yyy</b> zzz';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
-        $input='xxx<br>';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
         $input='text with <div>some div</div>';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
         $input='text with HTML &nbsp; entities';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
+        $input='xxx<br>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br >';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br style="eee">';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br style="eee" >';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='<h2>abc</h2>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
 
         // False
         $input='xxx < br>';
+        $after=dol_textishtml($input);
+        $this->assertFalse($after);
+        $input='xxx <email@email.com>';	// <em> is html, <em... is not
+        $after=dol_textishtml($input);
+        $this->assertFalse($after);
+        $input='xxx <brstyle="ee">';
         $after=dol_textishtml($input);
         $this->assertFalse($after);
     }
@@ -222,6 +240,53 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
         return true;
     }
+
+    /**
+     * testDolConcat
+     *
+     * @return boolean
+     */
+    public function testDolConcat()
+    {
+        $text1="A string 1"; $text2="A string 2";	// text 1 and 2 are text, concat need only \n
+        $after=dol_concatdesc($text1, $text2);
+        $this->assertEquals("A string 1\nA string 2",$after);
+
+        $text1="A<br>string 1"; $text2="A string 2";	// text 1 is html, concat need <br>\n
+        $after=dol_concatdesc($text1, $text2);
+        $this->assertEquals("A<br>string 1<br>\nA string 2",$after);
+
+        $text1="A string 1"; $text2="A <b>string</b> 2";	// text 2 is html, concat need <br>\n
+        $after=dol_concatdesc($text1, $text2);
+        $this->assertEquals("A string 1<br>\nA <b>string</b> 2",$after);
+
+        return true;
+    }
+
+
+    /**
+     * testDolStringNohtmltag
+     *
+     * @return boolean
+     */
+    public function testDolStringNohtmltag()
+    {
+        $text="A\nstring\n";
+        $after=dol_string_nohtmltag($text,0);
+        $this->assertEquals("A\nstring",$after,"test1");
+
+        $text="A <b>string<b>\n\nwith html tag and '<' chars<br>\n";
+        $after=dol_string_nohtmltag($text, 0);
+        $this->assertEquals("A string\n\nwith html tag and '<' chars",$after,"test2");
+
+        $text="A <b>string<b>\n\nwith tag with < chars<br>\n";
+        $after=dol_string_nohtmltag($text, 1);
+        $this->assertEquals("A string with tag with < chars",$after,"test3");
+
+        return true;
+    }
+
+
 
     /**
      * testDolHtmlEntitiesBr
@@ -299,7 +364,22 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testDolTextIsHtml
+     * testDolUnaccent
+     *
+     * @return boolean
+     */
+    public function testDolUnaccent()
+    {
+    	// Text not already HTML
+
+    	$input="A string\nwith a à ä é è ë ï ü ö ÿ, &, < and >.";
+        $after=dol_string_unaccent($input);
+        $this->assertEquals("A string\nwith a a a e e e i u o y, &, < and >.",$after);
+    }
+
+
+    /**
+     * testDolUtf8Check
      *
      * @return void
      */
@@ -493,22 +573,26 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
      */
     public function testImgPicto()
     {
-        $s=img_picto('alt','user');
+        $s=img_picto('title','user');
         print __METHOD__." s=".$s."\n";
         $this->assertContains('theme',$s,'testImgPicto1');
 
-    	$s=img_picto('alt','img.png','style="float: right"',0);
+    	$s=img_picto('title','img.png','style="float: right"',0);
         print __METHOD__." s=".$s."\n";
         $this->assertContains('theme',$s,'testImgPicto2');
         $this->assertContains('style="float: right"',$s,'testImgPicto2');
 
-        $s=img_picto('alt','/fullpath/img.png','',1);
+        $s=img_picto('title','/fullpath/img.png','',1);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals($s,'<img src="/fullpath/img.png" border="0" alt="alt" title="alt">','testImgPicto3');
+        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="" title="title">',$s,'testImgPicto3');
 
-        $s=img_picto('alt','/fullpath/img.png','',true);
+        $s=img_picto('title','/fullpath/img.png','',true);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals($s,'<img src="/fullpath/img.png" border="0" alt="alt" title="alt">','testImgPicto3');
+        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="" title="title">',$s,'testImgPicto4');
+
+        $s=img_picto('title:alt','/fullpath/img.png','',true);
+        print __METHOD__." s=".$s."\n";
+        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="alt" title="title">',$s,'testImgPicto5');
     }
 
     /**
@@ -532,16 +616,16 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     public function testVerifCond()
     {
         $verifcond=verifCond('1==1');
-        $this->assertTrue($verifcond);
+        $this->assertTrue($verifcond,'Test a true comparison');
 
         $verifcond=verifCond('1==2');
-        $this->assertFalse($verifcond);
+        $this->assertFalse($verifcond,'Test a false comparison');
 
         $verifcond=verifCond('$conf->facture->enabled');
-        $this->assertTrue($verifcond);
+        $this->assertTrue($verifcond,'Test that conf property of a module report true when enabled');
 
         $verifcond=verifCond('$conf->moduledummy->enabled');
-        $this->assertFalse($verifcond);
+        $this->assertFalse($verifcond,'Test that conf property of a module report false when disabled');
 
         $verifcond=verifCond('');
         $this->assertTrue($verifcond);
@@ -718,5 +802,26 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG;"}',json_encode($tmp));
     }
 
+	/**
+	 * dol_nl2br
+	 *
+	 * @return void
+	 */
+	public function testDolNl2Br() {
+
+		//String to encode
+		$string = "a\na";
+
+		$this->assertEquals(dol_nl2br($string), "a<br>\na");
+
+		//With $forxml parameter
+		$this->assertEquals(dol_nl2br($string, 0, 1), "a<br />\na");
+
+		//Replacing \n by br
+		$this->assertEquals(dol_nl2br($string, 1), "a<br>a");
+
+		//With $forxml parameter
+		$this->assertEquals(dol_nl2br($string, 1, 1), "a<br />a");
+	}
+
 }
-?>

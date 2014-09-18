@@ -89,6 +89,8 @@ ListOfServicesToExpireWithDuration=Lista usluga koja ističe za %s dana
 ListOfServicesToExpireWithDurationNeg=Lista usluga koji ističe za više od %s dana
 ListOfServicesToExpire=Lista usluga koja ističe
 NoteListOfYourExpiredServices=Ova lista sadrži samo usluge kontakata treće strane sa kojima ste linkani kao prodajni predstavnik
+StandardContractsTemplate=Predložak uobičajenog ugovora
+ContactNameAndSignature=Za %s, ime i potpis
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Predstavnik trgovca potpisuje ugovor

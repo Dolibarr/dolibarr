@@ -1,21 +1,21 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
-* Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *       \file       htdocs/projet/index.php
@@ -45,7 +45,7 @@ $sortorder = GETPOST("sortorder",'alpha');
 
 /*
  * View
-*/
+ */
 
 $socstatic=new Societe($db);
 $projectstatic=new Project($db);
@@ -73,8 +73,24 @@ else
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
+// Search project
+if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
+{
+	$var=false;
+	print '<form method="post" action="'.DOL_URL_ROOT.'/projet/liste.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover" width="100%">';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProject").'</td></tr>';
+	print '<tr '.$bc[$var].'>';
+	print '<td class="nowrap"><label for="sf_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_ref" id="sf_ref" size="18"></td>';
+	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="search_all" id="search_all" size="18"></td>';
+	print '</tr>';
+	print "</table></form>\n";
+	print "<br>\n";
+}
 
-print_projecttasks_array($db,$socid,$projectsListId);
+print_projecttasks_array($db,$socid,$projectsListId,0,0);
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
@@ -140,7 +156,7 @@ print '</div></div></div>';
 // Tasks for all resources of all opened projects and time spent for each task/resource
 print '<div class="fichecenter">';
 
-$sql = "SELECT p.title, p.rowid as projectid, t.label, t.rowid as taskid, u.rowid as userid, t.planned_workload, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
+$sql = "SELECT p.ref, p.title, p.rowid as projectid, t.label, t.rowid as taskid, u.rowid as userid, t.planned_workload, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
@@ -155,7 +171,7 @@ $sql.= " ORDER BY u.rowid, t.dateo, t.datee";
 
 $userstatic=new User($db);
 
-dol_syslog('projet:index.php: affectationpercent sql='.$sql,LOG_DEBUG);
+dol_syslog('projet:index.php: affectationpercent', LOG_DEBUG);
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -164,9 +180,10 @@ if ( $resql )
 
 	if ($num > (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA))
 	{
-/*		print '<tr '.$bc[0].'>';
+/*		$langs->load("errors");
+  		print '<tr '.$bc[0].'>';
 		print '<td colspan="9">';
-		print $langs->trans("TooManyDataPleaseUseMoreFilters");
+		print $langs->trans("WarningTooManyDataPleaseUseMoreFilters");
 		print '</td></tr>';*/
 	}
 	else
@@ -200,7 +217,13 @@ if ( $resql )
 
 			print "<tr ".$bc[$var].">";
 			print '<td>'.$username.'</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->projectid.'">'.$obj->title.'</a></td>';
+			print '<td>';
+			$projectstatic->id=$obj->projectid;
+			$projectstatic->ref=$obj->ref;
+			$projectstatic->title=$obj->title;
+			print $projectstatic->getNomUrl(1,'',16);
+			//print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
+			print '</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($obj->dateo)).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datee)).'</td>';
@@ -238,4 +261,3 @@ print '</div>';
 llxFooter();
 
 $db->close();
-?>

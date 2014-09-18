@@ -133,6 +133,7 @@ CashBudget=Budget de trésorerie
 PlannedTransactions=Écritures prévues
 Graph=Graphiques
 ExportDataset_banque_1=Écritures bancaires et relevés
+ExportDataset_banque_2=Bordereaux de remises de chèques
 TransactionOnTheOtherAccount=Écriture sur l'autre compte
 TransactionWithOtherAccount=Transfert de compte
 PaymentNumberUpdateSucceeded=Numéro de paiement mis à jour

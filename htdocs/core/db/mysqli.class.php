@@ -34,9 +34,9 @@ class DoliDBMysqli extends DoliDB
     //! Database type
     public $type='mysqli';
     //! Database label
-    static $label='MySQL';
+    const LABEL='MySQL';
     //! Version min database
-    static $versionmin=array(4,1,0);
+    const VERSIONMIN='4.1.0';
 	//! Resultset of last query
 	private $_results;
 
@@ -244,55 +244,6 @@ class DoliDBMysqli extends DoliDB
     }
 
     /**
-     * Validate a database transaction
-     *
-     * @param	string	$log		Add more log to default log line
-     * @return	int         		1 if validation is OK or transaction level no started, 0 if ERROR
-     */
-    function commit($log='')
-    {
-		dol_syslog('',0,-1);
-    	if ($this->transaction_opened<=1)
-        {
-            $ret=$this->query("COMMIT");
-            if ($ret)
-            {
-                $this->transaction_opened=0;
-                dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
-            }
-            return $ret;
-        }
-        else
-        {
-            $this->transaction_opened--;
-            return 1;
-        }
-    }
-
-    /**
-     *	Annulation d'une transaction et retour aux anciennes valeurs
-     *
-     * 	@param	string	$log		Add more log to default log line
-     * 	@return	int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
-     */
-    function rollback($log='')
-    {
-		dol_syslog('',0,-1);
-    	if ($this->transaction_opened<=1)
-        {
-            $ret=$this->query("ROLLBACK");
-            $this->transaction_opened=0;
-            dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
-            return $ret;
-        }
-        else
-        {
-            $this->transaction_opened--;
-            return 1;
-        }
-    }
-
-    /**
      * 	Execute a SQL request and return the resultset
      *
      * 	@param	string	$query			SQL query string
@@ -304,6 +255,9 @@ class DoliDBMysqli extends DoliDB
     function query($query,$usesavepoint=0,$type='auto')
     {
         $query = trim($query);
+
+	    if (! in_array($query,array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+
         if (! $this->database_name)
         {
             // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
@@ -322,7 +276,8 @@ class DoliDBMysqli extends DoliDB
                 $this->lastqueryerror = $query;
                 $this->lasterror = $this->error();
                 $this->lasterrno = $this->errno();
-                dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+
+                dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterrno." ".$this->lasterror, LOG_ERR);
             }
             $this->lastquery=$query;
             $this->_results = $ret;
@@ -425,24 +380,6 @@ class DoliDBMysqli extends DoliDB
         if (is_object($resultset)) mysqli_free_result($resultset);
     }
 
-
-    /**
-     *	Define limits and offset of request
-     *
-     *	@param	int		$limit      Maximum number of lines returned (-1=conf->liste_limit, 0=no limit)
-     *	@param	int		$offset     Numero of line from where starting fetch
-     *	@return	string      		String with SQL syntax to add a limit and offset
-     */
-    function plimit($limit=0,$offset=0)
-    {
-        global $conf;
-        if (empty($limit)) return "";
-        if ($limit < 0) $limit=$conf->liste_limit;
-        if ($offset > 0) return " LIMIT $offset,$limit ";
-        else return " LIMIT $limit ";
-    }
-
-
     /**
      *	Escape a string to insert data
      *
@@ -473,6 +410,7 @@ class DoliDBMysqli extends DoliDB
             1006 => 'DB_ERROR_CANNOT_CREATE',
             1007 => 'DB_ERROR_ALREADY_EXISTS',
             1008 => 'DB_ERROR_CANNOT_DROP',
+            1022 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
             1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
             1044 => 'DB_ERROR_ACCESSDENIED',
             1046 => 'DB_ERROR_NODBSELECTED',
@@ -895,25 +833,30 @@ class DoliDBMysqli extends DoliDB
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
-            return -1;
+            if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS')
+            {
+            	return -1;
+            }
+            else
+			{
+            	// If user already exists, we continue to set permissions
+            	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
+            }
         }
         $sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 
         $sql="FLUSH Privileges";
 
-        dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql);
+        dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 
@@ -1086,4 +1029,3 @@ class DoliDBMysqli extends DoliDB
     }
 }
 
-?>

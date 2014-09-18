@@ -89,6 +89,8 @@ ListOfServicesToExpireWithDuration=Lista di servizi in scadenza entro %s giorni
 ListOfServicesToExpireWithDurationNeg=Lista di servizi scaduti da più di %s giorni
 ListOfServicesToExpire=Lista dei servizi in scadenza
 NoteListOfYourExpiredServices=Questa lista contiene i servizi relativi a contratti di terze parti per le quali siete collegati come rappresentanti commerciali.
+StandardContractsTemplate=Template standard per i contratti
+ContactNameAndSignature=Per %s, Nome e firma:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Contatto interno per la firma del contratto

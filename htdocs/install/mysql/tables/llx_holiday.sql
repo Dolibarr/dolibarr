@@ -20,6 +20,7 @@ CREATE TABLE llx_holiday
 (
 rowid          integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
 fk_user        integer NOT NULL,
+fk_user_create integer,
 date_create    DATETIME NOT NULL,
 description    VARCHAR( 255 ) NOT NULL,
 date_debut     DATE NOT NULL,

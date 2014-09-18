@@ -1,48 +1,33 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
-#
 About = Sobre
 CronAbout = Sobre Cron
 CronAboutPage = Pagina sobre Cron
-
-#
 # Right
-#
 Permission23101 = Ler tarefa agendada
 Permission23102 = Criar/atualizar tarefa agendada
 Permission23103 = Apagar tarefa agendada
 Permission23104 = Executar tarefa agendada
-
-#
 # Admin
-#
 CronSetup= Configuração do gerenciamento de trabalho agendado
-URLToLaunchCronJobs=URL para lançar tarefas cron
-OrToLaunchASpecificJob=Ou lançar tarefa especifica
+URLToLaunchCronJobs=URL para checar e iniciar os cron se necessario
+OrToLaunchASpecificJob=Ou checkar e iniciar um specifico trabalho
 KeyForCronAccess=Chave seguranca para URL que lanca tarefas cron
 FileToLaunchCronJobs=Linha de comando para iniciar tarefas agendadas
 CronExplainHowToRunUnix=No ambiente Unix você deve usar crontab para executar linha de comando a cada minuto
 CronExplainHowToRunWin=No ambiente Microsoft (tm) Windows você pode usar ferramentas tarefa agendada para executar a linha de comando cada minuto
-
-
-#
 # Menu
-#
 CronJobs=Trabalhos programados
 CronListActive= Lista de trabalhos ativos
 CronListInactive= Lista de trabalhos nao ativos
-
-
-#
+CronListActive= Lista de trabalhos ativos
 # Page list
-#
 CronDateLastRun=Ultimo acionamento
 CronLastOutput=Saida do ultimo acionamento
 CronLastResult=Codigo do ultimo resultado
 CronListOfCronJobs=Lista de tarefas agendadas
 CronCommand=Comando
-CronList= Lista tarefas
+CronList=Lista trabalhos
 CronDelete= Apagar tarefas cron
 CronConfirmDelete= Tem certeza que deseja apagar este trabalho cron ?
 CronExecute=Lançar trabalho
@@ -69,10 +54,7 @@ CronLabel=Descriçao
 CronNbRun=Nr. execuçao
 CronEach=Cada
 JobFinished=Trabalho iniciado e terminado
-
-#
 #Page card
-#
 CronAdd= Adicionar trabalho
 CronHourStart= Hora e data do inicio do trabalho
 CronEvery= E execute cada tarefa
@@ -94,20 +76,12 @@ CronObjectHelp=O nome do objeto a ser carregado. Por exemplo para buscar método
 CronMethodHelp=O método de objeto para o lançamento. Por exemplo para buscar método do objeto Dolibarr Product /htdocs/produtos/class/product.class.php, o valor do método é <i>fecth</i>
 CronArgsHelp=Os argumentos do método. Por exemplo para buscar método do objeto Product do Dolibarr /htdocs/produto/class/product.class.php, o valor de paramtetros pode ser <i>0, ProductRef</i>
 CronCommandHelp=A linha de comando do sistema a se executar.
-
-#
 # Info
-#
 CronInfoPage=Informaçao
-
-
-#
 # Common
-#
 CronType=Tipo tarefa
 CronType_method=Chamar metodo da classe Dolibarr
 CronType_command=Comando Shell
 CronMenu=Cron
 CronCannotLoadClass=Nao e possivel carregar a classe %s ou o objeto %s
-
 UseMenuModuleToolsToAddCronJobs=Vá ao menu "Principal - Módulo de ferramentas - Lista de trabalhos" para ver e editar a programação dos trabalhos.

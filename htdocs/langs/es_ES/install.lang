@@ -13,7 +13,7 @@ PHPSupportSessions=Este PHP soporta sesiones
 PHPSupportPOSTGETOk=Este PHP soporta bien las variables POST y GET.
 PHPSupportPOSTGETKo=Es posible que este PHP no soporte las variables POST y/o GET. Compruebe el parámetro <b>variables_order</b> del php.ini.
 PHPSupportGD=Este PHP soporta las funciones gráficas GD.
-PHPSupportUTF8=Este PHP soporta las funciones UTFB.
+PHPSupportUTF8=Este PHP soporta las funciones UTF8.
 PHPMemoryOK=Su memoria máxima de sesión PHP esta definida a <b>%s</b>. Esto debería ser suficiente.
 PHPMemoryTooLow=Su memoria máxima de sesión PHP está definida en <b>%s</b> bytes. Esto es muy poco. Se recomienda modificar el parámetro <b>memory_limit</b> de su archivo <b>php.ini</b> a por lo menos <b>%s</b> bytes.
 Recheck=Haga click aquí para realizar un test más exhaustivo
@@ -82,7 +82,7 @@ FunctionsCreation=Creación de funciones
 AdminAccountCreation=Creación de la cuenta administrador
 PleaseTypePassword=¡Indique una contraseña, no se aceptan las contraseñas vacías!
 PleaseTypeALogin=¡Indique un usuario!
-PasswordsMismatch=¡Las contraseñas no coinciden, vuelva a intentarlo !
+PasswordsMismatch=¡Las contraseñas no coinciden, vuelva a intentarlo!
 SetupEnd=Fin de la instalación
 SystemIsInstalled=Se está instalando su sistema.
 SystemIsUpgraded=Se actualizó Dolibarr correctamente.
@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Pulse aquí para ver/editar los parámetros técnico
 
 #########
 # upgrade
-#########
 MigrationFixData=Corrección de datos desnormalizados
 MigrationOrder=Migración de datos de los pedidos clientes
 MigrationSupplierOrder=Migración de datos de los pedidos a proveedores
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Actualización de tiempo dedicado en segundos
 MigrationActioncommElement=Actualización de los datos de acciones sobre elementos
 MigrationPaymentMode=Actualización de los modos de pago
 MigrationCategorieAssociation=Actualización de las categorías
+
+ShowNotAvailableOptions=Mostrar opciones no disponibles
+HideNotAvailableOptions=Ocultar opciones no disponibles

@@ -161,4 +161,3 @@ class box_members extends ModeleBoxes
 
 }
 
-?>

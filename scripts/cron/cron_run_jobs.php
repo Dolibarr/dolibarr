@@ -69,7 +69,7 @@ $error=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
 // Check security key
 if ($key != $conf->global->CRON_KEY)
@@ -160,4 +160,3 @@ if(is_array($object->lines) && (count($object->lines)>0))
 $db->close();
 
 exit(0);
-?>

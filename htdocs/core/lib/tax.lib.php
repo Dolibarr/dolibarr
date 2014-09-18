@@ -29,7 +29,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function tax_prepare_head($object)
 {
@@ -51,7 +51,7 @@ function tax_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->tax->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
@@ -194,7 +194,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
     if ($sql == 'TODO') return -2;
     if ($sql != 'TODO')
     {
-        dol_syslog("Tax.lib:thirdparty sql=".$sql);
+        dol_syslog("Tax.lib:thirdparty", LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -366,7 +366,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     if ($sql == 'TODO') return -2;
     if ($sql != 'TODO')
     {
-        dol_syslog("Tax.lib.php::vat_by_date sql=".$sql);
+        dol_syslog("Tax.lib.php::vat_by_date", LOG_DEBUG);
 
         $resql = $db->query($sql);
         if ($resql)
@@ -531,7 +531,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     if ($sql == 'TODO') return -2; // -2 = Feature not yet available
     if ($sql != 'TODO')
     {
-        dol_syslog("Tax.lib.php::vat_by_date sql=".$sql);
+        dol_syslog("Tax.lib.php::vat_by_date", LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -588,4 +588,3 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     return $list;
 }
 
-?>

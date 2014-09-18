@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/holiday/class/holiday.class.php';
 $langs->load("dict");
@@ -290,4 +290,3 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     }
 
 }
-?>

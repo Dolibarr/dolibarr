@@ -2,7 +2,7 @@
 
 Dolibarr ERP & CRM is a modern software to manage your company or foundation activity (contacts, suppliers, invoices, orders, stocks, agenda, ...).It's an opensource software (wrote with PHP language) designed for small and medium companies, foundation and freelances. You can freely install, use and distribute it as a standalone application or as a web application to use it from every internet access and media.
 
-![ScreenShot](http://www.dolibarr.org/images/dolibarr_screenshot1_640x480.png)
+![ScreenShot](http://www.dolibarr.org/images/dolibarr_screenshot1_640x400.png)
 
 
 ## LICENSE
@@ -113,7 +113,8 @@ See ChangeLog file found into package.
 - Multi-user, with several permissions levels for each feature.
 - Very user friendly and easy to use.
 - Highly customizable: Enable only modules you need, user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one).
-- Works with PHP 5.2.1, MySql 4.1 or PostgreSQL 8.1.
+- Works with PHP 5.3+, MySql 4.1 or PostgreSQL 8.1.
+- Require PHP and Mysql or Postgresql (See exatc versions on http://wiki.dolibarr.org/index.php/Prerequisite).
 - Compatible with all Cloud solutions that match MySql, PHP or PostgreSQL prerequisites.
 - An easy to understand, maintain and code interfaces with your own system information (PHP with no heavy frameworks, trigger and hook architecture).
 - Support countries specific features:

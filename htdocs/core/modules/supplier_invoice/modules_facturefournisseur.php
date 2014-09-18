@@ -127,6 +127,7 @@ abstract class ModeleNumRefSuppliersInvoices
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
 	}
 }
@@ -220,13 +221,6 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
         	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
-			// Calls triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('BILL_SUPPLIER_BUILDDOC',$object,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// End calls triggers
-
 			return 1;
 		}
 		else
@@ -251,4 +245,3 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
 	}
 }
 
-?>

@@ -128,4 +128,3 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 	}
 }
 
-?>

@@ -5,11 +5,12 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014      Cédric Gross         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2014	   Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -122,7 +124,7 @@ if (empty($reshook))
     // Barcode value
     if ($action ==	'setbarcode' && $createbarcode)
     {
-    	$result=$object->check_barcode(GETPOST('barcode'));
+    	$result=$object->check_barcode(GETPOST('barcode'),GETPOT('barcode_type_code'));
 
 		if ($result >= 0)
 		{
@@ -143,20 +145,18 @@ if (empty($reshook))
 		}
     }
 
-    if ($action == 'setaccountancy_code_buy')
-    {
-        $result = $object->setValueFrom('accountancy_code_buy', GETPOST('accountancy_code_buy'));
+    if ($action == 'setaccountancy_code_buy') {
+
+	    $result = $object->setAccountancyCode('buy', GETPOST('accountancy_code_buy'));
         if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
-        else $object->accountancy_code_buy=GETPOST('accountancy_code_buy');
         $action="";
     }
 
     if ($action == 'setaccountancy_code_sell')
     {
-        $result = $object->setValueFrom('accountancy_code_sell', GETPOST('accountancy_code_sell'));
-        if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
-        else $object->accountancy_code_sell=GETPOST('accountancy_code_sell');
-        $action="";
+	    $result = $object->setAccountancyCode('sell', GETPOST('accountancy_code_sell'));
+	    if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
+	    $action="";
     }
 
     // Add a product or service
@@ -206,7 +206,20 @@ if (empty($reshook))
 
             $object->barcode_type          = GETPOST('fk_barcode_type');
             $object->barcode		           = GETPOST('barcode');
-			
+            // Set barcode_type_xxx from barcode_type id
+            $stdobject=new GenericObject($db);
+    	    $stdobject->element='product';
+            $stdobject->barcode_type=GETPOST('fk_barcode_type');
+            $result=$stdobject->fetch_barcode();
+            if ($result < 0)
+            {
+            	$error++;
+            	setEventMessage('Failed to get bar code type information '.$stdobject->error, 'errors');
+            }
+            $object->barcode_type_code      = $stdobject->barcode_type_code;
+            $object->barcode_type_coder     = $stdobject->barcode_type_coder;
+            $object->barcode_type_label     = $stdobject->barcode_type_label;
+
             $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
             $object->url					= GETPOST('url');
             $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
@@ -307,6 +320,19 @@ if (empty($reshook))
 
 	            $object->barcode_type           = GETPOST('fk_barcode_type');
     	        $object->barcode		        = GETPOST('barcode');
+    	        // Set barcode_type_xxx from barcode_type id
+    	        $stdobject=new GenericObject($db);
+    	        $stdobject->element='product';
+    	        $stdobject->barcode_type=GETPOST('fk_barcode_type');
+    	        $result=$stdobject->fetch_barcode();
+    	        if ($result < 0)
+    	        {
+    	        	$error++;
+    	        	setEventMessage('Failed to get bar code type information '.$stdobject->error, 'errors');
+    	        }
+    	        $object->barcode_type_code      = $stdobject->barcode_type_code;
+    	        $object->barcode_type_coder     = $stdobject->barcode_type_coder;
+    	        $object->barcode_type_label     = $stdobject->barcode_type_label;
 
             	$object->accountancy_code_sell  = GETPOST('accountancy_code_sell');
                 $object->accountancy_code_buy   = GETPOST('accountancy_code_buy');
@@ -358,7 +384,7 @@ if (empty($reshook))
                 $object->status_buy = 0;
                 $object->id = null;
                 $object->barcode = -1;
-                
+
                 if ($object->check())
                 {
                     $id = $object->create($user);
@@ -405,12 +431,12 @@ if (empty($reshook))
                         else
                         {
                             $db->rollback();
-                            if (count($object->errors)) 
+                            if (count($object->errors))
                             {
                             	setEventMessage($object->errors, 'errors');
                             	dol_print_error($db,$object->errors);
                             }
-                            else 
+                            else
                             {
                             	setEventMessage($langs->trans($object->error), 'errors');
                             	dol_print_error($db,$object->error);
@@ -438,7 +464,7 @@ if (empty($reshook))
 
         if ($result > 0)
         {
-            header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($object->ref));
+            header('Location: '.DOL_URL_ROOT.'/product/liste.php?type='.$object->type.'&delprod='.urlencode($object->ref));
             exit;
         }
         else
@@ -486,6 +512,24 @@ if (empty($reshook))
             $pu_ttc = $object->multiprices_ttc[$soc->price_level];
             $price_base_type = $object->multiprices_base_type[$soc->price_level];
         }
+   		elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+		{
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+
+			$prodcustprice = new Productcustomerprice($db);
+
+			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $soc->id);
+
+			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			if ($result) {
+				if (count($prodcustprice->lines) > 0) {
+					$pu_ht = price($prodcustprice->lines [0]->price);
+					$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
+					$price_base_type = $prodcustprice->lines [0]->price_base_type;
+					$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+				}
+			}
+		}
 
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
@@ -559,7 +603,24 @@ if (empty($reshook))
             $pu_ttc = $object->multiprices_ttc[$soc->price_level];
             $price_base_type = $object->multiprices_base_type[$soc->price_level];
         }
+    	elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+		{
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
+			$prodcustprice = new Productcustomerprice($db);
+
+			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $soc->id);
+
+			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			if ($result) {
+				if (count($prodcustprice->lines) > 0) {
+					$pu_ht = price($prodcustprice->lines [0]->price);
+					$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
+					$price_base_type = $prodcustprice->lines [0]->price_base_type;
+					$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+				}
+			}
+		}
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
         if ($tva_tx != $object->tva_tx)
@@ -632,7 +693,24 @@ if (empty($reshook))
             $pu_ttc = $object->multiprices_ttc[$soc->price_level];
             $price_base_type = $object->multiprices_base_type[$soc->price_level];
         }
+    	elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+		{
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
+			$prodcustprice = new Productcustomerprice($db);
+
+			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $soc->id);
+
+			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			if ($result) {
+				if (count($prodcustprice->lines) > 0) {
+					$pu_ht = price($prodcustprice->lines [0]->price);
+					$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
+					$price_base_type = $prodcustprice->lines [0]->price_base_type;
+					$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+				}
+			}
+		}
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
         if ($tva_tx != $object->tva_tx)
@@ -785,7 +863,7 @@ else
         print '</td></tr>';
 
 	    // Batch number management
-		if ($conf->productbatch->enabled) 
+		if ($conf->productbatch->enabled)
 		{
 			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Batch").')</td><td colspan="3">';
 			$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
@@ -798,8 +876,8 @@ else
 
         if ($showbarcode)
         {
-	        print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
-	        if (isset($_POST['fk_barcode_type']))
+ 	        print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
+ 	        if (isset($_POST['fk_barcode_type']))
 	        {
 	         	$fk_barcode_type=GETPOST('fk_barcode_type');
 	        }
@@ -828,8 +906,8 @@ else
         // Public URL
         print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
 		print '<input type="text" name="url" size="90" value="'.GETPOST('url').'">';
-        print '</td></tr>';    
-        
+        print '</td></tr>';
+
         // Stock min level
         if ($type != 1 && ! empty($conf->stock->enabled))
         {
@@ -902,7 +980,7 @@ else
 	        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        print '</td></tr>';
         }
-        
+
         // Other attributes
         $parameters=array('colspan' => 3);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -987,8 +1065,6 @@ else
 
     else if ($object->id > 0)
     {
-        $res=$object->fetch_optionals($object->id,$extralabels);
-
         // Fiche en mode edition
         if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
         {
@@ -997,7 +1073,7 @@ else
 
             $type = $langs->trans('Product');
             if ($object->isservice()) $type = $langs->trans('Service');
-            print_fiche_titre($langs->trans('Modify').' '.$type.' : '.$object->ref, "");
+            print_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
 
             // Main official, simple, and not duplicated code
             print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">'."\n";
@@ -1008,10 +1084,10 @@ else
             print '<table class="border allwidth">';
 
             // Ref
-            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.$object->ref.'"></td></tr>';
+            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
 
             // Label
-            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.$object->libelle.'"></td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
 
             // Status To sell
             print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
@@ -1066,6 +1142,7 @@ else
 		        }
 		        else
 		        {
+	        		$fk_barcode_type=$object->barcode_type;
 		        	if (empty($fk_barcode_type) && ! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 		        }
 		        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
@@ -1092,7 +1169,7 @@ else
             print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
 			print '<input type="text" name="url" size="80" value="'.$object->url.'">';
             print '</td></tr>';
-            
+
             // Stock
             if ($object->isproduct() && ! empty($conf->stock->enabled))
             {
@@ -1170,7 +1247,7 @@ else
 	            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	            print '</td></tr>';
         	}
-        	
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1255,9 +1332,13 @@ else
             if ($showphoto || $showbarcode)
             {
                 print '<td valign="middle" align="center" width="25%" rowspan="'.$nblignes.'">';
-                if ($showphoto)   print $object->show_photos($conf->product->multidir_output[$object->entity],1,1,0,0,0,80);
+				print '<div class="photolist">';
+				$maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
+				if ($conf->browser->phone) $maxvisiblephotos=1;
+                if ($showphoto)   print $object->show_photos($conf->product->multidir_output[$object->entity],1,$maxvisiblephotos,0,0,0,80);
                 if ($showphoto && $showbarcode) print '<br><br>';
                 if ($showbarcode) print $form->showbarcode($object);
+				print '</div>';
                 print '</td>';
             }
 
@@ -1309,6 +1390,7 @@ else
                     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="setbarcode">';
+                    print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
                     print '<input size="40" type="text" name="barcode" value="'.$object->barcode.'">';
                     print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
                 }
@@ -1437,11 +1519,11 @@ else
         	if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
         	{
 	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
-			
+
             	// Origin country code
             	print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id,0,$db).'</td>';
         	}
-        	
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1711,4 +1793,3 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
 llxFooter();
 $db->close();
-?>

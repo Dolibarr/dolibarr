@@ -8,7 +8,6 @@ NotActiveModCP=Morate omogućiti modul godišnji odmori da bi vidjeli ovu strani
 NotConfigModCP=Morate konfigurisati modul godišnji odmori da bi vidjeli ovu stranicu. Da bi ste uradili ovo, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">kliknite ovdje<a>.
 NoCPforUser=Nema te zahtjeva za godišnje odmore.
 AddCP=Prijavi se za godišnji odmor
-CPErrorSQL=Desila se SQL greška:
 Employe=Zaposlenik
 DateDebCP=Datum početka
 DateFinCP=Datum završetka
@@ -34,7 +33,6 @@ ReturnCP=Vrati se na prethodnu stranicu
 ErrorUserViewCP=Niste autorizovani da čitate ovaj zahtjev za godišnji odmor.
 InfosCP=Informacije o zahtjevu za odmor
 InfosWorkflowCP=Workflow informacija
-DateCreateCP=Datum kreiranja
 RequestByCP=Zahtjev poslao
 TitreRequestCP=Lista godišnjih odmora
 NbUseDaysCP=Broj iskorištenih dana godišnjeg odmora
@@ -130,7 +128,6 @@ ErrorMailNotSend=Desila se greška prilikom slanja emaila:
 NoCPforMonth=Nema odsustva za ovaj mjesec.
 nbJours=Broj dana
 TitleAdminCP=Konfiguracija godišnjih odmora
-
 #Messages
 Hello=Zdravo
 HolidaysToValidate=Potvrdi godišnje odmore
@@ -143,10 +140,10 @@ HolidaysRefused=Odbijeni godišnji odmori
 HolidaysRefusedBody=Vaš zahtjev za godišnji odmor od %s do %s je odbijen zbog: 
 HolidaysCanceled=Poništeni godišnji odmori
 HolidaysCanceledBody=Vaš zahtjev za godišnji odmor od %s fo %s je poništen.
-
-Permission20001=Pročitaj/kreiraj/izmijeni njigove godišnje odmore
-Permission20002=Pročitaj/kreiraj/izmijeni sve zahtjeve za godišnje odmore
-Permission20003=Obriši njihove zahtjeve za godišnje odmore
-Permission20004=Definiši korisnikove godišnje odmore
+Permission20000=Read you own holidays
+Permission20001=Create/modify your holidays
+Permission20002=Create/modify holidays for everybody
+Permission20003=Delete holidays requests
+Permission20004=Setup users holidays
 Permission20005=Pregledaj izvještaj o izmijenjenim godišnjim odmorima
-Permission20006=Pristupi mjesečnom izvještaj za godišnje odmore
+Permission20006=Read holidays monthly report

@@ -43,7 +43,7 @@ $object=new Opensurveysondage($db);
 $result=$object->fetch(0,$numsondage);
 if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
 
-$nblignes=count($object->fetch_lines());
+$nblignes=$object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
 $canbemodified = ($object->date_fin > dol_now());
@@ -212,7 +212,6 @@ if ($testmodifier)
 	$sql.= " SET reponses = '".$db->escape($nouveauchoix)."'";
 	$sql.= " WHERE id_users = '".$db->escape($idtomodify)."'";
 
-	dol_syslog("sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
 }
@@ -393,7 +392,6 @@ $compteur = 0;
 $sql ="SELECT id_users, nom, id_sondage, reponses";
 $sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 $sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
-dol_syslog('sql='.$sql);
 $resql=$db->query($sql);
 if (! $resql)
 {
@@ -741,4 +739,3 @@ print '<a name="bas"></a>'."\n";
 llxFooterSurvey();
 
 $db->close();
-?>

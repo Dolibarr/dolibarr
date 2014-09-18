@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 		//if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
-		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?16:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
+		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxpicture-=20;
@@ -132,17 +132,17 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
     /**
      *  Function to build pdf onto disk
      *
-     *  @param		int		$object				Id of object to generate
-     *  @param		object	$outputlangs		Lang output object
-     *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int		$hidedetails		Do not show line details
-     *  @param		int		$hidedesc			Do not show desc
-     *  @param		int		$hideref			Do not show ref
-     *  @return     int             			1=OK, 0=KO
+     *  @param		CommandeFournisseur	$object				Id of object to generate
+     *  @param		Translate			$outputlangs		Lang output object
+     *  @param		string				$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int					$hidedetails		Do not show line details
+     *  @param		int					$hidedesc			Do not show desc
+     *  @param		int					$hideref			Do not show ref
+     *  @return		int										1=OK, 0=KO
      */
 	function write_file($object,$outputlangs='',$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
-		global $user,$langs,$conf,$hookmanager;
+		global $user,$langs,$conf,$hookmanager,$mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -192,6 +192,17 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			if (file_exists($dir))
 			{
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
@@ -393,7 +404,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
 					&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) // and there is local tax
 					{
-						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
+						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc,$object->thirdparty);
 						$localtax1_type = $localtaxtmp_array[0];
 						$localtax2_type = $localtaxtmp_array[2];
 					}
@@ -489,7 +500,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->Close();
 
 				$pdf->Output($file,'F');
-
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
@@ -700,7 +710,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 			//{
     			//Local tax 1
-			    foreach( $this->localtax1 as $tvakey => $tvaval )
+			foreach( $this->localtax1 as $localtax_type => $localtax_rate )
+			{
+				if (in_array((string) $localtax_type, array('2','4','6'))) continue;
+
+				foreach( $localtax_rate as $tvakey => $tvaval )
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0
 					{
@@ -720,15 +734,19 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 					}
 				}
-			//}
+			}
 
 			//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 			//{
     			//Local tax 2
-			    foreach( $this->localtax2 as $tvakey => $tvaval )
+			foreach( $this->localtax2 as $localtax_type => $localtax_rate )
+			{
+				if (in_array((string) $localtax_type, array('2','4','6'))) continue;
+
+				foreach( $localtax_rate as $tvakey => $tvaval )
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0
 					{
@@ -751,7 +769,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 					}
 				}
-			//}
+			}
 		}
 
 		// Total TTC
@@ -913,6 +931,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$outputlangs->load("bills");
 		$outputlangs->load("orders");
 		$outputlangs->load("companies");
+		$outputlangs->load("sendings");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -983,11 +1002,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
         $posy+=5;
 		$pdf->SetXY($posx,$posy);
-		if ($object->date_commande)
+		if (! empty($object->date_commande))
 		{
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date_commande,"day",false,$outputlangs,true), '', 'R');
-			$pdf->MultiCell(190, 3, $outputlangs->transnoentities("DateDeliveryPlanned")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{
@@ -995,7 +1013,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
 		}
 
-		$posy+=2;
+		$pdf->SetTextColor(0,0,60);
+		if (! empty($object->date_livraison)) $pdf->MultiCell(190, 3, $outputlangs->transnoentities("DateDeliveryPlanned")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
+
+		$posy+=5;
 		$pdf->SetTextColor(0,0,60);
 
 		// Show list of linked objects
@@ -1096,9 +1117,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		$showdetails=0;
+		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_ORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }
 
-?>

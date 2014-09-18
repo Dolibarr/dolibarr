@@ -67,12 +67,12 @@ class mod_project_simple extends ModeleNumRefProjects
      */
     function canBeActivated()
     {
-    	global $conf,$langs;
+    	global $conf,$langs,$db;
 
         $coyymm=''; $max='';
 
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
         $sql.= " AND entity = ".$conf->entity;
@@ -108,7 +108,7 @@ class mod_project_simple extends ModeleNumRefProjects
 
 		// D'abord on recupere la valeur max
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE ref like '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -122,7 +122,7 @@ class mod_project_simple extends ModeleNumRefProjects
 		}
 		else
 		{
-			dol_syslog("mod_project_simple::getNextValue sql=".$sql);
+			dol_syslog("mod_project_simple::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 
@@ -130,7 +130,9 @@ class mod_project_simple extends ModeleNumRefProjects
 
 		//$yymm = strftime("%y%m",time());
 		$yymm = strftime("%y%m",$date);
-		$num = sprintf("%04s",$max+1);
+		
+		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s",$max+1);
 
 		dol_syslog("mod_project_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
@@ -150,4 +152,3 @@ class mod_project_simple extends ModeleNumRefProjects
     }
 }
 
-?>

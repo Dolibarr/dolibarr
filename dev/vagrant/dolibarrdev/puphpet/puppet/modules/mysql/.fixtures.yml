@@ -1,0 +1,5 @@
+fixtures:
+  repositories:
+    "stdlib": "https://github.com/puppetlabs/puppetlabs-stdlib"
+  symlinks:
+    "mysql": "#{source_dir}"

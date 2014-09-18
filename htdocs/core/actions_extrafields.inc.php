@@ -328,4 +328,3 @@ if ($action == 'delete')
 	}
 }
 
-?>

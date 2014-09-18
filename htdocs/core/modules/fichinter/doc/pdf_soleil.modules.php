@@ -82,7 +82,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->option_modereg = 0;                 // Affiche mode reglement
 		$this->option_condreg = 0;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
-		$this->option_multilang = 0;               // Dispo en plusieurs langues
+		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
 		// Get source company
@@ -96,13 +96,13 @@ class pdf_soleil extends ModelePDFFicheinter
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		int		$object				Id of object to generate
-	 *  @param		object	$outputlangs		Lang output object
-	 *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int		$hidedetails		Do not show line details
-	 *  @param		int		$hidedesc			Do not show desc
-	 *  @param		int		$hideref			Do not show ref
-	 *  @return     int             			1=OK, 0=KO
+	 *  @param		CommonObject	$object				Id of object to generate
+	 *  @param		Translate		$outputlangs		Lang output object
+	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int				$hidedetails		Do not show line details
+	 *  @param		int				$hidedesc			Do not show desc
+	 *  @param		int				$hideref			Do not show ref
+	 *  @return		int									1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
@@ -137,6 +137,18 @@ class pdf_soleil extends ModelePDFFicheinter
 
 			if (file_exists($dir))
 			{
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 				$pdf=pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
 				$heightforinfotot = 50;	// Height reserved to output the info and total part
@@ -210,22 +222,22 @@ class pdf_soleil extends ModelePDFFicheinter
 				$nexY = $tab_top + 7;
 
 				$pdf->SetXY($this->marge_gauche, $tab_top);
-				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
-				$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8);
+				$pdf->MultiCell(190,5,$outputlangs->transnoentities("Description"),0,'L',0);
+				$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur-$this->marge_droite, $tab_top + 5);
 
 				$pdf->SetFont('', '', $default_font_size - 1);
 
-				$pdf->SetXY($this->marge_gauche, $tab_top + 8);
+				$pdf->SetXY($this->marge_gauche, $tab_top + 5);
 				$text=$object->description;
 				if ($object->duree > 0)
 				{
-				    $totaltime=convertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
+				    $totaltime=convertSecondToTime($object->duration,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
 				    $text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
 				}
 				$desc=dol_htmlentitiesbr($text,1);
 				//print $outputlangs->convToOutputCharset($desc); exit;
 
-				$pdf->writeHTMLCell(180, 3, 10, $tab_top + 8, $outputlangs->convToOutputCharset($desc), 0, 1);
+				$pdf->writeHTMLCell(180, 3, 10, $tab_top + 5, $outputlangs->convToOutputCharset($desc), 0, 1);
 				$nexY = $pdf->GetY();
 
 				$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
@@ -237,9 +249,10 @@ class pdf_soleil extends ModelePDFFicheinter
 				{
 					$objectligne = $object->lines[$i];
 
-					$valide = $objectligne->id ? $objectligne->fetch($objectligne->id) : 0;
+					$valide = empty($objectligne->id) ? 0 : $objectligne->fetch($objectligne->id);
 					if ($valide > 0 || $object->specimen)
 					{
+						$curX = $this->posxdesc-1;
 						$curY = $nexY;
 						$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 						$pdf->SetTextColor(0,0,0);
@@ -249,7 +262,12 @@ class pdf_soleil extends ModelePDFFicheinter
 						$pageposbefore=$pdf->getPage();
 
 						// Description of product line
-						$txt='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration),1,$outputlangs->charset_output).'</strong>';
+						$txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
+						if ($objectligne->duration > 0)
+						{
+							$txt.=" - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration);
+						}
+						$txt='<strong>'.dol_htmlentitiesbr($txt,1,$outputlangs->charset_output).'</strong>';
 						$desc=dol_htmlentitiesbr($objectligne->desc,1);
 
 						$pdf->writeHTMLCell(0, 0, $curX, $curY + 1, dol_concatdesc($txt,$desc), 0, 1, 0);
@@ -594,9 +612,9 @@ class pdf_soleil extends ModelePDFFicheinter
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'FICHINTER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		$showdetails=0;
+		return pdf_pagefoot($pdf,$outputlangs,'FICHINTER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }
 
-?>

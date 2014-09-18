@@ -50,4 +50,3 @@ print $langs->trans("FeatureNotYetAvailable");
 llxFooter();
 
 $db->close();
-?>

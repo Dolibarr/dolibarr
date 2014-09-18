@@ -137,8 +137,6 @@ class mailing_xinputfile extends MailingTargets
 			{
 				$cpt=0;
 
-				//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-				//print_r($_FILES);
 				$file=$upload_dir . "/" . $_FILES['username']['name'];
 				$handle = @fopen($file, "r");
 				if ($handle)
@@ -166,7 +164,7 @@ class mailing_xinputfile extends MailingTargets
 								{
 									$cibles[$j] = array(
 					                    			'email' => $email,
-					                    			'name' => $name,
+					                    			'lastname' => $name,
 					                    			'firstname' => $firstname,
 													'other' => $other,
                                                     'source_url' => '',
@@ -225,4 +223,3 @@ class mailing_xinputfile extends MailingTargets
 
 }
 
-?>

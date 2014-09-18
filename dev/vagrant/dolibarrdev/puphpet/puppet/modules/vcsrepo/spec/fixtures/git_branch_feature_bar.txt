@@ -1,0 +1,14 @@
+  feature/foo
+* feature/bar
+  feature/baz
+  feature/quux
+  only/local
+  master
+  refactor/foo
+  origin/HEAD
+  origin/feature/foo
+  origin/feature/bar
+  origin/feature/baz
+  origin/feature/quux
+  origin/only/remote
+  origin/master

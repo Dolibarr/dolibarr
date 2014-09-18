@@ -50,7 +50,7 @@ Enlevement=Pick-up por o Cliente
 DocumentModelSimple=Modelo Simples
 DocumentModelMerou=Modelo A5 Merou
 WarningNoQtyLeftToSend=Atenção, nenhum produto à espera de ser enviado.
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Estatisticas referentes os envios , mas somente validados. Data usada e data da validacao do envio ( a data planejada da entrega nao e sempre conhecida).
 DateDeliveryPlanned=Data de entrega planejada
 DateReceived=Data de entrega recebida
 SendShippingByEMail=Envio enviado por e-mail
@@ -66,11 +66,9 @@ CarrierList=Lista de transportadoras
 SendingMethodCATCH=Remoção pelo cliente
 SendingMethodTRANS=Transportadora
 SendingMethodCOLSUI=Acompanhamento
-
 # ModelDocument
 DocumentModelSirocco=Modelo de Documento Sirocco
 DocumentModelTyphon=Modelo de Documento Typhon
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER nao definida
 SumOfProductVolumes=Soma do volume dos pedidos
 SumOfProductWeights=Soma do peso dos produtos

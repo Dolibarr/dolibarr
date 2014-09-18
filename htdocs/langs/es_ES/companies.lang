@@ -18,6 +18,7 @@ NewCompany=Nueva empresa (cliente potencial, cliente, proveedor)
 NewThirdParty=Nuevo tercero (cliente potencial, cliente, proveedor)
 NewSocGroup=Nueva agrupación de empresas
 NewPrivateIndividual=Nuevo particular (cliente potencial, cliente, proveedor)
+CreateDolibarrThirdPartySupplier=Crear un tercero (proveedor)
 ProspectionArea=Área de prospección
 SocGroup=Agrupamiento de empresas
 IdThirdParty=ID tercero
@@ -90,6 +91,9 @@ LocalTax2IsUsedES= Sujeto a IRPF
 LocalTax2IsNotUsedES= No sujeto a IRPF
 LocalTax1ES=RE
 LocalTax2ES=IRPF
+TypeLocaltax1ES=Tasa RE
+TypeLocaltax2ES=Tasa IRPF
+TypeES=Tasa
 ThirdPartyEMail=%s
 WrongCustomerCode=Código cliente incorrecto
 WrongSupplierCode=Código proveedor incorrecto
@@ -313,7 +317,7 @@ EditDeliveryAddress=Modificar dirección de envío
 ThisUserIsNot=Este usuario no es ni un cliente potencial, ni un cliente, ni un proveedor
 VATIntraCheck=Verificar
 VATIntraCheckDesc=El link <b>%s</b> permite consultar al servicio europeo de control de números de IVA intracomunitario. Se requiere acceso a internet para que el servicio funcione
-VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/lang.do?fromWhichPage=vieshome&selectedLanguage=ES
+VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Verificar en la web de la Comisión Europea
 VATIntraManualCheck=Puede también realizar una verificación manual en la web europea <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Comprobación imposible. El servicio de comprobación no es prestado por el país país miembro (%s).

@@ -52,8 +52,6 @@ $fuser->getrights();
 
 if ($_GET["action"] == 'dolibarr2ldap')
 {
-    $message="";
-
     $db->begin();
 
     $ldap=new Ldap();
@@ -67,12 +65,12 @@ if ($_GET["action"] == 'dolibarr2ldap')
 
     if ($result >= 0)
     {
-        $message.='<div class="ok">'.$langs->trans("UserSynchronized").'</div>';
+        setEventMessage($langs->trans("UserSynchronized"));
         $db->commit();
     }
     else
     {
-        $message.='<div class="error">'.$ldap->error.'</div>';
+        setEventMessage($ldap->error, 'errors');
         $db->rollback();
     }
 }
@@ -152,10 +150,6 @@ print '</table>';
 
 print '</div>';
 
-
-dol_htmloutput_mesg($message);
-
-
 /*
  * Barre d'actions
  */
@@ -228,4 +222,3 @@ print '</table>';
 $db->close();
 
 llxFooter();
-?>

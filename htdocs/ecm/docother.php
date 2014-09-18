@@ -172,4 +172,3 @@ print $langs->trans("FeatureNotYetAvailable");
 $db->close();
 
 llxFooter();
-?>

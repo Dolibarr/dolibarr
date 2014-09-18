@@ -158,4 +158,3 @@ if ($geoip)
 llxFooter();
 
 $db->close();
-?>

@@ -2,6 +2,144 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 3.7 compared to 3.6.* *****
+For users:
+- New: PDF event report show project and status of event.
+- New: Onto event summary of elements, end date and status are visible.
+- New: Can filter on status on interventions.
+- New: Add help info of field type into dictionary of payment types.
+- New: Add proposals into referer page of thirdparty.
+- New: On contact list can set filter on both active and not active (no more exclusive select). 
+- New: Each user can include its own external ics calendar into dolibarr agenda view.
+- New: Intervention documents are now available in ECM module.
+- New: Can attach supplier order to a customer order.
+- New: Supervisor is now visible into user list. 
+- New: Add user of creation and validation on invoice export.
+- New: Add info page about browser.
+- New: Enable feature developed for 3.6 we forgot to enabled: Adding prefix
+       on uploaded file names. 
+- New: No more dependency between contract and service module.
+- New: [ task #867 ] Remove ESAEB external module code from core.
+- New: Can create proposal from an intervention.
+- New: Can filter events on a group of users.
+- New: Can filter events of a thirdparty.
+- New: Split Agenda view (month, week, day) into different tabs.
+- New: Form to add a photo is immediatly available on photo page if
+       permissions are ok (save one click per photo to add).
+- New: Add option PRODUCT_MAX_VISIBLE_PHOTO to limit number of photos
+       shown on main product card.
+- New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
+       create an automatic event into agenda.
+- New: Add new type of event (when type of events are used, not by default)
+- New: Add country into table of thirdparties type. This will allow to provide
+       a list of thirdparty types specific to a country (like argentina that
+       need type A or B).
+- New: Can force a specific bank account onto an invoice/order.
+- New: Home page of project area shows list of draft project (like other main page).
+- New: Can search on project ref or string from project main page (like other main page).
+- New: First change to match accessibility rules: http://www.w3.org/TR/WCAG10-HTML-TECHS/
+       Differentiate text and img.
+       Use label into quick search form.
+       Use accesskey on form search.
+- New: Intervention documents are now available in ECM module
+- New: Add attachments on user card + in ECM module
+- New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.    
+- New: [ task #1204 ] add Numering contrat module free (like leopard in product module)
+- New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice
+- New: Enable supplier price log table
+- New: [ task #1204 ] add a External reference to contract
+- New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
+- New: Optimize size of image static resources.
+- New: Add hourly and daily amount on user card. Add weekly working hours and salary on user card.
+- New: Content of predefined email come firstly from table llx_c_email_template, then translation key. 
+- New: Add option MAIN_GENERATE_INVOICES_WITH_PICTURE to show picture 
+       onto PDF like MAIN_GENERATE_PROPOSALS_WITH_PICTURE dir for proposals.
+- Upgrade phpexcel lib to 1.7.8
+- Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
+- Fix: [ bug #1470, #1472, #1473] User trigger problem
+- Fix: [ bug #1489, #1491 ] Intervention trigger problem
+- Fix: [ bug #1492, #1493 ] Member trigger problem
+- Fix: [ bug #1474, #1475 ] Contract trigger problem
+- Fix: [ bug #1496 ] ACTION_DELETE trigger does not show trigger error
+- Fix: [ bug #1494 ] CATEGORY_CREATE and CATEGORY_MODIFY triggers do not intercept trigger action
+- Fix: [ bug #1502 ] DON_CREATE trigger does not intercept trigger action
+- Fix: [ bug #1505, #1504] Project trigger problem
+- Fix: [ bug #1463, #1464 ] Proposal triggers problem
+- Fix: [ bug #1498, #1499 ] Shipment/Delivery triggers problem
+- Fix: [ bug #1465, #1466 ] Product triggers problem
+- Fix: [ bug #1508 ] STOCK_MOVEMENT does not show trigger error message
+- Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
+- Fix: [ bug #1506, #1507 ] ECM trigger error problem
+- Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
+- Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
+
+New experimental module:
+- New: Module Accounting Expert to manage accountancy
+		Special Thanks to developpers :
+			Olivier Geffroy
+			Alexandre Spangaro
+			Ari Elbaz
+			Florian Henry
+			Juanjo Menent
+		And to the contributors :
+			Jeff Info				2000 euros
+			Nord Anim		 		 120 euros
+			Hydroflex		 		 120 euros
+			Asysteo			 		 120 euros
+			Fournisseur médical		 120 euros
+
+For translators:
+- Update language files.
+- New: When a translation is not available we always jump to en_US and only en_US.
+
+For developers:
+- New: Add a css style "cursorpointer".
+- New: Select list of users can return user into hierarchy.
+- New: getBrowserInfo can return type of layout of browser (classic/phone/tablet)
+- New: Add hook "searchAgendaFrom" and "beforePDFCreation".
+- New: Add trigger DON_UPDATE, DON_DELETE
+- New: Add country iso code on 3 chars into table of countries.
+- Qual: Removed hard coded rowid into data init of table llx_c_action_trigger.
+- LINEBILL_DELETE, LINK_DELETE, ORDER_SUPPLIER_DELETE, RESOURCE_DELETE trigger called before SQL delete
+- New: [ Task #1481 ] Add trigger BILL_SUPPLIER_UPDATE.
+- New: [ Task #1495 ] Add trigger LINECONTRACT_CREATE.
+- New: Added hook "formConfirm" and "doActions" for supplier invoice card.
+- New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card.
+- New: renamed table llx_c_pays to llx_c_country & libelle field to label.
+- Qual: Renamed table llx_c_civilite into llx_c_civility,
+		field civilite into label in the same table,
+		and field civilite into civility in other table
+
+WARNING: Following changes may create regression for some external modules, but was necessary to make
+Dolibarr better:
+
+- Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
+- Some field into database were renamed from "libelle" to "label".
+- Table llx_c_pays were renamed into llx_c_country.  
+- Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
+  creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
+
+ 
+***** ChangeLog for 3.6.1 compared to 3.6.* *****
+For users:
+- Fix: Can upload files on services.
+- Fix: sql errors on updat fichinter.
+- Fix: debian script syntax error.
+- Fix: error "menu param is not inside list" into pos module.
+- Fix: Salary payments are not reflected on the reporting sheets.
+- Fix: Unsubscribe emailing not working.
+- Fix: Trigger on create category call failed because user is not passed on card.
+- Fix: list event view lost type event filter.
+- Fix: Save also code event.
+- Fix: VAT payment - Add control on field date value.
+- Fix: Salaries payment - Field date value is now required and add control on it.
+- Fix: Iban was used instead of Bic into SEPA file.
+- Fix: Must unaccent strings into SEPA file.
+- Fix: Extrafield feature select from table should try to translate multiple column when not needed 
+- Fix: cents for indian ruppes are calle paisa and paise.
+- Fix: Invoices payments may be older than invoices.
+
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
 - New: Update ckeditor to version 4.
@@ -42,17 +180,39 @@ For users:
 - New: More options to create a credit note (can be filled autatically according to remain to pay).
 - New: Can define custom fields for categories.
 - New: Prepare generation of SEPA files into module withdrawal.
-- New: Can filter on status for supplier order.
-- Fix: Project Task numbering customs rule works.
-- Fix: Add actions events not implemented.
+- New: [ task #1164 ] Add "Ref. supplier" search box in supplier orders
+- New: [ task #1345 ] Can filter on status for supplier order.
+- New: Add option FACTURE_SENDBYEMAIL_FOR_ALL_STATUS to allow to send invoice by email 
+       whatever is its status.
 - New: Add filter date in bank writing list page.
-- Fix: Price min of composition is not supplier price min by quantity
-
-TODO
-- New: Predefined product and free product use same form.
+- New: Extrafields can be used as substitution key %EXTRA_XXX% into emails texts for members.
+- New: Add categories translation.
+- New: Enable option "clone target emailing".
+- New: Improved tax module: Add specific page for salaries payment	
+- New: Add composer.json file so Dolibarr can be publish onto packagist.org.
+- New: The combo list of juridical status is now sorted
 - New: [ task #926 ] Add extrafield feature on order lines.
 - New: [ task #927 ] Add extrafield feature on Proposal lines.
 - New: [ task #928 ] Add extrafield feature on invoice lines.
+- New: Paypal/paybox email sent after backcall of a payment is now a formated and translated
+       HTML content. For member subscription renewal, there is also a link to member.
+- New: When a subscription is recorded with invoice and payment:
+       - the document (PDF) of invoice is also generated.
+       - the invoice is set to status paid.
+- New: Can enter holiday for someone else if user has permission for.
+- Fix: Project Task numbering customs rule works.
+- Fix: Add actions events not implemented.
+- Fix: Price min of composition is not supplier price min by quantity.
+- Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers.
+- Fix: [ bug #1439 ] impossible to remove a a translation (multilanguage-feature) 
+- New: If multilangue is enabled, mail (from propal, invoice, etc...) message is pre-defaulted in Customer language
+- Fix: [ bug #1459 ] _ADD_CONTACT and _DEL_CONTACT triggers do not intercept insertion when reported an error
+- Fix: [ bug #1478 ] BILL_PAYED trigger action does not intercept failure under some circumstances
+- Fix: [ bug #1479 ] Several customer invoice triggers do not intercept trigger action
+- Fix: [ bug #1477 ] Several customer invoice triggers do not show trigger error messages
+- Fix: [ bug #1471 ] Several PHP warnings when intercepting USER_CREATE trigger.
+- Fix: [ bug #1517 ] Packages sizes.
+- Fix: [ bug #1521 ] The second order's page from a provider shows all orders
 
 For translators:
 - Update language files.
@@ -70,6 +230,12 @@ For developers:
 - New: Normalize code for barcode generation to match other modules.
 - New: Uniformize code for contacts forms.
 - New: Add some hooks for financial reports.
+- New: A module can add its own ECM view.
+- New: A module can disable a standard ECM view.
+- New: Add multilang support into product webservice.
+- New: Add hooks on project card page.
+- New: Add call_trigger method on CommonObject class. So new trigger call within object is just : 
+$result = $this->call_trigger($trigger_name, $user) 
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -77,17 +243,127 @@ Dolibarr better:
 - The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
 removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
 - Remove the javascript function ac_delay() that is not used anymore by core code.
-- Properties "dictionnaries" into module descriptor files has been renamed into "dictionaries".
+- Properties "dictionnaries" into module descriptor files have been renamed into "dictionaries".
 - Method form->select_currency() has been removed. Use instead print form->selectCurrency().
 - Method form->select_methodes_commande() has been renamed into english name selectInputMethod().
 - The following hooks are now 'addreplace' hooks: "formCreateThirdpartyOptions" 
-  So check that return value is 0 to keep default standard behaviour after hook or 1 to disable
+  So check that return value is 0 to keep default standard behaviour after hook, or 1 to disable
   default standard behaviour.
+- Properties "civilite_id" were renamed into "civility_id".
+- Remove add_photo_web() that is ot used anymore by core code.
 
 
+***** ChangeLog for 3.5.5 compared to 3.5.4 *****
+Fix: Holiday module was broken. Initializaion of amount of holidays failed.
+Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas.
+Fix: Fusion PDF button on unpaid invoice is no more displayed.
+Fix: Unpaid invoice launch fusion PDF action even if it is only search (with enter keyboard input instead of lens click).
+Fix: Pb when showing log list of holiday module with some mysql versions.
+Fix: Error with bad timezone pushed by some browsers.
+Fix: shipping list SQL request was not filtering on shipping element
+Fix: debian package provided by dolibarr team must use embedded libraries.
+Fix: [ bug #1528 ] Leopard Services numeration module description is not translated.
+Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas.
+Fix: [ bug #1534 ] Unknown error when deleting a product photo under special circumstances.
+Fix: Update impayees.php
+Fix: Link product, In list view and label product.
+Fix: visible task into area "time" for "My task" must limit task to tasks i am assigned to.
+Fix: When disabled, all fields to add time into task line must be disabled.
+Fix: Missing include files.lib.php in some pages that use dol_delete_recursive
+Fix: [ bug #1558 ] Product/service edit page title shows new Ref instead of old ref.
+Fix: [ bug #1553 ] Saving User displays setup removes menu.
+Fix: [ bug #1544 ] Can remove date from invoice.
+Fix: list event view lost type event filter.
+Fix: Add code save on create event.
+Fix: SQL injection.
+Fix: [ bug #1589 ] Menu type in "Edit menu" page is not translated
+Fix: [ bug #1591 ] Linked object block shows Total HT/TTC even if not having permission to read them
+Fix: [ bug #1577 ] When creating new Private individual third, selected third type is ignored
+Fix: [ bug #1555 ] Update accountancy code of products does not throw PRODUCT_MODIFY trigger
+Fix: [ bug #1548 ] Supplier payment card shows type in French
+Fix: [ bug #1546 ] Incorrect page number when searching in the list of bank transactions
+
+***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: Hide title of event when agenda module disabled.
+Fix: When using option MAIN_MAIL_ALLOW_SENDMAIL_F, a mail was sent to sender.
+Fix: Question about warehouse must not be done when module stock is disabled.
+Fix: Option STOCK_SUPPORTS_SERVICES was not correctly implemented
+     (missing test at some places).
+Fix: Renaming a project with uplaoded files failed.
+Fix: [ bug #1476 ] Invoice creation form loses invoice date when there is a validation error.
+Fix: [ bug #1431 ] Reception and Send supplier order box has a weird top margin.
+Fix: [ bug #1428 ] "Nothing" is shown in the middle of the screen in a supplier order.
+Fix: The object deliverycompany was not used anymore and output of
+     details for delivery reports was lost during 3.5. Rewrite code to
+     restore feature.
+Fix: [ bug #1445 ] html fix : missing </tr>
+Fix: [ bug #1415 ] Intervention document model name and suppliers model names is not shown
+     properly in module configuration
+Fix: [ bug #1416 ] Supplier order does not list document models in the select box of the 
+     supplier order card
+Fix: [ bug #1443 ] Payment conditions is erased after editing supplier invoice label or 
+     limit date for payment
+Fix: Filter on status was not visible when selected from url.
+Fix: Filtering on status was last when asking to sort.
+Fix: [ bug #1432 ] Trigger SHIPPING_CREATE ignores interception on error.
+Fix: [ bug #1449 ] Trigger ORDER_CREATE, LINEORDER_DELETE, LINEORDER_UPDATE and LINEORDER_INSERT ignore interception on error.
+Fix: [ bug #1450 ] Several Customer order's triggers do not report the error from the trigger handler.
+Fix: [ bug #1451 ] Interrupted order clone through trigger, loads nonexistent order.
+Fix: [ bug #1454 ] Mention de bas de page erroné
+Fix: Do not display dictionnay for non activated module 
+Fix: Link element from element project pages
+Fix: [ bug #1509 ] Expedition admin free text & watermark submit error
+Fix: [ bug #1349 ] AJAX contact selector does not work fine in Project card
+Fix: [ bug #1452 ] variable used but not defined
+Fix: If multiprice level is used the VAT on addline is not correct
+Fix: [ bug #1254 ] Error when using "Enter" on qty input box of a product (on supplier order part)
+Fix: [ bug #1462, 1468, 1480, 1483, 1490, 1497] $this instead of $object
+Fix: [ bug #1455 ] outstanding amount
+Fix: [ bug #1425 ] LINEBILL_SUPPLIER_DELETE failure trigger leads to an endless loop
+Fix: [ bug #1460 ] Several supplier order triggers do not show error messages
+Fix: [ bug #1461 ] LINEORDER_SUPPLIER_CREATE does not intercept supplier order line insertion
+Fix: [ bug #1484 ] BILL_SUPPLIER_PAYED trigger action does not intercept failure under some circumstances
+Fix: [ bug #1482 ] Several supplier invoice triggers do not show trigger error messages
+Fix: [ bug #1486 ] LINEBILL_SUPPLIER_CREATE and LINEBILL_SUPPLIER_UPDATE triggers do not intercept trigger action
+Fix: [ bug #1522 ] Element list into associate object into project are no more filterd by project thirdparty
+Fix: [ bug #1526 ] Thumbs of files uploaded with dots in their names do not load correctly
+Fix: Import ProfId1 to siren and ProfId2 to siret
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
+Fix: [ bug #1351 ] VIES verification link broken.
+Fix: [ bug #1352 ] Removing a shipping does not remove the delivery.
+Fix: Option MAIN_INVERT_SENDER_RECIPIENT broken with typhon template.
+Fix: Can disable features with PHPEXCEL (no DLSF compatible).
+Fix: Can disable features with CKEDITOR. 
+Fix: Pb of records not correctly cleaned when module marge is
+     uninstalled (conflict between 'margin' and 'margins').
+Fix: [ bug #1341 ] Lastname not added by file or direct input in mass e-mailing.
+Fix: [ bug #1357 ] Invoice creator state not printed in generated invoice documents.
+Fix: Suppliers invoice mask fails using {tttt} in numbering.
+Fix: [ bug #1350 ] pdf template name for typhon was not correctly set when enabling module.
+Fix: Navigation on notes for shipments was not working.
+Fix: [ bug #1353 ] Email notifications, wrong URL.
+Fix: [ bug #1362 ] Note is not saved.
+Fix: tr/td balance.
+Fix: [ bug #1360 ] note indicator for member tab.
+Fix: Nb of notes and doc not visible onto tasks.
+Fix: [ bug #1372 ] Margin calculation does not work in proposals.
+Fix: [ bug #1381 ] PHP Warning when listing stock transactions page.
+Fix: [ bug #1367 ] "Show invoice" link after a POS sell throws an error.
+Fix: TCPDF error file not found in member card generation.
+Fix: [ bug #1380 ] Customer invoices are not grouped in company results report.
+Fix: [ bug #1393 ] PHP Warning when creating a supplier invoice.
+Fix: [ bug #1399 ] [pgsql] Silent warning when setting a propal as "facturée" in propal.php
+Fix: When number reach 9999 with default numbering module, next number
+     will be 10000 instead of 0000 and error.
+Fix: element page on project give wrong href link.
+Fix: [ bug #1397 ] Filter by supplier orders with status Draft does not filter.
+Fix: [ bug #1388 ] Wrong date when invoicing several orders.
+Fix: [ bug #1411 ] Unable to set an expedition note if invoices module is not enabled.
+Fix: [ bug #1407 ] Rouget pdf overlapped when using tracking number and public notes.
+Fix: [ bug #1405 ] Rouget PDF expedition incorrect when two expeditions under the same commande
+Fix: [ bug #1434 ] Muscadet supplier order document model linked objects overlap the text
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
@@ -175,6 +451,7 @@ Fix: [ bug #1306 ] Fatal error when adding an external calendar.
 New: Added es_CL language
 Fix: Margin tabs bad data show
 Fix: [ bug #1318 ] Problem with enter key when adding an existing product to a customer invoice.
+Fix: [ bug #1410 ] Add customer order line asks for required Unit Price but doesn't interrupt the creation of the line
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
@@ -314,6 +591,7 @@ Fix: Add a limit into list to avoid browser to hang when database is too large.
 Fix: [ bug #1212 ] 'jqueryFileTree.php' directory traversal vulnerability
 Fix: Agenda and Banks module were not working with multicompany module
 Fix: [ bug #1317 ] Removing a category does not remove all child categories
+Fix: [ bug #1380 ] Customer invoices are not grouped in company results report.
 
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
 Fix: field's problem into company's page (RIB).

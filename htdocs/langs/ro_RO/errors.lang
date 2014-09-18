@@ -135,6 +135,8 @@ ErrorWarehouseMustDiffers=Depozitul sursă și țintă trebuie să difere
 ErrorBadFormat=Bad format!
 ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
+ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
+
 # Warnings
 WarningMandatorySetupNotComplete=Parametri de setare obligatorii nu sunt încă definiţi
 WarningSafeModeOnCheckExecDir=Atenţie, PHP <b>safe_mode</b> opţiune este pe atât de comandă trebuie să fie depozitate într-un director declarate de <b>safe_mode_exec_dir</b> parametru PHP.
@@ -151,3 +153,4 @@ WarningCloseAlways=Atenţie, închiderea are loc chiar dacă suma diferă. Nu ac
 WarningUsingThisBoxSlowDown=Atenție, folosind această casetă încetiniţi serios toate paginile ce arată caseta.
 WarningClickToDialUserSetupNotComplete=Setările informațiilor ClickToDial pentru userul dvs. nu sunt complete (vezi tabul ClickToDial pe fişal dvs. de utilizator).
 WarningNotRelevant=Operaţiuni irelevante pentru acest dataset
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.

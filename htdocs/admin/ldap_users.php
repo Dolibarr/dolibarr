@@ -427,7 +427,7 @@ if (function_exists("ldap_connect"))
             }
             else
            {
-                $mesg='<div class="error">'.$ldap->error.'</div>';
+                setEventMessage($ldap->error, 'errors');
             }
 
 			print "<br>\n";
@@ -453,4 +453,3 @@ if (function_exists("ldap_connect"))
 $db->close();
 
 llxFooter();
-?>

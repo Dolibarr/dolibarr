@@ -117,24 +117,25 @@ class modMyModule extends DolibarrModules
         //                              'objecttype:+tabname2:Title2:mylangfile@mymodule:$user->rights->othermodule->read:/mymodule/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2
         //                              'objecttype:-tabname:NU:conditiontoremove');                                                     						// To remove an existing tab identified by code tabname
 		// where objecttype can be
-		// 'thirdparty'       to add a tab in third party view
-		// 'intervention'     to add a tab in intervention view
-		// 'order_supplier'   to add a tab in supplier order view
-		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'invoice'          to add a tab in customer invoice view
-		// 'order'            to add a tab in customer order view
-		// 'product'          to add a tab in product view
-		// 'stock'            to add a tab in stock view
-		// 'propal'           to add a tab in propal view
-		// 'member'           to add a tab in fundation member view
-		// 'contract'         to add a tab in contract view
-		// 'user'             to add a tab in user view
-		// 'group'            to add a tab in group view
+		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 		// 'contact'          to add a tab in contact view
+		// 'contract'         to add a tab in contract view
+		// 'group'            to add a tab in group view
+		// 'intervention'     to add a tab in intervention view
+		// 'invoice'          to add a tab in customer invoice view
+		// 'invoice_supplier' to add a tab in supplier invoice view
+		// 'member'           to add a tab in fundation member view
+		// 'opensurveypoll'	  to add a tab in opensurvey poll view
+		// 'order'            to add a tab in customer order view
+		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
-		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-		// 'opensurveypoll'	  to add a tab in opensurvey poll view
+		// 'product'          to add a tab in product view
+		// 'propal'           to add a tab in propal view
+		// 'project'          to add a tab in project view
+		// 'stock'            to add a tab in stock view
+		// 'thirdparty'       to add a tab in third party view
+		// 'user'             to add a tab in user view
         $this->tabs = array();
 
         // Dictionaries
@@ -172,7 +173,7 @@ class modMyModule extends DolibarrModules
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
-		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
+		// $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		// $this->rights[$r][1] = 'Permision label';	// Permission label
 		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
 		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
@@ -269,4 +270,3 @@ class modMyModule extends DolibarrModules
 
 }
 
-?>

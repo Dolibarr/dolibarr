@@ -1,10 +1,11 @@
 # Dolibarr language file - Source file is en_US - shop
-Shop=متجر
-ShopWeb=تسوق على الإنترنت
-LastOrders=أوامر الماضي
-OnStandBy=على اهبة الاستعداد
-TreatmentInProgress=التقدم في العلاج
-LastCustomers=آخر الزبائن
-OSCommerceShop=OSCommerce متجر
-OSCommerce=OSCommerce
-AddProd=بيع على الانترنت
+FailedConnectDBCheckModuleSetup=برای اتصال به پایگاه داده با همکاری شکست خورد. بررسی کنید راه اندازی ماژول شما
+Shop=فروشگاه
+ShopWeb=وب سایت فروشگاه
+LastOrders=آخرین سفارشات
+OnStandBy=آماده به کار
+TreatmentInProgress=درمان در حال پیشرفت است
+LastCustomers=تاریخ و زمان آخرین مشتریان
+OSCommerceShop=فروشگاه آهنگ تولد
+OSCommerce=آهنگ تولد
+AddProd=فروش آنلاین

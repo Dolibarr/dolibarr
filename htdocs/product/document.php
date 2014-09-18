@@ -104,7 +104,7 @@ if ($object->id)
 	
 
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -141,7 +141,7 @@ if ($object->id)
     print '</div>';
 
     $modulepart = 'produit';
-    $permission = $user->rights->produit->creer;
+    $permission = (($object->type == 0 && $user->rights->produit->creer) || ($object->type == 1 && $user->rights->service->creer));
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
@@ -153,4 +153,3 @@ else
 
 llxFooter();
 $db->close();
-?>

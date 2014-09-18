@@ -34,7 +34,7 @@ $langs->load("sendings");
 
 // Security check
 $socid=0;
-$comid = isset($_GET["id"])?$_GET["id"]:'';
+$comid = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$comid,'');
 
@@ -47,8 +47,8 @@ $result=restrictedArea($user,'commande',$comid,'');
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $commande = new Commande($db);
-$commande->fetch($_GET["id"]);
-$commande->info($_GET["id"]);
+$commande->fetch($comid);
+$commande->info($comid);
 $soc = new Societe($db);
 $soc->fetch($commande->socid);
 
@@ -66,4 +66,3 @@ print '</div>';
 $db->close();
 
 llxFooter();
-?>

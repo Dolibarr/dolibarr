@@ -30,7 +30,7 @@ $langs->load("companies");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 
 // Security check
-$socid = $_GET["socid"];
+$socid = GETPOST("socid",'int');
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -224,4 +224,3 @@ else
 llxFooter();
 
 $db->close();
-?>

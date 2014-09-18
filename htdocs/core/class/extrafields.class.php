@@ -27,6 +27,7 @@
  *	\brief      File of class to manage extra fields
  */
 
+
 /**
  *	Class to manage standard extra fields
  */
@@ -207,16 +208,16 @@ class ExtraFields
 	/**
 	 *	Add description of a new optional attribute
 	 *
-	 *	@param	string	$attrname			code of attribute
-	 *	@param	string	$label				label of attribute
-	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour', 'float')
-	 *  @param	int		$pos				Position of attribute
-	 *  @param	int		$size				Size/length of attribute
-	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
-	 *  @param	int		$unique				Is field unique or not
-	 *  @param	int		$required			Is field required or not
-	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
-	 *  @return	int							<=0 if KO, >0 if OK
+	 *	@param	string			$attrname		code of attribute
+	 *	@param	string			$label			label of attribute
+	 *  @param	int				$type			Type of attribute ('int', 'text', 'varchar', 'date', 'datehour', 'float')
+	 *  @param	int				$pos			Position of attribute
+	 *  @param	int				$size			Size/length of attribute
+	 *  @param  string			$elementtype	Element type ('member', 'product', 'company', ...)
+	 *  @param	int				$unique			Is field unique or not
+	 *  @param	int				$required		Is field required or not
+	 *  @param  array||string	$param			Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @return	int								<=0 if KO, >0 if OK
 	 */
 	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='')
 	{
@@ -254,7 +255,7 @@ class ExtraFields
 			$sql.= " '".$params."'";
 			$sql.=')';
 
-			dol_syslog(get_class($this)."::create_label sql=".$sql);
+			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				return 1;
@@ -285,7 +286,6 @@ class ExtraFields
 			if ($result < 0)
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			}
 
 			$result=$this->delete_label($attrname,$elementtype);
@@ -317,7 +317,7 @@ class ExtraFields
 			$sql.= " AND entity IN  (0,".$conf->entity.')';
 			$sql.= " AND elementtype = '".$elementtype."'";
 
-			dol_syslog(get_class($this)."::delete_label sql=".$sql);
+			dol_syslog(get_class($this)."::delete_label", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -398,7 +398,7 @@ class ExtraFields
 					{
 						$sql="ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
 					}
-					dol_syslog(get_class($this).'::update sql='.$sql);
+					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql=$this->db->query($sql,1,'dml');
 					return 1;
 				}
@@ -453,7 +453,7 @@ class ExtraFields
 			$sql_del.= " WHERE name = '".$attrname."'";
 			$sql_del.= " AND entity = ".$conf->entity;
 			$sql_del.= " AND elementtype = '".$elementtype."'";
-			dol_syslog(get_class($this)."::update_label sql=".$sql_del);
+			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
 			$resql1=$this->db->query($sql_del);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
@@ -479,7 +479,7 @@ class ExtraFields
 			$sql.= " '".$pos."',";
 			$sql.= " '".$param."'";
 			$sql.= ")";
-			dol_syslog(get_class($this)."::update_label sql=".$sql);
+			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
 			$resql2=$this->db->query($sql);
 
 			if ($resql1 && $resql2)
@@ -536,7 +536,7 @@ class ExtraFields
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
 		$sql.= " ORDER BY pos";
 
-		dol_syslog(get_class($this)."::fetch_name_optionals_label sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_name_optionals_label", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -612,17 +612,18 @@ class ExtraFields
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			if(!class_exists('Form'))
-				require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-			$formstat = new Form($db);
 
 			$showtime = in_array($type,array('datetime')) ? 1 : 0;
-			// Do not show current date when field not required (see select_date() method)
-			if(!$required && $value == '')
-				$value = '-1';
 
-			$out = $formstat->select_date($value, 'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
-			// TODO Missing to add $moreparam
+			// Do not show current date when field not required (see select_date() method)
+			if (!$required && $value == '') $value = '-1';
+
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			global $form;
+			if (! is_object($form)) $form=new Form($this->db);
+
+			// TODO Must also support $moreparam
+			$out = $form->select_date($value, 'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
 		}
 		elseif (in_array($type,array('int')))
 		{
@@ -672,13 +673,14 @@ class ExtraFields
 		elseif ($type == 'select')
 		{
 			$out = '';
-			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
+			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox('options_'.$key.$keyprefix, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+				$out.= ajax_combobox('options_'.$key.$keyprefix, array(), $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 			}
 
 			$out.='<select class="flat" name="options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
+			$out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key=>$val )
 			{
 				list($val, $parent) = explode('|', $val);
@@ -695,7 +697,7 @@ class ExtraFields
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox('options_'.$key.$keyprefix, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+				$out.= ajax_combobox('options_'.$key.$keyprefix, array(), $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 			}
 
 			$out.='<select class="flat" name="options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
@@ -752,7 +754,7 @@ class ExtraFields
 				$sql.=preg_replace('/^ AND /','',$sqlwhere);
 				//print $sql;
 
-				dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
+				dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -941,7 +943,7 @@ class ExtraFields
 			$selectkey="rowid";
 			$keyList='rowid';
 
-			if (count($InfoFieldList)==3)
+			if (count($InfoFieldList)>=3)
 			{
 				$selectkey = $InfoFieldList[2];
 				$keyList=$InfoFieldList[2].' as rowid';
@@ -962,7 +964,7 @@ class ExtraFields
 			$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
 			//$sql.= ' AND entity = '.$conf->entity;
 
-			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
+			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -973,11 +975,11 @@ class ExtraFields
 				// Several field into label (eq table:code|libelle:rowid)
 				$fields_label = explode('|',$InfoFieldList[1]);
 
-				if(is_array($fields_label))
+				if(is_array($fields_label) && count($fields_label)>1)
 				{
 					foreach ($fields_label as $field_toshow)
 					{
-						$translabel=$langs->trans($field_toshow);
+						$translabel=$langs->trans($obj->$field_toshow);
 						if ($translabel!=$field_toshow) {
 							$value.=dol_trunc($translabel,18).' ';
 						}else {

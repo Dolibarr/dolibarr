@@ -88,7 +88,9 @@ NoExpiredServices=Keine abgelaufen aktiven Dienste
 ListOfServicesToExpireWithDuration=Liste der Leistungen die in %s Tagen ablaufen
 ListOfServicesToExpireWithDurationNeg=Liste der Services die seit mehr als %s Tagen abgelaufen sind
 ListOfServicesToExpire=Liste der Services die ablaufen
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertragsunterzeichnung durch Vertreter

@@ -1,42 +1,12 @@
-/*
- * Language code: ru_UA
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ru_UA
-Calendar=Календарь
-AddTrip=Добавить поездку
-Tools=Инструменты
-ToolsDesc=Эта область посвящена группе разные инструменты не доступны в другие пункты меню. <br><br> Эти инструменты могут быть достигнуты из меню на стороне.
-Birthday=День рождения
-BirthdayDate=День рождения
+# Dolibarr language file - Source file is en_US - other
 DateToBirth=Дата до рождения
 BirthdayAlertOn=День рождения оповещения активных
 BirthdayAlertOff=День рождения оповещения неактивные
 Notify_FICHINTER_VALIDATE=Вмешательство проверку
-Notify_WITHDRAW_TRANSMIT=Передача вывода
-Notify_WITHDRAW_CREDIT=Кредитный выход
-Notify_WITHDRAW_EMIT=Isue вывода
-Notify_ORDER_SENTBYMAIL=Покупатель делает заказ по почте
-Notify_COMPANY_CREATE=Третья партия, созданная
-Notify_PROPAL_SENTBYMAIL=Коммерческое предложение по почте
-Notify_ORDER_SENTBYMAIL=Envío pedido пор электронной почте
 Notify_BILL_PAYED=Клиенту счет-фактура оплачен
-Notify_BILL_CANCEL=Клиенту счет-фактура отменен
-Notify_BILL_SENTBYMAIL=Клиенту счет-фактура высылается по почте
-Notify_FICHEINTER_VALIDATE=Вмешательство проверку
-Notify_SHIPPING_VALIDATE=Доставка проверку
-Notify_SHIPPING_SENTBYMAIL=Доставка по почте
 Notify_MEMBER_VALIDATE=Член проверку
 Notify_MEMBER_SUBSCRIPTION=Член подписался
-Notify_MEMBER_RESILIATE=Член resiliated
-Notify_MEMBER_DELETE=Член удален
-NbOfAttachedFiles=Количество прикрепленных файлов / документов
 TotalSizeOfAttachedFiles=Общий размер присоединенных файлов / документов
-MaxSize=Максимальный размер
 PredefinedMailTest=Это тест почте. \ NВ две строки, разделенные возвратом каретки.
 PredefinedMailTestHtml=Это <b>тест</b> почте (слово тест должен быть жирным шрифтом). <br> Две строки, разделенные возвратом каретки.
 PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Только здесь вы найдете счета __FACREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
@@ -57,16 +27,8 @@ CanceledBy=Отменен по %s
 ClosedBy=Закрыто %s
 FileWasRemoved=Файл был удален %s
 DirWasRemoved=Каталог %s был удален
-Width=Ширина
-Height=Высота
-Depth=Глубина
-Top=Топ
-Bottom=Дно
-Left=Левый
-Right=Право
 CalculatedWeight=Расчетный вес
 CalculatedVolume=Расчетный объем
-Weight=Вес
 Length=Длина
 LengthUnitm=метр
 LengthUnitdm=дм
@@ -77,16 +39,7 @@ SurfaceUnitm2=м2
 SurfaceUnitdm2=дм2
 SurfaceUnitcm2=см2
 SurfaceUnitmm2=мм2
-VolumeUnitounce=унция
-VolumeUnitlitre=литр
-VolumeUnitgallon=галлон
-Size=размер
 SizeUnitm=метр
-SizeUnitdm=дм
-SizeUnitcm=см
-SizeUnitmm=мм
-SizeUnitinch=дюйм
-SizeUnitfoot=фут
 ProfIdShortDesc=<b>Профессор Id %s</b> является информация в зависимости от третьей стране партией. <br> Например, для страны <b>%s,</b> это код <b>%s.</b>
 DolibarrDemo=Dolibarr ERP / CRM-демо-
 StatsByNumberOfUnits=Статистика количества товаров / услуг, единиц
@@ -107,14 +60,6 @@ ResizeDesc=Введите новое значение ширины <b>или</b>
 NewLength=Новые ширина
 NewHeight=Новая высота
 NewSizeAfterCropping=Новый размер после обрезки
-ClickHere=Нажмите здесь
-UseAdvancedPerms=Используйте дополнительные разрешения некоторых модулей
-FileFormat=Формат файлов
-SelectAColor=Выберите цвет
-AddFiles=Добавить файлы
-StartUpload=Начать загрузку
-CancelUpload=Отмена загрузки
-FileIsTooBig=Файлы слишком велик
 PropalClosedSignedInDolibarr=Предложение %s подписан в Dolibarr
 PropalClosedRefusedInDolibarr=Предложение %s отказано в Dolibarr
 PropalValidatedInDolibarr=Предложение %s подтверждены в Dolibarr
@@ -129,7 +74,4 @@ LibraryUsed=Librairy использоваться
 LibraryVersion=Версия
 ExportableDatas=Экспортные данные
 NoExportableData=Нет экспорта данных (без модулей с экспортируемыми данными загружен, или отсутствуют разрешения)
-ToExport=Экспорт
-NewExport=Новый экспорт
 ExternalSites=Внешние сайты
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:00:38).

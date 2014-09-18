@@ -293,13 +293,76 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                         // setVars failed, probably because key not found
 					}
 				}
+
+
+                // Replace tags of lines for contacts
+                $contact_arrray=array();
+
+                $sql = "SELECT p.rowid";
+                $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+                $sql .= " WHERE p.fk_soc = ".$object->id;
+
+                $result = $this->db->query($sql);
+                $num = $this->db->num_rows($result);
+
+                $var=true;
+                if ($num)
+                {
+                	$i=0;
+                	$contactstatic = new Contact($this->db);
+
+                	while($i < $num)
+                	{
+                		$obj = $this->db->fetch_object($result);
+
+                		$contact_arrray[$i] = $obj->rowid;
+                		$i++;
+                	}
+                }
+                if((is_array($contact_arrray) && count($contact_arrray) > 0))
+                {
+                	try
+                	{
+                		$listlines = $odfHandler->setSegment('companycontacts');
+
+                		foreach($contact_arrray as $array_key => $contact_id)
+                		{
+                			$res_contact = $contactstatic->fetch($contact_id);
+                			$tmparray=$this->get_substitutionarray_contact($contactstatic,$outputlangs,'contact');
+                			foreach($tmparray as $key => $val)
+                			{
+                				try
+                				{
+                					$listlines->setVars($key, $val, true, 'UTF-8');
+                				}
+                				catch(OdfException $e)
+                				{
+                				}
+                				catch(SegmentException $e)
+                				{
+                				}
+                			}
+                			$listlines->merge();
+                		}
+                		$odfHandler->mergeSegment($listlines);
+                	}
+                	catch(OdfException $e)
+                	{
+                		$this->error=$e->getMessage();
+                		dol_syslog($this->error, LOG_WARNING);
+                		//return -1;
+                	}
+                }
+
                 // Make substitutions into odt of thirdparty + external modules
 				$tmparray=$this->get_substitutionarray_thirdparty($object,$outputlangs);
                 complete_substitutions_array($tmparray, $outputlangs, $object);
+
                 // Call the ODTSubstitution hook
                 $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
                 $reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                //var_dump($object->id); exit;
+
+                // Replace variables into document
 				foreach($tmparray as $key=>$value)
 				{
 					try {
@@ -331,7 +394,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 				}
 
-                                // Call the beforeODTSave hook
+                // Call the beforeODTSave hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
@@ -353,6 +416,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 				}
 
+				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -373,4 +438,3 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 }
 
-?>

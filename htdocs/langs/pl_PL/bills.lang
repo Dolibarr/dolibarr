@@ -85,6 +85,7 @@ ClassifyPaid=Klasyfikacja "wypłata"
 ClassifyPaidPartially=Klasyfikacja "paid częściowo"
 ClassifyCanceled=Klasyfikacji &quot;Abandoned&quot;
 ClassifyClosed=Klasyfikacja "zamkniętych"
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Utwórz fakturę
 AddBill=Dodaj faktury lub noty uznaniowej
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=Kwota twierdził
 ExcessReceived=Trop Peru
 EscompteOffered=Rabat oferowane (płatność przed kadencji)
-SendBillRef=Wyślij faktury %s
-SendReminderBillRef=Wyślij faktury %s (przypomnienie)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Zlecenia stałe
 StandingOrder=Zlecenie stałe
 NoDraftBills=Projekt nr faktury
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Suma dwóch nowych rabatu musi być równa 
 ConfirmRemoveDiscount=Czy na pewno chcesz usunąć ten rabat?
 RelatedBill=Podobne faktury
 RelatedBills=Faktur związanych
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Natychmiastowe
@@ -315,7 +318,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% in advance, 50%% on delivery
 FixAmount=Fix amount
 VarAmount=Variable amount (%% tot.)
-
 # PaymentType
 PaymentTypeVIR=Lokat bankowych
 PaymentTypeShortVIR=Lokat bankowych

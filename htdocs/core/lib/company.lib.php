@@ -4,7 +4,7 @@
  * Copyright (C) 2007		    Patrick Raguin			  <patrick.raguin@gmail.com>
  * Copyright (C) 2010-2012	Regis Houssin			    <regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2014  Florian Henry		  	  <florian.henry@open-concept.pro>
- * Copyright (C) 2013       Juanjo Menent		  	  <jmenent@2byte.es>
+ * Copyright (C) 2013-2014  Juanjo Menent		  	  <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel		<contact@altairis.fr>
  * Copyright (C) 2013       Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  *
@@ -64,13 +64,13 @@ function societe_prepare_head($object)
         $h++;
     }
 
-	if (($object->localtax1_assuj || $object->localtax2_assuj) && (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0) )
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/societe/localtaxes.php?socid='.$object->id;
-		$head[$h][1] = $langs->trans("LocalTaxes");
-		$head[$h][2] = 'localtaxes';
-		$h++;
-	}
+    if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+        $head[$h][1] = $langs->trans("Contact");
+        $head[$h][2] = 'contact';
+        $h++;
+    }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
      {
@@ -98,7 +98,7 @@ function societe_prepare_head($object)
 
     if ($user->societe_id == 0)
     {
-        if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled))
+        if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fichinter->enabled) || ! empty($conf->fournisseur->enabled))
         {
 	        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 	        $head[$h][1] = $langs->trans("Referers");
@@ -128,7 +128,7 @@ function societe_prepare_head($object)
         // Attached files
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         $upload_dir = $conf->societe->dir_output . "/" . $object->id;
-        $nbFiles = count(dol_dir_list($upload_dir,'files'));
+        $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
 		if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
@@ -178,7 +178,7 @@ function societe_prepare_head2($object)
     if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
     {
 	    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
-	    $head[$h][1] = $langs->trans("BankAccount")." $account->number";
+	    $head[$h][1] = $langs->trans("BankAccount");
 	    $head[$h][2] = 'rib';
 	    $h++;
     }
@@ -262,19 +262,19 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
     if (! is_object($dbtouse)) $dbtouse=$db;
     if (! is_object($outputlangs)) $outputlangs=$langs;
 
-    $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
+    $sql = "SELECT rowid, code, label FROM ".MAIN_DB_PREFIX."c_country";
     if (is_numeric($searchkey)) $sql.= " WHERE rowid=".$searchkey;
     elseif (! empty($searchkey)) $sql.= " WHERE code='".$db->escape($searchkey)."'";
-    else $sql.= " WHERE libelle='".$db->escape($searchlabel)."'";
+    else $sql.= " WHERE label='".$db->escape($searchlabel)."'";
 
-    dol_syslog("Company.lib::getCountry sql=".$sql);
+    dol_syslog("Company.lib::getCountry", LOG_DEBUG);
     $resql=$dbtouse->query($sql);
     if ($resql)
     {
         $obj = $dbtouse->fetch_object($resql);
         if ($obj)
         {
-            $label=((! empty($obj->libelle) && $obj->libelle!='-')?$obj->libelle:'');
+            $label=((! empty($obj->label) && $obj->label!='-')?$obj->label:'');
             if (is_object($outputlangs))
             {
                 $outputlangs->load("dict");
@@ -317,7 +317,7 @@ function getState($id,$withcode='',$dbtouse=0)
     $sql = "SELECT rowid, code_departement as code, nom as label FROM ".MAIN_DB_PREFIX."c_departements";
     $sql.= " WHERE rowid=".$id;
 
-    dol_syslog("Company.lib::getState sql=".$sql);
+    dol_syslog("Company.lib::getState", LOG_DEBUG);
     $resql=$dbtouse->query($sql);
     if ($resql)
     {
@@ -394,7 +394,7 @@ function getFormeJuridiqueLabel($code)
     $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
     $sql.= " WHERE code='$code'";
 
-    dol_syslog("Company.lib::getFormeJuridiqueLabel sql=".$sql);
+    dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -626,7 +626,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     // Status
     print '<td class="liste_titre maxwidthonsmartphone">';
-    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+    print $form->selectarray('search_status', array('-1'=>'','0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
     print '</td>';
 
     // Copy to clipboard
@@ -648,21 +648,21 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
 
     $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.skype, p.statut ";
-    $sql .= ", p.civilite, p.address, p.zip, p.town";
+    $sql .= ", p.civility as civility_id, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
-    if ($search_status!='') $sql .= " AND p.statut = ".$db->escape($search_status);
+    if ($search_status!='' && $search_status != '-1') $sql .= " AND p.statut = ".$db->escape($search_status);
     if ($search_name)       $sql .= " AND (p.lastname LIKE '%".$db->escape($search_name)."%' OR p.firstname LIKE '%".$db->escape($search_name)."%')";
     $sql.= " ORDER BY $sortfield $sortorder";
 
-    dol_syslog('core/lib/company.lib.php :: show_contacts sql='.$sql,LOG_DEBUG);
+    dol_syslog('core/lib/company.lib.php :: show_contacts', LOG_DEBUG);
     $result = $db->query($sql);
     $num = $db->num_rows($result);
 
-    if ($num)
+	$var=true;
+	if ($num)
     {
         $i=0;
-        $var=true;
 
         while ($i < $num)
         {
@@ -675,7 +675,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->statut = $obj->statut;
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
-            $contactstatic->civilite = $obj->civilite;
+            $contactstatic->civility_id = $obj->civility_id;
             print $contactstatic->getNomUrl(1);
             print '</td>';
 
@@ -953,7 +953,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
-        dol_syslog("company.lib::show_actions_todo sql=".$sql);
+        dol_syslog("company.lib::show_actions_todo", LOG_DEBUG);
         $result=$db->query($sql);
         if ($result)
         {
@@ -1089,7 +1089,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
-        dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
+        dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -1141,7 +1141,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " AND mc.fk_mailing=m.rowid";
         $sql.= " ORDER BY mc.date_envoi DESC, m.rowid DESC";
 
-        dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
+        dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -1387,4 +1387,3 @@ function show_subsidiaries($conf,$langs,$db,$object)
 	return $i;
 }
 
-?>

@@ -103,4 +103,3 @@ class modGeneratePassNone extends ModeleGenPassword
 
 }
 
-?>

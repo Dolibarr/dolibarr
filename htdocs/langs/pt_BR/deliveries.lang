@@ -23,3 +23,4 @@ GoodStatusDeclaration=Recebi a mercadorias acima em bom estado,
 Deliverer=Destinatario:
 Sender=Remetente
 Recipient=Destinatário
+ErrorStockIsNotEnough=Não existe estoque suficiente

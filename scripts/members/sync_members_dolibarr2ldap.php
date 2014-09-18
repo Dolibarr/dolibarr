@@ -51,7 +51,7 @@ $error=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 if (! isset($argv[1]) || ! $argv[1]) {
@@ -82,6 +82,7 @@ print "Press a key to confirm...\n";
 $input = trim(fgets(STDIN));
 print "Warning, this operation may result in data loss if it failed.\n";
 print "Be sure to have a backup of your LDAP database (With OpenLDAP: slapcat > save.ldif).\n";
+
 print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
 
@@ -160,4 +161,3 @@ else
 }
 
 exit($error);
-?>

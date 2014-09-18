@@ -1,22 +1,16 @@
 # Dolibarr language file - Source file is en_US - cron
 #
 # About page
-#
 About = Hakkında
 CronAbout = Cron hakkında
 CronAboutPage = Cron hakkında sayfası
 
-#
 # Right
-#
 Permission23101 = Planlı görev oku
 Permission23102 = Planlı görev oluştur/güncelle
 Permission23103 = Planlı görev sil
 Permission23104 = Planlı görev yürüt
-
-#
 # Admin
-#
 CronSetup= Planlı iş yönetimi ayarları
 URLToLaunchCronJobs=Gerekliyse, Cron işlerini denetleyen ve başlatan İnternet adresi
 OrToLaunchASpecificJob=Ya da özel bir işi denetlemek ve başlatmak için
@@ -24,20 +18,12 @@ KeyForCronAccess=Cron işlerini başlatacak URL için güvenlik anahtarı
 FileToLaunchCronJobs=Cron işlerini başlatacak komut satırı
 CronExplainHowToRunUnix=Unix ortamında her dakika Komut satırını çalıştırmak için cron sekmesini kullanmalısınız
 CronExplainHowToRunWin=Microsoft (tm) Windows ortamında her dakika Komut satırı çalıştırmak için Planlı görev araçlarını kullanabilirsiniz
-
-
-#
 # Menu
-#
 CronJobs=Planlı işler
 CronListActive= Etkin işler listesi
 CronListInactive= Etkin olmayan işler listesi
 CronListActive= Etkin işler listesi
-
-
-#
 # Page list
-#
 CronDateLastRun=Son çalıştırma
 CronLastOutput=Son çalıştırma çıktısı
 CronLastResult=Son sonuç kodu
@@ -70,10 +56,7 @@ CronLabel=Açıklama
 CronNbRun=Başlatma sayısı
 CronEach=Her
 JobFinished=İş başlatıldı ve bitirildi
-
-#
 #Page card
-#
 CronAdd= İş ekle
 CronHourStart= Görevin başlama saati ve tarihi
 CronEvery= Ve her işi yürüt
@@ -95,20 +78,12 @@ CronObjectHelp=Yüklenecek nesne adı. <BR> Örneğin; Dolibarr Ürün nesnesi a
 CronMethodHelp=Çalıştırılacak nesne yöntemi. <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/product/class/product.class.php, yöntem değeri <i>fecth</i>
 CronArgsHelp=Yöntem parametreleri. <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/product/class/product.class.php, parametre değerleri <i>0, ProductRef</i> olabilir
 CronCommandHelp=Yürütülecek sistem komut satırı.
-
-#
 # Info
-#
 CronInfoPage=Bilgi
-
-
-#
 # Common
-#
 CronType=Görev türü
 CronType_method=Dolibarr Sınıfı çağırma yöntemi
 CronType_command=Kabuk komutu
 CronMenu=Kron
 CronCannotLoadClass=%s sınıfı ya da %s nesnesi yüklenemiyor
-
 UseMenuModuleToolsToAddCronJobs=Planlı işleri görmek ve düzenlemek için "Giriş - Modül araçları - İş listesi" menüsüne gidin.

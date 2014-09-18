@@ -106,6 +106,9 @@ ProjectReportDate=Změnit datum úkolu dle data zahájení projektu
 ErrorShiftTaskDate=Nelze přesunout datum úkolu dle nového data zahájení projektu
 ProjectsAndTasksLines=Projekty a úkoly
 ProjectCreatedInDolibarr=Projekt %s vytvořen
+TaskCreatedInDolibarr=Task %s created
+TaskModifiedInDolibarr=Task %s modified
+TaskDeletedInDolibarr=Task %s deleted
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Vedoucí projektu
 TypeContact_project_external_PROJECTLEADER=Vedoucí projektu
@@ -122,3 +125,6 @@ DocumentModelBaleine=Kompletní projektový report (logo. ..)
 PlannedWorkload = Plánované vytížení
 WorkloadOccupation= Zábor vytížení
 ProjectReferers=Odkazující objekty
+SearchAProject=Search a project
+ProjectMustBeValidatedFirst=Project must be validated first
+ProjectDraft=Draft projects

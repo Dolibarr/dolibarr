@@ -64,8 +64,8 @@ class Deplacement extends CommonObject
 	{
 		$this->db = $db;
 
-        $this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
-        $this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
+        $this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
+        $this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
 
 		return 1;
 	}
@@ -120,20 +120,20 @@ class Deplacement extends CommonObject
 		$sql.= ", ".($this->fk_soc > 0? $this->fk_soc : "null");
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."deplacement");
 
-                        // Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('DEPLACEMENT_CREATE',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('DEPLACEMENT_CREATE',$user);
+            if ($result < 0)
+            {
+            	$this->db->rollback();
+            	return -2;
+            }
+            // End call triggers
 
 			$result=$this->update($user);
 			if ($result > 0)
@@ -203,7 +203,7 @@ class Deplacement extends CommonObject
 		$sql .= " , fk_projet = ".($this->fk_project>0?$this->fk_project:0);
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -230,7 +230,7 @@ class Deplacement extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " WHERE rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ( $result )
 		{
@@ -271,7 +271,7 @@ class Deplacement extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = ".$id;
 
-		dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -321,21 +321,25 @@ class Deplacement extends CommonObject
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
 		}
 		if ($mode == 3)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
 		if ($mode == 4)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==2 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
 	}
 
@@ -377,11 +381,11 @@ class Deplacement extends CommonObject
 
 	   $ret=array();
 
-        $sql = "SELECT id, code, libelle as label";
+        $sql = "SELECT id, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees";
         $sql.= " WHERE active = ".$active;
 
-        dol_syslog(get_class($this)."::listOfTypes sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::listOfTypes", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ( $result )
         {
@@ -415,7 +419,7 @@ class Deplacement extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'deplacement as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
-		dol_syslog(get_class($this).'::info sql='.$sql);
+		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result)
@@ -449,4 +453,3 @@ class Deplacement extends CommonObject
 
 }
 
-?>

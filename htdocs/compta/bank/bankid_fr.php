@@ -34,7 +34,8 @@ $langs->load("categories");
 $langs->load("bills");
 
 $action=GETPOST('action');
-$id=GETPOST('id');
+$id=GETPOST('id','int');
+$ref=GETPOST('ref');
 
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
@@ -79,7 +80,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 		}
 		else
 		{
-			$message='<div class="error">'.$account->error.'</div>';
+			setEventMessage($account->error, 'errors');
 			$action='edit';     // Force chargement page edition
 		}
 	}
@@ -88,8 +89,9 @@ if ($action == 'update' && ! $_POST["cancel"])
 if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->banque->configurer)
 {
 	// Modification
-	$account = new Account($db, $_GET["id"]);
-	$account->delete($_GET["id"]);
+	$account = new Account($db);
+	$account->fetch($id);
+	$account->delete();
 
 	header("Location: ".DOL_URL_ROOT."/compta/bank/index.php");
 	exit;
@@ -304,8 +306,6 @@ if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 	print_fiche_titre($langs->trans("EditFinancialAccount"));
 	print "<br>";
 
-	dol_htmloutput_mesg($message);
-
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$account->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -460,4 +460,3 @@ if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 llxFooter();
 
 $db->close();
-?>

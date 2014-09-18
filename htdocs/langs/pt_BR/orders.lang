@@ -55,6 +55,7 @@ DraftOrWaitingShipped=Rascunho o validado mas ainda não expedido
 MenuOrdersToBill=Pedidos por Faturar
 MenuOrdersToBill2=Pedidos a se faturar
 SearchOrder=Procurar um Pedido
+SearchACustomerOrder=Procure um pedido do cliente
 ShipProduct=Enviar Produto
 Discount=Desconto
 CreateOrder=Criar Pedido
@@ -100,7 +101,6 @@ RelatedOrders=Pedidos Anexos
 OnProcessOrders=Pedidos em Processo
 RefOrder=Ref. Pedido
 RefCustomerOrder=Ref. Pedido Cliente
-CustomerOrder=Pedido de Cliente
 RefCustomerOrderShort=Ref. Ped. Cliente
 SendOrderByMail=Enviar pedido por e-mail
 ActionsOnOrder=Ações sobre o pedido
@@ -131,8 +131,6 @@ Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON não definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Erro na carga do Arquivo módulo '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Erro na carga de arquivo módulo '%s'
 Error_OrderNotChecked=Nenhum pedido seleçionado para se faturar
-
-
 # Sources
 OrderSource0=Orçamento Proposto
 OrderSource1=Internet
@@ -143,18 +141,16 @@ OrderSource5=Comercial
 OrderSource6=Revistas
 QtyOrdered=Quant. Pedida
 AddDeliveryCostLine=Adicionar uma linha de despesas de fretes indicando o peso do pedido
-
 # Documents models
 PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=O modelo simplificado do pedido
-# PDFProformaDescription=A complete proforma invoice (logo…)
+PDFProformaDescription=A proforma fatura completa (logomarca...)
 # Orders modes
 OrderByMail=Correio
 OrderByFax=Fax
 OrderByEMail=E-mail
 OrderByWWW=Online
 OrderByPhone=Telefone
-
 CreateInvoiceForThisCustomer=Faturar pedidos
 NoOrdersToInvoice=Nenhum pedido faturavel
 CloseProcessedOrdersAutomatically=Clasificar "processados" os pedidos selecionados.
@@ -164,3 +160,4 @@ Ordered=Pedido
 OrderCreated=Seus pedidos foram criados
 OrderFail=Um erro ocorreu durante a criação de seus pedidos
 CreateOrders=Criar pedidos
+ToBillSeveralOrderSelectCustomer=Para criar uma nota fiscal para várias encomendas, clique primeiro no cliente, em seguida, escolha "%s".

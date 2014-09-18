@@ -85,6 +85,7 @@ ClassifyPaid=Merk 'Betalt'
 ClassifyPaidPartially=Merk 'Delbetalt'
 ClassifyCanceled=Merk 'Tapsført'
 ClassifyClosed=Merk 'Lukket'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Lag faktura
 AddBill=Legg til faktura eller kreditnota
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=Beløp purret
 ExcessReceived=Overskytende
 EscompteOffered=Rabatt innrømmet (betalt før forfall)
-SendBillRef=Send faktura %s
-SendReminderBillRef=Send faktura %s (påminnelse)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Utestående ordre
 StandingOrder=Utestående ordre
 NoDraftBills=Ingen fakturakladder
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Totalt to nye rabatt må være lik original
 ConfirmRemoveDiscount=Er du sikker på at du vil fjerne denne rabatten?
 RelatedBill=Relaterte faktura
 RelatedBills=Relaterte fakturaer
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Kontant
@@ -315,7 +318,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% in advance, 50%% on delivery
 FixAmount=Fix amount
 VarAmount=Variable amount (%% tot.)
-
 # PaymentType
 PaymentTypeVIR=Bankgiro
 PaymentTypeShortVIR=Bankgiro

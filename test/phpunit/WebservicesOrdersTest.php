@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
@@ -118,11 +118,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testWSOrderXxx
+     * testWSOrderGetOrder
      *
      * @return int
      */
-    public function testWSOrderXxx()
+    public function testWSOrderGetOrder()
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;
@@ -131,7 +131,7 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	$db=$this->savdb;
 
     	$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_order.php';
-    	$WS_METHOD  = '';
+    	$WS_METHOD  = 'getOrder';
     	$ns='http://www.dolibarr.org/ns/';
 
     	// Set the WebService URL
@@ -152,27 +152,31 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	'entity'=>'');
 
     	// Test URL
-    	if ($WS_METHOD)
-    	{
-    		$parameters = array('authentication'=>$authentication);
-    		print __METHOD__." call method ".$WS_METHOD."\n";
+    	$parameters = array('authentication'=>$authentication,'id'=>1);
+    	print __METHOD__." call method ".$WS_METHOD."\n";
+    	try {
     		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
-    		if (! $result)
-    		{
-    			//var_dump($soapclient);
-    			print $soapclient->error_str;
-    			print "<br>\n\n";
-    			print $soapclient->request;
-    			print "<br>\n\n";
-    			print $soapclient->response;
-    		}
-
-    		print __METHOD__." result=".$result."\n";
-	    	$this->assertEquals('OK',$result['result']['result_code']);
     	}
+    	catch(SoapFault $exception)
+    	{
+    		echo $exception;
+    		$result=0;
+    	}
+    	if (! $result || ! empty($result['faultstring']))
+    	{
+    		//var_dump($soapclient);
+    		print $soapclient->error_str;
+    		print "\n<br>\n";
+    		print $soapclient->request;
+    		print "\n<br>\n";
+    		print $soapclient->response;
+    		print "\n";
+    	}
+
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('OK',$result['result']['result_code']);
 
     	return $result;
     }
 
 }
-?>

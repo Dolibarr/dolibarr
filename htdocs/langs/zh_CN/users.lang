@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=HRM area
 UserCard=用户卡
 ContactCard=联系卡
 GroupCard=集团卡
@@ -86,7 +87,7 @@ MyInformations=我的资料
 ExportDataset_user_1=Dolibarr的用户和属性
 DomainUser=域用户%s
 Reactivate=重新启用
-CreateInternalUserDesc=这种形式可以让您创造一个用户对贵公司内部/基础。为了创造一个外部用户（客户，供应商，...),使用按钮'创建Dolibarr用户从第三方的名片'。
+CreateInternalUserDesc=This form allows you to create an user internal to your company/foundation. To create an external user (customer, supplier, ...), use the button 'Create Dolibarr user' from third party's contact card.
 InternalExternalDesc=<b>内部</b>用户是一个用户是公司的一部分，你的/基础。 <br> <b>外部</b>用户是一个客户，供应商或其他。 <br><br>在这两种情况下，权限定义了Dolibarr权利，也有外部用户可以比内部用户（见首页 - 设置 - 显示不同的菜单经理）
 PermissionInheritedFromAGroup=因为从权限授予一个用户的一组继承。
 Inherited=遗传
@@ -116,5 +117,5 @@ DontDowngradeSuperAdmin=只有超级管理员可以降级超级管理员
 HierarchicalResponsible=责任分级
 HierarchicView=分层视图
 UseTypeFieldToChange=改变用户字段类型
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Use OpenID to login
+OpenIDURL=OpenID URL
+LoginUsingOpenID=Use OpenID to login

@@ -77,7 +77,7 @@ if($action)
 	if($action == 'STOCK_USE_VIRTUAL_STOCK') {
 	    $res = dolibarr_set_const($db, "STOCK_USE_VIRTUAL_STOCK", GETPOST('STOCK_USE_VIRTUAL_STOCK','alpha'),'chaine',0,'',$conf->entity);
 	}
-	
+
 	if($action == 'STOCK_MUST_BE_ENOUGH_FOR_INVOICE') {
 	    $res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_INVOICE", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_INVOICE','alpha'),'chaine',0,'',$conf->entity);
 	}
@@ -329,7 +329,6 @@ if ($virtualdiffersfromphysical)
 	print '</table>';
 }
 
-$db->close();
-
 llxFooter();
-?>
+
+$db->close();

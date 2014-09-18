@@ -62,7 +62,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 	/**		Return description of module
 	 *
-	 * 		@param	string 		$langs		Object langs
+	 * 		@param	Translate 		$langs		Object langs
 	 * 		@return string      			Description of module
 	 */
 	function info($langs)
@@ -104,7 +104,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs			Object langs
-	 * @param	product		$objproduct		Object product
+	 * @param	Product		$objproduct		Object product
 	 * @return	string						Return string example
 	 */
 	function getExample($langs,$objproduct=0)
@@ -161,20 +161,23 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	/**
 	 * 	Check validity of code according to its rules
 	 *
-	 *	@param	DoliDB		$db			Database handler
-	 *	@param	string		&$code		Code to check/correct
-	 *	@param	Product		$product	Object product
-	 *  @param  int		  	$type   	0 = customer/prospect , 1 = supplier
-	 *  @return int						0 if OK
-	 * 									-1 ErrorBadCustomerCodeSyntax
-	 * 									-2 ErrorCustomerCodeRequired
-	 * 									-3 ErrorCustomerCodeAlreadyUsed
-	 * 									-4 ErrorPrefixRequired
+	 *	@param	DoliDB		$db					Database handler
+	 *	@param	string		&$code				Code to check/correct
+	 *	@param	Product		$product			Object product
+	 *  @param  int		  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
+	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
+	 *  @return int								0 if OK
+	 * 											-1 ErrorBadCustomerCodeSyntax
+	 * 											-2 ErrorCustomerCodeRequired
+	 * 											-3 ErrorCustomerCodeAlreadyUsed
+	 * 											-4 ErrorPrefixRequired
 	 */
-	function verif($db, &$code, $product, $type)
+	function verif($db, &$code, $product, $thirdparty_type, $type)
 	{
 		global $conf;
 
+		//var_dump($code.' '.$product->ref.' '.$thirdparty_type);exit;
+		
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		$result=0;
@@ -190,7 +193,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		}
 		else
 		{
-			if ($this->verif_syntax($code) >= 0)
+			if ($this->verif_syntax($code, $type) >= 0)
 			{
 				$is_dispo = $this->verif_dispo($db, $code, $product);
 				if ($is_dispo <> 0)
@@ -215,7 +218,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 			}
 		}
 
-		dol_syslog(get_class($this)."::verif type=".$type." result=".$result);
+		dol_syslog(get_class($this)."::verif type=".$thirdparty_type." result=".$result);
 		return $result;
 	}
 
@@ -254,12 +257,13 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	}
 
 	/**
-	 *	Renvoi si un code respecte la syntaxe
+	 *	Return if a barcode value match syntax
 	 *
-	 *	@param	string		$code		Code a verifier
+	 *	@param	string	$codefortest	Code to check syntax
+     *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
 	 *	@return	int						0 if OK, <0 if KO
 	 */
-	function verif_syntax($code)
+	function verif_syntax($codefortest, $typefortest)
 	{
 		global $conf;
 
@@ -273,11 +277,16 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 			return '';
 		}
 
-		$result=check_value($mask,$code);
+		$newcodefortest=$codefortest;
+		if (in_array($typefortest,array('EAN13','ISBN')))	// We remove the CRC char not included into mask
+		{
+			$newcodefortest=substr($newcodefortest,0,12);
+		}
+	
+		$result=check_value($mask,$newcodefortest);
 
 		return $result;
 	}
 
 }
 
-?>

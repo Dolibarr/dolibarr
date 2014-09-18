@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Clicca qui per mostrare/modificare i parametri avanz
 
 #########
 # upgrade
-#########
 MigrationFixData=Fix per i dati denormalizzati
 MigrationOrder=Migrazione dei dati per gli ordini dei clienti
 MigrationSupplierOrder=Migrazione dei dati degli ordini fornitori
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Aggiorna tempo trascorso in secondi
 MigrationActioncommElement=Aggiornare i dati sulle azioni
 MigrationPaymentMode=Migrazione dei dati delle modalità di pagamento
 MigrationCategorieAssociation=Migrazione delle categorie
+
+ShowNotAvailableOptions=Mostra opzioni non disponibili
+HideNotAvailableOptions=Nascondi opzioni non disponibili

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,13 +20,14 @@
 /**
  * 	\file       htdocs/societe/class/address.class.php
  * 	\ingroup    societe
- *  \brief      Fichier de la classe des adresses des tiers
+ *  \brief      File of class to manage addresses. This class is deprecated.
  */
 
 
 /**
- *  \class 		Address
- *  \brief 		Class to manage addresses
+ *  Class to manage addresses
+ *
+ *  @deprecated This class is dedicated to a not supported and deprecated feature.
  */
 class Address
 {
@@ -113,10 +114,7 @@ class Address
 
 					$this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
 				}
-				else
-				{
-					dol_syslog(get_class($this)."::create echec insert sql=$sql");
-				}
+
 				$this->db->rollback();
 				return -2;
 			}
@@ -199,7 +197,7 @@ class Address
 			if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
 			$sql .= " WHERE fk_soc = '" . $socid ."' AND rowid = '" . $this->db->escape($id) ."'";
 
-			dol_syslog(get_class($this)."::Update sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::Update", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -218,7 +216,6 @@ class Address
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::Update error sql=".$sql, LOG_ERR);
 					$result=-2;
 				}
 				$this->db->rollback();
@@ -264,12 +261,11 @@ class Address
             // Adresses liees a la societe
 			if ($this->socid)
 			{
-				$sql = 'SELECT a.rowid as id, a.label, a.name, a.address, a.datec as dc';
-				$sql .= ', a.tms as date_update, a.fk_soc';
+				$sql = 'SELECT a.rowid as id, a.label, a.name, a.address, a.datec as date_creation, a.tms as date_modification, a.fk_soc';
 				$sql .= ', a.zip, a.town, a.note, a.fk_pays as country_id, a.phone, a.fax';
-				$sql .= ', p.code as country_code, p.libelle as country';
+				$sql .= ', c.code as country_code, c.label as country';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
-				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
+				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON a.fk_pays = c.rowid';
 				$sql .= ' WHERE a.fk_soc = '.$this->socid;
 
 				$resql=$this->db->query($sql);
@@ -284,8 +280,8 @@ class Address
 						$line = new AddressLine($this->db);
 
 						$line->id				= $objp->id;
-						$line->date_creation	= $this->db->jdate($objp->dc);
-						$line->date_update		= $this->db->jdate($objp->date_update);
+						$line->date_creation	 = $this->db->jdate($objp->date_creation);
+						$line->date_modification = $this->db->jdate($objp->date_modification);
 						$line->label			= $objp->label;
 						$line->name				= $objp->name;
 						$line->address			= $objp->address;
@@ -318,7 +314,6 @@ class Address
 		}
 		else
 		{
-			dol_syslog(get_class($this).'::Fetch '.$this->db->error(), LOG_ERR);
 			$this->error=$this->db->error();
 		}
 	}
@@ -335,12 +330,11 @@ class Address
 		global $langs;
 		global $conf;
 
-		$sql = 'SELECT a.rowid, a.fk_soc, a.label, a.name, a.address, a.datec as date_creation';
-		$sql .= ', a.tms as date_update';
+		$sql = 'SELECT a.rowid, a.fk_soc, a.label, a.name, a.address, a.datec as date_creation, a.tms as date_modification';
 		$sql .= ', a.zip, a.town, a.note, a.fk_pays as country_id, a.phone, a.fax';
-		$sql .= ', p.code as country_code, p.libelle as country';
+		$sql .= ', c.code as country_code, c.label as country';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON a.fk_pays = c.rowid';
 		$sql .= ' WHERE a.rowid = '.$id;
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -352,7 +346,7 @@ class Address
 				$this->id				= $obj->rowid;
 				$this->socid			= $obj->fk_soc;
 
-				$this->date_update		= $this->db->jdate($obj->date_update);
+				$this->date_modification		= $this->db->jdate($obj->date_modification);
 				$this->date_creation 	= $this->db->jdate($obj->date_creation);
 
 				$this->label 			= $obj->label;
@@ -382,7 +376,7 @@ class Address
 		}
 		else
 		{
-			dol_syslog('Erreur Societe::Fetch echec sql='.$sql);
+			dol_syslog('Erreur Societe::Fetch echec', LOG_DEBUG);
 			dol_syslog('Erreur Societe::Fetch '.$this->db->error());
 			$this->error=$this->db->error();
 			$result = -3;
@@ -446,7 +440,7 @@ class Address
 	 */
 	function info($id)
 	{
-		$sql = "SELECT s.rowid, s.nom, datec, datea,";
+		$sql = "SELECT s.rowid, s.nom, datec as date_creation, tms as date_modification,";
 		$sql.= " fk_user_creat, fk_user_modif";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.rowid = ".$id;
@@ -472,8 +466,8 @@ class Address
 					$this->user_modification = $muser;
 				}
 				$this->ref			     = $obj->nom;
-				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datea);
+				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
 			}
 
 			$this->db->free($result);
@@ -489,15 +483,14 @@ class Address
 
 
 /**
- *  \class 		AddressLine
- *  \brief 		Class to manage one address line
+ *  Class to manage one address line
  */
 class AddressLine
 {
 
 	var $id;
 	var $date_creation;
-	var $date_update;
+	var $date_modification;
 	var $label;
 	var $name;
 	var $address;
@@ -521,4 +514,3 @@ class AddressLine
 		$this->db = $db;
 	}
 }
-?>

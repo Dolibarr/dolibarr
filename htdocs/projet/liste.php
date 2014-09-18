@@ -61,6 +61,7 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
+$search_all=GETPOST("search_all");
 
 
 /*
@@ -97,10 +98,14 @@ if ($search_societe)
 {
 	$sql .= natural_search('s.nom', $search_societe);
 }
+if ($search_all)
+{
+	$sql .= natural_search(array('p.ref','p.title','s.nom'), $search_all);
+}
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-dol_syslog("list allowed project sql=".$sql);
+dol_syslog("list allowed project", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -126,7 +131,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
@@ -215,4 +220,3 @@ print "</table>";
 llxFooter();
 
 $db->close();
-?>

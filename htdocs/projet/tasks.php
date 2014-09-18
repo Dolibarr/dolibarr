@@ -47,7 +47,7 @@ $object = new Project($db);
 $taskstatic = new Task($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
-if ($id > 0 || $ref)
+if ($id > 0 || ! empty($ref))
 {
 	$object->fetch($id,$ref);
 	$id=$object->id;
@@ -90,13 +90,13 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	{
 		if (empty($label))
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
 			$action='create';
 			$error++;
 		}
 		else if (empty($_POST['task_parent']))
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask"));
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask")), 'errors');
 			$action='create';
 			$error++;
 		}
@@ -130,6 +130,11 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			if ($taskid > 0)
 			{
 				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
+			}
+			else
+			{
+			    setEventMessage($task->error,'errors');
+			    setEventMessage($task->errors,'errors');
 			}
 		}
 
@@ -178,7 +183,7 @@ llxHeader("",$langs->trans("Tasks"),$help_url);
 if ($id > 0 || ! empty($ref))
 {
 	$object->fetch($id, $ref);
-	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
+	$object->fetch_thirdparty();
 	$res=$object->fetch_optionals($object->id,$extralabels_projet);
 
 
@@ -215,8 +220,8 @@ if ($id > 0 || ! empty($ref))
 
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Company").'</td><td>';
-	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+	if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td>';
 	print '</tr>';
@@ -232,12 +237,12 @@ if ($id > 0 || ! empty($ref))
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print dol_print_date($object->date_start,'dayhour');
+	print dol_print_date($object->date_start,'day');
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print dol_print_date($object->date_end,'dayhour');
+	print dol_print_date($object->date_end,'day');
 	print '</td></tr>';
 
 	// Other options
@@ -254,13 +259,11 @@ if ($id > 0 || ! empty($ref))
 }
 
 
-if ($action == 'create' && $user->rights->projet->creer && (empty($object->societe->id) || $userWrite > 0))
+if ($action == 'create' && $user->rights->projet->creer && (empty($object->thirdparty->id) || $userWrite > 0))
 {
 	if ($id > 0 || ! empty($ref)) print '<br>';
 
 	print_fiche_titre($langs->trans("NewTask"));
-
-	dol_htmloutput_errors($mesg);
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -369,7 +372,7 @@ else
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
 	}
 
 	print '</div>';
@@ -438,11 +441,19 @@ else
 	{
 		if ($mode=='mine')
 		{
-			if ($nboftaskshown < count($tasksrole)) $object->clean_orphelins();
+			if ($nboftaskshown < count($tasksrole))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
+			}
 		}
 		else
 		{
-			if ($nboftaskshown < count($tasksarray)) $object->clean_orphelins();
+			if ($nboftaskshown < count($tasksarray))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
+			}
 		}
 	}
 }
@@ -450,4 +461,3 @@ else
 llxFooter();
 
 $db->close();
-?>

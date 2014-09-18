@@ -24,7 +24,7 @@
 require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 
 
-/**     
+/**
  *      Classe permettant la generation du formulaire d'envoi de Sms
  *      Usage: $formsms = new FormSms($db)
  *             $formsms->proprietes=1 ou chaine ou tableau de valeurs
@@ -83,20 +83,21 @@ class FormSms
     }
 
     /**
-     *	Show the form to input an sms
+     *	Show the form to input an sms.
      *
      *	@param	string	$width	Width of form
      *	@return	void
      */
     function show_form($width='180px')
     {
-        global $conf, $langs, $user;
+        global $conf, $langs, $user, $form;
+
+        if (! is_object($form)) $form=new Form($this->db);
 
         $langs->load("other");
         $langs->load("mails");
         $langs->load("sms");
 
-        $form=new Form($this->db);
         $soc=new Societe($this->db);
         if (!empty($this->withtosocid) && $this->withtosocid > 0)
         {
@@ -213,6 +214,7 @@ function limitChars(textarea, limit, infodiv)
                 else
                 {
                     dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE", LOG_WARNING);
+	                $resultsender=array();
                     $resultsender[0]->number=$this->fromsms;
                 }
 
@@ -236,7 +238,7 @@ function limitChars(textarea, limit, infodiv)
             }
         }
 
-        // To
+        // To (target)
         if ($this->withto || is_array($this->withto))
         {
             print '<tr><td width="180">';
@@ -334,4 +336,3 @@ function limitChars(textarea, limit, infodiv)
 
 }
 
-?>

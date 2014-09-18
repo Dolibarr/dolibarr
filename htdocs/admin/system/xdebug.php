@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,12 +53,26 @@ if (function_exists('socket_create'))
     $port = ini_get('xdebug.remote_port')?ini_get('xdebug.remote_port'):9000;
 
     print "<strong>Current xdebug setup:</strong><br>\n";
+    print "* Remote debug setup:<br>\n";
+    print 'xdebug.remote_enable = '.ini_get('xdebug.remote_enable')."<br>\n";
     print 'xdebug.remote_host = '.$address."<br>\n";
     print 'xdebug.remote_port = '.$port."<br>\n";
-    print 'xdebug.profiler_output_dir = '.ini_get('xdebug.profiler_output_dir')."<br>\n";
+    print "* Profiler setup ";
+    if (function_exists('xdebug_get_profiler_filename')) print xdebug_get_profiler_filename()?"(currently on into file ".xdebug_get_profiler_filename().")":"(currently off)";
+    else print "(currenlty not available)";
+    print ":<br>\n";
     print 'xdebug.profiler_enable = '.ini_get('xdebug.profiler_enable')."<br>\n";
     print 'xdebug.profiler_enable_trigger = '.ini_get('xdebug.profiler_enable_trigger')."<br>\n";
+    print 'xdebug.profiler_output_dir = '.ini_get('xdebug.profiler_output_dir')."<br>\n";
+    print 'xdebug.profiler_output_name = '.ini_get('xdebug.profiler_output_name')."<br>\n";
+    print 'xdebug.profiler_append = '.ini_get('xdebug.profiler_append')."<br>\n";
     print "<br>\n";
+
+    echo "To run a debug session, add parameter<br>";
+    echo "* XDEBUG_SESSION_START=aname on your URL. To stop, remove cookie XDEBUG_SESSION_START.<br>\n";
+    echo "To run a profiler session (when xdebug.profiler_enable_trigger=1), add parameter<br>\n";
+    echo "* XDEBUG_PROFILE=aname on each URL.<br>";
+    print "<br>";
 
     print "<strong>Test debugger server (Eclipse for example):</strong><br>\n";
     $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -94,7 +108,6 @@ xdebug.auto_trace=0
 	         XDebug with same port than in php.ini<br>
 	         Allow Remote debug=yes or prompt<br>'."\n";
         print "<br>\n";
-        echo "Then, to run a debug session (when xdebug.profiler_enable_trigger=1), add parameter XDEBUG_SESSION_START=aname on your URL. To stop, remove cookie XDEBUG_SESSION_START.\n";
     }
     else
     {
@@ -113,4 +126,3 @@ else
 llxFooter();
 
 $db->close();
-?>

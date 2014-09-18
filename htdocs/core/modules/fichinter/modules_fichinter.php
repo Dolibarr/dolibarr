@@ -136,6 +136,7 @@ abstract class ModeleNumRefFicheinter
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
 	}
 }
@@ -223,13 +224,6 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('FICHINTER_BUILDDOC',$object,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
-
 			return 1;
 		}
 		else
@@ -246,4 +240,3 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 	}
 }
 
-?>

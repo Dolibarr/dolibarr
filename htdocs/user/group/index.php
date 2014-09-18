@@ -129,4 +129,3 @@ else
 
 llxFooter();
 $db->close();
-?>

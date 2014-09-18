@@ -79,6 +79,14 @@ MailtoEMail=Hyper-link ao e-mail
 ActivateCheckRead=Permitir uso do atalho "Desenscrever"
 ActivateCheckReadKey=Chave principal para criptar URL de uso para funções "Ler destinatario" e "Desenscrever"
 EMailSentToNRecipients=E-mail enviado para %s destinatarios.
+XTargetsAdded=<b>%s </b> destinatários adicionados à lista de destino
+EachInvoiceWillBeAttachedToEmail=Documento usando o modelo de fatura padrão que será criado e anexado a cada e-mail.
+MailTopicSendRemindUnpaidInvoices=Lembrete da fatura %s (%s)
+SendRemind=Enviar lembrete por e-mails
+RemindSent=%s lembrete(s) de envio
+AllRecipientSelectedForRemind=Todos os endereços de e-mails dos representantes selecionados (note que será enviada uma mensagem por fatura)
+NoRemindSent=Sem lembrete de e-mail enviado
+ResultOfMassSending=Resultado do lembretes de envio em massa de e-mails
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contatos de Fornecedores (clientes potenciais, clientes, Fornecedores...)
@@ -92,8 +100,6 @@ MailingModuleDescContactsByCompanyCategory=Contatos/Endereços de terceiros (por
 MailingModuleDescContactsByCategory=Contatos/endereços de terceiros por categoria
 MailingModuleDescMembersCategories=Membros da Fundação (por categoria)
 MailingModuleDescContactsByFunction=Contatos/Enderecos de terceiros (por posição/função)
-
-
 LineInFile=Linha %s em arquivo
 RecipientSelectionModules=Módulos de seleção dos destinatários
 MailSelectedRecipients=Destinatários selecionados
@@ -114,6 +120,7 @@ TargetsReset=Limpar lista
 ToClearAllRecipientsClickHere=Para limpar a lista dos destinatários deste mailing, faça click ao botão
 ToAddRecipientsChooseHere=Para Adicionar destinatários, escoja os que figuran em listas a continuação
 NbOfEMailingsReceived=Mailings em massa recebidos
+NbOfEMailingsSend=E-mails em massa enviados
 IdRecord=ID registo
 DeliveryReceipt=Recibo de recpção
 YouCanUseCommaSeparatorForSeveralRecipients=Pode usar o caracter0 de separação <b>coma </b> para especificar multiplos destinatários.
@@ -121,7 +128,6 @@ TagCheckMail=Seguir quando o e-mail sera lido
 TagUnsubscribe=Atalho para se desenscrever
 TagSignature=Assinatura do remetente
 TagMailtoEmail=E-mail destinatario
-
 # Module Notifications
 Notifications=Notificações
 NoNotificationsWillBeSent=Nenhuma notificação por e-mail está prevista para este evento e empresa

@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
@@ -127,7 +127,7 @@ class SqlTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testBank
+     * testSql
      *
      * @return string
      */
@@ -139,24 +139,67 @@ class SqlTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/install/mysql/tables');
+		$listofsqldir = array(DOL_DOCUMENT_ROOT.'/install/mysql/tables', DOL_DOCUMENT_ROOT.'/install/mysql/migration');
+
+		foreach ($listofsqldir as $dir)
+		{
+			print 'Process dir '.$dir."\n";
+			$filesarray = scandir($dir);
+			foreach($filesarray as $key => $file)
+			{
+				if (! preg_match('/\.sql$/',$file)) continue;
+
+				print 'Check sql file '.$file."\n";
+				$filecontent=file_get_contents($dir.'/'.$file);
+
+				$result=strpos($filecontent,'`');
+				print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
+				$this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
+
+				$result=strpos($filecontent,'int(');
+				print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
+				$this->assertTrue($result===false, 'Found int(x) instead of integer into '.$file.'. Bad.');
+
+				$result=strpos($filecontent,'ON DELETE CASCADE');
+				print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
+				$this->assertTrue($result===false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
+			}
+		}
+
+        return;
+    }
+
+    /**
+     * testInitData
+     *
+     * @return string
+     */
+    public function testInitData()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdata');
 		foreach($filesarray as $key => $file)
 		{
 			if (! preg_match('/\.sql$/',$file)) continue;
 
 			print 'Check sql file '.$file."\n";
-			$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$file);
+			$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdata/'.$file);
 
-			$result=strpos($filecontent,'`');
-			print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
-			$this->assertTrue($result===false);
+			$result=strpos($filecontent,'@gmail.com');
+			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
+			$this->assertTrue($result===false, 'Found a bad key into file '.$file);
 
-			$result=strpos($filecontent,'int(');
-			print __METHOD__." Result for checking we don't have back 'int(' instead of integer = ".$result."\n";
-			$this->assertTrue($result===false);
+			$result=strpos($filecontent,'eldy@');
+			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
+			$this->assertTrue($result===false, 'Found a bad key into file '.$file);
 		}
 
         return;
     }
+
 }
-?>

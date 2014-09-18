@@ -70,8 +70,7 @@ class modBookmark extends DolibarrModules
 		$this->const = array();
 
 		// Boites
-		$this->boxes = array();
-		$this->boxes[0][1] = "box_bookmarks.php";
+		$this->boxes = array(0=>array('file'=>'box_bookmarks.php','enabledbydefaulton'=>'Home'));
 
 		// Permissions
 		$this->rights = array();
@@ -132,4 +131,3 @@ class modBookmark extends DolibarrModules
     }
 
 }
-?>

@@ -39,16 +39,16 @@ function dol_basename($pathfile)
  *  Scan a directory and return a list of files/directories.
  *  Content for string is UTF8 and dir separator is "/".
  *
- *  @param	string	$path        	Starting path from which to search
- *  @param	string	$types        	Can be "directories", "files", or "all"
- *  @param	int		$recursive		Determines whether subdirectories are searched
- *  @param	string	$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- *  @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
- *  @param	string	$sortcriteria	Sort criteria ("","fullname","name","date","size")
- *  @param	string	$sortorder		Sort order (SORT_ASC, SORT_DESC)
- *	@param	int		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
- *  @param	int		$nohook			Disable all hooks
- *  @return	array					Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
+ *  @param	string		$path        	Starting path from which to search
+ *  @param	string		$types        	Can be "directories", "files", or "all"
+ *  @param	int			$recursive		Determines whether subdirectories are searched
+ *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
+ *  @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
+ *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
+ *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
+ *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
+ *  @param	int			$nohook			Disable all hooks
+ *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=false)
 {
@@ -513,9 +513,9 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 	if (empty($newmask))	// This should no happen
 	{
 		dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
-		$newmask='0664';	
+		$newmask='0664';
 	}
-	
+
 	@chmod($newpathofdestfile, octdec($newmask));
 
 	return 1;
@@ -597,7 +597,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	global $conf, $db, $user, $langs;
 	global $object, $hookmanager;
 
-	$error=0;
+	$reshook=0;
 	$file_name = $dest_file;
 
 	if (empty($nohook))
@@ -663,8 +663,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		}
 
 		// Security:
-		// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans
-		// les noms de fichiers.
+		// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 		if (preg_match('/^\./',$dest_file) || preg_match('/\.\./',$dest_file) || preg_match('/[<>|]/',$dest_file))
 		{
 			dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
@@ -677,7 +676,13 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		$reshook=$hookmanager->executeHooks('moveUploadedFile', $parameters, $object);
 	}
 
-	if (empty($reshook))
+	if ($reshook < 0)	// At least one blocking error returned by one hook
+	{
+		$errmsg = join(',', $hookmanager->errors);
+		if (empty($errmsg)) $errmsg = 'ErrorReturnedBySomeHooks';	// Should not occurs. Added if hook is bugged and does not set ->errors when there is error.
+		return $errmsg;
+	}
+	elseif (empty($reshook))
 	{
 		// The file functions must be in OS filesystem encoding.
 		$src_file_osencoded=dol_osencode($src_file);
@@ -710,8 +715,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			return -3;	// Unknown error
 		}
 	}
-	else
-		return $reshook;
+
+	return 1;	// Success
 }
 
 /**
@@ -802,14 +807,15 @@ function dol_delete_dir($dir,$nophperrors=0)
 }
 
 /**
- *  Remove a directory $dir and its subdirectories
+ *  Remove a directory $dir and its subdirectories (or only files and subdirectories)
  *
  *  @param	string	$dir            Dir to delete
  *  @param  int		$count          Counter to count nb of deleted elements
  *  @param  int		$nophperrors    Disable all PHP output errors
+ *  @param	int		$onlysub		Delete only files and subdir, not main directory
  *  @return int             		Number of files and directory removed
  */
-function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
+function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0,$onlysub=0)
 {
     dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
     if (dol_is_dir($dir))
@@ -836,9 +842,13 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
                 }
             }
             closedir($handle);
-            dol_delete_dir($dir,$nophperrors);
-            $count++;
-            //echo "removing $dir<br>\n";
+
+            if (empty($onlysub))
+            {
+	            dol_delete_dir($dir,$nophperrors);
+    	        $count++;
+        	    //echo "removing $dir<br>\n";
+            }
         }
     }
 
@@ -879,7 +889,7 @@ function dol_delete_preview($object)
 	{
 		if ( ! dol_delete_file($file,1) )
 		{
-			$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+			$object->error=$langs->trans("ErrorFailedToOpenFile",$file);
 			return 0;
 		}
 	}
@@ -893,7 +903,7 @@ function dol_delete_preview($object)
 			{
 				if ( ! dol_delete_file($preview,1) )
 				{
-					$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
+					$object->error=$langs->trans("ErrorFailedToOpenFile",$preview);
 					return 0;
 				}
 			}
@@ -1148,26 +1158,29 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 }
 
 /**
- * 	Convert an image file into antoher format.
+ * 	Convert an image file into anoher format.
  *  This need Imagick php extension.
  *
- *  @param	string	$file       Input file name
- *  @param  string	$ext        Extension of target file
+ *  @param	string	$fileinput  Input file name
+ *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
+ *  @param	string	$fileoutput	Output filename
  *  @return	int					<0 if KO, >0 if OK
  */
-function dol_convert_file($file,$ext='png')
+function dol_convert_file($fileinput,$ext='png',$fileoutput='')
 {
 	global $langs;
 
 	$image=new Imagick();
-	$ret = $image->readImage($file);
+	$ret = $image->readImage($fileinput);
 	if ($ret)
 	{
 		$ret = $image->setImageFormat($ext);
 		if ($ret)
 		{
+			if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
+
 			$count = $image->getNumberImages();
-			$ret = $image->writeImages($file . "." . $ext, true);
+			$ret = $image->writeImages($fileoutput, true);
 			if ($ret) return $count;
 			else return -3;
 		}
@@ -1279,13 +1292,13 @@ function dol_uncompress($inputfile,$outputdir)
 /**
  * Return file(s) into a directory (by default most recent)
  *
- * @param 	string	$dir			Directory to scan
- * @param	string	$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
- * @param	int		$nohook			Disable all hooks
- * @return	string					Full path to most recent file
+ * @param 	string		$dir			Directory to scan
+ * @param	string		$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	int			$nohook			Disable all hooks
+ * @return	string						Full path to most recent file
  */
-function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$','^\.'),$nohook=false)
+function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta|_preview\.png)$','^\.'),$nohook=false)
 {
     $tmparray=dol_dir_list($dir,'files',0,$regexfilter,$excludefilter,'date',SORT_DESC,'',$nohook);
     return $tmparray[0];
@@ -1579,6 +1592,16 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
+	// Wrapping for interventions
+	else if ($modulepart == 'fichinter')
+	{
+		if ($fuser->rights->ficheinter->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->ficheinter->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+	}
 
 	// Wrapping pour les commandes fournisseurs
 	else if ($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier')
@@ -1755,7 +1778,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	{
 		$accessallowed=1;
 		$dir='files';
-		if ($type == 'application/x-bittorrent') $dir='torrents';
+		if (dol_mimetype($original_file) == 'application/x-bittorrent') $dir='torrents';
 		$original_file=$conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
 	}
 
@@ -1851,4 +1874,3 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 
 	return $ret;
 }
-?>

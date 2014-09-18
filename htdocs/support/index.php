@@ -92,9 +92,13 @@ if (preg_match('/es/i',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/
 print '<br>'.$langs->trans("ForDocumentationSeeWiki",$urlwiki,$urlwiki);
 print '<br>';
 $urlforum='http://www.dolibarr.org/forum/';
-if (preg_match('/fr/i',$langs->defaultlang)) $urlforum='http://www.dolibarr.fr/forum/';
-if (preg_match('/es/i',$langs->defaultlang)) $urlforum='http://www.dolibarr.es/index.php/foro/';
-print '<br>'.$langs->trans("ForAnswersSeeForum",$urlforum,$urlforum).'<br>';
+$urlforumlocal='http://www.dolibarr.org/forum/';
+if (preg_match('/fr/i',$langs->defaultlang)) $urlforumlocal='http://www.dolibarr.fr/forum/';
+if (preg_match('/es/i',$langs->defaultlang)) $urlforumlocal='http://www.dolibarr.es/index.php/foro/';
+if (preg_match('/it/i',$langs->defaultlang)) $urlforumlocal='http://www.dolibarr.it/forum/';
+if (preg_match('/gr/i',$langs->defaultlang)) $urlforumlocal='http://www.dolibarr.gr/forum/';
+print '<br>'.$langs->trans("ForAnswersSeeForum",$urlforumlocal,$urlforumlocal).'<br>';
+if ($urlforumlocal != $urlforum) print '<b><a href="'.$urlforum.'">'.$urlforum.'</a></b>';
 print '</td></tr></table>';
 print '</td>';
 print '</tr>';
@@ -244,4 +248,3 @@ print '</div>';
 
 
 pFooter();
-?>

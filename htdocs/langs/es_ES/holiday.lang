@@ -8,7 +8,6 @@ NotActiveModCP=Debe activar el módulo Vacaciones para ver esta página.
 NotConfigModCP=Debe configurar el módulo Vacaciones para ver esta página. Para configurarlo, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">haga clic aquí</a>.
 NoCPforUser=No tiene peticiones de vacaciones.
 AddCP=Crear petición de vacaciones
-CPErrorSQL=Ha ocurrido un error de SQL :
 Employe=Empleado
 DateDebCP=Fecha inicio
 DateFinCP=Fecha fin
@@ -34,7 +33,6 @@ ReturnCP=Volver a la página anterior
 ErrorUserViewCP=No está autorizado a leer esta petición de vacaciones.
 InfosCP=Información de la petición de vacaciones
 InfosWorkflowCP=Información del workflow
-DateCreateCP=Fecha de creación
 RequestByCP=Pedido por
 TitreRequestCP=Ficha vacaciones
 NbUseDaysCP=Número de días de vacaciones consumidos
@@ -130,7 +128,6 @@ ErrorMailNotSend=Se ha producido un error en el envío del e-mail :
 NoCPforMonth=Sin vacaciones este mes.
 nbJours=Número de días
 TitleAdminCP=Configuración de las vacaciones
-
 #Messages
 Hello=Hola
 HolidaysToValidate=Días retribuidos a validar
@@ -143,10 +140,10 @@ HolidaysRefused=Días retribuidos denegados
 HolidaysRefusedBody=Su solicitud de días retribuidos desde el %s al %s ha sido denegada por el siguiente motivo :
 HolidaysCanceled=Días retribuidos cancelados
 HolidaysCanceledBody=Su solicitud de días retribuidos desde el %s al %s ha sido cancelada.
-
-Permission20001=Consultar/crear/modificar sus vacaciones
-Permission20002=Consultar/modificar todas las solicitudes de permisos retribuídos
-Permission20003=Eliminar las solicitudes de permisos retribuídos
-Permission20004=Definir los permisos retribuídos de los usuarios
+Permission20000=Leer sus propios días retribuidos
+Permission20001=Crear/modificar sus días retribuidos
+Permission20002=Crear/modificar días retribuidos para todos
+Permission20003=Eliminar peticiones de días retribuidos
+Permission20004=Configurar días retribuidos de usuarios
 Permission20005=Consultar el historial de modificaciones de permisos retribuídos
-Permission20006=Acceder al informe mensual de permisos retribuídos
+Permission20006=Leer informe mensual de días retribuidos

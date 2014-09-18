@@ -44,11 +44,12 @@ $value = GETPOST('value','alpha');
 
 // Pricing Rules
 $select_pricing_rules=array(
-'PRODUCT_PRICE_UNIQ'=>$langs->trans('PriceCatalogue'),
-'PRODUIT_MULTIPRICES'=>$langs->trans('MultiPricesAbility'),
-'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer')
+'PRODUCT_PRICE_UNIQ'=>$langs->trans('PriceCatalogue'),			// Unique price
+'PRODUIT_MULTIPRICES'=>$langs->trans('MultiPricesAbility'),		// Several prices according to a customer level
+'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer')		// Different price for each customer
 );
-if ($conf->global->MAIN_FEATURES_LEVEL==2) {
+if ($conf->global->MAIN_FEATURES_LEVEL==2) 
+{
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity');
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity');
 }
@@ -90,12 +91,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -103,33 +104,37 @@ if ($action == 'nbprod')
 {
 	$res = dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", $value,'chaine',0,'',$conf->entity);
 }
-else if ($action == 'multiprix_num')
+else if ($action == 'PRODUIT_MULTIPRICES_LIMIT')
 {
 	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", $value,'chaine',0,'',$conf->entity);
 }
 if ($action == 'pricingrule')
 {
 	$princingrules = GETPOST('princingrule','alpha');
-	foreach ($select_pricing_rules as $rule=>$label) {
-
-		if ($rule==$princingrules) {
-			if ( $princingrules =='PRODUCT_PRICE_UNIQ') {
-				$res = dolibarr_set_const($db, 'PRODUIT_MULTIPRICES', 0,'chaine',0,'',$conf->entity);
-				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0,'chaine',0,'',$conf->entity);
-				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES', 0,'chaine',0,'',$conf->entity);
-			} else {
+	foreach ($select_pricing_rules as $rule=>$label) // Loop on each possible mode
+	{
+		if ($rule == $princingrules) // We are on selected rule, we enable it
+		{
+			if ($princingrules == 'PRODUCT_PRICE_UNIQ') // For this case, we disable entries manually
+			{
+				$res = dolibarr_set_const($db, 'PRODUIT_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0, 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES', 0, 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($db, 'PRODUCT_PRICE_UNIQ', 1, 'chaine', 0, '', $conf->entity);
+			}
+			else
+			{
 				$multirule=explode('&',$princingrules);
-				if (is_array($multirule) && count($multirule)>0) {
-					foreach($multirule as $rulesselected) {
-						$res = dolibarr_set_const($db, $rulesselected, 1,'chaine',0,'',$conf->entity);
-					}
-				} else {
-					$res = dolibarr_set_const($db, $rule, 1,'chaine',0,'',$conf->entity);
+				foreach($multirule as $rulesselected) 
+				{
+					$res = dolibarr_set_const($db, $rulesselected, 1, 'chaine', 0, '', $conf->entity);
 				}
 			}
-		} else {
+		}
+		else	// We clear this mode
+		{
 			if (strpos($rule,'&')===false) {
-				$res = dolibarr_set_const($db, $rule, 0,'chaine',0,'',$conf->entity);
+				$res = dolibarr_set_const($db, $rule, 0, 'chaine', 0, '', $conf->entity);
 			}
 		}
 		
@@ -173,11 +178,11 @@ if($action)
 
  	if (! $error)
     {
-        $mesg = '<font class="ok">'.$langs->trans("SetupSaved").'</font>';
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = '<font class="error">'.$langs->trans("Error").'</font>';
+	    setEventMessage($langs->trans("Error"), 'errors');
     }
 }
 
@@ -337,7 +342,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	$var=!$var;
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="multiprix_num">';
+	print '<input type="hidden" name="action" value="PRODUIT_MULTIPRICES_LIMIT">';
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
 	print '<td align="right"><input size="3" type="text" class="flat" name="value" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
@@ -367,7 +372,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="usesearchtoselectproduct">';
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("UseSearchToSelectProduct").'</td>';
+print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"),$langs->trans('UseSearchToSelectProductTooltip'),1).'</td>';
 if (empty($conf->use_javascript_ajax))
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -500,16 +505,14 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 	}
 	else
 	{
+		//TODO: Translate
 		print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
 	}
 
 	print '</table>';
 }
 
-dol_htmloutput_mesg($mesg);
-
 llxFooter();
 
 $db->close();
 
-?>

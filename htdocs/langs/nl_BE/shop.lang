@@ -1,10 +1,3 @@
-# Dolibarr language file - nl_BE - shop
-Shop=Winkel
-ShopWeb=Webwinkel
-LastOrders=Laatste bestellingen
-OnStandBy=Op stand-by
-TreatmentInProgress=Behandeling in uitvoering
+# Dolibarr language file - Source file is en_US - shop
 LastCustomers=Laatste klanten
 OSCommerceShop=OSCommerce shop
-OSCommerce=OSCommerce
-AddProd=Verkopen online

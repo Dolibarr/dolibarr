@@ -220,4 +220,3 @@ class FactureStats extends Stats
 	
 }
 
-?>

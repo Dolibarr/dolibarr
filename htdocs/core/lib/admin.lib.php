@@ -215,7 +215,6 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
                 }
                 else
                 {
-                    dol_syslog('Admin.lib::run_sql Failed to get max rowid for '.$table.' '.$db->lasterror().' sql='.$sqlgetrowid, LOG_ERR);
                     if (! $silent) print '<tr><td valign="top" colspan="2">';
                     if (! $silent) print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
                     if (! $silent) print '</tr>';
@@ -226,7 +225,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             $from='__+MAX_'.$table.'__';
             $to='+'.$listofmaxrowid[$table];
             $newsql=str_replace($from,$to,$newsql);
-            dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.') sql='.$newsql, LOG_DEBUG);
+            dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.')', LOG_DEBUG);
 
             $arraysql[$i]=$newsql;
         }
@@ -251,7 +250,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
 
             // Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
             if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".dol_htmlentities($newsql,ENT_NOQUOTES)."'</td></tr>\n";
-            dol_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+            dol_syslog('Admin.lib::run_sql Request '.($i+1), LOG_DEBUG);
 			$sqlmodified=0;
 
             // Replace for encrypt data
@@ -300,7 +299,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
                 $sqlmodified++;
             }
 
-            if ($sqlmodified) dol_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+            if ($sqlmodified) dol_syslog('Admin.lib::run_sql New Request '.($i+1), LOG_DEBUG);
 
             $result=$db->query($newsql,$usesavepoint);
             if ($result)
@@ -393,7 +392,7 @@ function dolibarr_del_const($db, $name, $entity=1)
     $sql.= ")";
     if ($entity >= 0) $sql.= " AND entity = ".$entity;
 
-    dol_syslog("admin.lib::dolibarr_del_const sql=".$sql);
+    dol_syslog("admin.lib::dolibarr_del_const", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -427,7 +426,7 @@ function dolibarr_get_const($db, $name, $entity=1)
     $sql.= " WHERE name = ".$db->encrypt($name,1);
     $sql.= " AND entity = ".$entity;
 
-    dol_syslog("admin.lib::dolibarr_get_const sql=".$sql);
+    dol_syslog("admin.lib::dolibarr_get_const", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -474,7 +473,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     $sql.= " WHERE name = ".$db->encrypt($name,1);
     if ($entity >= 0) $sql.= " AND entity = ".$entity;
 
-    dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
+    dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
     $resql=$db->query($sql);
 
     if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
@@ -487,7 +486,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
         //print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
         //print "xx".$db->escape($value);
-        dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
+        dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
         $resql=$db->query($sql);
     }
 
@@ -500,7 +499,6 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     else
     {
         $error=$db->lasterror();
-        dol_syslog("admin.lib::dolibarr_set_const ".$error, LOG_ERR);
         $db->rollback();
         return -1;
     }
@@ -510,7 +508,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function security_prepare_head()
 {
@@ -864,9 +862,10 @@ function unActivateModule($value, $requiredby=1)
  * 	@param		array		&$tabrowid			Tabrowid
  * 	@param		array		&$tabcond			Tabcond
  * 	@param		array		&$tabhelp			Tabhelp
+ * 	@param		array		&$tabfieldcheck		Tabfieldcheck
  * 	@return		int			1
  */
-function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond,&$tabhelp)
+function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond,&$tabhelp,&$tabfieldcheck)
 {
     global $db, $modules, $conf, $langs;
 
@@ -889,7 +888,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
         {
             while (($file = readdir($handle))!==false)
             {
-                if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+            	if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
                 {
                     if (is_dir($dirroot . '/' . $file . '/core/modules/'))
                     {
@@ -900,7 +899,6 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
             closedir($handle);
         }
     }
-    //var_dump($modulesdir);
 
     foreach ($modulesdir as $dir)
     {
@@ -937,6 +935,8 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                         $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
                         if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
                         if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+                        //If module is not activated disqualified
+                        if (empty($conf->global->$const_name)) $modulequalified=0;
 
                         if ($modulequalified)
                         {
@@ -959,7 +959,8 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
 
                             // Complete arrays
                             //&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond
-                            //$objMod
+                            if (empty($objMod->dictionaries) && ! empty($objMod->dictionnaries)) $objMod->dictionaries=$objMod->dictionnaries;		// For backward compatibility
+
                             if (! empty($objMod->dictionaries))
                             {
                                 //var_dump($objMod->dictionaries['tabname']);
@@ -977,6 +978,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                                 foreach($objMod->dictionaries['tabfieldinsert'] as $val) $tabfieldinsert[] = $val;
                                 foreach($objMod->dictionaries['tabrowid'] as $val) $tabrowid[] = $val;
                                 foreach($objMod->dictionaries['tabcond'] as $val) $tabcond[] = $val;
+                                foreach($objMod->dictionaries['tabfieldcheck'] as $val) $tabfieldcheck[] = $val;
                                 if (! empty($objMod->dictionaries['tabhelp'])) foreach($objMod->dictionaries['tabhelp'] as $val) $tabhelp[] = $val;
                                 //foreach($objMod->dictionaries['tabsqlsort'] as $val) $tablib[] = $val;
                                 //$tabname = array_merge ($tabname, $objMod->dictionaries['tabname']);
@@ -1041,7 +1043,7 @@ function form_constantes($tableau,$strictw3c=0)
         $sql.= " ORDER BY name ASC, entity DESC";
         $result = $db->query($sql);
 
-        dol_syslog("List params sql=".$sql);
+        dol_syslog("List params", LOG_DEBUG);
         if ($result)
         {
             $obj = $db->fetch_object($result);	// Take first result of select
@@ -1215,7 +1217,7 @@ function addDocumentModel($name, $type, $label='', $description='')
     $sql.= (! empty($description)?"'".$db->escape($description)."'":"null");
     $sql.= ")";
 
-    dol_syslog("admin.lib::addDocumentModel sql=".$sql);
+    dol_syslog("admin.lib::addDocumentModel", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -1248,7 +1250,7 @@ function delDocumentModel($name, $type)
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 
-	dol_syslog("admin.lib::delDocumentModel sql=".$sql);
+	dol_syslog("admin.lib::delDocumentModel", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -1292,4 +1294,3 @@ function phpinfo_array()
 	return $info_arr;
 }
 
-?>

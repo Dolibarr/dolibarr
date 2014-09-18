@@ -25,14 +25,14 @@ ErrorGoBackAndCorrectParameters=Fara aftur á bak og leiðrétta rangar breytur.
 ErrorWrongValueForParameter=Þú gætir hafa slegið rangt gildi fyrir breytu ' %s '.
 ErrorFailedToCreateDatabase=Ekki tókst að búa til gagnagrunn ' %s '.
 ErrorFailedToConnectToDatabase=Tókst ekki að tengjast við gagnagrunn ' %s '.
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=PHP útgáfa of gamall. Útgáfa %s  er krafist.
 WarningPHPVersionTooLow=PHP útgáfa of gamall. Útgáfa %s eða meira er gert ráð fyrir. Þessi útgáfa ætti að leyfa setja en er ekki studd.
 ErrorConnectedButDatabaseNotFound=Tenging við miðlara árangri en %s  gagnagrunninum 'fannst ekki.
 ErrorDatabaseAlreadyExists=%s  Database 'er þegar til.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Ef gagnagrunnur er ekki til, farðu til baka og athuga möguleika á "Búa til gagnagrunn".
 IfDatabaseExistsGoBackAndCheckCreate=Ef skráð er þegar til, farðu til baka og veljið "Create gagnagrunninum" valmöguleikann.
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP Version
 YouCanContinue=Þú getur haldið áfram ...
 PleaseBePatient=Vinsamlegast sýnið þolinmæði ...
@@ -154,11 +154,10 @@ MigrationShippingDelivery2=Uppfærsla geymslu siglinga 2
 MigrationFinished=Migration lokið
 LastStepDesc=<strong>Síðasta skref:</strong> Tilgreindu hér notandanafn og lykilorð sem þú ætlar að nota til að tengjast hugbúnaði. Ekki missa þetta eins og það er á reikningnum að gefa öllum öðrum.
 ActivateModule=Virkja mát %s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 
 #########
 # upgrade
-#########
 MigrationFixData=Festa fyrir denormalized gögn
 MigrationOrder=Gögn fólksflutninga fyrir pantanir viðskiptavina
 MigrationSupplierOrder=Gögn fólksflutninga fyrir pantanir birgis
@@ -206,4 +205,7 @@ MigrationProjectUserResp=Gögn fólksflutninga sviði fk_user_resp af llx_projet
 MigrationProjectTaskTime=Uppfæra tími í sekúndum
 MigrationActioncommElement=Uppfæra upplýsingar um aðgerðir
 MigrationPaymentMode=Gögn fólksflutninga í ham greiðslu
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Migration of categories
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

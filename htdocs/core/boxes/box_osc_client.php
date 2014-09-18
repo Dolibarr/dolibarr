@@ -110,4 +110,3 @@ class box_osc_clients extends ModeleBoxes
 
 }
 
-?>

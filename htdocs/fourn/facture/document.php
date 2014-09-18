@@ -89,7 +89,7 @@ if ($object->id > 0)
 	dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), 0, 'bill');
 
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -168,8 +168,36 @@ if ($object->id > 0)
 	print $form->editfieldval("Label",'label',$object->label,$object,0);
 	print '</td>';
 
+    // Status
+    $alreadypaid=$object->getSommePaiement();
+    print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4,$alreadypaid).'</td></tr>';
+
+    // Amount
+    print '<tr><td>'.$langs->trans('AmountHT').'</td><td colspan="3">'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3">'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+
+	// Amount Local Taxes
+	//TODO: Place into a function to control showing by country or study better option
+	if ($societe->localtax1_assuj=="1") //Localtax1
+	{
+		print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
+		print '<td align="right">'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+		print '<td colspan="2">&nbsp;</td></tr>';
+	}
+	if ($societe->localtax2_assuj=="1") //Localtax2
+	{
+		print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
+		print '<td align="right" colspan="3">'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
+		print '</tr>';
+	}
+	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td colspan="3">'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+
+	print '</table><br>';
+
+	print '<table class="border" width="100%">';
+
 	// Nb of files
-	print '<tr><td>'.$langs->trans('NbOfAttachedFiles').'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td width="30%" class="nowrap">'.$langs->trans('NbOfAttachedFiles').'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('TotalSizeOfAttachedFiles').'</td><td colspan="3">'.$totalsize.' '.$langs->trans('bytes').'</td></tr>';
 
@@ -189,4 +217,3 @@ else
 
 llxFooter();
 $db->close();
-?>

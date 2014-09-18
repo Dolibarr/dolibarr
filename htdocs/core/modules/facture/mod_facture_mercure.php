@@ -178,4 +178,3 @@ class mod_facture_mercure extends ModeleNumRefFactures
     }
 
 }
-?>

@@ -38,11 +38,11 @@
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
-// For MultiCompany module. 
+// For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retreive from object ref and not from url.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_int($entity)) define("DOLENTITY", $entity);
+if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -226,7 +226,7 @@ if ($action == 'add')
         $adh->public      = $_POST["public"];
         $adh->firstname   = $_POST["firstname"];
         $adh->lastname    = $_POST["lastname"];
-        $adh->civilite_id = $_POST["civilite_id"];
+        $adh->civility_id = $_POST["civility_id"];
         $adh->societe     = $_POST["societe"];
         $adh->address     = $_POST["address"];
         $adh->zip         = $_POST["zipcode"];
@@ -251,7 +251,7 @@ if ($action == 'add')
         $extralabels=$extrafields->fetch_name_optionals_label($adh->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels,$adh);
 
-        $result=$adh->create($user->id);
+        $result=$adh->create($user);
         if ($result > 0)
         {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -445,7 +445,7 @@ else
 }
 // Civility
 print '<tr><td>'.$langs->trans('UserTitle').'</td><td>';
-print $formcompany->select_civility(GETPOST('civilite_id'),'civilite_id').'</td></tr>'."\n";
+print $formcompany->select_civility(GETPOST('civility_id'),'civility_id').'</td></tr>'."\n";
 // Lastname
 print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="lastname" size="40" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
@@ -606,4 +606,3 @@ print
 llxFooterVierge();
 
 $db->close();
-?>

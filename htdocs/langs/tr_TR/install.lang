@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Gelişmiş parametreleri (uzman modu) göstermek/dü
 
 #########
 # upgrade
-#########
 MigrationFixData=Standart dışı veri onarımı
 MigrationOrder=Müşteri siparişleri için veri taşıma
 MigrationSupplierOrder=Tedarikçi siparişleri için veri taşıma
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Saniyede olarak harcanan süreyi güncelle
 MigrationActioncommElement=Eylemlere ilişkin veri güncellemesi
 MigrationPaymentMode=Ödeme biçimi için veri taşıma
 MigrationCategorieAssociation=Kategorilerin taşınması
+
+ShowNotAvailableOptions=Kullanılamayacak seçenekler görüntülensin
+HideNotAvailableOptions=Kullanılamayacak seçenekler gizlensin

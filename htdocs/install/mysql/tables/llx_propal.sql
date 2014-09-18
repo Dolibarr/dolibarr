@@ -26,7 +26,7 @@ create table llx_propal
   entity				integer DEFAULT 1 NOT NULL,		-- multi company id
 
   ref_ext				varchar(255),					-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(255),					-- reference into an internal system (used by dolibarr)
+  ref_int				varchar(255),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
   ref_client			varchar(255),					-- customer proposal number
 
   fk_soc				integer,
@@ -61,6 +61,7 @@ create table llx_propal
   note_public			text,
   model_pdf				varchar(255),
   date_livraison		date DEFAULT NULL,				-- delivery date
+  fk_shipping_method    integer,                        -- shipping method id
   fk_availability		integer NULL,
   fk_input_reason		integer,
   import_key			varchar(14),

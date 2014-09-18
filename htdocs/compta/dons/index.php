@@ -209,4 +209,3 @@ print '</td></tr></table>';
 llxFooter();
 
 $db->close();
-?>

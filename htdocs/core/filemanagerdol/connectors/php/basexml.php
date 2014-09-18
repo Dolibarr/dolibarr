@@ -101,6 +101,13 @@ function SendError($number, $text)
 	exit ;
 }
 
+/**
+ * SendErrorNode
+ *
+ * @param 	integer $number		Number
+ * @param	string	$text		Text of error
+ * @return 	string				Error node
+ */
 function SendErrorNode($number, $text)
 {
 	if ($text)
@@ -108,4 +115,3 @@ function SendErrorNode($number, $text)
 	else
 		echo '<Error number="' . $number . '" />' ;
 }
-?>

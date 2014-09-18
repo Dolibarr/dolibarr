@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
  *
@@ -87,8 +87,6 @@ if ($action == 'update' && ($caneditfield || ! empty($user->admin)))
         if ($_POST["check_MAIN_LANG_DEFAULT"]=="on") $tabparam["MAIN_LANG_DEFAULT"]=$_POST["main_lang_default"];
         else $tabparam["MAIN_LANG_DEFAULT"]='';
 
-        $tabparam["MAIN_MENU_STANDARD"]=$_POST["MAIN_MENU_STANDARD"];
-
         if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["MAIN_SIZE_LISTE_LIMIT"]=$_POST["main_size_liste_limit"];
         else $tabparam["MAIN_SIZE_LISTE_LIMIT"]='';
 
@@ -100,8 +98,6 @@ if ($action == 'update' && ($caneditfield || ! empty($user->admin)))
         $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
 
         $result=dol_set_user_param($db, $conf, $fuser, $tabparam);
-
-        $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
         header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
         exit;
@@ -276,4 +272,3 @@ dol_fiche_end();
 
 llxFooter();
 $db->close();
-?>

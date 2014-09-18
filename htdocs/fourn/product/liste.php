@@ -121,7 +121,7 @@ if ($fourn_id > 0)
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog("fourn/product/liste.php: sql=".$sql);
+dol_syslog("fourn/product/liste.php:", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -149,7 +149,7 @@ if ($resql)
 	if (isset($catid))
 	{
 		print "<div id='ways'>";
-		$c = new Categorie($db, $catid);
+		$c = new Categorie($db);
 		$ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
 		print " &gt; ".$ways[0]."<br>\n";
 		print "</div><br>";
@@ -242,4 +242,3 @@ else
 $db->close();
 
 llxFooter();
-?>

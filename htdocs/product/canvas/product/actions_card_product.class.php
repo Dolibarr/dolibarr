@@ -447,4 +447,3 @@ class ActionsCardProduct
 
 }
 
-?>

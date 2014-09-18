@@ -76,7 +76,8 @@ $sql.= " AND pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND pl.fk_soc = s.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ".$db->order($sortfield, $sortorder);
+$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -126,4 +127,3 @@ else
 $db->close();
 
 llxFooter();
-?>

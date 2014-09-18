@@ -79,6 +79,7 @@ MailtoEMail=Verknüpfung zu E-Mail
 ActivateCheckRead=Erlaube den Zugriff auf den "Abmelde"-Link
 ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=E-Mail versandt an %s Empfänger.
+XTargetsAdded=<b>%s</b> Empfänger der Liste zugefügt
 EachInvoiceWillBeAttachedToEmail=Ein Dokument mit der Standard-Vorlage für Rechnungen wird erstellt und an jede E-Mail angehängt.
 MailTopicSendRemindUnpaidInvoices=Zahlungserinnerung für Rechnung %s (%s)
 SendRemind=Zahlungserinnerung per E-Mail senden
@@ -99,8 +100,6 @@ MailingModuleDescContactsByCompanyCategory=Kontakt über Partner (durch Kategori
 MailingModuleDescContactsByCategory=Kontakte / Adressen von Partnern nach Kategorie
 MailingModuleDescMembersCategories=Mitglieder der Stiftung (durch Kategorie)
 MailingModuleDescContactsByFunction=Kontakt über Partner (durch Position/Funktion)
-
-
 LineInFile=Zeile %s in der Datei
 RecipientSelectionModules=Definiert Empfängerauswahlen
 MailSelectedRecipients=Ausgewählte Empfänger
@@ -121,6 +120,7 @@ TargetsReset=Liste leeren
 ToClearAllRecipientsClickHere=Klicken Sie hier, um die Empfängerliste zu leeren
 ToAddRecipientsChooseHere=Fügen Sie Empfänger über die Listenauswahl hinzu
 NbOfEMailingsReceived=Empfangene E-Mail-Kampagnen
+NbOfEMailingsSend=Massenmails versandt
 IdRecord=Eintrag-ID
 DeliveryReceipt=Zustellbestätigung
 YouCanUseCommaSeparatorForSeveralRecipients=Trennen Sie mehrere Empfänger mit einem <b>Komma</b>
@@ -128,7 +128,6 @@ TagCheckMail=Track mail opening
 TagUnsubscribe=Abmelde Link
 TagSignature=Signatur des Absenders
 TagMailtoEmail=E-Mailadresses des Empfängers
-
 # Module Notifications
 Notifications=Benachrichtigungen
 NoNotificationsWillBeSent=Für dieses Ereignis und diesen Partner sind keine Benachrichtigungen geplant

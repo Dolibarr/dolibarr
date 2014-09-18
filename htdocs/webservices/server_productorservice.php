@@ -14,6 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Path to WSDL is: http://localhost/dolibarr/webservices/server_productorservice.php?wsdl
  */
 
 /**
@@ -32,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
 
@@ -86,6 +89,64 @@ $server->wsdl->addComplexType(
     )
 );
 
+$productorservice_fields = array(
+    'id' => array('name'=>'id','type'=>'xsd:string'),
+    'ref' => array('name'=>'ref','type'=>'xsd:string'),
+    'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
+    'type' => array('name'=>'type','type'=>'xsd:string'),
+    'label' => array('name'=>'label','type'=>'xsd:string'),
+    'description' => array('name'=>'description','type'=>'xsd:string'),
+    'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
+    'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
+    'note' => array('name'=>'note','type'=>'xsd:string'),
+    'status_tobuy' => array('name'=>'status_tobuy','type'=>'xsd:string'),
+    'status_tosell' => array('name'=>'status_tosell','type'=>'xsd:string'),
+    'barcode' => array('name'=>'barcode','type'=>'xsd:string'),
+    'barcode_type' => array('name'=>'barcode_type','type'=>'xsd:string'),
+    'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
+    'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
+    'customcode' => array('name'=>'customcode','type'=>'xsd:string'),
+
+    'price_net' => array('name'=>'price_net','type'=>'xsd:string'),
+    'price' => array('name'=>'price','type'=>'xsd:string'),
+    'price_min_net' => array('name'=>'price_min_net','type'=>'xsd:string'),
+    'price_min' => array('name'=>'price_min','type'=>'xsd:string'),
+
+    'price_base_type' => array('name'=>'price_base_type','type'=>'xsd:string'),
+
+    'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:string'),
+    'vat_npr' => array('name'=>'vat_npr','type'=>'xsd:string'),
+    'localtax1_tx' => array('name'=>'localtax1_tx','type'=>'xsd:string'),
+    'localtax2_tx' => array('name'=>'localtax2_tx','type'=>'xsd:string'),
+
+    'stock_alert' => array('name'=>'stock_alert','type'=>'xsd:string'),
+    'stock_real' => array('name'=>'stock_real','type'=>'xsd:string'),
+    'stock_pmp' => array('name'=>'stock_pmp','type'=>'xsd:string'),
+    'canvas' => array('name'=>'canvas','type'=>'xsd:string'),
+    'import_key' => array('name'=>'import_key','type'=>'xsd:string'),
+
+    'dir' => array('name'=>'dir','type'=>'xsd:string'),
+    'images' => array('name'=>'images','type'=>'tns:ImagesArray')
+);
+
+//Retreive all extrafield for product
+// fetch optionals attributes and labels
+$extrafields=new ExtraFields($db);
+$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+if (count($extrafields)>0) {
+	$extrafield_array = array();
+}
+foreach($extrafields->attribute_label as $key=>$label)
+{
+	$type =$extrafields->attribute_type[$key];
+	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+	else {$type='xsd:string';}
+
+	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+}
+
+$productorservice_fields=array_merge($productorservice_fields,$extrafield_array);
+
 // Define other specific objects
 $server->wsdl->addComplexType(
     'product',
@@ -93,45 +154,7 @@ $server->wsdl->addComplexType(
     'struct',
     'all',
     '',
-    array(
-    	'id' => array('name'=>'id','type'=>'xsd:string'),
-		'ref' => array('name'=>'ref','type'=>'xsd:string'),
-        'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
-    	'type' => array('name'=>'type','type'=>'xsd:string'),
-		'label' => array('name'=>'label','type'=>'xsd:string'),
-        'description' => array('name'=>'description','type'=>'xsd:string'),
-        'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
-        'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
-        'note' => array('name'=>'note','type'=>'xsd:string'),
-    	'status_tobuy' => array('name'=>'status_tobuy','type'=>'xsd:string'),
-    	'status_tosell' => array('name'=>'status_tosell','type'=>'xsd:string'),
-    	'barcode' => array('name'=>'barcode','type'=>'xsd:string'),
-    	'barcode_type' => array('name'=>'barcode_type','type'=>'xsd:string'),
-		'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
-    	'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
-    	'customcode' => array('name'=>'customcode','type'=>'xsd:string'),
-
-    	'price_net' => array('name'=>'price_net','type'=>'xsd:string'),
-    	'price' => array('name'=>'price','type'=>'xsd:string'),
-    	'price_min_net' => array('name'=>'price_min_net','type'=>'xsd:string'),
-    	'price_min' => array('name'=>'price_min','type'=>'xsd:string'),
-
-    	'price_base_type' => array('name'=>'price_base_type','type'=>'xsd:string'),
-
-    	'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:string'),
-    	'vat_npr' => array('name'=>'vat_npr','type'=>'xsd:string'),
-    	'localtax1_tx' => array('name'=>'localtax1_tx','type'=>'xsd:string'),
-    	'localtax2_tx' => array('name'=>'localtax2_tx','type'=>'xsd:string'),
-
-    	'stock_alert' => array('name'=>'stock_alert','type'=>'xsd:string'),
-    	'stock_real' => array('name'=>'stock_real','type'=>'xsd:string'),
-    	'stock_pmp' => array('name'=>'stock_pmp','type'=>'xsd:string'),
-		'canvas' => array('name'=>'canvas','type'=>'xsd:string'),
-		'import_key' => array('name'=>'import_key','type'=>'xsd:string'),
-
-		'dir' => array('name'=>'dir','type'=>'xsd:string'),
-		'images' => array('name'=>'images','type'=>'tns:ImagesArray')
-    )
+    $productorservice_fields
 );
 
 
@@ -187,18 +210,6 @@ $server->wsdl->addComplexType(
     )
 );
 
-/*$server->wsdl->addComplexType(
-    'ProductsArray',
-    'complexType',
-    'array',
-    '',
-    'SOAP-ENC:Array',
-    array(),
-    array(
-        array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:product[]')
-    ),
-    'tns:product'
-);*/
 $server->wsdl->addComplexType(
     'ProductsArray2',
     'complexType',
@@ -269,6 +280,20 @@ $server->register(
 
 // Register WSDL
 $server->register(
+    'deleteProductOrService',
+    // Entry values
+    array('authentication'=>'tns:authentication','listofid'=>'xsd:string'),
+    // Exit values
+    array('result'=>'tns:result','nbdeleted'=>'xsd:int'),
+    $ns,
+    $ns.'#deleteProductOrService',
+    $styledoc,
+    $styleuse,
+    'WS to delete a product or service'
+);
+
+// Register WSDL
+$server->register(
     'getListOfProductsOrServices',
     // Entry values
     array('authentication'=>'tns:authentication','filterproduct'=>'tns:filterproduct'),
@@ -303,7 +328,7 @@ $server->register(
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
  * @param	ref_ext		$ref_ext			Ref external of object
- * @param	$lang		$lang				Force lang
+ * @param   string      $lang               Lang to force
  * @return	mixed
  */
 function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang='')
@@ -311,6 +336,9 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
     global $db,$conf,$langs;
 
     dol_syslog("Function: getProductOrService login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+
+    $langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+    $langs->setDefaultLang($langcode);
 
     if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
@@ -347,46 +375,65 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
             	$dir = $dir . '/'. $pdir;
 
+            	if (! empty($product->multilangs[$langs->defaultlang]["label"]))     		$product->label =  $product->multilangs[$langs->defaultlang]["label"];
+            	if (! empty($product->multilangs[$langs->defaultlang]["description"]))     	$product->description =  $product->multilangs[$langs->defaultlang]["description"];
+            	if (! empty($product->multilangs[$langs->defaultlang]["note"]))     		$product->note =  $product->multilangs[$langs->defaultlang]["note"];
+		
+		$productorservice_result_fields = array(
+		    'id' => $product->id,
+	   	    'ref' => $product->ref,
+	   	    'ref_ext' => $product->ref_ext,
+	    	    'label' => $product->label,
+	    	    'description' => $product->description,
+	    	    'date_creation' => dol_print_date($product->date_creation,'dayhourrfc'),
+	    	    'date_modification' => dol_print_date($product->date_modification,'dayhourrfc'),
+	            'note' => $product->note,
+	            'status_tosell' => $product->status,
+	            'status_tobuy' => $product->status_buy,
+		    'type' => $product->type,
+		    'barcode' => $product->barcode,
+		    'barcode_type' => $product->barcode_type,
+		    'country_id' => $product->country_id>0?$product->country_id:'',
+		    'country_code' => $product->country_code,
+		    'custom_code' => $product->customcode,
+	
+	            'price_net' => $product->price,
+	            'price' => $product->price_ttc,
+	            'price_min_net' => $product->price_min,
+	            'price_min' => $product->price_min_ttc,
+	            'price_base_type' => $product->price_base_type,
+		    'vat_rate' => $product->tva_tx,
+		    //! French VAT NPR
+		    'vat_npr' => $product->tva_npr,
+		    //! Spanish local taxes
+		    'localtax1_tx' => $product->localtax1_tx,
+		    'localtax2_tx' => $product->localtax2_tx,
+	
+		    'stock_real' => $product->stock_reel,
+		    'stock_alert' => $product->seuil_stock_alerte,
+		    'pmp' => $product->pmp,
+		    'import_key' => $product->import_key,
+		    'dir' => $pdir,
+		    'images' => $product->liste_photos($dir,$nbmax=10)
+                );
+                
+                //Retreive all extrafield for thirdsparty
+            	// fetch optionals attributes and labels
+            	$extrafields=new ExtraFields($db);
+            	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+            	//Get extrafield values
+            	$product->fetch_optionals($product->id,$extralabels);
+            	
+            	foreach($extrafields->attribute_label as $key=>$label)
+            	{
+            		$productorservice_result_fields=array_merge($productorservice_result_fields,array('options_'.$key => $product->array_options['options_'.$key]));
+            	}
+		
                 // Create
                 $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			        'product'=>array(
-				    	'id' => $product->id,
-			   			'ref' => $product->ref,
-			   			'ref_ext' => $product->ref_ext,
-			    		'label' => $product->label,
-			    		'description' => $product->description,
-			    		'date_creation' => dol_print_date($product->date_creation,'dayhourrfc'),
-			    		'date_modification' => dol_print_date($product->date_modification,'dayhourrfc'),
-			            'note' => $product->note,
-			            'status_tosell' => $product->status,
-			            'status_tobuy' => $product->status_buy,
-                		'type' => $product->type,
-				        'barcode' => $product->barcode,
-				        'barcode_type' => $product->barcode_type,
-                		'country_id' => $product->country_id>0?$product->country_id:'',
-				        'country_code' => $product->country_code,
-				        'custom_code' => $product->customcode,
-
-			        	'price_net' => $product->price,
-			        	'price' => $product->price_ttc,
-			        	'price_min_net' => $product->price_min,
-			        	'price_min' => $product->price_min_ttc,
-			        	'price_base_type' => $product->price_base_type,
-				        'vat_rate' => $product->tva_tx,
-				        //! French VAT NPR
-				        'vat_npr' => $product->tva_npr,
-				        //! Spanish local taxes
-				        'localtax1_tx' => $product->localtax1_tx,
-				        'localtax2_tx' => $product->localtax2_tx,
-
-				        'stock_real' => $product->stock_reel,
-                		'stock_alert' => $product->seuil_stock_alerte,
-				        'pmp' => $product->pmp,
-                		'import_key' => $product->import_key,
-                		'dir' => $pdir,
-                		'images' => $product->liste_photos($dir,$nbmax=10)
-                ));
+			        'product'=>$productorservice_result_fields
+                );
             }
             else
             {
@@ -405,7 +452,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
     {
         $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
     }
-
+	//var_dump($objectresp);exit;
     return $objectresp;
 }
 
@@ -486,6 +533,14 @@ function createProductOrService($authentication,$product)
         }*/
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
+        
+        $extrafields=new ExtraFields($db);
+	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+	foreach($extrafields->attribute_label as $key=>$label)
+	{
+		$key='options_'.$key;
+		$newobject->array_options[$key]=$product[$key];
+	}
 
         $db->begin();
 
@@ -520,7 +575,7 @@ function createProductOrService($authentication,$product)
 
 
 /**
- * Update an invoice
+ * Update a product or service
  *
  * @param	array		$authentication		Array of authentication information
  * @param	Product		$product			Product
@@ -597,6 +652,14 @@ function updateProductOrService($authentication,$product)
         }*/
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
+        
+	$extrafields=new ExtraFields($db);
+	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+	foreach($extrafields->attribute_label as $key=>$label)
+	{
+		$key='options_'.$key;
+		$newobject->array_options[$key]=$product[$key];
+	}
 
         $db->begin();
 
@@ -624,6 +687,103 @@ function updateProductOrService($authentication,$product)
     if ($error)
     {
         $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
+
+    return $objectresp;
+}
+
+
+/**
+ * Delete a product or service
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	string		$listofidstring		List of id with comma
+ * @return	array							Array result
+ */
+function deleteProductOrService($authentication,$listofidstring)
+{
+    global $db,$conf,$langs;
+
+    $now=dol_now();
+
+    dol_syslog("Function: deleteProductOrService login=".$authentication['login']);
+
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+
+	// User must be defined to user authenticated
+    global $user;
+    $user=$fuser;
+
+    $listofid=explode(',',trim($listofidstring));
+    $listofiddeleted=array();
+
+    // Check parameters
+    if (count($listofid) == 0 || empty($listofid[0]))
+    {
+        $error++; $errorcode='KO'; $errorlabel="List of Id of products or services to delete are required.";
+    }
+
+    if (! $error)
+    {
+    	$firsterror='';
+
+		$db->begin();
+
+    	foreach($listofid as $key => $id)
+		{
+	        $newobject=new Product($db);
+	        $result=$newobject->fetch($id);
+
+	        if ($result == 0)
+	        {
+	        	$error++;
+		        $firsterror='Product or service with id '.$id.' not found';
+		        break;
+	        }
+	        else
+			{
+		        $result=$newobject->delete();
+		        if ($result <= 0)
+		        {
+		            $error++;
+		            $firsterror=$newobject->error;
+		            break;
+		        }
+
+		        $listofiddeleted[]=$id;
+			}
+		}
+
+	    if (! $error)
+	    {
+	        $db->commit();
+            //$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'listofid'=>$listofiddeleted);
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'nbdeleted'=>count($listofiddeleted));
+	    }
+	    else
+	    {
+	    	$db->rollback();
+	        $error++;
+	        $errorcode='KO';
+	        $errorlabel=$firsterror;
+		}
+    }
+
+    if ($error)
+    {
+        //$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'listofid'=>$listofiddeleted);
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'nbdeleted'=>0);
+    }
+    else if (count($listofiddeleted) == 0)
+    {
+   		//$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'listofid'=>$listofiddeleted);
+   		$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'nbdeleted'=>0);
     }
 
     return $objectresp;
@@ -707,15 +867,19 @@ function getListOfProductsOrServices($authentication,$filterproduct)
 
 
 /**
- * getProductsForCategory
+ * Get list of products for a category
  *
  * @param	array		$authentication		Array of authentication information
  * @param	array		$id					Category id
  * @param	$lang		$lang				Force lang
  * @return	array							Array result
- */function getProductsForCategory($authentication,$id,$lang='')
+ */
+function getProductsForCategory($authentication,$id,$lang='')
 {
 	global $db,$conf,$langs;
+
+	$langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+	$langs->setDefaultLang($langcode);
 
 	dol_syslog("Function: getProductsForCategory login=".$authentication['login']." id=".$id);
 
@@ -755,7 +919,7 @@ function getListOfProductsOrServices($authentication,$filterproduct)
 				$sql .= " ORDER BY fk_".$field." ASC" ;
 
 
-				dol_syslog("getProductsForCategory get id of product into category sql=".$sql);
+				dol_syslog("getProductsForCategory get id of product into category", LOG_DEBUG);
 				$res  = $db->query($sql);
 				if ($res)
 				{
@@ -763,6 +927,7 @@ function getListOfProductsOrServices($authentication,$filterproduct)
 					{
 						$obj = new Product($db);
 						$obj->fetch($rec['fk_'.$field]);
+						$iProduct = 0;
 						if($obj->status > 0 )
 						{
 							$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
@@ -773,11 +938,11 @@ function getListOfProductsOrServices($authentication,$filterproduct)
 						    	'id' => $obj->id,
 					   			'ref' => $obj->ref,
 					   			'ref_ext' => $obj->ref_ext,
-					    		'label' => $obj->label,
-					    		'description' => $obj->description,
+					    		'label' => ! empty($obj->multilangs[$langs->defaultlang]["label"]) ? $obj->multilangs[$langs->defaultlang]["label"] : $obj->label,
+					    		'description' => ! empty($obj->multilangs[$langs->defaultlang]["description"]) ? $obj->multilangs[$langs->defaultlang]["description"] : $obj->description,
 					    		'date_creation' => dol_print_date($obj->date_creation,'dayhourrfc'),
 					    		'date_modification' => dol_print_date($obj->date_modification,'dayhourrfc'),
-					            'note' => $obj->note,
+					            'note' => ! empty($obj->multilangs[$langs->defaultlang]["note"]) ? $obj->multilangs[$langs->defaultlang]["note"] : $obj->note,
 					            'status_tosell' => $obj->status,
 					            'status_tobuy' => $obj->status_buy,
 		                		'type' => $obj->type,
@@ -800,6 +965,20 @@ function getListOfProductsOrServices($authentication,$filterproduct)
 		                		'dir' => $pdir,
 		                		'images' => $obj->liste_photos($dir,$nbmax=10)
 							);
+							
+							//Retreive all extrafield for thirdsparty
+							// fetch optionals attributes and labels
+							$extrafields=new ExtraFields($db);
+							$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+							//Get extrafield values
+							$product->fetch_optionals($obj->id,$extralabels);
+							
+							foreach($extrafields->attribute_label as $key=>$label)
+							{
+								$products[$iProduct]=array_merge($products[$iProduct],array('options_'.$key => $product->array_options['options_'.$key]));
+							}
+							
+							$iProduct++;
 						}
 
 					}
@@ -840,9 +1019,5 @@ function getListOfProductsOrServices($authentication,$filterproduct)
 	return $objectresp;
 }
 
-
-
 // Return the results.
-$server->service($HTTP_RAW_POST_DATA);
-
-?>
+$server->service(file_get_contents("php://input"));

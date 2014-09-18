@@ -8,7 +8,6 @@ NotActiveModCP=Πρέπει να ενεργοποιήσετε τις άδειε�
 NotConfigModCP=Πρέπει να ρυθμίσετε τις άδειες στο module για να δείτε αυτή τη σελίδα. Για να το κάνετε αυτό, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> πατήστε εδώ </ a>.
 NoCPforUser=Δεν υπάρχει ζήτηση για άδεια.
 AddCP=Εφαρμογή για άδεια
-CPErrorSQL=Παρουσιάστηκε σφάλμα στην SQL:
 Employe=Εργαζόμενος
 DateDebCP=Ημερ. έναρξης
 DateFinCP=Ημερ. τέλους
@@ -34,7 +33,6 @@ ReturnCP=Επιστροφή στην προηγούμενη σελίδα
 ErrorUserViewCP=Δεν έχετε δικαίωμα να διαβάσετε αυτό το αίτημα για τις άδειες.
 InfosCP=Πληροφορίες για τη ζήτηση των αδειών
 InfosWorkflowCP=Πληροφορίες για την ροή εργασιών
-DateCreateCP=Ημερομηνία Δημιουργίας
 RequestByCP=Ζητήθηκε από
 TitreRequestCP=Φύλλο αδειών
 NbUseDaysCP=Αριθμός ημερών αδειών που καταναλώνονται
@@ -130,7 +128,6 @@ ErrorMailNotSend=Παρουσιάστηκε σφάλμα κατά την απο�
 NoCPforMonth=Όχι αυτό το μήνα.
 nbJours=Αριθμός ημερών
 TitleAdminCP=Διαμόρφωση αδειών
-
 #Messages
 Hello=Γεια σας
 HolidaysToValidate=Επικύρωση άδειας
@@ -143,10 +140,10 @@ HolidaysRefused=Άρνηση άδειας
 HolidaysRefusedBody=Το αίτημα σας για την άδεια από %s έως %s έχει απορριφθεί για τους ακόλουθους λόγους:
 HolidaysCanceled=Ακύρωση άδειας
 HolidaysCanceledBody=Το αίτημά σας για άδεια από %s έως %s έχει ακυρωθεί.
-
-Permission20001=Διαβάστε/δημιουργήστε/τροποποιήστε τις άδειες τους
-Permission20002=Διαβάστε/τροποποιήστε όλα τα αιτήματα των αδειών
-Permission20003=Διαγραφή αιτημάτων αδειών
-Permission20004=Ορίστε χρήστες για άδειες
+Permission20000=Δείτε τις δικές σας άδειες
+Permission20001=Δημιουργία/τροποποίηση της άδειάς σας
+Permission20002=Δημιουργία/τροποποίηση των αδειών για όλους
+Permission20003=Αιτήματα διαγραφής αδειών
+Permission20004=Ρύθμιση χρηστών για της άδειες
 Permission20005=Επανεξέταση καταγραφής των τροποποιημένων αδειών
-Permission20006=Πρόσβαση μηνιαίας αναφοράς αδειών
+Permission20006=Δείτε την μηνιαία αναφορά αδειών

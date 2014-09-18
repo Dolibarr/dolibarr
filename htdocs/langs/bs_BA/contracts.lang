@@ -80,7 +80,7 @@ DeleteContractLine=Izbriši stavku ugovora
 ConfirmDeleteContractLine=Jeste li sigurni da želite obrisati ovu stavku ugovora?
 MoveToAnotherContract=Pomjeri uslugu u drugi ugovor.
 ConfirmMoveToAnotherContract=Izabrao sam novi ugovor i potvrđujem da želim premjestiti ovu uslugu u odabrani ugovor.
-# ConfirmMoveToAnotherContractQuestion=Choose in which existing contract (of same third party), you want to move this service to ?
+ConfirmMoveToAnotherContractQuestion=Choose in which existing contract (of same third party), you want to move this service to ?
 PaymentRenewContractId=Obnovi stavku ugovora (broj %s)
 ExpiredSince=Datum isticanja
 RelatedContracts=Povezani ugovori
@@ -88,7 +88,9 @@ NoExpiredServices=Nema istekle aktivne usluge
 ListOfServicesToExpireWithDuration=Lista usluga pred isticanje za %s dana
 ListOfServicesToExpireWithDurationNeg=Lista isteklih usluga više od %s dana
 ListOfServicesToExpire=Lista usluga pred isticanje
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Predstavnik prodaje koji potpisuje ugovor

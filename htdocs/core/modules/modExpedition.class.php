@@ -97,12 +97,12 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$r++;
 		$this->const[$r][0] = "EXPEDITION_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/shipment";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
+		$r++;
 
 		$this->const[$r][0] = "LIVRAISON_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
@@ -118,7 +118,6 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$r++;
 		$this->const[$r][0] = "LIVRAISON_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/delivery";
@@ -217,15 +216,15 @@ class modExpedition extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='Shipments';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("expedition","shipment","export"));
-		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','co.libelle'=>'Country','co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','c.rowid'=>"Id",'c.ref'=>"Ref",'c.ref_customer'=>"RefCustomer",'c.fk_soc'=>"IdCompany",'c.date_creation'=>"DateCreation",'c.date_delivery'=>"DateSending",'c.tracking_number'=>"TrackingNumber",'c.height'=>"Height",'c.width'=>"Width",'c.size'=>"Depth",'c.size_units'=>'SizeUnits','c.weight'=>"Weight",'c.weight_units'=>"WeightUnits",'c.fk_statut'=>'Status','c.note_public'=>"NotePublic",'ed.rowid'=>'LineId','cd.description'=>'Description','ed.qty'=>"Qty",'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel');
-		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.libelle'=>'List:c_pays:libelle:libelle','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Number",'c.remise_percent'=>"Number",'c.total_ht'=>"Number",'c.total_ttc'=>"Number",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','ed.qty'=>"Text");
-		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.libelle'=>'List:c_pays:libelle:libelle','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_customer'=>"Text",'c.date_creation'=>"Date",'c.date_delivery'=>"Date",'c.tracking_number'=>"Number",'c.height'=>"Number",'c.width'=>"Number",'c.weight'=>"Number",'c.fk_statut'=>'Status','c.note_public'=>"Text",'ed.qty'=>"Number");
+		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','co.label'=>'Country','co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','c.rowid'=>"Id",'c.ref'=>"Ref",'c.ref_customer'=>"RefCustomer",'c.fk_soc'=>"IdCompany",'c.date_creation'=>"DateCreation",'c.date_delivery'=>"DateSending",'c.tracking_number'=>"TrackingNumber",'c.height'=>"Height",'c.width'=>"Width",'c.size'=>"Depth",'c.size_units'=>'SizeUnits','c.weight'=>"Weight",'c.weight_units'=>"WeightUnits",'c.fk_statut'=>'Status','c.note_public'=>"NotePublic",'ed.rowid'=>'LineId','cd.description'=>'Description','ed.qty'=>"Qty",'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel');
+		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Number",'c.remise_percent'=>"Number",'c.total_ht'=>"Number",'c.total_ttc'=>"Number",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','ed.qty'=>"Text");
+		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_customer'=>"Text",'c.date_creation'=>"Date",'c.date_delivery'=>"Date",'c.tracking_number'=>"Number",'c.height'=>"Number",'c.width'=>"Number",'c.weight'=>"Number",'c.fk_statut'=>'Status','c.note_public'=>"Text",'ed.qty'=>"Number");
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company','s.phone'=>'company','s.siren'=>'company','s.ape'=>'company','s.siret'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','c.rowid'=>"shipment",'c.ref'=>"shipment",'c.ref_customer'=>"shipment",'c.fk_soc'=>"shipment",'c.date_creation'=>"shipment",'c.date_delivery'=>"shipment",'c.tracking_number'=>'shipment','c.height'=>"shipment",'c.width'=>"shipment",'c.size'=>'shipment','c.size_units'=>'shipment','c.weight'=>"shipment",'c.weight_units'=>'shipment','c.fk_statut'=>"shipment",'c.note_public'=>"shipment",'ed.rowid'=>'shipment_line','cd.description'=>'shipment_line','ed.qty'=>"shipment_line",'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product');
 		$this->export_dependencies_array[$r]=array('shipment_line'=>'ed.rowid','product'=>'ed.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'expedition as c, '.MAIN_DB_PREFIX.'societe as s';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as co ON s.fk_pays = co.rowid,';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'expeditiondet as ed, '.MAIN_DB_PREFIX.'commandedet as cd';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_expedition AND ed.fk_origin_line = cd.rowid';
@@ -243,7 +242,7 @@ class modExpedition extends DolibarrModules
 	 */
 	function init($options='')
 	{
-		global $conf;
+		global $conf,$langs;
 
 		// Permissions
 		$this->remove($options);
@@ -271,8 +270,8 @@ class modExpedition extends DolibarrModules
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','shipping',".$conf->entity.")",
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[2][2]."' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[2][2]."','delivery',".$conf->entity.")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[3][2]."' AND entity = ".$conf->entity,
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[3][2]."','delivery',".$conf->entity.")",
 		);
 
 		return $this->_init($sql,$options);
@@ -294,4 +293,3 @@ class modExpedition extends DolibarrModules
     }
 
 }
-?>

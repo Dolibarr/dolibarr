@@ -8,7 +8,6 @@ NotActiveModCP=Vous devez activer le module Congés pour afficher cette page.
 NotConfigModCP=Vous devez configurer le module Congés pour afficher cette page. Pour effectuer cette opération, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">cliquer ici</a>.
 NoCPforUser=Vous n'avez pas encore de demande de congés.
 AddCP=Créer demande de congés
-CPErrorSQL=Une erreur SQL est survenue :
 Employe=Employé
 DateDebCP=Date Début
 DateFinCP=Date Fin
@@ -34,7 +33,6 @@ ReturnCP=Retour à la page précédente
 ErrorUserViewCP=Vous n'êtes pas autorisé à lire cette demande de congés.
 InfosCP=Informations de la demande de congés
 InfosWorkflowCP=Informations du workflow
-DateCreateCP=Date de création
 RequestByCP=Demandée par
 TitreRequestCP=Fiche Congés
 NbUseDaysCP=Nombre de jours de congés consommés
@@ -130,7 +128,6 @@ ErrorMailNotSend=Une erreur est survenue lors de l'envoi du mail :
 NoCPforMonth=Aucun congé ce mois-ci.
 nbJours=Nombre jours
 TitleAdminCP=Configuration des Congés
-
 #Messages
 Hello=Bonjour
 HolidaysToValidate=Congés payés à valider
@@ -143,10 +140,10 @@ HolidaysRefused=Congés payés refusée
 HolidaysRefusedBody=Votre demande de congés payés %s à %s vient d'être refusée pour le motif suivant :
 HolidaysCanceled=Congés payés annulée
 HolidaysCanceledBody=Votre demande de congés %s à %s va été annulée.
-
-Permission20001=Lire / Créer / modifier ses congès
-Permission20002=Lire / Modifier toutes les demandes de congés payés
-Permission20003=Supprimer des demandes de congés payés
-Permission20004=Définir les congés payés des utilisateurs
+Permission20000=Lire ses propres congès
+Permission20001=Créer/modifier ses propres congès
+Permission20002=Créer/modifier les congès pour tout le monde
+Permission20003=Supprimer les demandes de congés
+Permission20004=Définir les congés des utilisateurs
 Permission20005=Voir les logs de modification des congés payés
-Permission20006=Accéder au rapport mensuel des congés payés
+Permission20006=Accéder au rapport mensuel des congés

@@ -19,12 +19,17 @@
 // Variable $upload_dir must be defined when entering here
 
 // Send file/link
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
-    if ($object->id) {
-        dol_add_file_process($upload_dir, 0, 1, 'userfile');
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
+{
+    if ($object->id)
+    {
+        dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
     }
-} elseif (GETPOST('linkit') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
-    if ($object->id) {
+}
+elseif (GETPOST('linkit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
+{
+    if ($object->id)
+    {
         $link = GETPOST('link', 'alpha');
         if ($link)
         {
@@ -74,7 +79,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
                 setEventMessage($langs->trans("ErrorFailedToDeleteLink", $link->label), 'errors');
             }
         }
-        header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id.($withproject?'&withproject=1':''));
+        header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id.(!empty($withproject)?'&withproject=1':''));
         exit;
     }
 }

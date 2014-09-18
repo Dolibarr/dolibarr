@@ -52,4 +52,3 @@ $db->close();
  */
 print moneyMeter($actualValue, $pendingValue, $intentValue);
 
-?>

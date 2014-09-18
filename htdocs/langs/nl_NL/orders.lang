@@ -55,7 +55,7 @@ DraftOrWaitingShipped=Concept of nog niet verzonden
 MenuOrdersToBill=Te factureren opdrachten
 MenuOrdersToBill2=Te factureren orders
 SearchOrder=Zoekopdracht
-# SearchACustomerOrder=Search a customer order
+SearchACustomerOrder=Zoek een klant bestelling
 ShipProduct=Verzend product
 Discount=Korting
 CreateOrder=Creeer opdracht
@@ -101,7 +101,6 @@ RelatedOrders=Gerelateerde opdrachten
 OnProcessOrders=Opdrachten in behandeling
 RefOrder=Ref. Opdracht
 RefCustomerOrder=Ref. afnemersopdracht
-CustomerOrder=Afnemersopdracht
 RefCustomerOrderShort=Ref. afnemersopdr.
 SendOrderByMail=Verzend opdracht per post
 ActionsOnOrder=Acties op opdrachten
@@ -132,8 +131,6 @@ Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON niet gedefinieerd
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Het laden van modulebestand '%s' is mislukt
 Error_FailedToLoad_COMMANDE_ADDON_File=Het laden  van modulebestand '%s' mislukt
 Error_OrderNotChecked=Geen te factureren order gekozen
-
-
 # Sources
 OrderSource0=Offerte
 OrderSource1=Internet
@@ -144,7 +141,6 @@ OrderSource5=Commercieel
 OrderSource6=Magazijn
 QtyOrdered=Aantal besteld
 AddDeliveryCostLine=Voeg een verzendkostenregel toe die het gewicht van de goederen in de opdracht aangeeft
-
 # Documents models
 PDFEinsteinDescription=Een compleet opdrachtenmodel (incl. logo, etc)
 PDFEdisonDescription=Een eenvoudig opdrachtenmodel
@@ -155,7 +151,6 @@ OrderByFax=Fax
 OrderByEMail=E-mail
 OrderByWWW=Online
 OrderByPhone=Telefoon
-
 CreateInvoiceForThisCustomer=Factureer orders
 NoOrdersToInvoice=Geen te factureren orders
 CloseProcessedOrdersAutomatically=Alle geselecteerde orders zijn afgehandeld
@@ -165,4 +160,4 @@ Ordered=Besteld
 OrderCreated=Je order is aangemaakt
 OrderFail=Fout tijdens aanmaken order
 CreateOrders=Maak orders
-# ToBillSeveralOrderSelectCustomer=To create an invoice for several orders, click first onto customer, then choose "%s".
+ToBillSeveralOrderSelectCustomer=Om een factuur voor verscheidene orden te creëren, klikt eerste op klant, dan kies "%s".

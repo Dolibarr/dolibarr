@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/categories/class/categorie.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
@@ -305,7 +305,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Categorie($this->savdb);
     	$result=$localobject->fetch($id);
-		$result=$localobject->delete($id);
+		$result=$localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertGreaterThan(0, $result);
@@ -336,4 +336,3 @@ class CategorieTest extends PHPUnit_Framework_TestCase
     }
 
 }
-?>

@@ -1,0 +1,35 @@
+
+MenuResourceIndex=Ressources
+MenuResourceAdd=Nouvelle ressource
+MenuResourcePlanning=Planning des Ressources
+DeleteResource=Effacer ressource
+ConfirmDeleteResourceElement=Confirmer la suppression de la ressource pour cet élément
+NoResourceInDatabase=Aucune ressource en base de données.
+NoResourceLinked=Aucune ressource liée
+
+ResourcePageIndex=Liste des Ressources
+ResourceSingular=Ressource
+ResourceCard=Fiche ressource
+AddResource=Ajouter une ressource
+ResourceFormLabel_ref=Nom de la ressource
+ResourceType=Type de la ressource
+ResourceFormLabel_description=Description de la ressource
+
+ResourcesLinkedToElement=Ressources liées à l'élément
+RessourceLineSuccessfullyUpdated=Ressource mise à jour
+RessourceLineSuccessfullyDeleted=Ressource supprimée
+
+ShowResourcePlanning=Montrer le planning des ressources
+PlanningOfAffectedResources=Planning des ressources affectées aux évènements
+GotoDate=Afficher la date
+
+ResourceElementPage=Ressources de l'élément
+ResourceCreatedWithSuccess=Ressource créee avec succès
+RessourceLineSuccessfullyDeleted=Ressource supprimée avec succès
+RessourceLineSuccessfullyUpdated=Ressource mise à jour
+ResourceLinkedWithSuccess=Ressource liée avec succès
+
+TitleResourceCard=Fiche ressource
+ConfirmDeleteResource=Confirmer la suppression de cette ressource?
+RessourceSuccessfullyDeleted=Ressource effacée avec succès
+DictionaryResourceType=Type de ressources

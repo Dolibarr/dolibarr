@@ -32,6 +32,7 @@ require '../../main.inc.php';
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $htmlname	= GETPOST('htmlname','alpha');
+$showempty	= GETPOST('showempty','int');
 
 /*
  * View
@@ -47,12 +48,12 @@ if (! empty($id) && ! empty($action) && ! empty($htmlname))
 	$form = new Form($db);
 	
 	$return=array();
+	if (empty($showempty)) $showempty=0;
 	
-	$return['value']	= $form->selectcontacts($id,'','contactid',0,'','',0,'',true);
+	$return['value']	= $form->selectcontacts($id,'','contactid',$showempty,'','',0,'',true);
 	$return['num']		= $form->num;
 	$return['error']	= $form->error;
 	
 	echo json_encode($return);
 }
 
-?>

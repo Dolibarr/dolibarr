@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ if ($object->id > 0)
 
 	/*
 	 *   Facture
-	*/
+	 */
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -384,21 +384,19 @@ if ($object->id > 0)
 	print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
-	if ($mysoc->country_code=='ES')
+	if ($mysoc->localtax1_assuj=="1") //Localtax1
 	{
-		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
-		if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
+		print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
+		print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
+	if ($mysoc->localtax2_assuj=="1") //Localtax2
+	{
+		print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
+		print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	}
+
 
 	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
@@ -428,7 +426,7 @@ if ($object->id > 0)
 
 	/*
 	 * Withdrawal request
-	*/
+	 */
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
 	$sql .= " , pfd.date_traite as date_traite";
@@ -450,7 +448,7 @@ if ($object->id > 0)
 
 	/*
 	 * Buttons
-	*/
+	 */
 	print "\n<div class=\"tabsAction\">\n";
 
 	// Add a withdraw request
@@ -462,12 +460,17 @@ if ($object->id > 0)
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 		}
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#">'.$langs->trans("MakeWithdrawRequest").'</a>';
+		if ($num == 0)
+		{
+			if ($object->statut > 0) print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPayed")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+		}
+		else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 	}
 
 	print "</div><br>\n";
@@ -582,4 +585,3 @@ if ($object->id > 0)
 
 llxFooter();
 $db->close();
-?>

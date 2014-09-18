@@ -65,4 +65,3 @@ $ecriture_color = imagecolorallocate($img, 0, 0, 0);
 imagestring($img, 4, 24, 8, $string, $ecriture_color);
 imagepng($img);
 
-?>

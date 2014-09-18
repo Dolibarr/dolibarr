@@ -43,7 +43,7 @@ if ($action == 'update')
     || $_POST["MAIN_MAX_DECIMALS_SHOWN"] > $MAXDEC)
     {
         $error++;
-        $mesg='<div class="error">'.$langs->trans("ErrorDecimalLargerThanAreForbidden",$MAXDEC).'</div>';
+	    setEventMessage($langs->trans("ErrorDecimalLargerThanAreForbidden",$MAXDEC), 'errors');
     }
 
     if ($_POST["MAIN_MAX_DECIMALS_UNIT"]  < 0
@@ -52,7 +52,7 @@ if ($action == 'update')
     {
         $langs->load("errors");
         $error++;
-        $mesg='<div class="error">'.$langs->trans("ErrorNegativeValueNotAllowed").'</div>';
+	    setEventMessage($langs->trans("ErrorNegativeValueNotAllowed"), 'errors');
     }
 
     if ($_POST["MAIN_ROUNDING_RULE_TOT"])
@@ -61,7 +61,7 @@ if ($action == 'update')
         {
             $langs->load("errors");
             $error++;
-            $mesg='<div class="error">'.$langs->trans("ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT").'</div>';
+	        setEventMessage($langs->trans("ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT"), 'errors');
         }
     }
 
@@ -93,8 +93,6 @@ print_fiche_titre($langs->trans("LimitsSetup"),'','setup');
 
 print $langs->trans("LimitsDesc")."<br>\n";
 print "<br>\n";
-
-if ($mesg) print $mesg.'<br>';
 
 if ($action == 'edit')
 {
@@ -206,9 +204,9 @@ else
 	// Add vat rates examples specific to country
 	$vat_rates=array();
 
-	$sql.="SELECT taux as vat_rate";
-	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-	$sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$mysoc->country_code."' AND taux != 0";
+	$sql="SELECT taux as vat_rate";
+	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+	$sql.=" WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$mysoc->country_code."' AND t.taux <> 0";
 	$sql.=" ORDER BY t.taux ASC";
 	$resql=$db->query($sql);
 	if ($resql)
@@ -316,4 +314,3 @@ else
 llxFooter();
 
 $db->close();
-?>

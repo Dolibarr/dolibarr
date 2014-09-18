@@ -540,7 +540,7 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 					$langs->load("dict");
 
 					$sql = "SELECT rowid";
-					$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+					$sql.= " FROM ".MAIN_DB_PREFIX."c_country";
 					$sql.= " WHERE active = 1";
 					$sql.= " AND code='".$thirdparty->country_code."'";
 
@@ -583,7 +583,7 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 						$contact->socid = $thirdparty->id;
 						$contact->lastname = $thirdpartywithuser['name'];
 						$contact->firstname = $thirdpartywithuser['firstname'];
-						$contact->civilite_id = $thirdparty->civilite_id;
+						$contact->civility_id = $thirdparty->civility_id;
 						$contact->address = $thirdparty->address;
 						$contact->zip = $thirdparty->zip;
 						$contact->town = $thirdparty->town;
@@ -753,8 +753,5 @@ function setUserPassword($authentication,$shortuser) {
 	return $objectresp;
 }
 
-
 // Return the results.
-$server->service($HTTP_RAW_POST_DATA);
-
-?>
+$server->service(file_get_contents("php://input"));

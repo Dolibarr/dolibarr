@@ -76,7 +76,7 @@ class AdherentType extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog("Adherent_type::create sql=".$sql);
+        dol_syslog("Adherent_type::create", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -99,8 +99,10 @@ class AdherentType extends CommonObject
      */
     function update($user)
     {
-    	global $hookmanager;
-    	
+    	global $hookmanager,$conf;
+
+    	$error=0;
+
         $this->libelle=trim($this->libelle);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
@@ -116,6 +118,8 @@ class AdherentType extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
+        	$action='update';
+        	
         	// Actions on extra fields (by external module or standard code)
         	$hookmanager->initHooks(array('membertypedao'));
         	$parameters=array('membertype'=>$this->id);
@@ -132,8 +136,8 @@ class AdherentType extends CommonObject
         		}
         	}
         	else if ($reshook < 0) $error++;
-        	
-        	
+
+
             return 1;
         }
         else
@@ -184,7 +188,7 @@ class AdherentType extends CommonObject
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
         $sql .= " WHERE d.rowid = ".$rowid;
 
-        dol_syslog("Adherent_type::fetch sql=".$sql);
+        dol_syslog("Adherent_type::fetch", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -207,7 +211,6 @@ class AdherentType extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog("Adherent_type::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -336,4 +339,3 @@ class AdherentType extends CommonObject
         }
     }
 }
-?>

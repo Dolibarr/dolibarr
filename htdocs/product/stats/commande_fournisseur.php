@@ -111,7 +111,7 @@ if ($id > 0 || ! empty($ref))
 
 		$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
 		$sql.= " c.rowid, c.total_ht as total_ht, c.ref,";
-		$sql.= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid";
+		$sql.= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid, d.qty";
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -141,6 +141,7 @@ if ($id > 0 || ! empty($ref))
 			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"c.date_commande","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Qty"),$_SERVER["PHP_SELF"],"d.qty","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.total_ht","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
@@ -165,6 +166,7 @@ if ($id > 0 || ! empty($ref))
 					print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";
 					print '<td align="center">'.dol_print_date($db->jdate($objp->date_commande))."</td>";
+					print "<td align=\"center\">".$objp->qty."</td>\n";
 					print '<td align="right">'.price($objp->total_ht)."</td>\n";
 					print '<td align="right">'.$commandestatic->getLibStatut(4).'</td>';
 					print "</tr>\n";
@@ -189,4 +191,3 @@ else
 
 llxFooter();
 $db->close();
-?>

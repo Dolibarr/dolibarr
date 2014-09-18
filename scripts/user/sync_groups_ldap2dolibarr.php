@@ -56,7 +56,7 @@ $forcecommit=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 // List of fields to get from LDAP
@@ -70,18 +70,19 @@ $required_fields = array(
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
-if ($argv[2]) $conf->global->LDAP_SERVER_HOST=$argv[2];
-
-print "***** $script_file ($version) *****\n";
 
 if (! isset($argv[1])) {
 	//print "Usage:  $script_file (nocommitiferror|commitiferror) [id_group]\n";
-	print "Usage:  $script_file (nocommitiferror|commitiferror) [ldapserverhost]\n";
+	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...]\n";
 	exit(-1);
 }
-$groupid=$argv[3];
-if ($argv[1] == 'commitiferror') $forcecommit=1;
 
+foreach($argv as $key => $val)
+{
+	if ($val == 'commitiferror') $forcecommit=1;
+	if (preg_match('/--server=([^\s]+)$/',$val,$reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
+	if (preg_match('/--excludeuser=([^\s]+)$/',$val,$reg)) $excludeuser=explode(',',$reg[1]);
+}
 
 print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;	// On bloque les mails
@@ -103,8 +104,7 @@ print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
 print "Mapped LDAP fields=".join(',',$required_fields)."\n";
 print "\n";
-print "Press a key to confirm...";
-$input = trim(fgets(STDIN));
+
 print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
 
@@ -256,4 +256,3 @@ function dolValidElement($element)
 	return (trim($element) != '');
 }
 
-?>

@@ -25,14 +25,14 @@ ErrorGoBackAndCorrectParameters=Vrnite se nazaj in popravite napačne parametre.
 ErrorWrongValueForParameter=Morda ste vnesli napačno vrednost parametra '%s'.
 ErrorFailedToCreateDatabase=Neuspešno kreiranje baze podatkov '%s'.
 ErrorFailedToConnectToDatabase=Neuspešna povezava z bazo podatkov '%s'.
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Verzija baze podatkov (%s) je prestara. Zahtevana je verzija %s ali novejša.
 ErrorPHPVersionTooLow=PHP verzija je prestara. Zahtevana je verzija %s.
 WarningPHPVersionTooLow=PHP verzija je prestara. Pričakovana je verzija %s ali novejša. Ta verzija bi morala dovoliti namestitev, vendar ni podprta.
 ErrorConnectedButDatabaseNotFound=Povezava s strežnikom je vzpostavljena, vendar ni najdena baza podatkov'%s'.
 ErrorDatabaseAlreadyExists=Baza podatkov '%s' že obstaja.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Če baza podatkov ne obstaja, se vrnite nazaj in označite opcijo "Ustvari bazo podatkov".
 IfDatabaseExistsGoBackAndCheckCreate=Če baza podatkov že obstaja, se vrnite nazaj in odznačite opcijo "Ustvari bazo podatkov".
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=Verzija brskalnika je prestara. Priporočamo nadgraditev vašega brskalnika na zadnjo verzijo Firefox, Chrome ali Opera.
 PHPVersion=PHP Verzija
 YouCanContinue=Lahko nadaljujete...
 PleaseBePatient=Prosim, bodite potrpežljivi...
@@ -154,11 +154,10 @@ MigrationShippingDelivery2=Nadgraditev skladišča za odpremo 2
 MigrationFinished=Prenos končan
 LastStepDesc=<strong>Zadnji korak</strong>: Tukaj določite uporabniško ime in geslo, ki ju nameravate uporabiti za priklop v software. Ne izgubite ju, ker je to račun za administriranje vseh ostalih računov.
 ActivateModule=Vključite modul %s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Kliknite tukaj za prikaz/popravek naprednih parametrov (expertni način)
 
 #########
 # upgrade
-#########
 MigrationFixData=Popravek denormaliziranih podatkov
 MigrationOrder=Prenos podatkov o naročilih kupcev
 MigrationSupplierOrder=Prenos podatkov o naročilih pri dobaviteljih
@@ -206,4 +205,7 @@ MigrationProjectUserResp=Prenos podatkov polja fk_user_resp tabele llx_projet v 
 MigrationProjectTaskTime=Posodobitev porabljenega časa v sekundah
 MigrationActioncommElement=Posodobitev podatkov o aktivnostih
 MigrationPaymentMode=Podatki, migracije za način plačila
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Migracija kategorij
+
+ShowNotAvailableOptions=Prikaži opcije, ki niso na voljo
+HideNotAvailableOptions=Skrij opcije, ki niso na voljo

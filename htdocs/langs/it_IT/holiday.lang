@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - holiday
-HRM=HRM
+HRM=Risorse umane
 Holidays=Ferie
 CPTitreMenu=Ferie
 MenuReportMonth=Estratto conto mensile
@@ -8,7 +8,6 @@ NotActiveModCP=Per vedere questa pagina devi attivare il modulo ferie.
 NotConfigModCP=Per vedere questa pagina devi configurare il modulo ferie. <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> Clicca qui </ a> per attivarlo.
 NoCPforUser=Non hai richieste di ferie.
 AddCP=Richiedi ferie
-CPErrorSQL=Si è verificato un errore SQL:
 Employe=Dipendente
 DateDebCP=Data di inizio
 DateFinCP=Data di fine
@@ -34,7 +33,6 @@ ReturnCP=Torna alla pagina precedente
 ErrorUserViewCP=Non sei autorizzato a leggere questa richiesta di ferie.
 InfosCP=Informazioni sulla richiesta ferie
 InfosWorkflowCP=Flusso di informazioni
-DateCreateCP=Data di creazione
 RequestByCP=Richiesto da
 TitreRequestCP=Scheda ferie
 NbUseDaysCP=Numero giorni i ferie goduti
@@ -130,7 +128,6 @@ ErrorMailNotSend=Si è verificato un errore nell'invio dell'email:
 NoCPforMonth=Nessun permesso questo mese.
 nbJours=Numero di giorni
 TitleAdminCP=Impostazioni delle ferie
-
 #Messages
 Hello=Salve
 HolidaysToValidate=Convalida ferie
@@ -143,10 +140,10 @@ HolidaysRefused=Ferie negate
 HolidaysRefusedBody=La tua richiesta di ferie dal %s al %s è stata negata con la seguente motivazione:
 HolidaysCanceled=Ferie annullate
 HolidaysCanceledBody=La tua richiesta di ferie dal %s al %s è stata annullata.
-
-Permission20001=Leggi/crea/modifica le loro ferie
-Permission20002=Leggi/modifica tutte le richieste di ferie
-Permission20003=Cancella le loro richieste di ferie
-Permission20004=Definisci le ferie degli utenti
+Permission20000=Visualizza le tue ferie
+Permission20001=Crea/modifica le tue ferie
+Permission20002=Crea/modifica le ferie di tutti
+Permission20003=Cancella richieste ferie
+Permission20004=Imposta ferie
 Permission20005=Controlla il log delle modifiche alle ferie
-Permission20006=Accedi al report mensile delle ferie
+Permission20006=Visualizza il report sulle ferie del mese

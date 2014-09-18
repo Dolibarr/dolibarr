@@ -113,4 +113,3 @@ print "</table>";
 $dbosc->close();
 
 llxFooter();
-?>

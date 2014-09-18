@@ -59,19 +59,19 @@ $langs->load("cron");
 $key = GETPOST('securitykey','alpha');
 if (empty($key))
 {
-	echo 'securitykey is require';
+	echo 'Securitykey is required. Check setup of cron jobs module.';
 	exit;
 }
 if($key != $conf->global->CRON_KEY)
 {
-	echo 'securitykey is wrong';
+	echo 'Securitykey is wrong.';
 	exit;
 }
 // Check the key, avoid that a stranger starts cron
 $userlogin = GETPOST('userlogin','alpha');
 if (empty($userlogin))
 {
-	echo 'userlogin is require';
+	echo 'Userlogin is required.';
 	exit;
 }
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -175,8 +175,7 @@ if (is_array($object->lines) && (count($object->lines)>0))
 }
 else
 {
-	echo "No active jobs found";
+	echo "Result: No active jobs found.";
 }
 
 $db->close();
-?>

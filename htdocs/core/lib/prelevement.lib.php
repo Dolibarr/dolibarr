@@ -29,7 +29,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function prelevement_prepare_head($object)
 {
@@ -97,4 +97,3 @@ function prelevement_check_config()
 	return 0;
 }
 
-?>

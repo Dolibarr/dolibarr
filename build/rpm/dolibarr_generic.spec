@@ -275,6 +275,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/product
 %_datadir/dolibarr/htdocs/projet
 %_datadir/dolibarr/htdocs/public
+%_datadir/dolibarr/htdocs/resource
 %_datadir/dolibarr/htdocs/societe
 %_datadir/dolibarr/htdocs/support
 %_datadir/dolibarr/htdocs/theme
@@ -568,7 +569,16 @@ fi
 
 # version x.y.z-0.1.a for alpha, x.y.z-0.2.b for beta, x.y.z-0.3 for release
 %changelog
-* Mon Feb 21 2014 Laurent Destailleur 3.6.0-0.2.b
+* Wed Jul 15 2014 Laurent Destailleur 3.6.0-0.3
+- Upstream release
+
+* Tue Jul 8 2014 Laurent Destailleur 3.5.5-0.3
+- Upstream release
+
+* Tue Jul 1 2014 Laurent Destailleur 3.5.4-0.3
+- Upstream release
+
+* Fri May 2 2014 Laurent Destailleur 3.5.3-0.3
 - Upstream release
 
 * Fri Feb 14 2014 Laurent Destailleur 3.5.2-0.3

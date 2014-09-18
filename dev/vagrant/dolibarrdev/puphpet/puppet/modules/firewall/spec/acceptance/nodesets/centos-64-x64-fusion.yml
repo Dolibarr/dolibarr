@@ -1,0 +1,10 @@
+HOSTS:
+  centos-64-x64:
+    roles:
+      - master
+    platform: el-6-x86_64
+    box : centos-64-x64-fusion503-nocm
+    box_url : http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-fusion503-nocm.box
+    hypervisor : fusion
+CONFIG:
+  type: foss

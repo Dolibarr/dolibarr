@@ -253,7 +253,6 @@ CivilityMR=Gospodin
 CivilityMLE=Gospođica
 CivilityMTRE=Master
 CivilityDR=Doktor
-
 ##### Currencies #####
 Currencyeuros=EUR
 CurrencyAUD=Australski dolari
@@ -290,10 +289,8 @@ CurrencyXOF=CFA franci BCEAO
 CurrencySingXOF=CFA Franak BCEAO
 CurrencyXPF=CFP franci
 CurrencySingXPF=CFP franak
-
 CurrencyCentSingEUR=cent
 CurrencyThousandthSingTND=hiljaditi
-
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Mailing kampanje
@@ -306,7 +303,6 @@ DemandReasonTypeSRC_WOM=Riječ usta
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Zaposlenik
 DemandReasonTypeSRC_SPONSORING=Pokroviteljstvo
-
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
 PaperFormatEU2A0=Format 2A0

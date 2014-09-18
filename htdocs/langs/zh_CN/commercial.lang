@@ -71,6 +71,7 @@ ActionAC_FAX=发送传真
 ActionAC_PROP=通过邮件发送建议
 ActionAC_EMAIL=发送电子邮件
 ActionAC_RDV=会议
+ActionAC_INT=Intervention on site
 ActionAC_FAC=通过邮件发送客户发票
 ActionAC_REL=通过邮件发送客户发票（提醒）
 ActionAC_CLO=关闭

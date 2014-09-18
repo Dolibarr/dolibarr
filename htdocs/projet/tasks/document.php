@@ -151,7 +151,7 @@ if ($object->id > 0)
 
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td>';
@@ -165,6 +165,16 @@ if ($object->id > 0)
 
 		// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
+
+	   	// Date start
+		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+		print dol_print_date($projectstatic->date_start,'day');
+		print '</td></tr>';
+
+		// Date end
+		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+		print dol_print_date($projectstatic->date_end,'day');
+		print '</td></tr>';
 
 		print '</table>';
 
@@ -180,7 +190,7 @@ if ($object->id > 0)
 	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
 	// Files list constructor
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -199,7 +209,7 @@ if ($object->id > 0)
 		$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 	}
 	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 	print '</td>';
 	print '</tr>';
 
@@ -214,7 +224,7 @@ if ($object->id > 0)
 		print '</td></tr>';
 
 		// Third party
-		print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+		print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
 		if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
@@ -247,4 +257,3 @@ else
 llxFooter();
 
 $db->close();
-?>

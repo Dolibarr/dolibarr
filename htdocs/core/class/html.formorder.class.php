@@ -97,7 +97,7 @@ class FormOrder
 
 	/**
 	 *	Return list of input method (mode used to receive order, like order received by email, fax, online)
-	 *  List found into table c_input_method
+	 *  List found into table c_input_method.
 	 *
 	 *	@param	string	$selected		Id of preselected input method
 	 *  @param  string	$htmlname 		Name of HTML select list
@@ -106,17 +106,17 @@ class FormOrder
 	 */
 	function selectInputMethod($selected='',$htmlname='source_id',$addempty=0)
 	{
-		global $conf,$langs;
-		$listofmethods=array();
+		global $conf,$langs,$form;
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-		$form=new Form($this->db);
-
+        if (! is_object($form)) $form=new Form($this->db);
+		
+        $listofmethods=array();
+		
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
 		$sql.= " WHERE active = 1";
 
-		dol_syslog(get_class($this)."::selectInputMethod sql=".$sql);
+		dol_syslog(get_class($this)."::selectInputMethod", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -141,4 +141,3 @@ class FormOrder
 
 }
 
-?>

@@ -147,7 +147,7 @@ IfAlreadyExistsCheckOption=Sollte dieser Name korrekt und die Datenbank noch nic
 OpenBaseDir=PHP openbasedir Einstellungen
 YouAskToCreateDatabaseSoRootRequired=Sie haben die Option "Datenbank erstellen" ausgewählt. Hierfür müssen Sie Benutzername und Passwort des Datenbank-Super-Users in das untenstehende Formular eintragen.
 YouAskToCreateDatabaseUserSoRootRequired=Sie haben die Option "Datenbankbenutzer erstellen" ausgewählt. Hierfür müssen Sie Benutzername und Passwort des Datenbank-Super-Users in das untenstehende Formular eintragen.
-NextStepMightLastALongTime=Der aktuelle Vorgang kann mehrere Minuten dauern. Holen Sie sich eine frische Tasse Kaffee, oder nutzen Sie die Gelegenheit für eine Rauchpause. Warten Sie jedoch bitte in jedem Fall, bis der nächste Bildschirm vollständig angezeigt wird, bevor Sir fortfahren.
+NextStepMightLastALongTime=Der aktuelle Vorgang kann mehrere Minuten dauern. Holen Sie sich eine frische Tasse Kaffee, oder nutzen Sie die Gelegenheit für eine Rauchpause. Warten Sie jedoch bitte in jedem Fall, bis der nächste Bildschirm vollständig angezeigt wird, bevor Sie fortfahren.
 MigrationCustomerOrderShipping=Kundenbestellungsversand aktualisieren
 MigrationShippingDelivery=Aktualisiere die Speicherung von Lieferungen (Versandart?)
 MigrationShippingDelivery2=Aktualisiere die Speicherung von Lieferungen 2 (Versandart 2?)
@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Hier klicken um erweiterte Funktionen zu zeigen/bear
 
 #########
 # upgrade
-#########
 MigrationFixData=Denormalisierte Daten bereinigen
 MigrationOrder=Datenmigration für Kundenbestellungen
 MigrationSupplierOrder=Datenmigration für Lieferantenbestellungen
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Aktualisiere aufgewandte Zeit (in Sekunden)
 MigrationActioncommElement=Aktualisiere die Maßnahmen
 MigrationPaymentMode=Migration der Daten für die Zahlungsart
 MigrationCategorieAssociation=Kategorien verschieben
+
+ShowNotAvailableOptions=Nicht verfügbare Optionen anzeigen
+HideNotAvailableOptions=Nicht verfügbare Optionen ausblenden

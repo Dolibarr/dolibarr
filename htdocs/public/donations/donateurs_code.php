@@ -111,4 +111,3 @@ else
 $db->close();
 
 llxFooterVierge();
-?>

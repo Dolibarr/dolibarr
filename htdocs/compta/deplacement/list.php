@@ -56,6 +56,7 @@ $search_ref=GETPOST('search_ref','alpha');
  */
 
 $tripandexpense_static=new Deplacement($db);
+$userstatic = new User($db);
 
 llxHeader();
 
@@ -132,12 +133,23 @@ if ($resql)
 
         $var=!$var;
         print '<tr '.$bc[$var].'>';
+        // Id
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$obj->rowid.'</a></td>';
+        // Type
         print '<td>'.$langs->trans($obj->type).'</td>';
+        // Date
         print '<td>'.dol_print_date($db->jdate($obj->dd),'day').'</td>';
-        print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->firstname.' '.$obj->name.'</a></td>';
+        // User
+        print '<td align="left">';
+        $userstatic->id = $obj->rowid;
+        $userstatic->lastname = $obj->lastname;
+        $userstatic->firstname = $obj->firstname;
+        print $userstatic->getNomUrl(1);
+        print '</td>';
+
         if ($obj->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
         else print '<td>&nbsp;</td>';
+
         print '<td align="right">'.$obj->km.'</td>';
 
         $tripandexpense_static->statut=$obj->fk_statut;
@@ -158,4 +170,3 @@ else
 $db->close();
 
 llxFooter();
-?>

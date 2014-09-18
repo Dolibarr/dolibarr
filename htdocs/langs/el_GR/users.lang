@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=Περιοχή HRM
 UserCard=Καρτέλα Χρήστη
 ContactCard=Καρτέλα αντιπροσώπου
 GroupCard=Καρτέλα Ομάδας
@@ -86,7 +87,7 @@ MyInformations=My data
 ExportDataset_user_1=Dolibarr's users and properties
 DomainUser=Domain user %s
 Reactivate=Reactivate
-CreateInternalUserDesc=This form allows you to creat an user internal to your company/foundation. To creat an external user (customer, supplier, ...), use button 'Create Dolibarr user' from third party's contact card.
+CreateInternalUserDesc=Αυτή η φόρμα σας επιτρέπει να δημιουργήσετε ένα χρήστη στο εσωτερικό της εταιρείας / ίδρυμά σας. Για να δημιουργήσετε έναν εξωτερικό χρήστη (πελάτη, προμηθευτή, ...), χρησιμοποιήστε το κουμπί «Δημιουργία Dolibarr χρήστη από την κάρτα επαφής Πελ./Προμ.
 InternalExternalDesc=An <b>internal</b> user is a user that is part of your company/foundation.<br>An <b>external</b> user is a customer, supplier or other.<br><br>In both cases, permissions defines rights on Dolibarr, also external user can have a different menu manager than internal user (See Home - Setup - Display)
 PermissionInheritedFromAGroup=Permission granted because inherited from one of a user's group.
 Inherited=Inherited

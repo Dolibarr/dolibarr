@@ -49,32 +49,59 @@ $hookmanager->initHooks(array('projectcard'));
 
 $object = new Project($db);
 $extrafields = new ExtraFields($db);
-$object->fetch($id,$ref);
-if ($object->id > 0)
+if ($id > 0 || ! empty($ref))
 {
+	$object->fetch($id,$ref);
 	$object->fetch_thirdparty();
+	$id=$object->id;
 }
 
 // Security check
-$socid=0;
+$socid=GETPOST('socid');
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $object->id);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-$date_start=dol_mktime(0,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
-$date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));;
+$date_start=dol_mktime(0,0,0,GETPOST('projectstartmonth','int'),GETPOST('projectstartday','int'),GETPOST('projectstartyear','int'));
+$date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));
 
 
 /*
  * Actions
  */
 
-// Cancel
-if (GETPOST("cancel") && ! empty($backtopage))
+$parameters=array('id'=>$socid, 'objcanvas'=>$objcanvas);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+
+if (empty($reshook))
 {
-	if (GETPOST("comefromclone")==1)
+
+	// Cancel
+	if (GETPOST("cancel") && ! empty($backtopage))
+	{
+		if (GETPOST("comefromclone")==1)
+		{
+		    $result=$object->delete($user);
+		    if ($result > 0)
+		    {
+		        header("Location: index.php");
+		        exit;
+		    }
+		    else
+		    {
+		        dol_syslog($object->error,LOG_DEBUG);
+			    setEventMessage($langs->trans("CantRemoveProject"), 'errors');
+		    }
+		}
+	    header("Location: ".$backtopage);
+	    exit;
+	}
+
+	//if cancel and come from clone then delete the cloned project
+	if (GETPOST("cancel") && (GETPOST("comefromclone")==1))
 	{
 	    $result=$object->delete($user);
 	    if ($result > 0)
@@ -85,276 +112,259 @@ if (GETPOST("cancel") && ! empty($backtopage))
 	    else
 	    {
 	        dol_syslog($object->error,LOG_DEBUG);
-	        $mesg='<div class="error">'.$langs->trans("CantRemoveProject").'</div>';
+		    setEventMessage($langs->trans("CantRemoveProject"), 'errors');
 	    }
 	}
-    header("Location: ".$backtopage);
-    exit;
-}
 
-//if cancel and come from clone then delete the cloned project
-if (GETPOST("cancel") && (GETPOST("comefromclone")==1))
-{
-    $result=$object->delete($user);
-    if ($result > 0)
-    {
-        header("Location: index.php");
-        exit;
-    }
-    else
-    {
-        dol_syslog($object->error,LOG_DEBUG);
-        $mesg='<div class="error">'.$langs->trans("CantRemoveProject").'</div>';
-    }
-}
-
-if ($action == 'add' && $user->rights->projet->creer)
-{
-    $error=0;
-    if (empty($_POST["ref"]))
-    {
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
-        $error++;
-    }
-    if (empty($_POST["title"]))
-    {
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
-        $error++;
-    }
-
-    if (! $error)
-    {
-        $error=0;
-
-        $db->begin();
-
-        $object->ref             = GETPOST('ref','alpha');
-        $object->title           = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
-        $object->socid           = GETPOST('socid','int');
-        $object->description     = GETPOST('description'); // Do not use 'alpha' here, we want field as it is
-        $object->public          = GETPOST('public','alpha');
-        $object->datec=dol_now();
-        $object->date_start=$date_start;
-        $object->date_end=$date_end;
-
-        // Fill array 'array_options' with data from add form
-        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-
-        $result = $object->create($user);
-        if ($result > 0)
-        {
-            // Add myself as project leader
-            $result = $object->add_contact($user->id, 'PROJECTLEADER', 'internal');
-            if ($result < 0)
-            {
-                $langs->load("errors");
-                $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
-                $error++;
-            }
-        }
-        else
-        {
-            $langs->load("errors");
-            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
-            $error++;
-        }
-
-        if (! $error)
-        {
-            $db->commit();
-
-            header("Location:fiche.php?id=".$object->id);
-            exit;
-        }
-        else
-        {
-            $db->rollback();
-
-            $action = 'create';
-        }
-    }
-    else
-    {
-        $action = 'create';
-    }
-}
-
-if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
-{
-    $error=0;
-
-    if (empty($ref))
-    {
-        $error++;
-        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
-    }
-    if (empty($_POST["title"]))
-    {
-        $error++;
-        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
-    }
-
-    $db->begin();
-
-    if (! $error)
-    {
-        $object->oldcopy = dol_clone($object);
-
-		$old_start_date = $object->date_start;
-
-        $object->ref          = GETPOST('ref','alpha');
-        $object->title        = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
-        $object->socid        = GETPOST('socid','int');
-        $object->description  = GETPOST('description');	// Do not use 'alpha' here, we want field as it is
-        $object->public       = GETPOST('public','alpha');
-        $object->date_start   = empty($_POST["project"])?'':$date_start;
-        $object->date_end     = empty($_POST["projectend"])?'':$date_end;
-
-        // Fill array 'array_options' with data from add form
-        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0)
-		{
-			$error++;
-		}
-    }
-
-    if (! $error)
-    {
-    	$result=$object->update($user);
-    	if ($result < 0)
-    	{
-    		$error++;
-    		setEventMessage($object->errors,'errors');
-    	}
-    }
-
-    if (! $error)
-    {
-    	if (GETPOST("reportdate") && ($object->date_start!=$old_start_date))
-    	{
-    		$result=$object->shiftTaskDate($old_start_date);
-    		if ($result < 0)
-    		{
-    			$error++;
-    			$mesg='<div class="error">'.$langs->trans("ErrorShiftTaskDate").':'.$object->error.'</div>';
-    		}
-    	}
-    }
-
-    if ($error)
-    {
-		$db->rollback();
-    	$action='edit';
-    }
-    else
+	if ($action == 'add' && $user->rights->projet->creer)
 	{
-    	$db->commit();
+	    $error=0;
+	    if (empty($_POST["ref"]))
+	    {
+		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+	        $error++;
+	    }
+	    if (empty($_POST["title"]))
+	    {
+		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+	        $error++;
+	    }
 
-		if (GETPOST('socid','int') > 0) $object->societe->fetch(GETPOST('socid','int'));
-		else unset($object->societe);
-    }
-}
+	    if (! $error)
+	    {
+	        $error=0;
 
-// Build doc
-if ($action == 'builddoc' && $user->rights->projet->creer)
-{
-	// Save last template used to generate document
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+	        $db->begin();
 
-    $outputlangs = $langs;
-    if (GETPOST('lang_id'))
-    {
-        $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang(GETPOST('lang_id'));
-    }
-    $result=project_pdf_create($db, $object, $object->modelpdf, $outputlangs);
-    if ($result <= 0)
-    {
-        dol_print_error($db,$result);
-        exit;
-    }
-}
+	        $object->ref             = GETPOST('ref','alpha');
+	        $object->title           = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
+	        $object->socid           = GETPOST('socid','int');
+	        $object->description     = GETPOST('description'); // Do not use 'alpha' here, we want field as it is
+	        $object->public          = GETPOST('public','alpha');
+	        $object->datec=dol_now();
+	        $object->date_start=$date_start;
+	        $object->date_end=$date_end;
 
-// Delete file in doc form
-if ($action == 'remove_file' && $user->rights->projet->creer)
-{
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	        // Fill array 'array_options' with data from add form
+	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
-    if ($object->id > 0)
-    {
-        $langs->load("other");
-        $upload_dir =	$conf->projet->dir_output . "/";
-        $file =	$upload_dir	. '/' .	GETPOST('file');
-        $ret=dol_delete_file($file);
-        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    }
-}
+	        $result = $object->create($user);
+	        if ($result > 0)
+	        {
+	            // Add myself as project leader
+	            $result = $object->add_contact($user->id, 'PROJECTLEADER', 'internal');
+	            if ($result < 0)
+	            {
+	                $langs->load("errors");
+		            setEventMessage($langs->trans($object->error), 'errors');
+	                $error++;
+	            }
+	        }
+	        else
+	        {
+	            $langs->load("errors");
+		        setEventMessage($langs->trans($object->error), 'errors');
+	            $error++;
+	        }
+
+	        if (! $error)
+	        {
+	            $db->commit();
+
+	            header("Location:fiche.php?id=".$object->id);
+	            exit;
+	        }
+	        else
+	        {
+	            $db->rollback();
+
+	            $action = 'create';
+	        }
+	    }
+	    else
+	    {
+	        $action = 'create';
+	    }
+	}
+
+	if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
+	{
+	    $error=0;
+
+	    if (empty($ref))
+	    {
+	        $error++;
+	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+	    }
+	    if (empty($_POST["title"]))
+	    {
+	        $error++;
+	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+	    }
+
+	    $db->begin();
+
+	    if (! $error)
+	    {
+	        $object->oldcopy = dol_clone($object);
+
+			$old_start_date = $object->date_start;
+
+	        $object->ref          = GETPOST('ref','alpha');
+	        $object->title        = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
+	        $object->socid        = GETPOST('socid','int');
+	        $object->description  = GETPOST('description');	// Do not use 'alpha' here, we want field as it is
+	        $object->public       = GETPOST('public','alpha');
+	        $object->date_start   = empty($_POST["projectstart"])?'':$date_start;
+	        $object->date_end     = empty($_POST["projectend"])?'':$date_end;
+
+	        // Fill array 'array_options' with data from add form
+	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0)
+			{
+				$error++;
+			}
+	    }
+
+	    if (! $error)
+	    {
+	    	$result=$object->update($user);
+	    	if ($result < 0)
+	    	{
+	    		$error++;
+	    		setEventMessage($object->errors,'errors');
+	    	}
+	    }
+
+	    if (! $error)
+	    {
+	    	if (GETPOST("reportdate") && ($object->date_start!=$old_start_date))
+	    	{
+	    		$result=$object->shiftTaskDate($old_start_date);
+	    		if ($result < 0)
+	    		{
+	    			$error++;
+				    setEventMessage($langs->trans("ErrorShiftTaskDate").':'.$object->error, 'errors');
+	    		}
+	    	}
+	    }
+
+	    if ($error)
+	    {
+			$db->rollback();
+	    	$action='edit';
+	    }
+	    else
+		{
+	    	$db->commit();
+
+			if (GETPOST('socid','int') > 0) $object->thirdparty->fetch(GETPOST('socid','int'));
+			else unset($object->thirdparty);
+	    }
+	}
+
+	// Build doc
+	if ($action == 'builddoc' && $user->rights->projet->creer)
+	{
+		// Save last template used to generate document
+		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+
+	    $outputlangs = $langs;
+	    if (GETPOST('lang_id'))
+	    {
+	        $outputlangs = new Translate("",$conf);
+	        $outputlangs->setDefaultLang(GETPOST('lang_id'));
+	    }
+	    $result=project_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+	    if ($result <= 0)
+	    {
+	        dol_print_error($db,$result);
+	        exit;
+	    }
+	}
+
+	// Delete file in doc form
+	if ($action == 'remove_file' && $user->rights->projet->creer)
+	{
+	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	    if ($object->id > 0)
+	    {
+	        $langs->load("other");
+	        $upload_dir =	$conf->projet->dir_output . "/";
+	        $file =	$upload_dir	. '/' .	GETPOST('file');
+	        $ret=dol_delete_file($file);
+	        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+	        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	    }
+	}
 
 
-if ($action == 'confirm_validate' && GETPOST('confirm') == 'yes')
-{
-    $result = $object->setValid($user);
-    if ($result <= 0)
-    {
-        $mesg='<div class="error">'.$object->error.'</div>';
-    }
-}
+	if ($action == 'confirm_validate' && GETPOST('confirm') == 'yes')
+	{
+	    $result = $object->setValid($user);
+	    if ($result <= 0)
+	    {
+		    setEventMessage($object->error, 'errors');
+	    }
+	}
 
-if ($action == 'confirm_close' && GETPOST('confirm') == 'yes')
-{
-    $result = $object->setClose($user);
-    if ($result <= 0)
-    {
-        $mesg='<div class="error">'.$object->error.'</div>';
-    }
-}
+	if ($action == 'confirm_close' && GETPOST('confirm') == 'yes')
+	{
+	    $result = $object->setClose($user);
+	    if ($result <= 0)
+	    {
+		    setEventMessage($object->error, 'errors');
+	    }
+	}
 
-if ($action == 'confirm_reopen' && GETPOST('confirm') == 'yes')
-{
-    $result = $object->setValid($user);
-    if ($result <= 0)
-    {
-        $mesg='<div class="error">'.$object->error.'</div>';
-    }
-}
+	if ($action == 'confirm_reopen' && GETPOST('confirm') == 'yes')
+	{
+	    $result = $object->setValid($user);
+	    if ($result <= 0)
+	    {
+		    setEventMessage($object->error, 'errors');
+	    }
+	}
 
-if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->projet->supprimer)
-{
-    $object->fetch($id);
-    $result=$object->delete($user);
-    if ($result > 0)
-    {
-        header("Location: index.php");
-        exit;
-    }
-    else
-    {
-        dol_syslog($object->error,LOG_DEBUG);
-        $mesg='<div class="error">'.$langs->trans("CantRemoveProject").'</div>';
-    }
-}
+	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->projet->supprimer)
+	{
+	    $object->fetch($id);
+	    $result=$object->delete($user);
+	    if ($result > 0)
+	    {
+	        header("Location: index.php");
+	        exit;
+	    }
+	    else
+	    {
+	        dol_syslog($object->error,LOG_DEBUG);
+	        setEventMessage($object->error,'errors');
+	        setEventMessage($object->errors,'errors');
+	    }
+	}
 
-if ($action == 'confirm_clone' && $user->rights->projet->creer && GETPOST('confirm') == 'yes')
-{
-    $clone_contacts=GETPOST('clone_contacts')?1:0;
-    $clone_tasks=GETPOST('clone_tasks')?1:0;
-	$clone_project_files = GETPOST('clone_project_files') ? 1 : 0;
-	$clone_task_files = GETPOST('clone_task_files') ? 1 : 0;
-    $clone_notes=GETPOST('clone_notes')?1:0;
-    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes);
-    if ($result <= 0)
-    {
-        $mesg='<div class="error">'.$object->error.'</div>';
-    }
-    else
-    {
-    	$object->fetch($result);	// Load new object
-    	$action='edit';
-    	$comefromclone=true;
-    }
+	if ($action == 'confirm_clone' && $user->rights->projet->creer && GETPOST('confirm') == 'yes')
+	{
+	    $clone_contacts=GETPOST('clone_contacts')?1:0;
+	    $clone_tasks=GETPOST('clone_tasks')?1:0;
+		$clone_project_files = GETPOST('clone_project_files') ? 1 : 0;
+		$clone_task_files = GETPOST('clone_task_files') ? 1 : 0;
+	    $clone_notes=GETPOST('clone_notes')?1:0;
+	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes);
+	    if ($result <= 0)
+	    {
+		    setEventMessage($object->error, 'errors');
+	    }
+	    else
+	    {
+	    	$object->fetch($result);	// Load new object
+	    	$action='edit';
+	    	$comefromclone=true;
+	    }
+	}
 }
 
 
@@ -376,9 +386,11 @@ if ($action == 'create' && $user->rights->projet->creer)
     /*
      * Create
      */
-    print_fiche_titre($langs->trans("NewProject"));
 
-    dol_htmloutput_mesg($mesg);
+	$thirdparty=new Societe($db);
+	if ($socid > 0) $thirdparty->fetch($socid);
+
+    print_fiche_titre($langs->trans("NewProject"));
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -388,12 +400,28 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<table class="border" width="100%">';
 
     $defaultref='';
-    $obj = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
-    if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php"))
+    $modele = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
+
+    // Search template files
+    $file=''; $classname=''; $filefound=0;
+    $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+    foreach($dirmodels as $reldir)
     {
-        require_once DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.'.php';
-        $modProject = new $obj;
-        $defaultref = $modProject->getNextValue($soc,$object);
+    	$file=dol_buildpath($reldir."core/modules/project/".$modele.'.php',0);
+    	if (file_exists($file))
+    	{
+    		$filefound=1;
+    		$classname = $modele;
+    		break;
+    	}
+    }
+
+    if ($filefound)
+    {
+	    $result=dol_include_once($reldir."core/modules/project/".$modele.'.php');
+	    $modProject = new $classname;
+
+	    $defaultref = $modProject->getNextValue($thirdparty,$object);
     }
 
     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
@@ -419,7 +447,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Date start
     print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-    print $form->select_date(($date_start?$date_start:''),'project');
+    print $form->select_date(($date_start?$date_start:''),'projectstart');
     print '</td></tr>';
 
     // Date end
@@ -461,9 +489,6 @@ else
      * Show or edit
      */
 
-    dol_htmloutput_mesg($mesg);
-
-    if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
     $res=$object->fetch_optionals($object->id,$extralabels);
 
     // To verify role of users
@@ -536,8 +561,8 @@ else
         print '<td><input size="30" name="title" value="'.$object->title.'"></td></tr>';
 
         // Customer
-        print '<tr><td>'.$langs->trans("Thirdparty").'</td><td>';
-        $text=$form->select_company($object->societe->id,'socid','',1,1);
+        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+        $text=$form->select_company($object->thirdparty->id,'socid','',1,1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
         print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
         print '</td></tr>';
@@ -553,7 +578,7 @@ else
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-        print $form->select_date($object->date_start?$object->date_start:-1,'project');
+        print $form->select_date($object->date_start?$object->date_start:-1,'projectstart');
         print ' &nbsp; &nbsp; <input type="checkbox" name="reportdate" value="yes" ';
         if ($comefromclone){print ' checked="checked" ';}
 		print '/> '. $langs->trans("ProjectReportDate");
@@ -607,8 +632,8 @@ else
         print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
         // Third party
-        print '<tr><td>'.$langs->trans("Thirdparty").'</td><td>';
-        if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
+        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1);
         else print'&nbsp;';
         print '</td></tr>';
 
@@ -768,9 +793,13 @@ else
 
         print '</td></tr></table>';
     }
+
+    // Hook to add more things on page
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('mainCardTabAddMore',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+
 }
 
 llxFooter();
 
 $db->close();
-?>

@@ -18,6 +18,3 @@ htdocs/repair_business.php
 Thumbs.db
 # Vagrant generated files
 .vagrant
-/index.html
-/phpmyadmin
-/xhprof

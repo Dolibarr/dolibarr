@@ -121,4 +121,3 @@ if ($resql)
 $db->close();
 
 llxFooter();
-?>

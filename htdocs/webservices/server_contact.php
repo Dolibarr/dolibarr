@@ -302,24 +302,24 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
 	            	'ref_propal' => $contact->ref_propal,
 	            	'user_id' => $contact->user_id,
 	            	'user_login' => $contact->user_login,
-	            	'civilite_id' => $contact->civility_id,
+	            	'civility_id' => $contact->civility_id,
             		'poste' => $contact->poste,
             		'statut' => $contact->statut
             	);
-            	
+
             	//Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields=new ExtraFields($db);
             	$extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
             	//Get extrafield values
             	$contact->fetch_optionals($contact->id,$extralabels);
-            	
+
             	foreach($extrafields->attribute_label as $key=>$label)
             	{
             		$contact_result_fields=array_merge($contact_result_fields,array('options_'.$key => $contact->array_options['options_'.$key]));
             	}
-            	
-            	
+
+
                 // Create
                 $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
@@ -378,12 +378,12 @@ function createContact($authentication,$contact)
 
 	if (! $error)
 	{
-		
+
 
 		$newobject=new Contact($db);
-		
+
 		$newobject->id=$contact['id'];
-		$newobject->civilite_id=$contact['civility_id'];
+		$newobject->civility_id=$contact['civility_id'];
 		$newobject->lastname=$contact['lastname'];
 		$newobject->firstname=$contact['firstname'];
 		$newobject->address=$contact['address'];
@@ -415,7 +415,7 @@ function createContact($authentication,$contact)
 		$newobject->user_login=$contact['user_login'];
 		$newobject->poste=$contact['poste'];
 		$newobject->statut=$contact['statut'];
-		
+
 		//Retreive all extrafield for thirdsparty
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
@@ -425,9 +425,9 @@ function createContact($authentication,$contact)
 			$key='options_'.$key;
 			$newobject->array_options[$key]=$contact[$key];
 		}
-		
 
-		
+
+
 		//...
 
 		$db->begin();
@@ -491,24 +491,24 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 	{
 		$linesinvoice=array();
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civility_id, c.lastname, c.firstname, c.statut,";
+		$sql = "SELECT c.rowid, c.fk_soc, c.civility as civility_id, c.lastname, c.firstname, c.statut,";
 		$sql.= " c.address, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
 		//$sql.= " c.priv, c.note, c.default_lang, c.no_email, c.canvas,";
-		$sql.= " p.libelle as country, p.code as country_code,";
+		$sql.= " co.label as country, co.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
 		$sql.= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_pays = co.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		$sql.= " WHERE c.fk_soc=$idthirdparty";
-		
+
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -528,37 +528,37 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 				$linescontact[]=array(
 				'id' => $contact->id,
 				'ref' => $contact->ref,
-				'civility_id' => $contact->civilite_id?$contact->civilite_id:'',  
+				'civility_id' => $contact->civility_id?$contact->civility_id:'',
 				'lastname' => $contact->lastname?$contact->lastname:'',
 				'firstname' => $contact->firstname?$contact->firstname:'',
 				'address' => $contact->address?$contact->address:'',
 				'zip' => $contact->zip?$contact->zip:'',
 				'town' => $contact->town?$contact->town:'',
-				
+
 				'state_id' => $contact->state_id?$contact->state_id:'',
 				'state_code' => $contact->state_code?$contact->state_code:'',
 				'state' => $contact->state?$contact->state:'',
-				
+
 				'country_id' => $contact->country_id?$contact->country_id:'',
 				'country_code' => $contact->country_code?$contact->country_code:'',
 				'country' => $contact->country?$contact->country:'',
-				
+
 				'socid' => $contact->socid?$contact->socid:'',
 				'socname' => $contact->socname?$contact->socname:'',
 				'poste' => $contact->poste?$contact->poste:'',
-				
-				
-				
+
+
+
 				'phone_pro' => $contact->phone_pro?$contact->phone_pro:'',
 				'fax' => $contact->fax?$contact->fax:'',
 				'phone_perso' => $contact->phone_perso?$contact->phone_perso:'',
 				'phone_mobile' => $contact->phone_mobile?$contact->phone_mobile:'',
-				
+
 				'email' => $contact->email?$contact->email:'',
 				'jabberid' => $contact->jabberid?$contact->jabberid:'',
 				'priv' => $contact->priv?$contact->priv:'',
 				'mail' => $contact->mail?$contact->mail:'',
-				
+
 				'birthday' => $contact->birthday?$contact->birthday:'',
 				'default_lang' => $contact->default_lang?$contact->default_lang:'',
 				'note' => $contact->note?$contact->note:'',
@@ -570,11 +570,11 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 				'user_id' => $contact->user_id?$contact->user_id:'',
 				'user_login' => $contact->user_login?$contact->user_login:'',
 				'statut' => $contact->statut?$contact->statut:''
-				
-				
-				
-				
-				
+
+
+
+
+
 				);
 
 				$i++;
@@ -641,11 +641,11 @@ function updateContact($authentication,$contact)
 		if (!empty($object->id)) {
 
 			$objectfound=true;
-				
-			
+
+
 			$object->firstname=$contact['firstname'];
 			$object->lastname=$contact['lastname'];
-			
+
 			$object->address=$contact['address'];
 			$object->zip=$contact['zip'];
 			$object->town=$contact['town'];
@@ -653,18 +653,18 @@ function updateContact($authentication,$contact)
 			$object->country_id=$contact['country_id'];
 			if ($contact['country_code']) $object->country_id=getCountry($contact['country_code'],3);
 			$object->province_id=$contact['province_id'];
-		
+
 
 			$object->phone_perso=$contact['phone_perso'];
 			$object->phone_mobile=$contact['phone_mobile'];
 			$object->fax=$contact['fax'];
 			$object->email=$contact['email'];
-			
-			$object->civilite_id=$contact['civility_id'];
+
+			$object->civility_id=$contact['civility_id'];
 			$object->poste=$contact['poste'];
-			
+
 			$object->statut=$contact['statut'];
-			
+
 
 			//Retreive all extrafield for contact
 			// fetch optionals attributes and labels
@@ -712,7 +712,6 @@ function updateContact($authentication,$contact)
 
 	return $objectresp;
 }
-// Return the results.
-$server->service($HTTP_RAW_POST_DATA);
 
-?>
+// Return the results.
+$server->service(file_get_contents("php://input"));

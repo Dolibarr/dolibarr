@@ -1,24 +1,10 @@
-# Dolibarr language file - nl_BE - suppliers
-Suppliers=Leveranciers
-Supplier=Leverancier
-AddSupplier=Voeg een leverancier toe
-SupplierRemoved=Leverancier verwijderd
+# Dolibarr language file - Source file is en_US - suppliers
 SuppliersInvoice=Leveranciers factuur
-NewSupplier=Nieuwe leverancier
-History=Geschiedenis
 ListOfSuppliers=Lijst van de leveranciers
-ShowSupplier=Toon leverancier
-OrderDate=Bestel datum
-BuyingPrice=Aankoopprijs
-AddSupplierPrice=Leveranciersprijs toevoegen
-ChangeSupplierPrice=Verander leveranciersprijs
-ErrorQtyTooLowForThisSupplier=Hoeveelheid te laag voor deze leverancier of geen prijs vastgesteld op dit product voor deze leverancier
 ErrorSupplierCountryIsNotDefined=Land voor deze leverancier is niet gedefinieerd. Corrigeer dit eerste.
 ProductHasAlreadyReferenceInThisSupplier=Dit product heeft al een referentie in deze leverancier
-NoRecordedSuppliers=Geen leveranciers geregistreerd
 SupplierPayment=Leverancier betaling
 SuppliersArea=Leveranciers gebied
-RefSupplierShort=Ref. Leverancier
 ExportDataset_fournisseur_1=Leverancier facturenlijst en facturen' lijnen
 ExportDataset_fournisseur_2=Leverancier facturen en betalingen
 ApproveThisOrder=Goedkeuren van deze bestelling

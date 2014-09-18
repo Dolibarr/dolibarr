@@ -81,7 +81,7 @@ class Paiement extends CommonObject
 		$sql.= ' WHERE p.fk_paiement = c.id';
 		$sql.= ' AND p.rowid = '.$id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result)
@@ -161,7 +161,7 @@ class Paiement extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
 		$sql.= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$totalamount."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
 
-		dol_syslog(get_class($this)."::Create insert paiement sql=".$sql);
+		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -177,7 +177,7 @@ class Paiement extends CommonObject
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount)';
 					$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\')';
 
-					dol_syslog(get_class($this).'::Create Amount line '.$key.' insert paiement_facture sql='.$sql);
+					dol_syslog(get_class($this).'::Create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
@@ -221,13 +221,20 @@ class Paiement extends CommonObject
                             if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice. We do nothing more.");
                             else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
-                            else $result=$invoice->set_paid($user,'','');
+                            else 
+                            {
+                                $result=$invoice->set_paid($user,'','');
+                                if ($result<0)
+                                {
+                                    $this->error=$invoice->error;
+                                    $error++;
+                                }
+                            }
 					    }
 					}
 					else
 					{
 						$this->error=$this->db->lasterror();
-						dol_syslog(get_class($this).'::Create insert paiement_facture error='.$this->error, LOG_ERR);
 						$error++;
 					}
 				}
@@ -240,17 +247,14 @@ class Paiement extends CommonObject
 			if (! $error)
 			{
 				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PAYMENT_CUSTOMER_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				$result=$this->call_trigger('PAYMENT_CUSTOMER_CREATE', $user);
+				if ($result < 0) { $error++; }
 				// Fin appel triggers
 			}
 		}
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this).'::Create insert paiement error='.$this->error, LOG_ERR);
 			$error++;
 		}
 
@@ -355,11 +359,13 @@ class Paiement extends CommonObject
 			if (! $notrigger)
 			{
 				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PAYMENT_DELETE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+				$result=$this->call_trigger('PAYMENT_DELETE', $user);
+				if ($result < 0) 
+				{ 
+				    $this->db->rollback();
+				    return -1;
+				 }
+			    // Fin appel triggers
 			}
 
 			$this->db->commit();
@@ -508,11 +514,9 @@ class Paiement extends CommonObject
 	            if (! $error && ! $notrigger)
 				{
 					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('PAYMENT_ADD_TO_BANK',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
+					$result=$this->call_trigger('PAYMENT_ADD_TO_BANK', $user);
+				    if ($result < 0) { $error++; }
+				    // Fin appel triggers
 				}
             }
             else
@@ -553,7 +557,7 @@ class Paiement extends CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 
-		dol_syslog(get_class($this).'::update_fk_bank sql='.$sql);
+		dol_syslog(get_class($this).'::update_fk_bank', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -581,7 +585,7 @@ class Paiement extends CommonObject
             $sql.= " SET datep = '".$this->db->idate($date)."'";
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::update_date sql=".$sql);
+            dol_syslog(get_class($this)."::update_date", LOG_DEBUG);
             $result = $this->db->query($sql);
             if ($result)
             {
@@ -592,7 +596,6 @@ class Paiement extends CommonObject
             else
             {
                 $this->error='Error -1 '.$this->db->error();
-                dol_syslog(get_class($this)."::update_date ".$this->error, LOG_ERR);
                 return -2;
             }
         }
@@ -613,7 +616,7 @@ class Paiement extends CommonObject
             $sql.= " SET num_paiement = '".$this->db->escape($num)."'";
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::update_num sql=".$sql);
+            dol_syslog(get_class($this)."::update_num", LOG_DEBUG);
             $result = $this->db->query($sql);
             if ($result)
             {
@@ -623,7 +626,6 @@ class Paiement extends CommonObject
             else
             {
                 $this->error='Error -1 '.$this->db->error();
-                dol_syslog(get_class($this)."::update_num ".$this->error, LOG_ERR);
                 return -2;
             }
         }
@@ -639,7 +641,7 @@ class Paiement extends CommonObject
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.$this->id;
 
-		dol_syslog(get_class($this).'::valide sql='.$sql);
+		dol_syslog(get_class($this).'::valide', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -663,7 +665,7 @@ class Paiement extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p';
 		$sql.= ' WHERE p.rowid = '.$id;
 
-		dol_syslog(get_class($this).'::info sql='.$sql);
+		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result)
@@ -726,7 +728,7 @@ class Paiement extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error.' - sql='.$sql);
+			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error.' -', LOG_DEBUG);
 			return -1;
 		}
 	}
@@ -811,4 +813,3 @@ class Paiement extends CommonObject
 	}
 
 }
-?>

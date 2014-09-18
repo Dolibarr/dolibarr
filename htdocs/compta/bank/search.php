@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
+$langs->load("companies");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -144,7 +145,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 //print $sql;
 
-dol_syslog('compta/bank/search.php:: sql='.$sql);
+dol_syslog('compta/bank/search.php::', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -166,9 +167,9 @@ if ($resql)
 
 	print '<form method="post" action="search.php" name="search_form">';
 	
-	$moreforfilter .= $langs->trans('Period') . ' ' . $langs->trans('DateOperationShort') . ': ';
+	$moreforfilter .= $langs->trans('Period') . ' ' . $langs->trans('StartDate') . ': ';
 	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 1, 1);
-	$moreforfilter .= $langs->trans('PeriodEndDate') . ':' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 1, 1);
+	$moreforfilter .= $langs->trans('EndDate') . ':' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 1, 1);
 	
 	
 	if ($moreforfilter) {
@@ -251,7 +252,7 @@ if ($resql)
 	        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
 
 	        // Payment type
-	        print "<td align=\"center\">";
+	        print '<td class="nowrap">';
 	        $labeltype=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle');
 	        if ($labeltype == 'SOLD') print '&nbsp;'; //$langs->trans("InitialBankBalance");
 	        else print $labeltype;
@@ -337,4 +338,3 @@ if ($_POST["action"] == "search" && ! $num)
 $db->close();
 
 llxFooter();
-?>

@@ -19,3 +19,4 @@ TF_TRIP=Tur
 ListTripsAndExpenses=Liste over ture og omkostninger
 ExpensesArea=Udflugter og udgifter området
 SearchATripAndExpense=Søg en tur og regning
+ClassifyRefunded=Classify 'Refunded'

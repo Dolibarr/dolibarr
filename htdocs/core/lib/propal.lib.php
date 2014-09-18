@@ -27,7 +27,7 @@
  * Prepare array with list of tabs
  *
  * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function propal_prepare_head($object)
 {
@@ -90,7 +90,7 @@ function propal_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
@@ -147,4 +147,3 @@ function propal_admin_prepare_head($object)
 }
 
 
-?>

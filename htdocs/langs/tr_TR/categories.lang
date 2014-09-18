@@ -110,4 +110,4 @@ ConfirmDeletePicture=Resim silmeyi onayla
 ExtraFieldsCategories=Tamamlayıcı öznitelikler
 CategoriesSetup=Kategori ayarları
 CategorieRecursiv=Ana kategoriyle otomatik bağlantılı
-CategorieRecursivHelp=If activated, product will also linked to parent category when adding into a subcategory
+CategorieRecursivHelp=Etkinse, ürün bir alt kategoriye eklenirken aynı zamanda ana kategoriye de eklenecektir

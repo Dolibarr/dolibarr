@@ -41,6 +41,7 @@ $id = (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action = GETPOST('action','alpha');
 $option = GETPOST('option');
 $mode=GETPOST('mode');
+$builddoc_generatebutton=GETPOST('builddoc_generatebutton');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -57,7 +58,7 @@ $resultmasssend='';
  */
 
 // Send remind email
-if ($action == 'presend' && GETPOST('cancel')) 
+if ($action == 'presend' && GETPOST('cancel'))
 {
 	$action='';
 	if (GETPOST('models')=='facture_relance') $mode='sendmassremind';	// If we made a cancel from submit email form, this means we must be into mode=sendmassremind
@@ -66,7 +67,7 @@ if ($action == 'presend' && GETPOST('cancel'))
 if ($action == 'presend' && GETPOST('sendmail'))
 {
 	if (GETPOST('models')=='facture_relance') $mode='sendmassremind';	// If we made a cancel from submit email form, this means we must be into mode=sendmassremind
-	
+
 	if (!isset($user->email))
 	{
 		$error++;
@@ -79,7 +80,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 		$error++;
 		setEventMessage("InvoiceNotChecked","warnings");
 	}
-	
+
 	if (! $error)
 	{
 		$nbsent = 0;
@@ -92,7 +93,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 
 			if ($result > 0)	// Invoice was found
 			{
-				if ($object->statut != 1) 
+				if ($object->statut != 1)
 				{
 					continue; // Payment done or started or canceled
 				}
@@ -104,7 +105,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
 				$file = $filedir . '/' . $filename;
 				$mime = 'application/pdf';
-				
+
 				if (dol_is_file($file))
 				{
 					$object->fetch_thirdparty();
@@ -120,7 +121,8 @@ if ($action == 'presend' && GETPOST('sendmail'))
 						$subject = GETPOST('subject');
 						$message = GETPOST('message');
 						$sendtocc = GETPOST('sentocc');
-						
+						$sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
+
 						$substitutionarray=array(
 							'__ID__' => $object->id,
 							'__EMAIL__' => $object->thirdparty->email,
@@ -130,7 +132,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 							'__REF__' => $object->ref,
 							'__REFCLIENT__' => $object->thirdparty->name
 						);
-						
+
 						$message=make_substitutions($message, $substitutionarray);
 
 						$actiontypecode='AC_FAC';
@@ -150,7 +152,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 
 						// Send mail
 						require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
-						$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
+						$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
 						if ($mailfile->error)
 						{
 							$resultmasssend.='<div class="error">'.$mailfile->error.'</div>';
@@ -181,7 +183,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 
 								if (! $error)
 								{
-									$resultmasssend.=$langs->trans("MailSent").': '.$sendto."<br>\n";	
+									$resultmasssend.=$langs->trans("MailSent").': '.$sendto."<br>\n";
 								}
 								else
 								{
@@ -216,8 +218,8 @@ if ($action == 'presend' && GETPOST('sendmail'))
 				}
 			}
 		}
-		
-		if ($nbsent) 
+
+		if ($nbsent)
 		{
 			$action='';	// Do not show form post if there was at least one successfull sent
 			setEventMessage($nbsent. '/'.$countToSend.' '.$langs->trans("RemindSent"));
@@ -230,7 +232,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 }
 
 
-if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search'))
+if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search') && !empty($builddoc_generatebutton))
 {
 	if (is_array($_POST['toGenerate']))
 	{
@@ -363,7 +365,9 @@ $(document).ready(function() {
 $now=dol_now();
 
 $search_ref = GETPOST("search_ref");
+$search_refcustomer=GETPOST('search_refcustomer');
 $search_societe = GETPOST("search_societe");
+$search_paymentmode = GETPOST("search_paymentmode");
 $search_montant_ht = GETPOST("search_montant_ht");
 $search_montant_ttc = GETPOST("search_montant_ttc");
 $late = GETPOST("late");
@@ -381,9 +385,9 @@ if (! $sortorder) $sortorder="ASC";
 $limit = $conf->liste_limit;
 
 $sql = "SELECT s.nom, s.rowid as socid, s.email";
-$sql.= ", f.rowid as facid, f.facnumber, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
+$sql.= ", f.rowid as facid, f.facnumber, f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
 $sql.= ", f.datef as df, f.date_lim_reglement as datelimite";
-$sql.= ", f.paye as paye, f.fk_statut, f.type";
+$sql.= ", f.paye as paye, f.fk_statut, f.type, f.fk_mode_reglement";
 $sql.= ", sum(pf.amount) as am";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -407,7 +411,9 @@ if (GETPOST('filtre'))
 	}
 }
 if ($search_ref)         $sql .= " AND f.facnumber LIKE '%".$db->escape($search_ref)."%'";
+if ($search_refcustomer) $sql .= " AND f.ref_client LIKE '%".$db->escape($search_refcustomer)."%'";
 if ($search_societe)     $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
+if ($search_paymentmode)     $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
 if ($search_montant_ht)  $sql .= " AND f.total = '".$db->escape($search_montant_ht)."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$db->escape($search_montant_ttc)."'";
 if (GETPOST('sf_ref'))   $sql .= " AND f.facnumber LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
@@ -435,7 +441,9 @@ if ($resql)
 	$param.=(! empty($socid)?"&amp;socid=".$socid:"");
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 	if ($search_ref)         $param.='&amp;search_ref='.urlencode($search_ref);
+    	if ($search_refcustomer) $param.='&amp;search_ref='.urlencode($search_refcustomer);
 	if ($search_societe)     $param.='&amp;search_societe='.urlencode($search_societe);
+	if ($search_societe)     $param.='&amp;search_paymentmode='.urlencode($search_paymentmode);
 	if ($search_montant_ht)  $param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
 	if ($search_montant_ttc) $param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
 	if ($late)               $param.='&amp;late='.urlencode($late);
@@ -452,8 +460,6 @@ if ($resql)
 	elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("ShowUnpaidAll").'</a>';
 	print_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
-
-	dol_htmloutput_mesg($mesg);
 
 	print '<form id="form_unpaid" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
 
@@ -504,7 +510,7 @@ if ($resql)
 		print $formmail->get_form();
 		print '<br>'."\n";
 	}
-	
+
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 	if ($late) print '<input type="hidden" name="late" value="'.dol_escape_htmltag($late).'">';
@@ -518,14 +524,16 @@ if ($resql)
 		//print $resultmasssend;
 		print '<br>';
 	}
-	
+
 	$i = 0;
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"f.fk_reglement_mode","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Taxes"),$_SERVER["PHP_SELF"],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
@@ -547,9 +555,15 @@ if ($resql)
 	// Ref
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'"></td>';
+    print '<td class="liste_titre">';
+    print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
+    print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
+	print '<td class="liste_titre" align="left">';
+	$form->select_types_paiements($search_paymentmode, 'search_paymentmode');
+	print '</td>';
 	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="8" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="8" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'"></td>';
@@ -621,10 +635,28 @@ if ($resql)
 
 			print "</td>\n";
 
+			// Customer ref
+			print '<td class="nowrap">';
+			print $objp->ref_client;
+			print '</td>';
+
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day').'</td>'."\n";
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day').'</td>'."\n";
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,28).'</a></td>';
+            print '<td>';
+            $thirdparty=new Societe($db);
+            $thirdparty->id=$objp->socid;
+            $thirdparty->nom=$objp->nom;
+            $thirdparty->client=$objp->client;
+            $thirdparty->code_client=$objp->code_client;
+            print $thirdparty->getNomUrl(1,'customer');
+            print '</td>';
+
+            // Payment mode
+            print '<td>';
+            $form->form_modes_reglement($_SERVER['PHP_SELF'], $objp->fk_mode_reglement, 'none');
+            print '</td>';
+
 
 			print '<td align="right">'.price($objp->total_ht).'</td>';
 			print '<td align="right">'.price($objp->total_tva);
@@ -678,7 +710,7 @@ if ($resql)
 		}
 
 		print '<tr class="liste_total">';
-		print '<td colspan="4" align="left">'.$langs->trans("Total").'</td>';
+		print '<td colspan="6" align="left">'.$langs->trans("Total").'</td>';
 		print '<td align="right"><b>'.price($total_ht).'</b></td>';
 		print '<td align="right"><b>'.price($total_tva).'</b></td>';
 		print '<td align="right"><b>'.price($total_ttc).'</b></td>';
@@ -726,4 +758,3 @@ else dol_print_error($db,'');
 
 llxFooter();
 $db->close();
-?>

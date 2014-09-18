@@ -1,0 +1,7 @@
+[client]
+user=root
+host=localhost
+<% unless scope.lookupvar('mysql::server::root_password') == 'UNSET' -%>
+password='<%= scope.lookupvar('mysql::server::root_password') %>'
+<% end -%>
+socket=<%= @options['client']['socket'] -%>

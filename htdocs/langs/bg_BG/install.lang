@@ -154,11 +154,10 @@ MigrationShippingDelivery2=Upgrade storage of shipping 2
 MigrationFinished=Миграцията завърши
 LastStepDesc=<strong>Последна стъпка:</strong> Определете тук потребителско име и парола, планирате да използвате, за да се свържете с софтуер. Не губят, тъй като това е акаунт за администриране на всички останали.
 ActivateModule=Активиране на модул %s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 
 #########
 # upgrade
-#########
 MigrationFixData=Решете denormalized данни
 MigrationOrder=Миграция на данни за поръчки на клиента
 MigrationSupplierOrder=Миграция на данни за поръчки на доставчика
@@ -206,4 +205,7 @@ MigrationProjectUserResp=Data Migration поле fk_user_resp на llx_projet ll
 MigrationProjectTaskTime=Актуализация на времето, прекарано в секунда
 MigrationActioncommElement=Актуализиране на данни за действия
 MigrationPaymentMode=Миграция на данни за плащане режим
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Migration of categories
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

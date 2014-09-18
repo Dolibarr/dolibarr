@@ -89,4 +89,3 @@ abstract class ModeleGenPassword
 
 }
 
-?>

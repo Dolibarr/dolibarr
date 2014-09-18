@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=Area HRM
 UserCard=Scheda utente
 ContactCard=Scheda contatto
 GroupCard=Scheda gruppo
@@ -86,7 +87,7 @@ MyInformations=I miei dati
 ExportDataset_user_1=Utenti e proprietà di Dolibarr
 DomainUser=Utente di dominio %s
 Reactivate=Riattiva
-CreateInternalUserDesc=Questo modulo permette di creare un utente interno per la vostra Azienda/Fondazione. Per creare un utente esterno (cliente, fornitore, ...), utilizzare il pulsante "Crea utente" nella scheda soggetti terzi.
+CreateInternalUserDesc=Questo modulo ti permette di creare un utente interno alla tua azienda/fondazione. Per creare un utente esterno (clienti, fornitori, .. ) utilizza il bottone 'Crea utente' nella scheda soggetti terzi.
 InternalExternalDesc=Un utente <b>interno</b> è un utente che fa parte della vostra Azienda/Fondazione.<br/>Un utente <b>esterno</b> è un cliente, un fornitore o altro.<br/><br/>In entrambi i casi, le autorizzazioni definiscono i diritti all'interno di Dolibarr. Ad un utente esterno si può assegnare un gestore dei menu diverso (vedi Home - Impostazioni - Visualizzazione).
 PermissionInheritedFromAGroup=Autorizzazioni ereditate dall'appartenenza al gruppo.
 Inherited=Ereditato

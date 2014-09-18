@@ -64,7 +64,7 @@ else if ($action == 'update')
 {
 	if (GETPOST('submit_GENBARCODE_LOCATION'))
 	{
-		$location = GETPOST('genbarcodelocation','alpha');
+		$location = GETPOST('GENBARCODE_LOCATION','alpha');
 		$res = dolibarr_set_const($db, "GENBARCODE_LOCATION",$location,'chaine',0,'',$conf->entity);
 	}
 	if (GETPOST('submit_PRODUIT_DEFAULT_BARCODE_TYPE'))
@@ -203,7 +203,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
 $sql.= " WHERE entity = ".$conf->entity;
 $sql.= " ORDER BY code";
 
-dol_syslog("admin/barcode.php sql=".$sql);
+dol_syslog("admin/barcode.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -433,4 +433,3 @@ print "<br>";
 $db->close();
 
 llxFooter();
-?>

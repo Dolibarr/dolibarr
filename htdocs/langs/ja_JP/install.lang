@@ -25,14 +25,14 @@ ErrorGoBackAndCorrectParameters=後方に移動して、不正なパラメータ
 ErrorWrongValueForParameter=あなたは、パラメータ  %s 間違った値を入力した可能性があります。
 ErrorFailedToCreateDatabase=データベース %s を作成できませんでした。
 ErrorFailedToConnectToDatabase=データベース %s への接続に失敗しました。
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=あまりにも古いPHPバージョン。バージョン%sが必要です。
 WarningPHPVersionTooLow=あまりにも古いPHPバージョン。バージョンの%s以上が期待されている。このバージョンは、インストール許可する必要がありますが、サポートされていません。
 ErrorConnectedButDatabaseNotFound=しかしデータベース %s 成功したサーバーへの接続を見つけていない。
 ErrorDatabaseAlreadyExists=データベース %s は既に存在します。
 IfDatabaseNotExistsGoBackAndUncheckCreate=データベースが存在しない場合は、戻ってオプション&quot;データベースを作成します&quot;をチェック。
 IfDatabaseExistsGoBackAndCheckCreate=データベースが既に存在する場合は、戻ってチェックを外してオプションの &quot;データベースの作成&quot;を参照してください。
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHPのバージョン
 YouCanContinue=作業を続行することができます...
 PleaseBePatient=しばらくお待ちください...
@@ -154,11 +154,10 @@ MigrationShippingDelivery2=海運2の容量をアップグレード
 MigrationFinished=マイグレーションが終了しました
 LastStepDesc=<strong>最後のステップ</strong> ：ここにあなたがソフトウェアへの接続に使用する予定のログインとパスワードを定義します。それは他のすべてを管理するアカウントであるとしてこれを紛失しないでください。
 ActivateModule=モジュール%sをアクティブにする
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 
 #########
 # upgrade
-#########
 MigrationFixData=非正規化データを修正
 MigrationOrder=顧客の注文のためのデータ移行
 MigrationSupplierOrder=サプライヤーの受注のためのデータ移行
@@ -206,4 +205,7 @@ MigrationProjectUserResp=llx_projetのデータマイグレーション分野fk_
 MigrationProjectTaskTime=更新時間は秒単位で過ごした
 MigrationActioncommElement=アクション上でデータを更新する
 MigrationPaymentMode=支払い·モードのデータ移行
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Migration of categories
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

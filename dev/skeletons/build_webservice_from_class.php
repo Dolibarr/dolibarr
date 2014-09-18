@@ -177,4 +177,3 @@ else $error++;
 
 print "You must rename files by removing the 'out.' prefix in their name.\n";
 return $error;
-?>

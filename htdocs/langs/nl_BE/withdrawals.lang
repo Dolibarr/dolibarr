@@ -1,14 +1,11 @@
-# Dolibarr language file - nl_BE - withdrawals
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=Permanente opdrachten gebied
 CustomersStandingOrdersArea=Klanten permanente opdrachten gebied
-StandingOrders=Permanente opdrachten
-StandingOrder=Permanente opdrachten
 NewStandingOrder=Nieuwe doorlopende opdracht
 Withdrawals=Intrekkingen
 Withdrawal=Intrekking
 WithdrawalsReceipts=Intrekking van aandelen
 WithdrawalReceipt=Intrekking ontvangst
-WithdrawalReceiptShort=Ontvangst
 LastWithdrawalReceipts=Last %s intrekking van aandelen
 WithdrawedBills=Withdrawed facturen
 WithdrawalsLines=Opnemingen lijnen
@@ -21,8 +18,6 @@ InvoiceWaitingWithdraw=Factuur wachten intrekken
 AmountToWithdraw=Bedrag terug te trekken
 WithdrawsRefused=Intrekt geweigerd
 NoInvoiceToWithdraw=Geen klant factuur betaling modus "trekken" wacht. Ga op 'Trek' lipje op factuur kaart te maken van een verzoek.
-ResponsibleUser=Verantwoordelijke gebruiker
-WithdrawalsSetup=Intrekking setup
 WithdrawStatistics=Intrekt "statistieken
 WithdrawRejectStatistics=Intrekken verwerpt 'statistieken
 LastWithdrawalReceipt=Last %s intrekking van aandelen

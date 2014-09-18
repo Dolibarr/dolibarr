@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -112,10 +112,10 @@ if ($id > 0 || ! empty($ref))
         $relativepath = $objectref.'/'.$objectref.'.pdf';
         $relativepathdetail = $objectref.'/'.$objectref.'-detail.pdf';
 
-		// Chemin vers png apercus
-		$fileimage = $file.".png";          // Si PDF d'1 page
-		$fileimagebis = $file."-0.png";     // Si PDF de plus d'1 page
-        $relativepathimage = $relativepath.'.png';
+        // Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
+        $fileimage = $file.'_preview.png';          	// If PDF has 1 page
+        $fileimagebis = $file.'_preview-0.pdf.png';     // If PDF has more than one page
+        $relativepathimage = $relativepath.'_preview.png';
 
 		$var=true;
 
@@ -151,7 +151,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				if (class_exists("Imagick"))
 				{
-					$ret = dol_convert_file($file);
+					$ret = dol_convert_file($file,'png',$fileimage);
 					if ($ret < 0) $error++;
 				}
 				else
@@ -193,6 +193,8 @@ if ($id > 0 || ! empty($ref))
 		print '<td align="right" colspan="1"><b>'.price($object->total_ht).'</b></td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		print '</table>';
+
+		dol_fiche_end();
 	}
 	else
 	{
@@ -227,4 +229,3 @@ print '</div>';
 $db->close();
 
 llxFooter();
-?>

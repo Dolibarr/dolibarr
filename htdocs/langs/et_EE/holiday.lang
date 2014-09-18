@@ -8,7 +8,6 @@ NotActiveModCP=Selle lehe vaatamiseks pead sisse lülitama puhkuste mooduli
 NotConfigModCP=Selle lehe vaatamiseks pead seadistama puhkuste mooduli. Selle jaoks <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">klõpsa siia</a>.
 NoCPforUser=Sul ei ole puhkuse vajadust.
 AddCP=Taotle puhkust
-CPErrorSQL=Tekkis SQLi viga:
 Employe=Töötaja
 DateDebCP=Alguskuupäev
 DateFinCP=Lõppkuupäev
@@ -34,7 +33,6 @@ ReturnCP=Mine tagasi eelmisele lehele
 ErrorUserViewCP=Sul ei ole ligipääsuõigusi antud puhkusetaotluse vaatamiseks.
 InfosCP=Puhkusevajaduse info
 InfosWorkflowCP=Informatsiooni töövoog
-DateCreateCP=Loomiskuupäev
 RequestByCP=Taotles
 TitreRequestCP=Puhkuste leht
 NbUseDaysCP=Kulutatud puhkusepäevade arv
@@ -130,7 +128,6 @@ ErrorMailNotSend=E-kirja saatmisel tekkis viga:
 NoCPforMonth=Sellel kuul pole puhkusi.
 nbJours=Päevade arv
 TitleAdminCP=Puhkuste seadistamine
-
 #Messages
 Hello=Tere
 HolidaysToValidate=Kinnita puhkused
@@ -143,10 +140,10 @@ HolidaysRefused=Tagasi lükatud puhkused
 HolidaysRefusedBody=Sinu puhkusetaotlus alates %s kuni %s on tagasi lükatud põhjusel:
 HolidaysCanceled=Tühistatud puhkused
 HolidaysCanceledBody=Sinu puhkusetaotlus alates %s kuni %s on tühistatud.
-
-Permission20001=Oma puhkuste vaatamine/loomine/muutmine
-Permission20002=Kõikide puhkusetaotluste vaatamine/muutmine
-Permission20003=Oma puhkusetaotluste kustutamine
-Permission20004=Kasutajate puhkuste määratlemine
+Permission20000=Read you own holidays
+Permission20001=Create/modify your holidays
+Permission20002=Create/modify holidays for everybody
+Permission20003=Delete holidays requests
+Permission20004=Setup users holidays
 Permission20005=Muudetud puhkuste logi vaatamine
-Permission20006=Ligipääs puhkuste igakuisele aruandele
+Permission20006=Read holidays monthly report

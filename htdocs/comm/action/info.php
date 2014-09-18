@@ -40,7 +40,7 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', 'fk_soc', 'id');
+$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
 
 /*
@@ -67,4 +67,3 @@ print '</div>';
 $db->close();
 
 llxFooter();
-?>

@@ -1,22 +1,16 @@
 # Dolibarr language file - Source file is en_US - cron
 #
 # About page
-#
 About = Sobre
 CronAbout = Sobre Cron
 CronAboutPage = Sobre Cron
 
-#
 # Right
-#
 Permission23101 = Veure les tasques programades
 Permission23102 = Crear/Modificar les tasques programades
 Permission23103 = Eliminar les tasques programades
 Permission23104 = Executar les tasques programades
-
-#
 # Admin
-#
 CronSetup= Pàgina de configuració del mòdul - Gestió de tasques planificades
 URLToLaunchCronJobs=URL per llançar les tasques automàtiques
 OrToLaunchASpecificJob=O per llançar una tasca específica
@@ -24,20 +18,12 @@ KeyForCronAccess=Codi de seguretat per a la URL de llançament de tasques autom�
 FileToLaunchCronJobs=Ordre per llançar les tasques automàtiques
 CronExplainHowToRunUnix=En un entorn Unix pot parametritzar crontab per executar aquesta comanda cada minut
 CronExplainHowToRunWin=En un entorn Microsoft (tm) Windows pot utilitzar el planificador de tasques per llançar aquesta comanda cada minut
-
-
-#
 # Menu
-#
 CronJobs=Tasques programades
 CronListActive= Llistat de tasques planificades actives
 CronListInactive= Llistat de tasques planificades inactives
 CronListActive= Llistat de tasques planificades actives
-
-
-#
 # Page list
-#
 CronDateLastRun=Últim llançament
 CronLastOutput=Última sortida
 CronLastResult=Últim codi tornat
@@ -70,10 +56,7 @@ CronLabel=Descripció
 CronNbRun=Nº ejec.
 CronEach=Tota (s)
 JobFinished=Tasques llançades i finalitzades
-
-#
 #Page card
-#
 CronAdd= Afegir una tasca
 CronHourStart= Dia i hora d'inici de la tasca
 CronEvery= Executar cada
@@ -95,20 +78,12 @@ CronObjectHelp=El nombre del objeto a crear. <BR> Por ejemplo para llamar el mé
 CronMethodHelp=El método a lanzar. <BR> Por ejemplo para llamar el método fetch del objeto Product de Dolibarr  /htdocs/product/class/product.class.php, el valor del método es <i>fecth</i>
 CronArgsHelp=Los argumentos del método. <BR> Por ejemplo para usar el método fetch del objeto Product deDolibarr /htdocs/product/class/product.class.php, el valor del parámetro podría ser <i>0, RefProduit</i>
 CronCommandHelp=El comando del sistema a executar
-
-#
 # Info
-#
 CronInfoPage=Informació
-
-
-#
 # Common
-#
 CronType=Tipus d'acció a executar
 CronType_method=Mètode d'una classe d'un mòdul Dolibarr
 CronType_command=Comando Shell
 CronMenu=Cron
 CronCannotLoadClass=impossible carregar la classe %s de l'objecte %s
-
-# UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.

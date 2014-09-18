@@ -84,7 +84,6 @@ class modWorkflow extends DolibarrModules
 
         // Boxes
         $this->boxes = array();
-        //$this->boxes[0][1] = "box_workflow@workflow";
 
         // Permissions
         $this->rights = array();
@@ -166,4 +165,3 @@ class modWorkflow extends DolibarrModules
     }
 
 }
-?>

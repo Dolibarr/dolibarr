@@ -104,4 +104,3 @@ print "</TABLE>";
 $dbosc->close();
 
 llxFooter();
-?>

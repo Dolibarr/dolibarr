@@ -92,11 +92,11 @@ class CMailFile
 	 *	@param 	array	$mimetype_list       List of MIME type of attached files
 	 *	@param 	array	$mimefilename_list   List of attached file name in message
 	 *	@param 	string	$addr_cc             Email cc
-	 *	@param 	string	$addr_bcc            Email bcc
-	 *	@param 	int		$deliveryreceipt		Ask a delivery receipt
-	 *	@param 	int		$msgishtml       	1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-	 *	@param 	string	$errors_to      		Email errors
-	 *	@param	string	$css			        Css option
+	 *	@param 	string	$addr_bcc            Email bcc (Note: This is autocompleted with MAIN_MAIL_AUTOCOPY_TO if defined)
+	 *	@param 	int		$deliveryreceipt     Ask a delivery receipt
+	 *	@param 	int		$msgishtml           1=String IS already html, 0=String IS NOT html, -1=Unknown make autodetection (with fast mode, not reliable)
+	 *	@param 	string	$errors_to      	 Email errors
+	 *	@param	string	$css                 Css option
 	 */
 	function __construct($subject,$to,$from,$msg,
 	$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
@@ -170,7 +170,7 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to
+		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
 		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc.=($addr_bcc?', ':'').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 
 		// Action according to choosed sending method
@@ -212,9 +212,10 @@ class CMailFile
 			$text_body = $this->write_body($msg);
 
 			// Encode images
+			$images_encoded = '';
 			if ($this->atleastoneimage)
 			{
-				$images_encoded = $this->write_images($this->images_encoded);
+				$images_encoded.= $this->write_images($this->images_encoded);
 				// always end related and end alternative after inline images
 				$images_encoded.= "--" . $this->related_boundary . "--" . $this->eol;
 				$images_encoded.= $this->eol . "--" . $this->alternative_boundary . "--" . $this->eol;
@@ -404,7 +405,7 @@ class CMailFile
 						// le return-path dans les header ne fonctionne pas avec tous les MTA
 						// Le passage par -f est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
 						// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
-						$bounce .= ($bounce?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $conf->global->MAIN_MAIL_ERRORS_TO : ($this->addr_from != '' ? '-f' . $this->addr_from : '') );
+						$bounce .= ($bounce?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO,2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from,2) : '') );
 					}
                     if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA))    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
                     {
@@ -656,6 +657,7 @@ class CMailFile
 		{
 			$out.= "To: ".$this->getValidAddress($this->addr_to,0,1).$this->eol2;
 		}
+		// Return-Path is important because it is used by SPF. Some MTA does not read Return-Path from header but from command line. See option MAIN_MAIL_ALLOW_SENDMAIL_F for that.
 		$out.= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol2;
 		if (isset($this->reply_to)  && $this->reply_to)  $out.= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol2;
 		if (isset($this->errors_to) && $this->errors_to) $out.= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol2;
@@ -742,7 +744,7 @@ class CMailFile
 		}
 		else
 		{
-			$strContent.= $msgtext;
+			$strContent = $msgtext;
 		}
 
 		// Make RFC821 Compliant, replace bare linefeeds
@@ -1079,4 +1081,3 @@ class CMailFile
 	}
 }
 
-?>

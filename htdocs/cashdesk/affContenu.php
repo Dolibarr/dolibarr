@@ -54,17 +54,25 @@ print '</div>';
 
 print '<div class="principal">';
 
-if ( $_GET['menu'] )
+$page=GETPOST('menu','alpha');
+if (empty($page)) $page='facturation';
+
+if (in_array(
+		$page,
+		array(
+			'deconnexion',
+			'index','index_verif','facturation','facturation_verif','facturation_dhtml',
+			'validation','validation_ok','validation_ticket','validation_verif',
+		)
+	))
 {
-	include $_GET['menu'].'.php';
+	include $page.'.php';
 }
 else
 {
-	include 'facturation.php';
+	dol_print_error('','menu param '.$page.' is not inside allowed list');
 }
 
 print '</div>';
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
-
-?>

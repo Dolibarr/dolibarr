@@ -155,4 +155,3 @@ class box_factures_imp extends ModeleBoxes
 
 }
 
-?>

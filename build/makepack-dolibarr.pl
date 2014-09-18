@@ -369,6 +369,7 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.git*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.scrutinizer.yml`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.travis.yml`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.tx`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/build.xml`;
@@ -415,6 +416,7 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/uml`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/vagrant`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/xdebug`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/dev/dolibarr_changes.txt`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/dev/README`;
@@ -451,6 +453,7 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/adapters`;		# Keep this removal in case we embed libraries
         #$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;		# _source must be kept into tarball
    	    
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/datatables/extras/TableTools/swf`;	# Source of this flash is not available
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/samples`;
@@ -515,12 +518,13 @@ if ($nboftargetok) {
 			$ret=`rm -fr $BUILDROOT/$FILENAMETGZ/htdocs/includes/ckeditor/_source`;	# We can't remove it with exclude file, we need it for some tarball packages
 			
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-   		    $cmd="tar --exclude-vcs --exclude-from \"$BUILDROOT/$PROJECT/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
+   		    $cmd="tar --exclude-vcs --exclude-from \"$BUILDROOT/$PROJECT/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" $FILENAMETGZ";
+   		    print "$cmd\n";
    		    $ret=`$cmd`;
 
     		# Move to final dir
-       		print "Move $FILENAMETGZ.tgz to $NEWDESTI/$FILENAMETGZ.tgz\n";
-       		$ret=`mv "$FILENAMETGZ.tgz" "$NEWDESTI/$FILENAMETGZ.tgz"`;
+       		print "Move $BUILDROOT/$FILENAMETGZ.tgz to $NEWDESTI/$FILENAMETGZ.tgz\n";
+       		$ret=`mv "$BUILDROOT/$FILENAMETGZ.tgz" "$NEWDESTI/$FILENAMETGZ.tgz"`;
     		next;
     	}
 
@@ -956,8 +960,8 @@ if ($nboftargetok) {
     	}
     }
 
-    # Build package for each target
-    #------------------------------
+    # Publish package for each target
+    #--------------------------------
     foreach my $target (keys %CHOOSEDPUBLISH) 
     {
         if ($CHOOSEDPUBLISH{$target} < 0) { next; }
@@ -970,12 +974,15 @@ if ($nboftargetok) {
     		"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
     		"$DESTI/standard/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
     	);
+    	use POSIX qw/strftime/;
     	foreach my $file (sort keys %filestoscansf)
     	{
     		$found=0;
     		my $filesize = -s $file;
+    		my $filedate = (stat $file)[9];
     		print $file." ".($filesize?"(found)":"(not found)");
     		print ($filesize?" - ".$filesize:"");
+    		print ($filedate?" - ".strftime("%Y-%m-%d %H:%M:%S",localtime($filedate)):"");
     		print "\n";
     	}
 
@@ -1032,9 +1039,7 @@ if ($nboftargetok) {
 				print "$command\n";	
 				my $ret=`$command 2>&1`;
 				print "$ret\n";
-	    		
 	    	}
-
     	}
     }    
 }

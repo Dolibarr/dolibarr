@@ -355,4 +355,3 @@ print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
 llxFooter();
 
 $db->close();
-?>

@@ -17,7 +17,7 @@
 
 /**
  *       \file       htdocs/boutique/osc_master.inc.php
- *       \brief      Fichier de preparation de l'environnement Dolibarr pour OSCommerce
+ *       \brief      File of preparation of the environment Dolibarr for OSCommerce
  */
 
 
@@ -31,9 +31,8 @@ if (! $dbosc->connected)
     dol_syslog($dbosc,"host=".$conf->global->OSC_DB_HOST.", user=".$conf->global->OSC_DB_USER.", databasename=".$conf->global->OSC_DB_NAME.", ".$db->error,LOG_ERR);
 
 	llxHeader("",$langs->trans("OSCommerceShop"),"");
-	print '<div class="error">Failed to connect to oscommerce database. Check your module setup</div>';
+	print '<div class="error">'.$langs->trans('FailedConnectDBCheckModuleSetup').'</div>';
 	llxFooter();
 	exit;
 }
 
-?>

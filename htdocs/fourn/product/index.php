@@ -151,4 +151,3 @@ print '</td></tr></table>';
 $db->close();
 
 llxFooter();
-?>

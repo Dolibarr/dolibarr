@@ -6,6 +6,7 @@ CountryES=Espanha
 CountryDE=Alemanha
 CountryCH=Suiça
 CountryGB=Grã-Bretanha
+CountryUK=Reino Unido
 CountryIE=Irlanda
 CountryCN=China
 CountryTN=Tunísia
@@ -252,7 +253,6 @@ CivilityMR=Sr.
 CivilityMLE=Dr.
 CivilityMTRE=Eng.
 CivilityDR=Doutor
-
 ##### Currencies #####
 Currencyeuros=Euros
 CurrencyAUD=Dólaros Australianos
@@ -289,10 +289,8 @@ CurrencyXOF=Francos CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=Francos CFP
 CurrencySingXPF=Franco CFP
-
 CurrencyCentSingEUR=centavo
 CurrencyThousandthSingTND=mil
-
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Campanha correio
@@ -305,7 +303,6 @@ DemandReasonTypeSRC_WOM=Palavra da boca
 DemandReasonTypeSRC_PARTNER=Parceiro
 DemandReasonTypeSRC_EMPLOYEE=Empregado
 DemandReasonTypeSRC_SPONSORING=Sponsorizacao
-
 #### Paper formats ####
 PaperFormatEU4A0=Formato 4A0
 PaperFormatEU2A0=Formato 2A0

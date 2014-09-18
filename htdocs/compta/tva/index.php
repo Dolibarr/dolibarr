@@ -60,7 +60,7 @@ if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
  *
  * @param 	DoliDB	$db		Database handler
  * @param 	string	$sql	SQL Request
- * @param 	date		$date	Date
+ * @param 	date	$date	Date
  * @return	void
  */
 function pt ($db, $sql, $date)
@@ -122,17 +122,17 @@ print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
 print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
 print '<br>';
 
-echo '<table width="100%" class="notopnoleftnoright">';
-echo '<tr><td class="notopnoleft" width="50%">';
+print '<table width="100%" class="notopnoleftnoright">';
+print '<tr><td class="notopnoleft" width="50%">';
 print_titre($langs->trans("VATSummary"));
 // The report mode is the one defined by defaut in tax module setup
 //print $modetax;
 //print '('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
-echo '</td><td>';
+print '</td><td>';
 print_titre($langs->trans("VATPaid"));
-echo '</td></tr>';
+print '</td></tr>';
 
-echo '<tr><td class="notopnoleft" width="50%" valign="top">';
+print '<tr><td class="notopnoleft" width="50%" valign="top">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -230,7 +230,7 @@ print '</tr>';
 print '</table>';
 
 
-echo '</td>';
+print '</td>';
 print '<td class="notopnoleftnoright" valign="top" width="50%">';
 
 /*
@@ -242,18 +242,17 @@ $sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.datev >= '".$db->idate(dol_get_first_day($y,1,false))."'";
 $sql.= " AND f.datev <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-$sql.= " GROUP BY dm  ORDER BY dm ASC";
+$sql.= " GROUP BY dm ORDER BY dm ASC";
 
 pt($db, $sql,$langs->trans("Year")." $y");
 
 
 print "</td></tr></table>";
 
-echo '</td></tr>';
-echo '</table>';
+print '</td></tr>';
+print '</table>';
 
 
 $db->close();
 
 llxFooter();
-?>

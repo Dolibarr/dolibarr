@@ -7,5 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Criar uma factura de cliente automaticame
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Criar uma factura de cliente automaticamente depois de um contrato de é validado
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Criar uma fatura de cliente automaticamente após um pedido do cliente está fechado
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classificar proposta fonte ligada ao bico quando a ordem do cliente é definido como pago
-# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
-# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifique os pedido do cliente vinculado as fonte(s) das faturas quando a fatura do cliente ainda não foi paga
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifique os pedidos do cliente vinculado as fonte(s) das faturas quando a fatura do cliente  for paga.

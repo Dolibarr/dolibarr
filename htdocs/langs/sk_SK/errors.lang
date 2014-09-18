@@ -135,6 +135,8 @@ ErrorWarehouseMustDiffers=Zdrojovej a cieľovej sklady musia sa líši
 ErrorBadFormat=Bad format!
 ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
+ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
+
 # Warnings
 WarningMandatorySetupNotComplete=Povinné parametre sú doteraz stanovené
 WarningSafeModeOnCheckExecDir=Pozor, PHP <b>safe_mode</b> voľba je na to príkaz musí byť uložené vo vnútri adresára deklarovanej <b>safe_mode_exec_dir</b> parametrov php.
@@ -151,3 +153,4 @@ WarningCloseAlways=Pozor, zatváranie sa vykonáva, aj keď suma líši zdrojov�
 WarningUsingThisBoxSlowDown=Upozornenie Pri použití tohto políčka spomaliť vážne všetky stránky zobrazujúce krabici.
 WarningClickToDialUserSetupNotComplete=Nastavenie ClickToDial informácií pre užívateľa si nie sú kompletné (pozri tab ClickToDial na vaše užívateľské karty).
 WarningNotRelevant=Nerozhoduje prevádzku v našom súbore
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.

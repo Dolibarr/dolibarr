@@ -105,7 +105,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 		//if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
-		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?16:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
+		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxpicture-=20;
@@ -127,13 +127,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	/**
      *  Function to build pdf onto disk
      *
-     *  @param		int		$object				Id of object to generate
-     *  @param		object	$outputlangs		Lang output object
-     *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int		$hidedetails		Do not show line details
-     *  @param		int		$hidedesc			Do not show desc
-     *  @param		int		$hideref			Do not show ref
-     *  @return 	int             			1=OK, 0=KO
+     *  @param		FactureFournisseur	$object				Id of object to generate
+     *  @param		Translate			$outputlangs		Lang output object
+     *  @param		string				$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int					$hidedetails		Do not show line details
+     *  @param		int					$hidedesc			Do not show desc
+     *  @param		int					$hideref			Do not show ref
+     *  @return		int										1=OK, 0=KO
 	 */
 	function write_file($object, $outputlangs='', $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
@@ -184,6 +184,17 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 			if (file_exists($dir))
 			{
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
@@ -371,13 +382,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
 
-					if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
+					if (! empty($object->remise_percent)) $tvaligne-=($tvaligne*$object->remise_percent)/100;
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
 					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
+					if (empty($this->tva[$vatrate])) $this->tva[$vatrate]=0;
+					if (empty($this->localtax1[$localtax1rate])) $this->localtax1[$localtax1rate]=0;
+					if (empty($this->localtax2[$localtax2rate])) $this->localtax2[$localtax2rate]=0;
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
@@ -860,7 +874,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -1013,7 +1026,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$carac_client_name=$outputlangs->convToOutputCharset($mysoc->nom);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$mysoc,$object->contact,$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$mysoc,((!empty($object->contact))?$object->contact:null),$usecontact,'target');
 
 			// Show recipient
 			$widthrecbox=100;
@@ -1052,9 +1065,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		$showdetails=0;
+		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }
 
-?>

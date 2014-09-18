@@ -47,7 +47,7 @@ abstract class CommonInvoice extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;
 		$sql.= ' WHERE '.$field.' = '.$this->id;
 
-		dol_syslog(get_class($this)."::getSommePaiement sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -154,9 +154,9 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *  Return label of object status
 	 *
-	 *  @param      int		$mode            0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
-	 *  @param      double	$alreadypaid     0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
-	 *  @return     string			         Label
+	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+	 *  @param      double	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @return     string			        Label
 	 */
 	function getLibStatut($mode=0,$alreadypaid=-1)
 	{
@@ -253,6 +253,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 		if ($mode == 4)
 		{
+			$prefix='';
 			if (! $paye)
 			{
 				if ($status == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('BillStatusDraft');
@@ -287,6 +288,74 @@ abstract class CommonInvoice extends CommonObject
 			}
 		}
 	}
+
+	/**
+	 *	Renvoi une date limite de reglement de facture en fonction des
+	 *	conditions de reglements de la facture et date de facturation
+	 *
+	 *	@param      string	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
+	 *	@return     date     			       	Date limite de reglement si ok, <0 si ko
+	 */
+	function calculate_date_lim_reglement($cond_reglement=0)
+	{
+		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;
+		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_id;
+
+		$cdr_nbjour=0; $cdr_fdm=0; $cdr_decalage=0;
+
+		$sqltemp = 'SELECT c.fdm,c.nbjour,c.decalage';
+		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
+		if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
+		else $sqltemp.= " WHERE c.code='".$this->db->escape($cond_reglement)."'";
+
+		dol_syslog(get_class($this).'::calculate_date_lim_reglement', LOG_DEBUG);
+		$resqltemp=$this->db->query($sqltemp);
+		if ($resqltemp)
+		{
+			if ($this->db->num_rows($resqltemp))
+			{
+				$obj = $this->db->fetch_object($resqltemp);
+				$cdr_nbjour = $obj->nbjour;
+				$cdr_fdm = $obj->fdm;
+				$cdr_decalage = $obj->decalage;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+		$this->db->free($resqltemp);
+
+		/* Definition de la date limite */
+
+		// 1 : ajout du nombre de jours
+		$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+
+		// 2 : application de la regle "fin de mois"
+		if ($cdr_fdm)
+		{
+			$mois=date('m', $datelim);
+			$annee=date('Y', $datelim);
+			if ($mois == 12)
+			{
+				$mois = 1;
+				$annee += 1;
+			}
+			else
+			{
+				$mois += 1;
+			}
+			// On se deplace au debut du mois suivant, et on retire un jour
+			$datelim=dol_mktime(12,0,0,$mois,1,$annee);
+			$datelim -= (3600 * 24);
+		}
+
+		// 3 : application du decalage
+		$datelim += ($cdr_decalage * 3600 * 24);
+
+		return $datelim;
+	}
 }
 
 /**
@@ -296,4 +365,3 @@ abstract class CommonInvoiceLine extends CommonObject
 {
 }
 
-?>

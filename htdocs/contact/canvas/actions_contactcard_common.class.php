@@ -46,7 +46,8 @@ abstract class ActionsContactCardCommon
 	/**
 	 * 	Instantiation of DAO class
 	 *
-	 * 	@return	void
+	 * 	@return	int		0
+	 *  @deprecated		Using getInstanceDao should not be used.
 	 */
 	private function getInstanceDao()
 	{
@@ -65,6 +66,7 @@ abstract class ActionsContactCardCommon
 	            }
 	        }
 		}
+		return 0;
 	}
 
 	/**
@@ -271,7 +273,7 @@ abstract class ActionsContactCardCommon
         	}
 
         	// Civility
-        	$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civilite_id);
+        	$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
 
         	// Predefined with third party
         	if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS))
@@ -400,7 +402,7 @@ abstract class ActionsContactCardCommon
             require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
         	$login=dol_buildlogin($this->object->lastname, $this->object->firstname);
 
-       		$generated_password=getRandomPassword('');
+       		$generated_password=getRandomPassword(false);
         	$password=$generated_password;
 
         	// Create a form array
@@ -427,7 +429,7 @@ abstract class ActionsContactCardCommon
         $this->object->socid				=	$_POST["socid"];
         $this->object->lastname				=	$_POST["name"];
         $this->object->firstname			= 	$_POST["firstname"];
-        $this->object->civilite_id			= 	$_POST["civilite_id"];
+        $this->object->civility_id			= 	$_POST["civility_id"];
         $this->object->poste				= 	$_POST["poste"];
         $this->object->address				=	$_POST["address"];
         $this->object->zip					=	$_POST["zipcode"];
@@ -448,7 +450,7 @@ abstract class ActionsContactCardCommon
         // We set country_id, and country_code label of the chosen country
         if ($this->object->country_id)
         {
-            $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_pays WHERE rowid = ".$this->object->country_id;
+            $sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".$this->object->country_id;
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -458,12 +460,11 @@ abstract class ActionsContactCardCommon
             {
                 dol_print_error($this->db);
             }
-            $this->object->country_id	=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+            $this->object->country_id	=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
             $this->object->country_code	=	$obj->code;
-            $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+            $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
         }
     }
 
 }
 
-?>

@@ -260,4 +260,3 @@ class modUser extends DolibarrModules
     }
 
 }
-?>

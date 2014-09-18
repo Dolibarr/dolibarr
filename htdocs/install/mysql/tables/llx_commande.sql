@@ -25,7 +25,7 @@ create table llx_commande
   entity				integer DEFAULT 1 NOT NULL,		-- multi company id
 
   ref_ext				varchar(255),					-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(255),					-- reference into an internal system (used by dolibarr)
+  ref_int				varchar(255),					-- reference into an internal system (deprecated)
   ref_client			varchar(255),					-- reference for customer
 
   fk_soc				integer NOT NULL,
@@ -61,6 +61,7 @@ create table llx_commande
   fk_mode_reglement		integer,						-- mode de reglement
   
   date_livraison		date 	  default NULL,
+  fk_shipping_method    integer,                        -- shipping method id
   fk_availability		integer NULL,
   fk_input_reason		integer,
   fk_delivery_address	integer,						-- delivery address (deprecated)

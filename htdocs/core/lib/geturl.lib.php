@@ -26,7 +26,7 @@
  *
  * @param	string	$url 				URL to call.
  * @param	string	$postorget			'POST', 'GET', 'HEAD'
- * @param	string	$param				Paraemeters of URL (x=value1&y=value2)
+ * @param	string	$param				Parameters of URL (x=value1&y=value2)
  * @param	string	$followlocation		1=Follow location, 0=Do not follow
  * @param	array	$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @return	array						Returns an associative array containing the response from the server array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
@@ -124,4 +124,3 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     return $rep;
 }
 
-?>

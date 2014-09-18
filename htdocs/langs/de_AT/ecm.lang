@@ -1,58 +1,7 @@
-/*
- * Language code: de_AT
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 12:09:12
- */
-
-
-MenuECM=Dokumente
-DocsMine=Meine Dokumente
-DocsGenerated=Erstellte Dokumente
-DocsElements=Dokumente
-DocsThirdParties=Dokumente von Partnern
-DocsContracts=Vertragsdokumente
-DocsProposals=Angebotsdokumente
-DocsOrders=Bestellungsdokumente
-DocsInvoices=Rechnungsdokumente
-ECMNbOfDocs=Anzahl der Dokumente im Verzeichnis
-ECMNbOfDocsSmall=Anz. Dok.
-ECMSection=Verzeichnis
-ECMSectionManual=Manuelles Verzeichnis
-ECMSectionAuto=Automatisches Verzeichnis
+# Dolibarr language file - Source file is en_US - ecm
 ECMSectionsManual=Manuelle Verzeichnisse
 ECMSectionsAuto=Automatische Verzeichnisse
-ECMSections=Verzeichnis
-ECMRoot=Stammordner
-ECMNewSection=Neues Verzeichnis
-ECMAddSection=Verzeichnis hinzufügen
-ECMNewSection=Neues Verzeichnis
-ECMNewDocument=Neues Dokument
-ECMCreationDate=Erstellungsdatum
-ECMNbOfFilesInDir=Anzahl der Dateien im Verzeichnis
-ECMNbOfSubDir=Anzahl der Unterverzeichnisse
 ECMNbOfFilesInSubDir=Anzahl der Dateien im Unterverzeichnis
-ECMCreationUser=Author
 ECMArea=ECM-Übersicht
 ECMAreaDesc=Das ECM (Electronic Content Management)-System erlaubt Ihnen das Speichern, Teilen und rasche Auffinden von Dokumenten.
 ECMAreaDesc2=* Automatische Verzeichnisse werden automatisch befüllt, wenn Sie Dokumente von der Karte eines Elements erstellen. <br> * Manuelle Verzeichnisse können Sie dazu nutzen, nicht mit anderen Elementen verbundene Dokumente zu speichern.
-ECMSectionWasRemoved=Das Verzeichnis <b>%s</b> wurde gelöscht.
-ECMDocumentsSection=Dokument des Verzeichnisses
-ECMSearchByKeywords=Suche nach Stichwörtern
-ECMSearchByEntity=Suche nach Objekt
-ECMSectionOfDocuments=Dokumentenverzeichnisse
-ECMTypeManual=Manuell
-ECMTypeAuto=Automatisch
-ECMDocsByThirdParties=Mit Partnern verknüpfte Dokumente
-ECMDocsByProposals=Mit Angeboten verknüpfte Dokumente
-ECMDocsByOrders=Mit Kundenaufträgen verknüpfte Dokumente
-ECMDocsByContracts=Mit Verträgen verknüpfte Dokumente
-ECMDocsByInvoices=Mit Kundenrechnungen verknüpfte Dokumente
-ECMDocsByProducts=Mit Produkten verknüpfte Dokumente
-ECMNoDirectoryYet=Noch kein Verzeichnis erstellt
-ShowECMSection=Zeige Verzeichnis
-DeleteSection=Lösche Verzeichnis
-ConfirmDeleteSection=Möchten Sie das Verzeichnis <b>%s</b> wirklich löschen?
-ECMDirectoryForFiles=Relatives Verzeichnis für Dateien
-CannotRemoveDirectoryContainsFiles=Entfernen des Verzeichnisses nicht möglich, da es noch Dateien enthält
-ECMFileManager=Dateiverwaltung
-ECMSelectASection=Wählen Sie ein Verzeichnis aus der Baumansicht auf der linken Seite...

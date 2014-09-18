@@ -1,0 +1,88 @@
+[eventlistener:<%= @name %>]
+command=<%= @command %>
+<% if @process_name -%>
+process_name=<%= @process_name %>
+<% end -%>
+<% if @numprocs -%>
+numprocs=<%= @numprocs %>
+<% end -%>
+<% if @numprocs_start -%>
+numprocs_start=<%= @numprocs_start %>
+<% end -%>
+<% if @events_string -%>
+events=<%= @events_string %>
+<% end -%>
+<% if @buffer_size -%>
+buffer_size=<%= @buffer_size %>
+<% end -%>
+<% if @result_handler -%>
+result_handler=<%= @result_handler %>
+<% end -%>
+<% if @priority -%>
+priority=<%= @priority %>
+<% end -%>
+<% if @autostart -%>
+autostart=<%= @autostart %>
+<% end -%>
+<% if @autorestart -%>
+autorestart=<%= @autorestart %>
+<% end -%>
+<% if @startsecs -%>
+startsecs=<%= @startsecs %>
+<% end -%>
+<% if @startretries -%>
+startretries=<%= @startretries %>
+<% end -%>
+<% if @exitcodes -%>
+exitcodes=<%= @exitcodes %>
+<% end -%>
+<% if @stopsignal -%>
+stopsignal=<%= @stopsignal %>
+<% end -%>
+<% if @stopwaitsecs -%>
+stopwaitsecs=<%= @stopwaitsecs %>
+<% end -%>
+<% if @stopasgroup -%>
+stopasgroup=<%= @stopasgroup %>
+<% end -%>
+<% if @killasgroup -%>
+killasgroup=<%= @killasgroup %>
+<% end -%>
+<% if @user -%>
+user=<%= @user %>
+<% end -%>
+<% if @redirect_stderr -%>
+redirect_stderr=<%= @redirect_stderr %>
+<% end -%>
+stdout_logfile=<%= scope.lookupvar('supervisord::log_path') %>/<%= @stdout_logfile %>
+<% if @stdout_logfile_maxbytes -%>
+stdout_logfile_maxbytes=<%= @stdout_logfile_maxbytes %>
+<% end -%>
+<% if @stdout_logfile_backups -%>
+stdout_logfile_backups=<%= @stdout_logfile_backups %>
+<% end -%>
+<% if @stdout_events_enabled -%>
+stdout_events_enabled=<%= @stdout_events_enabled %>
+<% end -%>
+stderr_logfile=<%= scope.lookupvar('supervisord::log_path') %>/<%= @stderr_logfile %>
+<% if @stderr_logfile_maxbytes -%>
+stderr_logfile_maxbytes=<%= @stderr_logfile_maxbytes %>
+<% end -%>
+<% if @stderr_logfile_backups -%>
+stderr_logfile_backups=<%= @stderr_logfile_backups %>
+<% end -%>
+<% if @stderr_events_enabled -%>
+stderr_events_enabled=<%= @stderr_events_enabled %>
+<% end -%>
+<% if @env_string -%>
+environment=<%= @env_string %>
+<% end -%>
+<% if @directory -%>
+directory=<%= @directory %>
+<% end -%>
+<% if @umask -%>
+umask=<%= @umask %>
+<% end -%>
+<% if @serverurl -%>
+serverurl=<%= @serverurl %>
+<% end -%>

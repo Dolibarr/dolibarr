@@ -57,4 +57,3 @@ print '<center><div class="logo_setup"></div></center>';
 
 llxFooter();
 $db->close();
-?>

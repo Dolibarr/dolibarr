@@ -68,7 +68,7 @@ $sql.= " AND d.entity IN (".getEntity().")";
 $sql.= " WHERE t.entity IN (".getEntity().")";
 $sql.= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
 
-dol_syslog("index.php::select nb of members by type sql=".$sql, LOG_DEBUG);
+dol_syslog("index.php::select nb of members by type", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -106,7 +106,7 @@ $sql.= " AND d.statut = 1 AND d.datefin >= '".$db->idate($now)."'";
 $sql.= " AND t.rowid = d.fk_adherent_type";
 $sql.= " GROUP BY d.fk_adherent_type";
 
-dol_syslog("index.php::select nb of uptodate members by type sql=".$sql, LOG_DEBUG);
+dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -137,15 +137,15 @@ print "</tr>\n";
 $var=false;
 print "<tr ".$bc[$var].">";
 print '<td>';
-print $langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="16">';
+print '<label for="search_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="16">';
 print '</td><td rowspan="3"><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
 print "<tr ".$bc[$var].">";
 print '<td>';
-print $langs->trans("Name").':</td><td><input type="text" name="search_lastname" class="flat" size="16">';
+print '<label for="search_lastname">'.$langs->trans("Name").'</label>:</td><td><input type="text" name="search_lastname" id="search_lastname" class="flat" size="16">';
 print '</td></tr>';
 print "<tr ".$bc[$var].">";
 print '<td>';
-print $langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="16">';
+print '<label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="16">';
 print '</td></tr>';
 print "</table></form>";
 
@@ -237,11 +237,14 @@ if ($resql)
 			$staticmember->id=$obj->rowid;
 			$staticmember->lastname=$obj->lastname;
 			$staticmember->firstname=$obj->firstname;
-			if (! empty($obj->fk_soc)) {
-				$staticmember->socid = $obj->fk_soc;
+			if (! empty($obj->fk_soc))
+			{
+				$staticmember->fk_soc = $obj->fk_soc;
 				$staticmember->fetch_thirdparty();
 				$staticmember->name=$staticmember->thirdparty->name;
-			} else {
+			}
+			else
+			{
 				$staticmember->name=$obj->company;
 			}
 			$staticmember->ref=$staticmember->getFullName($langs);
@@ -364,13 +367,13 @@ $Number=array();
 $tot=0;
 $numb=0;
 
-$sql = "SELECT c.cotisation, c.dateadh";
+$sql = "SELECT c.cotisation, c.dateadh as dateh";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
 $sql.= " WHERE d.entity IN (".getEntity().")";
 $sql.= " AND d.rowid = c.fk_adherent";
 if(isset($date_select) && $date_select != '')
 {
-	$sql .= " AND dateadh LIKE '$date_select%'";
+	$sql .= " AND c.dateadh LIKE '".$date_select."%'";
 }
 $result = $db->query($sql);
 if ($result)
@@ -380,7 +383,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		$year=dol_print_date($db->jdate($objp->dateadh),"%Y");
+		$year=dol_print_date($db->jdate($objp->dateh),"%Y");
 		$Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->cotisation;
 		$Number[$year]=(isset($Number[$year])?$Number[$year]:0)+1;
 		$tot+=$objp->cotisation;
@@ -425,4 +428,3 @@ print '</div></div></div>';
 
 llxFooter();
 $db->close();
-?>

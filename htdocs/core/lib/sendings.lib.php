@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function shipping_prepare_head($object)
 {
@@ -85,7 +85,7 @@ function shipping_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function delivery_prepare_head($object)
 {
@@ -110,16 +110,15 @@ function delivery_prepare_head($object)
 	$head[$h][2] = 'delivery';
 	$h++;
 
-	/* We are on id of delivery, no shipment
-	$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->origin_id;
 	$head[$h][1] = $langs->trans("ContactsAddresses");
 	$head[$h][2] = 'contact';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/expedition/note.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/expedition/note.php?id=".$object->origin_id;
 	$head[$h][1] = $langs->trans("Notes");
 	$head[$h][2] = 'note';
-	$h++;*/
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -172,7 +171,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 
 	$sql.= " ORDER BY obj.fk_product";
 
-	dol_syslog("show_list_sending_receive sql=".$sql, LOG_DEBUG);
+	dol_syslog("show_list_sending_receive", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -347,4 +346,3 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 	return 1;
 }
 
-?>

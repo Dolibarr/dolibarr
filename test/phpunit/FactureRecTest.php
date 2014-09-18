@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture-rec.class.php';
@@ -131,7 +131,7 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
 		$localobjectinv=new Facture($this->savdb);
 		$localobjectinv->initAsSpecimen();
 		$localobjectinv->create($user);
-		
+
 		$localobject=new FactureRec($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user, $localobjectinv->id);
@@ -141,11 +141,11 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
     	return $result;
     }
 
-    
-    
-    
-    
-    
+
+
+
+
+
     /**
      * Edit an object to test updates
      *
@@ -196,4 +196,3 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
         return $retAr;
     }
 }
-?>

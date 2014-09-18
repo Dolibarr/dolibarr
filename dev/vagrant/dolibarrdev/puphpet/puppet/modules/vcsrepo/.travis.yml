@@ -1,0 +1,31 @@
+branches:
+  only:
+    - master
+language: ruby
+bundler_args: --without development
+script: "bundle exec rake spec SPEC_OPTS='--format documentation'"
+after_success:
+  - git clone -q git://github.com/puppetlabs/ghpublisher.git .forge-release
+  - .forge-release/publish
+rvm:
+  - 1.8.7
+  - 1.9.3
+  - 2.0.0
+env:
+  matrix:
+    - PUPPET_GEM_VERSION="~> 2.7.0"
+    - PUPPET_GEM_VERSION="~> 3.3.0"
+  global:
+  - PUBLISHER_LOGIN=puppetlabs
+  - secure: |-
+      ZiIkYd9+CdPzpwSjFPnVkCx1FIlipxpbdyD33q94h2Tj5zXjNb1GXizVy0NR
+      kVxGhU5Ld8y9z8DTqKRgCI1Yymg3H//OU++PKLOQj/X5juWVR4URBNPeBOzu
+      IJBDl1MADKA4i1+jAZPpz4mTvTtKS4pWKErgCSmhSfsY1hs7n6c=
+matrix:
+  exclude:
+    - rvm: 1.9.3
+      env: PUPPET_GEM_VERSION="~> 2.7.0"
+    - rvm: 2.0.0
+      env: PUPPET_GEM_VERSION="~> 2.7.0"
+notifications:
+  email: false

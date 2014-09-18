@@ -731,4 +731,3 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 llxFooter();
 
 $db->close();
-?>

@@ -195,7 +195,7 @@ print '<td>'.$langs->trans("ActivityOnProjectThisWeek").'</td>';
 print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
+$sql = "SELECT p.rowid, p.ref, p.title, SUM(tt.task_duration) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
 $sql.= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -248,7 +248,7 @@ print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.dol_print_date($no
 print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
+$sql = "SELECT p.rowid, p.ref, p.title, SUM(tt.task_duration) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -283,6 +283,10 @@ else
 {
 	dol_print_error($db);
 }
+print '<tr class="liste_total">';
+print '<td>'.$langs->trans('Total').'</td>';
+print '<td align="right">'.convertSecondToTime($total).'</td>';
+print "</tr>\n";
 print "</table>";
 
 /* Affichage de la liste des projets de l'annee */
@@ -292,7 +296,7 @@ print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now
 print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
+$sql = "SELECT p.rowid, p.ref, p.title, SUM(tt.task_duration) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -326,6 +330,10 @@ else
 {
 	dol_print_error($db);
 }
+print '<tr class="liste_total">';
+print '<td>'.$langs->trans('Total').'</td>';
+print '<td align="right">'.convertSecondToTime($total).'</td>';
+print "</tr>\n";
 print "</table>";
 
 
@@ -335,4 +343,3 @@ print '</div></div></div>';
 llxFooter();
 
 $db->close();
-?>

@@ -51,7 +51,7 @@ function RemoveFromEnd($sourceString, $charToRemove)
 /**
  * FindBadUtf8
  *
- * @param 	unknown_type $string		String
+ * @param 	string $string		String
  * @return	boolean
  */
 function FindBadUtf8($string)
@@ -239,4 +239,3 @@ function IsImageValid( $filePath, $extension )
 	return true;
 }
 
-?>
