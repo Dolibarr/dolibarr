@@ -233,7 +233,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 		$object->date_livraison = $datelivraison;
         $object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 		$object->fk_delivery_address = GETPOST('fk_address');
-		$object->contactid = GETPOST('contactidp');
+		$object->contactid = GETPOST('contactid');
 
 		// If creation from another object of another module (Example: origin=propal, originid=1)
 		if (! empty($origin) && ! empty($originid)) {
@@ -383,8 +383,8 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 
 		// Insert default contacts if defined
 		if ($object_id > 0) {
-			if (GETPOST('contactidp')) {
-				$result = $object->add_contact(GETPOST('contactidp'), 'CUSTOMER', 'external');
+			if (GETPOST('contactid')) {
+				$result = $object->add_contact(GETPOST('contactid'), 'CUSTOMER', 'external');
 				if ($result < 0) {
 					setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
 					$error ++;
@@ -1481,7 +1481,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	*/
 	if ($socid > 0) {
 		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td colspan="2">';
-		$form->select_contacts($soc->id, $setcontact, 'contactidp', 1, $srccontactslist);
+		$form->select_contacts($soc->id, $setcontact, 'contactid', 1, $srccontactslist);
 		print '</td></tr>';
 
 		// Ligne info remises tiers
