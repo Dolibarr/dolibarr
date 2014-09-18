@@ -66,6 +66,7 @@ $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $lineid = GETPOST('lineid', 'int');
+$contactid = GETPOST('contactid','int');
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -76,8 +77,7 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($co
 $NBLINES = 4;
 
 // Security check
-if (! empty($user->societe_id))
-	$socid = $user->societe_id;
+if (! empty($user->societe_id)) $socid = $user->societe_id;
 $result = restrictedArea($user, 'propal', $id);
 
 $object = new Propal($db);
@@ -261,7 +261,7 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 				$object->remise_percent = GETPOST('remise_percent');
 				$object->remise_absolue = GETPOST('remise_absolue');
 				$object->socid = GETPOST('socid');
-				$object->contactid = GETPOST('contactidp');
+				$object->contactid = GETPOST('contactid');
 				$object->fk_project = GETPOST('projectid');
 				$object->modelpdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
@@ -285,7 +285,7 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
             $object->fk_account = GETPOST('fk_account', 'int');
-			$object->contactid = GETPOST('contactidp');
+			$object->contactid = GETPOST('contactid');
 			$object->fk_project = GETPOST('projectid');
 			$object->modelpdf = GETPOST('model');
 			$object->author = $user->id; // deprecated
@@ -351,7 +351,6 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 				}
 
 				$id = $object->create($user);
-
 				if ($id > 0)
 				{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
@@ -435,11 +434,11 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 							if ($reshook < 0)
 								$error ++;
 						} else {
-							$mesgs [] = $srcobject->error;
+							setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 							$error ++;
 						}
 				} else {
-					$mesgs [] = $object->error;
+					setEventMessages($object->error, $object->errors, 'errors');
 					$error ++;
 				}
 			} 			// Standard creation
@@ -448,23 +447,29 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 				$id = $object->create($user);
 			}
 
-			if ($id > 0) {
+			if ($id > 0)
+			{
 				// Insertion contact par defaut si defini
-				if (GETPOST('contactidp') > 0) {
-					$result = $object->add_contact(GETPOST('contactidp'), 'CUSTOMER', 'external');
-					if ($result < 0) {
-						$error ++;
+				if (GETPOST('contactid') > 0)
+				{
+					$result = $object->add_contact(GETPOST('contactid'), 'CUSTOMER', 'external');
+					if ($result < 0)
+					{
+						$error++;
 						setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
 					}
 				}
 
-				if (! $error) {
+				if (! $error)
+				{
 					$db->commit();
 
-					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+					{
 						// Define output language
 						$outputlangs = $langs;
-						if (! empty($conf->global->MAIN_MULTILANGS)) {
+						if (! empty($conf->global->MAIN_MULTILANGS))
+						{
 							$outputlangs = new Translate("", $conf);
 							$newlang = (GETPOST('lang_id') ? GETPOST('lang_id') : $object->thirdparty->default_lang);
 							$outputlangs->setDefaultLang($newlang);
@@ -475,13 +480,18 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 
 					header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
 					exit();
-				} else {
-					$db->rollback();
 				}
-			} else {
-				dol_print_error($db, $object->error);
+				else
+				{
+					$db->rollback();
+					$action='create';
+				}
+			}
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
-				exit();
+				$action='create';
 			}
 		}
 	}
@@ -1246,7 +1256,8 @@ $companystatic = new Societe($db);
 $now = dol_now();
 
 // Add new proposal
-if ($action == 'create') {
+if ($action == 'create')
+{
 	print_fiche_titre($langs->trans("NewProp"));
 
 	$soc = new Societe($db);
@@ -1346,12 +1357,16 @@ if ($action == 'create') {
 	}
 	print '</tr>' . "\n";
 
-	// Contacts
-	if ($socid > 0) {
+	// Contacts (ask contact only if thirdparty already defined). TODO do this also into order and invoice.
+	if ($socid > 0)
+	{
 		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td colspan="2">';
-		$form->select_contacts($soc->id, $setcontact, 'contactidp', 1, $srccontactslist);
+		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist);
 		print '</td></tr>';
+	}
 
+	if ($socid > 0)
+	{
 		// Ligne info remises tiers
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td colspan="2">';
 		if ($soc->remise_percent)

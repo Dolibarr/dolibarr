@@ -270,7 +270,7 @@ function pdf_getPDFFontSize($outputlangs)
 function pdf_getHeightForLogo($logo, $url = false)
 {
 	global $conf;
-	$height=(empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT)?22:$conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT); 
+	$height=(empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT)?22:$conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT);
 	$maxwidth=130;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp=dol_getImageSize($logo, $url);
@@ -1600,6 +1600,24 @@ function pdf_getLinkedObjects($object,$outputlangs)
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($objects[$i]->ref);
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateContract");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date_contrat,'day','',$outputlangs);
+			}
+		}
+		else if ($objecttype == 'shipping')
+		{
+			$outputlangs->load('orders');
+			$outputlangs->load('sendings');
+			$num=count($objects);
+			for ($i=0;$i<$num;$i++)
+			{
+				$objects[$i]->fetchObjectLinked();
+				$order = $objects[$i]->linkedObjects['commande'][0];
+
+				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
+				$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($objects[$i]->ref);
+				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ' / ' . $outputlangs->transnoentities("DateSending");
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
+				$linkedobjects[$objecttype]['date_value'].= ' / ' . dol_print_date($objects[$i]->date_delivery,'day','',$outputlangs);
 			}
 		}
 	}

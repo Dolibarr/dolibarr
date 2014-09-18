@@ -122,6 +122,7 @@ CustomerInvoicePayment=Règlement de facture client
 
 ThirdPartyAccount=Compte tiers
 
+NewAccountingMvt=Nouveau mouvement
 NumMvts=Numéro de mouvement
 ListeMvts=Liste du mouvement
 ErrorDebitCredit=Debit et Credit ne peuvent avoir une valeur en même temps

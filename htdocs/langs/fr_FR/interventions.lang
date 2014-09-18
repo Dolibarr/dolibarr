@@ -25,9 +25,11 @@ NameAndSignatureOfExternalContact=Nom et signature du client :
 DocumentModelStandard=Modèle de fiche d'intervention standard
 InterventionCardsAndInterventionLines=Fiches interventions et lignes d'interventions
 ClassifyBilled=Classer "Facturée"
+ClassifyUnBilled=Classer "Non facturée"
 StatusInterInvoiced=Facturée
 RelatedInterventions=Interventions rattachées
 ShowIntervention=Afficher intervention
+SendInterventionRef=Envoi de la fiche intervention %s
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable suivi de l'intervention
 TypeContact_fichinter_internal_INTERVENING=Intervenant

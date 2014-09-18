@@ -120,6 +120,7 @@ CustomerInvoicePayment=Pago Factura a cliente
 
 ThirdPartyAccount=Cuenta tercero
 
+NewAccountingMvt=Nueva movimiento
 NumMvts=Número de movimiento
 ListeMvts=Apuntes del movimiento
 ErrorDebitCredit=Débito y Crédito no pueden terner valor al mismo tiempo

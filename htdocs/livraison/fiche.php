@@ -46,7 +46,7 @@ $langs->load('orders');
 
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
-$backtourl=GETPOST('backtourl');
+$backtopage=GETPOST('backtopage');
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -150,7 +150,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	if ($result > 0)
 	{
 		$db->commit();
-		if (! empty($backtourl)) header("Location: ".$backtourl);
+		if (! empty($backtopage)) header("Location: ".$backtopage);
 		else header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
 		exit;
 	}
@@ -493,7 +493,7 @@ else
 			if ($action == 'delete')
 			{
 				$expedition_id = GETPOST("expid");
-				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&expid='.$expedition_id.'&backtourl='.urlencode($backtourl),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$delivery->ref),'confirm_delete','','',1);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$delivery->ref),'confirm_delete','','',1);
 
 			}
 
@@ -739,7 +739,7 @@ else
 				{
 					if ($conf->expedition_bon->enabled)
 					{
-						print '<a class="butActionDelete" href="fiche.php?id='.$delivery->id.'&amp;expid='.$delivery->origin_id.'&amp;action=delete&amp;backtourl='.urlencode(DOL_URL_ROOT.'/expedition/fiche.php?id='.$delivery->origin_id).'">'.$langs->trans("Delete").'</a>';
+						print '<a class="butActionDelete" href="fiche.php?id='.$delivery->id.'&amp;expid='.$delivery->origin_id.'&amp;action=delete&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/fiche.php?id='.$delivery->origin_id).'">'.$langs->trans("Delete").'</a>';
 					}
 					else
 					{

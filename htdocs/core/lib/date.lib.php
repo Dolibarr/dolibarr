@@ -131,12 +131,13 @@ function getServerTimeZoneInt($refgmtdate='now')
  *
  *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
- *  @param      int			$duration_unit      Unit of added delay (d, m, y, w)
+ *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h)
  *  @return     int      			        	New timestamp
  */
 function dol_time_plus_duree($time,$duration_value,$duration_unit)
 {
 	if ($duration_value == 0)  return $time;
+	if ($duration_unit == 'h') return $time + (3600*$duration_value);
 	if ($duration_unit == 'w') return $time + (3600*24*7*$duration_value);
 	if ($duration_value > 0) $deltastring="+".abs($duration_value);
 	if ($duration_value < 0) $deltastring="-".abs($duration_value);

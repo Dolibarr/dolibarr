@@ -5,6 +5,8 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: PDF event report show project and status of event.
+- New: Onto event summary of elements, end date and status are visible.
 - New: Can filter on status on interventions.
 - New: Add help info of field type into dictionary of payment types.
 - New: Add proposals into referer page of thirdparty.
@@ -29,7 +31,7 @@ For users:
        shown on main product card.
 - New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
        create an automatic event into agenda.
-- New: Add new type of event (when type of events are used, not by default)
+- New: Add new type of event (when type of events are used, not by default).
 - New: Add country into table of thirdparties type. This will allow to provide
        a list of thirdparty types specific to a country (like argentina that
        need type A or B).
@@ -40,15 +42,20 @@ For users:
        Differentiate text and img.
        Use label into quick search form.
        Use accesskey on form search.
-- New: Intervention documents are now available in ECM module
-- New: Add attachments on user card + in ECM module
+- New: Intervention documents are now available in ECM module.
+- New: Add attachments on user card + in ECM module.
 - New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.    
-- New: [ task #1204 ] add Numering contrat module free (like leopard in product module)
-- New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice
-- New: Enable supplier price log table
-- New: [ task #1204 ] add a External reference to contract
+- New: [ task #1204 ] add Numering contrat module free (like leopard in product module).
+- New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice.
+- New: Enable supplier price log table.
+- New: [ task #1204 ] add a External reference to contract.
 - New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
 - New: Optimize size of image static resources.
+- New: Add hourly and daily amount on user card. Add weekly working hours and salary on user card.
+- New: Content of predefined email come firstly from table llx_c_email_template, then translation key. 
+- New: Add option MAIN_GENERATE_INVOICES_WITH_PICTURE to show picture 
+       onto PDF like MAIN_GENERATE_PROPOSALS_WITH_PICTURE dir for proposals.
+- New: Add more search field in list of cheque deposits.
 - Upgrade phpexcel lib to 1.7.8
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
@@ -67,6 +74,7 @@ For users:
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
+- New: Add dunning into accountancy report
 
 New experimental module:
 - New: Module Accounting Expert to manage accountancy
@@ -76,7 +84,6 @@ New experimental module:
 			Ari Elbaz
 			Florian Henry
 			Juanjo Menent
-		
 		And to the contributors :
 			Jeff Info				2000 euros
 			Nord Anim		 		 120 euros
@@ -92,25 +99,25 @@ For developers:
 - New: Add a css style "cursorpointer".
 - New: Select list of users can return user into hierarchy.
 - New: getBrowserInfo can return type of layout of browser (classic/phone/tablet)
-- New: Add hook "searchAgendaFrom".
+- New: Add hook "searchAgendaFrom" and "beforePDFCreation".
 - New: Add trigger DON_UPDATE, DON_DELETE
 - New: Add country iso code on 3 chars into table of countries.
 - Qual: Removed hard coded rowid into data init of table llx_c_action_trigger.
 - LINEBILL_DELETE, LINK_DELETE, ORDER_SUPPLIER_DELETE, RESOURCE_DELETE trigger called before SQL delete
 - New: [ Task #1481 ] Add trigger BILL_SUPPLIER_UPDATE.
 - New: [ Task #1495 ] Add trigger LINECONTRACT_CREATE.
-- New: Added hook "formConfirm" and "doActions" for supplier invoice card
-- New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card
-- New: renamed table llx_c_pays to llx_c_country & libelle field to label
-- Qual: Renamed table llx_c_civilite into llx_c_civility
-		field civilite into label in the same table
+- New: Added hook "formConfirm" and "doActions" for supplier invoice card.
+- New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card.
+- New: renamed table llx_c_pays to llx_c_country & libelle field to label.
+- Qual: Renamed table llx_c_civilite into llx_c_civility,
+		field civilite into label in the same table,
 		and field civilite into civility in other table
 
-WARNING: Following change may create regression for some external modules, but was necessary to make
+WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
 - Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
-- Some field into database wwere renamed from "libelle" to "label".
+- Some field into database were renamed from "libelle" to "label".
 - Table llx_c_pays were renamed into llx_c_country.  
 - Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
@@ -132,6 +139,8 @@ For users:
 - Fix: Iban was used instead of Bic into SEPA file.
 - Fix: Must unaccent strings into SEPA file.
 - Fix: Extrafield feature select from table should try to translate multiple column when not needed 
+- Fix: cents for indian ruppes are calle paisa and paise.
+- Fix: Invoices payments may be older than invoices.
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
@@ -265,9 +274,16 @@ Fix: When disabled, all fields to add time into task line must be disabled.
 Fix: Missing include files.lib.php in some pages that use dol_delete_recursive
 Fix: [ bug #1558 ] Product/service edit page title shows new Ref instead of old ref.
 Fix: [ bug #1553 ] Saving User displays setup removes menu.
-Fix: [ bug #1544 ] Can remove date from invoice
-Fix: list event view lost type event filter
-Fix: Add code save on create event
+Fix: [ bug #1544 ] Can remove date from invoice.
+Fix: list event view lost type event filter.
+Fix: Add code save on create event.
+Fix: SQL injection.
+Fix: [ bug #1589 ] Menu type in "Edit menu" page is not translated
+Fix: [ bug #1591 ] Linked object block shows Total HT/TTC even if not having permission to read them
+Fix: [ bug #1577 ] When creating new Private individual third, selected third type is ignored
+Fix: [ bug #1555 ] Update accountancy code of products does not throw PRODUCT_MODIFY trigger
+Fix: [ bug #1548 ] Supplier payment card shows type in French
+Fix: [ bug #1546 ] Incorrect page number when searching in the list of bank transactions
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.

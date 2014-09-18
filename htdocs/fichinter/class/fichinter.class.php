@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  *
@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 
 
 /**
- *	Classe des gestion des fiches interventions
+ *	Class to manage interventions
  */
 class Fichinter extends CommonObject
 {
@@ -796,7 +796,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param      User	$user			Object user who modify
 	 *	@param      string	$description    description
-	 *	@return     int						<0 if ko, >0 if ok
+	 *	@return     int						<0 if KO, >0 if OK
 	 */
 	function set_description($user, $description)
 	{
@@ -808,7 +808,6 @@ class Fichinter extends CommonObject
 			$sql.= " SET description = '".$this->db->escape($description)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
-			$sql.= " AND fk_statut = 0";
 
 			if ($this->db->query($sql))
 			{

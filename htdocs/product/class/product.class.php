@@ -6,7 +6,7 @@
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013-2014 Cedric GROSS	        <c.gross@kreiz-it.fr>
- * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
  * Copyright (C) 2014 	   Philippe Grand 		<philippe.grand@atoo-net.com>
@@ -989,6 +989,62 @@ class Product extends CommonObject
 		}
 	}
 
+	/*
+	 * Sets an accountancy code for a product.
+	 * Also calls PRODUCT_MODIFY trigger when modified
+	 *
+	 * @param string $type It can be 'buy' or 'sell'
+	 * @param string $value Accountancy code
+	 * @return int <0 KO >0 OK
+	 */
+	public function setAccountancyCode($type, $value)
+	{
+		global $user, $langs, $conf;
+
+		$this->db->begin();
+
+		if ($type == 'buy') {
+			$field = 'accountancy_code_buy';
+		} elseif ($type == 'sell') {
+			$field = 'accountancy_code_sell';
+		} else {
+			return -1;
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ";
+		$sql.= "$field = '".$this->db->escape($value)."'";
+		$sql.= " WHERE rowid = ".$this->id;
+
+		dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+
+		if ($resql)
+		{
+			// Call triggers
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('PRODUCT_MODIFY',$this,$user,$langs,$conf);
+			if ($result < 0)
+			{
+				$this->errors=$interface->errors;
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
+			$this->$field = $value;
+
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
 	/**
 	 *	Load array this->multilangs
 	 *
@@ -1342,7 +1398,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, label, description, url, note, customcode, fk_country, price, price_ttc,";
+		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
@@ -1367,6 +1423,7 @@ class Product extends CommonObject
 
 				$this->id						= $obj->rowid;
 				$this->ref						= $obj->ref;
+				$this->ref_ext					= $obj->ref_ext;
 				$this->libelle					= $obj->label;		// TODO deprecated
 				$this->label					= $obj->label;
 				$this->description				= $obj->description;

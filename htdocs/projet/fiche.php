@@ -49,10 +49,11 @@ $hookmanager->initHooks(array('projectcard'));
 
 $object = new Project($db);
 $extrafields = new ExtraFields($db);
-$object->fetch($id,$ref);
-if ($object->id > 0)
+if ($id > 0 || ! empty($ref))
 {
+	$object->fetch($id,$ref);
 	$object->fetch_thirdparty();
+	$id=$object->id;
 }
 
 // Security check
@@ -63,7 +64,7 @@ $result = restrictedArea($user, 'projet', $object->id);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-$date_start=dol_mktime(0,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
+$date_start=dol_mktime(0,0,0,GETPOST('projectstartmonth','int'),GETPOST('projectstartday','int'),GETPOST('projectstartyear','int'));
 $date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));
 
 
@@ -216,7 +217,7 @@ if (empty($reshook))
 	        $object->socid        = GETPOST('socid','int');
 	        $object->description  = GETPOST('description');	// Do not use 'alpha' here, we want field as it is
 	        $object->public       = GETPOST('public','alpha');
-	        $object->date_start   = empty($_POST["project"])?'':$date_start;
+	        $object->date_start   = empty($_POST["projectstart"])?'':$date_start;
 	        $object->date_end     = empty($_POST["projectend"])?'':$date_end;
 
 	        // Fill array 'array_options' with data from add form
@@ -259,8 +260,8 @@ if (empty($reshook))
 		{
 	    	$db->commit();
 
-			if (GETPOST('socid','int') > 0) $object->societe->fetch(GETPOST('socid','int'));
-			else unset($object->societe);
+			if (GETPOST('socid','int') > 0) $object->thirdparty->fetch(GETPOST('socid','int'));
+			else unset($object->thirdparty);
 	    }
 	}
 
@@ -446,7 +447,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Date start
     print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-    print $form->select_date(($date_start?$date_start:''),'project');
+    print $form->select_date(($date_start?$date_start:''),'projectstart');
     print '</td></tr>';
 
     // Date end
@@ -488,7 +489,6 @@ else
      * Show or edit
      */
 
-    if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
     $res=$object->fetch_optionals($object->id,$extralabels);
 
     // To verify role of users
@@ -562,7 +562,7 @@ else
 
         // Customer
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-        $text=$form->select_company($object->societe->id,'socid','',1,1);
+        $text=$form->select_company($object->thirdparty->id,'socid','',1,1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
         print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
         print '</td></tr>';
@@ -578,7 +578,7 @@ else
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-        print $form->select_date($object->date_start?$object->date_start:-1,'project');
+        print $form->select_date($object->date_start?$object->date_start:-1,'projectstart');
         print ' &nbsp; &nbsp; <input type="checkbox" name="reportdate" value="yes" ';
         if ($comefromclone){print ' checked="checked" ';}
 		print '/> '. $langs->trans("ProjectReportDate");
@@ -633,7 +633,7 @@ else
 
         // Third party
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-        if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
+        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1);
         else print'&nbsp;';
         print '</td></tr>';
 

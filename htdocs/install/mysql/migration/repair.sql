@@ -108,6 +108,7 @@ UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps
 -- VMYSQL DELETE from llx_menu where module = 'margins' and url = '/margin/index.php' and not exists (select * from llx_const where name = 'MAIN_MODULE_MARGIN' or name = 'MAIN_MODULE_MARGINS');
 
 
+ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur;
 
 
@@ -178,3 +179,9 @@ UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author >
 -- DROP TABLE llx_pos_moviments;
 -- DROP TABLE llx_pos_ticketdet;
 
+-- To replace amount on all invoice and lines when forgetting to apply a 20% vat
+-- update llx_facturedet set tva_tx = 20 where tva_tx = 0;
+-- update llx_facturedet set total_ht = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
+-- update llx_facturedet set total_tva = total_ttc - total_ht where total_vat = 0;
+-- update llx_facture set total = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
+-- update llx_facture set tva = total_ttc - total where tva = 0;

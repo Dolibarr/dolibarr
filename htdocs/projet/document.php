@@ -46,9 +46,9 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 $result=restrictedArea($user,'projet',$id,'');
 
 $object = new Project($db);
-$object->fetch($id,$ref);
-if ($object->id > 0)
+if ($id > 0 || ! empty($ref))
 {
+	$object->fetch($id,$ref);
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 }
@@ -84,8 +84,6 @@ $form = new Form($db);
 if ($object->id > 0)
 {
 	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
-
-	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
 
     // To verify role of users
     //$userAccess = $object->restrictedProjectArea($user,'read');
@@ -124,7 +122,7 @@ if ($object->id > 0)
 
 	// Company
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+	if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td></tr>';
 

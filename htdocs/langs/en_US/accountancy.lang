@@ -122,6 +122,7 @@ CustomerInvoicePayment=Payment of invoice customer
 
 ThirdPartyAccount=Thirdparty account
 
+NewAccountingMvt=New movement
 NumMvts=Number of movement
 ListeMvts=List of the movement
 ErrorDebitCredit=Debit and Credit cannot have a value at the same time

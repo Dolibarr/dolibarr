@@ -798,7 +798,5 @@ function validOrder($authentication,$id='')
 	return $objectresp;
 }
 
-
 // Return the results.
-$server->service((isset($HTTP_RAW_POST_DATA)?$HTTP_RAW_POST_DATA:''));
-
+$server->service(file_get_contents("php://input"));

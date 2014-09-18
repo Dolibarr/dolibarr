@@ -31,22 +31,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 $langs->load("companies");
 
 // Security check
-$contactid = isset($_GET["id"])?$_GET["id"]:'';
+$contactid = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid, 'socpeople&societe');
 
 
 
 /*
-* 	View
-*/
+ * 	View
+ */
 
 llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 
 $contact = new Contact($db);
-$contact->fetch($_GET["id"], $user);
-$contact->info($_GET["id"]);
+$contact->fetch($contactid, $user);
+$contact->info($contactid);
 
 
 $head = contact_prepare_head($contact);
