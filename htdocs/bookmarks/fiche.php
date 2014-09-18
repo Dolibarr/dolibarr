@@ -54,7 +54,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	if (GETPOST("cancel"))
 	{
-		if (empty($backtopage)) $backtopage=(GETPOST("urlsource")?GETPOST("urlsource"):((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/liste.php'));
+		if (empty($backtopage)) $backtopage=(GETPOST("urlsource")?GETPOST("urlsource"):((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 		header("Location: ".$backtopage);
 		exit;
 	}
@@ -86,7 +86,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 		if ($res > 0)
 		{
-			if (empty($backtopage)) $backtopage=(GETPOST("urlsource")?GETPOST("urlsource"):DOL_URL_ROOT.'/bookmarks/liste.php');
+			if (empty($backtopage)) $backtopage=(GETPOST("urlsource")?GETPOST("urlsource"):DOL_URL_ROOT.'/bookmarks/list.php');
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -285,7 +285,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	// Remove
 	if ($user->rights->bookmark->supprimer && $action != 'edit')
 	{
-		print "  <a class=\"butActionDelete\" href=\"liste.php?bid=".$bookmark->id."&amp;action=delete\">".$langs->trans("Delete")."</a>\n";
+		print "  <a class=\"butActionDelete\" href=\"list.php?bid=".$bookmark->id."&amp;action=delete\">".$langs->trans("Delete")."</a>\n";
 	}
 
 	print '</div>';

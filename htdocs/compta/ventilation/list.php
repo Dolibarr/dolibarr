@@ -20,7 +20,7 @@
 
 
 /**
- * 		\file       htdocs/compta/ventilation/liste.php
+ * 		\file       htdocs/compta/ventilation/list.php
  * 		\ingroup    compta
  * 		\brief      Page de ventilation des lignes de facture
  */
@@ -69,7 +69,7 @@ if ($result)
 	$num_lignes = $db->num_rows($result);
 	$i = 0;
 
-	print_barre_liste($langs->trans("InvoiceLinesToDispatch"),$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
+	print_barre_liste($langs->trans("InvoiceLinesToDispatch"),$page,"list.php","",$sortfield,$sortorder,'',$num_lignes);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Invoice").'</td>';

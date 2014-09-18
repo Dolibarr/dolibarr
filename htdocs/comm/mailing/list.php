@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/comm/mailing/liste.php
+ *       \file       htdocs/comm/mailing/list.php
  *       \ingroup    mailing
  *       \brief      Liste des mailings
  */

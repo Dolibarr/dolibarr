@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/product/stock/liste.php
+ *      \file       htdocs/product/stock/list.php
  *      \ingroup    stock
  *      \brief      Page with warehouse and stock value
  */

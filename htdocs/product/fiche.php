@@ -464,7 +464,7 @@ if (empty($reshook))
 
         if ($result > 0)
         {
-            header('Location: '.DOL_URL_ROOT.'/product/liste.php?type='.$object->type.'&delprod='.urlencode($object->ref));
+            header('Location: '.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'&delprod='.urlencode($object->ref));
             exit;
         }
         else

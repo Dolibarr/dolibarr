@@ -631,7 +631,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	if ($object->delete($object->id))
 	{
-		$url= (! empty($urlfrom) ? $urlfrom : 'liste.php');
+		$url= (! empty($urlfrom) ? $urlfrom : 'list.php');
 		header("Location: ".$url);
 		exit;
 	}
@@ -769,7 +769,7 @@ else
 
 			print '<table class="border" width="100%">';
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';

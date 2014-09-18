@@ -20,7 +20,7 @@
  */
 
 /**
- *       \file       htdocs/fourn/liste.php
+ *       \file       htdocs/fourn/list.php
  *       \ingroup    fournisseur
  *       \brief      Home page of supplier area
  */
@@ -118,7 +118,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-dol_syslog('fourn/liste.php:', LOG_DEBUG);
+dol_syslog('fourn/list.php:', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {

@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/expedition/liste.php
+ *      \file       htdocs/expedition/list.php
  *      \ingroup    expedition
  *      \brief      Page to list all shipments
  */

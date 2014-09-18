@@ -127,7 +127,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Formulaire recherche adherent
-print '<form action="liste.php" method="post">';
+print '<form action="list.php" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="search">';
 print '<table class="noborder nohover" width="100%">';

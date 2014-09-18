@@ -75,7 +75,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 if (! empty($conf->contrat->enabled))
 {
 	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';

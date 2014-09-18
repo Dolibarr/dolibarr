@@ -63,7 +63,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Search customer orders
 $var=false;
 print '<table class="noborder nohover" width="100%">';
-print '<form method="post" action="'.DOL_URL_ROOT.'/commande/liste.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchOrder").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
@@ -141,7 +141,7 @@ if ($resql)
             $var=!$var;
             print "<tr ".$bc[$var].">";
             print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
-            print '<td align="right"><a href="liste.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
+            print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
             print $commandestatic->LibStatut($status,$bool,3);
             print '</a>';
             print '</td>';
@@ -303,7 +303,7 @@ if (! empty($conf->commande->enabled))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=1">('.$num.')</a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></td></tr>';
 
 		if ($num)
 		{
@@ -374,7 +374,7 @@ if (! empty($conf->commande->enabled))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=2">('.$num.')</a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2">('.$num.')</a></td></tr>';
 
 		if ($num)
 		{

@@ -19,7 +19,7 @@
  */
 
 /**
- *      \file       htdocs/adherents/liste.php
+ *      \file       htdocs/adherents/list.php
  *      \ingroup    member
  *		\brief      Page to list all members of foundation
  */

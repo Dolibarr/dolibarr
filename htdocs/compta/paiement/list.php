@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/compta/paiement/liste.php
+ *	\file       htdocs/compta/paiement/list.php
  *  \ingroup    compta
  *  \brief      Page liste des paiements des factures clients
  */

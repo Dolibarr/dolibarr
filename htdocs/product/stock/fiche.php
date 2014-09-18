@@ -94,7 +94,7 @@ if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->right
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		header("Location: ".DOL_URL_ROOT.'/product/stock/liste.php');
+		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php');
 		exit;
 	}
 	else
@@ -238,7 +238,7 @@ else
 
 			print '<table class="border" width="100%">';
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/liste.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
 
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';

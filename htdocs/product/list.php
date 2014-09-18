@@ -25,7 +25,7 @@
  */
 
 /**
- *  \file       htdocs/product/liste.php
+ *  \file       htdocs/product/list.php
  *  \ingroup    produit
  *  \brief      Page to list products and services
  */
@@ -239,13 +239,13 @@ else
     	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	$param.=isset($type)?"&amp;type=".$type:"";
 
-    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
+    	print_barre_liste($texte, $page, "list.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
     	if (! empty($catid))
     	{
     		print "<div id='ways'>";
     		$c = new Categorie($db);
-    		$ways = $c->print_all_ways(' &gt; ','product/liste.php');
+    		$ways = $c->print_all_ways(' &gt; ','product/list.php');
     		print " &gt; ".$ways[0]."<br>\n";
     		print "</div><br>";
     	}
@@ -523,7 +523,7 @@ else
     		$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     		$param.=isset($type)?"&amp;type=".$type:"";
-    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
+    		print_barre_liste('', $page, "list.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
 
     		$db->free($resql);
 

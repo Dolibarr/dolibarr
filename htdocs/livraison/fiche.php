@@ -515,7 +515,7 @@ else
 			// Shipment
 			if (($delivery->origin == 'shipment' || $delivery->origin == 'expedition') && $delivery->origin_id > 0)
 			{
-				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/liste.php">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
 
 				// Ref
 				print '<tr><td width="20%">'.$langs->trans("RefSending").'</td>';

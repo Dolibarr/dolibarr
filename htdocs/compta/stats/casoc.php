@@ -429,9 +429,9 @@ if (count($amount)) {
 		print '<td align="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
                     if ($key > 0) {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid='.$key.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
 		    } else {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid=-1">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid=-1">';
 		    }
 		} else {
 		    if ($key > 0) {
@@ -447,9 +447,9 @@ if (count($amount)) {
 		print '<td align="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
                     if ($key > 0) {
-                        print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid='.$key.'">';
+                        print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
 		    } else {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?orphelins=1">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?orphelins=1">';
 		    }
 		} else {
                     if ($key > 0) {

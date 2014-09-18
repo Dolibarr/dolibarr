@@ -127,7 +127,7 @@ if ($resql)
             $var=!$var;
             print "<tr ".$bc[$var].">";
             print '<td>'.$propalstatic->LibStatut($status,0).'</td>';
-            print '<td align="right"><a href="liste.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
+            print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
         }
     }
@@ -399,7 +399,7 @@ if (! empty($conf->propal->enabled))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=1">('.$num.')</a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></td></tr>';
 
 		if ($num)
 		{
@@ -471,7 +471,7 @@ if (! empty($conf->propal->enabled))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=2">('.$num.')</a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2">('.$num.')</a></td></tr>';
 
 		if ($num)
 		{

@@ -164,7 +164,7 @@ if ($action == 'add')
 if ($action == 'delete')
 {
 	$don->delete($id);
-	header("Location: liste.php");
+	header("Location: list.php");
 	exit;
 }
 if ($action == 'commentaire')
@@ -459,7 +459,7 @@ if (! empty($id) && $action != 'edit')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/dons/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/dons/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
     $nbrows=12;
     if (! empty($conf->projet->enabled)) $nbrows++;

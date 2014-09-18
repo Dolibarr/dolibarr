@@ -51,7 +51,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 $var=false;
 print '<table class="noborder nohover" width="100%">';
-print '<form method="post" action="liste.php">';
+print '<form method="post" action="list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASending").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';

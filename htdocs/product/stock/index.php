@@ -51,7 +51,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 /*
  * Zone recherche entrepot
  */
-print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/liste.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print "<tr class=\"liste_titre\">";

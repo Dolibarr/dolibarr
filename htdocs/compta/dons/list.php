@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/compta/dons/liste.php
+ *	\file       htdocs/compta/dons/list.php
  *	\ingroup    don
  *	\brief      Page de liste des dons
  */

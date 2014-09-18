@@ -101,7 +101,7 @@ dol_fiche_head($head, 'element', $langs->trans("Project"),0,($project->public?'p
 
 print '<table class="border" width="100%">';
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
 print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 // Define a complementary filter for search of next/prev ref.

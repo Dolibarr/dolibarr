@@ -22,7 +22,7 @@
  */
 
 /**
- *	\file       htdocs/commande/liste.php
+ *	\file       htdocs/commande/list.php
  *	\ingroup    commande
  *	\brief      Page to list orders
  */

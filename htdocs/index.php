@@ -213,14 +213,14 @@ if (empty($user->societe_id))
 	    // Dashboard Link lines
 	    $links=array(DOL_URL_ROOT.'/comm/list.php',
 	    DOL_URL_ROOT.'/comm/prospect/list.php',
-	    DOL_URL_ROOT.'/fourn/liste.php',
-	    DOL_URL_ROOT.'/adherents/liste.php?statut=1&mainmenu=members',
-	    DOL_URL_ROOT.'/product/liste.php?type=0&mainmenu=products',
-	    DOL_URL_ROOT.'/product/liste.php?type=1&mainmenu=products',
+	    DOL_URL_ROOT.'/fourn/list.php',
+	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
+	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
+	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
 	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial',
-	    DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
+	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial',
 	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
-	    DOL_URL_ROOT.'/contrat/liste.php');
+	    DOL_URL_ROOT.'/contrat/list.php');
 	    // Translation lang files
 	    $langfile=array("companies",
 	                    "prospects",
@@ -317,7 +317,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
     $board->load_board($user);
     $board->warning_delay=$conf->commande->client->warning_delay/60/60/24;
     $board->label=$langs->trans("OrdersToProcess");
-    $board->url=DOL_URL_ROOT.'/commande/liste.php?viewstatut=-3';
+    $board->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
     $board->img=img_object($langs->trans("Orders"),"order");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -477,7 +477,7 @@ if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $use
     $board->load_board($user);
     $board->warning_delay=$conf->adherent->cotisation->warning_delay/60/60/24;
     $board->label=$langs->trans("MembersWithSubscriptionToReceive");
-    $board->url=DOL_URL_ROOT.'/adherents/liste.php?mainmenu=members&statut=1';
+    $board->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&statut=1';
     $board->img=img_object($langs->trans("Members"),"user");
     $rowspan++;
     $dashboardlines[]=$board;

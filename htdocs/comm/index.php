@@ -91,7 +91,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$var=false;
 	print '<table class="noborder nohover" width="100%">';
-	print '<form method="post" action="'.DOL_URL_ROOT.'/commande/liste.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchACustomerOrder").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
@@ -105,7 +105,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
 	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';

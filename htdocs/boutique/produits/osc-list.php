@@ -18,7 +18,7 @@
  */
 
 /**
- * 		\file 		htdocs/boutique/produits/osc-liste.php
+ * 		\file 		htdocs/boutique/produits/osc-list.php
  *		\ingroup    boutique
  *		\brief      Page gestion produits du module OsCommerce
  */
@@ -46,7 +46,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 
-print_barre_liste("Liste des produits oscommerce", $page, "osc-liste.php");
+print_barre_liste("Liste des produits oscommerce", $page, "osc-list.php");
 
 $sql = "SELECT p.products_id, p.products_model, p.products_quantity, p.products_status, d.products_name, m.manufacturers_name, m.manufacturers_id";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products as p, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_description as d, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."manufacturers as m";

@@ -21,7 +21,7 @@
  */
 
 /**
- *   \file       htdocs/fourn/commande/liste.php
+ *   \file       htdocs/fourn/commande/list.php
  *   \ingroup    fournisseur
  *   \brief      List of suppliers orders
  */

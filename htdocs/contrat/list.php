@@ -20,7 +20,7 @@
  */
 
 /**
- *       \file       htdocs/contrat/liste.php
+ *       \file       htdocs/contrat/list.php
  *       \ingroup    contrat
  *       \brief      Page liste des contrats
  */

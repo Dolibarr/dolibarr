@@ -364,7 +364,7 @@ if ($rowid > 0)
 		print "</div>";
 
 
-		// Show list of members (nearly same code than in page liste.php)
+		// Show list of members (nearly same code than in page list.php)
 
 		$membertypestatic=new AdherentType($db);
 
@@ -588,12 +588,12 @@ if ($rowid > 0)
 		        print '<td align="center">';
 				if ($user->rights->adherent->creer)
 				{
-					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=edit&return=liste.php">'.img_edit().'</a>';
+					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=edit&return=list.php">'.img_edit().'</a>';
 				}
 				print '&nbsp;';
 				if ($user->rights->adherent->supprimer)
 				{
-					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=resign&return=liste.php">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
+					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=resign&return=list.php">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
 		        }
 				print "</td>";
 

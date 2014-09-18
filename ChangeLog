@@ -112,6 +112,7 @@ For developers:
 - Qual: Renamed table llx_c_civilite into llx_c_civility,
 		field civilite into label in the same table,
 		and field civilite into civility in other table
+- Qual: Renamed all files & links "liste.php" into "list.php" 
 
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:

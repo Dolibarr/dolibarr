@@ -21,7 +21,7 @@
  */
 
 /**
- *		\file       htdocs/fourn/product/liste.php
+ *		\file       htdocs/fourn/product/list.php
  *		\ingroup    produit
  *		\brief      Page liste des produits ou services
  */
@@ -121,7 +121,7 @@ if ($fourn_id > 0)
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog("fourn/product/liste.php:", LOG_DEBUG);
+dol_syslog("fourn/product/list.php:", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -150,7 +150,7 @@ if ($resql)
 	{
 		print "<div id='ways'>";
 		$c = new Categorie($db);
-		$ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
+		$ways = $c->print_all_ways(' &gt; ','fourn/product/list.php');
 		print " &gt; ".$ways[0]."<br>\n";
 		print "</div><br>";
 	}

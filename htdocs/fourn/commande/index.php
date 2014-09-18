@@ -59,7 +59,7 @@ print '<tr valign="top"><td class="notopnoleft" width="30%">';
 */
 $var=false;
 print '<table class="noborder nohover" width="100%">';
-print '<form method="post" action="liste.php">';
+print '<form method="post" action="list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchOrder").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
@@ -125,7 +125,7 @@ if ($resql)
             $var=!$var;
             print "<tr ".$bc[$var].">";
             print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
-            print '<td align="right"><a href="liste.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
+            print '<td align="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
             print "</tr>\n";
         }
     }
@@ -184,7 +184,7 @@ if ($resql)
 
         print "<tr ".$bc[$var].">";
         print '<td>'.$langs->trans($commandestatic->statuts[$row[1]]).'</td>';
-        print '<td align="right"><a href="liste.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
+        print '<td align="right"><a href="list.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
 
         print "</tr>\n";
         $i++;
@@ -387,7 +387,7 @@ $num = $db->num_rows($resql);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=1">('.$num.')</a></td></tr>';
+print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></td></tr>';
 
 if ($num)
 {

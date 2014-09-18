@@ -564,7 +564,7 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confir
 		}
 		else
 		{
-			header("Location: liste.php");
+			header("Location: list.php");
 			exit;
 		}
 	}
@@ -1355,7 +1355,7 @@ else
 
 		print '<table class="border" width="100%">';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';

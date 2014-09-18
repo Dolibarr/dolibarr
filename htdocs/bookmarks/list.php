@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file       htdocs/bookmarks/liste.php
+ *       \file       htdocs/bookmarks/list.php
  *       \brief      Page to display list of bookmarks
  *       \ingroup    bookmark
  */

@@ -551,7 +551,7 @@ else if ($id || $ref)
         {
             $langs->load("mails");
             print '<td class="nowrap">'.$langs->trans("NbOfEMailingsReceived").'</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td>';
         }
         else
         {

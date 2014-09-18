@@ -48,7 +48,7 @@ function printBookmarksList($aDb, $aLangs)
 	// Menu bookmark
 	$ret.= '<div class="menu_titre">';
 	$ret.= '<table class="nobordernopadding" width="100%" summary="bookmarkstable"><tr><td>';
-	$ret.= '<a class="vmenu" href="'.DOL_URL_ROOT.'/bookmarks/liste.php">'.$langs->trans('Bookmarks').'</a>';
+	$ret.= '<a class="vmenu" href="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</a>';
 	$ret.= '</td><td align="right">';
 	if ($user->rights->bookmark->creer)
 	{

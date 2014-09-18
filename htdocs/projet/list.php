@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/projet/liste.php
+ *	\file       htdocs/projet/list.php
  *	\ingroup    projet
  *	\brief      Page to list projects
  */
@@ -39,7 +39,7 @@ if ($socid > 0)
 {
 	$soc = new Societe($db);
 	$soc->fetch($socid);
-	$title .= ' (<a href="liste.php">'.$soc->nom.'</a>)';
+	$title .= ' (<a href="list.php">'.$soc->nom.'</a>)';
 }
 if (!$user->rights->projet->lire) accessforbidden();
 

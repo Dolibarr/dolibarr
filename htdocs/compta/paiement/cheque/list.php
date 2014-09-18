@@ -19,7 +19,7 @@
  */
 
 /**
- *   \file       htdocs/compta/paiement/cheque/liste.php
+ *   \file       htdocs/compta/paiement/cheque/list.php
  *   \ingroup    compta
  *   \brief      Page list of cheque deposits
  */

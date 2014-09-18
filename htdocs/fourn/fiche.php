@@ -285,7 +285,7 @@ if ($object->fetch($id))
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$object->id.'">'.$langs->trans("All").' ('.$object->nbOfProductRefs().')';
+		print '<a href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("All").' ('.$object->nbOfProductRefs().')';
 		print '</a></td></tr></table>';
 	}
 
@@ -319,7 +319,7 @@ if ($object->fetch($id))
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
     			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
-    			print '<td align="right"><a href="commande/liste.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td>';
+    			print '<td align="right"><a href="commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';
