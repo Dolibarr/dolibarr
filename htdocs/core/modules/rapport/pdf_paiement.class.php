@@ -91,7 +91,7 @@ class pdf_paiement
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-		global $user,$langs,$conf;
+		global $conf, $hookmanager, $langs, $user;
 
 		$socid=0;
 		if ($user->societe_id) $socid=$user->societe_id;
