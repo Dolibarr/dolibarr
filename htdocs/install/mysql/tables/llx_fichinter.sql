@@ -24,6 +24,7 @@ create table llx_fichinter
   fk_projet			integer DEFAULT 0,          -- projet auquel est rattache la fiche
   fk_contrat		integer DEFAULT 0,          -- contrat auquel est rattache la fiche
   ref				varchar(30) NOT NULL,       -- number
+  ref_ext			varchar(255),
   entity			integer DEFAULT 1 NOT NULL, -- multi company id
   tms				timestamp,
   datec				datetime,                   -- date de creation 

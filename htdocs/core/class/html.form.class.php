@@ -3344,7 +3344,7 @@ class Form
      *    @param    string	$htmlname    	Nom du formulaire select
      *    @return	void
      */
-    function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
+    function form_contacts($page, $societe, $selected='', $htmlname='contactid')
     {
         global $langs, $conf;
 

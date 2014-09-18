@@ -34,6 +34,10 @@ $expeditionid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expedition',$expeditionid,'');
 
+$search_ref_exp = GETPOST("search_ref_exp");
+$search_ref_liv = GETPOST('search_ref_liv');
+$search_societe = GETPOST("search_societe");
+
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
@@ -47,6 +51,13 @@ if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="DESC";
 $limit = $conf->liste_limit;
 
+// Do we click on purge search criteria ?
+if (GETPOST("button_removefilter_x"))
+{
+    $search_ref_exp='';
+    $search_ref_liv='';
+    $search_societe='';
+}
 
 /*
  * View
@@ -79,10 +90,9 @@ if ($socid)
 {
 	$sql.= " AND e.fk_soc = ".$socid;
 }
-if (GETPOST('sf_ref','alpha'))
-{
-	$sql.= " AND e.ref like '%".$db->escape(GETPOST('sf_ref','alpha'))."%'";
-}
+if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
+if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
+if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1,$offset);
@@ -94,7 +104,10 @@ if ($resql)
 
 	$expedition = new Expedition($db);
 
-	$param="&amp;socid=$socid";
+	$param="";
+	if ($search_ref_exp) $param.= "&amp;search_ref_exp=".$search_ref_exp;
+	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".$search_ref_liv;
+	if ($search_societe) $param.= "&amp;search_societe=".$search_societe;
 
 	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
@@ -103,14 +116,44 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"e.ref","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateDeliveryPlanned"),$_SERVER["PHP_SELF"],"e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),"ship2bill.php","e.ref","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),"ship2bill.php","s.nom", "", $param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateDeliveryPlanned"),"ship2bill.php","e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
 	if($conf->livraison_bon->enabled) {
-		print_liste_field_titre($langs->trans("DateReceived"),$_SERVER["PHP_SELF"],"e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DeliveryOrder"),"ship2bill.php","e.date_expedition","",$param, '',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateReceived"),"ship2bill.php","e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
 	}
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"ship2bill.php","e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
+	
+	// Lignes des champs de filtre
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="10" type="text" name="search_ref_exp" value="'.$search_ref_exp.'">';
+    print '</td>';
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
+	print '</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	if($conf->livraison_bon->enabled) {
+		print '<td class="liste_titre">';
+		print '<input class="flat" size="10" type="text" name="search_ref_liv" value="'.$search_ref_liv.'"';
+		print '</td>';
+		print '<td class="liste_titre">&nbsp;</td>';
+	}
+	print '<td class="liste_titre" align="right">';
+	// Développé dans la 3.7
+	//print img_search();
+	//print img_searchclear();
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
+	print '<td class="liste_titre" align="center">';
+	print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
+	print '</td>';
+	
+	print "</tr>\n";
+	
 	$var=True;
 
 	while ($i < min($num,$limit))

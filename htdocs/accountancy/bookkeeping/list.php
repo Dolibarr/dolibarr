@@ -137,11 +137,11 @@ else {
 		
 		print $formventilation->select_bookkeeping_importkey('importkey', GETPOST('importkey'));
 		
-		print '<div class="inline-block divButAction"><input type="submit" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
+		print '<div class="inline-block divButAction"><input type="submit" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" />';
 		
 		print '</form>';
 		
-		print '<a href="./card.php?action=create" class="butAction">' . $langs->trans("NewAccountingMvt") . '</a>';
+		print '<a href="./card.php?action=create" class="butAction">' . $langs->trans("NewAccountingMvt") . '</a></div>';
 		
 		print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
