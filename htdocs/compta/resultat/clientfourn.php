@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 $langs->load("bills");
+$langs->load("donation");
+$langs->load("salaries");
 
 $date_startmonth=GETPOST('date_startmonth');
 $date_startday=GETPOST('date_startday');
@@ -555,7 +558,7 @@ if (! empty($date_start) && ! empty($date_end))
 $sql.= " GROUP BY u.rowid, u.firstname, u.lastname, p.fk_user, p.label, dm";
 $sql.= " ORDER BY u.firstname";
 
-dol_syslog("get payment salaries sql=".$sql);
+dol_syslog("get payment salaries");
 $result=$db->query($sql);
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
@@ -597,6 +600,64 @@ if ($result)
 else
 {
     dol_print_error($db);
+}
+
+/*
+ * Dunning
+*/
+
+print '<tr><td colspan="4">'.$langs->trans("Donation").'</td></tr>';
+$sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+$sql.= " FROM ".MAIN_DB_PREFIX."don as p";
+$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " AND fk_statut=2";
+if (! empty($date_start) && ! empty($date_end))
+	$sql.= " AND p.datedon >= '".$db->idate($date_start)."' AND p.datedon <= '".$db->idate($date_end)."'";
+$sql.= " GROUP BY p.societe,  p.firstname, p.lastname";
+$sql.= " ORDER BY p.societe,  p.firstname, p.lastname";
+
+dol_syslog("get dunning");
+$result=$db->query($sql);
+$subtotal_ht = 0;
+$subtotal_ttc = 0;
+if ($result)
+{
+	$num = $db->num_rows($result);
+	$var=true;
+	$i = 0;
+	if ($num)
+	{
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($result);
+
+			$total_ht += $obj->amount;
+			$total_ttc += $obj->amount;
+			$subtotal_ht -= $obj->amount;
+			$subtotal_ttc -= $obj->amount;
+
+			$var = !$var;
+			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+
+			print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/compta/dons/liste.php?search_company=".$obj->nom."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->nom. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
+
+			if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price($obj->amount).'</td>';
+			print '<td align="right">'.price($obj->amount).'</td>';
+			print '</tr>';
+			$i++;
+		}
+	}
+	else
+	{
+		$var = !$var;
+		print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+		print '<td colspan="3">'.$langs->trans("None").'</td>';
+		print '</tr>';
+	}
+}
+else
+{
+	dol_print_error($db);
 }
 print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES')

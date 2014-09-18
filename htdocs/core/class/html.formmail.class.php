@@ -685,7 +685,7 @@ class FormMail
 	 * 		@param	DoliDB		$db				Database handler
 	 * 		@param	string		$type_template	Get message for key module
 	 *      @param	string		$user			Use template public or limited to this user
-	 *      @para	Translate	$outputlangs	Output lang object
+	 *      @param	Translate	$outputlangs	Output lang object
 	 *      @return array						array('topic'=>,'content'=>,..)
 	 */
 	private function getEMailTemplate($db, $type_template, $user, $outputlangs)
