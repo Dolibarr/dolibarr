@@ -159,14 +159,7 @@ if (empty($reshook))
 
         $object->forme_juridique_code  = GETPOST('forme_juridique_code');
         $object->effectif_id           = GETPOST('effectif_id');
-        if (GETPOST("private") == 1)
-        {
-            $object->typent_id         = dol_getIdFromCode($db,'TE_PRIVATE','c_typent');
-        }
-        else
-        {
-            $object->typent_id         = GETPOST('typent_id');
-        }
+        $object->typent_id         = GETPOST('typent_id');
 
         $object->client                = GETPOST('client');
         $object->fournisseur           = GETPOST('fournisseur');

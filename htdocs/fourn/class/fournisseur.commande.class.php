@@ -132,7 +132,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (c.fk_mode_reglement = p.id)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
         $sql.= " WHERE c.entity = ".$conf->entity;
-        if ($ref) $sql.= " AND c.ref='".$ref."'";
+        if ($ref) $sql.= " AND c.ref='".$this->db->escape($ref)."'";
         else $sql.= " AND c.rowid=".$id;
 
         dol_syslog(get_class($this)."::fetch sql=".$sql,LOG_DEBUG);

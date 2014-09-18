@@ -34,7 +34,7 @@ $langs->load("categories");
 $langs->load("bills");
 
 $action=GETPOST('action');
-$id=GETPOST('id');
+$id=GETPOST('id','int');
 
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))

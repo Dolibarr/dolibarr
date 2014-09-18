@@ -6,7 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -122,20 +122,18 @@ if (empty($reshook))
     	exit;
     }
 
-    if ($action == 'setaccountancy_code_buy')
-    {
-        $result = $object->setValueFrom('accountancy_code_buy', GETPOST('accountancy_code_buy'));
+    if ($action == 'setaccountancy_code_buy') {
+
+	    $result = $object->setAccountancyCode('buy', GETPOST('accountancy_code_buy'));
         if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
-        else $object->accountancy_code_buy=GETPOST('accountancy_code_buy');
         $action="";
     }
 
     if ($action == 'setaccountancy_code_sell')
     {
-        $result = $object->setValueFrom('accountancy_code_sell', GETPOST('accountancy_code_sell'));
-        if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
-        else $object->accountancy_code_sell=GETPOST('accountancy_code_sell');
-        $action="";
+	    $result = $object->setAccountancyCode('sell', GETPOST('accountancy_code_sell'));
+	    if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
+	    $action="";
     }
 
     // Add a product or service

@@ -45,7 +45,7 @@ $langs->load('companies');
 if (! $user->rights->facture->creer)
 	accessforbidden();
 
-$id				= (GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility
+$id				= (GETPOST('id')?GETPOST('id','int'):GETPOST("facid"));  // For backward compatibility
 $ref			= GETPOST('ref','alpha');
 $action			= GETPOST('action','alpha');
 $confirm		= GETPOST('confirm','alpha');
@@ -97,7 +97,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 	if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	
+
 	$langs->load('bills');
 	$langs->load('products');
 	$langs->load('main');
@@ -213,7 +213,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 							$result=$objectsrc->fetch($orders_id[$ii]);
 							if ($result > 0)
 							{
-								if ($closeOrders) 
+								if ($closeOrders)
 								{
 									$objectsrc->classifyBilled();
 									$objectsrc->setStatut(3);

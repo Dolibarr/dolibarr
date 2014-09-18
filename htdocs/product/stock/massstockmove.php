@@ -44,9 +44,9 @@ $result=restrictedArea($user,'produit|service');
 //checks if a product has been ordered
 
 $action = GETPOST('action','alpha');
-$id_product = GETPOST('productid', 'productid');
-$id_sw = GETPOST('id_sw', 'id_sw');
-$id_tw = GETPOST('id_tw', 'id_tw');
+$id_product = GETPOST('productid', 'int');
+$id_sw = GETPOST('id_sw', 'int');
+$id_tw = GETPOST('id_tw', 'int');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 

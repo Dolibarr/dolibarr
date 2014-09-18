@@ -410,7 +410,7 @@ class Contrat extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
 		if ($ref)
 		{
-			$sql.= " WHERE ref='".$ref."'";
+			$sql.= " WHERE ref='".$this->db->escape($ref)."'";
 			$sql.= " AND entity IN (".getEntity('contract').")";
 		}
 		else $sql.= " WHERE rowid=".$id;
@@ -1942,7 +1942,7 @@ class ContratLigne
 		$sql.= " t.commentaire";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as t";
 		if ($id)  $sql.= " WHERE t.rowid = ".$id;
-		if ($ref) $sql.= " WHERE t.rowid = '".$ref."'";
+		if ($ref) $sql.= " WHERE t.rowid = '".$this->db->escape($ref)."'";
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
