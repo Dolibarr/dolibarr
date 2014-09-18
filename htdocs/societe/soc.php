@@ -147,6 +147,7 @@ if (empty($reshook))
             $object->name              = GETPOST('name', 'san_alpha')?GETPOST('name', 'san_alpha'):GETPOST('nom', 'san_alpha');
         }
         $object->address               = GETPOST('address', 'san_alpha');
+        $object->address2              = GETPOST('address2', 'san_alpha');
         $object->zip                   = GETPOST('zipcode', 'san_alpha');
         $object->town                  = GETPOST('town', 'san_alpha');
         $object->country_id            = GETPOST('country_id', 'int');
@@ -647,6 +648,7 @@ else
         $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
         $object->code_fournisseur	= GETPOST('code_fournisseur', 'san_alpha');
         $object->address			= GETPOST('address', 'san_alpha');
+        $object->address2            = GETPOST('address2', 'san_alpha');
         $object->zip				= GETPOST('zipcode', 'san_alpha');
         $object->town				= GETPOST('town', 'san_alpha');
         $object->state_id			= GETPOST('state_id', 'int');
@@ -881,6 +883,11 @@ else
         print '<tr><td valign="top"><label for="address">'.$langs->trans('Address').'</label></td>';
 	    print '<td colspan="3"><textarea name="address" id="address" cols="40" rows="3" wrap="soft">';
         print $object->address;
+        print '</textarea></td></tr>';
+        // Address2
+        print '<tr><td valign="top"><label for="address2">'.$langs->trans('Address2').'</label></td>';
+        print '<td colspan="3"><textarea name="address2" id="address2" cols="40" rows="3" wrap="soft">';
+        print $object->address2;
         print '</textarea></td></tr>';
 
         // Zip / Town
@@ -1154,6 +1161,7 @@ else
                 $object->fournisseur			= GETPOST('fournisseur', 'int');
                 $object->code_fournisseur		= GETPOST('code_fournisseur', 'san_alpha');
                 $object->address				= GETPOST('address', 'san_alpha');
+                $object->address2               = GETPOST('address2', 'san_alpha');
                 $object->zip					= GETPOST('zipcode', 'san_alpha');
                 $object->town					= GETPOST('town', 'san_alpha');
                 $object->country_id				= GETPOST('country_id')?GETPOST('country_id', 'int'):$mysoc->country_id;
@@ -1168,8 +1176,8 @@ else
                 $object->idprof2				= GETPOST('idprof2', 'san_alpha');
                 $object->idprof3				= GETPOST('idprof3', 'san_alpha');
                 $object->idprof4				= GETPOST('idprof4', 'san_alpha');
-        		    $object->idprof5				= GETPOST('idprof5', 'san_alpha');
-        		    $object->idprof6				= GETPOST('idprof6', 'san_alpha');
+        		$object->idprof5				= GETPOST('idprof5', 'san_alpha');
+        		$object->idprof6				= GETPOST('idprof6', 'san_alpha');
                 $object->typent_id				= GETPOST('typent_id', 'int');
                 $object->effectif_id			= GETPOST('effectif_id', 'int');
                 $object->barcode				= GETPOST('barcode', 'san_alpha');
@@ -1371,6 +1379,12 @@ else
             print '<tr><td valign="top"><label for="address">'.$langs->trans('Address').'</label></td>';
 	        print '<td colspan="3"><textarea name="address" id="address" cols="40" rows="3" wrap="soft">';
             print $object->address;
+            print '</textarea></td></tr>';
+            
+            // Address
+            print '<tr><td valign="top"><label for="address">'.$langs->trans('Address2').'</label></td>';
+            print '<td colspan="3"><textarea name="address2" id="address" cols="40" rows="3" wrap="soft">';
+            print $object->address2;
             print '</textarea></td></tr>';
 
             // Zip / Town
@@ -1707,6 +1721,11 @@ else
         // Address
         print "<tr><td valign=\"top\">".$langs->trans('Address').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         dol_print_address($object->address,'gmap','thirdparty',$object->id);
+        print "</td></tr>";
+        
+        // Address2
+        print "<tr><td valign=\"top\">".$langs->trans('Address2').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
+        print $object->address2;
         print "</td></tr>";
 
         // Zip / Town

@@ -97,6 +97,9 @@ ALTER TABLE llx_user ADD COLUMN weeklyhours double(16,8);
 ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_date;
 
 
+--add second address field for better geolocalisation
+ALTER TABLE llx_societe	ADD COLUMN address2 VARCHAR(255) NULL DEFAULT NULL AFTER address;
+
 -- Localtaxes by thirds
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax1 varchar(10);
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax2 varchar(10);
