@@ -121,9 +121,10 @@ print "</tr>\n";
 
 if (count($tasksarray) > (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA))
 {
+	$langs->load("errors");
 	print '<tr '.$bc[0].'>';
 	print '<td colspan="9">';
-	print $langs->trans("TooManyDataPleaseUseMoreFilters");
+	print $langs->trans("WarningTooManyDataPleaseUseMoreFilters");
 	print '</td></tr>';
 }
 else
