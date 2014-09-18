@@ -918,7 +918,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					// Grand livre
 					$newmenu->add("/accountancy/bookkeeping/list.php?leftmenu=bookkeeping",$langs->trans("Bookkeeping"),0,$user->rights->accounting->mouvements->lire, '', $mainmenu, 'bookkeeping');
 					if (empty($leftmenu) || preg_match('/bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/listbyyear.php",$langs->trans("ByYear"),1,$user->rights->accounting->mouvements->lire);
-					if (empty($leftmenu) || preg_match('/bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/balancebymonth.php.php",$langs->trans("AccountBalanceByMonth"),1,$user->rights->accounting->mouvements->lire);
+					if (empty($leftmenu) || preg_match('/bookkeeping/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/balancebymonth.php",$langs->trans("AccountBalanceByMonth"),1,$user->rights->accounting->mouvements->lire);
 
 					// Accountancy journals
 					if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy')
