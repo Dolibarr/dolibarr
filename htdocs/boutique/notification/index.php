@@ -62,7 +62,7 @@ if ($resql)
   $i = 0;
   print "<table class=\noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre("Client","index.php", "c.customers_lastname");
+  print_liste_field_titre("Client",$_SERVER["PHP_SELF"], "c.customers_lastname");
   print '<td>'.$langs->trans("Product").'</td>';
   print "</tr>\n";
   $var=True;

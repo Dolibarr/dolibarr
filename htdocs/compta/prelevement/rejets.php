@@ -85,13 +85,13 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	print_barre_liste($langs->trans("WithdrawsRefused"), $page, "rejets.php", $urladd, $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("WithdrawsRefused"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Line"),"rejets.php","p.ref",'',$urladd);
-	print_liste_field_titre($langs->trans("ThirdParty"),"rejets.php","s.nom",'',$urladd);
-	print_liste_field_titre($langs->trans("Reason"),"rejets.php","pr.motif","",$urladd);
+	print_liste_field_titre($langs->trans("Line"),$_SERVER["PHP_SELF"],"p.ref",'',$urladd);
+	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
+	print_liste_field_titre($langs->trans("Reason"),$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
 	print '</tr>';
 
 	$var=True;

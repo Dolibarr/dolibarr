@@ -94,13 +94,13 @@ if ($result)
     $num = $db->num_rows($result);
 
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
-    print_barre_liste($title." (".$langs->trans("Suppliers").")",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
+    print_barre_liste($title." (".$langs->trans("Suppliers").")",$page, $_SERVER["PHP_SELF"], "",$sortfield,$sortorder,"",$num);
 
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Lastname"),"contact.php","p.name", $begin, "", "", $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Firstname"),"contact.php","p.firstname", $begin, "", "", $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),"contact.php","s.nom", $begin, "", "", $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, "", "", $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, "", "", $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, "", "", $sortfield,$sortorder);
     print '<td class="liste_titre">'.$langs->trans("Email").'</td>';
     print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
     print "</tr>\n";

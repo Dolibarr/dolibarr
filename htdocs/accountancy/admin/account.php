@@ -139,12 +139,12 @@ if ($result) {
 	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("AccountNumber"), "account.php", "aa.account_number", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Label"), "account.php", "aa.label", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Accountparent"), "account.php", "aa.account_parent", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Pcgtype"), "account.php", "aa.pcg_type", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Pcgsubtype"), "account.php", "aa.pcg_subtype", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Active"), "account.php", "aa.active", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("AccountNumber"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "aa.label", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Accountparent"), $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Pcgtype"), $_SERVER["PHP_SELF"], "aa.pcg_type", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Pcgsubtype"), $_SERVER["PHP_SELF"], "aa.pcg_subtype", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Active"), $_SERVER["PHP_SELF"], "aa.active", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("&nbsp;");
 	print '</tr>';
 	

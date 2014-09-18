@@ -80,14 +80,14 @@ if ($resql)
     $i = 0;
     $var=True;
 
-    print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, "avalider.php","",$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num);
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),"avalider.php","p.rowid","","",'width="60"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),"avalider.php","dp","","",'width="80" align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),"avalider.php","c.libelle","","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("AmountTTC"),"avalider.php","c.libelle","","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","",'width="60"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","","",'width="80" align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"c.libelle","","",'align="right"',$sortfield,$sortorder);
     print "<td>&nbsp;</td>";
     print "</tr>\n";
 
