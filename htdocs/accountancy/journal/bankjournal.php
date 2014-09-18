@@ -191,7 +191,7 @@ if ($result) {
 				else if ($links[$key]['type'] == 'company')
 				{
 					$societestatic->id = $links[$key]['url_id'];
-					$societestatic->nom = $links[$key]['label'];
+					$societestatic->name = $links[$key]['label'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 					$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
 				}
