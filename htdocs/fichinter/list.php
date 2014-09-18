@@ -63,8 +63,9 @@ $search_status=GETPOST('search_status');
  */
 
 $form = new Form($db);
+$interventionstatic=new Fichinter($db);
 
-llxHeader();
+llxHeader('', $langs->trans("Intervention"));
 
 
 $sql = "SELECT";
@@ -102,8 +103,6 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 
-	$interventionstatic=new Fichinter($db);
-
 	$urlparam="&amp;socid=$socid";
 	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num);
 
@@ -139,8 +138,8 @@ if ($result)
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	print '<td class="liste_titre" align="right">';
-	$liststatus=array('0'=>$langs->trans("Draft"), '1'=>$langs->trans("Validated"), '2'=>$langs->trans("Billed"));
-	print $form->selectarray('search_status', $liststatus, GETPOST('search_status'), 1);
+	$liststatus=$interventionstatic->statuts_short;
+	print $form->selectarray('search_status', $liststatus, GETPOST('search_status'), 1, 0, 0, '', 1);
 	print '<input class="liste_titre" align="right" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print "</tr>\n";
