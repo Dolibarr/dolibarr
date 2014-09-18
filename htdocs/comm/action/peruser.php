@@ -600,41 +600,56 @@ else
 // Loop on each user to show calendar
 $sav = $tmpday;
 $showheader = true;
-foreach ($usernames as $username)
-{
-	echo "<tr>";
-	echo '<td class="cal_current_month">' . $username->getNomUrl(1). '</td>';
-	$tmpday = $sav;
 
-	$i = 0;
-	for ($iter_day = 0; $iter_day < 7; $iter_day++)
-	{
-		if (($i + 1) < $begin_d || ($i + 1) > $end_d)
-		{
+// listUsersForGroup may return -1 which is not traversable
+if (is_array($usernames)) {
+	foreach ($usernames as $username) {
+		echo "<tr>";
+		echo '<td class="cal_current_month">' . $username->getNomUrl(1) . '</td>';
+		$tmpday = $sav;
+
+		$i = 0;
+		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+			if (($i + 1) < $begin_d || ($i + 1) > $end_d) {
+				$i++;
+				continue;
+			}
+
+			// Show days of the current week
+			$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
+			$tmparray = dol_getdate($curtime, 'fast');
+			$tmpday = $tmparray['mday'];
+			$tmpmonth = $tmparray['mon'];
+			$tmpyear = $tmparray['year'];
+
+			$style = 'cal_current_month';
+			if ($iter_day == 6) $style .= ' cal_other_month';
+			$today = 0;
+			$todayarray = dol_getdate($now, 'fast');
+			if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $month && $todayarray['year'] == $year) $today = 1;
+			if ($today) $style = 'cal_today_peruser';
+
+			show_day_events2(
+				$username,
+				$tmpday,
+				$month,
+				$year,
+				$monthshown,
+				$style,
+				$eventarray,
+				0,
+				$maxnbofchar,
+				$newparam,
+				1,
+				300,
+				$showheader
+			);
+
 			$i++;
-			continue;
 		}
-
-        // Show days of the current week
-		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
-		$tmparray = dol_getdate($curtime,'fast');
-		$tmpday = $tmparray['mday'];
-		$tmpmonth = $tmparray['mon'];
-		$tmpyear = $tmparray['year'];
-
-		$style='cal_current_month';
-		if ($iter_day == 6) $style.=' cal_other_month';
-		$today=0;
-		$todayarray=dol_getdate($now,'fast');
-		if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
-		if ($today) $style='cal_today_peruser';
-
-		show_day_events2($username, $tmpday, $month, $year, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader);
-
-		$i++;
+		echo "</tr>\n";
+		$showheader = false;
 	}
-	echo "</tr>\n";
-	$showheader = false;
 }
 
 echo "</table>\n";

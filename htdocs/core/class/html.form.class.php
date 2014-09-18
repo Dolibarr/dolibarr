@@ -1302,14 +1302,17 @@ class Form
 		$assignedtouser=array();
 		if (!empty($_SESSION['assignedtouser'])) $assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
 		if (count($assignedtouser)) $out.='<br>';
-		foreach($assignedtouser as $key => $value)
-		{
-			$userstatic->fetch($key);
-			$out.=$userstatic->getNomUrl(1);
-			//$out.=' '.($value['mandatory']?$langs->trans("Mandatory"):$langs->trans("Optional"));
-			//$out.=' '.($value['transparency']?$langs->trans("Busy"):$langs->trans("NotBusy"));
-			$out.='<br>';
-		}
+		// dol_json_decode may return false on error which is not traversable
+		if (is_array($assignedtouser)) {
+			foreach($assignedtouser as $key => $value)
+			{
+				$userstatic->fetch($key);
+				$out.=$userstatic->getNomUrl(1);
+				//$out.=' '.($value['mandatory']?$langs->trans("Mandatory"):$langs->trans("Optional"));
+				//$out.=' '.($value['transparency']?$langs->trans("Busy"):$langs->trans("NotBusy"));
+				$out.='<br>';
+			}
+	    }
 
 		//$out.='</form>';
         return $out;

@@ -164,10 +164,10 @@ class Account extends CommonObject
      * 		TODO Move this into AccountLine
      *      Return array with links from llx_bank_url
      *
-     *      @param	int		$fk_bank        To search using bank transaction id
-     *      @param	int		$url_id         To search using link to
-     *      @param  string	$type           To search using type
-     *      @return array           		Array of links
+     *      @param  int         $fk_bank    To search using bank transaction id
+     *      @param  int         $url_id     To search using link to
+     *      @param  string      $type       To search using type
+     *      @return array|-1                Array of links or -1 on error
      */
     function get_url($fk_bank='', $url_id='', $type='')
     {
