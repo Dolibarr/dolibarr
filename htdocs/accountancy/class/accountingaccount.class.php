@@ -26,7 +26,7 @@
 /**
  * Classe permettant la gestion des comptes generaux de compta
  */
-class AccountingAccount
+class AccountingAccount extends CommonObject
 {
 	var $db;
 	var $id;
