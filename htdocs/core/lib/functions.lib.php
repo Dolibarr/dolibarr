@@ -1841,7 +1841,8 @@ function img_picto($titlealt, $picto, $options = '', $pictoisfullpath = false, $
 	if ($srconly) return $fullpathpicto;
 	else
 	{
-		$tmparray=explode(':',$titlealt);
+		$tmparray=array(0=>$titlealt);
+		if (preg_match('/:[^\s]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
 		$title=$tmparray[0];
 		$alt=empty($tmparray[1])?'':$tmparray[1];
 		return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($options?' '.$options:'').'>';	// Alt is used for accessibility, title for popup
