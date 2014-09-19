@@ -1276,6 +1276,7 @@ class Form
     /**
      *	Return select list of users. Selected users are stored into session.
      *
+     *  @param  string	$action         Value for $action
      *  @param  string	$htmlname       Field name in form
      *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
      *  @param  array	$exclude        Array list of users id to exclude
