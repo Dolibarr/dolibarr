@@ -263,11 +263,13 @@ if ($resql)
 		{
 			print '<td align="center" class="nowrap">';
 			print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv),"day")."</span>";
-			print ' <span>&nbsp; ';
+			print ' &nbsp';
+			print '<span>';
 			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
 			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
-			print img_edit_add() ."</a></span>";
+			print img_edit_add() ."</a>";
+			print '</span>';
 			print '</td>';
 		}
 		else
