@@ -53,6 +53,11 @@ class Project extends CommonObject
     var $statuts;
     var $oldcopy;
 
+	/**
+	 * @var Societe
+	 */
+	public $societe;
+
 
     /**
      *  Constructor
@@ -322,6 +327,7 @@ class Project extends CommonObject
                 $this->note_private = $obj->note_private;
                 $this->note_public = $obj->note_public;
                 $this->socid = $obj->fk_soc;
+                $this->societe = new Societe($this->db); // PHP strict compliance
                 $this->societe->id = $obj->fk_soc; // TODO For backward compatibility
                 $this->user_author_id = $obj->fk_user_creat;
                 $this->public = $obj->public;
