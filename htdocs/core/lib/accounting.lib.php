@@ -25,6 +25,7 @@
 
 /**
  *	Prepare array with list of admin tabs
+ *
  *	@param	Object	$object		Accounting account
  *
  *	@return	array				Array of tabs to show
