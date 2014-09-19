@@ -57,12 +57,14 @@ class ActionComm extends CommonObject
     var $punctual = 1;        // Milestone
     var $percentage;    // Percentage
     var $location;      // Location
+
 	var $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
     var $priority;      // Small int (0 By default)
     var $note;          // Description
 
-    var $usertodo;		// Object user that must do action
-    var $userdone;	 	// Object user that did action
+	var $userassigned;	// Array of user ids
+    var $usertodo;		// Object user of owner
+    var $userdone;	 	// Object user that did action (deprecated)
 
     var $societe;		// Company linked to action (optional)
     var $contact;		// Contact linked to action (optional)
@@ -89,10 +91,10 @@ class ActionComm extends CommonObject
     {
         $this->db = $db;
 
-        $this->author = new stdClass();
-        $this->usermod = new stdClass();
-        $this->usertodo = new stdClass();
-        $this->userdone = new stdClass();
+        //$this->author = new stdClass();
+        //$this->usermod = new stdClass();
+        //$this->usertodo = new stdClass();
+        //$this->userdone = new stdClass();
         $this->societe = new stdClass();
         $this->contact = new stdClass();
     }
