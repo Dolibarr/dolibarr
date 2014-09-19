@@ -44,7 +44,7 @@ $action = GETPOST('action', 'alpha');
 
 // Other parameters ACCOUNTING_*
 $list = array (
-		'ACCOUNTINGEX_SEPARATORCSV' 
+		'ACCOUNTING_SEPARATORCSV' 
 );
 
 /*
