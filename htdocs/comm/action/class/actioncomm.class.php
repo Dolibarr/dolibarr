@@ -258,9 +258,10 @@ class ActionComm extends CommonObject
      *    Load object from database
      *
      *    @param	int		$id     Id of action to get
+     *    @param	string	$ref    Ref of action to get
      *    @return	int				<0 if KO, >0 if OK
      */
-    function fetch($id)
+    function fetch($id, $ref='')
     {
         global $langs;
 
@@ -286,7 +287,9 @@ class ActionComm extends CommonObject
         $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
-        $sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
+        $sql.= " WHERE a.fk_action=c.id";
+        if ($ref) $sql.= " AND a.id=".$ref;		// No field ref, we use id
+        else $sql.= " AND a.id=".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);

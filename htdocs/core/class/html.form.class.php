@@ -3043,7 +3043,7 @@ class Form
      *  @param	int		$page        	Page
      *  @param  string	$selected    	Id condition pre-selectionne
      *  @param  string	$htmlname    	Name of select html field
-     *	@param	int		$addempty		Ajoute entree vide
+     *	@param	int		$addempty		Add empty entry
      *  @return	void
      */
     function form_conditions_reglement($page, $selected='', $htmlname='cond_reglement_id', $addempty=0)

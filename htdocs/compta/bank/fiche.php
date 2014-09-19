@@ -102,7 +102,7 @@ if ($_POST["action"] == 'add')
 
     if (! $error)
     {
-        $id = $account->create($user->id);
+        $id = $account->create($user);
         if ($id > 0)
         {
             $_GET["id"]=$id;            // Force chargement page en mode visu
@@ -306,7 +306,7 @@ if ($action == 'create')
 	$doleditor=new DolEditor('account_comment',$account->comment,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
 	$doleditor->Create();
 	print '</td></tr>';
-	
+
 	print '</table>';
 
 	print '<br>';
@@ -510,7 +510,7 @@ else
         $account->fetch(GETPOST('id','int'));
 
         print_fiche_titre($langs->trans("EditFinancialAccount"));
-        
+
         if ($conf->use_javascript_ajax)
         {
             print "\n".'<script type="text/javascript" language="javascript">';
@@ -614,7 +614,7 @@ else
 		$doleditor=new DolEditor('account_comment',(isset($_POST["account_comment"])?$_POST["account_comment"]:$account->comment),'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
 		$doleditor->Create();
 		print '</td></tr>';
-		
+
 		print '</table>';
 
 		print '<br>';
@@ -635,7 +635,7 @@ else
 		// Accountancy journal
         print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
         print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$account->accountancy_journal).'"></td></tr>';
-		
+
 		print '</table>';
 
 		print '<center><br><input value="'.$langs->trans("Modify").'" type="submit" class="button">';
