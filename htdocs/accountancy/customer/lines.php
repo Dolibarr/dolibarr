@@ -2,7 +2,8 @@
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
- * Copyright (C) 2014      Florian Henry		<florian.henry@open-concept.pro>   
+ * Copyright (C) 2014      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>   
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ $account_parent = GETPOST('account_parent');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->access)
+if (! $user->rights->accounting->ventilation->dispatch)
 	accessforbidden();
 
 $formventilation = new FormVentilation($db);
