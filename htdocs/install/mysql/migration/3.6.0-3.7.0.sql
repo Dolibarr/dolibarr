@@ -19,6 +19,13 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_propal ADD COLUMN fk_user_modif integer after fk_user_author;
+ALTER TABLE llx_commande ADD COLUMN fk_user_modif integer after fk_user_author;
+ALTER TABLE llx_facture ADD COLUMN fk_user_modif integer after fk_user_author;
+ALTER TABLE llx_product ADD COLUMN fk_user_modif integer after fk_user_author;
+ALTER TABLE llx_fichinter ADD COLUMN fk_user_modif integer after fk_user_author;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_user_modif integer after fk_user_author;
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_modif integer after fk_user_author;
 
 ALTER TABLE llx_fichinter ADD COLUMN ref_ext 	varchar(255);
 
