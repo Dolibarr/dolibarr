@@ -517,11 +517,11 @@ elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
 
         }
 
-        $localtax1tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
-        $localtax2tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
+        $localtax1_tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
+        $localtax2_tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
         $remise_percent=GETPOST('remise_percent');
 
-        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1tx, $localtax2tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
+        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
         if ($result >= 0)
         {
             unset($_POST['label']);
@@ -617,13 +617,13 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             $tvatx=get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
             $npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
 
-            $localtax1tx= get_localtax($tvatx, 1, $mysoc,$object->thirdparty);
-            $localtax2tx= get_localtax($tvatx, 2, $mysoc,$object->thirdparty);
+            $localtax1_tx= get_localtax($tvatx, 1, $mysoc,$object->thirdparty);
+            $localtax2_tx= get_localtax($tvatx, 2, $mysoc,$object->thirdparty);
 
             $type = $productsupplier->type;
 
             // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
-            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $qty, $idprod, $remise_percent, '', '', 0, $npr);
+            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, '', '', 0, $npr);
         }
     	if ($idprod == -2 || $idprod == 0)
         {
@@ -662,7 +662,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             $price_base_type = 'HT';
 
             //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-            $result=$object->addline($product_desc, $ht, $tva_tx, $localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
+            $result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
         }
         else
 		{
@@ -670,7 +670,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             $ht = $ttc / (1 + ($tva_tx / 100));
             $price_base_type = 'HT';
             //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-            $result=$object->addline($product_desc, $ht, $tva_tx,$localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
+            $result=$object->addline($product_desc, $ht, $tva_tx,$localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
         }
     }
 
