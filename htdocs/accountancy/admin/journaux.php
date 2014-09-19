@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014 	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,11 +44,11 @@ $action = GETPOST('action', 'alpha');
 
 // Other parameters ACCOUNTING_*
 $list = array (
-		'ACCOUNTING_SELL_JOURNAL',
-		'ACCOUNTING_PURCHASE_JOURNAL',
-		'ACCOUNTING_SOCIAL_JOURNAL',
-		'ACCOUNTING_CASH_JOURNAL',
-		'ACCOUNTING_MISCELLANEOUS_JOURNAL' 
+		'ACCOUNTINGEX_SELL_JOURNAL',
+		'ACCOUNTINGEX_PURCHASE_JOURNAL',
+		'ACCOUNTINGEX_SOCIAL_JOURNAL',
+		'ACCOUNTINGEX_CASH_JOURNAL',
+		'ACCOUNTINGEX_MISCELLANEOUS_JOURNAL' 
 );
 
 /*

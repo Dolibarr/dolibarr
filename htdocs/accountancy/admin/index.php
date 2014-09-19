@@ -3,7 +3,8 @@
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com> 
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,17 +46,17 @@ $action = GETPOST('action', 'alpha');
 
 // Other parameters COMPTA_* & ACCOUNTING_*
 $list = array (
-		'ACCOUNTING_LIMIT_LIST_VENTILATION',
-		'ACCOUNTING_LENGTH_GACCOUNT',
-		'ACCOUNTING_LENGTH_AACCOUNT',
+		'ACCOUNTINGEX_LIMIT_LIST_VENTILATION',
+		'ACCOUNTINGEX_LENGTH_GACCOUNT',
+		'ACCOUNTINGEX_LENGTH_AACCOUNT',
 		'COMPTA_ACCOUNT_CUSTOMER',
 		'COMPTA_ACCOUNT_SUPPLIER',
 		'COMPTA_PRODUCT_BUY_ACCOUNT',
 		'COMPTA_PRODUCT_SOLD_ACCOUNT',
 		'COMPTA_SERVICE_BUY_ACCOUNT',
 		'COMPTA_SERVICE_SOLD_ACCOUNT',
-		'ACCOUNTING_ACCOUNT_SUSPENSE',
-		'ACCOUNTING_ACCOUNT_TRANSFER_CASH' 
+		'ACCOUNTINGEX_ACCOUNT_SUSPENSE',
+		'ACCOUNTINGEX_ACCOUNT_TRANSFER_CASH' 
 );
 
 /*
@@ -258,7 +259,7 @@ foreach ($list as $key)
 
 $var = ! $var;
 print "<tr " . $bc[$var] . ">";
-print '<td width="80%">' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
+print '<td width="80%">' . $langs->trans("ACCOUNTINGEX_LIST_SORT_VENTILATION_TODO") . '</td>';
 if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
 	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
@@ -272,7 +273,7 @@ print '</tr>';
 
 $var = ! $var;
 print "<tr " . $bc[$var] . ">";
-print '<td width="80%">' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
+print '<td width="80%">' . $langs->trans("ACCOUNTINGEX_LIST_SORT_VENTILATION_DONE") . '</td>';
 if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
