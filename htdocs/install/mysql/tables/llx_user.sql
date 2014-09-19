@@ -71,7 +71,6 @@ create table llx_user
   fk_barcode_type	integer      DEFAULT 0,
   accountancy_code  varchar(32) NULL,
   nb_holiday		integer DEFAULT 0,
-  thm				double(24,8),
   tjm				double(24,8),
   salary			double(24,8),
   salaryextra		double(24,8),
