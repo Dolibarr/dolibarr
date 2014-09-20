@@ -1940,29 +1940,31 @@ function img_pdf($titlealt = 'default', $size = 3)
  *	Show logo +
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param  string	$other      Add more attributes on img
  *	@return string      		Return tag img
  */
-function img_edit_add($titlealt = 'default')
+function img_edit_add($titlealt = 'default', $other = '')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Add');
 
-	return img_picto($titlealt, 'edit_add.png');
+	return img_picto($titlealt, 'edit_add.png', $other);
 }
 /**
  *	Show logo -
  *
  *	@param	string	$titlealt	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param  string	$other      Add more attributes on img
  *	@return string      		Return tag img
  */
-function img_edit_remove($titlealt = 'default')
+function img_edit_remove($titlealt = 'default', $other='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Remove');
 
-	return img_picto($titlealt, 'edit_remove.png');
+	return img_picto($titlealt, 'edit_remove.png', $other);
 }
 
 /**
@@ -2265,9 +2267,9 @@ function img_search($titlealt = 'default', $other = '')
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Search');
-	
+
 	$img = img_picto($titlealt, 'search.png', $other, false, 1);
-	
+
 	$input = '<input type="image" class="liste_titre" name="button_search" src="'.$img.'" ';
 	$input.= 'value="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'" >';
 
@@ -2286,9 +2288,9 @@ function img_searchclear($titlealt = 'default', $other = '')
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Search');
-	
+
 	$img = img_picto($titlealt, 'searchclear.png', $other, false, 1);
-	
+
 	$input = '<input type="image" class="liste_titre" name="button_removefilter" src="'.$img.'" ';
 	$input.= 'value="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'" >';
 

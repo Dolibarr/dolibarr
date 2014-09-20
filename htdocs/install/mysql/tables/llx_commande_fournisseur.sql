@@ -30,16 +30,17 @@ create table llx_commande_fournisseur
   ref_supplier			varchar(30),
 
   fk_soc				integer NOT NULL,
-  fk_projet				integer DEFAULT 0,             -- projet auquel est rattache la commande
+  fk_projet				integer DEFAULT 0,             -- project id
 
   tms					timestamp,
   date_creation			datetime,                      -- date de creation 
   date_valid			datetime,                      -- date de validation
   date_approve			datetime,                      -- date de approve
   date_commande			date,                          -- date de la commande
-  fk_user_author		integer,                       -- createur de la commande
-  fk_user_valid			integer,                       -- valideur de la commande
-  fk_user_approve		integer,                       -- auteur approve
+  fk_user_author		integer,                       -- user making creation
+  fk_user_modif         integer,                       -- user making last change
+  fk_user_valid			integer,                       -- user validating
+  fk_user_approve		integer,                       -- user approving
   source				smallint NOT NULL,
   fk_statut				smallint  default 0,
   amount_ht				real      default 0,

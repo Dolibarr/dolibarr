@@ -30,6 +30,8 @@ create table llx_bank_account
   ref					varchar(12) NOT NULL,
   label					varchar(30) NOT NULL,
   entity				integer DEFAULT 1 NOT NULL,	-- multi company id
+  fk_user_author		integer,
+  fk_user_modif			integer,
   bank					varchar(60),
   code_banque			varchar(8),
   code_guichet			varchar(6),

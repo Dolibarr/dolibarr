@@ -57,12 +57,14 @@ class ActionComm extends CommonObject
     var $punctual = 1;        // Milestone
     var $percentage;    // Percentage
     var $location;      // Location
+
 	var $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
     var $priority;      // Small int (0 By default)
     var $note;          // Description
 
-    var $usertodo;		// Object user that must do action
-    var $userdone;	 	// Object user that did action
+	var $userassigned;	// Array of user ids
+    var $usertodo;		// Object user of owner
+    var $userdone;	 	// Object user that did action (deprecated)
 
     var $societe;		// Company linked to action (optional)
     var $contact;		// Contact linked to action (optional)
@@ -89,10 +91,10 @@ class ActionComm extends CommonObject
     {
         $this->db = $db;
 
-        $this->author = new stdClass();
-        $this->usermod = new stdClass();
-        $this->usertodo = new stdClass();
-        $this->userdone = new stdClass();
+        //$this->author = new stdClass();
+        //$this->usermod = new stdClass();
+        //$this->usertodo = new stdClass();
+        //$this->userdone = new stdClass();
         $this->societe = new stdClass();
         $this->contact = new stdClass();
     }
@@ -258,9 +260,10 @@ class ActionComm extends CommonObject
      *    Load object from database
      *
      *    @param	int		$id     Id of action to get
+     *    @param	string	$ref    Ref of action to get
      *    @return	int				<0 if KO, >0 if OK
      */
-    function fetch($id)
+    function fetch($id, $ref='')
     {
         global $langs;
 
@@ -286,7 +289,9 @@ class ActionComm extends CommonObject
         $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
-        $sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
+        $sql.= " WHERE a.fk_action=c.id";
+        if ($ref) $sql.= " AND a.id=".$ref;		// No field ref, we use id
+        else $sql.= " AND a.id=".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);

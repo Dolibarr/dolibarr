@@ -130,7 +130,7 @@ abstract class ActionsAdherentCardCommon
                 }
                 else
                 {
-                    $this->errors=$nuser->error;
+                    $this->errors[]=$nuser->error;
 
                     $this->db->rollback();
                 }

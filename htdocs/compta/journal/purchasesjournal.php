@@ -104,11 +104,11 @@ $sql.= " fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_t
 $sql.= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur,";
 $sql.= " p.rowid as pid, p.ref as ref, p.accountancy_code_buy,";
 $sql.= " ct.accountancy_code_buy as account_tva, ct.recuperableonly";
-$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det fd";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product";
-$sql.= " JOIN ".MAIN_DB_PREFIX."facture_fourn f ON f.rowid = fd.fk_facture_fourn";
-$sql.= " JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = f.fk_soc" ;
+$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as fd";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva as ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
+$sql.= " JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
+$sql.= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc" ;
 $sql.= " WHERE f.fk_statut > 0 AND f.entity = ".$conf->entity;
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
 else $sql.= " AND f.type IN (0,1,2,3)";
