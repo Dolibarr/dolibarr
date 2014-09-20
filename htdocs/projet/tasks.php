@@ -300,7 +300,8 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
-	print $form->select_dolusers($user->id,'userid',1);
+	$contactsofproject=$object->getListContactId('internal');
+	$form->select_users($user->id,'userid',0,'',0,'',$contactsofproject);
 	print '</td></tr>';
 
 	// Date start
