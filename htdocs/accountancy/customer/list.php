@@ -112,8 +112,9 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON p.accountancy_code_sell = aa.account_number";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation = 0";
-
+$sql .= " AND (accsys.rowid='".$conf->global->CHARTOFACCOUNTS."' OR p.accountancy_code_sell IS NULL)";
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity = '" . $conf->entity . "'";
 }
@@ -219,7 +220,7 @@ if ($result) {
 		
 		// Colonne choix ligne a ventiler
 		print '<td align="center">';
-		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->code_sell ? "checked" : "") . '/>';
+		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
 		
 		print '</tr>';
