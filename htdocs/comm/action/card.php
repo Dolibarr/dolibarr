@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
@@ -87,20 +87,37 @@ $hookmanager->initHooks(array('actioncard'));
  * Actions
  */
 
-if (GETPOST('addassignedtouser'))
+// Remove user to assigned list
+if (! empty($_POST['removedassigned']))
+{
+	$idtoremove=$_POST['removedassigned'];
+	if (! empty($_SESSION['assignedtouser'])) $tmpassigneduserids=dol_json_decode($_SESSION['assignedtouser'],1);
+	else $tmpassigneduserids=array();
+	unset($tmpassigneduserids[$idtoremove]);
+	//var_dump($_POST['removedassigned']);exit;
+	$_SESSION['assignedtouser']=dol_json_encode($tmpassigneduserids);
+	$donotclearsession=1;
+	if ($action == 'add') $action = 'create';
+	if ($action == 'update') $action = 'edit';
+}
+
+// Add user to assigned list
+if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
 {
 	// Add a new user
 	if (GETPOST('affectedto') > 0)
 	{
 		$assignedtouser=array();
-		if (!empty($_SESSION['assignedtouser'])) $assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
+		if (! empty($_SESSION['assignedtouser'])) $assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
 		$assignedtouser[GETPOST('affectedto')]=array('transparency'=>GETPOST('transparency'),'mandatory'=>1);
 		$_SESSION['assignedtouser']=dol_json_encode($assignedtouser);
 	}
 	$donotclearsession=1;
-	$action='create';
+	if ($action == 'add') $action = 'create';
+	if ($action == 'update') $action = 'edit';
 }
-// Add action
+
+// Add event
 if ($action == 'add')
 {
 	$error=0;
@@ -131,22 +148,22 @@ if ($action == 'add')
 	// Check parameters
 	if (! $datef && $percentage == 100)
 	{
-		$error++;
+		$error++; $donotclearsession=1;
 		$action = 'create';
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")), 'errors');
 	}
 
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! GETPOST('label'))
 	{
-		$error++;
+		$error++; $donotclearsession=1;
 		$action = 'create';
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Title")), 'errors');
 	}
 
 	// Initialisation objet cactioncomm
-	if (! GETPOST('actioncode'))
+	if (! GETPOST('actioncode') > 0)
 	{
-		$error++;
+		$error++; $donotclearsession=1;
 		$action = 'create';
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 	}
@@ -161,7 +178,6 @@ if ($action == 'add')
 	$object->priority = GETPOST("priority")?GETPOST("priority"):0;
 	$object->fulldayevent = (! empty($fulldayevent)?1:0);
 	$object->location = GETPOST("location");
-	$object->transparency = (GETPOST("transparency")=='on'?1:0);
 	$object->label = trim(GETPOST('label'));
 	$object->fk_element = GETPOST("fk_element");
 	$object->elementtype = GETPOST("elementtype");
@@ -186,18 +202,35 @@ if ($action == 'add')
 	$object->percentage = $percentage;
 	$object->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 60;
 
-	$usertodo=new User($db);
-	if ($_POST["affectedto"] > 0)
+	$listofuserid=dol_json_decode($_SESSION['assignedtouser']);
+	$i=0;
+	foreach($listofuserid as $key => $value)
 	{
-		$usertodo->fetch($_POST["affectedto"]);
+		if ($i == 0)	// First entry
+		{
+			$usertodo=new User($db);
+			if ($key > 0)
+			{
+				$usertodo->fetch($key);
+			}
+			$object->usertodo = $usertodo;
+			$object->transparency = (GETPOST("transparency")=='on'?1:0);
+		}
+
+		$object->userassigned[$key]=array('id'=>$key, 'transparency'=>(GETPOST("transparency")=='on'?1:0));
+
+		$i++;
 	}
-	$object->usertodo = $usertodo;
-	$userdone=new User($db);
-	if ($_POST["doneby"] > 0)
+
+	if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
 	{
-		$userdone->fetch($_POST["doneby"]);
+		$userdone=new User($db);
+		if ($_POST["doneby"] > 0)
+		{
+			$userdone->fetch($_POST["doneby"]);
+		}
+		$object->userdone = $userdone;
 	}
-	$object->userdone = $userdone;
 
 	$object->note = trim($_POST["note"]);
 	if (isset($_POST["contactid"])) $object->contact = $contact;
@@ -214,16 +247,22 @@ if ($action == 'add')
 	if (! empty($conf->phenix->enabled) && GETPOST('add_phenix') == 'on') $object->use_phenix=1;
 
 	// Check parameters
+	if (empty($object->usertodo))
+	{
+		$error++; $donotclearsession=1;
+		$action = 'create';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ActionAffectedTo")), 'errors');
+	}
 	if ($object->type_code == 'AC_RDV' && ($datep == '' || ($datef == '' && empty($fulldayevent))))
 	{
-		$error++;
+		$error++; $donotclearsession=1;
 		$action = 'create';
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")), 'errors');
 	}
 
 	if (! GETPOST('apyear') && ! GETPOST('adyear'))
 	{
-		$error++;
+		$error++; $donotclearsession=1;
 		$action = 'create';
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
 	}
@@ -265,42 +304,14 @@ if ($action == 'add')
 				$langs->load("errors");
 				$error=$langs->trans($object->error);
 				setEventMessage($error,'errors');
-				$action = 'create';
+				$action = 'create'; $donotclearsession=1;
 			}
 		}
 		else
 		{
 			$db->rollback();
-			$langs->load("errors");
-
-			if (! empty($object->error)) setEventMessage($langs->trans($object->error), 'errors');
-			if (count($object->errors)) setEventMessage($object->errors, 'errors');
-
-			$action = 'create';
-		}
-	}
-}
-
-/*
- * Action suppression de l'action
- */
-if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
-{
-	$object->fetch($id);
-
-	if ($user->rights->agenda->myactions->delete
-		|| $user->rights->agenda->allactions->delete)
-	{
-		$result=$object->delete();
-
-		if ($result >= 0)
-		{
-			header("Location: index.php");
-			exit;
-		}
-		else
-		{
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create'; $donotclearsession=1;
 		}
 	}
 }
@@ -348,25 +359,59 @@ if ($action == 'update')
 
 		if (! $datef && $percentage == 100)
 		{
-			$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
+			$error++; $donotclearsession=1;
+			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
 			$action = 'edit';
 		}
 
 		// Users
-		$usertodo=new User($db);
-		if ($_POST["affectedto"])
+		$listofuserid=dol_json_decode($_SESSION['assignedtouser']);
+		$i=0;
+		foreach($listofuserid as $key => $value)
 		{
-			$usertodo->fetch($_POST["affectedto"]);
-		}
-		$object->usertodo = $usertodo;
-		$object->transparency=(GETPOST("transparency")=='on'?1:0);
+			if ($i == 0)	// First entry
+			{
+				$usertodo=new User($db);
+				if ($key > 0)
+				{
+					$usertodo->fetch($key);
+				}
+				$object->usertodo = $usertodo;
+				$object->transparency=(GETPOST("transparency")=='on'?1:0);
+			}
 
-		$userdone=new User($db);
-		if ($_POST["doneby"])
-		{
-			$userdone->fetch($_POST["doneby"]);
+			$object->userassigned[$key]=array('id'=>$key, 'transparency'=>(GETPOST("transparency")=='on'?1:0));
+
+			$i++;
 		}
-		$object->userdone = $userdone;
+
+		if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
+		{
+			$userdone=new User($db);
+			if ($_POST["doneby"])
+			{
+				$userdone->fetch($_POST["doneby"]);
+			}
+			$object->userdone = $userdone;
+		}
+
+		// Check parameters
+		if (! GETPOST('actioncode') > 0)
+		{
+			$error++; $donotclearsession=1;
+			$action = 'edit';
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+		}
+		else
+		{
+			$result=$cactioncomm->fetch(GETPOST('actioncode'));
+		}
+		if (empty($object->usertodo))
+		{
+			$error++; $donotclearsession=1;
+			$action = 'edit';
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ActionAffectedTo")), 'errors');
+		}
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -383,23 +428,43 @@ if ($action == 'update')
 			}
 			else
 			{
+				setEventMessages($object->error,$object->errors,'errors');
 				$db->rollback();
 			}
 		}
 	}
 
-	if ($result < 0)
-	{
-		setEventMessage($object->error,'errors');
-		setEventMessage($object->errors,'errors');
-	}
-	else
+	if (! $error)
 	{
         if (! empty($backtopage))
         {
             header("Location: ".$backtopage);
             exit;
         }
+	}
+}
+
+/*
+ * delete event
+ */
+if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
+{
+	$object->fetch($id);
+
+	if ($user->rights->agenda->myactions->delete
+		|| $user->rights->agenda->allactions->delete)
+	{
+		$result=$object->delete();
+
+		if ($result >= 0)
+		{
+			header("Location: index.php");
+			exit;
+		}
+		else
+		{
+			setEventMessages($object->error,$object->errors,'errors');
+		}
 	}
 }
 
@@ -576,15 +641,14 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
 
 	// Assigned to
-	$var=false;
 	print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	if (empty($donotclearsession))
 	{
 		$assignedtouser=GETPOST("affectedtouser")?GETPOST("affectedtouser"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id);
 		$_SESSION['assignedtouser']=dol_json_encode(array($assignedtouser=>array('transparency'=>1,'mandatory'=>1)));
 	}
-	//print $form->select_dolusers_forevent('affectedto',1);
-	print $form->select_dolusers(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id),'affectedto',1);
+	print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'affectedto',1);
+	//print $form->select_dolusers(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id),'affectedto',1);
 	print '</td></tr>';
 
 	print '</table>';
@@ -599,7 +663,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Realised by
-	if ($conf->global->AGENDA_ENABLE_DONEBY)
+	if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
 	{
 		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
 		print $form->select_dolusers(GETPOST("doneby")?GETPOST("doneby"):(! empty($object->userdone->id) && $percent==100?$object->userdone->id:0),'doneby',1);
@@ -704,11 +768,6 @@ if ($action == 'create')
 // View or edit
 if ($id > 0)
 {
-	if ($error)
-	{
-		dol_htmloutput_errors($error);
-	}
-
 	$result=$object->fetch($id);
 	$object->fetch_optionals($id,$extralabels);
 
@@ -833,7 +892,14 @@ if ($id > 0)
 
 		// Assigned to
 		print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
-		print $form->select_dolusers($object->usertodo->id>0?$object->usertodo->id:-1,'affectedto',1);
+		$listofuserid=array();
+		if (empty($donotclearsession))
+		{
+			if (is_object($object->usertodo)) $listofuserid[$object->usertodo->id]=array('id'=>$object->usertodo->id,'transparency'=>$object->transparency);
+			$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
+		}
+		print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'affectedto',1);
+		//print $form->select_dolusers($object->usertodo->id>0?$object->usertodo->id:-1,'affectedto',1);
 		print '</td></tr>';
 
         print '</table><br><br><table class="border" width="100%">';
@@ -844,7 +910,7 @@ if ($id > 0)
 		print '</td></tr>';
 
 		// Realised by
-		if ($conf->global->AGENDA_ENABLE_DONEBY)
+		if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
 		{
 			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
 			print $form->select_dolusers($object->userdone->id> 0?$object->userdone->id:-1,'doneby',1);

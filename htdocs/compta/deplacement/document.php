@@ -88,7 +88,7 @@ if ($object->id)
 {
 	$object->fetch_thirdparty();
 
-	$head=trip_prepare_head($object, $user);
+	$head=trip_prepare_head($object);
 
 	dol_fiche_head($head, 'documents',  $langs->trans("TripCard"), 0, 'trip');
 

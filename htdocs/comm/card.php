@@ -327,11 +327,11 @@ if ($id > 0)
 	print '</td><td colspan="3">';
 	if ($action == 'editconditions')
 	{
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->cond_reglement_id,'cond_reglement_id',-1,1);
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id',1);
 	}
 	else
 	{
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->cond_reglement_id,'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_id, 'none');
 	}
 	print "</td>";
 	print '</tr>';

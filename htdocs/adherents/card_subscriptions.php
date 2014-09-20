@@ -276,7 +276,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         $db->begin();
 
         // Create subscription
-        $crowid=$object->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend, $option);
+        $crowid=$object->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
         if ($crowid <= 0)
         {
             $error++;

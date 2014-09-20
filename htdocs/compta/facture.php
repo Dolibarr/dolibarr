@@ -171,11 +171,12 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fact
 }
 
 // Delete line
-else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->facture->creer) {
+else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$object->fetch_thirdparty();
 
-	$result = $object->deleteline($_GET ['lineid'], $user);
+	$result = $object->deleteline(GETPOST('lineid'));
 	if ($result > 0) {
 		// Define output language
 		$outputlangs = $langs;
@@ -203,14 +204,16 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 }
 
 // Delete link of credit note to invoice
-else if ($action == 'unlinkdiscount' && $user->rights->facture->creer) {
+else if ($action == 'unlinkdiscount' && $user->rights->facture->creer)
+{
 	$discount = new DiscountAbsolute($db);
-	$result = $discount->fetch($_GET ["discountid"]);
+	$result = $discount->fetch(GETPOST("discountid"));
 	$discount->unlink_invoice();
 }
 
 // Validation
-else if ($action == 'valid' && $user->rights->facture->creer) {
+else if ($action == 'valid' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 
 	// On verifie signe facture
@@ -229,7 +232,8 @@ else if ($action == 'valid' && $user->rights->facture->creer) {
 	}
 }
 
-else if ($action == 'set_thirdparty' && $user->rights->facture->creer) {
+else if ($action == 'set_thirdparty' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$object->setValueFrom('fk_soc', $socid);
 
@@ -237,12 +241,14 @@ else if ($action == 'set_thirdparty' && $user->rights->facture->creer) {
 	exit();
 }
 
-else if ($action == 'classin' && $user->rights->facture->creer) {
+else if ($action == 'classin' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$object->setProject($_POST['projectid']);
 }
 
-else if ($action == 'setmode' && $user->rights->facture->creer) {
+else if ($action == 'setmode' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	if ($result < 0)
@@ -268,7 +274,8 @@ else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
 	if ($result < 0) dol_print_error($db, $object->error);
 }
 
-else if ($action == 'setconditions' && $user->rights->facture->creer) {
+else if ($action == 'setconditions' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$object->cond_reglement_code = 0; // To clean property
 	$object->cond_reglement_id = 0; // To clean property
@@ -283,7 +290,8 @@ else if ($action == 'setconditions' && $user->rights->facture->creer) {
 	if ($result < 0) dol_print_error($db, $object->error);
 }
 
-else if ($action == 'setpaymentterm' && $user->rights->facture->creer) {
+else if ($action == 'setpaymentterm' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$object->date_lim_reglement = dol_mktime(12, 0, 0, $_POST['paymenttermmonth'], $_POST['paymenttermday'], $_POST['paymenttermyear']);
 	if ($object->date_lim_reglement < $object->date) {
@@ -295,7 +303,8 @@ else if ($action == 'setpaymentterm' && $user->rights->facture->creer) {
 		dol_print_error($db, $object->error);
 }
 
-else if ($action == 'setrevenuestamp' && $user->rights->facture->creer) {
+else if ($action == 'setrevenuestamp' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$object->revenuestamp = GETPOST('revenuestamp');
 	$result = $object->update($user);
@@ -305,16 +314,19 @@ else if ($action == 'setrevenuestamp' && $user->rights->facture->creer) {
 }
 
 // bank account
-else if ($action == 'setbankaccount' && $user->rights->facture->creer) {
+else if ($action == 'setbankaccount' && $user->rights->facture->creer)
+{
     $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 }
 
-else if ($action == 'setremisepercent' && $user->rights->facture->creer) {
+else if ($action == 'setremisepercent' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$result = $object->set_remise($user, $_POST['remise_percent']);
 }
 
-else if ($action == "setabsolutediscount" && $user->rights->facture->creer) {
+else if ($action == "setabsolutediscount" && $user->rights->facture->creer)
+{
 	// POST[remise_id] ou POST[remise_id_for_payment]
 	if (! empty($_POST["remise_id"])) {
 		$ret = $object->fetch($id);
@@ -339,7 +351,8 @@ else if ($action == "setabsolutediscount" && $user->rights->facture->creer) {
 	}
 }
 
-else if ($action == 'set_ref_client' && $user->rights->facture->creer) {
+else if ($action == 'set_ref_client' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$object->set_ref_client($_POST['ref_client']);
 }
@@ -359,7 +372,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 	{
 		$idprof_mandatory = 'SOCIETE_IDPROF' . ($i) . '_INVOICE_MANDATORY';
 		$idprof = 'idprof' . $i;
-		if (! $object->thirdparty->$idprof && ! empty($conf->global->$idprof_mandatory)) {
+		if (! $object->thirdparty->$idprof && ! empty($conf->global->$idprof_mandatory))
+		{
 			if (! $error)
 				$langs->load("errors");
 			$error ++;
@@ -376,7 +390,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 	}
 
 	// Check for warehouse
-	if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
+	if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
+	{
 		if (! $idwarehouse || $idwarehouse == - 1) {
 			$error ++;
 			setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), 'errors');
@@ -412,7 +427,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 }
 
 // Go back to draft status (unvalidate)
-else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate)) {
+else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate))
+{
 	$idwarehouse = GETPOST('idwarehouse');
 
 	$object->fetch($id);
@@ -426,7 +442,8 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 	}
 
 	// Check parameters
-	if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
+	if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
+	{
 		if (! $idwarehouse || $idwarehouse == - 1) {
 			$error ++;
 			setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), 'errors');
@@ -460,7 +477,8 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 		$ventilExportCompta = $object->getVentilExportCompta();
 
 		// On verifie si aucun paiement n'a ete effectue
-		if ($resteapayer == $object->total_ttc && $object->paye == 0 && $ventilExportCompta == 0) {
+		if ($resteapayer == $object->total_ttc && $object->paye == 0 && $ventilExportCompta == 0)
+		{
 			$result=$object->set_draft($user, $idwarehouse);
 			if ($result<0) setEventMessage($object->error,'errors');
 
@@ -484,12 +502,14 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 }
 
 // Classify "paid"
-else if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->facture->paiement) {
+else if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->facture->paiement)
+{
 	$object->fetch($id);
 	$result = $object->set_paid($user);
 	if ($result<0) setEventMessage($object->error,'errors');
 } // Classif "paid partialy"
-else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->rights->facture->paiement) {
+else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->rights->facture->paiement)
+{
 	$object->fetch($id);
 	$close_code = $_POST["close_code"];
 	$close_note = $_POST["close_note"];
