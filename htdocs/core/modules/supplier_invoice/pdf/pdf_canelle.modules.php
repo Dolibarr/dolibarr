@@ -58,9 +58,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *	Constructor
 	 *
 	 *  @param	DoliDB		$db     	Database handler
-	 *  @param	Object		$object		Supplier invoice
 	 */
-	function __construct($db,$object)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -90,12 +89,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 
 		$this->franchise=!$mysoc->tva_assuj;
-
-        // Get source company
-        if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
-        if (! is_object($object->thirdparty)) $object->thirdparty=$mysoc;	// If fetch_thirdparty fails, object has no socid (specimen)
-        $this->emetteur=$object->thirdparty;
-        if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
         // Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -138,6 +131,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	function write_file($object, $outputlangs='', $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$hookmanager;
+
+		// Get source company
+		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
+		if (! is_object($object->thirdparty)) $object->thirdparty=$mysoc;	// If fetch_thirdparty fails, object has no socid (specimen)
+		$this->emetteur=$object->thirdparty;
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
