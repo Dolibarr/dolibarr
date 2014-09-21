@@ -1598,7 +1598,7 @@ else if ($id || $ref)
 		// Build document if it not exists
 		if (! $file || ! is_readable($file))
 		{
-			$result = $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref));
+			$result = $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
 				dol_print_error($db,$result);
