@@ -1687,16 +1687,6 @@ class FactureFournisseur extends CommonInvoice
 
 		$langs->load("suppliers");
 
-		$error=0;
-
-		// Increase limit for PDF build
-		$err=error_reporting();
-		error_reporting(0);
-		@set_time_limit(120);
-		error_reporting($err);
-
-		$srctemplatepath='';
-
 		// Set the model on the model name to use
 		if (! dol_strlen($modele))
 		{
@@ -1710,76 +1700,9 @@ class FactureFournisseur extends CommonInvoice
 			}
 		}
 
-		// If selected modele is a filename template (then $modele="modelname:filename")
-		$tmp=explode(':',$modele,2);
-		if (! empty($tmp[1]))
-		{
-			$modele=$tmp[0];
-			$srctemplatepath=$tmp[1];
-		}
+		$modelpath = "core/modules/supplier_invoice/pdf/";
 
-		// Search template files
-		$file=''; $classname=''; $filefound=0;
-		$dirmodels=array('/');
-		if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
-		foreach($dirmodels as $reldir)
-		{
-			foreach(array('doc','pdf') as $prefix)
-			{
-				$file = $prefix."_".$modele.".modules.php";
-
-				// We checked the location of the model
-				$file=dol_buildpath($reldir."core/modules/supplier_invoice/pdf/".$file,0);
-				if (file_exists($file))
-				{
-					$filefound=1;
-					$classname=$prefix.'_'.$modele;
-					break;
-				}
-			}
-			if ($filefound) break;
-		}
-
-		// Load the model
-		if ($filefound)
-		{
-			require_once $file;
-
-			$obj = new $classname($this->db,$this);
-
-			// We save charset_output to restore it because write_file can change it if needed for
-			// output format that does not support UTF8.
-			$sav_charset_output=$outputlangs->charset_output;
-			if ($obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
-			{
-				$outputlangs->charset_output=$sav_charset_output;
-
-				// we delete preview files
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				dol_delete_preview($this);
-
-				return 1;
-			}
-			else
-			{
-				$outputlangs->charset_output=$sav_charset_output;
-				dol_syslog("Erreur dans supplier_invoice_pdf_create");
-				dol_print_error($this->db,$obj->error);
-				return 0;
-			}
-		}
-		else
-		{
-			if (! $conf->global->INVOICE_SUPPLIER_ADDON_PDF)
-			{
-				print $langs->trans("Error")." ".$langs->trans("Error_INVOICE_SUPPLIER_ADDON_PDF_NotDefined");
-			}
-			else
-			{
-				print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
-			}
-			return 0;
-		}
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 }
