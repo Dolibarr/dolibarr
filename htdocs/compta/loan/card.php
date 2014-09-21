@@ -24,6 +24,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("compta");
 $langs->load("bills");
@@ -71,16 +72,16 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 // Add loan
 if ($action == 'add' && $user->rights->loan->write)
 {
-	$dateech=@dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
-	$dateperiod=@dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
-	if (! $dateech)
+	$datestart=dol_mktime(12,0,0, $_POST["startmonth"], $_POST["startday"], $_POST["startyear"]);
+	$dateend=dol_mktime(12,0,0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+	if (! $datestart)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
 		$action = 'create';
 	}
-	elseif (! $dateperiod)
+	elseif (! $dateend)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")), 'errors');
 		$action = 'create';
 	}
 	elseif (! $_POST["capital"])
@@ -92,10 +93,17 @@ if ($action == 'add' && $user->rights->loan->write)
 	{
 		$loan = new Loan($db);
 
-		$loan->label = $_POST["label"];
-		$loan->date_ech = $dateech;
-		$loan->periode = $dateperiod;
-		$loan->capital = $_POST["capital"];
+		$loan->label	 = GETPOST("label");
+		$loan->fk_bank	 = GETPOST("accountid");
+		$loan->capital	 = GETPOST("capital");
+		$loan->datestart = $datestart;
+		$loan->dateend	 = $dateend;
+		$loan->nbterm	 = GETPOST("nbterm");
+		$loan->rate		 = GETPOST("rate");
+		
+		$loan->account_capital	 = GETPOST("accountancy_account_capital");
+		$loan->account_insurance = GETPOST("accountancy_account_insurance");
+		$loan->account_interest	 = GETPOST("accountancy_account_interest");		
 
 		$id=$loan->create($user);
 		if ($id <= 0)
@@ -125,9 +133,9 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->loan->write)
 		$loan = new Loan($db);
 		$result=$loan->fetch($_GET["id"]);
 
-		$loan->lib=$_POST["label"];
-		$loan->date_ech=$dateech;
-		$loan->periode=$dateperiod;
+		$loan->label=$_POST["label"];
+		$loan->datestart=$datestart;
+		$loan->dateend=$dateend;
 
 		$result=$loan->update($user);
 		if ($result <= 0)
@@ -188,13 +196,13 @@ if ($action == 'create')
 	// Date Start
 	print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-    print $form->select_date($datestart?$datestart:-1,'','','','','add',1,1);
+    print $form->select_date($datestart?$datestart:-1,'start','','','','add',1,1);
     print '</td></tr>';
 	
 	// Date End
 	print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-    print $form->select_date($dateend?$dateend:-1,'','','','','add',1,1);
+    print $form->select_date($dateend?$dateend:-1,'end','','','','add',1,1);
     print '</td></tr>';
 	
 	// Number of terms
@@ -430,7 +438,7 @@ if ($id > 0)
 			// Edit
 			if ($user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/loan/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
 			}
 
 			// Emettre paiement

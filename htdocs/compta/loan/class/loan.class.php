@@ -34,7 +34,7 @@ class Loan extends CommonObject
 
     var $id;
     var $ref;
-    var $date_start;
+    var $datestart;
 	var $dateend;
     var $label;
     var $capital;
@@ -116,8 +116,8 @@ class Loan extends CommonObject
         // clean parameters
         $newcapital=price2num($this->capital,'MT');
 
-        // Validation parametres
-        if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode))
+        // Check parameters
+        if (! $newcapital > 0 || empty($this->datestart) || empty($this->dateend))
         {
             $this->error="ErrorBadParameter";
             return -2;
@@ -125,10 +125,10 @@ class Loan extends CommonObject
 
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, periode, amount, entity)";
-        $sql.= " VALUES (".$this->type.",'".$this->db->escape($this->lib)."',";
-        $sql.= " '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."',";
-        $sql.= " '".price2num($newamount)."',";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."loan (label, date_ech, periode, amount, entity)";
+        $sql.= " VALUES ('".$this->db->escape($this->label)."',";
+        $sql.= " '".$this->db->idate($this->datestart)."','".$this->db->idate($this->dateend)."',";
+        $sql.= " '".price2num($newcapital)."',";
         $sql.= " ".$conf->entity;
         $sql.= ")";
 
@@ -136,9 +136,9 @@ class Loan extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."chargesociales");
+            $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."loan");
 
-            //dol_syslog("ChargesSociales::create this->id=".$this->id);
+            //dol_syslog("Loans::create this->id=".$this->id);
             $this->db->commit();
             return $this->id;
         }
@@ -152,7 +152,7 @@ class Loan extends CommonObject
 
 
     /**
-     *      Delete a social contribution
+     *      Delete a loan
      *
      *      @param		User    $user   Object user making delete
      *      @return     		int 	<0 if KO, >0 if OK
@@ -223,7 +223,7 @@ class Loan extends CommonObject
 
 
     /**
-     *      Met a jour une charge sociale
+     *      Update loan
      *
      *      @param	User	$user   Utilisateur qui modifie
      *      @return int     		<0 si erreur, >0 si ok
