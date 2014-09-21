@@ -99,7 +99,7 @@ else
 }
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->COMPTA_MODE);
+$modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->ACCOUNTING_MODE);
 
 
 /*

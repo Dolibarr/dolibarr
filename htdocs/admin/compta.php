@@ -37,23 +37,23 @@ accessforbidden();
 
 $action = GETPOST('action','alpha');
 
-// Other parameters COMPTA_*
+// Other parameters ACCOUNTING_*
 $list = array(
-    'COMPTA_PRODUCT_BUY_ACCOUNT',
-    'COMPTA_PRODUCT_SOLD_ACCOUNT',
-    'COMPTA_SERVICE_BUY_ACCOUNT',
-    'COMPTA_SERVICE_SOLD_ACCOUNT',
-    'COMPTA_VAT_ACCOUNT',
-    'COMPTA_VAT_BUY_ACCOUNT',
-    'COMPTA_ACCOUNT_CUSTOMER',
-    'COMPTA_ACCOUNT_SUPPLIER'
+    'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
+    'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
+    'ACCOUNTING_SERVICE_BUY_ACCOUNT',
+    'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
+    'ACCOUNTING_VAT_ACCOUNT',
+    'ACCOUNTING_VAT_BUY_ACCOUNT',
+    'ACCOUNTING_ACCOUNT_CUSTOMER',
+    'ACCOUNTING_ACCOUNT_SUPPLIER'
 );
 
 /*
  * Actions
  */
 
-$compta_mode = defined('COMPTA_MODE')?COMPTA_MODE:'RECETTES-DEPENSES';
+$compta_mode = defined('ACCOUNTING_MODE')?ACCOUNTING_MODE:'RECETTES-DEPENSES';
 
 if ($action == 'update')
 {
@@ -69,7 +69,7 @@ if ($action == 'update')
 
     if (in_array($compta_mode,$compta_modes)) {
 
-        if (!dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode, 'chaine', 0, '', $conf->entity)) {
+        if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $compta_mode, 'chaine', 0, '', $conf->entity)) {
             $error++;
         }
     } else {
@@ -113,7 +113,7 @@ print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder" width="100%">';
 
-// Cas du parametre COMPTA_MODE
+// Cas du parametre ACCOUNTING_MODE
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description').'</td>';

@@ -87,10 +87,10 @@ ACCOUNTINGEX_SOCIAL_JOURNAL=Diario social
 ACCOUNTINGEX_ACCOUNT_TRANSFER_CASH=Cuenta de caja
 ACCOUNTINGEX_ACCOUNT_SUSPENSE=Cuenta operaciones pendientes de asignar
 
-COMPTA_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (si no se define en el producto)
-COMPTA_PRODUCT_SOLD_ACCOUNT=Cuenta contable predeterminada para los productos vendidos (si no se define en el producto)
-COMPTA_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (si no se define en el servicio)
-COMPTA_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servico)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta contable predeterminada para los productos vendidos (si no se define en el producto)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (si no se define en el servicio)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servico)
 
 Doctype=Tipo de documento
 Docdate=Fecha

@@ -60,7 +60,7 @@ function tva_coll($db,$y,$q)
 {
 	global $conf;
 
-    if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
+    if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
     {
         // if vat paid on due invoices
         $sql = "SELECT d.fk_facture as facid, f.facnumber as facnum, d.tva_tx as rate, d.total_ht as totalht, d.total_tva as amount";
@@ -128,7 +128,7 @@ function tva_paye($db, $y,$q)
 {
 	global $conf;
 
-    if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
+    if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
     {
         // Si on paye la tva sur les factures dues (non brouillon)
         $sql = "SELECT d.fk_facture_fourn as facid, f.facnumber as facnum, d.tva_tx as rate, d.total_ht as totalht, d.tva as amount";
@@ -212,7 +212,7 @@ print "<td align=\"right\">".$langs->trans("Invoices")."</td>";
 print "<td align=\"right\">".$langs->trans("TotalToPay")."</td>";
 print "</tr>\n";
 
-if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
+if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 {
 	$y = $year_current;
 

@@ -34,7 +34,7 @@ $langs->load("companies");
 $langs->load("categories");
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->COMPTA_MODE;
+$modecompta = $conf->global->ACCOUNTING_MODE;
 if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
 
 $sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
