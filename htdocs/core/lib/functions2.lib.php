@@ -1221,7 +1221,7 @@ function dol_print_reduction($reduction,$langs)
     $string = '';
     if ($reduction == 100)
     {
-        $string = $langs->trans("Offered");
+        $string = $langs->transnoentities("Offered");
     }
     else
     {
@@ -1326,7 +1326,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
-                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0,true); // Disable hook for the moment
+                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0);
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
                     }
                 }

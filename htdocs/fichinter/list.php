@@ -63,8 +63,9 @@ $search_status=GETPOST('search_status');
  */
 
 $form = new Form($db);
+$interventionstatic=new Fichinter($db);
 
-llxHeader();
+llxHeader('', $langs->trans("Intervention"));
 
 
 $sql = "SELECT";
@@ -102,8 +103,6 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 
-	$interventionstatic=new Fichinter($db);
-
 	$urlparam="&amp;socid=$socid";
 	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num);
 
@@ -114,9 +113,9 @@ if ($result)
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$urlparam,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$urlparam,'',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 	{
+		print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
 		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
 	}
@@ -131,15 +130,16 @@ if ($result)
 	print '</td><td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_desc" value="'.$search_desc.'" size="12">';
 	print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
     if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 	{
+		// Desc of line
+		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	print '<td class="liste_titre" align="right">';
-	$liststatus=array('0'=>$langs->trans("Draft"), '1'=>$langs->trans("Validated"), '2'=>$langs->trans("Billed"));
-	print $form->selectarray('search_status', $liststatus, GETPOST('search_status'), 1);
+	$liststatus=$interventionstatic->statuts_short;
+	print $form->selectarray('search_status', $liststatus, GETPOST('search_status'), 1, 0, 0, '', 1);
 	print '<input class="liste_titre" align="right" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print "</tr>\n";
@@ -166,9 +166,9 @@ if ($result)
 		print $companystatic->getNomUrl(1,'',44);
 		print '</td>';
         print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
-		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
 		if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 		{
+			print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
 			print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
 			print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
 		}

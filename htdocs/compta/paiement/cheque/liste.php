@@ -2,6 +2,7 @@
 /* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +21,14 @@
 /**
  *   \file       htdocs/compta/paiement/cheque/liste.php
  *   \ingroup    compta
- *   \brief      Page liste des bordereau de remise de cheque
+ *   \brief      Page list of cheque deposits
  */
 
 require('../../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -44,11 +47,15 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 $limit = $conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="bc.number";
+if (! $sortfield) $sortfield="dp";
 
+$year=GETPOST("year");
+$month=GETPOST("month");
+
+$form=new Form($db);
+$formother = new FormOther($db);
 $checkdepositstatic=new RemiseCheque($db);
 $accountstatic=new Account($db);
-
 
 /*
  * View
@@ -63,10 +70,25 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE bc.fk_bank_account = ba.rowid";
 $sql.= " AND bc.entity = ".$conf->entity;
-if (GETPOST('search_montant'))
+
+// Search criteria
+if (GETPOST("search_ref"))			$sql.=" AND bc.number=".GETPOST("search_ref",'int');
+if (GETPOST("search_account") > 0)	$sql.=" AND bc.fk_bank_account=".GETPOST("search_account",'int');
+if (GETPOST("search_amount"))		$sql.=" AND bc.amount=".price2num(GETPOST("search_amount"));
+if ($month > 0)
 {
-	$sql.=" AND bc.amount=".price2num(GETPOST('search_montant'));
+    if ($year > 0 && empty($day))
+    $sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+    else if ($year > 0 && ! empty($day))
+    $sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+    else
+    $sql.= " AND date_format(bc.date_bordereau, '%m') = '".$month."'";
 }
+else if ($year > 0)
+{
+	$sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+}
+
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($limit+1, $offset);
 //print "$sql";
@@ -79,27 +101,35 @@ if ($resql)
 	$i = 0;
 	$params='';
 
-	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, 'liste.php', $params, $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num);
 
-	print '<form method="get" action="liste.php">';
+	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),"liste.php","bc.number","",$params,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$params,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$params,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("NbOfCheques"),"liste.php","bc.nbcheque","",$params,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Amount"),"liste.php","bc.amount","",$params,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"liste.php","bc.statut","",$params,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.number","",$params,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$params,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$params,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("NbOfCheques"),$_SERVER["PHP_SELF"],"bc.nbcheque","",$params,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"bc.amount","",$params,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"bc.statut","",$params,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="left">';
+	print '<input class="fat" type="text" size="4" name="search_ref" value="'.GETPOST('search_ref').'">';
+    print '</td>';
+	print '<td class="liste_titre" align="center">';
+    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+    print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+    $formother->select_year($year?$year:-1,'year',1, 20, 5);
+    print '</td>';
+    print '<td>';
+    $form->select_comptes($_REQUEST["search_account"],'search_account',0,'',1);
+    print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input class="fat" type="text" size="6" name="search_montant" value="'.GETPOST('search_montant').'">';
+	print '<input class="fat" type="text" size="6" name="search_amount" value="'.GETPOST('search_amount').'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -124,16 +154,16 @@ if ($resql)
 		// Date
 		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
 
-		// Banque
+		// Bank
 		print '<td>';
 		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
 		else print '&nbsp;';
 		print '</td>';
 
-		// Nb of cheques
+		// Number of cheques
 		print '<td align="right">'.$objp->nbcheque.'</td>';
 
-		// Montant
+		// Amount
 		print '<td align="right">'.price($objp->amount).'</td>';
 
 		// Statut

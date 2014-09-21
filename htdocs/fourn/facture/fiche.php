@@ -526,11 +526,11 @@ elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
 
         }
 
-        $localtax1tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
-        $localtax2tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
+        $localtax1_tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
+        $localtax2_tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
         $remise_percent=GETPOST('remise_percent');
 
-        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1tx, $localtax2tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
+        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
         if ($result >= 0)
         {
             unset($_POST['label']);
@@ -626,13 +626,13 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             $tvatx=get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
             $npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
 
-            $localtax1tx= get_localtax($tvatx, 1, $mysoc,$object->thirdparty);
-            $localtax2tx= get_localtax($tvatx, 2, $mysoc,$object->thirdparty);
+            $localtax1_tx= get_localtax($tvatx, 1, $mysoc,$object->thirdparty);
+            $localtax2_tx= get_localtax($tvatx, 2, $mysoc,$object->thirdparty);
 
             $type = $productsupplier->type;
 
             // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
-            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $qty, $idprod, $remise_percent, '', '', 0, $npr);
+            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, '', '', 0, $npr);
         }
     	if ($idprod == -2 || $idprod == 0)
         {

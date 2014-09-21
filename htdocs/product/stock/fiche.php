@@ -261,7 +261,7 @@ else
 
 			// Country
 			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-			if (! empty($object->country_code)) 
+			if (! empty($object->country_code))
 			{
 				$img=picto_from_langcode($object->country_code);
 				print ($img?$img.' ':'');
@@ -339,14 +339,14 @@ else
 						print "<a class=\"butAction\" href=\"fiche.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
 					else
 						print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Modify")."</a>";
-	
+
 					if ($user->rights->stock->supprimer)
 						print "<a class=\"butActionDelete\" href=\"fiche.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
 					else
 						print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</a>";
 				}
 			}
-			
+
 			print "</div>";
 
 
@@ -375,7 +375,7 @@ else
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc,";
 			$sql.= " ps.pmp, ps.reel as value";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 			$sql.= " WHERE ps.fk_product = p.rowid";
 			$sql.= " AND ps.reel <> 0";	// We do not show if stock is 0 (no product in this warehouse)
 			$sql.= " AND ps.fk_entrepot = ".$object->id;

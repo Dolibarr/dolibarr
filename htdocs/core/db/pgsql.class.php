@@ -1209,11 +1209,14 @@ class DoliDBPgsql extends DoliDB
      */
 	function getPathOfRestore()
 	{
-		$fullpathofdump='/pathtopgrestore/pg_restore';
+		//$tool='pg_restore';
+		$tool='psql';
 
-        if (file_exists('/usr/bin/pg_restore'))
+		$fullpathofdump='/pathtopgrestore/'.$tool;
+
+        if (file_exists('/usr/bin/'.$tool))
         {
-            $fullpathofdump='/usr/bin/pg_restore';
+            $fullpathofdump='/usr/bin/'.$tool;
         }
         else
         {
@@ -1223,7 +1226,7 @@ class DoliDBPgsql extends DoliDB
             {
                 $liste=$this->fetch_array($resql);
                 $basedir=$liste['data_directory'];
-                $fullpathofdump=preg_replace('/data$/','bin',$basedir).'/pg_restore';
+                $fullpathofdump=preg_replace('/data$/','bin',$basedir).'/'.$tool;
             }
         }
 

@@ -1841,7 +1841,8 @@ function img_picto($titlealt, $picto, $options = '', $pictoisfullpath = false, $
 	if ($srconly) return $fullpathpicto;
 	else
 	{
-		$tmparray=explode(':',$titlealt);
+		$tmparray=array(0=>$titlealt);
+		if (preg_match('/:[^\s]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
 		$title=$tmparray[0];
 		$alt=empty($tmparray[1])?'':$tmparray[1];
 		return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($options?' '.$options:'').'>';	// Alt is used for accessibility, title for popup
@@ -1939,29 +1940,31 @@ function img_pdf($titlealt = 'default', $size = 3)
  *	Show logo +
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param  string	$other      Add more attributes on img
  *	@return string      		Return tag img
  */
-function img_edit_add($titlealt = 'default')
+function img_edit_add($titlealt = 'default', $other = '')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Add');
 
-	return img_picto($titlealt, 'edit_add.png');
+	return img_picto($titlealt, 'edit_add.png', $other);
 }
 /**
  *	Show logo -
  *
  *	@param	string	$titlealt	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param  string	$other      Add more attributes on img
  *	@return string      		Return tag img
  */
-function img_edit_remove($titlealt = 'default')
+function img_edit_remove($titlealt = 'default', $other='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Remove');
 
-	return img_picto($titlealt, 'edit_remove.png');
+	return img_picto($titlealt, 'edit_remove.png', $other);
 }
 
 /**
@@ -2252,6 +2255,47 @@ function img_phone($titlealt = 'default', $option = 0)
 	return img_picto($titlealt, $img);
 }
 
+/**
+ *  Show search logo
+ *
+ *  @param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param  string	$other      Add more attributes on img
+ *  @return string      		Retourne tag img
+ */
+function img_search($titlealt = 'default', $other = '')
+{
+	global $conf, $langs;
+
+	if ($titlealt == 'default') $titlealt = $langs->trans('Search');
+
+	$img = img_picto($titlealt, 'search.png', $other, false, 1);
+
+	$input = '<input type="image" class="liste_titre" name="button_search" src="'.$img.'" ';
+	$input.= 'value="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'" >';
+
+	return $input;
+}
+
+/**
+ *  Show search logo
+ *
+ *  @param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param  string	$other      Add more attributes on img
+ *  @return string      		Retourne tag img
+ */
+function img_searchclear($titlealt = 'default', $other = '')
+{
+	global $conf, $langs;
+
+	if ($titlealt == 'default') $titlealt = $langs->trans('Search');
+
+	$img = img_picto($titlealt, 'searchclear.png', $other, false, 1);
+
+	$input = '<input type="image" class="liste_titre" name="button_removefilter" src="'.$img.'" ';
+	$input.= 'value="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'" >';
+
+	return $input;
+}
 
 /**
  *	Show information for admin users

@@ -396,7 +396,7 @@ else if ($id || $ref)
 		llxHeader("","",$langs->trans("Member"));
 
 
-		$head=member_prepare_head($member, $user);
+		$head=member_prepare_head($member);
 		$titre=$langs->trans("Member");
 		$picto='user';
 		dol_fiche_head($head, 'category', $titre,0,$picto);
@@ -471,7 +471,7 @@ else if ($id || $ref)
 		llxHeader("","",$langs->trans("Contact"));
 
 
-		$head=contact_prepare_head($object, $user);
+		$head=contact_prepare_head($object);
 		$titre=$langs->trans("ContactsAddresses");
 		$picto='contact';
 		dol_fiche_head($head, 'category', $titre,0,$picto);

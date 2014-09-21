@@ -484,7 +484,7 @@ class Facture extends CommonInvoice
 
                     // Call trigger
                     $result=$this->call_trigger('BILL_CREATE',$user);
-                    if ($result < 0) $error++;             
+                    if ($result < 0) $error++;
                     // End call triggers
 
 					if (! $error)
@@ -593,8 +593,8 @@ class Facture extends CommonInvoice
 
 		// Load source object
 		$objFrom = dol_clone($this);
-		
-		
+
+
 
 		// Change socid if needed
 		if (! empty($socid) && $socid != $this->socid)
@@ -637,7 +637,7 @@ class Facture extends CommonInvoice
 				unset($this->products[$i]);	// Tant que products encore utilise
 			}
 		}
-		
+
 		// Create clone
 		$result=$this->create($user);
 		if ($result < 0) $error++;
@@ -645,7 +645,7 @@ class Facture extends CommonInvoice
 			// copy internal contacts
 			if ($this->copy_linked_contact($objFrom, 'internal') < 0)
 				$error++;
-			
+
 			// copy external contacts if same company
 			elseif ($objFrom->socid == $this->socid)
 			{
@@ -667,7 +667,7 @@ class Facture extends CommonInvoice
 
             // Call trigger
             $result=$this->call_trigger('BILL_CLONE',$user);
-            if ($result < 0) $error++;             
+            if ($result < 0) $error++;
             // End call triggers
 		}
 
@@ -1108,7 +1108,7 @@ class Facture extends CommonInvoice
 			{
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_MODIFY',$user);
-	            if ($result < 0) $error++;             
+	            if ($result < 0) $error++;
 	            // End call triggers
 			}
 		}
@@ -1266,7 +1266,7 @@ class Facture extends CommonInvoice
 		{
             // Call trigger
             $result=$this->call_trigger('BILL_DELETE',$user);
-            if ($result < 0) $error++;             
+            if ($result < 0) $error++;
             // End call triggers
 		}
 
@@ -1438,7 +1438,7 @@ class Facture extends CommonInvoice
 			{
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_PAYED',$user);
-	            if ($result < 0) $error++;             
+	            if ($result < 0) $error++;
 	            // End call triggers
 			}
 			else
@@ -1490,7 +1490,7 @@ class Facture extends CommonInvoice
 		{
             // Call trigger
             $result=$this->call_trigger('BILL_UNPAYED',$user);
-            if ($result < 0) $error++;             
+            if ($result < 0) $error++;
             // End call triggers
 		}
 		else
@@ -1554,7 +1554,7 @@ class Facture extends CommonInvoice
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_CANCEL',$user);
 	            if ($result < 0)
-	            {             
+	            {
 					$this->db->rollback();
 					return -1;
 				}
@@ -1768,11 +1768,11 @@ class Facture extends CommonInvoice
 			{
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_VALIDATE',$user);
-	            if ($result < 0) $error++;    
-	            //TODO: Restoring ref, facnumber, statut, brouillon to previous value if trigger fail           
+	            if ($result < 0) $error++;
+	            //TODO: Restoring ref, facnumber, statut, brouillon to previous value if trigger fail
 	            // End call triggers
 			}
-			
+
 			// Set new ref and define current statut
 			if (! $error)
 			{
@@ -1856,7 +1856,7 @@ class Facture extends CommonInvoice
 				$this->statut = 0;
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_UNVALIDATE',$user);
-	            if ($result < 0)              
+	            if ($result < 0)
 				{
 					$error++;
 					$this->statut=$old_statut;
@@ -3164,7 +3164,7 @@ class Facture extends CommonInvoice
 		$sql.= ' p.ref as product_ref, p.fk_product_type, p.label as product_label,';
 		$sql.= ' p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON l.fk_product=p.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
 		$sql.= ' ORDER BY l.rang ASC, l.rowid';
 
@@ -3659,7 +3659,7 @@ class FactureLigne  extends CommonInvoiceLine
                 // Call trigger
                 $result=$this->call_trigger('LINEBILL_INSERT',$user);
                 if ($result < 0)
-                {            
+                {
 					$this->db->rollback();
 					return -2;
 				}
@@ -3770,7 +3770,7 @@ class FactureLigne  extends CommonInvoiceLine
 			{
                 // Call trigger
                 $result=$this->call_trigger('LINEBILL_UPDATE',$user);
-                if ($result < 0)            
+                if ($result < 0)
  				{
 					$this->db->rollback();
 					return -2;
@@ -3800,7 +3800,7 @@ class FactureLigne  extends CommonInvoiceLine
 		$error=0;
 
 		$this->db->begin();
-		
+
 		// Call trigger
 		$result=$this->call_trigger('LINEBILL_DELETE',$user);
 		if ($result < 0)
@@ -3809,7 +3809,7 @@ class FactureLigne  extends CommonInvoiceLine
 			return -1;
 		}
 		// End call triggers
-		
+
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$this->rowid;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);

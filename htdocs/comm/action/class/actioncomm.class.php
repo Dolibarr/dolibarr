@@ -52,17 +52,19 @@ class ActionComm extends CommonObject
 
     var $datep;			// Date action start (datep)
     var $datef;			// Date action end (datep2)
-    var $durationp = -1;      // -1=Unkown duration
+    var $durationp = -1;      // -1=Unkown duration			// deprecated
     var $fulldayevent = 0;    // 1=Event on full day
     var $punctual = 1;        // Milestone
     var $percentage;    // Percentage
     var $location;      // Location
+
 	var $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
     var $priority;      // Small int (0 By default)
     var $note;          // Description
 
-    var $usertodo;		// Object user that must do action
-    var $userdone;	 	// Object user that did action
+	var $userassigned;	// Array of user ids
+    var $usertodo;		// Object user of owner
+    var $userdone;	 	// Object user that did action (deprecated)
 
     var $societe;		// Company linked to action (optional)
     var $contact;		// Contact linked to action (optional)
@@ -89,10 +91,10 @@ class ActionComm extends CommonObject
     {
         $this->db = $db;
 
-        $this->author = new stdClass();
-        $this->usermod = new stdClass();
-        $this->usertodo = new stdClass();
-        $this->userdone = new stdClass();
+        //$this->author = new stdClass();
+        //$this->usermod = new stdClass();
+        //$this->usertodo = new stdClass();
+        //$this->userdone = new stdClass();
         $this->societe = new stdClass();
         $this->contact = new stdClass();
     }
@@ -122,7 +124,7 @@ class ActionComm extends CommonObject
         if (empty($this->transparency)) $this->transparency = 0;
         if ($this->percentage > 100) $this->percentage = 100;
         //if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
-        if (! empty($this->datep) && ! empty($this->datef))   $this->durationp=($this->datef - $this->datep);
+        if (! empty($this->datep) && ! empty($this->datef))   $this->durationp=($this->datef - $this->datep);		// deprecated
         //if (! empty($this->date)  && ! empty($this->dateend)) $this->durationa=($this->dateend - $this->date);
         if (! empty($this->datep) && ! empty($this->datef) && $this->datep > $this->datef) $this->datef=$this->datep;
         //if (! empty($this->date)  && ! empty($this->dateend) && $this->date > $this->dateend) $this->dateend=$this->date;
@@ -167,7 +169,7 @@ class ActionComm extends CommonObject
         $sql.= "(datec,";
         $sql.= "datep,";
         $sql.= "datep2,";
-        $sql.= "durationp,";
+        $sql.= "durationp,";	// deprecated
         $sql.= "fk_action,";
         $sql.= "code,";
         $sql.= "fk_soc,";
@@ -186,7 +188,7 @@ class ActionComm extends CommonObject
         $sql.= "'".$this->db->idate($now)."',";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").",";
         $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").",";
-        $sql.= (isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null").",";
+        $sql.= (isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null").",";	// deprecated
         $sql.= (isset($this->type_id)?$this->type_id:"null").",";
         $sql.= (isset($this->code)?" '".$this->code."'":"null").",";
         $sql.= (isset($this->societe->id) && $this->societe->id > 0?" '".$this->societe->id."'":"null").",";
@@ -258,9 +260,10 @@ class ActionComm extends CommonObject
      *    Load object from database
      *
      *    @param	int		$id     Id of action to get
+     *    @param	string	$ref    Ref of action to get
      *    @return	int				<0 if KO, >0 if OK
      */
-    function fetch($id)
+    function fetch($id, $ref='')
     {
         global $langs;
 
@@ -269,8 +272,8 @@ class ActionComm extends CommonObject
         $sql.= " a.ref_ext,";
         $sql.= " a.datep,";
         $sql.= " a.datep2,";
+        $sql.= " a.durationp,";	// deprecated
         $sql.= " a.datec,";
-        $sql.= " a.durationp,";
         $sql.= " a.tms as datem,";
         $sql.= " a.code, a.label, a.note,";
         $sql.= " a.fk_soc,";
@@ -286,7 +289,9 @@ class ActionComm extends CommonObject
         $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
-        $sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
+        $sql.= " WHERE a.fk_action=c.id";
+        if ($ref) $sql.= " AND a.id=".$ref;		// No field ref, we use id
+        else $sql.= " AND a.id=".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -311,6 +316,7 @@ class ActionComm extends CommonObject
                 $this->label				= $obj->label;
                 $this->datep				= $this->db->jdate($obj->datep);
                 $this->datef				= $this->db->jdate($obj->datep2);
+				$this->durationp			= $this->durationp;					// deprecated
 
                 $this->datec   				= $this->db->jdate($obj->datec);
                 $this->datem   				= $this->db->jdate($obj->datem);
@@ -434,7 +440,7 @@ class ActionComm extends CommonObject
         if (empty($this->fulldayevent))  $this->fulldayevent = 0;
         if ($this->percentage > 100) $this->percentage = 100;
         //if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
-        if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);
+        if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);		// deprecated
         //if ($this->date  && $this->dateend) $this->durationa=($this->dateend - $this->date);
         if ($this->datep && $this->datef && $this->datep > $this->datef) $this->datef=$this->datep;
         //if ($this->date  && $this->dateend && $this->date > $this->dateend) $this->dateend=$this->date;
@@ -455,6 +461,7 @@ class ActionComm extends CommonObject
         $sql.= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'":"null");
         $sql.= ", datep = ".(strval($this->datep)!='' ? "'".$this->db->idate($this->datep)."'" : 'null');
         $sql.= ", datep2 = ".(strval($this->datef)!='' ? "'".$this->db->idate($this->datef)."'" : 'null');
+        $sql.= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null");	// deprecated
         $sql.= ", note = ".($this->note ? "'".$this->db->escape($this->note)."'":"null");
         $sql.= ", fk_soc =". ($this->societe->id > 0 ? "'".$this->societe->id."'":"null");
         $sql.= ", fk_project =". ($this->fk_project > 0 ? "'".$this->fk_project."'":"null");
@@ -857,7 +864,7 @@ class ActionComm extends CommonObject
             $sql = "SELECT a.id,";
             $sql.= " a.datep,";		// Start
             $sql.= " a.datep2,";	// End
-            $sql.= " a.durationp,";
+            $sql.= " a.durationp,";			// deprecated
             $sql.= " a.datec, a.tms as datem,";
             $sql.= " a.label, a.code, a.note, a.fk_action as type_id,";
             $sql.= " a.fk_soc,";
@@ -934,12 +941,12 @@ class ActionComm extends CommonObject
                     $event['type']=$type;
                     $datestart=$this->db->jdate($obj->datep)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
                     $dateend=$this->db->jdate($obj->datep2)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
-                    $duration=$obj->durationp;
+                    $duration=($datestart && $dateend)?($dateend - $datestart):0;
                     $event['summary']=$obj->label.($obj->socname?" (".$obj->socname.")":"");
                     $event['desc']=$obj->note;
                     $event['startdate']=$datestart;
-                    $event['duration']=$duration;	// Not required with type 'journal'
                     $event['enddate']=$dateend;		// Not required with type 'journal'
+                    $event['duration']=$duration;	// Not required with type 'journal'
                     $event['author']=dolGetFirstLastname($obj->firstname, $obj->lastname);
                     $event['priority']=$obj->priority;
                     $event['fulldayevent']=$obj->fulldayevent;

@@ -339,7 +339,7 @@ print '<table class="border" width="100%">';
 	print '<input type="text" name="label" size="80" value="'.dol_escape_htmltag($labelmovement).'">';
 	print '</td>';
 	print '</tr>';
-print '</table>';
+print '</table><br>';
 
 print '<div class="center"><input class="button" type="submit" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
 

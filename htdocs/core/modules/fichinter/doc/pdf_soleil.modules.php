@@ -82,7 +82,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->option_modereg = 0;                 // Affiche mode reglement
 		$this->option_condreg = 0;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
-		$this->option_multilang = 0;               // Dispo en plusieurs langues
+		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
 		// Get source company
@@ -222,22 +222,22 @@ class pdf_soleil extends ModelePDFFicheinter
 				$nexY = $tab_top + 7;
 
 				$pdf->SetXY($this->marge_gauche, $tab_top);
-				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
-				$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8);
+				$pdf->MultiCell(190,5,$outputlangs->transnoentities("Description"),0,'L',0);
+				$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur-$this->marge_droite, $tab_top + 5);
 
 				$pdf->SetFont('', '', $default_font_size - 1);
 
-				$pdf->SetXY($this->marge_gauche, $tab_top + 8);
+				$pdf->SetXY($this->marge_gauche, $tab_top + 5);
 				$text=$object->description;
 				if ($object->duree > 0)
 				{
-				    $totaltime=convertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
+				    $totaltime=convertSecondToTime($object->duration,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
 				    $text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
 				}
 				$desc=dol_htmlentitiesbr($text,1);
 				//print $outputlangs->convToOutputCharset($desc); exit;
 
-				$pdf->writeHTMLCell(180, 3, 10, $tab_top + 8, $outputlangs->convToOutputCharset($desc), 0, 1);
+				$pdf->writeHTMLCell(180, 3, 10, $tab_top + 5, $outputlangs->convToOutputCharset($desc), 0, 1);
 				$nexY = $pdf->GetY();
 
 				$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
@@ -262,7 +262,12 @@ class pdf_soleil extends ModelePDFFicheinter
 						$pageposbefore=$pdf->getPage();
 
 						// Description of product line
-						$txt='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration),1,$outputlangs->charset_output).'</strong>';
+						$txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
+						if ($objectligne->duration > 0)
+						{
+							$txt.=" - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration);
+						}
+						$txt='<strong>'.dol_htmlentitiesbr($txt,1,$outputlangs->charset_output).'</strong>';
 						$desc=dol_htmlentitiesbr($objectligne->desc,1);
 
 						$pdf->writeHTMLCell(0, 0, $curX, $curY + 1, dol_concatdesc($txt,$desc), 0, 1, 0);

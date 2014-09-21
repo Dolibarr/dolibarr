@@ -61,12 +61,17 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $project = new Project($db);
-if ($ref)
+if ($id > 0 || ! empty($ref))
 {
-    $project->fetch(0,$ref);
+    $project->fetch($id,$ref);
+    $project->fetch_thirdparty();
     $projectid=$project->id;
-}else {
+}
+else
+{
 	$project->fetch($projectid);
+    $project->fetch_thirdparty();
+    $projectid=$project->id;
 }
 
 // Security check
@@ -86,10 +91,6 @@ $form = new Form($db);
 $formproject=new FormProjets($db);
 
 $userstatic=new User($db);
-
-$project = new Project($db);
-$project->fetch($projectid,$ref);
-$project->fetch_thirdparty();
 
 // To verify role of users
 $userAccess = $project->restrictedProjectArea($user);

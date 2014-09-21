@@ -47,7 +47,7 @@ $object = new Project($db);
 $taskstatic = new Task($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
-if ($id > 0 || $ref)
+if ($id > 0 || ! empty($ref))
 {
 	$object->fetch($id,$ref);
 	$id=$object->id;
@@ -130,8 +130,8 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			if ($taskid > 0)
 			{
 				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
-			} 
-			else 
+			}
+			else
 			{
 			    setEventMessage($task->error,'errors');
 			    setEventMessage($task->errors,'errors');
@@ -183,7 +183,7 @@ llxHeader("",$langs->trans("Tasks"),$help_url);
 if ($id > 0 || ! empty($ref))
 {
 	$object->fetch($id, $ref);
-	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
+	$object->fetch_thirdparty();
 	$res=$object->fetch_optionals($object->id,$extralabels_projet);
 
 
@@ -198,7 +198,7 @@ if ($id > 0 || ! empty($ref))
 
 	$head=project_prepare_head($object);
 	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
-	
+
 	$param=($mode=='mine'?'&mode=mine':'');
 
 	print '<table class="border" width="100%">';
@@ -221,7 +221,7 @@ if ($id > 0 || ! empty($ref))
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+	if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td>';
 	print '</tr>';
@@ -259,7 +259,7 @@ if ($id > 0 || ! empty($ref))
 }
 
 
-if ($action == 'create' && $user->rights->projet->creer && (empty($object->societe->id) || $userWrite > 0))
+if ($action == 'create' && $user->rights->projet->creer && (empty($object->thirdparty->id) || $userWrite > 0))
 {
 	if ($id > 0 || ! empty($ref)) print '<br>';
 

@@ -1276,6 +1276,7 @@ class Form
     /**
      *	Return select list of users. Selected users are stored into session.
      *
+     *  @param  string	$action         Value for $action
      *  @param  string	$htmlname       Field name in form
      *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
      *  @param  array	$exclude        Array list of users id to exclude
@@ -1289,7 +1290,7 @@ class Form
      * 	@return	string					HTML select string
      *  @see select_dolgroups
      */
-    function select_dolusers_forevent($htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='')
+    function select_dolusers_forevent($action='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='')
     {
         global $conf,$user,$langs;
 
@@ -1297,18 +1298,24 @@ class Form
 
         // Method with no ajax
         //$out.='<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		$out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-		$out.='<input type="submit" class="button" name="addassignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+		$out.='<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
+		$out.='<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
+        $out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
+		$out.='<input type="submit" class="button" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		$assignedtouser=array();
 		if (!empty($_SESSION['assignedtouser'])) $assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
 		if (count($assignedtouser)) $out.='<br>';
+		$i=0;
 		foreach($assignedtouser as $key => $value)
 		{
 			$userstatic->fetch($key);
 			$out.=$userstatic->getNomUrl(1);
+			if ($i == 0) $out.=' ('.$langs->trans("Owner").')';
+			$out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
 			//$out.=' '.($value['mandatory']?$langs->trans("Mandatory"):$langs->trans("Optional"));
 			//$out.=' '.($value['transparency']?$langs->trans("Busy"):$langs->trans("NotBusy"));
 			$out.='<br>';
+			$i++;
 		}
 
 		//$out.='</form>';
@@ -3043,7 +3050,7 @@ class Form
      *  @param	int		$page        	Page
      *  @param  string	$selected    	Id condition pre-selectionne
      *  @param  string	$htmlname    	Name of select html field
-     *	@param	int		$addempty		Ajoute entree vide
+     *	@param	int		$addempty		Add empty entry
      *  @return	void
      */
     function form_conditions_reglement($page, $selected='', $htmlname='cond_reglement_id', $addempty=0)
@@ -3344,7 +3351,7 @@ class Form
      *    @param    string	$htmlname    	Nom du formulaire select
      *    @return	void
      */
-    function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
+    function form_contacts($page, $societe, $selected='', $htmlname='contactid')
     {
         global $langs, $conf;
 
