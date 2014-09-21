@@ -81,7 +81,7 @@ class Paiement extends CommonObject
 		$sql.= ' WHERE p.fk_paiement = c.id';
 		$sql.= ' AND p.rowid = '.$id;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result)
@@ -161,7 +161,7 @@ class Paiement extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
 		$sql.= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$totalamount."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
 
-		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
+		dol_syslog(__METHOD__ . " insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -177,7 +177,7 @@ class Paiement extends CommonObject
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount)';
 					$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\')';
 
-					dol_syslog(get_class($this).'::Create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
+					dol_syslog(__METHOD__ . ' Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
@@ -240,7 +240,7 @@ class Paiement extends CommonObject
 				}
 				else
 				{
-					dol_syslog(get_class($this).'::Create Amount line '.$key.' not a number. We discard it.');
+					dol_syslog(__METHOD__ . ' Amount line '.$key.' not a number. We discard it.');
 				}
 			}
 
@@ -405,7 +405,7 @@ class Paiement extends CommonObject
         	if ($accountid <= 0)
         	{
         		$this->error='Bad value for parameter accountid';
-        		dol_syslog(get_class($this).'::addPaymentToBank '.$this->error, LOG_ERR);
+        		dol_syslog(__METHOD__ . ' '.$this->error, LOG_ERR);
         		return -1;
         	}
 
@@ -557,7 +557,7 @@ class Paiement extends CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 
-		dol_syslog(get_class($this).'::update_fk_bank', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -566,7 +566,7 @@ class Paiement extends CommonObject
 		else
 		{
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this).'::update_fk_bank '.$this->error);
+            dol_syslog(__METHOD__ . ' '.$this->error);
 			return -1;
 		}
 	}
@@ -585,7 +585,7 @@ class Paiement extends CommonObject
             $sql.= " SET datep = '".$this->db->idate($date)."'";
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::update_date", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $result = $this->db->query($sql);
             if ($result)
             {
@@ -616,7 +616,7 @@ class Paiement extends CommonObject
             $sql.= " SET num_paiement = '".$this->db->escape($num)."'";
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::update_num", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $result = $this->db->query($sql);
             if ($result)
             {
@@ -641,7 +641,7 @@ class Paiement extends CommonObject
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.$this->id;
 
-		dol_syslog(get_class($this).'::valide', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -650,7 +650,7 @@ class Paiement extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this).'::valide '.$this->error);
+			dol_syslog(__METHOD__ . ' '.$this->error);
 			return -1;
 		}
 	}
@@ -665,7 +665,7 @@ class Paiement extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p';
 		$sql.= ' WHERE p.rowid = '.$id;
 
-		dol_syslog(get_class($this).'::info', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result)
@@ -728,7 +728,7 @@ class Paiement extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error.' -', LOG_DEBUG);
+			dol_syslog(__METHOD__ . ' Error '.$this->error.' -', LOG_DEBUG);
 			return -1;
 		}
 	}

@@ -126,7 +126,7 @@ class HookManager
         if (! is_array($this->hooks) || empty($this->hooks)) return '';
 
         $parameters['context']=join(':',$this->contextarray);
-        dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
+        dol_syslog(__METHOD__ . ' method='.$method." action=".$action." context=".$parameters['context']);
 
         // Define type of hook ('output', 'returnvalue' or 'addreplace'). 'addreplace' should be type for all hooks. 'output' and 'returnvalue' are deprecated.
         $hooktype='output';

@@ -73,7 +73,7 @@ class Address
 		$this->name  = trim($this->name);
 		$this->label = trim($this->label);
 
-		dol_syslog(get_class($this)."::create label=".$this->label);
+		dol_syslog(__METHOD__ . " label=".$this->label);
 
 		$this->db->begin();
 
@@ -95,13 +95,13 @@ class Address
 
 				if ($ret >= 0)
 				{
-					dol_syslog(get_class($this)."::create success id=".$this->id);
+					dol_syslog(__METHOD__ . " success id=".$this->id);
 					$this->db->commit();
 					return 0;
 				}
 				else
 				{
-					dol_syslog(get_class($this)."::create echec update");
+					dol_syslog(__METHOD__ . " echec update");
 					$this->db->rollback();
 					return -3;
 				}
@@ -123,7 +123,7 @@ class Address
 		else
 		{
 			$this->db->rollback();
-			dol_syslog(get_class($this)."::create echec verify sql=$sql");
+			dol_syslog(__METHOD__ . " echec verify sql=$sql");
 			return -1;
 		}
 	}
@@ -180,7 +180,7 @@ class Address
 
 		if ($result >= 0)
 		{
-			dol_syslog(get_class($this)."::Update verify ok");
+			dol_syslog(__METHOD__ . " verify ok");
 
 			$this->db->begin();
 
@@ -197,11 +197,11 @@ class Address
 			if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
 			$sql .= " WHERE fk_soc = '" . $socid ."' AND rowid = '" . $this->db->escape($id) ."'";
 
-			dol_syslog(get_class($this)."::Update", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				dol_syslog(get_class($this)."::Update success");
+				dol_syslog(__METHOD__ . " success");
 				$this->db->commit();
 				return 1;
 			}
@@ -302,13 +302,13 @@ class Address
 				}
 				else
 				{
-					dol_syslog(get_class($this).'::Fetch Erreur: aucune adresse', LOG_ERR);
+					dol_syslog(__METHOD__ . ' Erreur: aucune adresse', LOG_ERR);
 					return 0;
 				}
 			}
 			else
 			{
-				dol_syslog(get_class($this).'::Fetch Erreur: societe inconnue', LOG_ERR);
+				dol_syslog(__METHOD__ . ' Erreur: societe inconnue', LOG_ERR);
 				return -1;
 			}
 		}

@@ -97,7 +97,7 @@ class Productbatch extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		if (! $error)
@@ -123,7 +123,7 @@ class Productbatch extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -161,7 +161,7 @@ class Productbatch extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -216,7 +216,7 @@ class Productbatch extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		if (! $error)
@@ -240,7 +240,7 @@ class Productbatch extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -288,7 +288,7 @@ class Productbatch extends CommonObject
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element."";
     		$sql.= " WHERE rowid=".$this->id;
 
-    		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+    		dol_syslog(__METHOD__, LOG_DEBUG);
     		$resql = $this->db->query($sql);
         	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
@@ -298,7 +298,7 @@ class Productbatch extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -430,7 +430,7 @@ class Productbatch extends CommonObject
 
 		if (! empty($where)) $sql.= " AND (".implode(" OR ",$where).")";
 		
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+    	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

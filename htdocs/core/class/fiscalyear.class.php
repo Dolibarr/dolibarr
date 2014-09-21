@@ -95,7 +95,7 @@ class Fiscalyear
 		$sql.= ", ". $user->id;
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -150,7 +150,7 @@ class Fiscalyear
 		$sql .= ", fk_user_modif = " . $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -178,7 +178,7 @@ class Fiscalyear
 		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
 		$sql.= " WHERE rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ( $result )
 		{
@@ -212,7 +212,7 @@ class Fiscalyear
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE rowid = ".$id;
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -292,7 +292,7 @@ class Fiscalyear
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'accounting_fiscalyear as fy';
 		$sql.= ' WHERE fy.rowid = '.$id;
 
-		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);
+		dol_syslog(__METHOD__ . " info", LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result)

@@ -60,7 +60,7 @@ class AccountancySystem
 		$sql .= " (date_creation, fk_user_author, numero, label)";
 		$sql .= " VALUES (" . $this->db->idate($now) . "," . $user->id . ",'" . $this->numero . "','" . $this->label . "')";
 
-		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_system");

@@ -60,12 +60,12 @@ class Interfaces
         // Check parameters
         if (! is_object($object) || ! is_object($conf))	// Error
         {
-            dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERR);
+            dol_syslog(__METHOD__ . ' was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERR);
             return -1;
         }
         if (! is_object($user) || ! is_object($langs))	// Warning
         {
-            dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
+            dol_syslog(__METHOD__ . ' was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
         }
 
         $nbfile = $nbtotal = $nbok = $nbko = 0;
@@ -103,7 +103,7 @@ class Interfaces
                         if (in_array($modName,$modules))
                         {
                             $langs->load("errors");
-                            dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/core/triggers/"), LOG_ERR);
+                            dol_syslog(__METHOD__ . " action=".$action." ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/core/triggers/"), LOG_ERR);
                             continue;
                         }
                         else
@@ -124,7 +124,7 @@ class Interfaces
 
                         if (! $qualified)
                         {
-                            dol_syslog(get_class($this)."::run_triggers action=".$action." Triggers for file '".$file."' need module to be enabled", LOG_DEBUG);
+                            dol_syslog(__METHOD__ . " action=".$action." Triggers for file '".$file."' need module to be enabled", LOG_DEBUG);
                             continue;
                         }
 
@@ -153,17 +153,17 @@ class Interfaces
 
 				if (method_exists($objMod, 'runTrigger'))	// New method to implement
 				{
-	                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_INFO);
+	                dol_syslog(__METHOD__ . " action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_INFO);
 	                $result=$objMod->runTrigger($action,$object,$user,$langs,$conf);
 				}
 				elseif (method_exists($objMod, 'run_trigger'))	// Deprecated method
 				{
-	                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch run_trigger for file '".$files[$key]."'", LOG_INFO);
+	                dol_syslog(__METHOD__ . " action=".$action." Launch run_trigger for file '".$files[$key]."'", LOG_INFO);
 					$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
 				}
 				else
 				{
-	                dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
+	                dol_syslog(__METHOD__ . " action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
 				}
 
                 if ($result > 0)
@@ -188,18 +188,18 @@ class Interfaces
             }
             else
 			{
-                dol_syslog(get_class($this)."::run_triggers action=".$action." Failed to instantiate trigger for file '".$files[$key]."'", LOG_ERR);
+                dol_syslog(__METHOD__ . " action=".$action." Failed to instantiate trigger for file '".$files[$key]."'", LOG_ERR);
             }
         }
 
         if ($nbko)
         {
-            dol_syslog(get_class($this)."::run_triggers action=".$action." Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_ERR);
+            dol_syslog(__METHOD__ . " action=".$action." Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_ERR);
             return -$nbko;
         }
         else
         {
-            //dol_syslog(get_class($this)."::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_DEBUG);
+            //dol_syslog(__METHOD__ . " Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_DEBUG);
             return $nbok;
         }
     }

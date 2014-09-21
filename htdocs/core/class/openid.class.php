@@ -455,7 +455,7 @@ class SimpleOpenID
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (empty($url)) $url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 
-		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS get XRDS');
+		dol_syslog(__METHOD__ . ' get XRDS');
 
 		$addheaders=array('Accept: application/xrds+xml');
         $response = getURLContent($url, 'GET', '', 1, $addheaders);
@@ -487,7 +487,7 @@ class SimpleOpenID
         }
         else
        {
-       		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS found endpoint = '.$server);
+       		dol_syslog(__METHOD__ . ' found endpoint = '.$server);
         	$this->SetOpenIDServer($server);
         	return $server;
 	    }

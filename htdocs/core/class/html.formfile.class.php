@@ -869,7 +869,7 @@ class FormFile
         global $bc;
         global $sortfield, $sortorder;
 
-        dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
+        dol_syslog(__METHOD__ . ' upload_dir='.$upload_dir.' modulepart='.$modulepart);
 
         // Show list of documents
         if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));

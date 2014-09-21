@@ -122,7 +122,7 @@ class Conf
 	{
 		global $conf;
 
-		dol_syslog(get_class($this)."::setValues");
+		dol_syslog(__METHOD__);
 
 		/*
 		 * Definition de toutes les constantes globales d'environnement

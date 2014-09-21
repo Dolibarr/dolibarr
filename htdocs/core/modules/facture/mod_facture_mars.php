@@ -144,7 +144,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
-		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
@@ -167,7 +167,7 @@ class mod_facture_mars extends ModeleNumRefFactures
             $sql.= " WHERE facnumber LIKE '".$prefix."____-".$num."'";
             $sql.= " AND entity = ".$conf->entity;
 
-            dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -186,7 +186,7 @@ class mod_facture_mars extends ModeleNumRefFactures
     		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
     		else $num = sprintf("%04s",$max+1);
 
-    		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
+    		dol_syslog(__METHOD__ . " return ".$prefix.$yymm."-".$num);
     		return $prefix.$yymm."-".$num;
 		}
 		else dol_print_error('','Bad parameter for getNextValue');

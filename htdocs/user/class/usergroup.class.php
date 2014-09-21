@@ -86,7 +86,7 @@ class UserGroup extends CommonObject
 			$sql.= " WHERE g.rowid = ".$id;
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -146,7 +146,7 @@ class UserGroup extends CommonObject
 		}
 		$sql.= " ORDER BY g.nom";
 
-		dol_syslog(get_class($this)."::listGroupsForUser", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -203,7 +203,7 @@ class UserGroup extends CommonObject
 		}
 		if (! empty($excludefilter)) $sql.=' AND ('.$excludefilter.')';
 
-		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -248,7 +248,7 @@ class UserGroup extends CommonObject
 	{
 		global $conf;
 
-		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms");
+		dol_syslog(__METHOD__ . " $rid, $allmodule, $allperms");
 		$err=0;
 		$whereforadd='';
 
@@ -469,7 +469,7 @@ class UserGroup extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -590,7 +590,7 @@ class UserGroup extends CommonObject
 		$sql.= ",".$this->db->escape($entity);
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -643,7 +643,7 @@ class UserGroup extends CommonObject
 		$sql.= ", note = '" . $this->db->escape($this->note) . "'";
 		$sql.= " WHERE rowid = " . $this->id;
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

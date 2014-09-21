@@ -66,7 +66,7 @@ class FormCompany
 		$sql.= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id)?'0':$mysoc->country_id).")";
 		if ($filter) $sql.=" ".$filter;
 		$sql.= " ORDER by id";
-		dol_syslog(get_class($this).'::typent_array', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -105,7 +105,7 @@ class FormCompany
 		$sql.= " WHERE active = 1";
 		if ($filter) $sql.=" ".$filter;
 		$sql .= " ORDER BY id ASC";
-		dol_syslog(get_class($this).'::effectif_array', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -149,7 +149,7 @@ class FormCompany
 		print '<select class="flat" name="'.$htmlname.'">';
 		if ($empty) print '<option value="">&nbsp;</option>';
 
-		dol_syslog(get_class($this).'::form_prospect_level',LOG_DEBUG);
+		dol_syslog(__METHOD__,LOG_DEBUG);
 		$sql = "SELECT code, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql.= " WHERE active > 0";
@@ -215,7 +215,7 @@ class FormCompany
 	{
 		global $conf,$langs,$user;
 
-		dol_syslog(get_class($this)."::select_departement selected=".$selected.", country_codeid=".$country_codeid,LOG_DEBUG);
+		dol_syslog(__METHOD__ . " selected=".$selected.", country_codeid=".$country_codeid,LOG_DEBUG);
 
 		$langs->load("dict");
 
@@ -230,7 +230,7 @@ class FormCompany
 		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND c.code = '".$country_codeid."'";
 		$sql .= " ORDER BY c.code, d.code_departement";
 
-		dol_syslog(get_class($this)."::select_departement", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -238,7 +238,7 @@ class FormCompany
 			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			dol_syslog(get_class($this)."::select_departement num=".$num,LOG_DEBUG);
+			dol_syslog(__METHOD__ . " num=".$num,LOG_DEBUG);
 			if ($num)
 			{
 				$country='';
@@ -308,7 +308,7 @@ class FormCompany
 		$sql.= " WHERE r.fk_pays=c.rowid AND r.active = 1 and c.active = 1";
 		$sql.= " ORDER BY c.code, c.label ASC";
 
-		dol_syslog(get_class($this)."::select_region", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -449,7 +449,7 @@ class FormCompany
 		if ($filter) $sql .= " ".$filter;
 		$sql .= " ORDER BY c.code";
 
-		dol_syslog(get_class($this)."::select_juridicalstatus", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

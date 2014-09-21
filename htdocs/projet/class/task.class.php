@@ -123,7 +123,7 @@ class Task extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -157,7 +157,7 @@ class Task extends CommonObject
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -210,7 +210,7 @@ class Task extends CommonObject
         	$sql.="t.rowid = ".$id;
         }
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -292,7 +292,7 @@ class Task extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -324,7 +324,7 @@ class Task extends CommonObject
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -357,7 +357,7 @@ class Task extends CommonObject
 
         if ($this->hasChildren() > 0)
         {
-            dol_syslog(get_class($this)."::delete Can't delete record as it has some child", LOG_WARNING);
+            dol_syslog(__METHOD__ . " Can't delete record as it has some child", LOG_WARNING);
             $this->error='ErrorRecordHasChildren';
             $this->db->rollback();
             return 0;
@@ -382,7 +382,7 @@ class Task extends CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -402,7 +402,7 @@ class Task extends CommonObject
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -417,7 +417,7 @@ class Task extends CommonObject
 	        	$projectstatic->fetch($this->fk_project);
 
 	            $dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref) . '/' . dol_sanitizeFileName($this->id);
-	            dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
+	            dol_syslog(__METHOD__ . " dir=".$dir, LOG_DEBUG);
 	            if (file_exists($dir))
 	            {
 	            	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
@@ -451,7 +451,7 @@ class Task extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task";
         $sql.= " WHERE fk_task_parent=".$this->id;
 
-        dol_syslog(get_class($this)."::hasChildren", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         else
@@ -566,7 +566,7 @@ class Task extends CommonObject
         $sql.= " ORDER BY p.ref, t.rang, t.dateo";
 
         //print $sql;
-        dol_syslog(get_class($this)."::getTasksArray", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -640,7 +640,7 @@ class Task extends CommonObject
     {
         $arrayroles = array();
 
-        dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
+        dol_syslog(__METHOD__ . " userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
 
         // We want role of user for a projet or role of user for a task. Both are not possible.
         if (empty($userp) && empty($usert))
@@ -680,7 +680,7 @@ class Task extends CommonObject
         }
         //print $sql;
 
-        dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -759,7 +759,7 @@ class Task extends CommonObject
         $sql.= ", ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql) )
         {
             $tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
@@ -786,7 +786,7 @@ class Task extends CommonObject
             $sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             if (! $this->db->query($sql) )
             {
                 $this->error=$this->db->lasterror();
@@ -801,7 +801,7 @@ class Task extends CommonObject
             $sql.= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->timespent_fk_user.")";
             $sql.= " WHERE rowid = ".$tasktime_id;
 
-            dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             if (! $this->db->query($sql) )
             {
                 $this->error=$this->db->lasterror();
@@ -834,7 +834,7 @@ class Task extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetchTimeSpent", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -886,7 +886,7 @@ class Task extends CommonObject
         $sql.= " note = ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
         $sql.= " WHERE rowid = ".$this->timespent_id;
 
-        dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql) )
         {
             if (! $notrigger)
@@ -918,7 +918,7 @@ class Task extends CommonObject
             $sql.= " SET duration_effective = duration_effective + '".$newDuration."'";
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             if (! $this->db->query($sql) )
             {
                 $this->error=$this->db->lasterror();
@@ -949,7 +949,7 @@ class Task extends CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
         $sql.= " WHERE rowid = ".$this->timespent_id;
 
-        dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -970,7 +970,7 @@ class Task extends CommonObject
             $sql.= " SET duration_effective = duration_effective - '".$this->timespent_duration."'";
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             if ($this->db->query($sql) )
             {
                 $result = 0;
@@ -987,7 +987,7 @@ class Task extends CommonObject
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::delTimeSpent ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -1220,7 +1220,7 @@ class Task extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
+				dol_syslog(__METHOD__ . " nbError: ".$error." error : " . $this->error, LOG_ERR);
 				return -1;
 			}
 		}

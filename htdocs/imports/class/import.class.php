@@ -62,7 +62,7 @@ class Import
 	{
 		global $langs,$conf;
 
-		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
+		dol_syslog(__METHOD__ . " user=".$user->id." filter=".$filter);
 
         $var=true;
         $i=0;
@@ -182,7 +182,7 @@ class Import
 
 		$indice=0;
 
-		dol_syslog(get_class($this)."::build_example_file ".$model);
+		dol_syslog(__METHOD__ . " ".$model);
 
 		// Creation de la classe d'import du model Import_XXX
 		$dir = DOL_DOCUMENT_ROOT . "/core/modules/import/";
@@ -233,7 +233,7 @@ class Import
 		$sql.= ')';
 		$sql.= " VALUES (".($user->id > 0 ? $user->id : 0).", '".$this->db->escape($this->model_name)."', '".$this->datatoimport."', '".$this->hexa."')";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -261,7 +261,7 @@ class Import
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'import_model as em';
 		$sql.= ' WHERE em.rowid = '.$id;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -305,7 +305,7 @@ class Import
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -325,7 +325,7 @@ class Import
 		{
 			foreach($this->errors as $errmsg)
 			{
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();

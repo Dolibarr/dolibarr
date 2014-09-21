@@ -119,7 +119,7 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				dol_print_error($db,get_class($this)."::getNextValue ".$obj->error);
+				dol_print_error($db, __METHOD__ . " ".$obj->error);
 				return "";
 			}
 		}
@@ -156,7 +156,7 @@ class Contrat extends CommonObject
 		$sql.= " commentaire = '".$this->db->escape($comment)."'";
 		$sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3 OR statut = 5)";
 
-		dol_syslog(get_class($this)."::active_line", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -285,7 +285,7 @@ class Contrat extends CommonObject
 		$now=dol_now();
 
 		$error=0;
-		dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number);
+		dol_syslog(__METHOD__ . ' user='.$user->id.', force_number='.$force_number);
 
 
 		$this->db->begin();
@@ -311,7 +311,7 @@ class Contrat extends CommonObject
 			//$sql.= ", fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
 
-			dol_syslog(get_class($this)."::validate", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
@@ -335,7 +335,7 @@ class Contrat extends CommonObject
 					$dirdest = $conf->contract->dir_output.'/'.$snumfa;
 					if (file_exists($dirsource))
 					{
-						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+						dol_syslog(__METHOD__ . " rename dir ".$dirsource." into ".$dirdest);
 
 						if (@rename($dirsource, $dirdest))
 						{
@@ -411,7 +411,7 @@ class Contrat extends CommonObject
 		}
 		else $sql.= " WHERE rowid=".$id;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -458,14 +458,14 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::Fetch Erreur contrat non trouve");
+				dol_syslog(__METHOD__ . " Erreur contrat non trouve");
 				$this->error="Contract not found";
 				return -2;
 			}
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::Fetch Erreur lecture contrat");
+			dol_syslog(__METHOD__ . " Erreur lecture contrat");
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -510,7 +510,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = p.rowid";
 		$sql.= " ORDER by d.rowid ASC";
 
-		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -588,7 +588,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::Fetch Erreur lecture des lignes de contrats liees aux produits");
+			dol_syslog(__METHOD__ . " Erreur lecture des lignes de contrats liees aux produits");
 			return -3;
 		}
 
@@ -676,7 +676,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::Fetch Erreur lecture des lignes de contrat non liees aux produits");
+			dol_syslog(__METHOD__ . " Erreur lecture des lignes de contrat non liees aux produits");
 			$this->error=$this->db->error();
 			return -2;
 		}
@@ -809,7 +809,7 @@ class Contrat extends CommonObject
 				}
 				else
 				{
-					dol_syslog(get_class($this)."::create - 30 - ".$this->error, LOG_ERR);
+					dol_syslog(__METHOD__ . " - 30 - ".$this->error, LOG_ERR);
 
 					$this->db->rollback();
 					return -3;
@@ -818,7 +818,7 @@ class Contrat extends CommonObject
 			else
 			{
 				$this->error="Failed to add contact";
-				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
+				dol_syslog(__METHOD__ . " - 20 - ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -2;
@@ -860,7 +860,7 @@ class Contrat extends CommonObject
 			$res = $this->delete_linked_contact();
 			if ($res < 0)
 			{
-				dol_syslog(get_class($this)."::delete error", LOG_ERR);
+				dol_syslog(__METHOD__, LOG_ERR);
 				$error++;
 			}
 		}
@@ -877,7 +877,7 @@ class Contrat extends CommonObject
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql.= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".$this->id;
 
-			dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
+			dol_syslog(__METHOD__ . " contratdet_log", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -898,7 +898,7 @@ class Contrat extends CommonObject
 				$sql= "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
 				$sql.= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",",$tab_resql).")";
 
-				dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
+				dol_syslog(__METHOD__ . " contratdet_log", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
@@ -914,7 +914,7 @@ class Contrat extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " WHERE fk_contrat=".$this->id;
 
-			dol_syslog(get_class($this)."::delete contratdet", LOG_DEBUG);
+			dol_syslog(__METHOD__ . " contratdet", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -929,7 +929,7 @@ class Contrat extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
 			$sql.= " WHERE rowid=".$this->id;
 
-			dol_syslog(get_class($this)."::delete contrat", LOG_DEBUG);
+			dol_syslog(__METHOD__ . " contrat", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -1055,7 +1055,7 @@ class Contrat extends CommonObject
 			{
 				foreach($this->errors as $errmsg)
 				{
-					dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+					dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 					$this->error.=($this->error?', '.$errmsg:$errmsg);
 				}
 				$this->db->rollback();
@@ -1093,7 +1093,7 @@ class Contrat extends CommonObject
 	{
 		global $user, $langs, $conf, $mysoc;
 
-		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
+		dol_syslog(__METHOD__ . " $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
 
 		if ($this->statut >= 0)
 		{
@@ -1189,7 +1189,7 @@ class Contrat extends CommonObject
 			if ($date_end > 0) { $sql.= ",'".$this->db->idate($date_end)."'"; }
 			$sql.= ")";
 
-			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -1224,7 +1224,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::addline ErrorTryToAddLineOnValidatedContract", LOG_ERR);
+			dol_syslog(__METHOD__ . " ErrorTryToAddLineOnValidatedContract", LOG_ERR);
 			return -2;
 		}
 	}
@@ -1276,7 +1276,7 @@ class Contrat extends CommonObject
 			$remise_percent=0;
 		}
 
-		dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx, $localtax1tx, $localtax2tx, $price_base_type, $info_bits");
+		dol_syslog(__METHOD__ . " $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx, $localtax1tx, $localtax2tx, $price_base_type, $info_bits");
 
 		$this->db->begin();
 
@@ -1343,7 +1343,7 @@ class Contrat extends CommonObject
 		else { $sql.=",date_cloture=null"; }
 		$sql .= " WHERE rowid = ".$rowid;
 
-		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1365,7 +1365,7 @@ class Contrat extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				dol_syslog(get_class($this)."::updateligne Erreur -2");
+				dol_syslog(__METHOD__ . " Erreur -2");
 				return -2;
 			}
 		}
@@ -1373,7 +1373,7 @@ class Contrat extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::updateligne Erreur -1");
+			dol_syslog(__METHOD__ . " Erreur -1");
 			return -1;
 		}
 	}
@@ -1404,7 +1404,7 @@ class Contrat extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " WHERE rowid=".$idline;
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
@@ -1608,7 +1608,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE fk_contrat =".$this->id;
 		if ($statut >= 0) $sql.= " AND statut = '$statut'";
 
-		dol_syslog(get_class($this)."::array_detail()", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1644,7 +1644,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE fk_soc =".$this->socid;
 		if ($option == 'others') $sql.= " AND c.rowid != ".$this->id;
 
-		dol_syslog(get_class($this)."::getOtherContracts()", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2079,7 +2079,7 @@ class ContratLigne extends CommonObject
 		if ($id)  $sql.= " WHERE t.rowid = ".$id;
 		if ($ref) $sql.= " WHERE t.rowid = '".$this->db->escape($ref)."'";
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2235,7 +2235,7 @@ class ContratLigne extends CommonObject
 		$sql.= " commentaire='".$this->db->escape($this->commentaire)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2282,7 +2282,7 @@ class ContratLigne extends CommonObject
 		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2314,7 +2314,7 @@ class ContratLigne extends CommonObject
 		if (! $sql) return -1;
 
 		//print $sql;
-		dol_syslog(get_class($this)."::get_element_list", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{

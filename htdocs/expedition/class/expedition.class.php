@@ -144,7 +144,7 @@ class Expedition extends CommonObject
 			}
 			else
 			{
-				dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
+				dol_print_error($db, __METHOD__ . " ".$obj->error);
 				return "";
 			}
 		}
@@ -227,7 +227,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -237,7 +237,7 @@ class Expedition extends CommonObject
 			$sql.= " SET ref = '(PROV".$this->id.")'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::create", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				// Insertion des lignes
@@ -289,7 +289,7 @@ class Expedition extends CommonObject
 					{
 						foreach($this->errors as $errmsg)
 						{
-							dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+							dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 							$this->error.=($this->error?', '.$errmsg:$errmsg);
 						}
 						$this->db->rollback();
@@ -346,7 +346,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".$qty;
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create_line", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if (! $this->db->query($sql))
 		{
 			$error++;
@@ -411,7 +411,7 @@ class Expedition extends CommonObject
         if ($ref_ext) $sql.= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
         if ($ref_int) $sql.= " AND e.ref_int='".$this->db->escape($ref_int)."'";
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -485,7 +485,7 @@ class Expedition extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this).'::Fetch Error -2', LOG_ERR);
+				dol_syslog(__METHOD__ . ' Error -2', LOG_ERR);
 				$this->error='Delivery with id '.$id.' not found sql='.$sql;
 				return -2;
 			}
@@ -509,19 +509,19 @@ class Expedition extends CommonObject
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		dol_syslog(get_class($this)."::valid");
+		dol_syslog(__METHOD__);
 
 		// Protection
 		if ($this->statut)
 		{
-			dol_syslog(get_class($this)."::valid no draft status", LOG_WARNING);
+			dol_syslog(__METHOD__ . " no draft status", LOG_WARNING);
 			return 0;
 		}
 
 		if (! $user->rights->expedition->valider)
 		{
 			$this->error='Permission denied';
-			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -556,7 +556,7 @@ class Expedition extends CommonObject
 		$sql.= ", fk_user_valid = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::valid update expedition", LOG_DEBUG);
+		dol_syslog(__METHOD__ . " update expedition", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (! $resql)
 		{
@@ -579,7 +579,7 @@ class Expedition extends CommonObject
 			$sql.= " WHERE ed.fk_expedition = ".$this->id;
 			$sql.= " AND cd.rowid = ed.fk_origin_line";
 
-			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
+			dol_syslog(__METHOD__ . " select details", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -588,7 +588,7 @@ class Expedition extends CommonObject
 				{
 					if($obj->qty <= 0) continue;
 					
-					dol_syslog(get_class($this)."::valid movement index ".$i);
+					dol_syslog(__METHOD__ . " movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
 
 					//var_dump($this->lines[$i]);
@@ -631,7 +631,7 @@ class Expedition extends CommonObject
 				$dirdest = $conf->expedition->dir_output.'/sending/'.$newref;
 				if (file_exists($dirsource))
 				{
-					dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
+					dol_syslog(__METHOD__ . " rename dir ".$dirsource." into ".$dirdest);
 
 					if (@rename($dirsource, $dirdest))
 					{
@@ -669,7 +669,7 @@ class Expedition extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::valid ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -855,7 +855,7 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -875,7 +875,7 @@ class Expedition extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -930,14 +930,14 @@ class Expedition extends CommonObject
 			$sql.= " WHERE ed.fk_expedition = ".$this->id;
 			$sql.= " AND cd.rowid = ed.fk_origin_line";
 
-			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
+			dol_syslog(__METHOD__ . " select details", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
 				$cpt = $this->db->num_rows($resql);
 				for ($i = 0; $i < $cpt; $i++)
 				{
-					dol_syslog(get_class($this)."::delete movement index ".$i);
+					dol_syslog(__METHOD__ . " movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
 
 					//var_dump($this->lines[$i]);
@@ -1069,7 +1069,7 @@ class Expedition extends CommonObject
 		$sql.= " AND ed.fk_origin_line = cd.rowid";
 		$sql.= " ORDER BY cd.rang";
 
-		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1254,7 +1254,7 @@ class Expedition extends CommonObject
 
 		$now=dol_now();
 
-		dol_syslog(get_class($this)."::initAsSpecimen");
+		dol_syslog(__METHOD__);
 
 		// Charge tableau des produits prodids
 		$prodids = array();
@@ -1335,7 +1335,7 @@ class Expedition extends CommonObject
 			$sql.= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_date_livraison", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{

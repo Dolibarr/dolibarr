@@ -147,7 +147,7 @@ class Account extends CommonObject
         $sql.= ", '".$type."'";
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::add_url_line", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_url");
@@ -189,7 +189,7 @@ class Account extends CommonObject
         }
         $sql.= " ORDER BY type, label";
 
-        dol_syslog(get_class($this)."::get_url", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -302,7 +302,7 @@ class Account extends CommonObject
         $sql.= ", ".($banque?"'".$this->db->escape($banque)."'":"null");
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::addline", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
@@ -355,19 +355,19 @@ class Account extends CommonObject
         if (empty($this->country_id))
         {
             $this->error=$langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Country"));
-            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
             return -1;
         }
         if (empty($this->ref))
         {
             $this->error=$langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref"));
-            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
             return -1;
         }
         if (empty($this->date_solde))
         {
             $this->error=$langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateInitialBalance"));
-            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -406,7 +406,7 @@ class Account extends CommonObject
         $sql.= ", ".$this->country_id;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -478,13 +478,13 @@ class Account extends CommonObject
         if (empty($this->country_id))
         {
             $this->error=$langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Country"));
-            dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
             return -1;
         }
         if (empty($this->ref))
         {
             $this->error=$langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref"));
-            dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
             return -1;
         }
         if (! $this->label) $this->label = "???";
@@ -513,7 +513,7 @@ class Account extends CommonObject
         $sql.= " WHERE rowid = ".$this->id;
         $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -545,7 +545,7 @@ class Account extends CommonObject
         // Chargement librairie pour acces fonction controle RIB
         require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
-        dol_syslog(get_class($this)."::update_bban $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban");
+        dol_syslog(__METHOD__ . " $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban");
 
         // Check parameters
         if (! $this->ref)
@@ -570,7 +570,7 @@ class Account extends CommonObject
         $sql.= " WHERE rowid = ".$this->id;
         $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::update_bban", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $result = $this->db->query($sql);
         if ($result)
@@ -617,7 +617,7 @@ class Account extends CommonObject
         if ($id)  $sql.= " AND ba.rowid  = ".$id;
         if ($ref) $sql.= " AND ba.ref = '".$this->db->escape($ref)."'";
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -691,7 +691,7 @@ class Account extends CommonObject
         $sql.= " WHERE rowid  = ".$this->rowid;
         $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result) {
             return 1;
@@ -1091,7 +1091,7 @@ class AccountLine extends CommonObject
         else if ($ref) $sql.= " AND b.rowid='".$this->db->escape($ref)."'";
         else $sql.= " AND b.rowid=".$rowid;
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -1166,12 +1166,12 @@ class AccountLine extends CommonObject
         }
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".$this->rowid;
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if (! $result) $nbko++;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=".$this->rowid;
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if (! $result) $nbko++;
 
@@ -1208,7 +1208,7 @@ class AccountLine extends CommonObject
         $this->db->begin();
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".$this->rowid;
-        dol_syslog(get_class($this)."::delete_urls", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if (! $result) $nbko++;
 
@@ -1242,7 +1242,7 @@ class AccountLine extends CommonObject
         $sql.= " dateo='".$this->db->idate($this->dateo)."'";
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1275,7 +1275,7 @@ class AccountLine extends CommonObject
         $sql.= ", fk_user_rappro = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1289,7 +1289,7 @@ class AccountLine extends CommonObject
                 $sql.= ", ".$cat;
                 $sql.= ")";
 
-                dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $resql = $this->db->query($sql);
 
                 // No error check. Can fail if category already affected

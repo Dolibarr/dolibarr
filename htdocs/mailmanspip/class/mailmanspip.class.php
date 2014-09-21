@@ -171,7 +171,7 @@ class MailmanSpip
      */
     function add_to_spip($object)
     {
-        dol_syslog(get_class($this)."::add_to_spip");
+        dol_syslog(__METHOD__);
 
         if ($this->isSpipEnabled())
         {
@@ -213,7 +213,7 @@ class MailmanSpip
      */
     function del_to_spip($object)
     {
-        dol_syslog(get_class($this)."::del_to_spip");
+        dol_syslog(__METHOD__);
 
         if ($this->isSpipEnabled())
         {
@@ -305,7 +305,7 @@ class MailmanSpip
     {
         global $conf,$langs,$user;
 
-        dol_syslog(get_class($this)."::add_to_mailman");
+        dol_syslog(__METHOD__);
 
         $this->mladded_ok=array();
         $this->mladded_ko=array();
@@ -377,7 +377,7 @@ class MailmanSpip
     {
         global $conf,$langs,$user;
 
-        dol_syslog(get_class($this)."::del_to_mailman");
+        dol_syslog(__METHOD__);
 
         $this->mlremoved_ok=array();
         $this->mlremoved_ko=array();

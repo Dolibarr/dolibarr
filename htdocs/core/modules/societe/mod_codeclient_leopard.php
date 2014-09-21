@@ -115,7 +115,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 			$result=-2;
 		}
 
-		dol_syslog(get_class($this)."::verif type=".$type." result=".$result);
+		dol_syslog(__METHOD__ . " type=".$type." result=".$result);
 		return $result;
 	}
 }

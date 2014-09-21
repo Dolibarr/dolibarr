@@ -84,7 +84,7 @@ class BankCateg // extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -111,7 +111,7 @@ class BankCateg // extends CommonObject
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -142,7 +142,7 @@ class BankCateg // extends CommonObject
         $sql.= " WHERE t.rowid = ".$id;
         $sql.= " AND t.entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -191,7 +191,7 @@ class BankCateg // extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -216,7 +216,7 @@ class BankCateg // extends CommonObject
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -248,7 +248,7 @@ class BankCateg // extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -273,7 +273,7 @@ class BankCateg // extends CommonObject
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();

@@ -6,7 +6,7 @@
 notifications:
   email:
     on_success: never # [always|never|change] default: change
-    on_failure: change # [always|never|change] default: always
+    on_failure: always # [always|never|change] default: always
     
 services:
  - memcached # will start memcached

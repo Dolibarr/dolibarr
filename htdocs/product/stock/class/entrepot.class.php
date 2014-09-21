@@ -89,7 +89,7 @@ class Entrepot extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, label)";
 		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."')";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -105,21 +105,21 @@ class Entrepot extends CommonObject
 				}
 				else
 				{
-					dol_syslog(get_class($this)."::create return -3");
+					dol_syslog(__METHOD__ . " return -3");
 					$this->db->rollback();
 					return -3;
 				}
 			}
 			else {
 				$this->error="Failed to get insert id";
-				dol_syslog(get_class($this)."::create return -2");
+				dol_syslog(__METHOD__ . " return -2");
 				return -2;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::create Error ".$this->db->error());
+			dol_syslog(__METHOD__ . " Error ".$this->db->error());
 			$this->db->rollback();
 			return -1;
 		}
@@ -158,7 +158,7 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -199,13 +199,13 @@ class Entrepot extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql.= " WHERE rowid = " . $this->id;
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql1=$this->db->query($sql);
 
 			// Update denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET stock = (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql2=$this->db->query($sql);
 
 			if ($resql1 && $resql2)
@@ -255,7 +255,7 @@ class Entrepot extends CommonObject
 			if ($ref) $sql.= " AND label = '".$this->db->escape($ref)."'";
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -306,7 +306,7 @@ class Entrepot extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql.= " WHERE e.rowid = ".$id;
 
-		dol_syslog(get_class($this)."::info", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{

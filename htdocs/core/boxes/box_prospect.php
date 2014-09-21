@@ -73,7 +73,7 @@ class box_prospect extends ModeleBoxes
 			$sql.= " ORDER BY s.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql)
 			{

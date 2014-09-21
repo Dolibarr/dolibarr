@@ -393,7 +393,7 @@ class PaiementFourn extends Paiement
 		$sql.= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.$this->id;
 		if ($filter) $sql.= ' AND '.$filter;
 
-		dol_syslog(get_class($this).'::getBillsArray', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -413,7 +413,7 @@ class PaiementFourn extends Paiement
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error);
+			dol_syslog(__METHOD__ . ' Error '.$this->error);
 			return -1;
 		}
 	}

@@ -585,13 +585,13 @@ class DolGraph
 		if (empty($file))
 		{
 			$this->error="Call to draw method was made with empty value for parameter file.";
-			dol_syslog(get_class($this)."::draw ".$this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
 			return -2;
 		}
 		if (! is_array($this->data) || count($this->data) < 1)
 		{
 			$this->error="Call to draw method was made but SetData was not called or called with an empty dataset for parameters";
-			dol_syslog(get_class($this)."::draw ".$this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
 			return -1;
 		}
 		$call = "draw_".$this->_library;
@@ -610,7 +610,7 @@ class DolGraph
 	{
 		global $artichow_defaultfont;
 
-		dol_syslog(get_class($this)."::draw_artichow this->type=".join(',',$this->type));
+		dol_syslog(__METHOD__ . " this->type=".join(',',$this->type));
 
 		if (! defined('SHADOW_RIGHT_TOP'))  define('SHADOW_RIGHT_TOP',3);
 		if (! defined('LEGEND_BACKGROUND')) define('LEGEND_BACKGROUND',2);
@@ -797,7 +797,7 @@ class DolGraph
 	{
 		global $artichow_defaultfont;
 
-		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',',$this->type));
+		dol_syslog(__METHOD__ . " this->type=".join(',',$this->type));
 
 		if (empty($this->width) && empty($this->height))
 		{

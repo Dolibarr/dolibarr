@@ -167,7 +167,7 @@ class pdf_paiement
 		if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
 		$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 
-		dol_syslog(get_class($this)."::write_file", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{

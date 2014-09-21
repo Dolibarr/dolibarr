@@ -98,7 +98,7 @@ class Localtax extends CommonObject
 		$sql.= " '".$this->fk_user_modif."'";
 		$sql.= ")";
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
+	   	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -155,7 +155,7 @@ class Localtax extends CommonObject
 		$sql.= " fk_user_modif='".$this->fk_user_modif."'";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
@@ -205,7 +205,7 @@ class Localtax extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
         $sql.= " WHERE t.rowid = ".$id;
 
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+    	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -262,7 +262,7 @@ class Localtax extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."localtax";
 		$sql.= " WHERE rowid=".$this->id;
 
-	   	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+	   	dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
@@ -485,7 +485,7 @@ class Localtax extends CommonObject
         $sql.=", '".$user->id."', NULL";
         $sql.= ")";
 
-		dol_syslog(get_class($this)."::addPayment", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {

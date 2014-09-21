@@ -116,7 +116,7 @@ class PaymentSocialContribution extends CommonObject
 			$sql.= " ".$this->paiementtype.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($this->note)."', ".$user->id.",";
 			$sql.= " 0)";
 
-			dol_syslog(get_class($this)."::create", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -172,7 +172,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepaiement = pt.id";
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -261,7 +261,7 @@ class PaymentSocialContribution extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -286,7 +286,7 @@ class PaymentSocialContribution extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -319,7 +319,7 @@ class PaymentSocialContribution extends CommonObject
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
             $sql.= " WHERE type='payment_sc' AND url_id=".$this->id;
 
-            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
             if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         }
@@ -329,7 +329,7 @@ class PaymentSocialContribution extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge";
 			$sql.= " WHERE rowid=".$this->id;
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
@@ -355,7 +355,7 @@ class PaymentSocialContribution extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				dol_syslog(__METHOD__ . " ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -558,7 +558,7 @@ class PaymentSocialContribution extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{

@@ -81,7 +81,7 @@ class DoliDBPgsql extends DoliDB
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error="Pgsql PHP functions are not available in this version of PHP";
-			dol_syslog(get_class($this)."::DoliDBPgsql : Pgsql PHP functions are not available in this version of PHP",LOG_ERR);
+			dol_syslog(__METHOD__ . " : Pgsql PHP functions are not available in this version of PHP",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -90,7 +90,7 @@ class DoliDBPgsql extends DoliDB
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
-			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect, wrong host parameters",LOG_ERR);
+			dol_syslog(__METHOD__ . " : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -109,7 +109,7 @@ class DoliDBPgsql extends DoliDB
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error='Host, login or password incorrect';
-			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect ".$this->error,LOG_ERR);
+			dol_syslog(__METHOD__ . " : Erreur Connect ".$this->error,LOG_ERR);
 		}
 
 		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
@@ -127,7 +127,7 @@ class DoliDBPgsql extends DoliDB
 				$this->database_name = '';
 				$this->ok = 0;
 				$this->error=$this->error();
-				dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Select_db ".$this->error,LOG_ERR);
+				dol_syslog(__METHOD__ . " : Erreur Select_db ".$this->error,LOG_ERR);
 			}
 		}
 		else
@@ -449,7 +449,7 @@ class DoliDBPgsql extends DoliDB
     {
         if ($this->db)
         {
-          if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
+          if ($this->transaction_opened > 0) dol_syslog(__METHOD__ . " Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
           $this->connected=0;
           return pg_close($this->db);
         }
@@ -510,9 +510,9 @@ class DoliDBPgsql extends DoliDB
     				$this->lasterrno = $this->errno();
 			    }
 
-				dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
-				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
-				dol_syslog(get_class($this)."::query SQL error usesavepoint = ".$usesavepoint, LOG_ERR);
+				dol_syslog(__METHOD__ . " SQL Error query: ".$query, LOG_ERR);
+				dol_syslog(__METHOD__ . " SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
+				dol_syslog(__METHOD__ . " SQL error usesavepoint = ".$usesavepoint, LOG_ERR);
 
 				if ($usesavepoint && $this->transaction_opened)	// Warning, after that errno will be erased
 				{
@@ -991,7 +991,7 @@ class DoliDBPgsql extends DoliDB
 		// Note: using ' on user does not works with pgsql
 		$sql = "CREATE USER ".$this->escape($dolibarr_main_db_user)." with password '".$this->escape($dolibarr_main_db_pass)."'";
 
-		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
+		dol_syslog(__METHOD__, LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
 		if (! $resql)
 		{

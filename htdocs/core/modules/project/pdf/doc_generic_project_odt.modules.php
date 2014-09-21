@@ -231,7 +231,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	function get_substitutionarray_tasksressource($taskressource,$outputlangs)
 	{
 		global $conf;
-		//dol_syslog(get_class($this).'::get_substitutionarray_tasksressource taskressource='.var_export($taskressource,true),LOG_DEBUG);
+		//dol_syslog(__METHOD__ . ' taskressource='.var_export($taskressource,true),LOG_DEBUG);
 		return array(
 		'taskressource_rowid'=>$taskressource['rowid'],
 		'taskressource_role'=>$taskressource['libelle'],
@@ -713,7 +713,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						foreach ($filearray as $filedetail)
 						{
 							$tmparray=$this->get_substitutionarray_task_file($filedetail,$outputlangs);
-							//dol_syslog(get_class($this).'::main $tmparray'.var_export($tmparray,true));
+							//dol_syslog(__METHOD__ . ' $tmparray'.var_export($tmparray,true));
 							foreach($tmparray as $key => $val)
 							{
 								try
@@ -750,7 +750,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 					foreach ($filearray as $filedetail)
 					{
-						//dol_syslog(get_class($this).'::main $filedetail'.var_export($filedetail,true));
+						//dol_syslog(__METHOD__ . ' $filedetail'.var_export($filedetail,true));
 						$tmparray=$this->get_substitutionarray_project_file($filedetail,$outputlangs);
 
 						foreach($tmparray as $key => $val)

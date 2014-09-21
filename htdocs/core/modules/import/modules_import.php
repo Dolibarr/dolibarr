@@ -68,7 +68,7 @@ class ModeleImports
 	 */
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
-		dol_syslog(get_class($this)."::liste_modeles");
+		dol_syslog(__METHOD__);
 
 		$dir=DOL_DOCUMENT_ROOT."/core/modules/import/";
 		$handle=opendir($dir);

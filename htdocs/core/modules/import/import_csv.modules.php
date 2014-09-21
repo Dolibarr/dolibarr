@@ -217,7 +217,7 @@ class ImportCsv extends ModeleImports
 		global $langs;
 		$ret=1;
 
-		dol_syslog(get_class($this)."::open_file file=".$file);
+		dol_syslog(__METHOD__ . " file=".$file);
 
 		ini_set('auto_detect_line_endings',1);	// For MAC compatibility
 

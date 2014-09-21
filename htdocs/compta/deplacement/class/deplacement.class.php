@@ -120,7 +120,7 @@ class Deplacement extends CommonObject
 		$sql.= ", ".($this->fk_soc > 0? $this->fk_soc : "null");
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -203,7 +203,7 @@ class Deplacement extends CommonObject
 		$sql .= " , fk_projet = ".($this->fk_project>0?$this->fk_project:0);
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -233,7 +233,7 @@ class Deplacement extends CommonObject
 		if ($ref) $sql.= " AND ref ='".$this->db->escape($ref)."'";
 		else $sql.= " AND id = ".$id;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ( $result )
 		{
@@ -274,7 +274,7 @@ class Deplacement extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = ".$id;
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -388,7 +388,7 @@ class Deplacement extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees";
         $sql.= " WHERE active = ".$active;
 
-        dol_syslog(get_class($this)."::listOfTypes", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ( $result )
         {
@@ -422,7 +422,7 @@ class Deplacement extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'deplacement as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
-		dol_syslog(get_class($this).'::info', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result)

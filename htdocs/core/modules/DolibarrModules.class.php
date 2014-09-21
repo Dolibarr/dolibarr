@@ -245,7 +245,7 @@ abstract class DolibarrModules
                 // Add current entity id
                 $sql=str_replace('__ENTITY__', $conf->entity, $sql);
 
-                dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror."", LOG_DEBUG);
+                dol_syslog(__METHOD__ . " ignoreerror=".$ignoreerror."", LOG_DEBUG);
                 $result=$this->db->query($sql, $ignoreerror);
                 if (! $result)
                 {
@@ -256,7 +256,7 @@ abstract class DolibarrModules
                     }
                     else
                     {
-                        dol_syslog(get_class($this)."::_init Warning ".$this->db->lasterror(), LOG_WARNING);
+                        dol_syslog(__METHOD__ . " Warning ".$this->db->lasterror(), LOG_WARNING);
                     }
                 }
             }
@@ -319,7 +319,7 @@ abstract class DolibarrModules
         {
             if (! $err)
             {
-                dol_syslog(get_class($this)."::_remove", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $result=$this->db->query($array_sql[$i]);
                 if (! $result)
                 {
@@ -502,7 +502,7 @@ abstract class DolibarrModules
         $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
         $sql.= " AND entity IN (0, ".$entity.")";
 
-        dol_syslog(get_class($this)."::_active", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) $err++;
 
@@ -511,7 +511,7 @@ abstract class DolibarrModules
         $sql.= ",".$this->db->encrypt('1',1);
         $sql.= ",0,".$entity.")";
 
-        dol_syslog(get_class($this)."::_active", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) $err++;
 
@@ -537,7 +537,7 @@ abstract class DolibarrModules
         $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
         $sql.= " AND entity IN (0, ".$entity.")";
 
-        dol_syslog(get_class($this)."::_unactive", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $this->db->query($sql);
 
         return $err;
@@ -672,7 +672,7 @@ abstract class DolibarrModules
                 $sql.= " AND entity = ".$conf->entity;
                 if ($note) $sql.=" AND note ='".$this->db->escape($note)."'";
 
-                dol_syslog(get_class($this)."::insert_boxes", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $result=$this->db->query($sql);
                 if ($result)
                 {
@@ -689,7 +689,7 @@ abstract class DolibarrModules
                             $sql.= $note?"'".$this->db->escape($note)."'":"null";
                             $sql.= ")";
 
-                            dol_syslog(get_class($this)."::insert_boxes", LOG_DEBUG);
+                            dol_syslog(__METHOD__, LOG_DEBUG);
                             $resql=$this->db->query($sql);
                             if (! $resql) $err++;
 
@@ -706,7 +706,7 @@ abstract class DolibarrModules
 	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user,entity)";
     	                        $sql.= " VALUES (".$lastid.", ".$key2.", '0', 0, ".$conf->entity.")";
 
-    	                        dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2."", LOG_DEBUG);
+    	                        dol_syslog(__METHOD__ . " onto page ".$key2."=".$val2."", LOG_DEBUG);
                             	$resql=$this->db->query($sql);
                             	if (! $resql) $err++;
                             }
@@ -763,7 +763,7 @@ abstract class DolibarrModules
                 $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$this->db->escape($file)."'";
                 $sql.= " AND ".MAIN_DB_PREFIX."boxes.entity = ".$conf->entity;
 
-                dol_syslog(get_class($this)."::delete_boxes", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $resql=$this->db->query($sql);
                 if (! $resql)
                 {
@@ -775,7 +775,7 @@ abstract class DolibarrModules
                 $sql.= " WHERE file = '".$this->db->escape($file)."'";
                 $sql.= " AND entity = ".$conf->entity;
 
-                dol_syslog(get_class($this)."::delete_boxes", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $resql=$this->db->query($sql);
                 if (! $resql)
                 {
@@ -803,7 +803,7 @@ abstract class DolibarrModules
         $sql.= " WHERE ".$this->db->decrypt('name')." like '".$this->const_name."_TABS_%'";
         $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::delete_tabs", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if (! $this->db->query($sql))
         {
             $this->error=$this->db->lasterror();
@@ -848,7 +848,7 @@ abstract class DolibarrModules
                     $sql.= ", ".$conf->entity;
                     $sql.= ")";
 
-                    dol_syslog(get_class($this)."::insert_tabs", LOG_DEBUG);
+                    dol_syslog(__METHOD__, LOG_DEBUG);
                     $this->db->query($sql);
                 }
                 $i++;
@@ -904,7 +904,7 @@ abstract class DolibarrModules
                     $sql.= ")";
 
 
-                    dol_syslog(get_class($this)."::insert_const", LOG_DEBUG);
+                    dol_syslog(__METHOD__, LOG_DEBUG);
                     if (! $this->db->query($sql) )
                     {
                         $err++;
@@ -912,7 +912,7 @@ abstract class DolibarrModules
                 }
                 else
                 {
-                    dol_syslog(get_class($this)."::insert_const constant '".$name."' already exists", LOG_WARNING);
+                    dol_syslog(__METHOD__ . " constant '".$name."' already exists", LOG_WARNING);
                 }
             }
             else
@@ -945,7 +945,7 @@ abstract class DolibarrModules
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
                 $sql.= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
                 $sql.= " AND entity in (0, ".$conf->entity.")";
-                dol_syslog(get_class($this)."::delete_const", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $this->error=$this->db->lasterror();
@@ -978,7 +978,7 @@ abstract class DolibarrModules
         $sql_del.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
         $sql_del.= " AND entity IN (0,".$entity.")";
 
-        dol_syslog(get_class($this)."::insert_permissions", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql_del);
 
         if ($resql)
@@ -1042,7 +1042,7 @@ abstract class DolibarrModules
 	                            $err++;
 	                            break;
 	                        }
-	                        else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
+	                        else dol_syslog(__METHOD__ . " record already exists", LOG_INFO);
 
 	                    }
 
@@ -1058,7 +1058,7 @@ abstract class DolibarrModules
 							require DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
                     	}
                         $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 1";
-                        dol_syslog(get_class($this)."::insert_permissions Search all admin users", LOG_DEBUG);
+                        dol_syslog(__METHOD__ . " Search all admin users", LOG_DEBUG);
                         $resqlseladmin=$this->db->query($sql,1);
                         if ($resqlseladmin)
                         {
@@ -1067,7 +1067,7 @@ abstract class DolibarrModules
                             while ($i < $num)
                             {
                                 $obj2=$this->db->fetch_object($resqlseladmin);
-                                dol_syslog(get_class($this)."::insert_permissions Add permission to user id=".$obj2->rowid);
+                                dol_syslog(__METHOD__ . " Add permission to user id=".$obj2->rowid);
                                 $tmpuser=new User($this->db);
                                 $tmpuser->fetch($obj2->rowid);
                                 if (!empty($tmpuser->id)) {
@@ -1112,7 +1112,7 @@ abstract class DolibarrModules
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def";
         $sql.= " WHERE module = '".$this->rights_class."'";
         $sql.= " AND entity = ".$conf->entity;
-        dol_syslog(get_class($this)."::delete_permissions", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if (! $this->db->query($sql))
         {
             $this->error=$this->db->lasterror();
@@ -1180,7 +1180,7 @@ abstract class DolibarrModules
                 if (! $foundparent)
                 {
                     $this->error="ErrorBadDefinitionOfMenuArrayInModuleDescriptor (bad value for key fk_menu)";
-                    dol_syslog(get_class($this)."::insert_menus ".$this->error." ".$this->menu[$key]['fk_menu'], LOG_ERR);
+                    dol_syslog(__METHOD__ . " ".$this->error." ".$this->menu[$key]['fk_menu'], LOG_ERR);
                     $err++;
                 }
             }
@@ -1206,7 +1206,7 @@ abstract class DolibarrModules
                 else
                 {
                     $this->error=$menu->error;
-                    dol_syslog(get_class($this).'::insert_menus result='.$result." ".$this->error, LOG_ERR);
+                    dol_syslog(__METHOD__ . ' result='.$result." ".$this->error, LOG_ERR);
                     $err++;
                     break;
                 }
@@ -1219,7 +1219,7 @@ abstract class DolibarrModules
         }
         else
         {
-            dol_syslog(get_class($this)."::insert_menus ".$this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
             $this->db->rollback();
         }
 
@@ -1242,7 +1242,7 @@ abstract class DolibarrModules
         $sql.= " WHERE module = '".$this->db->escape($this->rights_class)."'";
         $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::delete_menus", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql)
         {
@@ -1293,7 +1293,7 @@ abstract class DolibarrModules
                     if (dol_mkdir($fulldir, DOL_DATA_ROOT) < 0)
                     {
                         $this->error = $langs->trans("ErrorCanNotCreateDir",$fulldir);
-                        dol_syslog(get_class($this)."::_init ".$this->error, LOG_ERR);
+                        dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
                         $err++;
                     }
                 }
@@ -1330,7 +1330,7 @@ abstract class DolibarrModules
         $sql.= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
         $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::insert_dirs", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -1341,7 +1341,7 @@ abstract class DolibarrModules
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
                 $sql.= " VALUES (".$this->db->encrypt($name,1).",'chaine',".$this->db->encrypt($dir,1).",'Directory for module ".$this->name."','0',".$conf->entity.")";
 
-                dol_syslog(get_class($this)."::insert_dirs", LOG_DEBUG);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $this->db->query($sql);
             }
         }
@@ -1370,7 +1370,7 @@ abstract class DolibarrModules
         $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_DIR_%'";
         $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::delete_dirs", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if (! $this->db->query($sql))
         {
             $this->error=$this->db->lasterror();
@@ -1432,7 +1432,7 @@ abstract class DolibarrModules
     			$sql.= ", ".$entity;
     			$sql.= ")";
 
-    			dol_syslog(get_class($this)."::insert_const_".$key."", LOG_DEBUG);
+    			dol_syslog(__METHOD__.$key."", LOG_DEBUG);
     			$resql=$this->db->query($sql,1);
     			if (! $resql)
     			{
@@ -1443,7 +1443,7 @@ abstract class DolibarrModules
     			    }
     			    else
     			    {
-    			        dol_syslog(get_class($this)."::insert_const_".$key." Record already exists.", LOG_WARNING);
+    			        dol_syslog(__METHOD__.$key." Record already exists.", LOG_WARNING);
     			    }
     			}
     		}
@@ -1474,7 +1474,7 @@ abstract class DolibarrModules
     			$sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_".strtoupper($key)."'";
     			$sql.= " AND entity = ".$entity;
 
-    			dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
+    			dol_syslog(__METHOD__.$key."", LOG_DEBUG);
     			if (! $this->db->query($sql))
     			{
     				$this->error=$this->db->lasterror();

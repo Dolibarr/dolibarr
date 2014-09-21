@@ -85,7 +85,7 @@ class DiscountAbsolute
         if ($rowid) $sql.= " sr.rowid=".$rowid;
         if ($fk_facture_source) $sql.= " sr.fk_facture_source=".$fk_facture_source;
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -144,7 +144,7 @@ class DiscountAbsolute
         if (empty($this->description))
         {
             $this->error='BadValueForPropertyDescription';
-            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+            dol_syslog(__METHOD__ . " ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -159,7 +159,7 @@ class DiscountAbsolute
         $sql.= " ".($this->fk_facture_source?"'".$this->fk_facture_source."'":"null");
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -194,7 +194,7 @@ class DiscountAbsolute
             $sql.=" AND fk_facture_source = ".$this->fk_facture_source;
             //$sql.=" AND rowid != ".$this->id;
 
-            dol_syslog(get_class($this)."::delete Check if we can remove discount", LOG_DEBUG);
+            dol_syslog(__METHOD__ . " Check if we can remove discount", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -221,7 +221,7 @@ class DiscountAbsolute
         $sql.= " AND (fk_facture_line IS NULL";	// Not used as absolute simple discount
         $sql.= " AND fk_facture IS NULL)";		// Not used as credit note and not used as deposit
 
-        dol_syslog(get_class($this)."::delete Delete discount", LOG_DEBUG);
+        dol_syslog(__METHOD__ . " Delete discount", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -232,7 +232,7 @@ class DiscountAbsolute
                 $sql.=" set paye=0, fk_statut=1";
                 $sql.=" WHERE (type = 2 or type = 3) AND rowid=".$this->fk_facture_source;
 
-                dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
+                dol_syslog(__METHOD__ . " Update credit note or deposit invoice statut", LOG_DEBUG);
                 $result=$this->db->query($sql);
                 if ($result)
                 {
@@ -290,7 +290,7 @@ class DiscountAbsolute
         if ($rowidinvoice) $sql.=" SET fk_facture = ".$rowidinvoice;
         $sql.=" WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::link_to_invoice", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -318,7 +318,7 @@ class DiscountAbsolute
         $sql.=" SET fk_facture_line = NULL, fk_facture = NULL";
         $sql.=" WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::unlink_invoice", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -352,7 +352,7 @@ class DiscountAbsolute
         if ($filter)   $sql.=' AND ('.$filter.')';
         if ($maxvalue) $sql.=' AND rc.amount_ttc <= '.price2num($maxvalue);
 
-        dol_syslog(get_class($this)."::getAvailableDiscounts", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -381,7 +381,7 @@ class DiscountAbsolute
         $sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
         $sql.= ' AND f.type = 2';
 
-        dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -407,7 +407,7 @@ class DiscountAbsolute
         $sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
         $sql.= ' AND f.type = 3';
 
-        dol_syslog(get_class($this)."::getSumDepositsUsed", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

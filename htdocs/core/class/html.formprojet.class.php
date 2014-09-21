@@ -80,7 +80,7 @@ class FormProjets
 		if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		$sql.= " ORDER BY p.ref ASC";
 
-		dol_syslog(get_class($this)."::select_projects", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -201,7 +201,7 @@ class FormProjets
 		$sql.= ' AND entity='.getEntity('project');
 		$sql.= " ORDER BY ref DESC";
 
-		dol_syslog(get_class($this).'::select_element', LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -224,7 +224,7 @@ class FormProjets
 			$this->db->free($resql);
 		}else {
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this) . "::select_element " . $this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 			return -1;
 		}
 	}
