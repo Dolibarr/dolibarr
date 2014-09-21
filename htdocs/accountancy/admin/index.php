@@ -63,22 +63,22 @@ $list = array (
  * Actions
  */
  
-$compta_mode = defined('ACCOUNTING_MODE')?ACCOUNTING_MODE:'RECETTES-DEPENSES';
+$accounting_mode = defined('ACCOUNTING_MODE')?ACCOUNTING_MODE:'RECETTES-DEPENSES';
 
 if ($action == 'update')
 {
     $error = 0;
 
-    $compta_modes = array(
+    $accounting_modes = array(
         'RECETTES-DEPENSES',
         'CREANCES-DETTES'
     );
 
-    $compta_mode = GETPOST('compta_mode','alpha');
+    $accounting_mode = GETPOST('accounting_mode','alpha');
 	
-	if (in_array($compta_mode,$compta_modes)) {
+	if (in_array($accounting_mode,$accounting_modes)) {
 
-        if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $compta_mode, 'chaine', 0, '', $conf->entity)) {
+        if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
             $error++;
         }
     } else {
@@ -165,7 +165,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description').'</td>';
 print "</tr>\n";
-print '<tr '.$bc[false].'><td width="200"><input type="radio" name="compta_mode" value="RECETTES-DEPENSES"'.($compta_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
+print '<tr '.$bc[false].'><td width="200"><input type="radio" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 // Write info on way to count VAT
 //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
@@ -179,7 +179,7 @@ print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 //	//	print nl2br($langs->trans('OptionModeTrueInfoExpert'));
 //}
 print "</td></tr>\n";
-print '<tr '.$bc[true].'><td width="200"><input type="radio" name="compta_mode" value="CREANCES-DETTES"'.($compta_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
+print '<tr '.$bc[true].'><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
 print '</form>';
 
