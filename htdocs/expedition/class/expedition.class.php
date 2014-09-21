@@ -1561,6 +1561,8 @@ class Expedition extends CommonObject
 
 		$modelpath = "core/modules/expedition/doc/";
 
+		$this->fetch_origin();
+
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, 0, 0, 0);
 	}
 
