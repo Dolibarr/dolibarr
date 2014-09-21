@@ -1,0 +1,467 @@
+<?php
+/* Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ *      \file       htdocs/compta/loan/card.php
+ *		\ingroup    loan
+ *		\brief      Loan card
+ */
+
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+
+$langs->load("compta");
+$langs->load("bills");
+$langs->load("loan");
+
+$id=GETPOST('id','int');
+$action=GETPOST("action");
+$confirm=GETPOST('confirm');
+
+// Security check
+$socid = GETPOST('socid','int');
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'loan', $id, '','');
+
+/*
+ * Actions
+ */
+ 
+// Classify paid
+if ($action == 'confirm_paid' && $confirm == 'yes')
+{
+	$loan = new Loan($db);
+	$loan->fetch($id);
+	$result = $loan->set_paid($user);
+}
+
+// Delete loan
+if ($action == 'confirm_delete' && $confirm == 'yes')
+{
+	$loan = new Loan($db);
+	$loan->fetch($id);
+	$result=$loan->delete($user);
+	if ($result > 0)
+	{
+		header("Location: index.php");
+		exit;
+	}
+	else
+	{
+		setEventMessage($loan->error, 'errors');
+	}
+}
+
+
+// Add loan
+if ($action == 'add' && $user->rights->loan->write)
+{
+	$dateech=@dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
+	$dateperiod=@dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
+	if (! $dateech)
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
+		$action = 'create';
+	}
+	elseif (! $dateperiod)
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
+		$action = 'create';
+	}
+	elseif (! $_POST["capital"])
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Capital")), 'errors');
+		$action = 'create';
+	}
+	else
+	{
+		$loan = new Loan($db);
+
+		$loan->label = $_POST["label"];
+		$loan->date_ech = $dateech;
+		$loan->periode = $dateperiod;
+		$loan->capital = $_POST["capital"];
+
+		$id=$loan->create($user);
+		if ($id <= 0)
+		{
+			setEventMessage($loan->error, 'errors');
+		}
+	}
+}
+
+
+if ($action == 'update' && ! $_POST["cancel"] && $user->rights->loan->write)
+{
+	$dateech=dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
+	$dateperiod=dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
+	if (! $dateech)
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
+		$action = 'edit';
+	}
+	elseif (! $dateperiod)
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
+		$action = 'edit';
+	}
+	else
+	{
+		$loan = new Loan($db);
+		$result=$loan->fetch($_GET["id"]);
+
+		$loan->lib=$_POST["label"];
+		$loan->date_ech=$dateech;
+		$loan->periode=$dateperiod;
+
+		$result=$loan->update($user);
+		if ($result <= 0)
+		{
+			setEventMessage($loan->error, 'errors');
+		}
+	}
+}
+
+
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+
+$help_url='EN:Module_Loan|FR:Module Emprunt';
+llxHeader("",$langs->trans("Loan"),$help_url);
+
+
+// Create mode
+if ($action == 'create')
+{
+	//WYSIWYG Editor
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+
+    print_fiche_titre($langs->trans("NewLoan"));
+
+    $datec = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+
+    print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="add">';
+
+    print '<table class="border" width="100%">';
+	
+	// Label
+	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>';
+
+	// Bank account
+	if (! empty($conf->banque->enabled))
+	{
+		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+		$form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Show list of bank account with courant
+		print '</td></tr>';
+	}
+	else
+	{
+		print '<tr><td>'.$langs->trans("Account").'</td><td>';
+		print $langs->trans("NoBankAccountDefined");
+		print '</td></tr>';
+	}
+	
+    // Capital
+    print '<tr><td class="fieldrequired">'.$langs->trans("Capital").'</td><td><input name="capital" size="10" value="' . GETPOST("capital") . '"></td></tr>';
+
+	// Date Start
+	print "<tr>";
+    print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
+    print $form->select_date($datestart?$datestart:-1,'','','','','add',1,1);
+    print '</td></tr>';
+	
+	// Date End
+	print "<tr>";
+    print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
+    print $form->select_date($dateend?$dateend:-1,'','','','','add',1,1);
+    print '</td></tr>';
+	
+	// Number of terms
+	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="4" value="' . GETPOST('nbterm') . '"></td></tr>';
+			
+	// Rate
+    print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="10" value="' . GETPOST("rate") . '"></td></tr>';
+
+	// Note
+    print '<tr>';
+    print '<td class="border" valign="top">'.$langs->trans('Note').'</td>';
+    print '<td valign="top" colspan="2">';
+
+    $doleditor = new DolEditor('note', GETPOST('note', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+    print $doleditor->Create(1);
+
+    print '</td></tr>';
+	print '</table>';
+	
+	print '<br>';
+
+	// Accountancy
+	print '<table class="border" width="100%">';
+	
+	if ($conf->accounting->enabled)
+	{
+		print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
+		print '<td><input name="accountancy_account_capital" size="16" value="'.$object->accountancy_account_capital.'">';
+		print '</td></tr>';
+
+		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
+		print '<td><input name="accountancy_account_insurance" size="16" value="'.$object->accountancy_account_insurance.'">';
+		print '</td></tr>';
+
+		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
+		print '<td><input name="accountancy_account_interest" size="16" value="'.$object->accountancy_account_interest.'">';
+		print '</td></tr>';
+	}
+	else
+	{
+		print '<tr><td width="25%">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
+		print '<td><input name="accountancy_account_capital" size="16" value="'.$object->accountancy_account_capital.'">';
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
+		print '<td><input name="accountancy_account_insurance" size="16" value="'.$object->accountancy_account_insurance.'">';
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("LoanAccountancyInterestCode").'</td>';
+		print '<td><input name="accountancy_account_interest" size="16" value="'.$object->accountancy_account_interest.'">';
+		print '</td></tr>';
+	}
+
+	print '</table>';
+	
+    print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center';
+
+    print '</form>';
+}
+
+// View
+if ($id > 0)
+{
+	$object = new Loan($db);
+    $result=$object->fetch($id);
+
+	if ($result > 0)
+	{
+		$head=loan_prepare_head($object);
+
+		dol_fiche_head($head, 'card', $langs->trans("Loan"),0,'bill');
+
+		// Confirm for loan
+		if ($action == 'paid')
+		{
+			$text=$langs->trans('ConfirmPayLoan');
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans('PayLoan'),$text,"confirm_paid",'','',2);
+		}
+
+		if ($action == 'delete')
+		{
+			$text=$langs->trans('ConfirmDeleteLoan');
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteLoan'),$text,'confirm_delete','','',2);
+		}
+
+		if ($action == 'edit')
+		{
+			print "<form name=\"loan\" action=\"card.php?id=$object->id&amp;action=update\" method=\"post\">";
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		}
+
+		print '<table class="border" width="100%">';
+
+		// Ref
+		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2">';
+		print $form->showrefnav($object,'id');
+		print "</td></tr>";
+
+		// Label
+		if ($action == 'edit')
+		{
+			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">';
+			print '<input type="text" name="label" size="40" value="'.$object->label.'">';
+			print '</td></tr>';
+		}
+		else
+		{
+			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->label.'</td></tr>';
+		}
+
+		$rowspan=5;
+		print '<td rowspan="'.$rowspan.'" valign="top">';
+
+		/*
+		 * Payments
+		 */
+		$sql = "SELECT p.rowid, p.num_payment, datep as dp, p.amount,";
+		$sql.= "c.libelle as paiement_type";
+		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p";
+		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
+		$sql.= ", ".MAIN_DB_PREFIX."loan as l";
+		$sql.= " WHERE p.fk_loan = ".$id;
+		$sql.= " AND p.fk_loan = l.rowid";
+		$sql.= " AND l.entity = ".$conf->entity;
+		$sql.= " AND p.fk_typepayment = c.id";
+		$sql.= " ORDER BY dp DESC";
+
+		//print $sql;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0; $total = 0;
+			echo '<table class="nobordernopadding" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("RefPayment").'</td>';
+			print '<td>'.$langs->trans("Date").'</td>';
+			print '<td>'.$langs->trans("Type").'</td>';
+      		print '<td align="right">'.$langs->trans("Amount").'</td>';
+      		print '<td>&nbsp;</td>';
+      		print '</tr>';
+
+			$var=True;
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($resql);
+				$var=!$var;
+				print "<tr ".$bc[$var]."><td>";
+				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+				print "<td>".$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
+        		print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+				print "</tr>";
+				$totalpaye += $objp->amount;
+				$i++;
+			}
+
+			if ($object->paye == 0)
+			{
+				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+
+				$resteapayer = $object->amount - $totalpaye;
+
+				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+				print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+			}
+			print "</table>";
+			$db->free($resql);
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		print "</td>";
+
+		print "</tr>";
+
+    	// Period end date
+		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
+		print "<td>";
+		if ($action == 'edit')
+		{
+			print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
+		}
+		else
+		{
+			print dol_print_date($object->periode,"day");
+		}
+		print "</td></tr>";
+
+		// Due date
+		if ($action == 'edit')
+		{
+			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
+			print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+			print "</td></tr>";
+		}
+		else {
+			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech,'day')."</td></tr>";
+		}
+
+		// Amount
+		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+
+		// Status
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
+
+		print '</table>';
+
+		if ($action == 'edit')
+		{
+			print '<br><div align="center">';
+			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+			print ' &nbsp; ';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '</div';
+		}
+
+		if ($action == 'edit') print "</form>\n";
+
+		dol_fiche_end();
+
+
+		/*
+		*   Boutons actions
+		*/
+		if ($action != 'edit')
+		{
+			print "<div class=\"tabsAction\">\n";
+
+			// Edit
+			if ($user->rights->loan->write)
+			{
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
+			}
+
+			// Emettre paiement
+			if ($object->paye == 0 && ((price2num($object->amount) < 0 && round($resteapayer) < 0) || (price2num($object->amount) > 0 && round($resteapayer) > 0)) && $user->rights->loan->write)
+			{
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
+			}
+
+			// Classify 'paid'
+			if ($object->paye == 0 && round($resteapayer) <=0 && $user->rights->loan->write)
+			{
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/loan/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
+			}
+
+			// Delete
+			if ($user->rights->loan->delete)
+			{
+				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/loan/card.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+			}
+
+			print "</div>";
+		}
+	}
+	else
+	{
+		// Loan not find
+		dol_print_error('',$object->error);
+	}
+}
+
+
+llxFooter();
+
+$db->close();
