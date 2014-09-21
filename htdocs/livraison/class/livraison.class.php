@@ -940,10 +940,6 @@ class Livraison extends CommonObject
 
 		$langs->load("deliveries");
 
-		$error=0;
-
-		$srctemplatepath='';
-
 		// Positionne modele sur le nom du modele de bon de livraison a utiliser
 		if (! dol_strlen($modele))
 		{
@@ -957,72 +953,10 @@ class Livraison extends CommonObject
 			}
 		}
 
-		// If selected modele is a filename template (then $modele="modelname:filename")
-		$tmp=explode(':',$modele,2);
-		if (! empty($tmp[1]))
-		{
-			$modele=$tmp[0];
-			$srctemplatepath=$tmp[1];
-		}
+		$modelpath = "core/modules/livraison/pdf/";
 
-		// Search template files
-		$file=''; $classname=''; $filefound=0;
-		$dirmodels=array('/');
-		if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
-		foreach($dirmodels as $reldir)
-		{
-			foreach(array('doc','pdf') as $prefix)
-			{
-				$file = $prefix."_".$modele.".modules.php";
-
-				// On verifie l'emplacement du modele
-				$file=dol_buildpath($reldir."core/modules/livraison/pdf/".$file,0);
-				if (file_exists($file))
-				{
-					$filefound=1;
-					$classname=$prefix.'_'.$modele;
-					break;
-				}
-			}
-			if ($filefound) break;
-		}
-
-		// Charge le modele
-		if ($filefound)
-		{
-			require_once $file;
-
-			$obj = new $classname($this->db);
-
-			// We save charset_output to restore it because write_file can change it if needed for
-			// output format that does not support UTF8.
-			$sav_charset_output=$outputlangs->charset_output;
-			if ($obj->write_file($this,$outputlangs) > 0)
-			{
-				$outputlangs->charset_output=$sav_charset_output;
-
-				// we delete preview files
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				dol_delete_preview($this);
-
-				return 1;
-			}
-			else
-			{
-				$outputlangs->charset_output=$sav_charset_output;
-				dol_syslog("Erreur dans delivery_order_pdf_create");
-				dol_print_error($this->db,$obj->error);
-				return 0;
-			}
-		}
-		else
-		{
-			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
-			return 0;
-		}
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, 0, 0, 0);
 	}
-
-
 
 }
 
