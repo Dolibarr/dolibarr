@@ -959,7 +959,7 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($object->id); // Reload to get new records
-				$object->generateDocument($object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 	}
@@ -1025,7 +1025,7 @@ else if ($action == 'up' && $user->rights->commande->creer) {
 	}
 
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-		$object->generateDocument($object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '#' . GETPOST('rowid'));
@@ -1047,7 +1047,7 @@ else if ($action == 'down' && $user->rights->commande->creer) {
 		$outputlangs->setDefaultLang($newlang);
 	}
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-		$object->generateDocument($object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '#' . GETPOST('rowid'));
