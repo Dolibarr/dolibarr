@@ -324,7 +324,7 @@ if ($resql)
 
 	// If option for groupDownload is ON
 	if(!empty($conf->global->FAC_AFF_ZIP_BILLS)){
-		$moreforfilter .= "<button id='btnDisplayColumnDownload' style='float: right;'>Download Zip</button>"; // TODO : Devensys => Add lang support
+		$moreforfilter .= "<button id='btnDisplayColumnDownload' style='float: right;'>".$langs->trans('DownloadZip')."</button>";
 	}
 
     if (!empty($moreforfilter))
@@ -492,7 +492,7 @@ if ($resql)
             // Print total
             print '<tr class="liste_total">';
 			if(!empty($conf->global->FAC_AFF_ZIP_BILLS)){
-				print '<td class="piz_hidden piz_footer liste_total" align="center"><a href="#" id="piz_download">Téléchargement</a> </td>';
+				print '<td class="piz_hidden piz_footer liste_total" align="center"><a href="#" id="piz_download">'.$langs->trans('Download').'</a> </td>';
 			}
             print '<td class="liste_total" colspan="5" align="left">'.$langs->trans('Total').'</td>';
             print '<td class="liste_total" align="right">'.price($total_ht,0,$langs).'</td>';

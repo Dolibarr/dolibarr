@@ -204,3 +204,5 @@ COMPTA_VAT_ACCOUNT=Code comptable par défaut pour l'encaissement de TVA
 COMPTA_VAT_BUY_ACCOUNT=Code comptable par défaut pour le versement de la TVA
 COMPTA_ACCOUNT_CUSTOMER=Code comptable par défaut des tiers clients
 COMPTA_ACCOUNT_SUPPLIER=Code comptable par défaut des tiers fournisseurs
+DownloadZip=Télécharger Zip
+Download=Téléchargement
