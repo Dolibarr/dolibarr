@@ -322,6 +322,7 @@ class Project extends CommonObject
                 $this->note_private = $obj->note_private;
                 $this->note_public = $obj->note_public;
                 $this->socid = $obj->fk_soc;
+                $this->societe=(object)array();// To avoid warning on next line
                 $this->societe->id = $obj->fk_soc; // TODO For backward compatibility
                 $this->user_author_id = $obj->fk_user_creat;
                 $this->public = $obj->public;
@@ -1276,23 +1277,23 @@ class Project extends CommonObject
 	 /**
 	  *    Associate element to a project
 	  *
-	  *    @param	string	$TableName			Table of the element to update
-	  *    @param	int		$ElementSelectId	Key-rowid of the line of the element to update
+	  *    @param	string	$tableName			Table of the element to update
+	  *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
 	  *    @return	int							1 if OK or < 0 if KO
 	  */
-	function update_element($TableName, $ElementSelectId)
+	function update_element($tableName, $elementSelectId)
 	{
-		$sql="UPDATE ".MAIN_DB_PREFIX.$TableName;
+		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
 
 		if ($TableName=="actioncomm")
 		{
 			$sql.= " SET fk_project=".$this->id;
-			$sql.= " WHERE id=".$ElementSelectId;
+			$sql.= " WHERE id=".$elementSelectId;
 		}
 		else
 		{
 			$sql.= " SET fk_projet=".$this->id;
-			$sql.= " WHERE rowid=".$ElementSelectId;
+			$sql.= " WHERE rowid=".$elementSelectId;
 		}
 
 		dol_syslog(get_class($this)."::update_element", LOG_DEBUG);
@@ -1304,6 +1305,39 @@ class Project extends CommonObject
 			return 1;
 		}
 
+	}
+	
+	/**
+	 *    Associate element to a project
+	 *
+	 *    @param	string	$tableName			Table of the element to update
+	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
+	 *    @return	int							1 if OK or < 0 if KO
+	 */
+	function remove_element($tableName, $elementSelectId)
+	{
+		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
+	
+		if ($TableName=="actioncomm")
+		{
+			$sql.= " SET fk_project=NULL";
+			$sql.= " WHERE id=".$elementSelectId;
+		}
+		else
+		{
+			$sql.= " SET fk_projet=NULL";
+			$sql.= " WHERE rowid=".$elementSelectId;
+		}
+	
+		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if (!$resql) {
+			$this->error=$this->db->lasterror();
+			return -1;
+		}else {
+			return 1;
+		}
+	
 	}
 }
 

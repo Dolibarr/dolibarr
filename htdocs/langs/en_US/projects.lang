@@ -120,6 +120,7 @@ TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
 TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 SelectElement=Select element
 AddElement=Link to element
+UnlinkElement=Unlink element
 # Documents models
 DocumentModelBaleine=A complete project's report model (logo...)
 PlannedWorkload = Planned workload
@@ -128,3 +129,4 @@ ProjectReferers=Refering objects
 SearchAProject=Search a project
 ProjectMustBeValidatedFirst=Project must be validated first
 ProjectDraft=Draft projects
+FirstAddRessourceToAllocateTime=Associate a ressource to allocate time
