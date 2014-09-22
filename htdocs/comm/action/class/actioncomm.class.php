@@ -534,9 +534,11 @@ class ActionComm extends CommonObject
      * 	 @param		int		$fk_element		Id of element action is linked to
      *   @param		string	$elementtype	Type of element action is linked to
      *   @param		string	$filter			Other filter
+     *   @param		string	$sortfield		Sort on this field
+     *   @param		string	$sortorder		ASC or DESC
      *   @return	array or string			Error string if KO, array with actions if OK
      */
-    static function getActions($db, $socid=0, $fk_element=0, $elementtype='', $filter='')
+    static function getActions($db, $socid=0, $fk_element=0, $elementtype='', $filter='', $sortfield='', $sortorder='')
     {
         global $conf, $langs;
 
@@ -552,6 +554,7 @@ class ActionComm extends CommonObject
             else $sql.= " AND a.fk_element = ".$fk_element." AND a.elementtype = '".$elementtype."'";
         }
         if (! empty($filter)) $sql.= $filter;
+		if ($sortorder && $sortfield) $sql.=$db->order($sortfield, $sortorder);
 
         dol_syslog(get_class()."::getActions", LOG_DEBUG);
         $resql=$db->query($sql);

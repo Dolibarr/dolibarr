@@ -2035,6 +2035,8 @@ abstract class CommonObject
      */
     function setStatut($status,$elementId='',$elementType='')
     {
+    	global $user,$langs,$conf;
+
         $elementId = (!empty($elementId)?$elementId:$this->id);
         $elementTable = (!empty($elementType)?$elementType:$this->table_element);
 
@@ -2050,9 +2052,36 @@ abstract class CommonObject
         dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
         if ($this->db->query($sql))
         {
-        	$this->db->commit();
-        	$this->statut = $status;
-        	return 1;
+        	if (! $error)
+			{
+				$trigkey='';
+				if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFYBILLED';
+
+				if ($trigkey)
+				{
+					// Appel des triggers
+					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers($trigkey,$this,$user,$langs,$conf);
+		 			if ($result < 0) {
+		 				$error++; $this->errors=$interface->errors;
+		 			}
+					// Fin appel triggers
+				}
+			}
+
+			if (! $error)
+			{
+				$this->db->commit();
+        		$this->statut = $status;
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				dol_syslog(get_class($this)."::setStatus ".$this->error,LOG_ERR);
+				return -1;
+			}
         }
         else
         {
@@ -2133,8 +2162,10 @@ abstract class CommonObject
      *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label()
      *  @return	int						<0 if error, 0 if no optionals to find nor found, 1 if a line is found and optional loaded
      */
-    function fetch_optionals($rowid,$optionsArray='')
+    function fetch_optionals($rowid='',$optionsArray='')
     {
+    	if (empty($rowid)) $rowid=$this->id;
+
         if (! is_array($optionsArray))
         {
             // optionsArray not already loaded, so we load it
@@ -2142,7 +2173,6 @@ abstract class CommonObject
             $extrafields = new ExtraFields($this->db);
             $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
         }
-
 
         // Request to get complementary values
         if (count($optionsArray) > 0)
@@ -2170,7 +2200,7 @@ abstract class CommonObject
                         if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
                         {
                             // we can add this attribute to adherent object
-                            $this->array_options["options_$key"]=$value;
+                            $this->array_options["options_".$key]=$value;
                         }
                     }
                 }

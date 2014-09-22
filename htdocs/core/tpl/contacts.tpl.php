@@ -60,9 +60,13 @@ $userstatic=new User($db);
 		<div class="tagtd">&nbsp;</div>
 	</form>
 
-	<?php $var=false; ?>
+	<?php
 
-
+	$var=true;
+	if (empty($hideaddcontactforuser))
+	{
+		$var=!$var;
+	?>
 	<form class="tagtr impair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
@@ -77,7 +81,13 @@ $userstatic=new User($db);
 		<div class="tagtd" align="right"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
 
-	<?php $var=!$var; ?>
+	<?php
+	}
+
+	if (empty($hideaddcontactforthirdparty))
+	{
+		$var=!$var;
+	?>
 
 	<form class="tagtr pair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -109,7 +119,8 @@ $userstatic=new User($db);
 		</div>
 	</form>
 
-<?php } ?>
+<?php }
+	} ?>
 
 	<form class="tagtr liste_titre">
 		<div class="tagtd"><?php echo $langs->trans("Source"); ?></div>
@@ -123,7 +134,8 @@ $userstatic=new User($db);
 	<?php $var=true; ?>
 
 	<?php
-	foreach(array('internal','external') as $source) {
+	$arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
+	foreach($arrayofsource as $source) {
 
 		$tmpobject=$object;
 		if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;

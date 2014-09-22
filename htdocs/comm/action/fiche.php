@@ -638,7 +638,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Location
-    print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
+    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
+    {
+		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
+    }
 
 	// Assigned to
 	print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
@@ -888,7 +891,10 @@ if ($id > 0)
 		print '</td></tr>';
 
         // Location
-        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$object->location.'"></td></tr>';
+	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
+	    {
+			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$object->location.'"></td></tr>';
+	    }
 
 		// Assigned to
 		print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
@@ -1020,13 +1026,16 @@ if ($id > 0)
         // Full day event
         print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent).'</td></tr>';
 
+		$rowspan=4;
+		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) $rowspan++;
+
 		// Date start
 		print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="2">';
 		if (! $object->fulldayevent) print dol_print_date($object->datep,'dayhour');
 		else print dol_print_date($object->datep,'day');
 		if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td>';
-		print '<td rowspan="5" align="center" valign="middle" width="180">'."\n";
+		print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="180">'."\n";
         print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="show_month">';
@@ -1079,7 +1088,10 @@ if ($id > 0)
 		print '</td></tr>';
 
         // Location
-        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="2">'.$object->location.'</td></tr>';
+	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
+    	{
+			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="2">'.$object->location.'</td></tr>';
+    	}
 
 		// Assigned to
 		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
