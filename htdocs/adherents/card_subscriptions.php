@@ -482,7 +482,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 						}
                     	// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
 						//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-							facture_pdf_create($db, $invoice, $invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+	                    $invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 
                     }

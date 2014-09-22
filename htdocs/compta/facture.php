@@ -191,7 +191,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		}
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 			$ret = $object->fetch($id); // Reload to get new records
-			$result = facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 		if ($result >= 0) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
@@ -417,7 +417,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($id); // Reload to get new records
-				facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		} else {
 			if (count($object->errors)) setEventMessage($object->errors, 'errors');
@@ -495,7 +495,7 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($id); // Reload to get new records
-				facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 	}
@@ -1305,7 +1305,7 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 					}
 
 					$ret = $object->fetch($id); // Reload to get new records
-					facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST ['prod_entry_mode']);
@@ -1436,7 +1436,7 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 				}
 
 				$ret = $object->fetch($id); // Reload to get new records
-				facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
 			unset($_POST['qty']);
@@ -1479,8 +1479,9 @@ else if ($action == 'up' && $user->rights->facture->creer) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 
 	header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '#' . $_GET ['rowid']);
 	exit();
@@ -1501,8 +1502,9 @@ else if ($action == 'down' && $user->rights->facture->creer) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 
 	header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '#' . $_GET ['rowid']);
 	exit();
@@ -1725,7 +1727,7 @@ else if ($action == 'builddoc') // En get ou en post
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result = facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	if ($result <= 0)
 	{
 		dol_print_error($db, $result);
@@ -3727,7 +3729,7 @@ if ($action == 'create')
 
 		// Build document if it not exists
 		if (! $file || ! is_readable($file)) {
-			$result = facture_pdf_create($db, $object, GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
 				dol_print_error($db, $result);
 				exit();

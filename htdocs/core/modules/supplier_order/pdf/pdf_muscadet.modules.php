@@ -61,9 +61,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *	Constructor
 	 *
 	 *  @param	DoliDB		$db      	Database handler
-	 *  @param	Object		$object		Supplier order
 	 */
-	function __construct($db,$object)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 

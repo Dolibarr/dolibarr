@@ -7,6 +7,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1669,5 +1670,39 @@ class FactureFournisseur extends CommonInvoice
             return -1;
         }
     }
+
+	/**
+	 *	Create a document onto disk according to template model.
+	 *
+	 *	@param	    string		$modele			Force template to use ('' to not force)
+	 *	@param		Translate	$outputlangs	Object lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf, $user, $langs;
+
+		$langs->load("suppliers");
+
+		// Set the model on the model name to use
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF))
+			{
+				$modele = $conf->global->INVOICE_SUPPLIER_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'canelle';
+			}
+		}
+
+		$modelpath = "core/modules/supplier_invoice/pdf/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 
 }
