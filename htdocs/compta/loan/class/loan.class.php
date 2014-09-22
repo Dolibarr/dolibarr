@@ -47,6 +47,9 @@ class Loan extends CommonObject
     var $date_creation;
     var $date_modification;
     var $date_validation;
+	var $fk_bank;
+	var $fk_user_creat;
+	var $fk_user_modif;
 
 
     /**
@@ -68,8 +71,7 @@ class Loan extends CommonObject
      */
     function fetch($id)
     {
-        $sql = "SELECT l.rowid, l.datestart,";
-        $sql.= " l.label, l.capital";
+        $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note";
         $sql.= " FROM ".MAIN_DB_PREFIX."loan as l";
         $sql.= " WHERE l.rowid = ".$id;
 
@@ -84,8 +86,12 @@ class Loan extends CommonObject
                 $this->id             = $obj->rowid;
                 $this->ref            = $obj->rowid;
                 $this->datestart      = $this->db->jdate($obj->datestart);
+				$this->dateend	      = $this->db->jdate($obj->dateend);
                 $this->label          = $obj->label;
                 $this->capital        = $obj->capital;
+				$this->nbterm		  = $obj->nbterm;
+				$this->rate	          = $obj->rate;
+				$this->note       	  = $obj->note;
 
                 return 1;
             }
@@ -112,9 +118,20 @@ class Loan extends CommonObject
     function create($user)
     {
     	global $conf;
+		
+		$error=0;
+
+        $now=dol_now();
 
         // clean parameters
         $newcapital=price2num($this->capital,'MT');
+		if (isset($this->note)) $this->note = trim($this->note);
+		if (isset($this->account_capital)) $this->account_capital = trim($this->account_capital);
+		if (isset($this->account_insurance)) $this->account_insurance = trim($this->account_insurance);
+		if (isset($this->account_interest)) $this->account_interest = trim($this->account_interest);
+		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
+		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
+		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
 
         // Check parameters
         if (! $newcapital > 0 || empty($this->datestart) || empty($this->dateend))
@@ -122,14 +139,31 @@ class Loan extends CommonObject
             $this->error="ErrorBadParameter";
             return -2;
         }
+		if (($conf->accounting->enabled) && empty($this->account_capital) && empty($this->account_insurance) && empty($this->account_interest))
+		{
+            $this->error="ErrorAccountingParameter";
+            return -2;			
+		}	
 
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."loan (label, date_ech, periode, amount, entity)";
-        $sql.= " VALUES ('".$this->db->escape($this->label)."',";
-        $sql.= " '".$this->db->idate($this->datestart)."','".$this->db->idate($this->dateend)."',";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."loan (label, fk_bank, capital, datestart, dateend, nbterm, rate, note";
+		$sql.= " ,accountancy_account_capital, accountancy_account_insurance, accountancy_account_interest, entity";
+		$sql.= " ,datec, fk_user_author)";
+		$sql.= " VALUES ('".$this->db->escape($this->label)."',";
+		$sql.= " '".$this->db->escape($this->fk_bank)."',";
         $sql.= " '".price2num($newcapital)."',";
-        $sql.= " ".$conf->entity;
+		$sql.= " '".$this->db->idate($this->datestart)."',";
+		$sql.= " '".$this->db->idate($this->dateend)."',";
+        $sql.= " '".$this->db->escape($this->nbterm)."',";
+		$sql.= " '".$this->db->escape($this->rate)."',";
+		$sql.= " '".$this->db->escape($this->note)."',";
+		$sql.= " '".$this->db->escape($this->account_capital)."',";
+		$sql.= " '".$this->db->escape($this->account_insurance)."',";
+		$sql.= " '".$this->db->escape($this->account_interest)."',";
+        $sql.= " ".$conf->entity.",";
+		$sql.= " '".$this->db->idate($now)."',";
+		$sql.= " ".$user->id;
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -440,7 +474,7 @@ class Loan extends CommonObject
 	 */
     function info($id)
     {
-        $sql = "SELECT l.rowid, l.tms as datem, l.datec as datec";
+        $sql = "SELECT l.rowid, l.tms as datem, l.fk_user_author as user_author, l.datec as datec";
         $sql.= " FROM ".MAIN_DB_PREFIX."loan as l";
         $sql.= " WHERE l.rowid = ".$id;
 
@@ -454,10 +488,10 @@ class Loan extends CommonObject
 
                 $this->id = $obj->rowid;
 
-                if ($obj->fk_user_author) {
+                if ($obj->user_author) {
                     $cuser = new User($this->db);
-                    $cuser->fetch($obj->fk_user_author);
-                    $this->user_creation     = $cuser;
+                    $cuser->fetch($obj->user_author);
+                    $this->user_creation = $cuser;
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);

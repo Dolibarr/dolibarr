@@ -1,11 +1,5 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+/* Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,22 +16,23 @@
  */
 
 /**
- *       \file       htdocs/compta/sociales/document.php
- *       \ingroup    tax
- *       \brief      Page with attached files on social contributions
+ *       \file       htdocs/compta/loan/document.php
+ *       \ingroup    loan
+ *       \brief      Page with attached files on loan
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("other");
 $langs->load("companies");
 $langs->load("compta");
 $langs->load("bills");
+$langs->load("loan");
 
 $id = GETPOST('id','int');
 $action = GETPOST("action");
@@ -45,8 +40,7 @@ $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
-
+$result = restrictedArea($user, 'loan', $id, '','');
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -61,12 +55,11 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-
-$object = new ChargeSociales($db);
+$object = new Loan($db);
 if ($id > 0) $object->fetch($id);
 
-$upload_dir = $conf->tax->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$modulepart='tax';
+$upload_dir = $conf->loan->dir_output.'/'.dol_sanitizeFileName($object->ref);
+$modulepart='loan';
 
 
 /*
@@ -82,16 +75,16 @@ include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php
 
 $form = new Form($db);
 
-$help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
-llxHeader("",$langs->trans("SocialContribution"),$help_url);
+$help_url='EN:Module_Loan|FR:Module_Emprunt';
+llxHeader("",$langs->trans("Loan"),$help_url);
 
 if ($object->id)
 {
-	$alreadypayed=$object->getSommePaiement();
+	$alreadypayed=$object->getSumPayment();
 	
-    $head=tax_prepare_head($object, $user);
+    $head = loan_prepare_head($object, $user);
 
-    dol_fiche_head($head, 'documents',  $langs->trans("SocialContribution"), 0, 'bill');
+    dol_fiche_head($head, 'documents',  $langs->trans("Loan"), 0, 'bill');
 
 
     // Construit liste des fichiers
@@ -114,44 +107,44 @@ if ($object->id)
     if ($action == 'edit')
     {
         print '<tr><td>'.$langs->trans("Label").'</td><td>';
-        print '<input type="text" name="label" size="40" value="'.$object->lib.'">';
+        print '<input type="text" name="label" size="40" value="'.$object->label.'">';
         print '</td></tr>';
     }
     else
     {
-        print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->lib.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
     }
 
-    // Type
-    print "<tr><td>".$langs->trans("Type")."</td><td>".$object->type_libelle."</td></tr>";
+    // Amount
+    print '<tr><td>'.$langs->trans("Capital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
-    // Period end date
-    print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
+	// Date start
+    print "<tr><td>".$langs->trans("Datestart")."</td>";
     print "<td>";
     if ($action == 'edit')
     {
-        print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
+        print $form->select_date($object->datestart, 'start', 0, 0, 0, 'loan', 1);
     }
     else
     {
-        print dol_print_date($object->periode,"day");
+        print dol_print_date($object->datestart,"day");
     }
     print "</td>";
     print "</tr>";
 
-    // Due date
+    // Date end
+    print "<tr><td>".$langs->trans("Dateend")."</td>";
+    print "<td>";
     if ($action == 'edit')
     {
-        print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-        print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
-        print "</td></tr>";
+        print $form->select_date($object->dateend, 'end', 0, 0, 0, 'loan', 1);
     }
-    else {
-        print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech,'day')."</td></tr>";
+    else
+    {
+        print dol_print_date($object->dateend,"day");
     }
-
-    // Amount
-    print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+    print "</td>";
+    print "</tr>";
 
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4,$alreadypayed).'</td></tr>';
@@ -162,8 +155,8 @@ if ($object->id)
 
     print '</div>';
 
-    $modulepart = 'tax';
-    $permission = $user->rights->tax->charges->creer;
+    $modulepart = 'loan';
+    $permission = $user->rights->loan->write;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

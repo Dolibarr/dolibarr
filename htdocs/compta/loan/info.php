@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +16,19 @@
  */
 
 /**
- *	\file       htdocs/compta/sociales/info.php
- *	\ingroup    tax
- *	\brief      Page with info about social contribution
+ *	\file       htdocs/compta/loan/info.php
+ *	\ingroup    loan
+ *	\brief      Page with info about loan
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("compta");
 $langs->load("bills");
+$langs->load("loan");
 
 $id=GETPOST('id','int');
 $action=GETPOST("action");
@@ -35,27 +36,27 @@ $action=GETPOST("action");
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
+$result = restrictedArea($user, 'loan', $id, '','');
 
 
 /*
  * View
  */
 
-$help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
-llxHeader("",$langs->trans("SocialContribution"),$help_url);
+$help_url='EN:Module_Loan|FR:Module_Emprunt';
+llxHeader("",$langs->trans("Loan"),$help_url);
 
-$chargesociales = new ChargeSociales($db);
-$chargesociales->fetch($id);
-$chargesociales->info($id);
+$loan = new Loan($db);
+$loan->fetch($id);
+$loan->info($id);
 
-$head = tax_prepare_head($chargesociales);
+$head = loan_prepare_head($loan);
 
-dol_fiche_head($head, 'info', $langs->trans("SocialContribution"), 0, 'bill');
+dol_fiche_head($head, 'info', $langs->trans("Loan"), 0, 'bill');
 
 
 print '<table width="100%"><tr><td>';
-dol_print_object_info($chargesociales);
+dol_print_object_info($loan);
 print '</td></tr></table>';
 
 print '</div>';

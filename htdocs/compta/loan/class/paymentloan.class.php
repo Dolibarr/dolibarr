@@ -28,10 +28,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 /**     \class      PaymentSocialContribution
  *		\brief      Class to manage payments of social contributions
  */
-class PaymentSocialContribution extends CommonObject
+class PaymentLoan extends CommonObject
 {
-	public $element='paiementcharge';			//!< Id that identify managed objects
-	public $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
+	public $element='payment_loan';			//!< Id that identify managed objects
+	public $table_element='payment_loan';	//!< Name of table without prefix where object is stored
 
 	var $id;
 	var $ref;

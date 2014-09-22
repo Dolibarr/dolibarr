@@ -153,7 +153,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->loan->write)
 
 $form = new Form($db);
 
-$help_url='EN:Module_Loan|FR:Module Emprunt';
+$help_url='EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("",$langs->trans("Loan"),$help_url);
 
 
@@ -268,7 +268,7 @@ if ($action == 'create')
 if ($id > 0)
 {
 	$object = new Loan($db);
-    $result=$object->fetch($id);
+    $result = $object->fetch($id);
 
 	if ($result > 0)
 	{
@@ -313,101 +313,41 @@ if ($id > 0)
 		{
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->label.'</td></tr>';
 		}
+		
+		// Capital
+		print '<tr><td>'.$langs->trans("Capital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
-		$rowspan=5;
-		print '<td rowspan="'.$rowspan.'" valign="top">';
-
-		/*
-		 * Payments
-		 */
-		$sql = "SELECT p.rowid, p.num_payment, datep as dp, p.amount,";
-		$sql.= "c.libelle as paiement_type";
-		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p";
-		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
-		$sql.= ", ".MAIN_DB_PREFIX."loan as l";
-		$sql.= " WHERE p.fk_loan = ".$id;
-		$sql.= " AND p.fk_loan = l.rowid";
-		$sql.= " AND l.entity = ".$conf->entity;
-		$sql.= " AND p.fk_typepayment = c.id";
-		$sql.= " ORDER BY dp DESC";
-
-		//print $sql;
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$i = 0; $total = 0;
-			echo '<table class="nobordernopadding" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("RefPayment").'</td>';
-			print '<td>'.$langs->trans("Date").'</td>';
-			print '<td>'.$langs->trans("Type").'</td>';
-      		print '<td align="right">'.$langs->trans("Amount").'</td>';
-      		print '<td>&nbsp;</td>';
-      		print '</tr>';
-
-			$var=True;
-			while ($i < $num)
-			{
-				$objp = $db->fetch_object($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var]."><td>";
-				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
-				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-				print "<td>".$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
-        		print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
-				print "</tr>";
-				$totalpaye += $objp->amount;
-				$i++;
-			}
-
-			if ($object->paye == 0)
-			{
-				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-
-				$resteapayer = $object->amount - $totalpaye;
-
-				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-				print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-			}
-			print "</table>";
-			$db->free($resql);
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-		print "</td>";
-
-		print "</tr>";
-
-    	// Period end date
-		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
+    	// Date start
+		print "<tr><td>".$langs->trans("DateStart")."</td>";
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
+			print $form->select_date($object->datestart, 'start', 0, 0, 0, 'update', 1);
 		}
 		else
 		{
-			print dol_print_date($object->periode,"day");
+			print dol_print_date($object->datestart,"day");
 		}
 		print "</td></tr>";
 
-		// Due date
+		// Date end
+		print "<tr><td>".$langs->trans("DateEnd")."</td>";
+		print "<td>";
 		if ($action == 'edit')
 		{
-			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
-			print "</td></tr>";
+			print $form->select_date($object->dateend, 'end', 0, 0, 0, 'update', 1);
 		}
-		else {
-			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech,'day')."</td></tr>";
+		else
+		{
+			print dol_print_date($object->dateend,"day");
 		}
-
-		// Amount
-		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+		print "</td></tr>";
+		
+		// Nbterms
+		print '<tr><td>'.$langs->trans("Nbterms").'</td><td>'.$object->nbterm.'</td></tr>';
+		
+		// Rate
+		print '<tr><td>'.$langs->trans("Rate").'</td><td>'.$object->rate.'</td></tr>';
 
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
@@ -461,6 +401,74 @@ if ($id > 0)
 
 			print "</div>";
 		}
+		
+		print '<br>';
+		print '<table class="border" width="100%">';
+		print '<tr><td>';
+
+		/*
+		 * Payments
+		 */
+		$sql = "SELECT p.rowid, p.num_payment, datep as dp, p.amount,";
+		$sql.= "c.libelle as paiement_type";
+		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p";
+		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
+		$sql.= ", ".MAIN_DB_PREFIX."loan as l";
+		$sql.= " WHERE p.fk_loan = ".$id;
+		$sql.= " AND p.fk_loan = l.rowid";
+		$sql.= " AND l.entity = ".$conf->entity;
+		$sql.= " AND p.fk_typepayment = c.id";
+		$sql.= " ORDER BY dp DESC";
+
+		//print $sql;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0; $total = 0;
+			echo '<table class="nobordernopadding" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("RefPayment").'</td>';
+			print '<td>'.$langs->trans("Date").'</td>';
+			print '<td>'.$langs->trans("Type").'</td>';
+      		print '<td align="right">'.$langs->trans("Amount").'</td>';
+      		print '<td>&nbsp;</td>';
+      		print '</tr>';
+
+			$var=True;
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($resql);
+				$var=!$var;
+				print "<tr ".$bc[$var]."><td>";
+				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+				print "<td>".$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
+        		print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+				print "</tr>";
+				$totalpaye += $objp->amount;
+				$i++;
+			}
+
+			if ($object->paye == 0)
+			{
+				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+
+				$resteapayer = $object->amount - $totalpaye;
+
+				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+				print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+			}
+			print "</table>";
+			$db->free($resql);
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		print "</td></tr>";
+		print "</table>";
 	}
 	else
 	{
