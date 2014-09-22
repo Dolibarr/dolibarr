@@ -52,6 +52,41 @@ $langs->load('companies');
 $langs->load('products');
 $langs->load('main');
 
+//hook for zipgenerating.
+if(!empty($_POST["TabBills"])){
+
+	//Check if all file existe
+	foreach($_POST["TabBills"] as $bill){
+		$filedir=$conf->facture->dir_output . '/' . $bill . '/' . $bill .'.pdf';
+		if(!file_exists($filedir)){
+			die($bill . " : File Not Found;");
+		}
+	}
+
+	//Create dir for zip if not exist
+	$diroutputzip=$conf->facture->dir_output . '/FactBill';
+	if(dol_mkdir($diroutputzip) < 0){
+		die("Error mkdir;");
+	};
+
+	//Creating Zip File
+	$zip = new ZipArchive();
+	$filename = time().".zip";
+	$path = $diroutputzip . "/" . $filename;
+	$zip->open($path, ZipArchive::CREATE);
+	foreach($_POST["TabBills"] as $bill){
+	$filedir=$conf->facture->dir_output . '/' . $bill . '/' . $bill .'.pdf';
+		$zip->addFile($filedir, $bill.".pdf");
+	}
+	$zip->Close();
+	$url = "http://" .$_SERVER['SERVER_NAME'] . "/document.php?modulepart=facture&file=FactBill/" .$filename;
+	print $url;
+	die;
+}
+
+
+
+
 $sall=trim(GETPOST('sall'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
 
@@ -286,15 +321,25 @@ if ($resql)
         $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
         $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
     }
-    if ($moreforfilter)
+
+	// If option for groupDownload is ON
+	if(!empty($conf->global->FAC_AFF_ZIP_BILLS)){
+		$moreforfilter .= "<button id='btnDisplayColumnDownload' style='float: right;'>Download Zip</button>"; // TODO : Devensys => Add lang support
+	}
+
+    if (!empty($moreforfilter))
     {
         print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="10">';
+        print '<td class="piz_headtab1 liste_titre" colspan="10">';
         print $moreforfilter;
         print '</td></tr>';
     }
 
     print '<tr class="liste_titre">';
+	if(!empty($conf->global->FAC_AFF_ZIP_BILLS)){
+		print '<td class="piz_headtab2 piz_hidden liste_titre" align="center">PDFs in Zip</td>';
+	}
+
     print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
@@ -310,6 +355,11 @@ if ($resql)
 
     // Filters lines
     print '<tr class="liste_titre">';
+
+	if(!empty($conf->global->FAC_AFF_ZIP_BILLS)){
+		print '<td class="piz_headtab3 piz_hidden liste_titre" align="center"><a id="piz_checkall" href="#">Tout</a> / <a id="piz_checknone" href="#">Aucun</a></td>';
+	}
+
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
@@ -346,6 +396,19 @@ if ($resql)
             $datelimit=$db->jdate($objp->datelimite);
 
             print '<tr '.$bc[$var].'>';
+
+			$filename=dol_sanitizeFileName($objp->facnumber); // move here, need value for checkbox
+			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
+			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
+
+			if(!empty($conf->global->FAC_AFF_ZIP_BILLS)) {
+				print "<td class='piz_chexbox piz_hidden' align='center'>";
+				if (file_exists($filedir)) {
+					print "<input type='checkbox' class='piz_checkbox' value='$filename' />";
+				}
+				print "</td>";
+			}
+
             print '<td class="nowrap">';
 
             $facturestatic->id=$objp->facid;
@@ -357,13 +420,6 @@ if ($resql)
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
             print '<td class="nobordernopadding nowrap">';
-
-			$filename=dol_sanitizeFileName($objp->facnumber); // move here, need value for checkbox
-			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
-			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
-			if(file_exists($filedir)) {
-				print "<input type='checkbox' id='billforzip' value='$filename'>";
-			}
             print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
             print $objp->increment;
             print '</td>';
@@ -435,6 +491,9 @@ if ($resql)
         {
             // Print total
             print '<tr class="liste_total">';
+			if(!empty($conf->global->FAC_AFF_ZIP_BILLS)){
+				print '<td class="piz_hidden piz_footer liste_total" align="center"><a href="#" id="piz_download">Téléchargement</a> </td>';
+			}
             print '<td class="liste_total" colspan="5" align="left">'.$langs->trans('Total').'</td>';
             print '<td class="liste_total" align="right">'.price($total_ht,0,$langs).'</td>';
             print '<td class="liste_total" align="right">'.price($total_tva,0,$langs).'</td>';
@@ -447,7 +506,63 @@ if ($resql)
 
     print "</table>\n";
     print "</form>\n";
-    $db->free($resql);
+
+	if(!empty($conf->global->FAC_AFF_ZIP_BILLS)){
+		// Add JS for download
+		print	'<script type="text/javascript">';
+		print   '	jQuery(function(){';
+
+		print	'		jQuery("#btnDisplayColumnDownload").click(function(){';
+		print	'			if(jQuery(".piz_headtab2").hasClass("piz_hidden")){';
+		print	'				jQuery(".piz_headtab1").attr("colspan",Number(jQuery(".piz_headtab1").attr("colspan")) + 1);';
+		print	'			}else{';
+		print	'				jQuery(".piz_headtab1").attr("colspan",Number(jQuery(".piz_headtab1").attr("colspan")) - 1);';
+		print	'			}';
+		print   '			jQuery(".piz_headtab2").toggleClass("piz_hidden");';
+		print   '			jQuery(".piz_headtab3").toggleClass("piz_hidden");';
+		print   '			jQuery(".piz_chexbox").toggleClass("piz_hidden");';
+		print   '			jQuery(".piz_footer").toggleClass("piz_hidden");';
+		print	'			return false;';
+		print	'		});';
+
+		print	'		jQuery("#piz_checkall").click(function(){';
+		print   '			jQuery(".piz_checkbox").prop( "checked", true );';
+		print	'			return false;';
+		print	'		});';
+
+		print	'		jQuery("#piz_checknone").click(function(){';
+		print   '			jQuery(".piz_checkbox").prop( "checked", false );';
+		print	'			return false;';
+		print	'		});';
+
+		print   '		jQuery("#piz_download").click(function(){';
+		print   '			var tabPdf = new Array();';
+		print   '			jQuery(".piz_checkbox:checked").each(function(){';
+		print   '				tabPdf.push(jQuery(this).val());';
+		print   '			});';
+		print   '			jQuery.ajax({';
+		print   '				type: "POST",';
+		print   '				url: document.URL,';
+		print   '				data: {"TabBills": tabPdf}';
+		print   '			}).done(function(data){';
+		print   '				console.log(data);';
+		print   '				window.open(data,"Download"); ';
+		print   '			});';
+		print   '			return false;';
+		print   '		});';
+
+		print	'	});';
+		print	'</script>';
+
+		print	'<style>';
+		print	'	.piz_hidden {';
+		print	'		display : none;';
+		print	'	}';
+		print	'</style>';
+	}
+
+
+	$db->free($resql);
 }
 else
 {
