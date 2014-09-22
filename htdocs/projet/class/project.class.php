@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1306,7 +1307,7 @@ class Project extends CommonObject
 		}
 
 	}
-	
+
 	/**
 	 *    Associate element to a project
 	 *
@@ -1317,7 +1318,7 @@ class Project extends CommonObject
 	function remove_element($tableName, $elementSelectId)
 	{
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
-	
+
 		if ($TableName=="actioncomm")
 		{
 			$sql.= " SET fk_project=NULL";
@@ -1328,7 +1329,7 @@ class Project extends CommonObject
 			$sql.= " SET fk_projet=NULL";
 			$sql.= " WHERE rowid=".$elementSelectId;
 		}
-	
+
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (!$resql) {
@@ -1337,7 +1338,42 @@ class Project extends CommonObject
 		}else {
 			return 1;
 		}
-	
+
 	}
+
+	/**
+	 *  Create an intervention document on disk using template defined into PROJECT_ADDON_PDF
+	 *
+	 *  @param	string		$modele			force le modele a utiliser ('' par defaut)
+	 *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param  int			$hidedetails    Hide details of lines
+	 *  @param  int			$hidedesc       Hide description
+	 *  @param  int			$hideref        Hide ref
+	 *  @return int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$langs;
+
+		$langs->load("projects");
+
+		// Positionne modele sur le nom du modele de projet a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->PROJECT_ADDON_PDF))
+			{
+				$modele = $conf->global->PROJECT_ADDON_PDF;
+			}
+			else
+			{
+				$modele='baleine';
+			}
+		}
+
+		$modelpath = "core/modules/project/pdf/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
 }
 

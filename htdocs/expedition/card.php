@@ -261,7 +261,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($id);    // Reload to get new records
-            $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
+            $result = $object->generateDocument($object->modelpdf, $outputlangs);
         }
         if ($result < 0)
         {
@@ -362,7 +362,7 @@ else if ($action == 'builddoc')	// En get ou en post
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
+	$result = $object->generateDocument($object->modelpdf, $outputlangs);
     if ($result <= 0)
     {
         dol_print_error($db,$result);
@@ -1598,7 +1598,7 @@ else if ($id || $ref)
 		// Build document if it not exists
 		if (! $file || ! is_readable($file))
 		{
-			$result=expedition_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result = $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
 				dol_print_error($db,$result);

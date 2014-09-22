@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
  * Copyright (C) 2010 Florian Henry  <florian.henry<àopen-concept.pro>
+ * Copyright (C) 2014 Marcos García  <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,92 +153,10 @@ abstract class ModeleNumRefTask
  *  @param  int			$hideref        Hide ref
  *  @param  HookManager	$hookmanager	Hook manager instance
  *  @return int         				0 if KO, 1 if OK
+ * @deprecated Use the new function generateDocument of Task class
  */
-function task_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
+function task_pdf_create(DoliDB $db, Task $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
 {
-	global $conf,$langs;
-	$langs->load("projects");
-
-	$error=0;
-
-	$srctemplatepath='';
-
-	// Positionne modele sur le nom du modele de projet a utiliser
-	if (! dol_strlen($modele))
-	{
-		if (! empty($conf->global->PROJECT_TASK_ADDON_PDF))
-		{
-			$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
-		}
-		else
-		{
-			$modele='nodefault';
-		}
-	}
-
-	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':',$modele,2);
-    if (! empty($tmp[1]))
-    {
-        $modele=$tmp[0];
-        $srctemplatepath=$tmp[1];
-    }
-
-	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
-	{
-    	foreach(array('doc','pdf') as $prefix)
-    	{
-    	    $file = $prefix."_".$modele.".modules.php";
-
-    		// On verifie l'emplacement du modele
-	        $file=dol_buildpath($reldir."core/modules/project/task/pdf/".$file,0);
-    		if (file_exists($file))
-    		{
-    			$filefound=1;
-    			$classname=$prefix.'_'.$modele;
-    			break;
-    		}
-    	}
-    	if ($filefound) break;
-    }
-
-	// Charge le modele
-	if ($filefound)
-	{
-		require_once $file;
-
-		$obj = new $classname($db);
-		// We save charset_output to restore it because write_file can change it if needed for
-		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $hookmanager) > 0)
-		{
-			$outputlangs->charset_output=$sav_charset_output;
-
-			// we delete preview files
-        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			dol_delete_preview($object);
-
-			// Success in building document. We build meta file.
-			dol_meta_create($object);
-
-			return 1;
-		}
-		else
-		{
-			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,"task_pdf_create Error: ".$obj->error);
-			return 0;
-		}
-	}
-	else
-	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
-		return 0;
-	}
+	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 }
 

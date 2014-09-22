@@ -9,7 +9,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2014 Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -3221,6 +3221,42 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *	@param	string		$modele			Force template to use ('' to not force)
+	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param  int			$hidedetails    Hide details of lines
+	 *  @param  int			$hidedesc       Hide description
+	 *  @param  int			$hideref        Hide ref
+	 *	@return int        					<0 if KO, >0 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("bills");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->FACTURE_ADDON_PDF))
+			{
+				$modele = $conf->global->FACTURE_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'crabe';
+			}
+		}
+
+		$modelpath = "core/modules/facture/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
+
 
 }
 

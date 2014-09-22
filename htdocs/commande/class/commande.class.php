@@ -7,6 +7,7 @@
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3010,6 +3011,40 @@ class Commande extends CommonOrder
             return -1;
         }
     }
+
+	/**
+	 *  Create a document onto disk accordign to template module.
+	 *
+	 *  @param	    string		$modele			Force le mnodele a utiliser ('' to not force)
+	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs,$hookmanager;
+
+		$langs->load("orders");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->COMMANDE_ADDON_PDF))
+			{
+				$modele = $conf->global->COMMANDE_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'einstein';
+			}
+		}
+
+		$modelpath = "core/modules/commande/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 
 }
 

@@ -178,7 +178,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		}
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 			$ret = $object->fetch($object->id); // Reload to get new records
-			commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -491,7 +491,7 @@ else if ($action == 'setconditions' && $user->rights->commande->creer) {
 			}
 
 			$ret = $object->fetch($object->id); // Reload to get new records
-			commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	}
 }
@@ -722,7 +722,7 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 						$outputlangs->setDefaultLang($newlang);
 					}
 
-					commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST ['prod_entry_mode']);
@@ -847,7 +847,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 				}
 
 				$ret = $object->fetch($object->id); // Reload to get new records
-				commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
 			unset($_POST ['qty']);
@@ -911,8 +911,9 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-				commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
 		}
 	}
 }
@@ -958,7 +959,7 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($object->id); // Reload to get new records
-				commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 	}
@@ -1023,8 +1024,9 @@ else if ($action == 'up' && $user->rights->commande->creer) {
 		$outputlangs->setDefaultLang($newlang);
 	}
 
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 
 	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '#' . GETPOST('rowid'));
 	exit();
@@ -1044,8 +1046,9 @@ else if ($action == 'down' && $user->rights->commande->creer) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 
 	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '#' . GETPOST('rowid'));
 	exit();
@@ -1073,7 +1076,7 @@ else if ($action == 'builddoc') // In get or post
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result = commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 	if ($result <= 0) {
 		dol_print_error($db, $result);
@@ -2462,7 +2465,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 			// Build document if it not exists
 			if (! $file || ! is_readable($file)) {
-				$result = commande_pdf_create($db, $object, GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result <= 0) {
 					dol_print_error($db, $result);
 					exit();

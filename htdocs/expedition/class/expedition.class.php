@@ -6,6 +6,7 @@
  * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1530,6 +1531,39 @@ class Expedition extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 * 	Cree un bon d'expedition sur disque
+	 *
+	 * 	@param	string		$modele			Force le modele a utiliser ('' to not force)
+	 * 	@param	Translate	$outputlangs	Objet lang a utiliser pour traduction
+	 *  @return int             			<=0 if KO, >0 if OK
+	 */
+	public function generateDocument($modele, $outputlangs)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("sendings");
+
+		// Sets the model on the model name to use
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->EXPEDITION_ADDON_PDF))
+			{
+				$modele = $conf->global->EXPEDITION_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'rouget';
+			}
+		}
+
+		$modelpath = "core/modules/expedition/doc/";
+
+		$this->fetch_origin();
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, 0, 0, 0);
 	}
 
 }
