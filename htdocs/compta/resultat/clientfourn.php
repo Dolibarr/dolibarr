@@ -601,6 +601,11 @@ else
 {
     dol_print_error($db);
 }
+print '<tr class="liste_total">';
+if ($modecompta == 'CREANCES-DETTES')
+	print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
+print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+print '</tr>';
 
 /*
  * Dunning
@@ -633,8 +638,8 @@ if ($result)
 
 			$total_ht += $obj->amount;
 			$total_ttc += $obj->amount;
-			$subtotal_ht -= $obj->amount;
-			$subtotal_ttc -= $obj->amount;
+			$subtotal_ht += $obj->amount;
+			$subtotal_ttc += $obj->amount;
 
 			$var = !$var;
 			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
@@ -661,8 +666,8 @@ else
 }
 print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES')
-	print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+	print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
+print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
 print '</tr>';
 
 /*

@@ -195,7 +195,7 @@ if ($id > 0 || ! empty($ref))
 	if ($object->fetch($id) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = dol_clone($projectstatic);
 
@@ -230,7 +230,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Thirdparty
 			print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-			if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
+			if (! empty($projectstatic->thirdparty->id)) print $projectstatic->thirdparty->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td>';
 			print '</tr>';
@@ -302,7 +302,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Third party
 			print '<td>'.$langs->trans("ThirdParty").'</td><td>';
-			if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
+			if ($projectstatic->thirdparty->id) print $projectstatic->thirdparty->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td></tr>';
 		}
@@ -345,13 +345,14 @@ if ($id > 0 || ! empty($ref))
 
 			// Contributor
 			print '<td class="nowrap">';
-			$restrictaddtimetocontactoftask=0;
-			if (empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS))
-			{
-				$restrictaddtimetocontactoftask=$object->getListContactId('internal');
-			}
 			print img_object('','user');
-			print $form->select_dolusers($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$restrictaddtimetocontactoftask);	// Note: If user is not allowed it will be disabled into combo list and userid not posted
+			$contactsoftask=$object->getListContactId('internal');
+			if (count($contactsoftask)>0) {
+				$userid=$contactsoftask[0];
+				$form->select_users($userid,'userid',0,'',0,'',$contactsoftask);
+			}else {
+				print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
+			}
 			print '</td>';
 
 			// Note
@@ -440,7 +441,15 @@ if ($id > 0 || ! empty($ref))
 			print '<td>';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print $form->select_dolusers($task_time->fk_user,'userid_line');
+				$contactsoftask=$object->getListContactId('internal');
+				if (!in_array($task_time->fk_user,$contactsoftask)) {
+					$contactsoftask[]=$task_time->fk_user;
+				}
+				if (count($contactsoftask)>0) {
+					$form->select_users($task_time->fk_user,'userid_line',0,'',0,'',$contactsoftask);
+				}else {
+					print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
+				}
 			}
 			else
 			{

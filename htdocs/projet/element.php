@@ -215,6 +215,15 @@ if ($action=="addelement")
 	if ($result<0) {
 		setEventMessage($mailchimp->error,'errors');
 	}
+}elseif ($action == "unlink") {
+	
+	$tablename = GETPOST("tablename");
+	$elementselectid = GETPOST("elementselect");
+	
+	$result = $project->remove_element($tablename, $elementselectid);
+	if ($result < 0) {
+		setEventMessage($project->error, 'errors');
+	}
 }
 
 foreach ($listofreferent as $key => $value)
@@ -247,7 +256,7 @@ foreach ($listofreferent as $key => $value)
 		print '<table class="noborder" width="100%">';
 
 		print '<tr class="liste_titre">';
-		print '<td width="100">'.$langs->trans("Ref").'</td>';
+		print '<td width="100" colspan="2">'.$langs->trans("Ref").'</td>';
 		print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
 		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountHT").'</td>';
@@ -276,7 +285,9 @@ foreach ($listofreferent as $key => $value)
 
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
-
+				print '<td width="1%">';
+				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
+				print "</td>\n";
 				// Ref
 				print '<td align="left">';
 				print $element->getNomUrl(1);
@@ -326,7 +337,7 @@ foreach ($listofreferent as $key => $value)
 				}
 			}
 
-			print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Number").': '.$i.'</td>';
+			print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Number").': '.$i.'</td>';
 			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
 			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
 			print '<td>&nbsp;</td>';
