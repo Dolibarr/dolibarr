@@ -19,6 +19,8 @@ For users:
 - Fix: Must unaccent strings into SEPA file.
 - Fix: Extrafield feature select from table should try to translate multiple column when not needed 
 - Fix: cents for indian ruppes are calle paisa and paise.
+- Fix: Invoices payments may be older than invoices.
+- Fix: [ bug #1593 ] Spanish Localtax IRPF not being calculated since 3.6.0 in supplier invoices when adding a line
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
