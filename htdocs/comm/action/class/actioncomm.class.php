@@ -768,7 +768,7 @@ class ActionComm extends CommonObject
 
         $result='';
         if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
-        else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
+        else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.'">';
         $lienfin='</a>';
         $label=$this->label;
         if (empty($label)) $label=$this->libelle;	// Fro backward compatibility
@@ -960,7 +960,7 @@ class ActionComm extends CommonObject
 					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
 					//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
-                    $url=$urlwithroot.'/comm/action/fiche.php?id='.$obj->id;
+                    $url=$urlwithroot.'/comm/action/card.php?id='.$obj->id;
                     $event['url']=$url;
                     $event['created']=$this->db->jdate($obj->datec)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
                     $event['modified']=$this->db->jdate($obj->datem)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));

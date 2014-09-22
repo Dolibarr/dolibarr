@@ -523,7 +523,7 @@ class CommandeFournisseur extends CommonOrder
 
         $result='';
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id.'">';
         $lienfin='</a>';
 
         $picto='order';

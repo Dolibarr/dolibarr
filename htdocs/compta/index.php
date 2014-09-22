@@ -127,7 +127,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
 if (! empty($conf->don->enabled) && $user->rights->don->lire)
 {
 	$langs->load("donations");
-    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/dons/liste.php">';
+    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/dons/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchADonation").'</td></tr>';
@@ -639,7 +639,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 			$i = 0;
 			print '<table class="noborder" width="100%">';
 			print "<tr class=\"liste_titre\">";
-			print '<td colspan="2">'.$langs->trans("OrdersToBill").' <a href="'.DOL_URL_ROOT.'/commande/liste.php?status=3&afacturer=1">('.$num.')</a></td>';
+			print '<td colspan="2">'.$langs->trans("OrdersToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?status=3&afacturer=1">('.$num.')</a></td>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 			print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 			print '<td align="right">'.$langs->trans("ToBill").'</td>';
@@ -916,7 +916,7 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr ".$bc[$var]."><td>".dol_print_date($obj->da,"day")."</td>";
-		print "<td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
+		print "<td><a href=\"action/card.php\">$obj->libelle $obj->label</a></td></tr>";
 		$i++;
 	}
 	$db->free($resql);

@@ -110,12 +110,12 @@ class box_factures extends ModeleBoxes
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
                     'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'maxlength'=>40,
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
                     'text' => dol_print_date($datec,'day'),

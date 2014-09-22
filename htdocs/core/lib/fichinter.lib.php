@@ -38,7 +38,7 @@ function fichinter_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/fiche.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;

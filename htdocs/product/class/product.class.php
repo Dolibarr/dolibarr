@@ -2798,7 +2798,7 @@ class Product extends CommonObject
         }
         else if ($option == 'composition')
         {
-			$lien = '<a href="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$this->id.'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id.'">';
 			$lienfin='</a>';
         }
         else if ($option == 'category')
@@ -2807,7 +2807,7 @@ class Product extends CommonObject
         }
         else
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$this->id.'">';
 			$lienfin='</a>';
 		}
 		$newref=$this->ref;

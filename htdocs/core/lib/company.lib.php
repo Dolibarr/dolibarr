@@ -48,7 +48,7 @@ function societe_prepare_head($object)
 
     if ($object->client==1 || $object->client==2 || $object->client==3)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$object->id;
+        $head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
         $head[$h][1] = '';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client==2 || $object->client==3)) $head[$h][1] .= $langs->trans("Prospect");
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && $object->client==3) $head[$h][1] .= '/';
@@ -58,7 +58,7 @@ function societe_prepare_head($object)
     }
     if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
     {
-        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$object->id;
+        $head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
         $head[$h][2] = 'supplier';
         $h++;
@@ -109,7 +109,7 @@ function societe_prepare_head($object)
         // Notifications
         if (! empty($conf->notification->enabled))
         {
-        	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$object->id;
+        	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
         	$head[$h][1] = $langs->trans("Notifications");
         	$head[$h][2] = 'notify';
         	$h++;
@@ -440,8 +440,8 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
         $buttoncreate='';
         if (! empty($conf->projet->enabled) && $user->rights->projet->creer)
         {
-            //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
+            //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
 			if (empty($conf->dol_optimize_smallscreen)) $buttoncreate.=' '.img_picto($langs->trans("AddProject"),'filenew');
 			$buttoncreate.='</a>'."\n";
         }
@@ -486,7 +486,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                         print "<tr ".$bc[$var].">";
 
                         // Ref
-                        print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
+                        print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
                         // Label
                         print '<td>'.$obj->title.'</td>';
                         // Date start
@@ -557,7 +557,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($user->rights->societe->contact->creer)
     {
     	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
+		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
 		if (empty($conf->dol_optimize_smallscreen)) $buttoncreate.=' '.img_picto($addcontact,'filenew');
 		$buttoncreate.='</a>'."\n";
     }
@@ -741,11 +741,11 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print '<td align="center">';
                 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
                 {
-                	print '<a class="hideonsmartphone" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+                	print '<a class="hideonsmartphone" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
                 	print img_object($langs->trans("Rendez-Vous"),"action_rdv");
                 	print '</a> ';
                 }
-                print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+                print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
                 print img_object($langs->trans("Event"),"action");
                 print '</a></td>';
             }
@@ -754,7 +754,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             if ($user->rights->societe->contact->creer)
             {
                 print '<td align="right">';
-                print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?action=edit&amp;id='.$obj->rowid.'&amp;backtopage='.urlencode($backtopage).'">';
+                print '<a href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&amp;id='.$obj->rowid.'&amp;backtopage='.urlencode($backtopage).'">';
                 print img_edit();
                 print '</a></td>';
             }
@@ -917,7 +917,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 		$permok=$user->rights->agenda->myactions->create;
         if (($object->id || $objcon->id) && $permok)
 		{
-            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create';
+            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
             if (get_class($object) == 'Societe') $out.='&amp;socid='.$object->id;
             $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
     		$out.=$langs->trans("AddAnAction").' ';
@@ -1200,7 +1200,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 		$permok=$user->rights->agenda->myactions->create;
         if ((! empty($object->id) || ! empty($objcon->id)) && $permok)
 		{
-            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create';
+            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
             if (get_class($object) == 'Societe') $out.='&amp;socid='.$object->id;
             $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
     		$out.=$langs->trans("AddAnAction").' ';
@@ -1238,7 +1238,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             }
             if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing')
             {
-                $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
+                $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
                 $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
                 $out.=dol_trunc($libelle,40);

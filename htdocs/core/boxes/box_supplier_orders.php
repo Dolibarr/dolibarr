@@ -86,8 +86,8 @@ class box_supplier_orders extends ModeleBoxes
                     $objp = $db->fetch_object($result);
                     $datem=$db->jdate($objp->tms);
 
-                    $urlo = DOL_URL_ROOT."/fourn/commande/fiche.php?id=".$objp->rowid;
-                    $urls = DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid;
+                    $urlo = DOL_URL_ROOT."/fourn/commande/card.php?id=".$objp->rowid;
+                    $urls = DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid;
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,

@@ -65,7 +65,7 @@ if ($id)
 
 		$h=0;
 
-		$head[$h][0] = DOL_URL_ROOT."/fourn/product/fiche.php?id=".$object->id;
+		$head[$h][0] = DOL_URL_ROOT."/fourn/product/card.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Card");
 		$h++;
 
@@ -89,7 +89,7 @@ if ($id)
 			$h++;
 		}
 
-		$head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$object->id;
+		$head[$h][0] = DOL_URL_ROOT."/product/card.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("CommercialCard");
 		$h++;
 

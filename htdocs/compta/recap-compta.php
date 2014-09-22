@@ -181,7 +181,7 @@ if ($socid > 0)
 						print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 						print '<td>';
 						print '&nbsp; &nbsp; &nbsp; '; // Decalage
-						print '<a href="paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
+						print '<a href="paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
 						print "<td>&nbsp;</td>\n";
 						print "<td>&nbsp;</td>\n";
 						print '<td align="right">'.price($objp->amount).'</td>';

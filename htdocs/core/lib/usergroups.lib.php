@@ -44,7 +44,7 @@ function user_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/user/card.php?id='.$object->id;
     $head[$h][1] = $langs->trans("UserCard");
     $head[$h][2] = 'user';
     $h++;
@@ -140,7 +140,7 @@ function group_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/group/fiche.php?id='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/user/group/card.php?id='.$object->id;
     $head[$h][1] = $langs->trans("GroupCard");
     $head[$h][2] = 'group';
     $h++;

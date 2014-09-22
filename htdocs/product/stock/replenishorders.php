@@ -260,7 +260,7 @@ if ($resql)
         $var = !$var;
         if (!dispatched($obj->rowid) && (!$sproduct || in_array($sproduct, getProducts($obj->rowid))))
         {
-            $href = DOL_URL_ROOT . '/fourn/commande/fiche.php?id=' . $obj->rowid;
+            $href = DOL_URL_ROOT . '/fourn/commande/card.php?id=' . $obj->rowid;
             print '<tr ' . $bc[$var] . '>'.
             // Ref
                  '<td>'.
@@ -269,7 +269,7 @@ if ($resql)
                  '</a></td>';
 
             // Company
-            $href = DOL_URL_ROOT . '/fourn/fiche.php?socid=' . $obj->socid;
+            $href = DOL_URL_ROOT . '/fourn/card.php?socid=' . $obj->socid;
             print '<td>'.
                  '<a href="' . $href .'">'.
                  img_object($langs->trans('ShowCompany'), 'company'). ' '.

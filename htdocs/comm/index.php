@@ -91,7 +91,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$var=false;
 	print '<table class="noborder nohover" width="100%">';
-	print '<form method="post" action="'.DOL_URL_ROOT.'/commande/liste.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchACustomerOrder").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
@@ -105,7 +105,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
 	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
@@ -217,7 +217,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td class="nowrap"><a href="../commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
+				print '<tr '.$bc[$var].'><td class="nowrap"><a href="../commande/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
@@ -417,7 +417,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var]."><td><a href=\"../contrat/fiche.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
+				print "<tr ".$bc[$var]."><td><a href=\"../contrat/card.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
 				print '<td>';
                 $companystatic->id=$objp->rowid;
                 $companystatic->name=$objp->name;
@@ -497,7 +497,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 
 				print "</td>";
 
-				print '<td align="left"><a href="fiche.php?socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,44).'</a></td>'."\n";
+				print '<td align="left"><a href="card.php?socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,44).'</a></td>'."\n";
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
 				print '<td align="right">'.price($obj->total_ttc).'</td>';

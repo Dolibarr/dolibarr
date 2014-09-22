@@ -1531,7 +1531,7 @@ class Contrat extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='contract';
@@ -2013,7 +2013,7 @@ class ContratLigne extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$this->fk_contrat.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'">';
 		$lienfin='</a>';
 
 		$picto='contract';

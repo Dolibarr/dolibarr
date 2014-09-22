@@ -136,24 +136,24 @@ if ($resql)
 	if ($mode == "4" && $filter != "expired") $title=$langs->trans("ListOfRunningServices");
 	if ($mode == "4" && $filter == "expired") $title=$langs->trans("ListOfExpiredServices");
 	if ($mode == "5") $title=$langs->trans("ListOfClosedServices");
-	print_barre_liste($title, $page, "services.php", $param, $sortfield, $sortorder,'',$num);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
 	print '<table class="liste" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Contract"),"services.php", "c.rowid",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Service"),"services.php", "p.description",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),"services.php", "s.nom",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Contract"),$_SERVER["PHP_SELF"], "c.rowid",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Service"),$_SERVER["PHP_SELF"], "p.description",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"], "s.nom",$param,"","",$sortfield,$sortorder);
 	// Date debut
-	if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),"services.php", "cd.date_ouverture_prevue",$param,'',' align="center"',$sortfield,$sortorder);
-	if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),"services.php", "cd.date_ouverture",$param,'',' align="center"',$sortfield,$sortorder);
+	if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),$_SERVER["PHP_SELF"], "cd.date_ouverture_prevue",$param,'',' align="center"',$sortfield,$sortorder);
+	if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),$_SERVER["PHP_SELF"], "cd.date_ouverture",$param,'',' align="center"',$sortfield,$sortorder);
 	// Date fin
-	if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),"services.php", "cd.date_fin_validite",$param,'',' align="center"',$sortfield,$sortorder);
-	else print_liste_field_titre($langs->trans("DateEndRealShort"),"services.php", "cd.date_cloture",$param,'',' align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"services.php", "cd.statut,c.statut",$param,"","align=\"right\"",$sortfield,$sortorder);
+	if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),$_SERVER["PHP_SELF"], "cd.date_fin_validite",$param,'',' align="center"',$sortfield,$sortorder);
+	else print_liste_field_titre($langs->trans("DateEndRealShort"),$_SERVER["PHP_SELF"], "cd.date_cloture",$param,'',' align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"], "cd.statut,c.statut",$param,"","align=\"right\"",$sortfield,$sortorder);
 	print "</tr>\n";
 
-	print '<form method="POST" action="services.php">';
+	print '<form method="POST" action="'. $_SERVER["PHP_SELF"] .'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	print '<tr class="liste_titre">';
