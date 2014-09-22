@@ -1071,4 +1071,11 @@ CREATE TABLE llx_fichinterdet_extrafields
 
 ALTER TABLE llx_fichinterdet_extrafields ADD INDEX idx_ficheinterdet_extrafields (fk_object);
 
+CREATE TABLE IF NOT EXISTS llx_usergroup_extrafields (
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=InnoDB ;
 
+ALTER TABLE llx_usergroup_extrafields ADD INDEX idx_usergroup_extrafields (fk_object);

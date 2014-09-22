@@ -27,6 +27,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if(! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
 
 // Defini si peux lire/modifier utilisateurs et permisssions
@@ -58,6 +59,10 @@ if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->multico
 }
 
 $object = new Usergroup($db);
+
+$extrafields = new ExtraFields($db);
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 /**
@@ -93,7 +98,10 @@ if ($action == 'add')
 			$object->nom	= trim($_POST["nom"]);
 			$object->note	= trim($_POST["note"]);
 
-			if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
+			// Fill array 'array_options' with data from add form
+      		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			
+      		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
 			else $object->entity = $_POST["entity"];
 
             $db->begin();
@@ -171,6 +179,9 @@ if ($action == 'update')
 		$object->nom	= trim($_POST["group"]);
 		$object->note	= dol_htmlcleanlastbr($_POST["note"]);
 
+		// Fill array 'array_options' with data from add form
+      	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+
 		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
 		else $object->entity = $_POST["entity"];
 
@@ -240,6 +251,15 @@ if ($action == 'create')
     $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
     $doleditor->Create();
     print "</td></tr>\n";
+    
+	// Other attributes
+    $parameters=array('object' => $object, 'colspan' => ' colspan="2"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    {
+    	print $object->showOptionals($extrafields,'edit');
+    }
+    
     print "</table>\n";
 
     print '<center><br><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></center>';
@@ -311,6 +331,15 @@ else
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
 			print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'&nbsp;</td>';
 			print "</tr>\n";
+					
+			// Other attributes
+            $parameters=array('colspan' => ' colspan="2"');
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            {
+            	print $object->showOptionals($extrafields);
+            }
+			
 			print "</table>\n";
 
 			print '</div>';
@@ -495,6 +524,14 @@ else
             $doleditor->Create();
             print '</td>';
             print "</tr>\n";
+        	// Other attributes
+            $parameters=array('colspan' => ' colspan="2"');
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            {
+            	print $object->showOptionals($extrafields,'edit');
+            }
+			
             print "</table>\n";
 
             print '<center><br><input class="button" value="'.$langs->trans("Save").'" type="submit"></center>';
