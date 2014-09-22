@@ -1531,5 +1531,5 @@ DeleteFiscalYear=Effacer année fiscale
 ConfirmDeleteFiscalYear=Êtes-vous sûr de vouloir supprimer cette année fiscale ?
 Opened=Ouverte
 Closed=Clôturé
-
 Format=Format
+setZipBills=Téléchargement multiple dans zip
