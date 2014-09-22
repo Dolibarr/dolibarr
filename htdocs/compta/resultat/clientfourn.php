@@ -99,7 +99,7 @@ else
 }
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->COMPTA_MODE);
+$modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->ACCOUNTING_MODE);
 
 
 /*
@@ -639,7 +639,7 @@ if ($result)
 			$var = !$var;
 			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
 
-			print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/compta/dons/liste.php?search_company=".$obj->nom."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->nom. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
+			print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/compta/dons/list.php?search_company=".$obj->nom."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->nom. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 			if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price($obj->amount).'</td>';
 			print '<td align="right">'.price($obj->amount).'</td>';

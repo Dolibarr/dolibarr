@@ -1104,7 +1104,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
         //$param='month='.$monthshown.'&year='.$year;
         $hourminsec='100000';
-        print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';
+        print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';
         print img_picto($langs->trans("NewAction"),'edit_add.png');
         print '</a>';
     }

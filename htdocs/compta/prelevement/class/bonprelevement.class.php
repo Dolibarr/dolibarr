@@ -1118,12 +1118,12 @@ class BonPrelevement extends CommonObject
 
         $result='';
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'">';
         $lienfin='</a>';
 
         if ($option == 'xxx')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'">';
             $lienfin='</a>';
         }
 

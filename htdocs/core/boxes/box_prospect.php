@@ -89,11 +89,11 @@ class box_prospect extends ModeleBoxes
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 			            'logo' => $this->boximg,
-			            'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+			            'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
 			            'text' => $objp->nom,
-			            'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+			            'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
  			           'text' => dol_print_date($datem, "day"));

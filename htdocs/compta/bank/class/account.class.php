@@ -882,7 +882,7 @@ class Account extends CommonObject
 
         if (empty($mode))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/fiche.php?id='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id.'">';
             $lienfin='</a>';
         }
         else if ($mode == 'transactions')

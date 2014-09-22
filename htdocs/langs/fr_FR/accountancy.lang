@@ -87,10 +87,10 @@ ACCOUNTING_SOCIAL_JOURNAL=Journal Social
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte de transfert espèce
 ACCOUNTING_ACCOUNT_SUSPENSE=Compte d'attente
 
-COMPTA_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (si non défini dans la fiche produit)
-COMPTA_PRODUCT_SOLD_ACCOUNT=Compte comptable par défaut pour les produits vendus (si non défini dans la fiche produit)
-COMPTA_SERVICE_BUY_ACCOUNT=Compte comptable par défaut pour les services achetés (si non défini dans la fiche service)
-COMPTA_SERVICE_SOLD_ACCOUNT=Compte comptable par défaut pour les services vendus (si non défini dans la fiche service)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (si non défini dans la fiche produit)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Compte comptable par défaut pour les produits vendus (si non défini dans la fiche produit)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable par défaut pour les services achetés (si non défini dans la fiche service)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable par défaut pour les services vendus (si non défini dans la fiche service)
 
 Doctype=Type de document
 Docdate=Date

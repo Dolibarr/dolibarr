@@ -659,7 +659,7 @@ class Holiday extends CommonObject
 
     	$result='';
 
-    	$lien = '<a href="'.DOL_URL_ROOT.'/holiday/fiche.php?id='.$this->id.'">';
+    	$lien = '<a href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$this->id.'">';
     	$lienfin='</a>';
 
     	$picto='holiday';

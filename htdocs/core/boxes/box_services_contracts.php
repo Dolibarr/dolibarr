@@ -113,21 +113,21 @@ class box_services_contracts extends ModeleBoxes
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
-                    'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+                    'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->label,
                     'maxlength' => 16,
-                    'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+                    'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
                     'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'maxlength' => 28,
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
                     'text' => dol_print_date($datem,'day'));

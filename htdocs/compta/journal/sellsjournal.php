@@ -141,15 +141,15 @@ if ($result)
    	{
    	    $obj = $db->fetch_object($result);
    	    // les variables
-   	    $cptcli = (! empty($conf->global->COMPTA_ACCOUNT_CUSTOMER)?$conf->global->COMPTA_ACCOUNT_CUSTOMER:$langs->trans("CodeNotDef"));
+   	    $cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER)?$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER:$langs->trans("CodeNotDef"));
    	    $compta_soc = (! empty($obj->code_compta)?$obj->code_compta:$cptcli);
 		$compta_prod = $obj->accountancy_code_sell;
 		if (empty($compta_prod))
 		{
-			if($obj->product_type == 0) $compta_prod = (! empty($conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT)?$conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
-			else $compta_prod = (! empty($conf->global->COMPTA_SERVICE_SOLD_ACCOUNT)?$conf->global->COMPTA_SERVICE_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
+			if($obj->product_type == 0) $compta_prod = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT)?$conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
+			else $compta_prod = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT)?$conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
 		}
-		$cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT)?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
+		$cpttva = (! empty($conf->global->ACCOUNTING_VAT_ACCOUNT)?$conf->global->ACCOUNTING_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
 		$compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
 
 		$account_localtax1=getLocalTaxesFromRate($obj->tva_tx, 1, $obj->thirdparty, $mysoc);
@@ -240,7 +240,6 @@ foreach ($tabfac as $key => $val)
 			if (isset($line['nomtcheck']) || $mt)
 			{
 				print "<tr ".$bc[$var]." >";
-				//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
 				print "<td>".dol_print_date($val["date"])."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";

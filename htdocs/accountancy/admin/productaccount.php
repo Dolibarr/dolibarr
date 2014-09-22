@@ -98,17 +98,17 @@ if ($resql) {
 		$compta_prodsell = $obj->accountancy_code_sell;
 		if (empty($compta_prodsell)) {
 			if ($obj->product_type == 0)
-				$compta_prodsell = (! empty($conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT) ? $conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 			else
-				$compta_prodsell = (! empty($conf->global->COMPTA_SERVICE_SOLD_ACCOUNT) ? $conf->global->COMPTA_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 		}
 
 		$compta_prodbuy = $obj->accountancy_code_buy;
 		if (empty($compta_prodbuy)) {
 			if ($obj->product_type == 0)
-				$compta_prodbuy = (! empty($conf->global->COMPTA_PRODUCT_BUY_ACCOUNT) ? $conf->global->COMPTA_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 			else
-				$compta_prodbuy = (! empty($conf->global->COMPTA_SERVICE_BUY_ACCOUNT) ? $conf->global->COMPTA_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 		}
 
 		$product_static = new Product($db);

@@ -386,7 +386,7 @@ if ($user_id == $user->id)
 {
 	print '<br>';
 	print '<div style="float: right; margin-top: 8px;">';
-	print '<a href="./fiche.php?action=request" class="butAction">'.$langs->trans('AddCP').'</a>';
+	print '<a href="./card.php?action=request" class="butAction">'.$langs->trans('AddCP').'</a>';
 	print '</div>';
 }
 

@@ -656,7 +656,7 @@ jQuery(document).ready(function() {
 		if (ids == \'none\') /* No event */
 		{
 			/* alert(\'no event\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&affectedto="+userid+"&datep="+year+month+day+hour+min+"00&backtopage='.urlencode($_SERVER["PHP_SELF"].'?year='.$year.'&month='.$month.'&day='.$day).'"
+			url = "'.DOL_URL_ROOT.'/comm/action/card.php?action=create&affectedto="+userid+"&datep="+year+month+day+hour+min+"00&backtopage='.urlencode($_SERVER["PHP_SELF"].'?year='.$year.'&month='.$month.'&day='.$day).'"
 			window.location.href = url;
 		}
 		else if (ids.indexOf(",") > -1)	/* There is several events */
@@ -668,7 +668,7 @@ jQuery(document).ready(function() {
 		else	/* One event */
 		{
 			/* alert(\'one event\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/fiche.php?action=view&id="+ids
+			url = "'.DOL_URL_ROOT.'/comm/action/card.php?action=view&id="+ids
 			window.location.href = url;
 		}
 	});

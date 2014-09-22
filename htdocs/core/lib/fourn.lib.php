@@ -37,7 +37,7 @@ function facturefourn_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('CardBill');
 	$head[$h][2] = 'card';
 	$h++;
@@ -100,7 +100,7 @@ function ordersupplier_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("OrderCard");
 	$head[$h][2] = 'card';
 	$h++;

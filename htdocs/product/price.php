@@ -801,7 +801,7 @@ if ($result) {
 			print '<td align="right">' . price($objp->price_min_ttc) . '</td>';
 
 			// User
-			print '<td align="right"><a href="' . DOL_URL_ROOT . '/user/fiche.php?id=' . $objp->user_id . '">' . img_object($langs->trans("ShowUser"), 'user') . ' ' . $objp->login . '</a></td>';
+			print '<td align="right"><a href="' . DOL_URL_ROOT . '/user/card.php?id=' . $objp->user_id . '">' . img_object($langs->trans("ShowUser"), 'user') . ' ' . $objp->login . '</a></td>';
 
 			// Action
 			if ($user->rights->produit->supprimer) {

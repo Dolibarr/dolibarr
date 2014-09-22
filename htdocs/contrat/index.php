@@ -75,7 +75,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 if (! empty($conf->contrat->enabled))
 {
 	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
@@ -416,7 +416,7 @@ if ($resql)
 		}
 		else
 		{
-		    print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
+		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
             if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a>';
             else print '</a> '.dol_trunc($obj->note,20);
 		}
@@ -426,7 +426,7 @@ if ($resql)
 		$staticcompany->nom=$obj->nom;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
-		print '<td class="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print '<td class="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		$dateend=$db->jdate($obj->date_fin_validite);
 		print $staticcontratligne->LibStatut($obj->statut, 3, ($dateend && $dateend < $now)?1:0);
 		print '</a></td>';
@@ -496,7 +496,7 @@ if ($resql)
 		}
 		else
 		{
-		    print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
+		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
             if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a>';
             else print '</a> '.dol_trunc($obj->note,20);
 		}
@@ -576,7 +576,7 @@ if ($resql)
 		}
 		else
 		{
-		    print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
+		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
             if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a>';
             else print '</a> '.dol_trunc($obj->note,20);
 		}

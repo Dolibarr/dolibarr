@@ -156,7 +156,7 @@ if ($id > 0 || ! empty($ref))
 	*/
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';

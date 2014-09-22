@@ -254,7 +254,7 @@ if ($id > 0 || ! empty($ref))
 						print "</td>\n";
 				
 						// Lastname
-						print "<td><a href=\"fiche.php?rowid=$objp->rowid\">";
+						print "<td><a href=\"card.php?rowid=$objp->rowid\">";
 						print ((! empty($objp->lastname) || ! empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
 						print (((! empty($objp->lastname) || ! empty($objp->firstname)) && ! empty($companyname)) ? ' / ' : '');
 						print (! empty($companyname) ? dol_trunc($companyname, 32) : '');
