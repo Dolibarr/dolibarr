@@ -1511,7 +1511,7 @@ elseif (! empty($object->id))
 			{
 				print '<tr><td';
 				if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-				print '>'.$label.'</td><td colspan="5">';
+					print '>'.$label.'</td><td colspan="5">';
 				// Convert date into timestamp format
 				if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 				{
@@ -1527,25 +1527,23 @@ elseif (! empty($object->id))
 		  			print $extrafields->showOutputField($key,$value);
 				}
 
-				print '</td></tr>'."\n";
-		  	}
-		}
-
-		if(count($extrafields->attribute_label) > 0)
-		{
-			if ($action == 'edit_extras' && $user->rights->fournisseur->commande->creer)
-			{
-				print '<tr><td></td><td colspan="5">';
-				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-				print '</form>';
-				print '</td></tr>';
-			}
-			else
-			{
-				if ($object->statut == 0 && $user->rights->fournisseur->commande->creer)
+				if(count($extrafields->attribute_label) > 0)
 				{
-					print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
+					if ($action == 'edit_extras' && $user->rights->fournisseur->commande->creer)
+					{
+						print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+						print '</form>';
+					}
+					else
+					{
+						if ($object->statut == 0 && $user->rights->fournisseur->commande->creer)
+						{
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
+						}
+					}
 				}
+				print '</td></tr>';
+
 			}
 		}
 	}
