@@ -56,6 +56,7 @@ For users:
 - New: Add option MAIN_GENERATE_INVOICES_WITH_PICTURE to show picture 
        onto PDF like MAIN_GENERATE_PROPOSALS_WITH_PICTURE dir for proposals.
 - New: Add more search field in list of cheque deposits.
+- New: Add feature to order to invoice on supplier part
 - Upgrade phpexcel lib to 1.7.8
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem

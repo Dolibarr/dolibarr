@@ -40,3 +40,5 @@ AddSupplierInvoice=Create supplier invoice
 ListOfSupplierProductForSupplier=List of products and prices for supplier <b>%s</b>
 NoneOrBatchFileNeverRan=None or batch <b>%s</b> not ran recently
 SentToSuppliers=Sent to suppliers
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

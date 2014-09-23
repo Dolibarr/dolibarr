@@ -52,6 +52,9 @@ $object = new Fournisseur($db);
  * Action
  */
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('suppliercard'));
+
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
@@ -299,6 +302,28 @@ if ($object->fetch($id))
 
 	if ($user->rights->fournisseur->commande->lire)
 	{
+		
+		
+		// TODO move to DAO class
+		// Check if there are supplier orders billable
+		$sql2 = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_supplier,';
+		$sql2.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut';
+		$sql2.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$sql2.= ', '.MAIN_DB_PREFIX.'commande_fournisseur as c';
+		$sql2.= ' WHERE c.fk_soc = s.rowid';
+		$sql2.= ' AND s.rowid = '.$object->id;
+		// Show orders with status validated, shipping started and delivered (well any order we can bill)
+		$sql2.= " AND c.fk_statut IN (5)";
+		// Find order that are not already invoiced
+		$sql2 .= " AND c.rowid NOT IN (SELECT fk_source FROM " . MAIN_DB_PREFIX . "element_element WHERE targettype='invoice_supplier')";
+		$resql2=$db->query($sql2);
+		if ($resql2) {
+			$orders2invoice = $db->num_rows($resql2);
+			$db->free($resql2);
+		} else {
+			setEventMessage($db->lasterror(),'errors');
+		}
+		
 		// TODO move to DAO class
 		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
@@ -427,6 +452,9 @@ if ($object->fetch($id))
 	 */
 
 	print '<div class="tabsAction">';
+	
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 
 	if ($user->rights->fournisseur->commande->creer)
 	{
@@ -438,6 +466,12 @@ if ($object->fetch($id))
 	{
 		$langs->load("bills");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
+	}
+	
+	if ($user->rights->fournisseur->facture->creer)
+	{
+		if (! empty($orders2invoice) && $orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+		else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 	}
 
     // Add action
