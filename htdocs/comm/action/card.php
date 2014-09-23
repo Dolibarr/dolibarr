@@ -93,7 +93,10 @@ if (! empty($_POST['removedassigned']))
 	$idtoremove=$_POST['removedassigned'];
 	if (! empty($_SESSION['assignedtouser'])) $tmpassigneduserids=dol_json_decode($_SESSION['assignedtouser'],1);
 	else $tmpassigneduserids=array();
-	unset($tmpassigneduserids[$idtoremove]);
+	foreach ($tmpassigneduserids as $key => $val)
+	{
+		if ($val['id'] == $idtoremove) unset($tmpassigneduserids[$key]);
+	}
 	//var_dump($_POST['removedassigned']);exit;
 	$_SESSION['assignedtouser']=dol_json_encode($tmpassigneduserids);
 	$donotclearsession=1;
@@ -108,8 +111,11 @@ if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
 	if (GETPOST('assignedtouser') > 0)
 	{
 		$assignedtouser=array();
-		if (! empty($_SESSION['assignedtouser'])) $assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
-		$assignedtouser[GETPOST('assignedtouser')]=array('transparency'=>GETPOST('transparency'),'mandatory'=>1);
+		if (! empty($_SESSION['assignedtouser']))
+		{
+			$assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
+		}
+		$assignedtouser[GETPOST('assignedtouser')]=array('id'=>GETPOST('assignedtouser'), 'transparency'=>GETPOST('transparency'),'mandatory'=>1);
 		$_SESSION['assignedtouser']=dol_json_encode($assignedtouser);
 	}
 	$donotclearsession=1;
@@ -202,22 +208,23 @@ if ($action == 'add')
 	$object->percentage = $percentage;
 	$object->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 60;
 
-	$listofuserid=dol_json_decode($_SESSION['assignedtouser']);
+	$listofuserid=array();
+	if (! empty($_SESSION['assignedtouser'])) $listofuserid=dol_json_decode($_SESSION['assignedtouser']);
 	$i=0;
 	foreach($listofuserid as $key => $value)
 	{
 		if ($i == 0)	// First entry
 		{
 			$usertodo=new User($db);
-			if ($key > 0)
+			if ($value['id'] > 0)
 			{
-				$usertodo->fetch($key);
+				$usertodo->fetch($value['id']);
 			}
 			$object->usertodo = $usertodo;
 			$object->transparency = (GETPOST("transparency")=='on'?1:0);
 		}
 
-		$object->userassigned[$key]=array('id'=>$key, 'transparency'=>(GETPOST("transparency")=='on'?1:0));
+		$object->userassigned[$value['id']]=array('id'=>$value['id'], 'transparency'=>(GETPOST("transparency")=='on'?1:0));
 
 		$i++;
 	}
@@ -281,6 +288,8 @@ if ($action == 'add')
 		{
 			if (! $object->error)
 			{
+				unset($_SESSION['assignedtouser']);
+
 				$db->commit();
 				if (! empty($backtopage))
 				{
@@ -337,6 +346,7 @@ if ($action == 'update')
 		if ($p2min == -1) $p2min='0';
 
 		$object->fetch($id);
+		$object->fetch_userassigned();
 
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
@@ -363,26 +373,26 @@ if ($action == 'update')
 			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),$object->errors,'errors');
 			$action = 'edit';
 		}
-
 		// Users
-		$listofuserid=dol_json_decode($_SESSION['assignedtouser']);
-		$i=0;
-		foreach($listofuserid as $key => $value)
+		$listofuserid=array();
+		//$assignedtouser=(GETPOST("assignedtouser") >0)?GETPOST("assignedtouser"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : 0);
+		$assignedtouser=(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : 0);
+		if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>$object->transparency);	// Owner first
+
+		if (! empty($_SESSION['assignedtouser']))
 		{
-			if ($i == 0)	// First entry
+			// Restore array with key with same value than param 'id'
+			$tmplist1=dol_json_decode($_SESSION['assignedtouser'], true); $tmplist2=array();
+			foreach($tmplist1 as $key => $val)
 			{
-				$usertodo=new User($db);
-				if ($key > 0)
-				{
-					$usertodo->fetch($key);
-				}
-				$object->usertodo = $usertodo;
-				$object->transparency=(GETPOST("transparency")=='on'?1:0);
+				if ($val['id'] && $val['id'] != $assignedtouser) $listofuserid[$val['id']]=$val;
 			}
+		}
 
-			$object->userassigned[$key]=array('id'=>$key, 'transparency'=>(GETPOST("transparency")=='on'?1:0));
-
-			$i++;
+		$object->userassigned=array();	// Clear old content
+		foreach($listofuserid as $key => $val)
+		{
+			$object->userassigned[$val['id']]=array('id'=>$val['id'], 'mandatory'=>0, 'transparency'=>(GETPOST("transparency")=='on'?1:0));
 		}
 
 		if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
@@ -424,6 +434,8 @@ if ($action == 'update')
 
 			if ($result > 0)
 			{
+				unset($_SESSION['assignedtouser']);
+
 				$db->commit();
 			}
 			else
@@ -438,6 +450,7 @@ if ($action == 'update')
 	{
         if (! empty($backtopage))
         {
+        	unset($_SESSION['assignedtouser']);
             header("Location: ".$backtopage);
             exit;
         }
@@ -474,6 +487,8 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 if ($action == 'mupdate')
 {
     $object->fetch($id);
+    $object->fetch_userassigned();
+
     $shour = dol_print_date($object->datep,"%H");
     $smin = dol_print_date($object->datep, "%M");
 
@@ -645,11 +660,19 @@ if ($action == 'create')
 
 	// Assigned to
 	print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
+	$listofuserid=array();
 	if (empty($donotclearsession))
 	{
 		$assignedtouser=GETPOST("assignedtouser")?GETPOST("assignedtouser"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id);
-		$_SESSION['assignedtouser']=dol_json_encode(array($assignedtouser=>array('transparency'=>1,'mandatory'=>1)));
+		if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser,'mandatory'=>0,'transparency'=>$object->transparency);	// Owner first
+		$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
 	}
+	/*
+	if (empty($donotclearsession))
+	{
+		$assignedtouser=GETPOST("assignedtouser")?GETPOST("assignedtouser"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id);
+		$_SESSION['assignedtouser']=dol_json_encode(array($assignedtouser=>array('id'=>$assignedtouser,'transparency'=>1,'mandatory'=>1)));
+	}*/
 	print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
 	//print $form->select_dolusers(GETPOST("assignedtouser")?GETPOST("assignedtouser"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id),'affectedto',1);
 	print '</td></tr>';
@@ -771,10 +794,11 @@ if ($action == 'create')
 // View or edit
 if ($id > 0)
 {
-	$result=$object->fetch($id);
-	$object->fetch_optionals($id,$extralabels);
+	$result1=$object->fetch($id);
+	$result2=$object->fetch_userassigned();
+	$result3=$object->fetch_optionals($id,$extralabels);
 
-	if ($result < 0)
+	if ($result1 < 0 || $result2 < 0 || $result3 < 0)
 	{
 		dol_print_error($db,$object->error);
 		exit;
@@ -901,7 +925,8 @@ if ($id > 0)
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
-			if (is_object($object->usertodo)) $listofuserid[$object->usertodo->id]=array('id'=>$object->usertodo->id,'transparency'=>$object->transparency);
+			if (is_object($object->usertodo)) $listofuserid[$object->usertodo->id]=array('id'=>$object->usertodo->id,'transparency'=>$object->transparency);	// Owner first
+			$listofuserid=array_merge($listofuserid,$object->userassigned);
 			$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
 		}
 		print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
@@ -1094,8 +1119,17 @@ if ($id > 0)
     	}
 
 		// Assigned to
-		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-		if ($object->usertodo->id > 0) print $object->usertodo->getNomUrl(1);
+		//if ($object->usertodo->id > 0) print $object->usertodo->getNomUrl(1);
+    	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
+		$listofuserid=array();
+		if (empty($donotclearsession))
+		{
+			if (is_object($object->usertodo)) $listofuserid[$object->usertodo->id]=array('id'=>$object->usertodo->id,'transparency'=>$object->transparency);	// Owner first
+			$listofuserid=array_merge($listofuserid,$object->userassigned);
+			$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
+			//var_dump($_SESSION['assignedtouser']);
+		}
+		print $form->select_dolusers_forevent('view','assignedtouser',1);
 		print '</td></tr>';
 
 		print '</table><br><br><table class="border" width="100%">';

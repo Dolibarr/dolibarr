@@ -343,8 +343,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 		// No specific scripts
 
         // Tasks to do always and only into last targeted version
-        $afterversionarray=explode('.','3.4.9');	// target is after this
-        $beforeversionarray=explode('.','3.5.9');	// target is before this
+        $afterversionarray=explode('.','3.6.9');	// target is after this
+        $beforeversionarray=explode('.','3.7.9');	// target is before this
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
         	// Reload modules (this must be always and only into last targeted version)

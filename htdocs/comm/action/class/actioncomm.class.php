@@ -62,7 +62,7 @@ class ActionComm extends CommonObject
     var $priority;      // Small int (0 By default)
     var $note;          // Description
 
-	var $userassigned;	// Array of user ids
+	var $userassigned = array();	// Array of user ids
     var $usertodo;		// Object user of owner
     var $userdone;	 	// Object user that did action (deprecated)
 
@@ -217,7 +217,7 @@ class ActionComm extends CommonObject
 				foreach($this->userassigned as $key => $val)
 				{
 					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", 0, ".$val['transparency'].", 0)";
+					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['mandatory']?$val['mandatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
 
 					$resql = $this->db->query($sql);
 					if (! $resql)
@@ -375,6 +375,34 @@ class ActionComm extends CommonObject
         }
     }
 
+
+    /**
+     *    Initialize this->userassigned array
+     *
+     *    @return	int				<0 if KO, >0 if OK
+     */
+    function fetch_userassigned()
+    {
+        global $langs;
+        $sql.="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
+		$sql.=" FROM ".MAIN_DB_PREFIX."actioncomm_resources";
+		$sql.=" WHERE element_type = 'user' AND fk_actioncomm = ".$this->id;
+		$resql2=$this->db->query($sql);
+		if ($resql2)
+		{
+            while ($obj = $this->db->fetch_object($resql2))
+            {
+            	$this->userassigned[$obj->fk_element]=array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
+            }
+        	return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+    }
+
     /**
      *    Delete event from database
      *
@@ -519,7 +547,28 @@ class ActionComm extends CommonObject
         	}
         	else if ($reshook < 0) $error++;
 
-            if (! $notrigger)
+            // Now insert assignedusers
+			if (! $error)
+			{
+				$sql ="DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".$this->id." AND element_type = 'user'";
+				$resql = $this->db->query($sql);
+
+				foreach($this->userassigned as $key => $val)
+				{
+					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
+					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['manadatory']?$val['manadatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
+
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$error++;
+		           		$this->errors[]=$this->db->lasterror();
+					}
+					//var_dump($sql);exit;
+				}
+			}
+
+            if (! $error && ! $notrigger)
             {
                 // Call trigger
                 $result=$this->call_trigger('ACTION_MODIFY',$user);
