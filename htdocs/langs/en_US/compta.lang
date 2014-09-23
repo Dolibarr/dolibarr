@@ -204,3 +204,6 @@ ACCOUNTING_VAT_ACCOUNT=Default accountancy code for collecting VAT
 ACCOUNTING_VAT_BUY_ACCOUNT=Default accountancy code for paying VAT
 ACCOUNTING_ACCOUNT_CUSTOMER=Accountancy code by default for customer thirdparties
 ACCOUNTING_ACCOUNT_SUPPLIER=Accountancy code by default for supplier thirdparties
+CloneTax=Clone a social contribution
+ConfirmCloneTax=Confirm the clone of a social contribution
+CloneTaxForNextMonth=Clone it for next month
