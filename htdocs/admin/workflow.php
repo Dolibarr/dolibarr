@@ -88,8 +88,11 @@ $workflowcodes=array(
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
 {
-	foreach($conf->modules_parts['workflow'] as $workflow)
+	foreach($conf->modules_parts['workflow'] as $modulename => $workflow)
 	{
+		// Load language file for external modules
+		$langs->load('workflow@' . $modulename);
+
 		$workflowcodes = array_merge($workflowcodes, $workflow);
 	}
 }
