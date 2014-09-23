@@ -928,7 +928,7 @@ if ($action == 'create')
 
 	// Ref Int
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-	print '<td colspan="2"><input type="text" siez="5" name="ref_customer" id="ref_customer" value="'.GETPOST('ref_customer','alpha').'"></td></tr>';
+	print '<td colspan="2"><input type="text" size="5" name="ref_customer" id="ref_customer" value="'.GETPOST('ref_customer','alpha').'"></td></tr>';
 
     // Customer
 	print '<tr>';
@@ -1200,13 +1200,20 @@ else
         			print '<tr><td';
         			if (! empty($extrafields->attribute_required [$key]))
         				print ' class="fieldrequired"';
-        			print '>' . $label . '</td><td colspan="5">';
+        			print '>';
+					print '<table class="nobordernopadding" width="100%"><tbody><tr><td>';
+					print $label;
+					print '</td><td align="right">';
+					if ($object->statut == 0 && $user->rights->contrat->creer && !($action == 'edit_extras' && GETPOST('attribute') == $key))
+						print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_picto('', 'edit') . '</a>';
+					print '</td></tr></tbody></table>';
+					print '</td><td colspan="5">';
         			// Convert date into timestamp format
         			if (in_array($extrafields->attribute_type [$key], array('date','datetime'))) {
         				$value = isset($_POST ["options_" . $key]) ? dol_mktime($_POST ["options_" . $key . "hour"], $_POST ["options_" . $key . "min"], 0, $_POST ["options_" . $key . "month"], $_POST ["options_" . $key . "day"], $_POST ["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
         			}
 
-        			if ($action == 'edit_extras' && $user->rights->commande->creer && GETPOST('attribute') == $key) {
+        			if ($action == 'edit_extras' && $user->rights->contrat->creer && GETPOST('attribute') == $key) {
         				print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formcontract">';
         				print '<input type="hidden" name="action" value="update_extras">';
         				print '<input type="hidden" name="attribute" value="' . $key . '">';
@@ -1219,8 +1226,6 @@ else
         				print '</form>';
         			} else {
         				print $extrafields->showOutputField($key, $value);
-        				if ($object->statut == 0 && $user->rights->commande->creer)
-        					print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_picto('', 'edit') . ' ' . $langs->trans('Modify') . '</a>';
         			}
         			print '</td></tr>' . "\n";
         		}
