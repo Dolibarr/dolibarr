@@ -804,8 +804,10 @@ class Form
             // Construct $out and $outarray
             $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">'."\n";
 
-            $textifempty=' ';
-            if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='&nbsp;';
+            $textifempty='';
+            // Do not use textempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
+            //$textifempty=' ';
+            //if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
             if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
 
             $num = $this->db->num_rows($resql);

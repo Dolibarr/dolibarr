@@ -20,6 +20,8 @@
 
 ALTER TABLE llx_bank_account ADD COLUMN fk_user_author integer;
 
+ALTER TABLE llx_c_actioncomm ADD COLUMN color varchar(9);
+
 ALTER TABLE llx_propal ADD COLUMN fk_user_modif integer after fk_user_author;
 ALTER TABLE llx_commande ADD COLUMN fk_user_modif integer after fk_user_author;
 ALTER TABLE llx_facture ADD COLUMN fk_user_modif integer after fk_user_author;

@@ -66,10 +66,11 @@ class ActionComm extends CommonObject
     var $usertodo;		// Object user of owner
     var $userdone;	 	// Object user that did action (deprecated)
 
+    var $socid;
+    var $contactid;
     var $societe;		// Company linked to action (optional)
     var $contact;		// Contact linked to action (optional)
     var $fk_project;	// Id of project (optional)
-
 
     // Properties for links to other objects
     var $fk_element;    // Id of record
