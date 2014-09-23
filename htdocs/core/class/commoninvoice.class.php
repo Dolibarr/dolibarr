@@ -358,10 +358,14 @@ abstract class CommonInvoice extends CommonObject
 	}
 }
 
+
+
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
+
 /**
  *	Parent class of all other business classes for details of elements (invoices, contracts, proposals, orders, ...)
  */
-abstract class CommonInvoiceLine extends CommonObject
+abstract class CommonInvoiceLine extends CommonObjectLine
 {
 }
 

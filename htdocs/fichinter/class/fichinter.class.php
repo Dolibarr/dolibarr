@@ -545,7 +545,7 @@ class Fichinter extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='intervention';

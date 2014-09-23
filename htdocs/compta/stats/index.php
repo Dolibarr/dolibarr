@@ -38,7 +38,7 @@ else {
 $userid=GETPOST('userid','int');
 $socid = GETPOST('socid','int');
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->COMPTA_MODE;
+$modecompta = $conf->global->ACCOUNTING_MODE;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 // Security check

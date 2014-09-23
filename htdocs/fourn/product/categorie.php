@@ -72,7 +72,7 @@ if ($_GET["id"])
 
       $h=0;
 
-      $head[$h][0] = DOL_URL_ROOT."/fourn/product/fiche.php?id=".$product->id;
+      $head[$h][0] = DOL_URL_ROOT."/fourn/product/card.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Card");
       $h++;
 
@@ -95,7 +95,7 @@ if ($_GET["id"])
       $head[$h][1] = $langs->trans("Photos");
       $h++;
 
-      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+      $head[$h][0] = DOL_URL_ROOT."/product/stats/card.php?id=".$product->id;
       $head[$h][1] = $langs->trans('Statistics');
       $h++;
 

@@ -73,7 +73,7 @@ if ($resql)
       $var=!$var;
       print "<tr ".$bc[$var].">";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_name."</a></td>";
+      print '<td><a href="'.DOL_URL_ROOT.'/boutique/livre/card.php?oscid='.$objp->products_id.'">'.$objp->products_name."</a></td>";
       print '<td align="center">'.$objp->nb.'</td>';
 
       print '<td align="center"><a href="index.php?products_id='.$objp->products_id.'">Voir les clients</td>';

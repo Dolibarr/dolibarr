@@ -80,14 +80,14 @@ if ($resql)
     $i = 0;
     $var=True;
 
-    print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, "avalider.php","",$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num);
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),"avalider.php","p.rowid","","",'width="60"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),"avalider.php","dp","","",'width="80" align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),"avalider.php","c.libelle","","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("AmountTTC"),"avalider.php","c.libelle","","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","",'width="60"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","","",'width="80" align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"c.libelle","","",'align="right"',$sortfield,$sortorder);
     print "<td>&nbsp;</td>";
     print "</tr>\n";
 
@@ -96,7 +96,7 @@ if ($resql)
         $objp = $db->fetch_object($resql);
         $var=!$var;
         print "<tr ".$bc[$var].">";
-        print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
         print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
         print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
         print '<td align="right">'.price($objp->amount).'</td>';
@@ -104,7 +104,7 @@ if ($resql)
 
         if ($objp->statut == 0)
         {
-            print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
+            print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
         }
         else
         {

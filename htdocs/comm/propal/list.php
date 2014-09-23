@@ -370,7 +370,7 @@ if ($result)
 		print $objp->ref_client;
 		print '</td>';
 
-		$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
+		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$objp->rowid;
 
 		// Company
 		$companystatic->id=$objp->rowid;

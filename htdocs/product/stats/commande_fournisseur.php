@@ -163,7 +163,7 @@ if ($id > 0 || ! empty($ref))
 					print "<tr ".$bc[$var].">";
 					print '<td>'.$commandestatic->getNomUrl(1)."</td>\n";
 					print "</a></td>\n";
-					print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+					print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";
 					print '<td align="center">'.dol_print_date($db->jdate($objp->date_commande))."</td>";
 					print "<td align=\"center\">".$objp->qty."</td>\n";

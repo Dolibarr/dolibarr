@@ -178,7 +178,7 @@ class Notify
 	                    switch($objet_type)
 	                    {
 	                    	case 'ficheinter':
-							    $link='/fichinter/fiche.php?id='.$objet_id;
+							    $link='/fichinter/card.php?id='.$objet_id;
 	    						break;
 	                    	case 'propal':
 							    $link='/comm/propal.php?id='.$objet_id;
@@ -187,10 +187,10 @@ class Notify
 							    $link='/compta/facture.php?facid='.$objet_id;
 	    						break;
 	                    	case 'order':
-							    $link='/commande/fiche.php?id='.$objet_id;
+							    $link='/commande/card.php?id='.$objet_id;
 	    						break;
 	    					case 'order_supplier':
-							    $link='/fourn/commande/fiche.php?id='.$objet_id;
+							    $link='/fourn/commande/card.php?id='.$objet_id;
 	    						break;
 	                    }
 						// Define $urlwithroot

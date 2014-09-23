@@ -74,9 +74,9 @@ For users:
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
+- New: Direct invoice creation from predefined invoice
 - New: Add dunning into accountancy report
-
-New experimental module:
+For users, new experimental module:
 - New: Module Accounting Expert to manage accountancy
 		Special Thanks to developpers :
 			Olivier Geffroy
@@ -111,7 +111,11 @@ For developers:
 - New: renamed table llx_c_pays to llx_c_country & libelle field to label.
 - Qual: Renamed table llx_c_civilite into llx_c_civility,
 		field civilite into label in the same table,
-		and field civilite into civility in other table
+		and field civilite into civility in other table.
+- Qual: Renamed all files & links "liste.php" into "list.php".
+- Qual: Renamed all files & links "fiche.php" into "card.php".
+- Qual: Replace all constants COMPTA_* by ACCOUNTING_*.
+- Qual: Replace all constants ACCOUNTINGEX_* by ACCOUNTING_* to simplify migration of the module
 
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -121,7 +125,8 @@ Dolibarr better:
 - Table llx_c_pays were renamed into llx_c_country.  
 - Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
-
+- A lot of pages called fiche.php were renamed into card.php
+- A lot of pages called liste.php were renamed into list.php
  
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:

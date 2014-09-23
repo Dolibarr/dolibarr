@@ -804,8 +804,10 @@ class Form
             // Construct $out and $outarray
             $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">'."\n";
 
-            $textifempty=' ';
-            if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='&nbsp;';
+            $textifempty='';
+            // Do not use textempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
+            //$textifempty=' ';
+            //if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
             if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
 
             $num = $this->db->num_rows($resql);
@@ -1275,6 +1277,7 @@ class Form
 
     /**
      *	Return select list of users. Selected users are stored into session.
+     *  List of users are provided into $_SESSION['assignedtouser'].
      *
      *  @param  string	$action         Value for $action
      *  @param  string	$htmlname       Field name in form
@@ -1295,23 +1298,35 @@ class Form
         global $conf,$user,$langs;
 
         $userstatic=new User($this->db);
+		$out='';
 
         // Method with no ajax
         //$out.='<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		$out.='<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
-		$out.='<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
-        $out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-		$out.='<input type="submit" class="button" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+        if ($action == 'view')
+        {
+			$out.='';
+        }
+		else
+		{
+			$out.='<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
+			$out.='<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
+			$out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
+			$out.='<input type="submit" class="button" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+		}
 		$assignedtouser=array();
-		if (!empty($_SESSION['assignedtouser'])) $assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
-		if (count($assignedtouser)) $out.='<br>';
-		$i=0;
+		if (!empty($_SESSION['assignedtouser']))
+		{
+			$assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
+		}
+		if (count($assignedtouser) && $action != 'view') $out.='<br>';
+		$i=0; $ownerid=0;
 		foreach($assignedtouser as $key => $value)
 		{
-			$userstatic->fetch($key);
+			if ($value['id'] == $ownerid) continue;
+			$userstatic->fetch($value['id']);
 			$out.=$userstatic->getNomUrl(1);
-			if ($i == 0) $out.=' ('.$langs->trans("Owner").')';
-			$out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
+			if ($i == 0) { $ownerid = $value['id']; $out.=' ('.$langs->trans("Owner").')'; }
+			if ($i > 0 && $action != 'view') $out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
 			//$out.=' '.($value['mandatory']?$langs->trans("Mandatory"):$langs->trans("Optional"));
 			//$out.=' '.($value['transparency']?$langs->trans("Busy"):$langs->trans("NotBusy"));
 			$out.='<br>';
@@ -2850,7 +2865,7 @@ class Form
 
 		// JQUI method dialog is broken with jmobile, we use standard HTML.
 		// Note: When using dol_use_jmobile or no js, you must also check code for button use a GET url with action=xxx and check that you also output the confirm code when action=xxx
-		// See page product/fiche.php for example
+		// See page product/card.php for example
         if (! empty($conf->dol_use_jmobile)) $useajax=0;
 		if (empty($conf->use_javascript_ajax)) $useajax=0;
 
@@ -3034,7 +3049,7 @@ class Form
             {
                 $projet = new Project($this->db);
                 $projet->fetch($selected);
-                //print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$selected.'">'.$projet->title.'</a>';
+                //print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
                 print $projet->getNomUrl(0,'',1);
             }
             else
@@ -3367,7 +3382,7 @@ class Form
             {
             	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
                 print '<font class="error">Cette societe n\'a pas de contact, veuillez en cr�er un avant de faire votre proposition commerciale</font><br>';
-                print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$addcontact.'</a>';
+                print '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$addcontact.'</a>';
             }
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';

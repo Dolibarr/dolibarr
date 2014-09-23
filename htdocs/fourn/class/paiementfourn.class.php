@@ -488,7 +488,7 @@ class PaiementFourn extends Paiement
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$text=$this->ref;	// Sometimes ref contains label

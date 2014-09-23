@@ -126,7 +126,7 @@ class AllTests
         require_once dirname(__FILE__).'/ContratTest.php';
         $suite->addTestSuite('ContratTest');
 
-        require_once dirname(__FILE__).'/FichinterTest.php';
+        require_once dirname(__FILE__).'/FichInterTest.php';
         $suite->addTestSuite('FichinterTest');
 
         require_once dirname(__FILE__).'/PropalTest.php';

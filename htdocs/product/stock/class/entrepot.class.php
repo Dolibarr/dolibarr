@@ -513,7 +513,7 @@ class Entrepot extends CommonObject
 
 		$result='';
 
-		$lien='<a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$this->id.'">';
+		$lien='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowStock"),'stock').$lienfin.' ');

@@ -62,14 +62,15 @@ class ActionComm extends CommonObject
     var $priority;      // Small int (0 By default)
     var $note;          // Description
 
-	var $userassigned;	// Array of user ids
+	var $userassigned = array();	// Array of user ids
     var $usertodo;		// Object user of owner
     var $userdone;	 	// Object user that did action (deprecated)
 
+    var $socid;
+    var $contactid;
     var $societe;		// Company linked to action (optional)
     var $contact;		// Contact linked to action (optional)
     var $fk_project;	// Id of project (optional)
-
 
     // Properties for links to other objects
     var $fk_element;    // Id of record
@@ -211,22 +212,43 @@ class ActionComm extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm","id");
 
-            // Actions on extra fields (by external module or standard code)
-            $hookmanager->initHooks(array('actioncommdao'));
-            $parameters=array('actcomm'=>$this->id);
-            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-            if (empty($reshook))
+            // Now insert assignedusers
+			if (! $error)
+			{
+				foreach($this->userassigned as $key => $val)
+				{
+					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
+					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['mandatory']?$val['mandatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
+
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$error++;
+		           		$this->errors[]=$this->db->lasterror();
+					}
+					//var_dump($sql);exit;
+				}
+			}
+
+            if (! $error)
             {
-            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-            	{
-            		$result=$this->insertExtraFields();
-            		if ($result < 0)
-            		{
-            			$error++;
-            		}
-            	}
+	            // Actions on extra fields (by external module or standard code)
+	            $hookmanager->initHooks(array('actioncommdao'));
+	            $parameters=array('actcomm'=>$this->id);
+	            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+	            if (empty($reshook))
+	            {
+	            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	            	{
+	            		$result=$this->insertExtraFields();
+	            		if ($result < 0)
+	            		{
+	            			$error++;
+	            		}
+	            	}
+	            }
+	            else if ($reshook < 0) $error++;
             }
-            else if ($reshook < 0) $error++;
 
             if (! $error && ! $notrigger)
             {
@@ -352,6 +374,34 @@ class ActionComm extends CommonObject
             $this->error=$this->db->lasterror();
             return -1;
         }
+    }
+
+
+    /**
+     *    Initialize this->userassigned array
+     *
+     *    @return	int				<0 if KO, >0 if OK
+     */
+    function fetch_userassigned()
+    {
+        global $langs;
+        $sql.="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
+		$sql.=" FROM ".MAIN_DB_PREFIX."actioncomm_resources";
+		$sql.=" WHERE element_type = 'user' AND fk_actioncomm = ".$this->id;
+		$resql2=$this->db->query($sql);
+		if ($resql2)
+		{
+            while ($obj = $this->db->fetch_object($resql2))
+            {
+            	$this->userassigned[$obj->fk_element]=array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
+            }
+        	return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
     }
 
     /**
@@ -498,7 +548,28 @@ class ActionComm extends CommonObject
         	}
         	else if ($reshook < 0) $error++;
 
-            if (! $notrigger)
+            // Now insert assignedusers
+			if (! $error)
+			{
+				$sql ="DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".$this->id." AND element_type = 'user'";
+				$resql = $this->db->query($sql);
+
+				foreach($this->userassigned as $key => $val)
+				{
+					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
+					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['manadatory']?$val['manadatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
+
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$error++;
+		           		$this->errors[]=$this->db->lasterror();
+					}
+					//var_dump($sql);exit;
+				}
+			}
+
+            if (! $error && ! $notrigger)
             {
                 // Call trigger
                 $result=$this->call_trigger('ACTION_MODIFY',$user);
@@ -534,9 +605,11 @@ class ActionComm extends CommonObject
      * 	 @param		int		$fk_element		Id of element action is linked to
      *   @param		string	$elementtype	Type of element action is linked to
      *   @param		string	$filter			Other filter
+     *   @param		string	$sortfield		Sort on this field
+     *   @param		string	$sortorder		ASC or DESC
      *   @return	array or string			Error string if KO, array with actions if OK
      */
-    static function getActions($db, $socid=0, $fk_element=0, $elementtype='', $filter='')
+    static function getActions($db, $socid=0, $fk_element=0, $elementtype='', $filter='', $sortfield='', $sortorder='')
     {
         global $conf, $langs;
 
@@ -552,6 +625,7 @@ class ActionComm extends CommonObject
             else $sql.= " AND a.fk_element = ".$fk_element." AND a.elementtype = '".$elementtype."'";
         }
         if (! empty($filter)) $sql.= $filter;
+		if ($sortorder && $sortfield) $sql.=$db->order($sortfield, $sortorder);
 
         dol_syslog(get_class()."::getActions", LOG_DEBUG);
         $resql=$db->query($sql);
@@ -765,7 +839,7 @@ class ActionComm extends CommonObject
 
         $result='';
         if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
-        else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
+        else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.'">';
         $lienfin='</a>';
         $label=$this->label;
         if (empty($label)) $label=$this->libelle;	// Fro backward compatibility
@@ -957,7 +1031,7 @@ class ActionComm extends CommonObject
 					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
 					//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
-                    $url=$urlwithroot.'/comm/action/fiche.php?id='.$obj->id;
+                    $url=$urlwithroot.'/comm/action/card.php?id='.$obj->id;
                     $event['url']=$url;
                     $event['created']=$this->db->jdate($obj->datec)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
                     $event['modified']=$this->db->jdate($obj->datem)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));

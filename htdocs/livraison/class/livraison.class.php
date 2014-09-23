@@ -5,6 +5,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2011-2012 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -648,7 +649,7 @@ class Livraison extends CommonObject
 		$urlOption='';
 
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='sending';
@@ -924,6 +925,37 @@ class Livraison extends CommonObject
 		{
 			return -2;
 		}
+	}
+
+	/**
+	 *	Create object on disk
+	 *
+	 *	@param	string		$modele			force le modele a utiliser ('' to not force)
+	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @return int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs='')
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("deliveries");
+
+		// Positionne modele sur le nom du modele de bon de livraison a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->LIVRAISON_ADDON_PDF))
+			{
+				$modele = $conf->global->LIVRAISON_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'typhon';
+			}
+		}
+
+		$modelpath = "core/modules/livraison/pdf/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, 0, 0, 0);
 	}
 
 }

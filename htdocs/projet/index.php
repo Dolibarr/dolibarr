@@ -77,7 +77,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 {
 	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/projet/liste.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/projet/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProject").'</td></tr>';
@@ -135,7 +135,7 @@ if ( $resql )
 			print $langs->trans("OthersNotLinkedToThirdParty");
 		}
 		print '</td>';
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$obj->socid.'">'.$obj->nb.'</a></td>';
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'">'.$obj->nb.'</a></td>';
 		print "</tr>\n";
 
 		$i++;
@@ -222,7 +222,7 @@ if ( $resql )
 			$projectstatic->ref=$obj->ref;
 			$projectstatic->title=$obj->title;
 			print $projectstatic->getNomUrl(1,'',16);
-			//print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
+			//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
 			print '</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($obj->dateo)).'</td>';

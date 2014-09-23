@@ -99,7 +99,7 @@ else
 }
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->COMPTA_MODE);
+$modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->ACCOUNTING_MODE);
 
 
 /*
@@ -601,6 +601,11 @@ else
 {
     dol_print_error($db);
 }
+print '<tr class="liste_total">';
+if ($modecompta == 'CREANCES-DETTES')
+	print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
+print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+print '</tr>';
 
 /*
  * Dunning
@@ -633,13 +638,13 @@ if ($result)
 
 			$total_ht += $obj->amount;
 			$total_ttc += $obj->amount;
-			$subtotal_ht -= $obj->amount;
-			$subtotal_ttc -= $obj->amount;
+			$subtotal_ht += $obj->amount;
+			$subtotal_ttc += $obj->amount;
 
 			$var = !$var;
 			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
 
-			print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/compta/dons/liste.php?search_company=".$obj->nom."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->nom. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
+			print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/compta/dons/list.php?search_company=".$obj->nom."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->nom. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 			if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price($obj->amount).'</td>';
 			print '<td align="right">'.price($obj->amount).'</td>';
@@ -661,8 +666,8 @@ else
 }
 print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES')
-	print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+	print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
+print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
 print '</tr>';
 
 /*
