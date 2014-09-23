@@ -1338,7 +1338,14 @@ else if ($id > 0 || ! empty($ref))
 			{
 				print '<tr><td';
 				if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-				print '>'.$label.'</td><td colspan="3">';
+				print '>';
+				print '<table class="nobordernopadding" width="100%"><tbody><tr><td>';
+				print $label;
+				print '</td><td align="right">';
+				if (($object->statut == 0 || $object->statut == 1) && $user->rights->ficheinter->creer && !($action == 'edit_extras' && GETPOST('attribute') == $key))
+					print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_picto('', 'edit') . '</a>';
+				print '</td></tr></tbody></table>';
+				print '</td><td colspan="3">';
 				// Convert date into timestamp format
 				if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 				{
@@ -1355,7 +1362,6 @@ else if ($id > 0 || ! empty($ref))
 				else
 				{
 					print $extrafields->showOutputField($key,$value);
-					if (($object->statut == 0 || $object->statut == 1) && $user->rights->ficheinter->creer) print ' &nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
 				}
 				print '</td></tr>'."\n";
 			}
