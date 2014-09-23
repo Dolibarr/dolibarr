@@ -45,7 +45,6 @@ $limit = $conf->liste_limit;
 if (! $sortfield) $sortfield="l.rowid";
 if (! $sortorder) $sortorder="DESC";
 
-$year=$_GET["year"];
 $filtre=$_GET["filtre"];
 
 /*
@@ -57,33 +56,19 @@ $loan = new Loan($db);
 
 llxHeader();
 
-$sql = "SELECT cs.rowid as id, cs.fk_type as type, ";
-$sql.= " cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode,";
-$sql.= " c.libelle as type_lib,";
-$sql.= " SUM(pc.amount) as alreadypayed";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
-$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
-$sql.= " WHERE cs.fk_type = c.id";
-$sql.= " AND cs.entity = ".$conf->entity;
-if (GETPOST("search_label")) $sql.=" AND cs.libelle LIKE '%".$db->escape(GETPOST("search_label"))."%'";
-if ($year > 0)
-{
-    $sql .= " AND (";
-    // Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
-    // ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-    $sql .= "   (cs.periode IS NOT NULL AND date_format(cs.periode, '%Y') = '".$year."') ";
-    $sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$year."')";
-    $sql .= ")";
-}
+$sql = "SELECT l.rowid as id, l.label, l.capital, l.datestart, l.dateend,";
+$sql.= " SUM(pl.amount) as alreadypayed";
+$sql.= " FROM ".MAIN_DB_PREFIX."loan as l,";
+$sql.= " ".MAIN_DB_PREFIX."payment_loan as pl";
+$sql.= " WHERE pl.fk_loan = l.rowid";
+$sql.= " AND l.entity = ".$conf->entity;
+if (GETPOST("search_label")) $sql.=" AND l.label LIKE '%".$db->escape(GETPOST("search_label"))."%'";
+
 if ($filtre) {
     $filtre=str_replace(":","=",$filtre);
     $sql .= " AND ".$filtre;
 }
-if ($typeid) {
-    $sql .= " AND cs.fk_type=".$typeid;
-}
-$sql.= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
+
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
@@ -96,18 +81,9 @@ if ($resql)
 	$var=true;
 
 	$param='';
-	if ($year)   $param.='&amp;year='.$year;
-	if ($typeid) $param.='&amp;typeid='.$typeid;
-
-	if ($year)
-	{
-		print_fiche_titre($langs->trans("SocialContributions"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
-	}
-	else
-	{
-		print_barre_liste($langs->trans("SocialContributions"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines);
-	}
-
+	
+	print_fiche_titre($langs->trans("Loans"));
+	
 	if (empty($mysoc->country_id) && empty($mysoc->country_code))
 	{
 		print '<div class="error">';
@@ -125,24 +101,16 @@ if ($resql)
 
 		print "<tr class=\"liste_titre\">";
 		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"id","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"cs.libelle","",$param,'align="left"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"periode","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cs.paye","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"l.label","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Capital"),$_SERVER["PHP_SELF"],"l.capital","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"l.datestart","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"l.paid","",$param,'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
 
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.GETPOST("search_label").'"></td>';
-		// Type
-		print '<td class="liste_titre" align="left">';
-	    $formsocialcontrib->select_type_socialcontrib($typeid,'typeid',1,16,0);
-	    print '</td>';
-		// Period end date
 		print '<td class="liste_titre">&nbsp;</td>';
-	    print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
 		print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -161,33 +129,19 @@ if ($resql)
 			$loan->id=$obj->id;
 			$loan->lib=$obj->id;
 			$loan->ref=$obj->id;
-			print $loan->getNomUrl(1,'20');
+			print $loan->getNameUrl(1,'20');
 			print '</td>';
 
 			// Label
-			print '<td>'.dol_trunc($obj->libelle,42).'</td>';
+			print '<td>'.dol_trunc($obj->label,42).'</td>';
 
-			// Type
-			print '<td>'.dol_trunc($obj->type_lib,16).'</td>';
+			// Capital
+			print '<td align="right" width="100">'.price($obj->capital).'</td>';
 
-			// Date end period
-			print '<td align="center">';
-			if ($obj->periode)
-			{
-				print '<a href="index.php?year='.strftime("%Y",$db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode),'day').'</a>';
-			}
-			else
-			{
-				print '&nbsp;';
-			}
-			print '</td>';
+			// Date start
+			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->datestart), 'day').'</td>';
 
-			print '<td align="right" width="100">'.price($obj->amount).'</td>';
-
-			// Due date
-			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
-
-			print '<td align="right" class="nowrap">'.$loan->LibStatut($obj->paye,5,$obj->alreadypayed).'</a></td>';
+			print '<td align="right" class="nowrap">'.$loan->LibStatut($obj->paid,5,$obj->alreadypayed).'</a></td>';
 
 			print '</tr>';
 			$i++;

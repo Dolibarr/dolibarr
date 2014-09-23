@@ -423,14 +423,14 @@ class Loan extends CommonObject
 
         $result='';
 
-        if (empty($this->ref)) $this->ref=$this->lib;
+        if (empty($this->ref)) $this->ref=$this->label;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/loan/card.php?id='.$this->id.'">';
-        $lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/loan/card.php?id='.$this->id.'">';
+        $linkend='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowSocialContribution").': '.$this->lib,'bill').$lienfin.' ');
+        if ($withpicto) $result.=($link.img_object($langs->trans("ShowLoan").': '.$this->label,'bill').$linkend.' ');
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
+        if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
         return $result;
     }
 
