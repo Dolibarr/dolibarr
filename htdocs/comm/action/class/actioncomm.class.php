@@ -192,10 +192,10 @@ class ActionComm extends CommonObject
         $sql.= (isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null").",";	// deprecated
         $sql.= (isset($this->type_id)?$this->type_id:"null").",";
         $sql.= (isset($this->code)?" '".$this->code."'":"null").",";
-        $sql.= (isset($this->societe->id) && $this->societe->id > 0?" '".$this->societe->id."'":"null").",";
+        $sql.= (isset($this->socid) && $this->socid > 0?" '".$this->socid."'":"null").",";
         $sql.= (isset($this->fk_project) && $this->fk_project > 0?" '".$this->fk_project."'":"null").",";
         $sql.= " '".$this->db->escape($this->note)."',";
-        $sql.= (isset($this->contact->id) && $this->contact->id > 0?"'".$this->contact->id."'":"null").",";
+        $sql.= (isset($this->contactid) && $this->contactid > 0?"'".$this->contactid."'":"null").",";
         $sql.= (isset($user->id) && $user->id > 0 ? "'".$user->id."'":"null").",";
         $sql.= (isset($this->usertodo->id) && $this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
         $sql.= (isset($this->userdone->id) && $this->userdone->id > 0?"'".$this->userdone->id."'":"null").",";
@@ -358,10 +358,12 @@ class ActionComm extends CommonObject
                 $this->location				= $obj->location;
                 $this->transparency			= $obj->transparency;
 
-                $this->socid				= $obj->fk_soc;	// To have fetch_thirdparty method working
-                $this->societe->id			= $obj->fk_soc;
-                $this->contact->id			= $obj->fk_contact;
-                $this->fk_project			= $obj->fk_project;
+                $this->socid				= $obj->fk_soc;			// To have fetch_thirdparty method working
+                $this->contactid			= $obj->fk_contact;
+                $this->fk_project			= $obj->fk_project;		// To have fetch_project method working
+
+                $this->societe->id			= $obj->fk_soc;			// For backward compatibility
+                $this->contact->id			= $obj->fk_contact;		// For backward compatibility
 
                 $this->fk_element			= $obj->fk_element;
                 $this->elementtype			= $obj->elementtype;

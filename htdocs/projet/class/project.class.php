@@ -323,8 +323,6 @@ class Project extends CommonObject
                 $this->note_private = $obj->note_private;
                 $this->note_public = $obj->note_public;
                 $this->socid = $obj->fk_soc;
-                $this->societe=(object)array();// To avoid warning on next line
-                $this->societe->id = $obj->fk_soc; // TODO For backward compatibility
                 $this->user_author_id = $obj->fk_user_creat;
                 $this->public = $obj->public;
                 $this->statut = $obj->fk_statut;
