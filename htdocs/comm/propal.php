@@ -664,10 +664,12 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 }
 
 // Go back to draft
-if ($action == 'modif' && $user->rights->propal->creer) {
+if ($action == 'modif' && $user->rights->propal->creer)
+{
 	$object->set_draft($user);
 
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+	{
 		// Define output language
 		$outputlangs = $langs;
 		if (! empty($conf->global->MAIN_MULTILANGS)) {
@@ -2010,26 +2012,34 @@ if ($action == 'create')
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified
 	                                                                                           // by
 	                                                                                           // hook
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
-		foreach ($extrafields->attribute_label as $key => $label) {
-			if ($action == 'edit_extras') {
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		foreach ($extrafields->attribute_label as $key => $label)
+		{
+			if ($action == 'edit_extras')
+			{
 				$value = (isset($_POST ["options_" . $key]) ? $_POST ["options_" . $key] : $object->array_options ["options_" . $key]);
-			} else {
+			}
+			else
+			{
 				$value = $object->array_options ["options_" . $key];
 			}
-			if ($extrafields->attribute_type [$key] == 'separate') {
+			if ($extrafields->attribute_type [$key] == 'separate')
+			{
 				print $extrafields->showSeparator($key);
-			} else {
+			}
+			else
+			{
 				print '<tr><td';
-				if (! empty($extrafields->attribute_required [$key]))
-					print ' class="fieldrequired"';
+				if (! empty($extrafields->attribute_required [$key])) print ' class="fieldrequired"';
 				print '>' . $label . '</td><td colspan="5">';
 				// Convert date into timestamp format
 				if (in_array($extrafields->attribute_type [$key], array('date','datetime'))) {
 					$value = isset($_POST ["options_" . $key]) ? dol_mktime($_POST ["options_" . $key . "hour"], $_POST ["options_" . $key . "min"], 0, $_POST ["options_" . $key . "month"], $_POST ["options_" . $key . "day"], $_POST ["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
 				}
 
-				if ($action == 'edit_extras' && $user->rights->propal->creer && GETPOST('attribute') == $key) {
+				if ($action == 'edit_extras' && $user->rights->propal->creer && GETPOST('attribute') == $key)
+				{
 					print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formsoc">';
 					print '<input type="hidden" name="action" value="update_extras">';
 					print '<input type="hidden" name="attribute" value="' . $key . '">';
@@ -2041,7 +2051,9 @@ if ($action == 'create')
 					print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 
 					print '</form>';
-				} else {
+				}
+				else
+				{
 					print $extrafields->showOutputField($key, $value);
 					if ($object->statut == 0 && $user->rights->propal->creer)
 						print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_picto('', 'edit') . ' ' . $langs->trans('Modify') . '</a>';

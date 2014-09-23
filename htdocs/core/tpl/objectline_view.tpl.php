@@ -194,7 +194,8 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 <?php
 //Line extrafield
-if (!empty($extrafieldsline)) {
+if (!empty($extrafieldsline))
+{
 	print $line->showOptionals($extrafieldsline,'view',array('style'=>$bcdd[$var],'colspan'=>$coldisplay));
 }
 ?>
