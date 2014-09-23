@@ -105,11 +105,11 @@ if (! empty($_POST['removedassigned']))
 if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
 {
 	// Add a new user
-	if (GETPOST('affectedto') > 0)
+	if (GETPOST('assignedtouser') > 0)
 	{
 		$assignedtouser=array();
 		if (! empty($_SESSION['assignedtouser'])) $assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
-		$assignedtouser[GETPOST('affectedto')]=array('transparency'=>GETPOST('transparency'),'mandatory'=>1);
+		$assignedtouser[GETPOST('assignedtouser')]=array('transparency'=>GETPOST('transparency'),'mandatory'=>1);
 		$_SESSION['assignedtouser']=dol_json_encode($assignedtouser);
 	}
 	$donotclearsession=1;
@@ -647,11 +647,11 @@ if ($action == 'create')
 	print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	if (empty($donotclearsession))
 	{
-		$assignedtouser=GETPOST("affectedtouser")?GETPOST("affectedtouser"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id);
+		$assignedtouser=GETPOST("assignedtouser")?GETPOST("assignedtouser"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id);
 		$_SESSION['assignedtouser']=dol_json_encode(array($assignedtouser=>array('transparency'=>1,'mandatory'=>1)));
 	}
-	print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'affectedto',1);
-	//print $form->select_dolusers(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id),'affectedto',1);
+	print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
+	//print $form->select_dolusers(GETPOST("assignedtouser")?GETPOST("assignedtouser"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id),'affectedto',1);
 	print '</td></tr>';
 
 	print '</table>';
@@ -904,8 +904,8 @@ if ($id > 0)
 			if (is_object($object->usertodo)) $listofuserid[$object->usertodo->id]=array('id'=>$object->usertodo->id,'transparency'=>$object->transparency);
 			$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
 		}
-		print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'affectedto',1);
-		//print $form->select_dolusers($object->usertodo->id>0?$object->usertodo->id:-1,'affectedto',1);
+		print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
+		//print $form->select_dolusers($object->usertodo->id>0?$object->usertodo->id:-1,'assignedtouser',1);
 		print '</td></tr>';
 
         print '</table><br><br><table class="border" width="100%">';

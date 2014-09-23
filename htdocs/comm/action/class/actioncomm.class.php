@@ -211,22 +211,43 @@ class ActionComm extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm","id");
 
-            // Actions on extra fields (by external module or standard code)
-            $hookmanager->initHooks(array('actioncommdao'));
-            $parameters=array('actcomm'=>$this->id);
-            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-            if (empty($reshook))
+            // Now insert assignedusers
+			if (! $error)
+			{
+				foreach($this->userassigned as $key => $val)
+				{
+					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
+					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", 0, ".$val['transparency'].", 0)";
+
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$error++;
+		           		$this->errors[]=$this->db->lasterror();
+					}
+					//var_dump($sql);exit;
+				}
+			}
+
+            if (! $error)
             {
-            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-            	{
-            		$result=$this->insertExtraFields();
-            		if ($result < 0)
-            		{
-            			$error++;
-            		}
-            	}
+	            // Actions on extra fields (by external module or standard code)
+	            $hookmanager->initHooks(array('actioncommdao'));
+	            $parameters=array('actcomm'=>$this->id);
+	            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+	            if (empty($reshook))
+	            {
+	            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	            	{
+	            		$result=$this->insertExtraFields();
+	            		if ($result < 0)
+	            		{
+	            			$error++;
+	            		}
+	            	}
+	            }
+	            else if ($reshook < 0) $error++;
             }
-            else if ($reshook < 0) $error++;
 
             if (! $error && ! $notrigger)
             {
