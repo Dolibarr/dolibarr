@@ -136,7 +136,9 @@ $server->wsdl->addComplexType(
             'minOccurs' => '0',
             'maxOccurs' => 'unbounded'
         )
-    )
+    ),
+    null,
+    'tns:line'
 );
 
 
@@ -197,7 +199,9 @@ $server->wsdl->addComplexType(
             'minOccurs' => '0',
             'maxOccurs' => 'unbounded'
         )
-    )
+    ),
+    null,
+    'tns:invoice'
 );
 
 
