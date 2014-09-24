@@ -5,7 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
- * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -712,8 +712,7 @@ class Commande extends CommonOrder
                         $fk_parent_line,
                         $this->lines[$i]->fk_fournprice,
                         $this->lines[$i]->pa_ht,
-                    	$this->lines[$i]->label,
-						$this->lines[$i]->array_options
+                    	$this->lines[$i]->label
                     );
                     if ($result < 0)
                     {
@@ -850,10 +849,6 @@ class Commande extends CommonOrder
         $error=0;
 
         $this->db->begin();
-
-		// get extrafields so they will be clone
-		foreach($this->lines as $line)
-			$line->fetch_optionals($line->rowid);
 
         // Load source object
         $objFrom = dol_clone($this);

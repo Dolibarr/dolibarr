@@ -8,7 +8,7 @@
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -788,9 +788,6 @@ class Propal extends CommonObject
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
 							$this->lines[$i]->label
-                            $this->lines[$i]->date_start,
-							$this->lines[$i]->date_end,
-							$this->lines[$i]->array_options
 						);
 
                         if ($result < 0)
@@ -925,10 +922,6 @@ class Propal extends CommonObject
 
         $this->db->begin();
 
-		// get extrafields so they will be clone
-		foreach($this->lines as $line)
-			$line->fetch_optionals($line->rowid);
-
         // Load source object
         $objFrom = dol_clone($this);
 
@@ -1053,7 +1046,7 @@ class Propal extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.entity = ".$conf->entity;
-        if ($ref) $sql.= " AND p.ref='".$ref."'";
+        if ($ref) $sql.= " AND p.ref='".$this->db->escape($ref)."'";
         else $sql.= " AND p.rowid=".$rowid;
 
         dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
