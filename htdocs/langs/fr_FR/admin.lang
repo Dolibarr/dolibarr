@@ -1533,3 +1533,4 @@ Opened=Ouverte
 Closed=Clôturé
 Format=Format
 setZipBills=Téléchargement multiple dans zip
+ErrorZipArchive=L'extention ZipArchive doit etre activé

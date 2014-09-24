@@ -264,19 +264,25 @@ if ($action == 'setforcedate')
 
 if ($action == 'setZipBills')
 {
+
 	$ZipBills = GETPOST('ZipBills','alpha');
 
-	$res = dolibarr_set_const($db, "FAC_AFF_ZIP_BILLS",$ZipBills,'chaine',0,'',$conf->entity);
+	if (class_exists('ZipArchive')) {
 
-	if (! $res > 0) $error++;
+		$res = dolibarr_set_const($db, "FAC_AFF_ZIP_BILLS", $ZipBills, 'chaine', 0, '', $conf->entity);
 
-	if (! $error)
+		if (!$res > 0) {
+			$error++;
+		}
+
+		if (!$error) {
+			setEventMessage($langs->trans("SetupSaved"));
+		} else {
+			setEventMessage($langs->trans("Error"), 'errors');
+		}
+	}else
 	{
-		setEventMessage($langs->trans("SetupSaved"));
-	}
-	else
-	{
-		setEventMessage($langs->trans("Error"),'errors');
+		setEventMessage($langs->trans("ErrorZipArchive"), 'errors');
 	}
 }
 
