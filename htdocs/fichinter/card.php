@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +65,7 @@ $mesg		= GETPOST('msg','alpha');
 $origin=GETPOST('origin','alpha');
 $originid=(GETPOST('originid','int')?GETPOST('originid','int'):GETPOST('origin_id','int')); // For backward compatibility
 $note_public = GETPOST('note_public');
+$lineid = GETPOST('line_id','int');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -95,7 +97,8 @@ $permissionnote=$user->rights->ficheinter->creer;	// Used by the include of acti
 /*
  * Actions
  */
-
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
@@ -538,7 +541,7 @@ else if ($action == 'classifyunbilled' && $user->rights->ficheinter->creer)
 else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('save','alpha') == $langs->trans("Save"))
 {
 	$objectline = new FichinterLigne($db);
-	if ($objectline->fetch(GETPOST('line_id','int')) <= 0)
+	if ($objectline->fetch($lineid) <= 0)
 	{
 		dol_print_error($db);
 		exit;
@@ -594,7 +597,7 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
 else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 {
 	$objectline = new FichinterLigne($db);
-	if ($objectline->fetch(GETPOST('line_id','int')) <= 0)
+	if ($objectline->fetch($lineid) <= 0)
 	{
 		dol_print_error($db);
 		exit;
@@ -626,7 +629,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 
 else if ($action == 'up' && $user->rights->ficheinter->creer)
 {
-	$object->line_up(GETPOST('line_id','int'));
+	$object->line_up($lineid);
 
 	// Define output language
 	$outputlangs = $langs;
@@ -640,13 +643,13 @@ else if ($action == 'up' && $user->rights->ficheinter->creer)
 	}
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
 
-	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('line_id','int'));
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.$lineid);
 	exit;
 }
 
 else if ($action == 'down' && $user->rights->ficheinter->creer)
 {
-	$object->line_down(GETPOST('line_id','int'));
+	$object->line_down($lineid);
 
 	// Define output language
 	$outputlangs = $langs;
@@ -660,7 +663,7 @@ else if ($action == 'down' && $user->rights->ficheinter->creer)
 	}
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
 
-	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('line_id','int'));
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.$lineid);
 	exit;
 }
 
@@ -1160,7 +1163,7 @@ else if ($id > 0 || ! empty($ref))
 	// Confirmation de la suppression de la fiche d'intervention
 	if ($action == 'delete')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
 
 	}
 
@@ -1184,23 +1187,31 @@ else if ($id > 0 || ! empty($ref))
 		}
 		$text=$langs->trans('ConfirmValidateIntervention',$numref);
 
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
 
 	}
 
 	// Confirmation de la validation de la fiche d'intervention
 	if ($action == 'modify')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
 
 	}
 
 	// Confirmation de la suppression d'une ligne d'intervention
 	if ($action == 'ask_deleteline')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.GETPOST('line_id','int'), $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
 
 	}
+	
+	if (!$formconfirm) {
+		$parameters=array('lineid'=>$lineid);
+		$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	}
+
+	// Print form confirm
+	print $formconfirm;
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" name="formfichinter">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
