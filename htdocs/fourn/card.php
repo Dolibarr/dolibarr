@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014      Jean Heimburger		<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,9 @@ if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'societe&fournisseur', $id, '&societe');
 
 $object = new Fournisseur($db);
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('suppliercard'));
 
 /*
  * Action
@@ -425,60 +429,66 @@ if ($object->fetch($id))
 	/*
 	 * Barre d'actions
 	 */
-
-	print '<div class="tabsAction">';
-
-	if ($user->rights->fournisseur->commande->creer)
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+	// modified by hook
+	if (empty($reshook)) 
 	{
-		$langs->load("orders");
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
+
+		print '<div class="tabsAction">';
+
+		if ($user->rights->fournisseur->commande->creer)
+		{
+			$langs->load("orders");
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
+		}
+
+		if ($user->rights->fournisseur->facture->creer)
+		{
+			$langs->load("bills");
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
+		}
+
+		// Add action
+		if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+		{
+		    if ($user->rights->agenda->myactions->create)
+		    {
+		        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a>';
+		    }
+		    else
+		    {
+		        print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
+		    }
+		}
+
+		print '</div>';
+		print '<br>';
+
+		if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
+		{
+		    print '<br>';
+		    // List of contacts
+		    show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+		}
+
+		// Addresses list
+		if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
+		{
+			$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+		}
+
+		if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+		{
+		    print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
+
+		    // List of todo actions
+		    show_actions_todo($conf,$langs,$db,$object);
+
+		    // List of done actions
+		    show_actions_done($conf,$langs,$db,$object);
+		}
 	}
-
-	if ($user->rights->fournisseur->facture->creer)
-	{
-		$langs->load("bills");
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
-	}
-
-    // Add action
-    if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
-    {
-        if ($user->rights->agenda->myactions->create)
-        {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a>';
-        }
-        else
-        {
-            print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
-        }
-    }
-
-	print '</div>';
-	print '<br>';
-
-    if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
-    {
-        print '<br>';
-        // List of contacts
-        show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-    }
-
-    // Addresses list
-    if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
-    {
-    	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-    }
-
-    if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
-    {
-        print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
-
-        // List of todo actions
-        show_actions_todo($conf,$langs,$db,$object);
-
-        // List of done actions
-        show_actions_done($conf,$langs,$db,$object);
-    }
 }
 else
 {
