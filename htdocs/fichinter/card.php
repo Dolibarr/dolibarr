@@ -1160,11 +1160,12 @@ else if ($id > 0 || ! empty($ref))
 
 	dol_fiche_head($head, 'card', $langs->trans("InterventionCard"), 0, 'intervention');
 
+	$formconfirm='';
+
 	// Confirmation de la suppression de la fiche d'intervention
 	if ($action == 'delete')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
-
 	}
 
 	// Confirmation validation
@@ -1188,24 +1189,22 @@ else if ($id > 0 || ! empty($ref))
 		$text=$langs->trans('ConfirmValidateIntervention',$numref);
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
-
 	}
 
 	// Confirmation de la validation de la fiche d'intervention
 	if ($action == 'modify')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
-
 	}
 
 	// Confirmation de la suppression d'une ligne d'intervention
 	if ($action == 'ask_deleteline')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
-
 	}
-	
-	if (!$formconfirm) {
+
+	if (!$formconfirm)
+	{
 		$parameters=array('lineid'=>$lineid);
 		$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	}
