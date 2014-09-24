@@ -41,7 +41,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
-if(!empty($conf->global->FAC_AFF_BUTTON_DUPPLIQUER)){ //if add button dupliquer
+if(!empty($conf->global->INVOICE_SHOW_DUPLICATE_BUTTON )){ //if add button dupliquer
 	$colspan ++ ;
 }
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc

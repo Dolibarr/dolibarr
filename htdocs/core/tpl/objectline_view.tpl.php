@@ -149,9 +149,9 @@
 		<?php } ?>
 	</td>
 
-	<?php if(!empty($conf->global->FAC_AFF_BUTTON_DUPPLIQUER)){
+	<?php if(!empty($conf->global->INVOICE_SHOW_DUPLICATE_BUTTON )){
 			if(!empty($line->ref)){
-				// produit prédefini
+				//mode predef
 				$string_argument = "'2'";
 				$descclean = str_replace($line->product_desc ."\n", "",$line->description);
 				$string_argument .= ", '".base64_encode($descclean)."'";
@@ -159,7 +159,7 @@
 				$string_argument .= ", '".$line->remise_percent."'";
 				$string_argument .= ", '".$line->fk_product."'";
 			}else{
-				//ligne libre
+				//mode free
 				$string_argument = "'1'";
 				$string_argument .= ", '".base64_encode($line->description)."'";
 				$string_argument .= ", '".$line->qty."'";
@@ -170,7 +170,7 @@
 			 }	?>
 			<td align="center"><?php $coldisplay++; ?>
 				<a href="" class="dupdup" onclick="autofillnewproduct(<?php echo $string_argument; ?>); return false;" >
-					<?php echo img_picto("Dupliquer",'split.png'); ?>
+					<?php echo img_picto($langs->trans("Duplicate"),'split.png'); ?>
 				</a>
 			</td>
 	<?php } ?>

@@ -3326,7 +3326,7 @@ if ($action == 'create')
 
 	print '</table><br>';
 
-	if(!empty($conf->global->FAC_AFF_BUTTON_DUPPLIQUER)){
+	if(!empty($conf->global->INVOICE_SHOW_DUPLICATE_BUTTON )){
 		print '<script type="text/javascript">';
 		print '	function autofillnewproduct(){';
 		print '		if(arguments.length > 0){';

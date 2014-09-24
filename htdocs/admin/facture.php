@@ -266,7 +266,7 @@ if ($action == 'setaffdupliquer')
 {
 	$affdupliquer = GETPOST('affdupliquer','alpha');
 
-	$res = dolibarr_set_const($db, "FAC_AFF_BUTTON_DUPPLIQUER",$affdupliquer,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "INVOICE_SHOW_DUPLICATE_BUTTON ",$affdupliquer,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -768,7 +768,7 @@ print '<input type="hidden" name="action" value="setaffdupliquer" />';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("AffButtonDupliquer");
 print '</td><td width="60" align="center">';
-print $form->selectyesno("affdupliquer",$conf->global->FAC_AFF_BUTTON_DUPPLIQUER,1);
+print $form->selectyesno("affdupliquer",$conf->global->INVOICE_SHOW_DUPLICATE_BUTTON ,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

@@ -2813,7 +2813,7 @@ abstract class CommonObject
 		print '<td width="10"></td>';
 
 		// add coll for align duplication button
-		if(!empty($conf->global->FAC_AFF_BUTTON_DUPPLIQUER)){
+		if(!empty($conf->global->INVOICE_SHOW_DUPLICATE_BUTTON )){
 			print '<td width="10"></td>';
 		}
 
