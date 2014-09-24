@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,23 +131,13 @@ if ($action == 'search')
 	$current_lang = $langs->getDefaultLang();
 
 	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.price, p.fk_product_type as type';
-	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ', pl.label as labelm, pl.description as descriptionm';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
-	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
 	$sql.= ' WHERE p.entity IN ('.getEntity("product", 1).')';
 	if ($key != "")
 	{
-		if (! empty($conf->global->MAIN_MULTILANGS))
-		{
-			$sql.= " AND (p.ref LIKE '%".$key."%'";
-			$sql.= " OR pl.label LIKE '%".$key."%')";
-		}
-		else
-		{
-			$sql.= " AND (p.ref LIKE '%".$key."%'";
-			$sql.= " OR p.label LIKE '%".$key."%')";
-		}
+		$sql.= " AND (p.ref LIKE '%".$key."%'";
+		$sql.= " OR p.label LIKE '%".$key."%')";
 	}
 	if (! empty($conf->categorie->enabled) && ! empty($parent) && $parent != -1)
 	{
@@ -505,7 +496,22 @@ if ($id > 0 || ! empty($ref))
 
 						print '<td>'.$productstatic->getNomUrl(1,'',24).'</td>';
 						$labeltoshow=$objp->label;
-						if ($conf->global->MAIN_MULTILANGS && $objp->labelm) $labeltoshow=$objp->labelm;
+            			// Multilangs
+            			if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
+            			{
+            				$sql = "SELECT label";
+            				$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+            				$sql.= " WHERE fk_product=".$objp->rowid;
+            				$sql.= " AND lang='". $langs->getDefaultLang() ."'";
+            				$sql.= " LIMIT 1";
+
+            				$result = $db->query($sql);
+            				if ($result)
+            				{
+            					$objtp = $db->fetch_object($result);
+            					if (! empty($objtp->label)) $objp->label = $objtp->label;
+            				}
+            			}
 
 						print '<td>'.$labeltoshow.'</td>';
 						if($product->is_sousproduit($id, $objp->rowid))
