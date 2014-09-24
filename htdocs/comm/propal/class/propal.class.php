@@ -787,7 +787,7 @@ class Propal extends CommonObject
 							$fk_parent_line,
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
-							$this->lines[$i]->label
+							$this->lines[$i]->label,
                             $this->lines[$i]->date_start,
 							$this->lines[$i]->date_end,
 							$this->lines[$i]->array_options
