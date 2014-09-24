@@ -120,7 +120,7 @@ if ($result)
     print '<td class="liste_titre">&nbsp;</td>';
     print '</tr>';
 
-    print '<form action="list.php" method="GET">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
     print '<tr class="liste_titre">';
     print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $search_line.'" size="6"></td>';
     print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. $search_bon.'" size="8"></td>';
