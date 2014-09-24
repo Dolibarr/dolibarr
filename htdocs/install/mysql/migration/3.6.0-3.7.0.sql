@@ -20,6 +20,8 @@
 
 ALTER TABLE llx_bank_account ADD COLUMN fk_user_author integer;
 
+ALTER TABLE llx_c_actioncomm ADD COLUMN color varchar(9);
+
 ALTER TABLE llx_propal ADD COLUMN fk_user_modif integer after fk_user_author;
 ALTER TABLE llx_commande ADD COLUMN fk_user_modif integer after fk_user_author;
 ALTER TABLE llx_facture ADD COLUMN fk_user_modif integer after fk_user_author;
@@ -130,6 +132,8 @@ ALTER TABLE llx_user ADD COLUMN weeklyhours double(16,8);
 
 
 ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_date;
+
+ALTER TABLE llx_actioncomm_resources CHANGE COLUMN transparent transparency smallint default 1;
 
 
 -- Localtaxes by thirds
@@ -1071,11 +1075,11 @@ CREATE TABLE llx_fichinterdet_extrafields
 
 ALTER TABLE llx_fichinterdet_extrafields ADD INDEX idx_ficheinterdet_extrafields (fk_object);
 
-CREATE TABLE IF NOT EXISTS llx_usergroup_extrafields (
+CREATE TABLE llx_usergroup_extrafields (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
-) ENGINE=InnoDB ;
+) ENGINE=innodb;
 
 ALTER TABLE llx_usergroup_extrafields ADD INDEX idx_usergroup_extrafields (fk_object);

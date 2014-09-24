@@ -62,14 +62,15 @@ class ActionComm extends CommonObject
     var $priority;      // Small int (0 By default)
     var $note;          // Description
 
-	var $userassigned;	// Array of user ids
+	var $userassigned = array();	// Array of user ids
     var $usertodo;		// Object user of owner
     var $userdone;	 	// Object user that did action (deprecated)
 
+    var $socid;
+    var $contactid;
     var $societe;		// Company linked to action (optional)
     var $contact;		// Contact linked to action (optional)
     var $fk_project;	// Id of project (optional)
-
 
     // Properties for links to other objects
     var $fk_element;    // Id of record
@@ -191,10 +192,10 @@ class ActionComm extends CommonObject
         $sql.= (isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null").",";	// deprecated
         $sql.= (isset($this->type_id)?$this->type_id:"null").",";
         $sql.= (isset($this->code)?" '".$this->code."'":"null").",";
-        $sql.= (isset($this->societe->id) && $this->societe->id > 0?" '".$this->societe->id."'":"null").",";
+        $sql.= (isset($this->socid) && $this->socid > 0?" '".$this->socid."'":"null").",";
         $sql.= (isset($this->fk_project) && $this->fk_project > 0?" '".$this->fk_project."'":"null").",";
         $sql.= " '".$this->db->escape($this->note)."',";
-        $sql.= (isset($this->contact->id) && $this->contact->id > 0?"'".$this->contact->id."'":"null").",";
+        $sql.= (isset($this->contactid) && $this->contactid > 0?"'".$this->contactid."'":"null").",";
         $sql.= (isset($user->id) && $user->id > 0 ? "'".$user->id."'":"null").",";
         $sql.= (isset($this->usertodo->id) && $this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
         $sql.= (isset($this->userdone->id) && $this->userdone->id > 0?"'".$this->userdone->id."'":"null").",";
@@ -211,22 +212,43 @@ class ActionComm extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm","id");
 
-            // Actions on extra fields (by external module or standard code)
-            $hookmanager->initHooks(array('actioncommdao'));
-            $parameters=array('actcomm'=>$this->id);
-            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-            if (empty($reshook))
+            // Now insert assignedusers
+			if (! $error)
+			{
+				foreach($this->userassigned as $key => $val)
+				{
+					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
+					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['mandatory']?$val['mandatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
+
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$error++;
+		           		$this->errors[]=$this->db->lasterror();
+					}
+					//var_dump($sql);exit;
+				}
+			}
+
+            if (! $error)
             {
-            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-            	{
-            		$result=$this->insertExtraFields();
-            		if ($result < 0)
-            		{
-            			$error++;
-            		}
-            	}
+	            // Actions on extra fields (by external module or standard code)
+	            $hookmanager->initHooks(array('actioncommdao'));
+	            $parameters=array('actcomm'=>$this->id);
+	            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+	            if (empty($reshook))
+	            {
+	            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	            	{
+	            		$result=$this->insertExtraFields();
+	            		if ($result < 0)
+	            		{
+	            			$error++;
+	            		}
+	            	}
+	            }
+	            else if ($reshook < 0) $error++;
             }
-            else if ($reshook < 0) $error++;
 
             if (! $error && ! $notrigger)
             {
@@ -336,10 +358,12 @@ class ActionComm extends CommonObject
                 $this->location				= $obj->location;
                 $this->transparency			= $obj->transparency;
 
-                $this->socid				= $obj->fk_soc;	// To have fetch_thirdparty method working
-                $this->societe->id			= $obj->fk_soc;
-                $this->contact->id			= $obj->fk_contact;
-                $this->fk_project			= $obj->fk_project;
+                $this->socid				= $obj->fk_soc;			// To have fetch_thirdparty method working
+                $this->contactid			= $obj->fk_contact;
+                $this->fk_project			= $obj->fk_project;		// To have fetch_project method working
+
+                $this->societe->id			= $obj->fk_soc;			// For backward compatibility
+                $this->contact->id			= $obj->fk_contact;		// For backward compatibility
 
                 $this->fk_element			= $obj->fk_element;
                 $this->elementtype			= $obj->elementtype;
@@ -352,6 +376,34 @@ class ActionComm extends CommonObject
             $this->error=$this->db->lasterror();
             return -1;
         }
+    }
+
+
+    /**
+     *    Initialize this->userassigned array
+     *
+     *    @return	int				<0 if KO, >0 if OK
+     */
+    function fetch_userassigned()
+    {
+        global $langs;
+        $sql.="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
+		$sql.=" FROM ".MAIN_DB_PREFIX."actioncomm_resources";
+		$sql.=" WHERE element_type = 'user' AND fk_actioncomm = ".$this->id;
+		$resql2=$this->db->query($sql);
+		if ($resql2)
+		{
+            while ($obj = $this->db->fetch_object($resql2))
+            {
+            	$this->userassigned[$obj->fk_element]=array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
+            }
+        	return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
     }
 
     /**
@@ -498,7 +550,28 @@ class ActionComm extends CommonObject
         	}
         	else if ($reshook < 0) $error++;
 
-            if (! $notrigger)
+            // Now insert assignedusers
+			if (! $error)
+			{
+				$sql ="DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".$this->id." AND element_type = 'user'";
+				$resql = $this->db->query($sql);
+
+				foreach($this->userassigned as $key => $val)
+				{
+					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
+					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['manadatory']?$val['manadatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
+
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$error++;
+		           		$this->errors[]=$this->db->lasterror();
+					}
+					//var_dump($sql);exit;
+				}
+			}
+
+            if (! $error && ! $notrigger)
             {
                 // Call trigger
                 $result=$this->call_trigger('ACTION_MODIFY',$user);

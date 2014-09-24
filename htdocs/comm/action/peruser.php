@@ -410,6 +410,8 @@ if ($resql)
         $event->location=$obj->location;
         $event->transparency=$obj->transparency;
 
+        $event->socid=$obj->fk_soc;
+        $event->contactid=$obj->fk_contact;
         $event->societe->id=$obj->fk_soc;
         $event->contact->id=$obj->fk_contact;
 
@@ -656,7 +658,7 @@ jQuery(document).ready(function() {
 		if (ids == \'none\') /* No event */
 		{
 			/* alert(\'no event\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/card.php?action=create&affectedto="+userid+"&datep="+year+month+day+hour+min+"00&backtopage='.urlencode($_SERVER["PHP_SELF"].'?year='.$year.'&month='.$month.'&day='.$day).'"
+			url = "'.DOL_URL_ROOT.'/comm/action/card.php?action=create&assignedtouser="+userid+"&datep="+year+month+day+hour+min+"00&backtopage='.urlencode($_SERVER["PHP_SELF"].'?year='.$year.'&month='.$month.'&day='.$day).'"
 			window.location.href = url;
 		}
 		else if (ids.indexOf(",") > -1)	/* There is several events */
@@ -779,7 +781,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				}
 				//$cssclass=$cssclass.' '.$cssclass.'_day_'.$ymd;
 
-				// Show rect of event
+				// Define all rects with event (cases1 is first half hour, cases2 is second half hour)
 				for ($h = $begin_h; $h < $end_h; $h++)
 				{
 					$color = ''; //init
@@ -797,12 +799,22 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 							$busy=$event->transparency;
 							$cases1[$h][$event->id]['busy']=$busy;
 							$cases1[$h][$event->id]['string']=dol_print_date($event->date_start_in_calendar,'dayhour').' - '.dol_print_date($event->date_end_in_calendar,'dayhour').' - '.$event->label;
+							$cases1[$h][$event->id]['typecode']=$event->type_code;
+							if ($event->socid)
+							{
+								$cases1[$h][$event->id]['string'].='xxx';
+							}
 						}
 						if ($event->date_start_in_calendar < $c && $dateendtouse > $b)
 						{
 							$busy=$event->transparency;
 							$cases2[$h][$event->id]['busy']=$busy;
 							$cases2[$h][$event->id]['string']=dol_print_date($event->date_start_in_calendar,'dayhour').' - '.dol_print_date($event->date_end_in_calendar,'dayhour').' - '.$event->label;
+							$cases1[$h][$event->id]['typecode']=$event->type_code;
+							if ($event->socid)
+							{
+								$cases2[$h][$event->id]['string'].='xxx';
+							}
 						}
 					}
 					else
@@ -812,6 +824,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 						$cases2[$h][$event->id]['busy']=$busy;
 						$cases1[$h][$event->id]['string']=$event->label;
 						$cases2[$h][$event->id]['string']=$event->label;
+						$cases1[$h][$event->id]['typecode']=$event->type_code;
+						$cases2[$h][$event->id]['typecode']=$event->type_code;
 						break;
 					}
 				}

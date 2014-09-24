@@ -34,9 +34,9 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
-require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT .'/societe/class/client.class.php';
-require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
 
 /**
@@ -3263,11 +3263,10 @@ class Facture extends CommonInvoice
 
 
 /**
- *	\class      	FactureLigne
- *	\brief      	Classe permettant la gestion des lignes de factures
- *					Gere des lignes de la table llx_facturedet
+ *	Class to manage invoice lines.
+ *  Saved into database table llx_facturedet
  */
-class FactureLigne  extends CommonInvoiceLine
+class FactureLigne extends CommonInvoiceLine
 {
 	var $db;
 	var $error;

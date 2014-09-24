@@ -106,7 +106,24 @@ class ChargeSociales extends CommonObject
             return -1;
         }
     }
+	/* 
+	 * Check if a social contribution can be created into database 
+	 * 
+	*/
+	function check() {
+		
+		$newamount=price2num($this->amount,'MT');
 
+        // Validation parametres
+        if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode))
+        {
+           
+            return false;
+        }
+		
+		
+		return true;
+	}
 
     /**
      *      Create a social contribution into database
@@ -121,12 +138,11 @@ class ChargeSociales extends CommonObject
         // Nettoyage parametres
         $newamount=price2num($this->amount,'MT');
 
-        // Validation parametres
-        if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode))
-        {
-            $this->error="ErrorBadParameter";
-            return -2;
-        }
+		if(!$this->check()) {
+			 $this->error="ErrorBadParameter";
+			 return -2;
+		}
+
 
         $this->db->begin();
 
