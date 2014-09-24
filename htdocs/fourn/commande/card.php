@@ -1435,7 +1435,7 @@ elseif (! empty($object->id))
     print '</tr>';
 
 	// Delivery date planed
-	print '<tr><td height="10">';
+	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
@@ -1456,13 +1456,13 @@ elseif (! empty($object->id))
 	{
 		print $object->date_livraison ? dol_print_date($object->date_livraison,'daytext') : '&nbsp;';
 	}
-	print '</td>';
+	print '</td></tr>';
 
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
 		$langs->load('projects');
-		print '<tr><td height="10">';
+		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Project');
 		print '</td>';
