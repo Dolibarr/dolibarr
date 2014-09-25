@@ -155,8 +155,9 @@ if ($viewstatut <> '')
 	}
 	if ($viewstatut == -3)	// To bill
 	{
-		$sql.= ' AND c.fk_statut in (1,2,3)';
-		$sql.= ' AND c.facture = 0'; // invoice not created
+		//$sql.= ' AND c.fk_statut in (1,2,3)';
+		//$sql.= ' AND c.facture = 0'; // invoice not created
+		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
 	}
 }
 if ($ordermonth > 0)
