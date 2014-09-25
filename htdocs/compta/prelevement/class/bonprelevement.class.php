@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014 		Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1342,7 +1343,7 @@ class BonPrelevement extends CommonObject
 			fputs($this->file, '	</CstmrDrctDbtInitn>'.$CrLf);
 			fputs($this->file, '</Document>'.$CrLf);
 
-			$sql = "SELECT pl.amount";
+			/*$sql = "SELECT pl.amount";
 			$sql.= " FROM";
 			$sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 			$sql.= " ".MAIN_DB_PREFIX."facture as f,";
@@ -1368,7 +1369,7 @@ class BonPrelevement extends CommonObject
 			else
 			{
 				$result = -2;
-			}
+			}*/
 
         }
 
