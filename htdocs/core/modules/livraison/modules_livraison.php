@@ -196,7 +196,7 @@ function delivery_order_pdf_create($db, $object, $modele, $outputlangs='')
     	    $file = $prefix."_".$modele.".modules.php";
 
     		// On verifie l'emplacement du modele
-	        $file=dol_buildpath($reldir."core/modules/livraison/pdf/".$file,0);
+	        $file=dol_buildpath($reldir."core/modules/livraison/doc/".$file,0);
     		if (file_exists($file))
     		{
     			$filefound=1;

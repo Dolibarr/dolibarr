@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
  * Copyright (C) 2011-2012 Philippe Grand        <philippe.grand@atoo-net.com>
@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/livraison/pdf/pdf_typhon.modules.php
+ *	\file       htdocs/core/modules/livraison/doc/pdf_typhon.modules.php
  *	\ingroup    livraison
  *	\brief      File of class to manage receving receipts with template Typhon
  *	\author	    Laurent Destailleur
@@ -97,10 +97,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxcomm=112;
+		$this->posxcomm=900;
 		//$this->posxtva=112;
 		//$this->posxup=126;
-		$this->posxqty=174;
+		$this->posxqty=140;
+		$this->posxremainingqty=165;
 		//$this->posxdiscount=162;
 		//$this->postotalht=174;
 		if ($this->page_largeur < 210) // To work with US executive format
@@ -174,6 +175,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			if (file_exists($dir))
 			{
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 				$nblines = count($object->lines);
 
 				// Create pdf instance
@@ -207,6 +219,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$commande->fetch($expedition->origin_id);
 				}
 				$object->commande=$commande;	// We set order of shipment onto delivery.
+				$object->commande->loadExpeditions();
 
 
 				$pdf->Open();
@@ -355,7 +368,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					// Quantity
 					//$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxqty, 3, $object->lines[$i]->qty_shipped, 0, 'R');
+					$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 3, $object->lines[$i]->qty_shipped, 0, 'R');
+
+					// Remaining to ship
+					$pdf->SetXY($this->posxremainingqty, $curY);
+					$qtyRemaining = $object->lines[$i]->qty_asked - $object->commande->expeditions[$object->lines[$i]->fk_origin_line];
+					$pdf->MultiCell($this->page_largeur-$this->marge_droite - $this->posxremainingqty, 3, $qtyRemaining, 0, 'R');
 					/*
 					 // Remise sur ligne
 					 $pdf->SetXY($this->posxdiscount, $curY);
@@ -615,12 +633,18 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		}
 
 		// Qty
-		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
+		$pdf->line($this->posxqty, $tab_top, $this->posxqty, $tab_top + $tab_height);
 		if (empty($hidetop)) {
-			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxqty, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
+			$pdf->SetXY($this->posxqty, $tab_top+1);
+			$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 2, $outputlangs->transnoentities("QtyShipped"),'','C');
 		}
 
+		// Remain to ship
+		$pdf->line($this->posxremainingqty, $tab_top, $this->posxremainingqty, $tab_top + $tab_height);
+		if (empty($hidetop)) {
+			$pdf->SetXY($this->posxremainingqty, $tab_top+1);
+			$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxremainingqty, 2, $outputlangs->transnoentities("KeepToShip"),'','C');
+		}
 	}
 
 	/**
@@ -850,7 +874,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'DELIVERY_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		$showdetails=0;
+		return pdf_pagefoot($pdf,$outputlangs,'DELIVERY_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }
