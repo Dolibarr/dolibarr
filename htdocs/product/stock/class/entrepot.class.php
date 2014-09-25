@@ -186,12 +186,12 @@ class Entrepot extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."stock_mouvement";
 		$sql.= " WHERE fk_entrepot = " . $this->id;
-		dol_syslog("Entrepot::delete", LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql1=$this->db->query($sql);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock";
 		$sql.= " WHERE fk_entrepot = " . $this->id;
-		dol_syslog("Entrepot::delete", LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql2=$this->db->query($sql);
 
 		if ($resql1 && $resql2)
@@ -202,8 +202,8 @@ class Entrepot extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql1=$this->db->query($sql);
 
-			// Update denormalized fields because we change content of produt_stock
-			$sql = "UPDATE ".MAIN_DB_PREFIX."product p SET p.stock= (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock ps WHERE ps.fk_product = p.rowid)";
+			// Update denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
+			$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET stock = (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql2=$this->db->query($sql);
@@ -217,7 +217,7 @@ class Entrepot extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->lasterror();
-				return -1;
+				return -2;
 			}
 		}
 		else
@@ -513,7 +513,7 @@ class Entrepot extends CommonObject
 
 		$result='';
 
-		$lien='<a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$this->id.'">';
+		$lien='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowStock"),'stock').$lienfin.' ');
@@ -540,7 +540,7 @@ class Entrepot extends CommonObject
         $this->description = 'WAREHOUSE SPECIMEN '.dol_print_date($now,'dayhourlog');
 		$this->statut=1;
         $this->specimen=1;
-		
+
 		$this->lieu='Location test';
         $this->address='21 jump street';
         $this->zip='99999';

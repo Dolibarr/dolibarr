@@ -44,7 +44,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des clients", $page, "index.php");
+print_barre_liste("Liste des clients", $page, $_SERVER["PHP_SELF"]);
 
 $sql = "SELECT c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, c.customers_newsletter";
 $sql .= " FROM ".DB_NAME_OSC.".customers as c";
@@ -58,8 +58,8 @@ if ($resql)
   $i = 0;
   print "<table class=\"noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Firstname"),"index.php", "c.customers_firstname");
-  print_liste_field_titre($langs->trans("Lastname"),"index.php", "c.customers_lastname");
+  print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"], "c.customers_firstname");
+  print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"], "c.customers_lastname");
   print '<td>'.$langs->trans("EMail").'</td><td align="center">'.$langs->trans("Newsletter").'</td>';
   print "</tr>\n";
   $var=True;
@@ -68,8 +68,8 @@ if ($resql)
       $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<tr ".$bc[$var].">";
-      print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_firstname."</a></td>\n";
-      print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_lastname."</a></td>\n";
+      print '<td><a href="card.php?id='.$objp->customers_id.'">'.$objp->customers_firstname."</a></td>\n";
+      print '<td><a href="card.php?id='.$objp->customers_id.'">'.$objp->customers_lastname."</a></td>\n";
       print "<td>$objp->customers_email_address</td>\n";
       print "<td align=\"center\">$objp->customers_newsletter</td>\n";
       print "</tr>\n";

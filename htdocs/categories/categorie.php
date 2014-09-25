@@ -396,7 +396,7 @@ else if ($id || $ref)
 		llxHeader("","",$langs->trans("Member"));
 
 
-		$head=member_prepare_head($member, $user);
+		$head=member_prepare_head($member);
 		$titre=$langs->trans("Member");
 		$picto='user';
 		dol_fiche_head($head, 'category', $titre,0,$picto);
@@ -471,7 +471,7 @@ else if ($id || $ref)
 		llxHeader("","",$langs->trans("Contact"));
 
 
-		$head=contact_prepare_head($object, $user);
+		$head=contact_prepare_head($object);
 		$titre=$langs->trans("ContactsAddresses");
 		$picto='contact';
 		dol_fiche_head($head, 'category', $titre,0,$picto);
@@ -551,7 +551,7 @@ else if ($id || $ref)
         {
             $langs->load("mails");
             print '<td class="nowrap">'.$langs->trans("NbOfEMailingsReceived").'</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td>';
         }
         else
         {
@@ -642,7 +642,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 		if ($user->rights->categorie->creer)
 		{
 			print '<td align="right">';
-			print '<a href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
+			print '<a href="'.DOL_URL_ROOT.'/categories/card.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
 			print $langs->trans("CreateCat").' ';
 			print img_picto($langs->trans("Create"),'filenew');
 			print "</a>";

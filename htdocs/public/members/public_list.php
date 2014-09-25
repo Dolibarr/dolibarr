@@ -126,10 +126,10 @@ if ($result)
 	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.$langs->trans("Firstname").'</a>';
 	print ' <a href="'.$_SERVER['PHP_SELF'].'?page='.$page.'&sortorder=ASC&sortfield=lastname">'.$langs->trans("Lastname").'</a>';
 	print ' / <a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=societe">'.$langs->trans("Company").'</a></td>'."\n";
-	//print_liste_field_titre($langs->trans("DateToBirth"),"public_list.php","birth",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
-	print_liste_field_titre($langs->trans("EMail"),"public_list.php","email",'',$param,$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Zip"),"public_list.php","zip","",$param,$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),"public_list.php","town","",$param,$sortfield,$sortorder);
+	//print_liste_field_titre($langs->trans("DateToBirth"), $_SERVER["PHP_SELF"],"birth",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
+	print_liste_field_titre($langs->trans("EMail"), $_SERVER["PHP_SELF"],"email",'',$param,$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Zip"), $_SERVER["PHP_SELF"],"zip","",$param,$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"), $_SERVER["PHP_SELF"],"town","",$param,$sortfield,$sortorder);
 	print "<td>".$langs->trans("Photo")."</td>\n";
 	print "</tr>\n";
 
@@ -140,7 +140,6 @@ if ($result)
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
 		print '<td><a href="public_card.php?id='.$objp->rowid.'">'.dolGetFirstLastname($obj->firstname, $obj->lastname).($objp->societe?' / '.$objp->societe:'').'</a></td>'."\n";
-		//print "<td>$objp->birth</td>\n"; // est-ce nécessaire ??
 		print '<td>'.$objp->email.'</td>'."\n";
 		print '<td>'.$objp->zip.'</td>'."\n";
 		print '<td>'.$objp->town.'</td>'."\n";

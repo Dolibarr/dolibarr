@@ -31,7 +31,7 @@ For users:
        shown on main product card.
 - New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
        create an automatic event into agenda.
-- New: Add new type of event (when type of events are used, not by default)
+- New: Add new type of event (when type of events are used, not by default).
 - New: Add country into table of thirdparties type. This will allow to provide
        a list of thirdparty types specific to a country (like argentina that
        need type A or B).
@@ -42,19 +42,20 @@ For users:
        Differentiate text and img.
        Use label into quick search form.
        Use accesskey on form search.
-- New: Intervention documents are now available in ECM module
-- New: Add attachments on user card + in ECM module
+- New: Intervention documents are now available in ECM module.
+- New: Add attachments on user card + in ECM module.
 - New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.    
-- New: [ task #1204 ] add Numering contrat module free (like leopard in product module)
-- New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice
-- New: Enable supplier price log table
-- New: [ task #1204 ] add a External reference to contract
+- New: [ task #1204 ] add Numering contrat module free (like leopard in product module).
+- New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice.
+- New: Enable supplier price log table.
+- New: [ task #1204 ] add a External reference to contract.
 - New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
 - New: Optimize size of image static resources.
 - New: Add hourly and daily amount on user card. Add weekly working hours and salary on user card.
 - New: Content of predefined email come firstly from table llx_c_email_template, then translation key. 
 - New: Add option MAIN_GENERATE_INVOICES_WITH_PICTURE to show picture 
        onto PDF like MAIN_GENERATE_PROPOSALS_WITH_PICTURE dir for proposals.
+- New: Add more search field in list of cheque deposits.
 - Upgrade phpexcel lib to 1.7.8
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
@@ -73,8 +74,9 @@ For users:
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
-
-New experimental module:
+- New: Direct invoice creation from predefined invoice
+- New: Add dunning into accountancy report
+For users, new experimental module:
 - New: Module Accounting Expert to manage accountancy
 		Special Thanks to developpers :
 			Olivier Geffroy
@@ -107,9 +109,14 @@ For developers:
 - New: Added hook "formConfirm" and "doActions" for supplier invoice card.
 - New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card.
 - New: renamed table llx_c_pays to llx_c_country & libelle field to label.
+- New: Added hook "formConfirm" and "doActions" for fichinter card
 - Qual: Renamed table llx_c_civilite into llx_c_civility,
 		field civilite into label in the same table,
-		and field civilite into civility in other table
+		and field civilite into civility in other table.
+- Qual: Renamed all files & links "liste.php" into "list.php".
+- Qual: Renamed all files & links "fiche.php" into "card.php".
+- Qual: Replace all constants COMPTA_* by ACCOUNTING_*.
+- Qual: Replace all constants ACCOUNTINGEX_* by ACCOUNTING_* to simplify migration of the module
 
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -119,7 +126,8 @@ Dolibarr better:
 - Table llx_c_pays were renamed into llx_c_country.  
 - Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
-
+- A lot of pages called fiche.php were renamed into card.php
+- A lot of pages called liste.php were renamed into list.php
  
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
@@ -139,6 +147,7 @@ For users:
 - Fix: Extrafield feature select from table should try to translate multiple column when not needed 
 - Fix: cents for indian ruppes are calle paisa and paise.
 - Fix: Invoices payments may be older than invoices.
+- Fix: [ bug #1593 ] Spanish Localtax IRPF not being calculated since 3.6.0 in supplier invoices when adding a line
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:

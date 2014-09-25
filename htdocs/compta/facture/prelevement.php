@@ -507,7 +507,7 @@ if ($object->id > 0)
 			print '<td align="center">'.$langs->trans("OrderWaiting").'</td>';
 			print '<td align="center">'.price($obj->amount).'</td>';
 			print '<td align="center">-</td>';
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 			print '<td>&nbsp;</td>';
 			print '<td>';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;did='.$obj->rowid.'">';
@@ -563,7 +563,7 @@ if ($object->id > 0)
 			print $withdrawreceipt->getNomUrl(1);
 			print "</td>\n";
 
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
 			print '<td>&nbsp;</td>';
 			print '<td>&nbsp;</td>';

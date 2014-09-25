@@ -263,11 +263,13 @@ if ($resql)
 		{
 			print '<td align="center" class="nowrap">';
 			print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv),"day")."</span>";
-			print ' <span>&nbsp; ';
+			print ' &nbsp';
+			print '<span>';
 			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
 			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
-			print img_edit_add() ."</a></span>";
+			print img_edit_add() ."</a>";
+			print '</span>';
 			print '</td>';
 		}
 		else
@@ -325,7 +327,7 @@ if ($resql)
 			else if ($links[$key]['type']=='payment_sc')
 			{
 			    // We don't show anything because there is 1 payment for 1 social contribution and we already show link to social contribution
-				/*print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
+				/*print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
 				print img_object($langs->trans('ShowPayment'),'payment').' ';
 				print $langs->trans("SocialContributionPayment");
 				print '</a>';*/
@@ -345,7 +347,7 @@ if ($resql)
 				print '</a>';
 			}
 			else if ($links[$key]['type']=='member') {
-				print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
+				print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
 				print img_object($langs->trans('ShowMember'),'user').' ';
 				print $links[$key]['label'];
 				print '</a>';

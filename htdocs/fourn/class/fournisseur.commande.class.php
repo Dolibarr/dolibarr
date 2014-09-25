@@ -5,7 +5,7 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2014	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2014  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  *
@@ -523,7 +523,7 @@ class CommandeFournisseur extends CommonOrder
 
         $result='';
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id.'">';
         $lienfin='</a>';
 
         $picto='order';
@@ -2005,6 +2005,42 @@ class CommandeFournisseur extends CommonOrder
 
         return '';
     }
+
+	/**
+	 *  Create a document onto disk according to template model.
+	 *
+	 *  @param	    string		$modele			Force template to use ('' to not force)
+	 *  @param		Translate	$outputlangs	Object lang to use for traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @return     int          				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf, $user, $langs;
+
+		$langs->load("suppliers");
+
+		// Sets the model on the model name to use
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF))
+			{
+				$modele = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'muscadet';
+			}
+		}
+
+		$modelpath = "core/modules/supplier_order/pdf/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
+
 }
 
 

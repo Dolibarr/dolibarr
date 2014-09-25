@@ -222,13 +222,16 @@ class Deplacement extends CommonObject
 	* Load an object from database
 	*
 	* @param	int		$id		Id of record to load
+	* @param	string	$ref	Ref of record
 	* @return	int				<0 if KO, >0 if OK
 	*/
-	function fetch($id)
+	function fetch($id, $ref='')
 	{
 		$sql = "SELECT rowid, fk_user, type, fk_statut, km, fk_soc, dated, note_private, note_public, fk_projet, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
-		$sql.= " WHERE rowid = ".$id;
+		$sql.= " WHERE entity IN (".getEntity('deplacement').")";
+		if ($ref) $sql.= " AND ref ='".$this->db->escape($ref)."'";
+		else $sql.= " AND id = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -355,7 +358,7 @@ class Deplacement extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='trip';

@@ -62,7 +62,7 @@ if ($resql)
   $i = 0;
   print "<table class=\noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre("Client","index.php", "c.customers_lastname");
+  print_liste_field_titre("Client",$_SERVER["PHP_SELF"], "c.customers_lastname");
   print '<td>'.$langs->trans("Product").'</td>';
   print "</tr>\n";
   $var=True;
@@ -71,8 +71,8 @@ if ($resql)
       $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<tr ".$bc[$var].">";
-      print "<td width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->customers_firstname $objp->customers_lastname</a></TD>\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_name."</a></td>";
+      print "<td width='70%'><a href=\"card.php?id=$objp->rowid\">$objp->customers_firstname $objp->customers_lastname</a></TD>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/boutique/livre/card.php?oscid='.$objp->products_id.'">'.$objp->products_name."</a></td>";
       print "</tr>\n";
       $i++;
     }

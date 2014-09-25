@@ -152,7 +152,7 @@ if ($resql)
 		print img_picto('', 'statut'.$obj->statut).' ';
 		print substr('000000'.$obj->rowid, -6);
 		print '</a></td>';
-		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
+		print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
 
 		print '<td align="right">'.price($obj->amount)."</td>\n";
 		print '<td>'.$rej->motifs[$obj->motif].'</td>';

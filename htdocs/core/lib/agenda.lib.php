@@ -435,7 +435,7 @@ function actions_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("CardAction");
 	$head[$h][2] = 'card';
 	$h++;

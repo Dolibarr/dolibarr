@@ -139,7 +139,7 @@ if ($id > 0 || ! empty($ref))
 		// Client
 		print "<tr><td>".$langs->trans("Customer")."</td>";
 		print '<td colspan="2">';
-		print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$soc->id.'">'.$soc->nom.'</a>';
 		print '</td>';
 		print '</tr>';
 

@@ -338,9 +338,10 @@ class Account extends CommonObject
     /**
      *  Create bank account into database
      *
+     *  @param	User	$user		Object user making creation
      *  @return int        			< 0 if KO, > 0 if OK
      */
-    function create()
+    function create($user='')
     {
         global $langs,$conf;
 
@@ -665,10 +666,9 @@ class Account extends CommonObject
                 return 1;
             }
             else
-            {
+			{
                 return 0;
             }
-            $this->db->free($result);
         }
         else
         {
@@ -882,7 +882,7 @@ class Account extends CommonObject
 
         if (empty($mode))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/fiche.php?id='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id.'">';
             $lienfin='</a>';
         }
         else if ($mode == 'transactions')

@@ -77,12 +77,12 @@ $titre = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("
 if ($type == "c" || $type=="p")
 {
 	$titre.='  ('.$langs->trans("ThirdPartyCustomers").')';
-	$urlfiche="fiche.php";
+	$urlfiche="card.php";
 }
 else if ($type == "f")
 {
 	$titre.=' ('.$langs->trans("ThirdPartySuppliers").')';
-	$urlfiche="fiche.php";
+	$urlfiche="card.php";
 }
 else if ($type == "o")
 {
@@ -378,7 +378,7 @@ if ($result)
     		print '<td>';
             if ($obj->socid)
             {
-                print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
+                print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
                 print img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,20).'</a>';
             }
             else
@@ -410,7 +410,7 @@ if ($result)
 
 		// Links Add action and Export vcard
         print '<td align="right">';
-        print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
+        print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
         print ' &nbsp; ';
         print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
         print img_picto($langs->trans("VCard"),'vcard.png').' ';

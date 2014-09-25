@@ -433,10 +433,10 @@ function createActionComm($authentication,$actioncomm)
 		$newobject->datep=$actioncomm['datep'];
 		$newobject->datef=$actioncomm['datef'];
 		$newobject->type_code=$actioncomm['type_code'];
-		$newobject->societe->id=$actioncomm['socid'];
+		$newobject->socid=$actioncomm['socid'];
 		$newobject->fk_project=$actioncomm['projectid'];
 		$newobject->note=$actioncomm['note'];
-		$newobject->contact->id=$actioncomm['contactid'];
+		$newobject->contactid=$actioncomm['contactid'];
 		$newobject->usertodo->id=$actioncomm['usertodo'];
 		$newobject->userdone->id=$actioncomm['userdone'];
 		$newobject->label=$actioncomm['label'];
@@ -517,21 +517,21 @@ function updateActionComm($authentication,$actioncomm)
 	if (! $error)
 	{
 		$objectfound=false;
-		
+
 		$object=new ActionComm($db);
 		$result=$object->fetch($actioncomm['id']);
-		
+
 		if (!empty($object->id)) {
-		
+
 			$objectfound=true;
 
 			$object->datep=$actioncomm['datep'];
 			$object->datef=$actioncomm['datef'];
 			$object->type_code=$actioncomm['type_code'];
-			$object->societe->id=$actioncomm['socid'];
+			$object->socid=$actioncomm['socid'];
+			$object->contactid=$actioncomm['contactid'];
 			$object->fk_project=$actioncomm['projectid'];
 			$object->note=$actioncomm['note'];
-			$object->contact->id=$actioncomm['contactid'];
 			$object->usertodo->id=$actioncomm['usertodo'];
 			$object->userdone->id=$actioncomm['userdone'];
 			$object->label=$actioncomm['label'];
@@ -541,7 +541,7 @@ function updateActionComm($authentication,$actioncomm)
 			$object->location=$actioncomm['location'];
 			$object->fk_element=$actioncomm['fk_element'];
 			$object->elementtype=$actioncomm['elementtype'];
-	
+
 			//Retreive all extrafield for actioncomm
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
@@ -551,7 +551,7 @@ function updateActionComm($authentication,$actioncomm)
 				$key='options_'.$key;
 				$object->array_options[$key]=$actioncomm[$key];
 			}
-	
+
 			$db->begin();
 
 			$result=$object->update($fuser);

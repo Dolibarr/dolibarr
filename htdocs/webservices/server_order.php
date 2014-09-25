@@ -755,7 +755,7 @@ function validOrder($authentication,$id='')
 				{
 					// Define output language
 					$outputlangs = $langs;
-					commande_pdf_create($db, $order, $order->modelpdf, $outputlangs, 0, 0, 0);
+					$order->generateDocument($order->modelpdf, $outputlangs);
 
 				}
 				else

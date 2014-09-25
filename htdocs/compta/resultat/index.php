@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accountin
 
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->COMPTA_MODE);
+$modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->ACCOUNTING_MODE);
 
 
 /*
@@ -480,7 +481,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 $sql.= " WHERE p.entity = ".$conf->entity;
 $sql.= " GROUP BY p.label, dm";
 
-dol_syslog("get social salaries payments  sql=".$sql);
+dol_syslog("get social salaries payments");
 $result=$db->query($sql);
 if ($result)
 {
@@ -498,6 +499,45 @@ if ($result)
 
 			if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
 			$decaiss_ttc[$obj->dm] += $obj->amount;
+
+			$i++;
+		}
+	}
+}
+else
+{
+	dol_print_error($db);
+}
+
+/*
+ * get dunning paiement
+*/
+$subtotal_ht = 0;
+$subtotal_ttc = 0;
+$sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+$sql.= " FROM ".MAIN_DB_PREFIX."don as p";
+$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " AND fk_statut=2";
+$sql.= " GROUP BY p.societe,  p.firstname, p.lastname, dm";
+
+dol_syslog("get social salaries payments");
+$result=$db->query($sql);
+if ($result)
+{
+	$num = $db->num_rows($result);
+	$var=false;
+	$i = 0;
+	if ($num)
+	{
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($result);
+
+			if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
+			$encaiss[$obj->dm] += $obj->amount;
+
+			if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
+			$encaiss_ttc[$obj->dm] += $obj->amount;
 
 			$i++;
 		}

@@ -304,13 +304,13 @@ if ($result)
             {
                 if ($key) print '<br>';
                 if ($links[$key]['type']=='payment') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowPayment'),'payment').' ';
                     print $langs->trans("Payment");
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='payment_supplier') {
-                    print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowPayment'),'payment').' ';
                     print $langs->trans("Payment");
                     print '</a>';
@@ -328,25 +328,25 @@ if ($result)
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='payment_sc') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowPayment'),'payment').' ';
                     print $langs->trans("SocialContributionPayment");
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='payment_vat') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/tva/fiche.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowVAT'),'payment').' ';
                     print $langs->trans("VATPayment");
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='payment_salary') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/salaries/fiche.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowPaymentSalary'),'payment').' ';
                     print $langs->trans("SalaryPayment");
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='member') {
-                    print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowMember'),'user').' ';
                     print $links[$key]['label'];
                     print '</a>';

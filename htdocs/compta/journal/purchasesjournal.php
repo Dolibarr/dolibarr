@@ -104,11 +104,11 @@ $sql.= " fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_t
 $sql.= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur,";
 $sql.= " p.rowid as pid, p.ref as ref, p.accountancy_code_buy,";
 $sql.= " ct.accountancy_code_buy as account_tva, ct.recuperableonly";
-$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det fd";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product";
-$sql.= " JOIN ".MAIN_DB_PREFIX."facture_fourn f ON f.rowid = fd.fk_facture_fourn";
-$sql.= " JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = f.fk_soc" ;
+$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as fd";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva as ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
+$sql.= " JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
+$sql.= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc" ;
 $sql.= " WHERE f.fk_statut > 0 AND f.entity = ".$conf->entity;
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
 else $sql.= " AND f.type IN (0,1,2,3)";
@@ -122,8 +122,8 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 	// les variables
-	$cptfour = (! empty($conf->global->COMPTA_ACCOUNT_SUPPLIER)?$conf->global->COMPTA_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef"));
-	$cpttva = (! empty($conf->global->COMPTA_VAT_BUY_ACCOUNT)?$conf->global->COMPTA_VAT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
+	$cptfour = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER)?$conf->global->ACCOUNTING_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef"));
+	$cpttva = (! empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)?$conf->global->ACCOUNTING_VAT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
 
 	$tabfac = array();
 	$tabht = array();
@@ -142,8 +142,8 @@ if ($result)
 		$compta_prod = $obj->accountancy_code_buy;
 		if (empty($compta_prod))
 		{
-			if($obj->product_type == 0) $compta_prod = (! empty($conf->global->COMPTA_PRODUCT_BUY_ACCOUNT)?$conf->global->COMPTA_PRODUCT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
-			else $compta_prod = (! empty($conf->global->COMPTA_SERVICE_BUY_ACCOUNT)?$conf->global->COMPTA_SERVICE_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
+			if($obj->product_type == 0) $compta_prod = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT)?$conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
+			else $compta_prod = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT)?$conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
 		}
 		$compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
 		$compta_localtax1 = (! empty($obj->account_localtax1)?$obj->account_localtax1:$langs->trans("CodeNotDef"));
@@ -230,7 +230,6 @@ foreach ($tabfac as $key => $val)
 			if (isset($line['nomtcheck']) || $mt)
 			{
 				print "<tr ".$bc[$var]." >";
-				//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
 				print "<td>".dol_print_date($val["date"])."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";

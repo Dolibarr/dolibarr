@@ -129,10 +129,10 @@ if ($result) {
 
 	$num = $db->num_rows($result);
 	// Variables
-	$cptfour = (! empty($conf->global->COMPTA_ACCOUNT_SUPPLIER) ? $conf->global->COMPTA_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
-	$cptcli = (! empty($conf->global->COMPTA_ACCOUNT_CUSTOMER) ? $conf->global->COMPTA_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
+	$cptfour = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
+	$cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
 	$cpttva = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) ? $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE : $langs->trans("CodeNotDef"));
-	$cptsociale = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) ? $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE : $langs->trans("CodeNotDef"));
+	$accountancy_account_salary = (! empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : $langs->trans("CodeNotDef"));
 
 	$tabpay = array ();
 	$tabbq = array ();
@@ -173,21 +173,26 @@ if ($result) {
 
 			$tabtype[$obj->rowid] = $links[$key]['type'];
 
-			if ($links[$key]['type'] == 'payment') {
+			if ($links[$key]['type'] == 'payment')
+			{
 				$paymentstatic->id = $links[$key]['url_id'];
 				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentstatic->getNomUrl(2);
-			} else if ($links[$key]['type'] == 'payment_supplier') {
+			} 
+			else if ($links[$key]['type'] == 'payment_supplier')
+			{
 				$paymentsupplierstatic->id = $links[$key]['url_id'];
 				$paymentsupplierstatic->ref = $links[$key]['url_id'];
 				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsupplierstatic->getNomUrl(2);
-			} else if ($links[$key]['type'] == 'company') {
-
+			}
+			else if ($links[$key]['type'] == 'company')
+			{
 				$societestatic->id = $links[$key]['url_id'];
 				$societestatic->nom = $links[$key]['label'];
 				$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 				$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
-			} else if ($links[$key]['type'] == 'sc') {
-
+			}
+			else if ($links[$key]['type'] == 'sc')
+			{
 				$chargestatic->id = $links[$key]['url_id'];
 				$chargestatic->ref = $links[$key]['url_id'];
 
@@ -196,7 +201,9 @@ if ($result) {
 					if ($reg[1] == 'socialcontribution')
 						$reg[1] = 'SocialContribution';
 					$chargestatic->lib = $langs->trans($reg[1]);
-				} else {
+				}
+				else
+				{
 					$chargestatic->lib = $links[$key]['label'];
 				}
 				$chargestatic->ref = $chargestatic->lib;
@@ -211,29 +218,33 @@ if ($result) {
 
 				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
 				$resultmid = $db->query($sqlmid);
-				if ($resultmid) {
+				if ($resultmid)
+				{
 					$objmid = $db->fetch_object($resultmid);
 					$tabtp[$obj->rowid][$objmid->accountancy_code] += $obj->amount;
 				}
-			} else if ($links[$key]['type'] == 'payment_vat') {
-
+			}
+			else if ($links[$key]['type'] == 'payment_vat')
+			{
 				$paymentvatstatic->id = $links[$key]['url_id'];
 				$paymentvatstatic->ref = $links[$key]['url_id'];
 				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
 				$tabtp[$obj->rowid][$cpttva] += $obj->amount;
-			} else if ($links[$key]['type'] == 'payment_salary') {
-				
+			}
+			else if ($links[$key]['type'] == 'payment_salary')
+			{	
 				$paymentsalstatic->id = $links[$key]['url_id'];
 				$paymentsalstatic->ref = $links[$key]['url_id'];
 				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
-				$tabtp[$obj->rowid][$cptsociale] += $obj->amount;
-			} else if ($links[$key]['type'] == 'banktransfert') {
-
+				$tabtp[$obj->rowid][$accountancy_account_salary] += $obj->amount;
+			}
+			else if ($links[$key]['type'] == 'banktransfert')
+			{
 				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
 				$tabtp[$obj->rowid][$cpttva] += $obj->amount;
 			}
 			/*else {
-				$tabtp [$obj->rowid] [$cptsociale] += $obj->amount;
+				$tabtp [$obj->rowid] [$accountancy_account_salary] += $obj->amount;
 			}*/
 		}
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
@@ -338,7 +349,7 @@ if ($action == 'writeBookKeeping') {
 					$bookkeeping->doc_ref = $objmid->facnumber;
 				}
 				$bookkeeping->code_tiers = $k;
-				$bookkeeping->numero_compte = $conf->global->COMPTA_ACCOUNT_CUSTOMER;
+				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			} else if ($tabtype[$key] == 'payment_supplier') {
 
 				$sqlmid = 'SELECT facf.facnumber';
@@ -353,7 +364,7 @@ if ($action == 'writeBookKeeping') {
 					$bookkeeping->doc_ref = $objmid->facnumber;
 				}
 				$bookkeeping->code_tiers = $k;
-				$bookkeeping->numero_compte = $conf->global->COMPTA_ACCOUNT_SUPPLIER;
+				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 			} else if ($tabtype[$key] == 'company') {
 
 				$sqlmid = 'SELECT fac.facnumber';
@@ -368,11 +379,11 @@ if ($action == 'writeBookKeeping') {
 					$bookkeeping->doc_ref = $objmid->facnumber;
 				}
 				$bookkeeping->code_tiers = $k;
-				$bookkeeping->numero_compte = $conf->global->COMPTA_ACCOUNT_CUSTOMER;
+				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			} else {
 
 				$bookkeeping->doc_ref = $k;
-				$bookkeeping->numero_compte = $conf->global->COMPTA_ACCOUNT_CUSTOMER;
+				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			}
 
 			$result = $bookkeeping->create();
@@ -423,9 +434,9 @@ if ($action == 'export_csv') {
 					print $date . $sep;
 					print $conf->global->ACCOUNTING_BANK_JOURNAL . $sep;
 					if ($val["lib"] == '(SupplierInvoicePayment)') {
-						print length_accountg($conf->global->COMPTA_ACCOUNT_SUPPLIER) . $sep;
+						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
 					} else {
-						print length_accountg($conf->global->COMPTA_ACCOUNT_CUSTOMER) . $sep;
+						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
 					}
 					print length_accounta(html_entity_decode($k)) . $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
@@ -477,14 +488,14 @@ if ($action == 'export_csv') {
 
 	llxHeader('', $langs->trans("BankJournal"));
 
-	$nom = $langs->trans("BankJournal");
-	$nomlink = '';
+	$namereport = $langs->trans("BankJournal");
+	$namelink = '';
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = time();
 	$description = $langs->trans("DescBankJournal") . '<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
-	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
+	report_header($namereport, $namelink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
 
 	print '<input type="button" class="button" style="float: right;" value="Export CSV" onclick="launch_export();" />';
 

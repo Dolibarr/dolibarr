@@ -395,7 +395,7 @@ class PaymentSalary extends CommonObject
 					if (! $error)
 					{
 						// Add link 'payment_salary' in bank_url between payment and bank transaction
-						$url=DOL_URL_ROOT.'/compta/salaries/fiche.php?id=';
+						$url=DOL_URL_ROOT.'/compta/salaries/card.php?id=';
 
 						$result=$acc->add_url_line($bank_line_id, $this->id, $url, "(SalaryPayment)", "payment_salary");
 						if ($result <= 0)
@@ -412,7 +412,7 @@ class PaymentSalary extends CommonObject
 					$result=$acc->add_url_line(
 						$bank_line_id,
 						$this->fk_user,
-						DOL_URL_ROOT.'/user/fiche.php?id=',
+						DOL_URL_ROOT.'/user/card.php?id=',
 						$langs->trans("SalaryPayment").' '.$fuser->getFullName($langs).' '.dol_print_date($this->datesp,'dayrfc').' '.dol_print_date($this->dateep,'dayrfc'),
 						'(User)',
 						'user'
@@ -488,7 +488,7 @@ class PaymentSalary extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/salaries/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='payment';

@@ -2,7 +2,7 @@
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,38 +209,42 @@ class Don extends CommonObject
      */
     function check($minimum=0)
     {
+    	global $langs;
+    	$langs->load('main');
+    	$langs->load('companies');
+    	
         $err = 0;
 
         if (dol_strlen(trim($this->societe)) == 0)
         {
             if ((dol_strlen(trim($this->lastname)) + dol_strlen(trim($this->firstname))) == 0)
             {
-                $error_string[$err] = "Vous devez saisir vos nom et prenom ou le nom de votre societe.";
+                $error_string[$err] = $langs->trans('ErrorFieldRequired',$langs->trans('Company').'/'.$langs->trans('Firstname').'-'.$langs->trans('Lastname'));
                 $err++;
             }
         }
 
         if (dol_strlen(trim($this->address)) == 0)
         {
-            $error_string[$err] = "L'adresse saisie est invalide";
+            $error_string[$err] = $langs->trans('ErrorFieldRequired',$langs->trans('Address'));
             $err++;
         }
 
         if (dol_strlen(trim($this->zip)) == 0)
         {
-            $error_string[$err] = "Le code postal saisi est invalide";
+            $error_string[$err] = $langs->trans('ErrorFieldRequired',$langs->trans('Zip'));
             $err++;
         }
 
         if (dol_strlen(trim($this->town)) == 0)
         {
-            $error_string[$err] = "La ville saisie est invalide";
+            $error_string[$err] = $langs->trans('ErrorFieldRequired',$langs->trans('Town'));
             $err++;
         }
 
         if (dol_strlen(trim($this->email)) == 0)
         {
-            $error_string[$err] = "L'email saisi est invalide";
+            $error_string[$err] = $langs->trans('ErrorFieldRequired',$langs->trans('EMail'));
             $err++;
         }
 
@@ -252,7 +256,7 @@ class Don extends CommonObject
         {
             if (!isset($map[substr($this->amount, $i, 1)] ))
             {
-                $error_string[$err] = "Le montant du don contient un/des caractere(s) invalide(s)";
+                $error_string[$err] = $langs->trans('ErrorFieldRequired',$langs->trans('Amount'));
                 $err++;
                 $amount_invalid = 1;
                 break;
@@ -263,14 +267,14 @@ class Don extends CommonObject
         {
             if ($this->amount == 0)
             {
-                $error_string[$err] = "Le montant du don est null";
+                $error_string[$err] = $langs->trans('ErrorFieldRequired',$langs->trans('Amount'));
                 $err++;
             }
             else
             {
                 if ($this->amount < $minimum && $minimum > 0)
                 {
-                    $error_string[$err] = "Le montant minimum du don est de $minimum";
+                    $error_string[$err] = $langs->trans('MinimumAmount',$langs->trans('$minimum'));
                     $err++;
                 }
             }
@@ -707,7 +711,7 @@ class Don extends CommonObject
 
         $result='';
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/dons/fiche.php?rowid='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/dons/card.php?rowid='.$this->id.'">';
         $lienfin='</a>';
 
         $picto='generic';

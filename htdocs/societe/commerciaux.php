@@ -186,7 +186,7 @@ if ($_GET["socid"])
 				null; // actions in normal case
       		}
 
-			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
 			print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
 			print '</a>&nbsp;';
@@ -253,7 +253,7 @@ if ($_GET["socid"])
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var]."><td>";
-				print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+				print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
 				print img_object($langs->trans("ShowUser"),"user").' ';
 				print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
 				print '</a>';

@@ -7,6 +7,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1531,7 +1532,7 @@ class Contrat extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='contract';
@@ -2013,7 +2014,7 @@ class ContratLigne extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$this->fk_contrat.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'">';
 		$lienfin='</a>';
 
 		$picto='contract';
@@ -2339,6 +2340,39 @@ class ContratLigne extends CommonObject
 		}
 	}
 
+	/**
+	 *  Create a contract document on disk using template defined into CONTRACT_ADDON_PDF
+	 *
+	 *  @param	string		$modele			force le modele a utiliser ('' par defaut)
+	 *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param  int			$hidedetails    Hide details of lines
+	 *  @param  int			$hidedesc       Hide description
+	 *  @param  int			$hideref        Hide ref
+	 *  @return int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$langs,$user,$hookmanager;
+
+		$langs->load("contracts");
+
+		// Positionne modele sur le nom du modele de contrat a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->CONTRACT_ADDON_PDF))
+			{
+				$modele = $conf->global->CONTRACT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'strato';
+			}
+		}
+
+		$modelpath = "core/modules/contract/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 }
 
 

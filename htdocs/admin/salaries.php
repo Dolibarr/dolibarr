@@ -36,7 +36,7 @@ if (!$user->admin)
 
 $action = GETPOST('action', 'alpha');
 
-// Other parameters COMPTA_* & ACCOUNTING_*
+// Other parameters SALARIES_*
 $list = array (
 		'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 		'SALARIES_ACCOUNTING_ACCOUNT_CHARGE'

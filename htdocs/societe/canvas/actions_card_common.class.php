@@ -242,14 +242,14 @@ abstract class ActionsCardCommon
 
                         if ( $this->object->client == 1 )
                         {
-                            header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$this->object->id);
+                            header("Location: ".DOL_URL_ROOT."/comm/card.php?socid=".$this->object->id);
                             return;
                         }
                         else
                         {
                             if (  $this->object->fournisseur == 1 )
                             {
-                                header("Location: ".DOL_URL_ROOT."/fourn/fiche.php?socid=".$this->object->id);
+                                header("Location: ".DOL_URL_ROOT."/fourn/card.php?socid=".$this->object->id);
                                 return;
                             }
                             else

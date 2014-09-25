@@ -174,7 +174,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 					if ($regenerate || ! dol_is_file($filename))
 					{
 	            	    if ($usestdout) print "Build PDF for invoice ".$obj->facnumber." - Lang = ".$outputlangs->defaultlang."\n";
-	    				$result=facture_pdf_create($db, $fac, $regenerate?$regenerate:$fac->modelpdf, $outputlangs);
+	    				$result= $fac->generateDocument($regenerate?$regenerate:$fac->modelpdf, $outputlangs);
 					}
 					else {
 					    if ($usestdout) print "PDF for invoice ".$obj->facnumber." already exists\n";

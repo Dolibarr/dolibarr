@@ -173,7 +173,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
     	// Crabe (english)
     	$localobject->modelpdf='crabe';
-    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 		$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
@@ -181,7 +181,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     	$newlangs1=new Translate("",$conf);
     	$newlangs1->setDefaultLang('ja_JP');
     	$localobject->modelpdf='crabe';
-    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $newlangs1);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs1);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
@@ -189,7 +189,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     	$newlangs2a=new Translate("",$conf);
     	$newlangs2a->setDefaultLang('sa_SA');
     	$localobject->modelpdf='crabe';
-    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $newlangs2a);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2a);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
@@ -197,7 +197,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     	$newlangs2b=new Translate("",$conf);
     	$newlangs2b->setDefaultLang('en_SA');
     	$localobject->modelpdf='crabe';
-    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $newlangs2b);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2b);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
@@ -205,7 +205,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     	$newlangs3=new Translate("",$conf);
     	$newlangs3->setDefaultLang('el_GR');
     	$localobject->modelpdf='crabe';
-    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $newlangs3);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs3);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
@@ -213,7 +213,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     	$newlangs4=new Translate("",$conf);
     	$newlangs4->setDefaultLang('zh_CN');
     	$localobject->modelpdf='crabe';
-    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $newlangs4);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs4);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
@@ -221,7 +221,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     	$newlangs5=new Translate("",$conf);
     	$newlangs5->setDefaultLang('ru_RU');
     	$localobject->modelpdf='crabe';
-    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $newlangs5);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs5);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
@@ -247,7 +247,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Canelle
         $localobject->modelpdf='canelle';
-        $result=supplier_invoice_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
@@ -274,7 +274,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Einstein
         $localobject->modelpdf='einstein';
-        $result=commande_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
@@ -302,7 +302,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Muscadet
         $localobject->modelpdf='muscadet';
-        $result=supplier_order_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+        $result= $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
@@ -329,7 +329,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Azur
         $localobject->modelpdf='azur';
-        $result=propale_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
@@ -355,7 +355,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Baleine
         $localobject->modelpdf='baleine';
-        $result=project_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
@@ -409,14 +409,14 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Merou
         $localobject->modelpdf='merou';
-        $result=expedition_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+        $result= $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
 
         // Rouget
         $localobject->modelpdf='rouget';
-        $result=expedition_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+        $result= $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";

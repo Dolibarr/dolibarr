@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014		Ari Elbaz (elarifr)		<github@accedinfo.com>  
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ $mesCasesCochees = GETPOST('mesCasesCochees', 'array');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->access)
+if (! $user->rights->accounting->ventilation->dispatch)
 	accessforbidden();
 
 $formventilation = new FormVentilation($db);
@@ -113,7 +114,9 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON p.accountancy_code_buy = aa.account_number";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation = 0";
+$sql .= " AND (accsys.rowid='".$conf->global->CHARTOFACCOUNTS."' OR p.accountancy_code_sell IS NULL)";
 
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity = '" . $conf->entity . "'";
@@ -176,9 +179,9 @@ if ($result) {
 			print '&nbsp;';
 		print '</td>';
 		
-		// print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->ref.'</a></td>';
+		// print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.$objp->ref.'</a></td>';
 		
-		// print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->ref_supplier.'</a></td>';
+		// print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.$objp->ref_supplier.'</a></td>';
 		
 		print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';
 		
@@ -198,7 +201,7 @@ if ($result) {
 		print '</td>';
 		// Colonne choix ligne a ventiler
 		print '<td align="center">';
-		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->code_buy ? "checked" : "") . '/>';
+		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
 		
 		print "</tr>";

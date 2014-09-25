@@ -149,6 +149,68 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
 	}
 }
 
+ // Action clone object
+if ($action == 'confirm_clone' && $confirm != 'yes') { $action=''; }
+if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->charges->creer))
+{
+    
+        $db->begin();
+
+		$originalId = $id;
+        
+		$object = new ChargeSociales($db);
+		$object->fetch($id);
+
+        if ($object->id > 0)
+        {
+            $object->paye = 0;
+            $object->id = $object->ref = null;
+     
+            if(GETPOST('clone_for_next_month') != '') {
+            	
+				$object->date_ech = strtotime('+1month', $object->date_ech);
+				$object->periode = strtotime('+1month', $object->periode);
+	        }
+			            
+            if ($object->check())
+            {
+                $id = $object->create($user);
+                if ($id > 0)
+                {
+                    $db->commit();
+                    $db->close();
+
+                    header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+                    exit;
+                }
+                else
+                {
+                    $id=$originalId;
+					$db->rollback();
+                    
+				    if (count($object->errors))
+                    {
+                    	setEventMessage($object->errors, 'errors');
+                    	dol_print_error($db,$object->errors);
+                    }
+                    else
+                    {
+                    	setEventMessage($langs->trans($object->error), 'errors');
+                    	dol_print_error($db,$object->error);
+                    }
+                }
+            }
+        }
+        else
+        {
+            $db->rollback();
+            dol_print_error($db,$object->error);
+        }
+    
+}
+
+
+
 
 
 /*
@@ -239,7 +301,18 @@ if ($id > 0)
 		$head=tax_prepare_head($object);
 
 		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
-
+		
+		// Clone confirmation
+		if ($action === 'clone')
+		{
+			$formclone=array(
+				array('type' => 'checkbox', 'name' => 'clone_for_next_month','label' => $langs->trans("CloneTaxForNextMonth"), 'value' => 1),
+    
+			);
+			
+		    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneTax'),$langs->trans('ConfirmCloneTax',$object->ref),'confirm_clone',$formclone,'yes');
+		}
+		
 		// Confirmation de la suppression de la charge
 		if ($action == 'paid')
 		{
@@ -319,7 +392,7 @@ if ($id > 0)
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var]."><td>";
-				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
         		print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
@@ -418,6 +491,12 @@ if ($id > 0)
 			if ($object->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
 			{
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
+			}
+			
+			// Clone
+			if ($user->rights->tax->charges->creer)
+			{
+				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/charges.php",1). "?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a>";
 			}
 
 			// Delete

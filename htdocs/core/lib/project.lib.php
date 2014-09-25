@@ -38,7 +38,7 @@ function project_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Project");
 	$head[$h][2] = 'project';
 	$h++;
@@ -642,6 +642,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 
 	$sortfield='';
 	$sortorder='';
+	$project_year_filter=0;
 
 	$title=$langs->trans("Project");
 	if ($statut == 0) $title=$langs->trans("ProjectDraft");
@@ -680,6 +681,17 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 	if ($statut >= 0)
 	{
 		$sql.= " AND p.fk_statut = ".$statut;
+	}
+	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE)) {
+		$project_year_filter = GETPOST("project_year_filter");
+		//Check if empty or invalid year. Wildcard ignores the sql check
+		if ($project_year_filter != "*") {
+			if (empty($project_year_filter) || !ctype_digit($project_year_filter)) { //
+				$project_year_filter = date("Y");
+			}
+			$sql.= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day($project_year_filter,12,false)).")";
+			$sql.= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day($project_year_filter,1,false)).")";
+		}
 	}
 	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut";
 	$sql.= " ORDER BY p.title, p.ref";
@@ -724,6 +736,19 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 	{
 		dol_print_error($db);
 	}
+
 	print "</table>";
+
+	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE)) {
+		//Add the year filter input
+		print '<table width="100%">';
+		print '<tr>';
+		print '<td>'.$langs->trans("Year").'</td>';
+		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<td style="text-align:right"><input type="text" size="4" class="flat" name="project_year_filter" value="'.$project_year_filter.'"/>';
+		print '</form>';
+		print "</tr>\n";
+		print '</table>';
+	}
 }
 

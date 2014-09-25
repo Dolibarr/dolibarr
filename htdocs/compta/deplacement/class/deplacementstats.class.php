@@ -77,7 +77,7 @@ class DeplacementStats extends Stats
 	 */
 	function getNbByYear()
 	{
-		$sql = "SELECT YEAR(datef) as dm, count(*)";
+		$sql = "SELECT YEAR(dated) as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		$sql.= " GROUP BY dm DESC";
 		$sql.= " WHERE ".$this->where;

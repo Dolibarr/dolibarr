@@ -233,7 +233,7 @@ class mailing_framboise extends MailingTargets
 		//$companystatic->id=$id;
 		//$companystatic->nom='';
 		//return $companystatic->getNomUrl(1);	// Url too long
-		return '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$id.'">'.img_object('',"user").'</a>';
+		return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$id.'">'.img_object('',"user").'</a>';
 	}
 
 }

@@ -10,6 +10,7 @@
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-214  Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1746,7 +1747,7 @@ class Propal extends CommonObject
                 		$outputlangs->setDefaultLang($newlang);
                 	}
                 	//$ret=$object->fetch($id);    // Reload to get new records
-                	propale_pdf_create($this->db, $this, $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL?$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	                $this->generateDocument($conf->global->PROPALE_ADDON_PDF_ODT_TOBILL?$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                 }
 
                 // Call trigger
@@ -1768,7 +1769,7 @@ class Propal extends CommonObject
             			$outputlangs->setDefaultLang($newlang);
             		}
             		//$ret=$object->fetch($id);    // Reload to get new records
-            		propale_pdf_create($this->db, $this, $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED?$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		            $this->generateDocument($conf->global->PROPALE_ADDON_PDF_ODT_CLOSED?$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             	}
 
                 // Call trigger
@@ -2672,6 +2673,41 @@ class Propal extends CommonObject
             return -1;
         }
     }
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 * 	@param	    string		$modele			Force model to use ('' to not force)
+	 * 	@param		Translate	$outputlangs	Object langs to use for output
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 * 	@return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("propale");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->PROPALE_ADDON_PDF))
+			{
+				$modele = $conf->global->PROPALE_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'azur';
+			}
+		}
+
+		$modelpath = "core/modules/propale/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
 
 }
 

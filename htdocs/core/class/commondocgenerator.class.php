@@ -27,8 +27,7 @@
 
 
 /**
- *	\class      CommonDocGenerator
- *	\brief      Parent class for documents generators
+ *	Parent class for documents generators
  */
 abstract class CommonDocGenerator
 {

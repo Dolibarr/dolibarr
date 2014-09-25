@@ -250,7 +250,7 @@ print "</table>";
 print '<div class="tabsAction">'."\n";
 if ($user->rights->banque->configurer)
 {
-	print '<a class="butAction" href="fiche.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
+	print '<a class="butAction" href="card.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
 }
 print '</div>';
 
