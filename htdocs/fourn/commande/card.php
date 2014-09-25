@@ -1814,98 +1814,104 @@ elseif (! empty($object->id))
 		/**
 		 * Boutons actions
 		 */
-		if ($user->societe_id == 0 && $action != 'edit_line' && $action != 'delete')
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+		// modified by hook
+		if (empty($reshook))
 		{
-			print '<div	 class="tabsAction">';
-
-			// Validate
-			if ($object->statut == 0 && $num > 0)
+			if ($user->societe_id == 0 && $action != 'edit_line' && $action != 'delete')
 			{
-				if ($user->rights->fournisseur->commande->valider)
+				print '<div	 class="tabsAction">';
+	
+				// Validate
+				if ($object->statut == 0 && $num > 0)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid"';
-					print '>'.$langs->trans('Validate').'</a>';
+					if ($user->rights->fournisseur->commande->valider)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid"';
+						print '>'.$langs->trans('Validate').'</a>';
+					}
 				}
-			}
-
-			// Modify
-			if ($object->statut == 1)
-			{
-				if ($user->rights->fournisseur->commande->commander)
+	
+				// Modify
+				if ($object->statut == 1)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a>';
+					if ($user->rights->fournisseur->commande->commander)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a>';
+					}
 				}
-			}
-
-			// Approve
-			if ($object->statut == 1)
-			{
-				if ($user->rights->fournisseur->commande->approuver)
+	
+				// Approve
+				if ($object->statut == 1)
 				{
-					print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
-					print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+					if ($user->rights->fournisseur->commande->approuver)
+					{
+						print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+						print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+					}
+					else
+					{
+						print '<a class="butActionRefused" href="#">'.$langs->trans("ApproveOrder").'</a>';
+						print '<a class="butActionRefused" href="#">'.$langs->trans("RefuseOrder").'</a>';
+					}
 				}
-				else
+	
+				// Send
+				if (in_array($object->statut, array(2, 3, 4, 5)))
 				{
-					print '<a class="butActionRefused" href="#">'.$langs->trans("ApproveOrder").'</a>';
-					print '<a class="butActionRefused" href="#">'.$langs->trans("RefuseOrder").'</a>';
+					if ($user->rights->fournisseur->commande->commander)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+					}
 				}
-			}
-
-			// Send
-			if (in_array($object->statut, array(2, 3, 4, 5)))
-			{
-				if ($user->rights->fournisseur->commande->commander)
+	
+				// Reopen
+				if (in_array($object->statut, array(2, 5, 6, 7, 9)))
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+					if ($user->rights->fournisseur->commande->commander)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+					}
 				}
-			}
-
-			// Reopen
-			if (in_array($object->statut, array(2, 5, 6, 7, 9)))
-			{
-				if ($user->rights->fournisseur->commande->commander)
+	
+				// Create bill
+				if (! empty($conf->fournisseur->enabled) && $object->statut >= 2)  // 2 means accepted
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+					if ($user->rights->fournisseur->facture->creer)
+					{
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+					}
+	
+					//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
+					//{
+					//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+					//}
 				}
-			}
-
-			// Create bill
-			if (! empty($conf->fournisseur->enabled) && $object->statut >= 2)  // 2 means accepted
-			{
-				if ($user->rights->fournisseur->facture->creer)
+	
+				// Cancel
+				if ($object->statut == 2)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+					if ($user->rights->fournisseur->commande->commander)
+					{
+						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+					}
 				}
-
-				//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
-				//{
-				//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
-				//}
-			}
-
-			// Cancel
-			if ($object->statut == 2)
-			{
-				if ($user->rights->fournisseur->commande->commander)
+	
+				// Clone
+				if ($user->rights->fournisseur->commande->creer)
 				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
 				}
+	
+				// Delete
+				if ($user->rights->fournisseur->commande->supprimer)
+				{
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+				}
+	
+				print "</div>";
 			}
-
-			// Clone
-			if ($user->rights->fournisseur->commande->creer)
-			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
-			}
-
-			// Delete
-			if ($user->rights->fournisseur->commande->supprimer)
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-			}
-
-			print "</div>";
 		}
 		print "<br>";
 
