@@ -47,8 +47,10 @@ class ActionComm extends CommonObject
 
     var $datec;			// Date creation record (datec)
     var $datem;			// Date modification record (tms)
-    var $author;		// Object user that create action
-    var $usermod;		// Object user that modified action
+    var $author;		// Object user that create action 	//deprecated
+    var $usermod;		// Object user that modified action	// deprecated
+    var $authorid;		// Id user that create action
+    var $usermodid;		// Id user that modified action
 
     var $datep;			// Date action start (datep)
     var $datef;			// Date action end (datep2)
@@ -63,8 +65,9 @@ class ActionComm extends CommonObject
     var $note;          // Description
 
 	var $userassigned = array();	// Array of user ids
-    var $usertodo;		// Object user of owner
-    var $userdone;	 	// Object user that did action (deprecated)
+    var $userownerid;	// Id of user owner
+	var $usertodo;		// Object user of owner				// deprecated
+    var $userdone;	 	// Object user that did action		// deprecated
 
     var $socid;
     var $contactid;
@@ -134,6 +137,9 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
+        $userownerid=isset($this->usertodo->id)?$this->usertodo->id:$this->userownerid;		// For backward compatibility
+        $userdoneid=isset($this->userdone->id)?$this->userdone->id:$this->userdoneid;		// For backward compatibility
+
         if (! $this->type_id && $this->type_code)
         {
             // Get id from code
@@ -197,8 +203,8 @@ class ActionComm extends CommonObject
         $sql.= " '".$this->db->escape($this->note)."',";
         $sql.= (isset($this->contactid) && $this->contactid > 0?"'".$this->contactid."'":"null").",";
         $sql.= (isset($user->id) && $user->id > 0 ? "'".$user->id."'":"null").",";
-        $sql.= (isset($this->usertodo->id) && $this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
-        $sql.= (isset($this->userdone->id) && $this->userdone->id > 0?"'".$this->userdone->id."'":"null").",";
+        $sql.= ($userownerid>0?"'".$userownerid."'":"null").",";
+        $sql.= ($userdoneid>0?"'".$userdoneid."'":"null").",";
         $sql.= "'".$this->db->escape($this->label)."','".$this->percentage."','".$this->priority."','".$this->fulldayevent."','".$this->db->escape($this->location)."','".$this->punctual."',";
         $sql.= "'".$this->transparency."',";
         $sql.= (! empty($this->fk_element)?$this->fk_element:"null").",";
@@ -351,8 +357,9 @@ class ActionComm extends CommonObject
                 $this->author->lastname		= $obj->lastname;
                 $this->usermod->id			= $obj->fk_user_mod;
 
-                $this->usertodo->id			= $obj->fk_user_action;
-                $this->userdone->id			= $obj->fk_user_done;
+                $this->userownerid			= $obj->fk_user_action;
+                $this->usertodo->id			= $obj->fk_user_action;		// deprecated
+                //$this->userdone->id			= $obj->fk_user_done;
                 $this->priority				= $obj->priority;
                 $this->fulldayevent			= $obj->fulldayevent;
                 $this->location				= $obj->location;
@@ -380,19 +387,25 @@ class ActionComm extends CommonObject
 
 
     /**
-     *    Initialize this->userassigned array
+     *    Initialize this->userassigned array with list of id of user assigned to event
      *
      *    @return	int				<0 if KO, >0 if OK
      */
     function fetch_userassigned()
     {
         global $langs;
+
         $sql.="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
 		$sql.=" FROM ".MAIN_DB_PREFIX."actioncomm_resources";
 		$sql.=" WHERE element_type = 'user' AND fk_actioncomm = ".$this->id;
 		$resql2=$this->db->query($sql);
 		if ($resql2)
 		{
+			$this->userassigned=array();
+
+			// If owner is known, we must but id first into list
+			if ($this->userownerid > 0) $this->userassigned[$this->userownerid]=array('id'=>$this->userownerid);	// Set first so will be first into list.
+
             while ($obj = $this->db->fetch_object($resql2))
             {
             	$this->userassigned[$obj->fk_element]=array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
