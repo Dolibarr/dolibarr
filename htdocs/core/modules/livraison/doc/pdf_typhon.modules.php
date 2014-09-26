@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
  * Copyright (C) 2011-2012 Philippe Grand        <philippe.grand@atoo-net.com>
@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/livraison/pdf/pdf_typhon.modules.php
+ *	\file       htdocs/core/modules/livraison/doc/pdf_typhon.modules.php
  *	\ingroup    livraison
  *	\brief      File of class to manage receving receipts with template Typhon
  *	\author	    Laurent Destailleur
