@@ -217,7 +217,7 @@ function delivery_order_pdf_create($db, $object, $modele, $outputlangs='')
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object,$outputlangs) > 0)
+		if ($obj->write_file($object, $outputlangs, $srctemplatepath) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 
