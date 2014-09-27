@@ -357,5 +357,3 @@ function measuring_units_string($unit,$measuring_style='')
 
 	return $measuring_units[$unit];
 }
-
-?>

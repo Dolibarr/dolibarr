@@ -706,4 +706,3 @@ abstract class ActionsCardCommon
 
 }
 
-?>

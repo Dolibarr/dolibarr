@@ -430,5 +430,3 @@ function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexterna
 	if (! $menuentry['perms']) return 2;															// No permissions and user is external
 	return 1;
 }
-
-?>
