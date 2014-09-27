@@ -91,7 +91,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	 * 	Check validity of code according to its rules
 	 *
 	 *	@param	DoliDB		$db		Database handler
-	 *	@param	string		&$code	Code to check/correct
+	 *	@param	string		$code	Code to check/correct
 	 *	@param	Product		$product	Object product
 	 *  @param  int		  	$type   0 = product , 1 = service
 	 *  @return int					0 if OK

@@ -133,17 +133,17 @@ class Societe extends CommonObject
     var $barcode_type;
     /**
      * code (loaded by fetch_barcode)
-     * @var
+     * @var string
      */
     var $barcode_type_code;
     /**
      * label (loaded by fetch_barcode)
-     * @var
+     * @var string
      */
     var $barcode_type_label;
     /**
      * coder (loaded by fetch_barcode)
-     * @var
+     * @var string
      */
     var $barcode_type_coder;
 
