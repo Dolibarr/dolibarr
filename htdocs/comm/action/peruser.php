@@ -179,17 +179,11 @@ $next_year  = $next['year'];
 $next_month = $next['month'];
 $next_day   = $next['day'];
 
-// Define firstdaytoshow and lastdaytoshow
-$firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
-$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 6, 'd');
-
 $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
 
 $tmpday = $first_day;
 //print 'xx'.$prev_year.'-'.$prev_month.'-'.$prev_day;
 //print 'xx'.$next_year.'-'.$next_month.'-'.$next_day;
-//print dol_print_date($firstdaytoshow,'day');
-//print dol_print_date($lastdaytoshow,'day');
 
 $title=$langs->trans("DoneAndToDoActions");
 if ($status == 'done') $title=$langs->trans("DoneActions");
@@ -225,9 +219,11 @@ $next_year  = $next['year'];
 $next_month = $next['month'];
 $next_day   = $next['day'];
 
-// Define firstdaytoshow and lastdaytoshow
+// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 $firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
-$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 6, 'd');
+$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
+//print dol_print_date($firstdaytoshow,'dayhour');
+//print dol_print_date($lastdaytoshow,'dayhour');
 
 $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
 
@@ -440,14 +436,14 @@ if ($resql)
 
         // Check values
         if ($event->date_end_in_calendar < $firstdaytoshow ||
-        $event->date_start_in_calendar > $lastdaytoshow)
+        $event->date_start_in_calendar >= $lastdaytoshow)
         {
             // This record is out of visible range
         }
         else
 		{
             if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
-            if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
+            if ($event->date_end_in_calendar >= $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow - 1);
 
             // Add an entry in actionarray for each day
             $daycursor=$event->date_start_in_calendar;
@@ -459,7 +455,7 @@ if ($resql)
             $loop=true; $j=0;
             $daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
             do
-            {
+			{
                 //if ($event->id==408) print 'daykey='.$daykey.' '.$event->datep.' '.$event->datef.'<br>';
 
                 $eventarray[$daykey][]=$event;
@@ -481,7 +477,6 @@ else
 {
     dol_print_error($db);
 }
-
 
 $maxnbofchar=18;
 $cachethirdparties=array();
@@ -647,7 +642,7 @@ foreach ($usernames as $username)
 }
 
 echo "</table>\n";
-
+var_dump($eventarray);exit;
 
 // Add js code to manage click on a box
 print '<script type="text/javascript" language="javascript">
