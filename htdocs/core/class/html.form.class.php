@@ -2830,8 +2830,8 @@ class Form
                     }
                     else if ($input['type'] == 'select')
                     {
-                        $more.='<tr><td valign="top" style="padding: 4px !important;">';
-                        if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left" style="padding: 4px !important;">';
+                        $more.='<tr><td valign="top">';
+                        if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
                         $more.=$this->selectarray($input['name'],$input['values'],$input['default'],1);
                         $more.='</td></tr>'."\n";
                     }
