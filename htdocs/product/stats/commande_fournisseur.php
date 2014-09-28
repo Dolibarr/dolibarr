@@ -67,10 +67,10 @@ if ($id > 0 || ! empty($ref))
 {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
-	
+
 	$parameters=array('id'=>$id);
 	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
-	$error=$hookmanager->error; $errors=$hookmanager->errors;
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
@@ -80,8 +80,9 @@ if ($id > 0 || ! empty($ref))
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==1?'service':'product');
 		dol_fiche_head($head, 'referers', $titre, 0, $picto);
-		
+
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 		print '<table class="border" width="100%">';
 
@@ -147,7 +148,7 @@ if ($id > 0 || ! empty($ref))
 			print "</tr>\n";
 
 			$commandestatic=new CommandeFournisseur($db);
-			
+
 			if ($num > 0)
 			{
 				$var=True;
@@ -155,7 +156,7 @@ if ($id > 0 || ! empty($ref))
 				{
 					$objp = $db->fetch_object($result);
 					$var=!$var;
-					
+
 					$commandestatic->id=$objp->commandeid;
 					$commandestatic->ref=$objp->ref;
 					$commandestatic->statut=$objp->statut;

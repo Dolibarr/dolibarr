@@ -97,9 +97,12 @@ $permissionnote=$user->rights->ficheinter->creer;	// Used by the include of acti
 /*
  * Actions
  */
+
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
 
 if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 {
