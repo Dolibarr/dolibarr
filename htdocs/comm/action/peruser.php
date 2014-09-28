@@ -803,7 +803,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 						{
 							$busy=$event->transparency;
 							$cases1[$h][$event->id]['busy']=$busy;
-							$cases1[$h][$event->id]['string']=dol_print_date($event->date_start_in_calendar,'dayhour').' - '.dol_print_date($event->date_end_in_calendar,'dayhour').' - '.$event->label;
+							$cases1[$h][$event->id]['string']=dol_print_date($event->date_start_in_calendar,'dayhour');
+		                    if ($event->date_end_in_calendar && $event->date_end_in_calendar != $event->date_start_in_calendar)
+			        		{
+				        		$tmpa=dol_getdate($event->date_start_in_calendar,true);
+				        		$tmpb=dol_getdate($event->date_end_in_calendar,true);
+				        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases1[$h][$event->id]['string'].='-'.dol_print_date($event->date_end_in_calendar,'hour');
+				        		else $cases1[$h][$event->id]['string'].='-'.dol_print_date($event->date_end_in_calendar,'dayhour');
+			        		}
+							$cases1[$h][$event->id]['string'].=' - '.$event->label;
 							$cases1[$h][$event->id]['typecode']=$event->type_code;
 							if ($event->socid)
 							{
@@ -814,8 +822,16 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 						{
 							$busy=$event->transparency;
 							$cases2[$h][$event->id]['busy']=$busy;
-							$cases2[$h][$event->id]['string']=dol_print_date($event->date_start_in_calendar,'dayhour').' - '.dol_print_date($event->date_end_in_calendar,'dayhour').' - '.$event->label;
-							$cases1[$h][$event->id]['typecode']=$event->type_code;
+							$cases2[$h][$event->id]['string']=dol_print_date($event->date_start_in_calendar,'dayhour');
+							if ($event->date_end_in_calendar && $event->date_end_in_calendar != $event->date_start_in_calendar)
+			        		{
+				        		$tmpa=dol_getdate($event->date_start_in_calendar,true);
+				        		$tmpb=dol_getdate($event->date_end_in_calendar,true);
+				        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases2[$h][$event->id]['string'].='-'.dol_print_date($event->date_end_in_calendar,'hour');
+				        		else $cases2[$h][$event->id]['string'].='-'.dol_print_date($event->date_end_in_calendar,'dayhour');
+			        		}
+							$cases2[$h][$event->id]['string'].=' - '.$event->label;
+							$cases2[$h][$event->id]['typecode']=$event->type_code;
 							if ($event->socid)
 							{
 								$cases2[$h][$event->id]['string'].='xxx';

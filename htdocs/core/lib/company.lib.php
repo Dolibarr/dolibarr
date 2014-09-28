@@ -968,8 +968,8 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     $out.=dol_print_date($datep,'dayhour');
                     if ($datep2 && $datep2 != $datep)
 	        		{
-		        		$tmpa=dol_getdate($datep);
-		        		$tmpb=dol_getdate($datep2);
+		        		$tmpa=dol_getdate($datep,true);
+		        		$tmpb=dol_getdate($datep2,true);
 		        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out.='-'.dol_print_date($datep2,'hour');
 		        		else $out.='-'.dol_print_date($datep2,'dayhour');
 	        		}
@@ -1211,8 +1211,8 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             $out.=dol_print_date($histo[$key]['datestart'],'dayhour');
             if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart'])
             {
-        		$tmpa=dol_getdate($histo[$key]['datestart']);
-        		$tmpb=dol_getdate($histo[$key]['dateend']);
+        		$tmpa=dol_getdate($histo[$key]['datestart'],true);
+        		$tmpb=dol_getdate($histo[$key]['dateend'],true);
         		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out.='-'.dol_print_date($histo[$key]['dateend'],'hour');
         		else $out.='-'.dol_print_date($histo[$key]['dateend'],'dayhour');
             }
