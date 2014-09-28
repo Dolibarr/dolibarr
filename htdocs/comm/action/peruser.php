@@ -96,7 +96,7 @@ if ($dateselect > 0)
 
 $tmp=empty($conf->global->MAIN_DEFAULT_WORKING_HOURS)?'9-18':$conf->global->MAIN_DEFAULT_WORKING_HOURS;
 $tmparray=explode('-',$tmp);
-$begin_h = GETPOST('begin_h')?GETPOST('begin_h','int'):($tmparray[0] != '' ? $tmparray[0] : 9);
+$begin_h = GETPOST('begin_h')!=''?GETPOST('begin_h','int'):($tmparray[0] != '' ? $tmparray[0] : 9);
 $end_h   = GETPOST('end_h')?GETPOST('end_h'):($tmparray[1] != '' ? $tmparray[1] : 18);
 if ($begin_h < 0 || $begin_h > 23) $begin_h = 9;
 if ($end_h < 1 || $end_h > 24) $end_h = 18;
@@ -688,7 +688,7 @@ $db->close();
 
 
 /**
- * Show event of a particular day
+ * Show event of a particular day for a user
  *
  * @param	string	$username		Login
  * @param   int		$day            Day
@@ -723,6 +723,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	$ymd=sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day);
 
 	$nextindextouse=count($colorindexused);	// At first run, this is 0, so fist user has 0, next 1, ...
+	//if ($username->id && $day==1) var_dump($eventarray);
 
 	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused)
@@ -789,6 +790,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				// Define all rects with event (cases1 is first half hour, cases2 is second half hour)
 				for ($h = $begin_h; $h < $end_h; $h++)
 				{
+					//if ($username->id == 1 && $day==1) print 'h='.$h;
 					$color = ''; //init
 					if (empty($event->fulldayevent))
 					{
@@ -847,7 +849,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 						$cases2[$h][$event->id]['string']=$event->label;
 						$cases1[$h][$event->id]['typecode']=$event->type_code;
 						$cases2[$h][$event->id]['typecode']=$event->type_code;
-						break;
+						//break;
 					}
 				}
 				$i++;
