@@ -419,6 +419,7 @@ if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
 if ($socid > 0) $sql.= ' AND a.fk_soc = '.$socid;
+// FIXME: We must filter on assignement table
 if ($usergroup > 0) $sql.= " AND ugu.fk_user = a.fk_user_action";
 if ($action == 'show_day')
 {
@@ -453,6 +454,7 @@ if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
 if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
 if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
+// FIXME: We must filter on assignement table
 if ($filtera > 0 || $filtert > 0 || $filterd > 0 || $usergroup > 0)
 {
     $sql.= " AND (";
@@ -484,10 +486,12 @@ if ($resql)
         $event->type_code=$obj->code;
         $event->libelle=$obj->label;
         $event->percentage=$obj->percent;
-        $event->author->id=$obj->fk_user_author;	// user id of creator
-        $event->usertodo->id=$obj->fk_user_action;	// user id of owner
-        $event->userdone->id=$obj->fk_user_done;	// deprecated
-		// $event->userstodo=... with s after user, in future version, will be an array with all id of user assigned to event
+        //$event->author->id=$obj->fk_user_author;	// user id of creator
+        $event->authorid=$obj->fk_user_author;	// user id of creator
+        $event->userownerid=$obj->fk_user_action;	// user id of owner
+        $event->fetch_userassigned();				// This load $event->userassigned
+        //$event->usertodo->id=$obj->fk_user_action;	// user id of owner
+        //$event->userdone->id=$obj->fk_user_done;	// deprecated
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
@@ -1069,7 +1073,7 @@ $db->close();
  * @param   int		$year            Year
  * @param   int		$monthshown      Current month shown in calendar view
  * @param   string	$style           Style to use for this day
- * @param   array	&$eventarray     Array of events
+ * @param   array	$eventarray     Array of events
  * @param   int		$maxprint        Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar     Nb of characters to show for event line
  * @param   string	$newparam        Parameters on current URL
@@ -1132,19 +1136,19 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
             {
                 if ($i < $maxprint || $maxprint == 0 || ! empty($conf->global->MAIN_JS_SWITCH_AGENDA))
                 {
-                    $ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
+					$keysofuserassigned=array_keys($event->userassigned);
+
+                	$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
 
                     // Define $color and $cssclass of event
                     $color=-1; $cssclass=''; $colorindex=-1;
-                    if ((! empty($event->author->id) && $event->author->id == $user->id)
-                    || (! empty($event->usertodo->id) && $event->usertodo->id == $user->id)
-                    || (! empty($event->userdone->id) && $event->userdone->id == $user->id))
-                    {
-                    	$nummytasks++; $cssclass='family_mytasks';
+       				if (in_array($user->id, $keysofuserassigned))
+					{
+						$nummytasks++; $cssclass='family_mytasks';
                     	// TODO Set a color using user color
                     	// Must defined rule to choose color of who to use.
-                    	// event->usertodo->id will still contains user id of owner
-                    	// event->userstodo will be an array in future.
+                    	// event->ownerid will still contains user id of owner
+                    	// event->userassigned will be an array in future.
                     	// $color=$user->color;
                     }
                     else if ($event->type_code == 'ICALEVENT')
@@ -1164,7 +1168,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     if ($color == -1)	// Color was not forced. Set color according to color index.
                     {
                     	// Define color index if not yet defined
-                    	$idusertouse=($event->usertodo->id?$event->usertodo->id:0);
+                    	$idusertouse=($event->userownerid?$event->userownerid:0);
                     	if (isset($colorindexused[$idusertouse]))
                     	{
                     		$colorindex=$colorindexused[$idusertouse];	// Color already assigned to this user
@@ -1344,7 +1348,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                 }
                 else
                 {
-                	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?maxprint=0&month='.$monthshown.'&year='.$year;
+                	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action='.$action.'&maxprint=0&month='.$monthshown.'&year='.$year;
                     print ($status?'&status='.$status:'').($filter?'&filter='.$filter:'');
                     print ($filtera?'&filtera='.$filtera:'').($filtert?'&filtert='.$filtert:'').($filterd?'&filterd='.$filterd:'');
                     print ($actioncode!=''?'&actioncode='.$actioncode:'');

@@ -201,7 +201,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *	Generate Header
 	 *
-	 *	@param  PDF			&$pdf        	Pdf object
+	 *	@param  PDF			$pdf        	Pdf object
 	 *	@param  int			$page        	Current page number
 	 *	@param  int			$pages       	Total number of pages
 	 *	@param	Translate	$outputlangs	Object language for output
@@ -307,7 +307,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *	Output array
 	 *
-	 *	@param	PDF			&$pdf			PDF object
+	 *	@param	PDF			$pdf			PDF object
 	 *	@param	int			$pagenb			Page nb
 	 *	@param	int			$pages			Pages
 	 *	@param	Translate	$outputlangs	Object lang
@@ -365,7 +365,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			&$pdf     			PDF
+	 *   	@param	PDF			$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text

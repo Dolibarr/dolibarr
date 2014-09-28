@@ -71,10 +71,13 @@ $hookmanager->initHooks(array('paiementcard'));
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 
 /*
  * Actions
  */
+
 if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='yes'))
 {
     $error = 0;

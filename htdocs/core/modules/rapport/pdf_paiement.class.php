@@ -260,7 +260,7 @@ class pdf_paiement
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param	PDF			$pdf     		Object PDF
 	 *  @param  int			$page	     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -319,7 +319,7 @@ class pdf_paiement
 	/**
 	 *	Output body
 	 *
-	 *	@param	PDF			&$pdf			PDF object
+	 *	@param	PDF			$pdf			PDF object
 	 *	@param	string		$page			Page
 	 *	@param	array		$lines			Array of lines
 	 *	@param	Translate	$outputlangs	Object langs

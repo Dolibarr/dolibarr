@@ -138,11 +138,12 @@ if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->dele
 
 $parameters=array('resource_id'=>resource_id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
 $parameters=array('resource_id'=>$resource_id);
 $reshook=$hookmanager->executeHooks('getElementResources',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
 /***************************************************

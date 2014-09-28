@@ -209,6 +209,7 @@ if ($mode == 'test' && $user->admin)
 
 dol_fiche_end();
 
+
 llxFooter();
 
 $db->close();

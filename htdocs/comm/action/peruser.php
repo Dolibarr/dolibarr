@@ -335,6 +335,7 @@ if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
 if ($socid > 0) $sql.= ' AND a.fk_soc = '.$socid;
+// FIXME: We must filter on assignement table
 if ($usergroup > 0) $sql.= " AND ugu.fk_user = a.fk_user_action";
 if ($action == 'show_day')
 {
@@ -369,6 +370,7 @@ if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
 if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
 if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
+// FIXME: We must filter on assignement table
 if ($filtera > 0 || $filtert > 0 || $filterd > 0 || $usergroup > 0)
 {
     $sql.= " AND (";
@@ -398,13 +400,14 @@ if ($resql)
         $event->datep=$db->jdate($obj->datep);      // datep and datef are GMT date
         $event->datef=$db->jdate($obj->datep2);
         $event->type_code=$obj->code;
-        $event->libelle=$obj->label;				// deprecated
+        //$event->libelle=$obj->label;				// deprecated
         $event->label=$obj->label;
         $event->percentage=$obj->percent;
-        $event->author->id=$obj->fk_user_author;	// user id of creator
-        $event->usertodo->id=$obj->fk_user_action;	// user id of owner
-        $event->userdone->id=$obj->fk_user_done;	// deprecated
-		// $event->userstodo=... with s after user, in future version, will be an array with all id of user assigned to event
+        //$event->author->id=$obj->fk_user_author;	// user id of creator
+        $event->authorid=$obj->fk_user_author;		// user id of creator
+        $event->userownerid=$obj->fk_user_action;	// user id of owner
+        $event->fetch_userassigned();				// This load $event->userassigned
+        //$event->userdone->id=$obj->fk_user_done;	// deprecated
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
@@ -412,8 +415,8 @@ if ($resql)
 
         $event->socid=$obj->fk_soc;
         $event->contactid=$obj->fk_contact;
-        $event->societe->id=$obj->fk_soc;
-        $event->contact->id=$obj->fk_contact;
+        //$event->societe->id=$obj->fk_soc;			// deprecated
+        //$event->contact->id=$obj->fk_contact;		// deprecated
 
         // Defined date_start_in_calendar and date_end_in_calendar property
         // They are date start and end of action but modified to not be outside calendar view.
@@ -424,7 +427,7 @@ if ($resql)
             else $event->date_end_in_calendar=$event->datep;
         }
         else
-        {
+		{
             $event->date_start_in_calendar=$event->datep;
             if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
             else $event->date_end_in_calendar=$event->datep;
@@ -442,7 +445,7 @@ if ($resql)
             // This record is out of visible range
         }
         else
-        {
+		{
             if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
             if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
 
@@ -598,6 +601,9 @@ else
 	$usernames = $tmpgroup->listUsersForGroup();
 }
 
+// Load array of colors by type
+// TODO
+$colorsbytype=array();
 
 // Loop on each user to show calendar
 $sav = $tmpday;
@@ -608,6 +614,7 @@ foreach ($usernames as $username)
 	echo '<td class="cal_current_month">' . $username->getNomUrl(1). '</td>';
 	$tmpday = $sav;
 
+	// Lopp on each day of week
 	$i = 0;
 	for ($iter_day = 0; $iter_day < 7; $iter_day++)
 	{
@@ -631,7 +638,7 @@ foreach ($usernames as $username)
 		if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
 		if ($today) $style='cal_today_peruser';
 
-		show_day_events2($username, $tmpday, $month, $year, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader);
+		show_day_events2($username, $tmpday, $month, $year, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader, $colorsbytype);
 
 		$i++;
 	}
@@ -695,7 +702,7 @@ $db->close();
  * @param   int		$year           Year
  * @param   int		$monthshown     Current month shown in calendar view
  * @param   string	$style          Style to use for this day
- * @param   array	&$eventarray    Array of events
+ * @param   array	$eventarray    	Array of events
  * @param   int		$maxprint       Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar    Nb of characters to show for event line
  * @param   string	$newparam       Parameters on current URL
@@ -721,8 +728,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	$i=0; $nummytasks=0; $numother=0; $numbirthday=0; $numical=0; $numicals=array();
 	$ymd=sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day);
 
-	$nextindextouse=count($colorindexused);	// At first run this is 0, so fist user has 0, next 1, ...
+	$nextindextouse=count($colorindexused);	// At first run, this is 0, so fist user has 0, next 1, ...
 
+	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused)
 	{
 		$annee = date('Y',$daykey);
@@ -733,17 +741,18 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			//Tout les events à la même date :
 			foreach ($eventarray[$daykey] as $index => $event)
 			{
-				if ($username->id != $event->usertodo->id) continue;	// We discard record if event is from another user than user we want to show
+				$keysofuserassigned=array_keys($event->userassigned);
+				if (! in_array($username->id,$keysofuserassigned)) continue;	// We discard record if event is from another user than user we want to show
+				//if ($username->id != $event->userownerid) continue;	// We discard record if event is from another user than user we want to show
 
 				$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
 
 				// Define $color and $cssclass of event
 				$color=-1; $cssclass=''; $colorindex=-1;
-				if ((! empty($event->author->id) && $event->author->id == $user->id)
-					|| (! empty($event->usertodo->id) && $event->usertodo->id == $user->id)
-					|| (! empty($event->userdone->id) && $event->userdone->id == $user->id))
+				if (in_array($user->id, $keysofuserassigned))
 				{
 					$nummytasks++; $cssclass='family_mytasks';
+					// TODO Set color according to event type
 				}
 				else if ($event->type_code == 'ICALEVENT')
 				{
@@ -765,7 +774,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				if ($color == -1)	// Color was not forced. Set color according to color index.
 				{
 					// Define color index if not yet defined
-					$idusertouse=($event->usertodo->id?$event->usertodo->id:0);
+					$idusertouse=($event->userownerid?$event->userownerid:0);
 					if (isset($colorindexused[$idusertouse]))
 					{
 						$colorindex=$colorindexused[$idusertouse];	// Color already assigned to this user

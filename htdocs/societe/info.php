@@ -48,7 +48,7 @@ $hookmanager->initHooks(array('infothirdparty'));
 
 $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ class CActionComm
     var $type;
     var $libelle;
     var $active;
+    var $color;
 
     var $type_actions=array();
 
@@ -59,7 +60,7 @@ class CActionComm
      */
     function fetch($id)
     {
-        $sql = "SELECT id, code, type, libelle, active";
+        $sql = "SELECT id, code, type, libelle, color, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         if (is_numeric($id)) $sql.= " WHERE id=".$id;
         else $sql.= " WHERE code='".$id."'";
@@ -77,12 +78,13 @@ class CActionComm
                 $this->type    = $obj->type;
                 $this->libelle = $obj->libelle;
                 $this->active  = $obj->active;
+                $this->color   = $obj->color;
 
                 $this->db->free($resql);
                 return 1;
             }
             else
-            {
+			{
                 $this->db->free($resql);
                 return 0;
             }
@@ -95,7 +97,7 @@ class CActionComm
     }
 
     /**
-     *  Return list of event types
+     *  Return list of event types: array(id=>label) or array(code=>label)
      *
      *  @param	int			$active     	1 or 0 to filter on event state active or not ('' by default = no filter)
      *  @param	string		$idorcode		'id' or 'code'
@@ -111,7 +113,7 @@ class CActionComm
         $repid = array();
         $repcode = array();
 
-        $sql = "SELECT id, code, libelle, module, type";
+        $sql = "SELECT id, code, libelle, module, type, color";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         if ($active != '') $sql.=" WHERE active=".$active;
         if (! empty($excludetype)) $sql.=($active != ''?" AND":" WHERE")." type <> '".$excludetype."'";

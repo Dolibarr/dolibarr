@@ -1751,8 +1751,8 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 /**
  * Return not used field number
  *
- * @param 	array	&$fieldssource	Array of field source
- * @param	array	&$listofkey		Array of keys
+ * @param 	array	$fieldssource	Array of field source
+ * @param	array	$listofkey		Array of keys
  * @return	void
  */
 function getnewkey(&$fieldssource,&$listofkey)

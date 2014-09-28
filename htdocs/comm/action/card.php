@@ -219,6 +219,7 @@ if ($action == 'add')
 			if ($value['id'] > 0)
 			{
 				$usertodo->fetch($value['id']);
+				$object->userownerid = $usertodo->id;
 			}
 			$object->usertodo = $usertodo;
 			$object->transparency = (GETPOST("transparency")=='on'?1:0);
@@ -235,17 +236,21 @@ if ($action == 'add')
 		if ($_POST["doneby"] > 0)
 		{
 			$userdone->fetch($_POST["doneby"]);
+			$object->userdoneid = $userdone->id;
 		}
 		$object->userdone = $userdone;
 	}
 
 	$object->note = trim($_POST["note"]);
+
 	if (isset($_POST["contactid"])) $object->contact = $contact;
+
 	if (GETPOST('socid','int') > 0)
 	{
 		$societe = new Societe($db);
 		$societe->fetch(GETPOST('socid','int'));
-		$object->societe = $societe;
+		$object->societe = $societe;	// deprecated
+		$object->thirdparty = $societe;
 	}
 
 	// Special for module webcal and phenix
@@ -359,8 +364,10 @@ if ($action == 'update')
 		$object->priority    = $_POST["priority"];
         $object->fulldayevent= $_POST["fullday"]?1:0;
 		$object->location    = GETPOST('location');
-		$object->societe->id = $_POST["socid"];
-		$object->contact->id = $_POST["contactid"];
+		$object->socid       = $_POST["socid"];
+		$object->contactid   = $_POST["contactid"];
+		$object->societe->id = $_POST["socid"];			// deprecated
+		$object->contact->id = $_POST["contactid"];		// deprecated
 		$object->fk_project  = $_POST["projectid"];
 		$object->note        = $_POST["note"];
 		$object->pnote       = $_POST["note"];
@@ -795,21 +802,15 @@ if ($action == 'create')
 if ($id > 0)
 {
 	$result1=$object->fetch($id);
-	$result2=$object->fetch_userassigned();
-	$result3=$object->fetch_optionals($id,$extralabels);
+	$result2=$object->fetch_thirdparty();
+	$result3=$object->fetch_userassigned();
+	$result4=$object->fetch_optionals($id,$extralabels);
 
-	if ($result1 < 0 || $result2 < 0 || $result3 < 0)
+	if ($result1 < 0 || $result2 < 0 || $result3 < 0 || $result4 < 0)
 	{
 		dol_print_error($db,$object->error);
 		exit;
 	}
-
-	$societe = new Societe($db);
-	if ($object->societe->id)
-	{
-		$result=$societe->fetch($object->societe->id);
-	}
-	$object->societe = $societe;
 
 	if ($object->author->id > 0)   { $tmpuser=new User($db); $res=$tmpuser->fetch($object->author->id); $object->author=$tmpuser; }
 	if ($object->usermod->id > 0)  { $tmpuser=new User($db); $res=$tmpuser->fetch($object->usermod->id); $object->usermod=$tmpuser; }
@@ -959,12 +960,12 @@ if ($id > 0)
 			print '<td>';
 			$events=array();
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-			print $form->select_company($object->societe->id,'socid','',1,1,0,$events);
+			print $form->select_company($object->thirdparty->id,'socid','',1,1,0,$events);
 			print '</td>';
 
 			// Contact
 			print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-			$form->select_contacts($object->societe->id, $object->contact->id,'contactid',1);
+			$form->select_contacts($object->thirdparty->id, $object->contact->id,'contactid',1);
 			print '</td></tr>';
 		}
 
@@ -978,7 +979,7 @@ if ($id > 0)
 			$langs->load("project");
 
 			print '<tr><td width="30%" valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
-			$numprojet=$formproject->select_projects($object->societe->id,$object->fk_project,'projectid');
+			$numprojet=$formproject->select_projects($object->thirdparty->id,$object->fk_project,'projectid');
 			if ($numprojet==0)
 			{
 				print ' &nbsp; <a href="../../projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -1152,12 +1153,12 @@ if ($id > 0)
 		// Third party - Contact
 		if ($conf->societe->enabled)
 		{
-			print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->societe->id?$object->societe->getNomUrl(1):$langs->trans("None"));
-			if ($object->societe->id && $object->type_code == 'AC_TEL')
+			print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id?$object->thirdparty->getNomUrl(1):$langs->trans("None"));
+			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL')
 			{
-				if ($object->societe->fetch($object->societe->id))
+				if ($object->thirdparty->fetch($object->thirdparty->id))
 				{
-					print "<br>".dol_print_phone($object->societe->phone);
+					print "<br>".dol_print_phone($object->thirdparty->phone);
 				}
 			}
 			print '</td>';

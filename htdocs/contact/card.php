@@ -83,7 +83,7 @@ $hookmanager->initHooks(array('contactcard'));
 
 $parameters=array('id'=>$id, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
@@ -142,10 +142,10 @@ if (empty($reshook))
     	{
     	    setEventMessage($object->error,'errors');
     	}
-    	else 
+    	else
     	{
         	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-        	exit;    	    
+        	exit;
     	}
     }
 
@@ -157,11 +157,11 @@ if (empty($reshook))
     	{
     	    setEventMessage($object->error,'errors');
     	}
-    	else 
+    	else
     	{
         	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-        	exit;    	    
-    	}    	
+        	exit;
+    	}
     }
 
     // Add contact
@@ -380,7 +380,7 @@ else
 
         $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
         dol_fiche_head($head, 'card', $title, 0, 'contact');
-        
+
         dol_htmloutput_events();
     }
 

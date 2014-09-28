@@ -462,7 +462,7 @@ class FormOther
     /**
      * Write lines of a project (all lines of a project if parent = 0)
      *
-     * @param 	int		&$inc					Cursor counter
+     * @param 	int		$inc					Cursor counter
      * @param 	int		$parent					Id of parent task we want to see
      * @param 	array	$lines					Array of task lines
      * @param 	int		$level					Level

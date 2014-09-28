@@ -72,8 +72,10 @@ class User extends CommonObject
 	var $datem;
 
 	//! If this is defined, it is an external user
-	var $societe_id;
-	var $contact_id;
+	var $societe_id;	// deprecated
+	var $contact_id;	// deprecated
+	var $socid;
+	var $contactid;
 
 	var $fk_member;
 	var $fk_user;
@@ -237,8 +239,10 @@ class User extends CommonObject
 				$this->datelastlogin		= $this->db->jdate($obj->datel);
 				$this->datepreviouslogin	= $this->db->jdate($obj->datep);
 
-				$this->societe_id           = $obj->fk_societe;
-				$this->contact_id           = $obj->fk_socpeople;
+				$this->societe_id           = $obj->fk_societe;		// deprecated
+				$this->contact_id           = $obj->fk_socpeople;	// deprecated
+				$this->socid                = $obj->fk_societe;
+				$this->contactid            = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
 
@@ -2114,7 +2118,7 @@ class User extends CommonObject
 	/**
 	 *  Update user using data from the LDAP
 	 *
-	 *  @param	ldapuser	&$ldapuser	Ladp User
+	 *  @param	ldapuser	$ldapuser	Ladp User
 	 *
 	 *  @return int  				<0 if KO, >0 if OK
 	 */

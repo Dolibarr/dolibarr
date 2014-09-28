@@ -60,12 +60,7 @@ $object = new ActionComm($db);
 if ($objectid > 0)
 {
 	$ret = $object->fetch($objectid);
-	if ($ret > 0) {
-		$company=new Societe($db);
-		$company->fetch($object->societe->id);
-		$object->societe=$company; // For backward compatibility
-		$object->thirdparty=$company;
-	}
+	$object->fetch_thirdparty();
 }
 
 // Get parameters
@@ -112,7 +107,7 @@ if ($object->id > 0)
 
 	$now=dol_now();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
-	
+
 	dol_fiche_head($head, 'documents', $langs->trans("Action"),0,'action');
 
 	// Affichage fiche action en mode visu
@@ -202,17 +197,17 @@ if ($object->id > 0)
 	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	if ($object->usertodo->id > 0) print $object->usertodo->getNomUrl(1);
 	print '</td></tr>';
-	
+
 	print '</table><br><br><table class="border" width="100%">';
 
 
 	// Third party - Contact
-	print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->societe->id?$object->societe->getNomUrl(1):$langs->trans("None"));
-	if ($object->societe->id && $object->type_code == 'AC_TEL')
+	print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id?$object->thirdparty->getNomUrl(1):$langs->trans("None"));
+	if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL')
 	{
-		if ($object->societe->fetch($object->societe->id))
+		if ($object->thirdparty->fetch($object->thirdparty->id))
 		{
-			print "<br>".dol_print_phone($object->societe->phone);
+			print "<br>".dol_print_phone($object->thirdparty->phone);
 		}
 	}
 	print '</td>';

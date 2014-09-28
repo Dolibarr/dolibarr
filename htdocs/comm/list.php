@@ -73,6 +73,7 @@ $hookmanager->initHooks(array('customerlist'));
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x"))
@@ -269,7 +270,7 @@ if ($result)
         print '<td align="center">'.$thirdpartystatic->getLibStatut(3);
         print '</td>';
         print '<td></td>';
-        
+
         $parameters=array('obj' => $obj);
         $formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 

@@ -117,6 +117,7 @@ $hookmanager->initHooks(array('membercard'));
 
 $parameters=array('rowid'=>$rowid, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
 {

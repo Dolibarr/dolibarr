@@ -101,6 +101,7 @@ $object->substitutionarrayfortest=array(
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
