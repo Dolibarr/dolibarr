@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2011-2012 Philippe Grand	     <philippe.grand@atoo-net.com>
@@ -953,7 +953,7 @@ class Livraison extends CommonObject
 			}
 		}
 
-		$modelpath = "core/modules/livraison/pdf/";
+		$modelpath = "core/modules/livraison/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, 0, 0, 0);
 	}

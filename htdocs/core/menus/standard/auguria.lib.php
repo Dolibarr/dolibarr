@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	DoliDB	$db				Database handler
  * @param 	string	$atarget		Target
  * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
- * @param  	array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
- * @param	array	&$menu			Object Menu to return back list of menu entries
+ * @param  	array	$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array	$menu			Object Menu to return back list of menu entries
  * @param	int		$noout			Disable output (Initialise &$menu only).
  * @return	int						0
  */
@@ -203,8 +203,8 @@ function print_end_menu_array_auguria()
  * @param	DoliDB		$db                 Database handler
  * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler
  * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler
- * @param  	array		&$tabMenu       	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
- * @param	Menu		&$menu				Object Menu to return back list of menu entries
+ * @param  	array		$tabMenu       	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	Menu		$menu				Object Menu to return back list of menu entries
  * @param	int			$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
  * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all)
@@ -402,8 +402,8 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
  * Function to test if an entry is enabled or not
  *
  * @param	string		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
- * @param	array		&$menuentry					Array for menu entry
- * @param	array		&$listofmodulesforexternal	Array with list of modules allowed to external users
+ * @param	array		$menuentry					Array for menu entry
+ * @param	array		$listofmodulesforexternal	Array with list of modules allowed to external users
  * @return	int										0=Hide, 1=Show, 2=Show gray
  */
 function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexternal)
@@ -430,4 +430,3 @@ function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexterna
 	if (! $menuentry['perms']) return 2;															// No permissions and user is external
 	return 1;
 }
-

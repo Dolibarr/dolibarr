@@ -3985,7 +3985,7 @@ function make_substitutions($chaine,$substitutionarray)
 /**
  *  Complete the $substitutionarray with more entries
  *
- *  @param  array		&$substitutionarray		Array substitution old value => new value value
+ *  @param  array		$substitutionarray		Array substitution old value => new value value
  *  @param  Translate	$outputlangs            If we want substitution from special constants, we provide a language
  *  @param  Object		$object                 If we want substitution from special constants, we provide data in a source object
  *  @param  Mixed		$parameters       		Add more parameters (useful to pass product lines)
@@ -4344,7 +4344,7 @@ function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *  or descending output and uses optionally natural case insensitive sorting (which
  *  can be optionally case sensitive as well).
  *
- *  @param      array		&$array      		Array to sort (array of array('key','otherkey1','otherkey2'...))
+ *  @param      array		$array      		Array to sort (array of array('key','otherkey1','otherkey2'...))
  *  @param      string		$index				Key in array to use for sorting criteria
  *  @param      int			$order				Sort order
  *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard" sort (asort)
@@ -4564,8 +4564,8 @@ function picto_from_langcode($codelang)
  *  @param	Conf		$conf           Object conf
  *  @param  Translate	$langs          Object langs
  *  @param  Object		$object         Object object
- *  @param  array		&$head          Object head
- *  @param  int			&$h             New position to fill
+ *  @param  array		$head          Object head
+ *  @param  int			$h             New position to fill
  *  @param  string		$type           Value for object where objectvalue can be
  *                              		'thirdparty'       to add a tab in third party view
  *		                              	'intervention'     to add a tab in intervention view

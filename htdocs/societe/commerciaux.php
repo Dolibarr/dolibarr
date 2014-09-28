@@ -57,8 +57,7 @@ if($_GET["socid"] && $_GET["commid"])
 
 		$parameters=array('id'=>$_GET["commid"]);
 		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
-		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
-
+		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 		if (empty($reshook)) $soc->add_commercial($user, $_GET["commid"]);
 
@@ -84,8 +83,7 @@ if($_GET["socid"] && $_GET["delcommid"])
 
 		$parameters=array('id'=>$_GET["delcommid"]);
 		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
-		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
-
+		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 		if (empty($reshook)) $soc->del_commercial($user, $_GET["delcommid"]);
 

@@ -110,6 +110,7 @@ $permissionnote=$user->rights->fournisseur->commande->creer;	// Used by the incl
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
@@ -1188,19 +1189,20 @@ if ($action=="create")
 }
 elseif (! empty($object->id))
 {
-	$author	= new User($db);
-	$author->fetch($object->user_author_id);
-
     $societe = new Fournisseur($db);
     $result=$societe->fetch($object->socid);
     if ($result < 0) dol_print_error($db);
+
+	$author	= new User($db);
+	$author->fetch($object->user_author_id);
+
+	$res=$object->fetch_optionals($object->id,$extralabels);
 
 	$head = ordersupplier_prepare_head($object);
 
 	$title=$langs->trans("SupplierOrder");
 	dol_fiche_head($head, 'card', $title, 0, 'order');
 
-	$res=$object->fetch_optionals($object->id,$extralabels);
 
 	/*
 	 * Confirmation de la suppression de la commande
@@ -1482,24 +1484,19 @@ elseif (! empty($object->id))
 		print '</tr>';
 	}
 
-	// Other attributes
+	// Other attributes (TODO Move this into an include)
 	$parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		if ($action == 'edit_extras')
-		{
-			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
-			print '<input type="hidden" name="action" value="update_extras">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="id" value="'.$object->id.'">';
-		}
-
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
-			if ($action == 'edit_extras') {
+			if ($action == 'edit_extras')
+			{
 				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-			} else {
+			}
+			else
+			{
 				$value=$object->array_options["options_".$key];
 			}
 
@@ -1518,15 +1515,25 @@ elseif (! empty($object->id))
 					$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$db->jdate($object->array_options['options_'.$key]);
 				}
 
-				if ($action == 'edit_extras' && $user->rights->fournisseur->commande->creer)
+				if ($action == 'edit_extras' && $user->rights->commande->creer && GETPOST('attribute') == $key)
 				{
-		  			print $extrafields->showInputField($key,$value);
+					print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formsoc">';
+					print '<input type="hidden" name="action" value="update_extras">';
+					print '<input type="hidden" name="attribute" value="' . $key . '">';
+					print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+					print '<input type="hidden" name="id" value="' . $object->id . '">';
+
+					print $extrafields->showInputField($key, $value);
+
+					print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
+					print '</form>';
 				}
 				else
 				{
-		  			print $extrafields->showOutputField($key,$value);
+					print $extrafields->showOutputField($key, $value);
+					if ($object->statut == 0 && $user->rights->commande->creer)
+						print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_picto('', 'edit') . ' ' . $langs->trans('Modify') . '</a>';
 				}
-
 				print '</td></tr>'."\n";
 		  	}
 		}

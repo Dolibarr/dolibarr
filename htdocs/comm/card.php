@@ -78,6 +78,7 @@ $object = new Societe($db);
 
 $parameters = array('socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
 if ($action == 'setcustomeraccountancycode')

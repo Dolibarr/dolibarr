@@ -101,7 +101,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barc
 
 $parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-$error=$hookmanager->error; $errors=$hookmanager->errors;
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
