@@ -1040,7 +1040,7 @@ class ExtraFields
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
 	 * @param   array	$extralabels    $array of extrafields
-	 * @param   object	&$object        Object
+	 * @param   object	$object        Object
 	 * @param	string	$onlykey		Only following key is filled
 	 * @return	int						1 if array_options set / 0 if no value
 	 */

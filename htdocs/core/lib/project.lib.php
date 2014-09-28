@@ -206,13 +206,13 @@ function project_admin_prepare_head()
 /**
  * Show task lines with a particular parent
  *
- * @param	string	 	&$inc				Counter that count number of lines legitimate to show (for return)
+ * @param	string	 	$inc				Counter that count number of lines legitimate to show (for return)
  * @param 	int			$parent				Id of parent task to start
- * @param 	array		&$lines				Array of all tasks
- * @param 	int			&$level				Level of task
+ * @param 	array		$lines				Array of all tasks
+ * @param 	int			$level				Level of task
  * @param 	string		$var				Color
  * @param 	int			$showproject		Show project columns
- * @param	int			&$taskrole			Array of roles of user for each tasks
+ * @param	int			$taskrole			Array of roles of user for each tasks
  * @param	int			$projectsListId		List of id of project allowed to user (string separated with comma)
  * @param	int			$addordertick		Add a tick to move task
  * @return	void
@@ -443,12 +443,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 /**
  * Output a task line
  *
- * @param	string	   	&$inc					?
+ * @param	string	   	$inc					?
  * @param   string		$parent					?
  * @param   Object		$lines					?
- * @param   int			&$level					?
- * @param   string		&$projectsrole			?
- * @param   string		&$tasksrole				?
+ * @param   int			$level					?
+ * @param   string		$projectsrole			?
+ * @param   string		$tasksrole				?
  * @param	string		$mine					Show only task lines I am assigned to
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @return  $inc
@@ -589,10 +589,10 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 /**
  * Search in task lines with a particular parent if there is a task for a particular user (in taskrole)
  *
- * @param 	string	&$inc				Counter that count number of lines legitimate to show (for return)
+ * @param 	string	$inc				Counter that count number of lines legitimate to show (for return)
  * @param 	int		$parent				Id of parent task to start
- * @param 	array	&$lines				Array of all tasks
- * @param	string	&$taskrole			Array of task filtered on a particular user
+ * @param 	array	$lines				Array of all tasks
+ * @param	string	$taskrole			Array of task filtered on a particular user
  * @return	int							1 if there is
  */
 function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
