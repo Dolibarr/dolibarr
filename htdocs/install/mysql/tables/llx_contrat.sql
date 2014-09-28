@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ create table llx_contrat
   fk_user_cloture			integer,
   note_private				text,
   note_public				text,
+  model_pdf					varchar(255),
   import_key				varchar(14),
   extraparams				varchar(255)
 
