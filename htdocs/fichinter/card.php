@@ -1216,7 +1216,6 @@ else if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if ($action == 'edit_extras') print '<input type="hidden" name="action" value="update_extras">';
 	if ($action == 'contrat')     print '<input type="hidden" name="action" value="setcontrat">';
-
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	print '<table class="border" width="100%">';
@@ -1224,18 +1223,18 @@ else if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
+	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';
 
 	// Third party
-	print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
+	print "<tr><td>".$langs->trans("Company").'</td><td colspan="3">'.$object->client->getNomUrl(1)."</td></tr>";
 
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 	{
 		// Duration
 		print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-		print '<td>'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '<td colspan="3">'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 		print '</tr>';
 	}
 
@@ -1326,7 +1325,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	// Statut
-	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
     // Other attributes (TODO Move this into an include)
     $parameters=array('colspan' => ' colspan="3"');
