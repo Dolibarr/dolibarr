@@ -601,6 +601,7 @@ else
 $colorsbytype=array();
 
 // Loop on each user to show calendar
+$todayarray=dol_getdate($now,'fast');
 $sav = $tmpday;
 $showheader = true;
 foreach ($usernames as $username)
@@ -629,11 +630,10 @@ foreach ($usernames as $username)
 		$style='cal_current_month';
 		if ($iter_day == 6) $style.=' cal_other_month';
 		$today=0;
-		$todayarray=dol_getdate($now,'fast');
-		if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
+		if ($todayarray['mday']==$tmpday && $todayarray['mon']==$tmpmonth && $todayarray['year']==$tmpyear) $today=1;
 		if ($today) $style='cal_today_peruser';
 
-		show_day_events2($username, $tmpday, $month, $year, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader, $colorsbytype);
+		show_day_events2($username, $tmpday, $tmpmonth, $tmpyear, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader, $colorsbytype);
 
 		$i++;
 	}
@@ -642,7 +642,6 @@ foreach ($usernames as $username)
 }
 
 echo "</table>\n";
-var_dump($eventarray);exit;
 
 // Add js code to manage click on a box
 print '<script type="text/javascript" language="javascript">
@@ -731,9 +730,11 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$annee = date('Y',$daykey);
 		$mois = date('m',$daykey);
 		$jour = date('d',$daykey);
-		if ($day==$jour && $month==$mois && $year==$annee)
+		//print $annee.'-'.$mois.'-'.$jour.' '.$year.'-'.$month.'-'.$day."<br>\n";
+
+		if ($day==$jour && $month==$mois && $year==$annee)	// Is it the day we are looking for when calling function ?
 		{
-			//Tout les events à la même date :
+			// Scan all event for this date
 			foreach ($eventarray[$daykey] as $index => $event)
 			{
 				$keysofuserassigned=array_keys($event->userassigned);
@@ -836,7 +837,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$i++;
 			}
 
-			break;
+			break;	// We found the date we were looking for. No need to search anymore.
 		}
 	}
 

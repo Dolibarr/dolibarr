@@ -914,16 +914,6 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         if (get_class($object) == 'Societe') $out.='</a>';
         $out.='</td>';
         $out.='<td colspan="5" align="right">';
-		$permok=$user->rights->agenda->myactions->create;
-        if (($object->id || $objcon->id) && $permok)
-		{
-            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-            if (get_class($object) == 'Societe') $out.='&amp;socid='.$object->id;
-            $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
-    		$out.=$langs->trans("AddAnAction").' ';
-    		$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-    		$out.="</a>";
-		}
         $out.='</td>';
         $out.='</tr>';
 
@@ -1208,16 +1198,6 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         if (get_class($object) == 'Societe') $out.='</a>';
         $out.='</td>';
         $out.='<td colspan="5" align="right">';
-		$permok=$user->rights->agenda->myactions->create;
-        if ((! empty($object->id) || ! empty($objcon->id)) && $permok)
-		{
-            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-            if (get_class($object) == 'Societe') $out.='&amp;socid='.$object->id;
-            $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
-    		$out.=$langs->trans("AddAnAction").' ';
-    		$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-    		$out.="</a>";
-		}
         $out.='</td>';
         $out.='</tr>';
 
