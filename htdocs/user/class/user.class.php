@@ -2118,7 +2118,7 @@ class User extends CommonObject
 	/**
 	 *  Update user using data from the LDAP
 	 *
-	 *  @param	ldapuser	&$ldapuser	Ladp User
+	 *  @param	ldapuser	$ldapuser	Ladp User
 	 *
 	 *  @return int  				<0 if KO, >0 if OK
 	 */
@@ -2237,7 +2237,7 @@ class User extends CommonObject
 
 		// Init this->parentof that is array(id_son=>id_parent, ...)
 		$this->load_parentof();
-		
+
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.login, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
