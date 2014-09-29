@@ -37,6 +37,8 @@ create table llx_loan
   capital_position				real     default 0,		-- If not a new loan, just have the position of capital
   date_position					date,
   
+  paid							smallint default 0 NOT NULL,
+  
   accountancy_account_capital	varchar(32),
   accountancy_account_insurance	varchar(32),
   accountancy_account_interest	varchar(32),

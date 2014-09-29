@@ -33,6 +33,7 @@ class Loan extends CommonObject
     public $table_element='loan';
 
     var $id;
+	var $rowid;
     var $ref;
     var $datestart;
 	var $dateend;
@@ -41,6 +42,7 @@ class Loan extends CommonObject
 	var $nbterm;
 	var $rate;
 	var $note;
+	var $paid;
 	var $account_capital;
 	var $account_insurance;
 	var $account_interest;
@@ -71,7 +73,8 @@ class Loan extends CommonObject
      */
     function fetch($id)
     {
-        $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note";
+        $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note,";
+		$sql.= " l.paid";
         $sql.= " FROM ".MAIN_DB_PREFIX."loan as l";
         $sql.= " WHERE l.rowid = ".$id;
 
@@ -92,6 +95,7 @@ class Loan extends CommonObject
 				$this->nbterm		  = $obj->nbterm;
 				$this->rate	          = $obj->rate;
 				$this->note       	  = $obj->note;
+				$this->paid       	  = $obj->paid;
 
                 return 1;
             }
@@ -220,7 +224,7 @@ class Loan extends CommonObject
         // Delete payments
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge where fk_charge='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_loan where fk_loan='".$this->id."'";
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -232,7 +236,7 @@ class Loan extends CommonObject
 
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."loan where rowid='".$this->id."'";
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -266,10 +270,10 @@ class Loan extends CommonObject
     {
         $this->db->begin();
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
-        $sql.= " SET libelle='".$this->db->escape($this->lib)."',";
-        $sql.= " date_ech='".$this->db->idate($this->date_ech)."',";
-        $sql.= " periode='".$this->db->idate($this->periode)."'";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."loan";
+        $sql.= " SET label='".$this->db->escape($this->label)."',";
+        $sql.= " datestart='".$this->db->idate($this->datestart)."',";
+        $sql.= " dateend='".$this->db->idate($this->dateend)."'";
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -288,57 +292,15 @@ class Loan extends CommonObject
     }
 
     /**
-     * Enter description here ...
-     *
-     * @param	int		$year		Year
-     * @return	number
-     */
-    function solde($year = 0)
-    {
-    	global $conf;
-
-        $sql = "SELECT SUM(f.amount) as amount";
-        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as f";
-        $sql.= " WHERE f.entity = ".$conf->entity;
-        $sql.= " AND paye = 0";
-
-        if ($year) {
-            $sql .= " AND f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
-        }
-
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result))
-            {
-                $obj = $this->db->fetch_object($result);
-                return $obj->amount;
-            }
-            else
-            {
-                return 0;
-            }
-
-            $this->db->free($result);
-
-        }
-        else
-        {
-            print $this->db->error();
-            return -1;
-        }
-    }
-
-    /**
-     *    Tag social contribution as payed completely
+     *    Tag loan as payed completely
      *
      *    @param	User	$user       Object user making change
      *    @return	int					<0 if KO, >0 if OK
      */
     function set_paid($user)
     {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
-        $sql.= " paye = 1";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
+        $sql.= " paid = 1";
         $sql.= " WHERE rowid = ".$this->id;
         $return = $this->db->query($sql);
         if ($return) return 1;
@@ -346,22 +308,22 @@ class Loan extends CommonObject
     }
 
     /**
-     *  Retourne le libelle du statut d'une charge (impaye, payee)
+     *  Return label of loan status (unpaid, paid)
      *
-     *  @param	int		$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *  @param	int		$mode       	0=label, 1=short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return	string        			Label
      */
     function getLibStatut($mode=0,$alreadypaid=-1)
     {
-        return $this->LibStatut($this->paye,$mode,$alreadypaid);
+        return $this->LibStatut($this->paid,$mode,$alreadypaid);
     }
 
     /**
      *  Return label for given status
      *
      *  @param	int		$statut        	Id statut
-     *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @param  int		$mode          	0=Label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label, 5=Short label + Picto
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return string        			Label
      */
@@ -425,7 +387,7 @@ class Loan extends CommonObject
 
         if (empty($this->ref)) $this->ref=$this->label;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/loan/card.php?id='.$this->id.'">';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/loan/card.php?id='.$this->rowid.'">';
         $linkend='</a>';
 
         if ($withpicto) $result.=($link.img_object($langs->trans("ShowLoan").': '.$this->label,'bill').$linkend.' ');

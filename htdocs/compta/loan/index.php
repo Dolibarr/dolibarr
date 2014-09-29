@@ -41,17 +41,17 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
 if (! $sortfield) $sortfield="l.rowid";
 if (! $sortorder) $sortorder="DESC";
+$limit = $conf->liste_limit;
 
+$search_label=GETPOST('search_label','alpha');
 $filtre=$_GET["filtre"];
 
 /*
  *	View
  */
 
-$form = new Form($db);
 $loan = new Loan($db);
 
 llxHeader();
@@ -68,34 +68,29 @@ if ($filtre) {
     $filtre=str_replace(":","=",$filtre);
     $sql .= " AND ".$filtre;
 }
-
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($limit+1,$offset);
+$sql.= $db->plimit($limit + 1, $offset);
 
+//print $sql;
 $resql=$db->query($sql);
-
 if ($resql)
 {
 	$num = $db->num_rows($resql);
-	$i = 0;
-	$var=true;
 
-	$param='';
-	
 	print_fiche_titre($langs->trans("Loans"));
-	
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
-	print "<table class=\"noborder\" width=\"100%\">";
-
-	print "<tr class=\"liste_titre\">";
+	$i = 0;
+    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"id","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"l.label","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Capital"),$_SERVER["PHP_SELF"],"l.capital","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"l.datestart","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"l.paid","",$param,'align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
+    print "</tr>\n";
 
+	// Filters lines
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.GETPOST("search_label").'"></td>';
@@ -103,9 +98,9 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
-	print "</tr>\n";
-
+    print "</td></tr>\n";
+	
+	$var=true;
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
@@ -115,9 +110,9 @@ if ($resql)
 
 		// Ref
 		print '<td width="60">';
-		$loan->id=$obj->id;
-		$loan->label=$obj->id;
-		$loan->ref=$obj->id;
+		$loan->id=$obj->rowid;
+		$loan->label=$obj->rowid;
+		$loan->ref=$obj->rowid;
 		print $loan->getNameUrl(1,'20');
 		print '</td>';
 
@@ -132,18 +127,19 @@ if ($resql)
 
 		print '<td align="right" class="nowrap">'.$loan->LibStatut($obj->paid,5,$obj->alreadypayed).'</a></td>';
 
-		print '</tr>';
+        print "</tr>\n";
+		
 		$i++;
 	}
 
-	print '</table>';
-	print '</form>';
+    print "</table>";
+    print "</form>\n";
+    $db->free($resql);
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
-
 $db->close();
 
 llxFooter();
