@@ -460,7 +460,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->email       = $email;
 	$object->login       = $login;
 	$object->pass        = $pass;
-	$object->naiss       = $birthdate;
+	$object->birth       = $birthdate;
 	$object->photo       = $photo;
 	$object->typeid      = $typeid;
 	//$object->note        = $comment;
@@ -883,7 +883,7 @@ else
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-		$form->select_date(($object->naiss ? $object->naiss : -1),'naiss','','',1,'formsoc');
+		$form->select_date(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
 
 		// Profil public
