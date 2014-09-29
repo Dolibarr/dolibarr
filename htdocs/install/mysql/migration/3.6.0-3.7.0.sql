@@ -1125,3 +1125,5 @@ create table llx_payment_loan
   fk_user_creat		integer,
   fk_user_modif		integer
 )ENGINE=innodb;
+
+ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER note_public;

@@ -218,9 +218,9 @@ if (empty($action) || $action=='show_month')
     $tmpday = -date("w",dol_mktime(0,0,0,$month,1,$year))+2;
     $tmpday+=((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)-1);
     if ($tmpday >= 1) $tmpday -= 7;
-    // Define firstdaytoshow and lastdaytoshow
+    // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
     $firstdaytoshow=dol_mktime(0,0,0,$prev_month,$max_day_in_prev_month+$tmpday,$prev_year);
-    $next_day=7-($max_day_in_month+1-$tmpday)%7;
+    $next_day=7 - ($max_day_in_month+1-$tmpday) % 7;
     if ($next_day < 6) $next_day+=7;
     $lastdaytoshow=dol_mktime(0,0,0,$next_month,$next_day,$next_year);
 }
@@ -242,9 +242,9 @@ if ($action=='show_week')
     $next_month = $next['month'];
     $next_day   = $next['day'];
 
-    // Define firstdaytoshow and lastdaytoshow
+    // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
     $firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
-	$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 6, 'd');
+	$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
 
     $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
 
@@ -261,7 +261,7 @@ if ($action == 'show_day')
     $next_month = $next['month'];
     $next_day   = $next['day'];
 
-    // Define firstdaytoshow and lastdaytoshow
+    // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
     $firstdaytoshow=dol_mktime(0,0,0,$prev_month,$prev_day,$prev_year);
     $lastdaytoshow=dol_mktime(0,0,0,$next_month,$next_day,$next_year);
 }
@@ -522,14 +522,14 @@ if ($resql)
 
         // Check values
         if ($event->date_end_in_calendar < $firstdaytoshow ||
-        $event->date_start_in_calendar > $lastdaytoshow)
+        $event->date_start_in_calendar >= $lastdaytoshow)
         {
             // This record is out of visible range
         }
         else
         {
             if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
-            if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
+            if ($event->date_end_in_calendar >= $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow-1);
 
             // Add an entry in actionarray for each day
             $daycursor=$event->date_start_in_calendar;
@@ -659,7 +659,7 @@ if (count($listofextcals))
                 if (isset($icalevent['RRULE']) && is_array($icalevent['RRULE'])) //repeatable event
                 {
                     //if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
-                    //if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
+                    //if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow-1);
                     if ($icalevent['DTSTART;VALUE=DATE']) //fullday event
                     {
                         $datecurstart=dol_stringtotime($icalevent['DTSTART;VALUE=DATE'],1);
@@ -698,10 +698,10 @@ if (count($listofextcals))
                     $until=empty($icalevent['RRULE']['UNTIL'])?0:dol_stringtotime($icalevent['RRULE']['UNTIL'],1);
                     $maxrepeat=empty($icalevent['RRULE']['COUNT'])?0:$icalevent['RRULE']['COUNT'];
                     if ($until && ($until+($datecurend-$datecurstart)) < $firstdaytoshow) continue;  // We discard repeatable event that end before start date to show
-                    if ($datecurstart > $lastdaytoshow) continue;                                    // We discard repeatable event that start after end date to show
+                    if ($datecurstart >= $lastdaytoshow) continue;                                   // We discard repeatable event that start after end date to show
 
                     $numofevent=0;
-                    while (($datecurstart <= $lastdaytoshow) && (empty($maxrepeat) || ($numofevent < $maxrepeat)))
+                    while (($datecurstart < $lastdaytoshow) && (empty($maxrepeat) || ($numofevent < $maxrepeat)))
                     {
                         if ($datecurend >= $firstdaytoshow)    // We add event
                         {
@@ -833,7 +833,7 @@ if (count($listofextcals))
                     }
 
                     // Add event into $eventarray if date range are ok.
-                    if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar > $lastdaytoshow)
+                    if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar >= $lastdaytoshow)
                     {
                         //print 'x'.$datestart.'-'.$dateend;exit;
                         //print 'x'.$datestart.'-'.$dateend;exit;
@@ -843,7 +843,7 @@ if (count($listofextcals))
                     else
                     {
                         if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
-                        if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
+                        if ($event->date_end_in_calendar >= $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow - 1);
 
                         // Add an entry in actionarray for each day
                         $daycursor=$event->date_start_in_calendar;
@@ -1140,7 +1140,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                 	$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
 
-                    // Define $color and $cssclass of event
+                    // Define $color (Hex string like '0088FF') and $cssclass of event
                     $color=-1; $cssclass=''; $colorindex=-1;
        				if (in_array($user->id, $keysofuserassigned))
 					{
@@ -1163,8 +1163,14 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	$color=$event->icalcolor;
                     	$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unsortable');
                     }
-                    else if ($event->type_code == 'BIRTHDAY')  { $numbirthday++; $colorindex=2; $cssclass='family_birthday unsortable'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]); }
-                    else { $numother++; $cssclass='family_other'; }
+                    else if ($event->type_code == 'BIRTHDAY')
+                    {
+                    	$numbirthday++; $colorindex=2; $cssclass='family_birthday unsortable'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
+                    }
+                    else
+                 	{
+                 		$numother++; $cssclass='family_other';
+                 	}
                     if ($color == -1)	// Color was not forced. Set color according to color index.
                     {
                     	// Define color index if not yet defined

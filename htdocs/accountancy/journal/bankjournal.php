@@ -137,16 +137,18 @@ if ($result) {
 	$tabpay = array ();
 	$tabbq = array ();
 	$tabtp = array ();
-	$tabcompany[$obj->rowid] = array (
-			'id' => $obj->socid,
-			'name' => $obj->name,
-			'code_client' => $obj->code_compta
-	);
 	$tabtype = array ();
 
 	$i = 0;
-	while ( $i < $num ) {
+	while ( $i < $num )
+	{
 		$obj = $db->fetch_object($result);
+
+		$tabcompany[$obj->rowid] = array(
+				'id' => $obj->socid,
+				'name' => $obj->name,
+				'code_client' => $obj->code_compta
+		);
 
 		// Controls
 		$compta_bank = $obj->account_number;
@@ -169,15 +171,15 @@ if ($result) {
 		}
 		$links = $object->get_url($obj->rowid);
 
-		foreach ( $links as $key => $val ) {
-
+		foreach ( $links as $key => $val )
+		{
 			$tabtype[$obj->rowid] = $links[$key]['type'];
 
 			if ($links[$key]['type'] == 'payment')
 			{
 				$paymentstatic->id = $links[$key]['url_id'];
 				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentstatic->getNomUrl(2);
-			} 
+			}
 			else if ($links[$key]['type'] == 'payment_supplier')
 			{
 				$paymentsupplierstatic->id = $links[$key]['url_id'];
@@ -232,7 +234,7 @@ if ($result) {
 				$tabtp[$obj->rowid][$cpttva] += $obj->amount;
 			}
 			else if ($links[$key]['type'] == 'payment_salary')
-			{	
+			{
 				$paymentsalstatic->id = $links[$key]['url_id'];
 				$paymentsalstatic->ref = $links[$key]['url_id'];
 				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
@@ -259,14 +261,17 @@ if ($result) {
 
 /*
  * Actions
-*/
+ */
 
 // Write bookkeeping
-if ($action == 'writeBookKeeping') {
+if ($action == 'writeBookKeeping')
+{
 	$error = 0;
-	foreach ( $tabpay as $key => $val ) {
+	foreach ( $tabpay as $key => $val )
+	{
 		// Bank
-		foreach ( $tabbq[$key] as $k => $mt ) {
+		foreach ( $tabbq[$key] as $k => $mt )
+		{
 			$bookkeeping = new BookKeeping($db);
 			$bookkeeping->doc_date = $val["date"];
 			$bookkeeping->doc_ref = $val["ref"];
@@ -317,8 +322,8 @@ if ($action == 'writeBookKeeping') {
 			}
 		}
 		// Third party
-		foreach ( $tabtp[$key] as $k => $mt ) {
-
+		foreach ( $tabtp[$key] as $k => $mt )
+		{
 			$bookkeeping = new BookKeeping($db);
 			$bookkeeping->doc_date = $val["date"];
 			$bookkeeping->doc_ref = $val["ref"];
@@ -399,7 +404,8 @@ if ($action == 'writeBookKeeping') {
 	}
 }
 // export csv
-if ($action == 'export_csv') {
+if ($action == 'export_csv')
+{
 	$sep = $conf->global->ACCOUNTING_SEPARATORCSV;
 
 	header('Content-Type: text/csv');
@@ -482,7 +488,9 @@ if ($action == 'export_csv') {
 			}
 		}
 	}
-} else {
+}
+else
+{
 
 	$form = new Form($db);
 
@@ -580,4 +588,5 @@ if ($action == 'export_csv') {
 	// End of page
 	llxFooter();
 }
+
 $db->close();

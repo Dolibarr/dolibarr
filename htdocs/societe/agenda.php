@@ -171,7 +171,22 @@ if ($socid)
 
     print '<br>';
 
-    print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
+    $objthirdparty=$soc;
+    $objcon=new stdClass();
+
+    $out='';
+    $permok=$user->rights->agenda->myactions->create;
+    if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
+    {
+        $out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
+        if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
+        $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
+    	$out.=$langs->trans("AddAnAction").' ';
+    	$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+    	$out.="</a>";
+	}
+
+    print load_fiche_titre($langs->trans("ActionsOnCompany"),$out,'');
 
     // List of todo actions
     show_actions_todo($conf,$langs,$db,$soc);
