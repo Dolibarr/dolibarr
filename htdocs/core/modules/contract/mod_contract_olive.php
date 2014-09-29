@@ -43,7 +43,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	var $code_auto = 0; 	                // Numerotation automatique
 
 
-	/**		
+	/**
 	 *	Return description of module
 	 *
 	 *	@return string      		Description of module
@@ -51,7 +51,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	function info()
 	{
 		global $langs;
-		
+
 		$langs->load("companies");
 		return $langs->trans("LeopardNumRefModelDesc");
 	}
@@ -74,7 +74,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * 	Check validity of code according to its rules
 	 *
 	 *	@param	DoliDB		$db		Database handler
-	 *	@param	string		&$code	Code to check/correct
+	 *	@param	string		$code	Code to check/correct
 	 *	@param	Product		$product	Object product
 	 *  @param  int		  	$type   0 = product , 1 = service
 	 *  @return int					0 if OK

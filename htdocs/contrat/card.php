@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
@@ -70,6 +71,15 @@ $hookmanager->initHooks(array('contractcard'));
 $object = new Contrat($db);
 $extrafields = new ExtraFields($db);
 
+// Load object
+if ($id > 0 || ! empty($ref)) {
+	$ret = $object->fetch($id, $ref);
+	if ($ret > 0)
+		$ret = $object->fetch_thirdparty();
+	if ($ret < 0)
+		dol_print_error('', $object->error);
+}
+
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -84,7 +94,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
 
 if ($action == 'confirm_active' && $confirm == 'yes' && $user->rights->contrat->activer)
 {
-    $object->fetch($id);
     $result = $object->active_line($user, GETPOST('ligne'), GETPOST('date'), GETPOST('dateend'), GETPOST('comment'));
 
     if ($result > 0)
@@ -106,7 +115,6 @@ else if ($action == 'confirm_closeline' && $confirm == 'yes' && $user->rights->c
 	}
 	if (! $error)
 	{
-	    $object->fetch($id);
 	    $result = $object->close_line($user, GETPOST('ligne'), GETPOST('dateend'), urldecode(GETPOST('comment')));
 	    if ($result > 0)
 	    {
@@ -363,7 +371,6 @@ if ($action == 'add' && $user->rights->contrat->creer)
 
 else if ($action == 'classin' && $user->rights->contrat->creer)
 {
-    $object->fetch($id);
     $object->setProject(GETPOST('projectid'));
 }
 
@@ -402,14 +409,6 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 
     if (! $error)
     {
-        $ret=$object->fetch($id);
-        if ($ret < 0)
-        {
-        	setEventMessage($object->error,'errors');
-            exit;
-        }
-        $ret=$object->fetch_thirdparty();
-
 		// Clean parameters
 		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
@@ -584,14 +583,6 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 
 else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST('cancel'))
 {
-	$ret=$object->fetch($id);
-	if ($ret < 0)
-	{
-		dol_print_error($db,$object->error);
-		exit;
-	}
-
-	$object->fetch_thirdparty();
     $objectline = new ContratLigne($db);
     if ($objectline->fetch(GETPOST('elrowid')))
     {
@@ -647,7 +638,6 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
 
 else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->contrat->creer)
 {
-    $object->fetch($id);
     $result = $object->deleteline(GETPOST('lineid'),$user);
 
     if ($result >= 0)
@@ -663,21 +653,17 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 
 else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contrat->creer)
 {
-    $object->fetch($id);
     $result = $object->validate($user);
 }
 
 // Close all lines
 else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 {
-    $object->fetch($id);
     $result = $object->cloture($user);
 }
 
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
 {
-	$object->fetch($id);
-	$object->fetch_thirdparty();
 	$result=$object->delete($user);
 	if ($result >= 0)
 	{
@@ -714,7 +700,6 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 	}
 } else if ($action == 'update_extras') {
 	// Fill array 'array_options' with data from update form
-	$object->fetch($id);
 	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
 	if ($ret < 0)
@@ -749,10 +734,6 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		exit;
 	}
 } elseif ($action=='setref') {
-	$result = $object->fetch($id);
-	if ($result < 0) {
-		setEventMessage($object->errors,'errors');
-	}
 	$object->ref=GETPOST('ref','alpha');
 
 	$result = $object->update($user);
@@ -765,17 +746,53 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 	}
 }
 
+// Generation doc (depuis lien ou depuis cartouche doc)
+else if ($action == 'builddoc' && $user->rights->contrat->creer) {
+	if (GETPOST('model')) {
+		$object->setDocModel($user, GETPOST('model'));
+	}
+
+	// Define output language
+	$outputlangs = $langs;
+	if (! empty($conf->global->MAIN_MULTILANGS)) {
+		$outputlangs = new Translate("", $conf);
+		$newlang = (GETPOST('lang_id') ? GETPOST('lang_id') : $object->thirdparty->default_lang);
+		$outputlangs->setDefaultLang($newlang);
+	}
+	$ret = $object->fetch($id); // Reload to get new records
+	$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+	if ($result <= 0) {
+		dol_print_error($db, $result);
+		exit();
+	} else {
+		header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc'));
+		exit();
+	}
+}
+
+// Remove file in doc form
+else if ($action == 'remove_file' && $user->rights->contrat->creer) {
+	if ($object->id > 0) {
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+
+		$langs->load("other");
+		$upload_dir = $conf->contrat->dir_output;
+		$file = $upload_dir . '/' . GETPOST('file');
+		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		if ($ret)
+			setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
+		else
+			setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
+	}
+}
+
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat->creer)
 {
 	if ($action == 'addcontact')
 	{
-		$result = $object->fetch($id);
-
-		if ($result > 0 && $id > 0)
-		{
-			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-			$result = $object->add_contact($contactid, GETPOST('type'), GETPOST('source'));
-		}
+		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+		$result = $object->add_contact($contactid, GETPOST('type'), GETPOST('source'));
 
 		if ($result >= 0)
 		{
@@ -799,20 +816,12 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat-
 	// bascule du statut d'un contact
 	else if ($action == 'swapstatut')
 	{
-		if ($object->fetch($id))
-		{
-			$result=$object->swapContactStatus(GETPOST('ligne'));
-		}
-		else
-		{
-			setEventMessage($object->error,'errors');
-		}
+		$result=$object->swapContactStatus(GETPOST('ligne'));
 	}
 
 	// Efface un contact
 	else if ($action == 'deletecontact')
 	{
-		$object->fetch($id);
 		$result = $object->delete_contact(GETPOST('lineid'));
 
 		if ($result >= 0)
@@ -834,6 +843,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat-
 llxHeader('',$langs->trans("ContractCard"),"Contrat");
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 
 $objectlignestatic=new ContratLigne($db);
 
@@ -1032,13 +1042,9 @@ else
 {
     $now=dol_now();
 
-    if ($id > 0 || ! empty($ref))
+    if ($object->id > 0)
     {
-        $result=$object->fetch($id,$ref);
-        if ($result < 0) dol_print_error($db,$object->error);
         $result=$object->fetch_lines();	// This also init $this->nbofserviceswait, $this->nbofservicesopened, $this->nbofservicesexpired=, $this->nbofservicesclosed
-        if ($result < 0) dol_print_error($db,$object->error);
-        $result=$object->fetch_thirdparty();
         if ($result < 0) dol_print_error($db,$object->error);
 
         $nbofservices=count($object->lines);
@@ -1793,16 +1799,29 @@ else
             print "</div>";
         }
 
+        print '<div class="fichecenter"><div class="fichehalfleft">';
 
-        print '<table width="100%"><tr><td width="50%" valign="top">';
+        /*
+         * Documents generes
+        */
+        $filename = dol_sanitizeFileName($object->ref);
+        $filedir = $conf->contrat->dir_output . "/" . dol_sanitizeFileName($object->ref);
+        $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+        $genallowed = $user->rights->contrat->creer;
+        $delallowed = $user->rights->contrat->supprimer;
+
+        $var = true;
+
+        $somethingshown = $formfile->show_documents('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
         /*
          * Linked object block
          */
         $somethingshown=$object->showLinkedObjectBlock();
 
-        print '</td><td valign="top" width="50%">';
-        print '</td></tr></table>';
+        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+        print '</div></div></div>';
     }
 }
 

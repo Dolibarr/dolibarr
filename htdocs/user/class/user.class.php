@@ -2118,7 +2118,7 @@ class User extends CommonObject
 	/**
 	 *  Update user using data from the LDAP
 	 *
-	 *  @param	ldapuser	&$ldapuser	Ladp User
+	 *  @param	ldapuser	$ldapuser	Ladp User
 	 *
 	 *  @return int  				<0 if KO, >0 if OK
 	 */

@@ -83,7 +83,7 @@ $hookmanager->initHooks(array('contactcard'));
 
 $parameters=array('id'=>$id, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
@@ -142,10 +142,10 @@ if (empty($reshook))
     	{
     	    setEventMessage($object->error,'errors');
     	}
-    	else 
+    	else
     	{
         	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-        	exit;    	    
+        	exit;
     	}
     }
 
@@ -157,11 +157,11 @@ if (empty($reshook))
     	{
     	    setEventMessage($object->error,'errors');
     	}
-    	else 
+    	else
     	{
         	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-        	exit;    	    
-    	}    	
+        	exit;
+    	}
     }
 
     // Add contact
@@ -380,7 +380,7 @@ else
 
         $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
         dol_fiche_head($head, 'card', $title, 0, 'contact');
-        
+
         dol_htmloutput_events();
     }
 
@@ -1110,7 +1110,22 @@ else
 
 		if (! empty($conf->agenda->enabled))
 		{
-        	print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),'','');
+			$objthirdparty=$objsoc;
+			$objcon=$object;
+
+		    $out='';
+		    $permok=$user->rights->agenda->myactions->create;
+		    if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
+		    {
+		        $out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
+		        if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
+		        $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
+		    	$out.=$langs->trans("AddAnAction").' ';
+		    	$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+		    	$out.="</a>";
+			}
+
+        	print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),$out,'');
 
         	print show_actions_todo($conf,$langs,$db,$objsoc,$object);
 

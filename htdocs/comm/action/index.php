@@ -218,9 +218,9 @@ if (empty($action) || $action=='show_month')
     $tmpday = -date("w",dol_mktime(0,0,0,$month,1,$year))+2;
     $tmpday+=((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)-1);
     if ($tmpday >= 1) $tmpday -= 7;
-    // Define firstdaytoshow and lastdaytoshow
+    // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
     $firstdaytoshow=dol_mktime(0,0,0,$prev_month,$max_day_in_prev_month+$tmpday,$prev_year);
-    $next_day=7-($max_day_in_month+1-$tmpday)%7;
+    $next_day=7 - ($max_day_in_month+1-$tmpday) % 7;
     if ($next_day < 6) $next_day+=7;
     $lastdaytoshow=dol_mktime(0,0,0,$next_month,$next_day,$next_year);
 }
@@ -242,9 +242,9 @@ if ($action=='show_week')
     $next_month = $next['month'];
     $next_day   = $next['day'];
 
-    // Define firstdaytoshow and lastdaytoshow
+    // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
     $firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
-	$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 6, 'd');
+	$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
 
     $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
 
@@ -261,7 +261,7 @@ if ($action == 'show_day')
     $next_month = $next['month'];
     $next_day   = $next['day'];
 
-    // Define firstdaytoshow and lastdaytoshow
+    // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
     $firstdaytoshow=dol_mktime(0,0,0,$prev_month,$prev_day,$prev_year);
     $lastdaytoshow=dol_mktime(0,0,0,$next_month,$next_day,$next_year);
 }
@@ -419,6 +419,7 @@ if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
 if ($socid > 0) $sql.= ' AND a.fk_soc = '.$socid;
+// FIXME: We must filter on assignement table
 if ($usergroup > 0) $sql.= " AND ugu.fk_user = a.fk_user_action";
 if ($action == 'show_day')
 {
@@ -453,6 +454,7 @@ if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
 if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
 if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
+// FIXME: We must filter on assignement table
 if ($filtera > 0 || $filtert > 0 || $filterd > 0 || $usergroup > 0)
 {
     $sql.= " AND (";
@@ -484,10 +486,12 @@ if ($resql)
         $event->type_code=$obj->code;
         $event->libelle=$obj->label;
         $event->percentage=$obj->percent;
-        $event->author->id=$obj->fk_user_author;	// user id of creator
-        $event->usertodo->id=$obj->fk_user_action;	// user id of owner
-        $event->userdone->id=$obj->fk_user_done;	// deprecated
-		// $event->userstodo=... with s after user, in future version, will be an array with all id of user assigned to event
+        //$event->author->id=$obj->fk_user_author;	// user id of creator
+        $event->authorid=$obj->fk_user_author;	// user id of creator
+        $event->userownerid=$obj->fk_user_action;	// user id of owner
+        $event->fetch_userassigned();				// This load $event->userassigned
+        //$event->usertodo->id=$obj->fk_user_action;	// user id of owner
+        //$event->userdone->id=$obj->fk_user_done;	// deprecated
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
@@ -518,14 +522,14 @@ if ($resql)
 
         // Check values
         if ($event->date_end_in_calendar < $firstdaytoshow ||
-        $event->date_start_in_calendar > $lastdaytoshow)
+        $event->date_start_in_calendar >= $lastdaytoshow)
         {
             // This record is out of visible range
         }
         else
         {
             if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
-            if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
+            if ($event->date_end_in_calendar >= $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow-1);
 
             // Add an entry in actionarray for each day
             $daycursor=$event->date_start_in_calendar;
@@ -655,7 +659,7 @@ if (count($listofextcals))
                 if (isset($icalevent['RRULE']) && is_array($icalevent['RRULE'])) //repeatable event
                 {
                     //if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
-                    //if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
+                    //if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow-1);
                     if ($icalevent['DTSTART;VALUE=DATE']) //fullday event
                     {
                         $datecurstart=dol_stringtotime($icalevent['DTSTART;VALUE=DATE'],1);
@@ -694,10 +698,10 @@ if (count($listofextcals))
                     $until=empty($icalevent['RRULE']['UNTIL'])?0:dol_stringtotime($icalevent['RRULE']['UNTIL'],1);
                     $maxrepeat=empty($icalevent['RRULE']['COUNT'])?0:$icalevent['RRULE']['COUNT'];
                     if ($until && ($until+($datecurend-$datecurstart)) < $firstdaytoshow) continue;  // We discard repeatable event that end before start date to show
-                    if ($datecurstart > $lastdaytoshow) continue;                                    // We discard repeatable event that start after end date to show
+                    if ($datecurstart >= $lastdaytoshow) continue;                                   // We discard repeatable event that start after end date to show
 
                     $numofevent=0;
-                    while (($datecurstart <= $lastdaytoshow) && (empty($maxrepeat) || ($numofevent < $maxrepeat)))
+                    while (($datecurstart < $lastdaytoshow) && (empty($maxrepeat) || ($numofevent < $maxrepeat)))
                     {
                         if ($datecurend >= $firstdaytoshow)    // We add event
                         {
@@ -829,7 +833,7 @@ if (count($listofextcals))
                     }
 
                     // Add event into $eventarray if date range are ok.
-                    if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar > $lastdaytoshow)
+                    if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar >= $lastdaytoshow)
                     {
                         //print 'x'.$datestart.'-'.$dateend;exit;
                         //print 'x'.$datestart.'-'.$dateend;exit;
@@ -839,7 +843,7 @@ if (count($listofextcals))
                     else
                     {
                         if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
-                        if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
+                        if ($event->date_end_in_calendar >= $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow - 1);
 
                         // Add an entry in actionarray for each day
                         $daycursor=$event->date_start_in_calendar;
@@ -1069,7 +1073,7 @@ $db->close();
  * @param   int		$year            Year
  * @param   int		$monthshown      Current month shown in calendar view
  * @param   string	$style           Style to use for this day
- * @param   array	&$eventarray     Array of events
+ * @param   array	$eventarray     Array of events
  * @param   int		$maxprint        Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar     Nb of characters to show for event line
  * @param   string	$newparam        Parameters on current URL
@@ -1132,19 +1136,19 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
             {
                 if ($i < $maxprint || $maxprint == 0 || ! empty($conf->global->MAIN_JS_SWITCH_AGENDA))
                 {
-                    $ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
+					$keysofuserassigned=array_keys($event->userassigned);
+
+                	$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
 
                     // Define $color and $cssclass of event
                     $color=-1; $cssclass=''; $colorindex=-1;
-                    if ((! empty($event->author->id) && $event->author->id == $user->id)
-                    || (! empty($event->usertodo->id) && $event->usertodo->id == $user->id)
-                    || (! empty($event->userdone->id) && $event->userdone->id == $user->id))
-                    {
-                    	$nummytasks++; $cssclass='family_mytasks';
+       				if (in_array($user->id, $keysofuserassigned))
+					{
+						$nummytasks++; $cssclass='family_mytasks';
                     	// TODO Set a color using user color
                     	// Must defined rule to choose color of who to use.
-                    	// event->usertodo->id will still contains user id of owner
-                    	// event->userstodo will be an array in future.
+                    	// event->ownerid will still contains user id of owner
+                    	// event->userassigned will be an array in future.
                     	// $color=$user->color;
                     }
                     else if ($event->type_code == 'ICALEVENT')
@@ -1164,7 +1168,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     if ($color == -1)	// Color was not forced. Set color according to color index.
                     {
                     	// Define color index if not yet defined
-                    	$idusertouse=($event->usertodo->id?$event->usertodo->id:0);
+                    	$idusertouse=($event->userownerid?$event->userownerid:0);
                     	if (isset($colorindexused[$idusertouse]))
                     	{
                     		$colorindex=$colorindexused[$idusertouse];	// Color already assigned to this user
@@ -1344,7 +1348,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                 }
                 else
                 {
-                	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?maxprint=0&month='.$monthshown.'&year='.$year;
+                	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action='.$action.'&maxprint=0&month='.$monthshown.'&year='.$year;
                     print ($status?'&status='.$status:'').($filter?'&filter='.$filter:'');
                     print ($filtera?'&filtera='.$filtera:'').($filtert?'&filtert='.$filtert:'').($filterd?'&filterd='.$filterd:'');
                     print ($actioncode!=''?'&actioncode='.$actioncode:'');

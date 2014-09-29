@@ -219,6 +219,7 @@ if ($action == 'add')
 			if ($value['id'] > 0)
 			{
 				$usertodo->fetch($value['id']);
+				$object->userownerid = $usertodo->id;
 			}
 			$object->usertodo = $usertodo;
 			$object->transparency = (GETPOST("transparency")=='on'?1:0);
@@ -235,6 +236,7 @@ if ($action == 'add')
 		if ($_POST["doneby"] > 0)
 		{
 			$userdone->fetch($_POST["doneby"]);
+			$object->userdoneid = $userdone->id;
 		}
 		$object->userdone = $userdone;
 	}

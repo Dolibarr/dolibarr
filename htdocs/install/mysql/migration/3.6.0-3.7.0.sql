@@ -1083,3 +1083,5 @@ CREATE TABLE llx_usergroup_extrafields (
 ) ENGINE=innodb;
 
 ALTER TABLE llx_usergroup_extrafields ADD INDEX idx_usergroup_extrafields (fk_object);
+
+ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER note_public;

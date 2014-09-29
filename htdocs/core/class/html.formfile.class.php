@@ -355,6 +355,15 @@ class FormFile
                     $modellist=ModelePDFFactures::liste_modeles($this->db);
                 }
             }
+            elseif ($modulepart == 'contract')
+            {
+            	if (is_array($genallowed)) $modellist=$genallowed;
+            	else
+            	{
+            		include_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
+            		$modellist=ModelePDFContract::liste_modeles($this->db);
+            	}
+            }
             elseif ($modulepart == 'project')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;

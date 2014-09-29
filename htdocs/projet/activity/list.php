@@ -127,6 +127,9 @@ if ($id)
 $tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0);    // We want to see all task of project i am allowed to see, not only mine. Later only mine will be editable later.
 $projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($user,0,($project->id?$project->id:$projectsListId),0);
 $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$project->id:$projectsListId),0);
+//var_dump($tasksarray);
+//var_dump($projectsrole);
+//var_dump($taskrole);
 
 
 llxHeader("",$title,"");
