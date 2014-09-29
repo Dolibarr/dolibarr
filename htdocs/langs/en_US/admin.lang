@@ -219,6 +219,7 @@ AutomaticIfJavascriptDisabled=Automatic if Javascript is disabled
 AvailableOnlyIfJavascriptNotDisabled=Available only if JavaScript is not disabled
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=Available only if JavaScript is not disabled
 Required=Required
+UsedOnlyWithTypeOption=Used by some agenda option only
 Security=Security
 Passwords=Passwords
 DoNotStoreClearPassword=Do no store clear passwords in database but store only encrypted value (Activated recommended)

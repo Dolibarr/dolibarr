@@ -1140,7 +1140,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                 	$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
 
-                    // Define $color and $cssclass of event
+                    // Define $color (Hex string like '0088FF') and $cssclass of event
                     $color=-1; $cssclass=''; $colorindex=-1;
        				if (in_array($user->id, $keysofuserassigned))
 					{
@@ -1163,8 +1163,14 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	$color=$event->icalcolor;
                     	$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unsortable');
                     }
-                    else if ($event->type_code == 'BIRTHDAY')  { $numbirthday++; $colorindex=2; $cssclass='family_birthday unsortable'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]); }
-                    else { $numother++; $cssclass='family_other'; }
+                    else if ($event->type_code == 'BIRTHDAY')
+                    {
+                    	$numbirthday++; $colorindex=2; $cssclass='family_birthday unsortable'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
+                    }
+                    else
+                 	{
+                 		$numother++; $cssclass='family_other';
+                 	}
                     if ($color == -1)	// Color was not forced. Set color according to color index.
                     {
                     	// Define color index if not yet defined
