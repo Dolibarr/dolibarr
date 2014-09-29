@@ -1368,7 +1368,7 @@ class Project extends CommonObject
 			}
 		}
 
-		$modelpath = "core/modules/project/pdf/";
+		$modelpath = "core/modules/project/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}

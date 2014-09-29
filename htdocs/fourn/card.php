@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014      Jean Heimburger		<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,12 +49,12 @@ $result = restrictedArea($user, 'societe&fournisseur', $id, '&societe');
 
 $object = new Fournisseur($db);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('suppliercard'));
+
 /*
  * Action
  */
-
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('suppliercard'));
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -451,12 +452,14 @@ if ($object->fetch($id))
 	/*
 	 * Barre d'actions
 	 */
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+	// modified by hook
+	if (empty($reshook)) 
+	{
 
 	print '<div class="tabsAction">';
 	
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-
 	if ($user->rights->fournisseur->commande->creer)
 	{
 		$langs->load("orders");
@@ -514,6 +517,7 @@ if ($object->fetch($id))
         // List of done actions
         show_actions_done($conf,$langs,$db,$object);
     }
+}
 }
 else
 {

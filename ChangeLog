@@ -6,12 +6,10 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
 - New: PDF event report show project and status of event.
-- New: Onto event summary of elements, end date and status are visible.
 - New: Can filter on status on interventions.
 - New: Add help info of field type into dictionary of payment types.
 - New: Add proposals into referer page of thirdparty.
 - New: On contact list can set filter on both active and not active (no more exclusive select). 
-- New: Each user can include its own external ics calendar into dolibarr agenda view.
 - New: Intervention documents are now available in ECM module.
 - New: Can attach supplier order to a customer order.
 - New: Supervisor is now visible into user list. 
@@ -22,16 +20,21 @@ For users:
 - New: No more dependency between contract and service module.
 - New: [ task #867 ] Remove ESAEB external module code from core.
 - New: Can create proposal from an intervention.
+- New: An event can be assigned to several users.
 - New: Can filter events on a group of users.
 - New: Can filter events of a thirdparty.
+- New: Onto event summary of elements, end date and status are visible.
 - New: Split Agenda view (month, week, day) into different tabs.
+- New: Add a view "per user" of agenda events (with different colors according to type of event).
+- New: Each user can include its own external ics calendar into dolibarr agenda view.
+- New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
+       create an automatic event into agenda.
+- New: Add new type of event (when type of events are used, not by default).
+- New: Can disable predefined type of events.
 - New: Form to add a photo is immediatly available on photo page if
        permissions are ok (save one click per photo to add).
 - New: Add option PRODUCT_MAX_VISIBLE_PHOTO to limit number of photos
        shown on main product card.
-- New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
-       create an automatic event into agenda.
-- New: Add new type of event (when type of events are used, not by default).
 - New: Add country into table of thirdparties type. This will allow to provide
        a list of thirdparty types specific to a country (like argentina that
        need type A or B).
