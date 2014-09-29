@@ -108,7 +108,7 @@ $begin_d = GETPOST('begin_d')?GETPOST('begin_d','int'):($tmparray[0] != '' ? $tm
 $end_d   = GETPOST('end_d')?GETPOST('end_d'):($tmparray[1] != '' ? $tmparray[1] : 5);
 if ($begin_d < 1 || $begin_d > 7) $begin_d = 1;
 if ($end_d < 1 || $end_d > 7) $end_d = 7;
-if ($end_d <= $begin_d) $end_d = $begin_d + 1;
+if ($end_d < $begin_d) $end_d = $begin_d + 1;
 
 if ($actioncode == '') $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
@@ -321,7 +321,7 @@ $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
-$sql.= ' ca.code';
+$sql.= ' ca.code, ca.color';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 if ($usergroup > 0) $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ugu";
@@ -396,6 +396,7 @@ if ($resql)
         $event->datep=$db->jdate($obj->datep);      // datep and datef are GMT date
         $event->datef=$db->jdate($obj->datep2);
         $event->type_code=$obj->code;
+        $event->type_color=$obj->color;
         //$event->libelle=$obj->label;				// deprecated
         $event->label=$obj->label;
         $event->percentage=$obj->percent;
@@ -665,7 +666,7 @@ jQuery(document).ready(function() {
 		else if (ids.indexOf(",") > -1)	/* There is several events */
 		{
 			/* alert(\'several events\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?usertodo="+userid
+			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?usertodo="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+dateselectday;
 			window.location.href = url;
 		}
 		else	/* One event */
@@ -744,12 +745,12 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 
 				$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
 
-				// Define $color and $cssclass of event
+				// Define $color (Hex string like '0088FF') and $cssclass of event
 				$color=-1; $cssclass=''; $colorindex=-1;
 				if (in_array($user->id, $keysofuserassigned))
 				{
 					$nummytasks++; $cssclass='family_mytasks';
-					// TODO Set color according to event type
+					$color=$event->type_color;
 				}
 				else if ($event->type_code == 'ICALEVENT')
 				{
@@ -760,15 +761,19 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 						}
 						$numicals[dol_string_nospecial($event->icalname)]++;
 					}
+
 					$color=$event->icalcolor;
 					$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unsortable');
 				}
-				else if ($event->type_code == 'BIRTHDAY')  {
+				else if ($event->type_code == 'BIRTHDAY')
+				{
 					$numbirthday++; $colorindex=2; $cssclass='family_birthday unsortable'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
 				}
-				else { $numother++; $cssclass='family_other';
+				else
+				{
+					$numother++; $cssclass='family_other';
 				}
-				if ($color == -1)	// Color was not forced. Set color according to color index.
+				if ($color < 0)	// Color was not forced. Set color according to color index.
 				{
 					// Define color index if not yet defined
 					$idusertouse=($event->userownerid?$event->userownerid:0);
@@ -791,7 +796,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				for ($h = $begin_h; $h < $end_h; $h++)
 				{
 					//if ($username->id == 1 && $day==1) print 'h='.$h;
-					$color = ''; //init
+					$newcolor = ''; //init
 					if (empty($event->fulldayevent))
 					{
 						$a = dol_mktime((int) $h,0,0,$month,$day,$year,false,false);
@@ -800,6 +805,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 
 						$dateendtouse=$event->date_end_in_calendar;
 						if ($dateendtouse==$event->date_start_in_calendar) $dateendtouse++;
+
+						//print dol_print_date($event->date_start_in_calendar,'dayhour').'-'.dol_print_date($a,'dayhour').'-'.dol_print_date($b,'dayhour').'<br>';
 
 						if ($event->date_start_in_calendar < $b && $dateendtouse > $a)
 						{
@@ -817,8 +824,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 							$cases1[$h][$event->id]['typecode']=$event->type_code;
 							if ($event->socid)
 							{
-								$cases1[$h][$event->id]['string'].='xxx';
+								//$cases1[$h][$event->id]['string'].='xxx';
 							}
+							$cases1[$h][$event->id]['color']=$color;
 						}
 						if ($event->date_start_in_calendar < $c && $dateendtouse > $b)
 						{
@@ -836,8 +844,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 							$cases2[$h][$event->id]['typecode']=$event->type_code;
 							if ($event->socid)
 							{
-								$cases2[$h][$event->id]['string'].='xxx';
+								//$cases2[$h][$event->id]['string'].='xxx';
 							}
+							$cases2[$h][$event->id]['color']=$color;
 						}
 					}
 					else
@@ -849,7 +858,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 						$cases2[$h][$event->id]['string']=$event->label;
 						$cases1[$h][$event->id]['typecode']=$event->type_code;
 						$cases2[$h][$event->id]['typecode']=$event->type_code;
-						//break;
+						$cases1[$h][$event->id]['color']='009900';
+						$cases2[$h][$event->id]['color']='009900';
 					}
 				}
 				$i++;
@@ -861,6 +871,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 
 	for ($h = $begin_h; $h < $end_h; $h++)
 	{
+		$color1='';$color2='';
 		$style1='';$style2='';
 		$string1='&nbsp;';$string2='&nbsp;';
 		$title1='';$title2='';
@@ -893,20 +904,25 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			$ids=array_keys($cases1[$h]);
 			$output = array_slice($cases1[$h], 0, 1);
 			if ($output[0]['string']) $title1.=' - '.$output[0]['string'];
+			if ($output[0]['color']) $color1 = $output[0]['color'];
 		}
+		else if (count($cases1[$h]) > 1) $color1='222222';
+
 		if (count($cases2[$h]) == 1)	// 1 seul evenement
 		{
 			$ids=array_keys($cases2[$h]);
 			$output = array_slice($cases2[$h], 0, 1);
 			if ($output[0]['string']) $title2.=' - '.$output[0]['string'];
+			if ($output[0]['color']) $color2 = $output[0]['color'];
 		}
+		else if (count($cases2[$h]) > 1) $color2='222222';
 		$ids1=join(',',array_keys($cases1[$h]));
 		$ids2=join(',',array_keys($cases2[$h]));
 		//var_dump($cases1[$h]);
 		print '<table class="nobordernopadding" width="100%">';
-		print '<tr><td class="'.($style1?$style1.' ':'').'onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_00_'.($ids1?$ids1:'none').'"'.($title1?' title="'.$title1.'"':'').'>';
+		print '<tr><td '.($color1?'style="background: #'.$color1.';"':'').'class="'.($style1?$style1.' ':'').'onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_00_'.($ids1?$ids1:'none').'"'.($title1?' title="'.$title1.'"':'').'>';
 		print $string1;
-		print '</td><td class="'.($style2?$style2.' ':'').'onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_30_'.($ids2?$ids2:'none').'"'.($title2?' title="'.$title2.'"':'').'>';
+		print '</td><td '.($color2?'style="background: #'.$color2.';"':'').'class="'.($style2?$style2.' ':'').'onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_30_'.($ids2?$ids2:'none').'"'.($title2?' title="'.$title2.'"':'').'>';
 		print $string2;
 		print '</td></tr>';
 		print '</table>';

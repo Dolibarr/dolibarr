@@ -39,9 +39,10 @@ class ActionComm extends CommonObject
 
     var $id;
 
-    var $type_id;		// id into parent table llx_c_actioncomm (will be deprecated into future, link should not be required)
-    var $type_code;		// code into parent table llx_c_actioncomm (will be deprecated into future, link should not be required). With defautl setup, should be AC_OTH_AUTO or AC_OTH
-    var $type;			// label into parent table llx_c_actioncomm (will be deprecated into future, link should not be required)
+    var $type_id;		// Id into parent table llx_c_actioncomm (used only if option to use type is set)
+    var $type_code;		// Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
+    var $type;			// Label into parent table llx_c_actioncomm (used only if option to use type is set)
+    var $type_color;	// Color into parent table llx_c_actioncomm (used only if option to use type is set)
     var $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
     var $label;
 
@@ -56,7 +57,7 @@ class ActionComm extends CommonObject
     var $datef;			// Date action end (datep2)
     var $durationp = -1;      // -1=Unkown duration			// deprecated
     var $fulldayevent = 0;    // 1=Event on full day
-    var $punctual = 1;        // Milestone
+    var $punctual = 1;        // Milestone					// TODO Not sure we need this. Milestone is already event with end date = start date
     var $percentage;    // Percentage
     var $location;      // Location
 
@@ -66,7 +67,8 @@ class ActionComm extends CommonObject
 
 	var $userassigned = array();	// Array of user ids
     var $userownerid;	// Id of user owner
-	var $usertodo;		// Object user of owner				// deprecated
+    var $userdoneid;	// Id of user done
+    var $usertodo;		// Object user of owner				// deprecated
     var $userdone;	 	// Object user that did action		// deprecated
 
     var $socid;
@@ -352,25 +354,29 @@ class ActionComm extends CommonObject
                 $this->note					= $obj->note;
                 $this->percentage			= $obj->percentage;
 
-                $this->author->id			= $obj->fk_user_author;
-                $this->author->firstname	= $obj->firstname;
-                $this->author->lastname		= $obj->lastname;
-                $this->usermod->id			= $obj->fk_user_mod;
+                $this->authorid             = $obj->fk_user_author;
+                $this->usermodid			= $obj->fk_user_mod;
+                $this->author->id			= $obj->fk_user_author;		// deprecated
+                $this->author->firstname	= $obj->firstname;			// deprecated
+                $this->author->lastname		= $obj->lastname;			// deprecated
+                $this->usermod->id			= $obj->fk_user_mod;		// deprecated
 
                 $this->userownerid			= $obj->fk_user_action;
+                $this->userdoneid			= $obj->fk_user_done;
                 $this->usertodo->id			= $obj->fk_user_action;		// deprecated
-                //$this->userdone->id			= $obj->fk_user_done;
+                $this->userdone->id			= $obj->fk_user_done;		// deprecated
                 $this->priority				= $obj->priority;
                 $this->fulldayevent			= $obj->fulldayevent;
                 $this->location				= $obj->location;
                 $this->transparency			= $obj->transparency;
+                $this->punctual				= $obj->punctual;
 
                 $this->socid				= $obj->fk_soc;			// To have fetch_thirdparty method working
-                $this->contactid			= $obj->fk_contact;
+                $this->contactid			= $obj->fk_contact;		// To have fetch_contact method working
                 $this->fk_project			= $obj->fk_project;		// To have fetch_project method working
 
-                $this->societe->id			= $obj->fk_soc;			// For backward compatibility
-                $this->contact->id			= $obj->fk_contact;		// For backward compatibility
+                $this->societe->id			= $obj->fk_soc;			// deprecated
+                $this->contact->id			= $obj->fk_contact;		// deprecated
 
                 $this->fk_element			= $obj->fk_element;
                 $this->elementtype			= $obj->elementtype;
@@ -1041,6 +1047,7 @@ class ActionComm extends CommonObject
                     $event['fulldayevent']=$obj->fulldayevent;
                     $event['location']=$obj->location;
                     $event['transparency']=(($obj->transparency > 0)?'OPAQUE':'TRANSPARENT');		// OPAQUE (busy) or TRANSPARENT (not busy)
+                    $event['punctual']=$obj->punctual;
                     $event['category']=$obj->libelle;	// libelle type action
 					// Define $urlwithroot
 					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -1146,7 +1153,7 @@ class ActionComm extends CommonObject
         $this->punctual=0;
         $this->percentage=0;
         $this->location='Location';
-        $this->transparency=0;
+        $this->transparency=1;	// 1 means opaque
         $this->priority=1;
         $this->note = 'Note';
     }

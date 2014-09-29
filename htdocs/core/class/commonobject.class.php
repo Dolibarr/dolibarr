@@ -577,11 +577,15 @@ abstract class CommonObject
     /**
      *		Charge le contact d'id $id dans this->contact
      *
-     *		@param	int		$contactid      Id du contact
+     *		@param	int		$contactid      Id du contact. Use this->contactid if empty.
      *		@return	int						<0 if KO, >0 if OK
      */
-    function fetch_contact($contactid)
+    function fetch_contact($contactid='')
     {
+    	if (empty($contactid)) $contactid=$this->contactid;
+
+    	if (empty($contactid)) return 0;
+
         require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
         $contact = new Contact($this->db);
         $result=$contact->fetch($contactid);
