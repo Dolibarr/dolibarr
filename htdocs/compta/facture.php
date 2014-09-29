@@ -873,7 +873,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 					$exp = new Expedition($db);
 					$exp->fetch($object->origin_id);
 					$exp->fetchObjectLinked();
-					if (count ($exp->linkedObjectsIds['commande']) > 0) $object->linked_objects['commande'] = $exp->linkedObjectsIds['commande'][0];
+					if (count($exp->linkedObjectsIds['commande']) > 0) $object->linked_objects['commande'] = $exp->linkedObjectsIds['commande'][0];
 				}
 				
 				if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects'])) {
