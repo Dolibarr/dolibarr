@@ -1636,14 +1636,14 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		else $original_file=$conf->facture->dir_output.'/payments/'.$original_file;
 	}
 
-	// Wrapping pour les exports de compta
+	// Wrapping for accounting exports
 	else if ($modulepart == 'export_compta')
 	{
-		if ($fuser->rights->compta->ventilation->creer || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->accounting->ventilation->dispatch || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->compta->dir_output.'/'.$original_file;
+		$original_file=$conf->accounting->dir_output.'/'.$original_file;
 	}
 
 	// Wrapping pour les expedition
