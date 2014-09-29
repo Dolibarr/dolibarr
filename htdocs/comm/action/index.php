@@ -966,7 +966,7 @@ llxFooter();
  * @param   int		$year            Year
  * @param   int		$monthshown      Current month shown in calendar view
  * @param   string	$style           Style to use for this day
- * @param   array	&$eventarray     Array of events
+ * @param   array	$eventarray     Array of events
  * @param   int		$maxprint        Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar     Nb of characters to show for event line
  * @param   string	$newparam        Parameters on current URL

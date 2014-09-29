@@ -130,4 +130,3 @@ else
 
 llxFooter();
 $db->close();
-?>

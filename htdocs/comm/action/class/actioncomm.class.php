@@ -284,7 +284,7 @@ class ActionComm extends CommonObject
         $sql.= " a.fk_user_action, a.fk_user_done,";
         $sql.= " a.fk_contact, a.percent as percentage,";
         $sql.= " a.fk_element, a.elementtype,";
-        $sql.= " a.priority, a.fulldayevent, a.location, a.transparency,";
+        $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
         $sql.= " c.id as type_id, c.code as type_code, c.libelle,";
         $sql.= " s.nom as socname,";
         $sql.= " u.firstname, u.lastname as lastname";
@@ -878,7 +878,7 @@ class ActionComm extends CommonObject
             $sql.= " a.fk_user_action, a.fk_user_done,";
             $sql.= " a.fk_contact, a.percent as percentage,";
             $sql.= " a.fk_element, a.elementtype,";
-            $sql.= " a.priority, a.fulldayevent, a.location,";
+            $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
             $sql.= " u.firstname, u.lastname,";
             $sql.= " s.nom as socname,";
             $sql.= " c.id as type_id, c.code as type_code, c.libelle";
@@ -1071,4 +1071,3 @@ class ActionComm extends CommonObject
 
 }
 
-?>

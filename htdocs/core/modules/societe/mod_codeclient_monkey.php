@@ -139,7 +139,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 		$date	= dol_now();
 		$yymm	= strftime("%y%m",$date);
-		
+
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
 		else $num = sprintf("%04s",$max+1);
 
@@ -152,7 +152,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 * 	Check validity of code according to its rules
 	 *
 	 *	@param	DoliDB		$db		Database handler
-	 *	@param	string		&$code	Code to check/correct
+	 *	@param	string		$code	Code to check/correct
 	 *	@param	Societe		$soc	Object third party
 	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
 	 *  @return int					0 if OK

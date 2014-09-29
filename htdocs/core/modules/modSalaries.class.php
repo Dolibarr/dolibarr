@@ -22,7 +22,7 @@
  */
 
 /**
- * 		\defgroup   tax		Module salaries
+ * 		\defgroup   salaries		Module salaries
  * 		\brief      Module to include salaries management
  *      \file       htdocs/core/modules/modSalaries.class.php
  *      \ingroup    salaries
