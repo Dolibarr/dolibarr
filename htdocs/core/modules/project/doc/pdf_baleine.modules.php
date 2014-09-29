@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/project/pdf/pdf_baleine.modules.php
+ *	\file       htdocs/core/modules/project/doc/pdf_baleine.modules.php
  *	\ingroup    project
  *	\brief      Fichier de la classe permettant de generer les projets au modele Baleine
  *	\author	    Regis Houssin

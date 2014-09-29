@@ -1343,7 +1343,7 @@ class Task extends CommonObject
 			}
 		}
 
-		$modelpath = "core/modules/project/task/pdf/";
+		$modelpath = "core/modules/project/task/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
