@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2014		Cedric GROSS		<c.gross@kreiz-it.fr>
+/* Copyright (C) 2006-2011	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2007		Patrick Raguin      	<patrick.raguin@gmail.com>
+ * Copyright (C) 2010-2012	Regis Houssin       	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010		Juanjo Menent       	<jmenent@2byte.es>
+ * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +167,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		 *	This class is an enhanced FPDI class that support method writeHTMLCell
 		 */
 		class FPDI_DolExtended extends FPDI
-        {
+		{
 			/**
 			 * __call
 			 *
@@ -434,9 +435,9 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 	// Add a background image on document
 	if (! empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))		// Warning, this option make TCPDF generation beeing crazy and some content disappeared behin the image
 	{
-        $pdf->SetAutoPageBreak(0,0);	// Disable auto pagebreak before adding image
+		$pdf->SetAutoPageBreak(0,0);	// Disable auto pagebreak before adding image
 		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X)?$conf->global->MAIN_USE_BACKGROUND_ON_PDF_X:0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y)?$conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y:0), 0, $page_height);
-        $pdf->SetAutoPageBreak(1,0);	// Restore pagebreak
+		$pdf->SetAutoPageBreak(1,0);	// Restore pagebreak
 	}
 }
 
@@ -498,7 +499,6 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 	$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
 	$diffsizecontent=(empty($conf->global->PDF_DIFFSIZE_CONTENT)?4:$conf->global->PDF_DIFFSIZE_CONTENT);
-
 	$pdf->SetXY($curx, $cury);
 
 	if (empty($onlynumber))
@@ -523,6 +523,27 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 			$pdf->SetFont('','',$default_font_size - $diffsizecontent);
 			$pdf->SetXY($curx, $cury);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': ' . $outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
+			$cury+=3;
+		}
+
+		// Use correct name of bank id according to country
+		$ibankey="IBANNumber";
+		if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+		if (! empty($account->iban))
+		{
+			$ibanDisplay_temp = $outputlangs->convToOutputCharset($account->iban);
+			$ibanDisplay = "";
+
+			for($i = 0; $i < dol_strlen($ibanDisplay_temp); $i++){
+				$ibanDisplay .= $ibanDisplay_temp[$i];
+				if($i%4 == 3 && $i > 0){
+					$ibanDisplay .= " ";
+				}
+			}
+
+			$pdf->SetFont('','B',$default_font_size - 3);
+			$pdf->SetXY($curx, $cury);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $ibanDisplay, 0, 'L', 0);
 			$cury+=3;
 		}
 
@@ -606,9 +627,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	}
 
 	// Use correct name of bank id according to country
-	$ibankey="IBANNumber";
 	$bickey="BICNumber";
-	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 	$pdf->SetFont('','',$default_font_size - $diffsizecontent);
@@ -625,13 +644,6 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	}
 	else if (! $usedetailedbban) $cury+=1;
 
-	if (! empty($account->iban))
-	{
-		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
-		$cury+=3;
-	}
-
 	if (! empty($account->bic))
 	{
 		$pdf->SetXY($curx, $cury);
@@ -640,7 +652,6 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 	return $pdf->getY();
 }
-
 
 /**
  *  Show footer of page for PDF generation
@@ -671,11 +682,11 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	{
 		// Make substitution
 		$substitutionarray=array(
-		'__FROM_NAME__' => $fromcompany->nom,
-		'__FROM_EMAIL__' => $fromcompany->email,
-		'__TOTAL_TTC__' => $object->total_ttc,
-		'__TOTAL_HT__' => $object->total_ht,
-		'__TOTAL_VAT__' => $object->total_vat
+			'__FROM_NAME__' => $fromcompany->nom,
+			'__FROM_EMAIL__' => $fromcompany->email,
+			'__TOTAL_TTC__' => $object->total_ttc,
+			'__TOTAL_HT__' => $object->total_ht,
+			'__TOTAL_VAT__' => $object->total_vat
 		);
 		complete_substitutions_array($substitutionarray,$outputlangs,$object);
 		$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
