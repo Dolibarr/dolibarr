@@ -1085,3 +1085,8 @@ CREATE TABLE llx_usergroup_extrafields (
 ALTER TABLE llx_usergroup_extrafields ADD INDEX idx_usergroup_extrafields (fk_object);
 
 ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER note_public;
+
+-- remove OSC module
+DELETE FROM llx_const WHERE name = 'MAIN_MODULE_BOUTIQUE';
+DELETE FROM llx_const WHERE name = 'OSC_DB_HOST';
+DELETE FROM llx_menu WHERE module = 'boutique';

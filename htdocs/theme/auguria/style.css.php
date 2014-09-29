@@ -400,7 +400,7 @@ $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 $mainmenuusedarray=array();	// Disable
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','cashdesk');
+$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','agenda','ecm','cashdesk');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
