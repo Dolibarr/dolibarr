@@ -1492,9 +1492,9 @@ class Form
     /**
      * constructProductListOption
      *
-     * @param 	resultset	&$objp			Resultset of fetch
-     * @param 	string		&$opt			Option
-     * @param 	string		&$optJson		Option
+     * @param 	resultset	$objp			Resultset of fetch
+     * @param 	string		$opt			Option
+     * @param 	string		$optJson		Option
      * @param 	int			$price_level	Price level
      * @param 	string		$selected		Preselected value
      * @return	void
@@ -4080,7 +4080,7 @@ class Form
     /**
      *    	Return HTML code to output a barcode
      *
-     *     	@param	Object	&$object		Object containing data to retrieve file name
+     *     	@param	Object	$object		Object containing data to retrieve file name
      * 		@param	int		$width			Width of photo
      * 	  	@return string    				HTML code to output barcode
      */

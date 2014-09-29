@@ -164,7 +164,7 @@ class BonPrelevement extends CommonObject
     /**
      *	Add line to withdrawal
      *
-     *	@param	int		&$line_id 		id line to add
+     *	@param	int		$line_id 		id line to add
      *	@param	int		$client_id  	id invoice customer
      *	@param	string	$client_nom 	name of cliente
      *	@param	int		$amount 		amount of invoice

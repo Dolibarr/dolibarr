@@ -20,7 +20,7 @@
  */
 
 /**
- *       \file       htdocs/core/modules/product/mod_barcode_product_standard.php
+ *       \file       htdocs/core/modules/barcode/mod_barcode_product_standard.php
  *       \ingroup    barcode
  *       \brief      File of class to manage barcode numbering with standard rule
  */
@@ -162,7 +162,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * 	Check validity of code according to its rules
 	 *
 	 *	@param	DoliDB		$db					Database handler
-	 *	@param	string		&$code				Code to check/correct
+	 *	@param	string		$code				Code to check/correct
 	 *	@param	Product		$product			Object product
 	 *  @param  int		  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
 	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
@@ -177,7 +177,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		global $conf;
 
 		//var_dump($code.' '.$product->ref.' '.$thirdparty_type);exit;
-		
+
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		$result=0;
@@ -282,7 +282,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		{
 			$newcodefortest=substr($newcodefortest,0,12);
 		}
-	
+
 		$result=check_value($mask,$newcodefortest);
 
 		return $result;
