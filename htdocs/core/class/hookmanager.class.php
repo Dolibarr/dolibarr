@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,7 +152,7 @@ class HookManager
         $modulealreadyexecuted=array();
         $resaction=0; $error=0; $result='';
 		$this->resPrint=''; $this->resArray=array();
-        foreach($this->hooks as $modules)    // this->hooks is an array with context as key and value is an array of modules that handle this context
+        foreach($this->hooks as $context => $modules)    // this->hooks is an array with context as key and value is an array of modules that handle this context
         {
             if (! empty($modules))
             {
@@ -166,6 +166,8 @@ class HookManager
                 	// test to avoid to run twice a hook, when a module implements several active contexts
                     if (in_array($module,$modulealreadyexecuted)) continue;
                     $modulealreadyexecuted[$module]=$module;
+                    // Add current context for avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
+                    $parameters['currentcontext'] = $context;
                     // Hooks that must return int (hooks with type 'addreplace')
                     if ($hooktype == 'addreplace')
                     {
