@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Destailleur Laurent		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
@@ -65,6 +65,7 @@ class Contrat extends CommonObject
 	var $note;			// deprecated
 	var $note_private;
 	var $note_public;
+	var $modelpdf;
 
 	var $fk_projet;
 
@@ -401,7 +402,7 @@ class Contrat extends CommonObject
 		$sql.= " fk_user_author,";
 		$sql.= " fk_projet,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
-		$sql.= " note_private, note_public, extraparams";
+		$sql.= " note_private, note_public, model_pdf, extraparams";
 		$sql.= " ,ref_customer";
 		$sql.= " ,ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
@@ -436,6 +437,7 @@ class Contrat extends CommonObject
 				$this->note						= $result["note_private"];	// deprecated
 				$this->note_private				= $result["note_private"];
 				$this->note_public				= $result["note_public"];
+				$this->modelpdf					= $result["model_pdf"];
 
 				$this->fk_projet				= $result["fk_projet"]; // deprecated
 				$this->fk_project				= $result["fk_projet"];
@@ -744,7 +746,7 @@ class Contrat extends CommonObject
 
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
 
-			
+
 			// Load object modContract
 			$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_olive');
 			if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
@@ -1865,6 +1867,40 @@ class Contrat extends CommonObject
 		$this->total_ht       = $xnbp*100;
 		$this->total_tva      = $xnbp*19.6;
 		$this->total_ttc      = $xnbp*119.6;
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 * 	@param	    string		$modele			Force model to use ('' to not force)
+	 * 	@param		Translate	$outputlangs	Object langs to use for output
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 * 	@return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("contracts");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->CONTRACT_ADDON_PDF))
+			{
+				$modele = $conf->global->CONTRACT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'strato';
+			}
+		}
+
+		$modelpath = "core/modules/contract/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 }
 
