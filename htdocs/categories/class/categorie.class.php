@@ -1263,7 +1263,7 @@ class Categorie extends CommonObject
 		$result='';
 
 		$lien = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'">';
-		$label=$langs->trans("ShowCategory").': '.$this->label;
+		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
 		$lienfin='</a>';
 
 		$picto='category';
@@ -1271,7 +1271,7 @@ class Categorie extends CommonObject
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.dol_trunc($this->label,$maxlength).$lienfin;
+		if ($withpicto != 2) $result.=$lien.dol_trunc(($this->ref?$this->ref:$this->label),$maxlength).$lienfin;
 		return $result;
 	}
 
