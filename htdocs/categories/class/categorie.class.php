@@ -1369,7 +1369,7 @@ class Categorie extends CommonObject
     					// Objet
     					$obj=array();
     					$obj['photo']=$photo;
-    					if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']=$photo_vignette;
+    					if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']='thumbs/' . $photo_vignette;
     					else $obj['photo_vignette']="";
 
     					$tabobj[$nbphoto-1]=$obj;
