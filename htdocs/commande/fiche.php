@@ -686,8 +686,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 					$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
 					$price_min = $prod->multiprices_min[$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
-					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
-					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
 				}
 				else
 				{
