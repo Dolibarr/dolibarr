@@ -111,3 +111,4 @@ ExtraFieldsCategories=Attributs supplémentaires
 CategoriesSetup=Configuration du module catégories
 CategorieRecursiv=Lier avec les catégories parentes
 CategorieRecursivHelp=Si activer, quand un élément est ajouté dans une catégorie, ajouter aussi l'élément dans toutes les catégories parentes
+ShowCategory=Afficher la catégorie
