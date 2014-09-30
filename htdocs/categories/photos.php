@@ -241,7 +241,7 @@ if ($object->id)
 			// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
 			if ($obj['photo_vignette'])
 			{
-				$filename='thumbs/'.$obj['photo_vignette'];
+				$filename=$obj['photo_vignette'];
 			}
 			else
 			{
