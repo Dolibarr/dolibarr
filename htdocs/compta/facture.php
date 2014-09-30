@@ -865,7 +865,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 				$object->origin_id = $originid;
 
 				// Possibility to add external linked objects with hooks
-				$object->linked_objects [$object->origin] = $object->origin_id;
+				$object->linked_objects[$object->origin] = $object->origin_id;
 				// link with order if it is a shipping invoice
 				if ($object->origin == 'shipping')
 				{
@@ -873,10 +873,11 @@ else if ($action == 'add' && $user->rights->facture->creer)
 					$exp = new Expedition($db);
 					$exp->fetch($object->origin_id);
 					$exp->fetchObjectLinked();
-					if (count ($exp->linkedObjectsIds['commande']) > 0) $object->linked_objects['commande'] = $exp->linkedObjectsIds['commande'][0];
+					if (count($exp->linkedObjectsIds['commande']) > 0) $object->linked_objects['commande'] = $exp->linkedObjectsIds['commande'][0];
 				}
-				
-				if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects'])) {
+
+				if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects']))
+				{
 					$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 				}
 
