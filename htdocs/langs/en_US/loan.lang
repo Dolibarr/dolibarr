@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Loan
+Loans=Loans
+NewLoan=New Loan
+ShowLoan=Show Loan
+PaymentLoan=Loan payment
+Capital=Capital
+Nbterms=Number of terms
+LoanAccountancyCapitalCode=Accountancy code capital
+LoanAccountancyInsuranceCode=Accountancy code insurance
+LoanAccountancyInterestCode=Accountancy code interest
+ConfigLoan=Configuration of the module loan
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accountancy code capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accountancy code interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accountancy code insurance by default

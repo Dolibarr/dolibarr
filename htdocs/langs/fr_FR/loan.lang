@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Emprunt
+Loans=Emprunts
+NewLoan=Nouvel emprunt
+ShowLoan=Voir emprunt
+PaymentLoan=Règlement d'emprunt
+Capital=Capital
+Nbterms=Nombre d'échéances
+LoanAccountancyCapitalCode=Compte comptable capital
+LoanAccountancyInsuranceCode=Compte comptable assurance
+LoanAccountancyInterestCode=Compte comptable intérêts
+ConfigLoan=Configuration du module emprunt
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte comptable capital par défaut
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compte comptable intérêts par défaut
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Compte comptable assurance par défaut

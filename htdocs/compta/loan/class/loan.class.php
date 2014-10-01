@@ -87,7 +87,7 @@ class Loan extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id             = $obj->rowid;
-                $this->ref            = $obj->rowid;
+				$this->ref            = $obj->rowid;
                 $this->datestart      = $this->db->jdate($obj->datestart);
 				$this->dateend	      = $this->db->jdate($obj->dateend);
                 $this->label          = $obj->label;
@@ -114,7 +114,7 @@ class Loan extends CommonObject
 
 
     /**
-     *      Create a social contribution into database
+     *      Create a loan into database
      *
      *      @param	User	$user   User making creation
      *      @return int     		<0 if KO, id if OK
@@ -201,10 +201,10 @@ class Loan extends CommonObject
 
         $this->db->begin();
 
-        // Get bank transaction lines for this social contributions
+        // Get bank transaction lines for this loan
         include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
         $account=new Account($this->db);
-        $lines_url=$account->get_url('',$this->id,'sc');
+        $lines_url=$account->get_url('',$this->id,'loan');
 
         // Delete bank urls
         foreach ($lines_url as $line_url)
@@ -385,14 +385,12 @@ class Loan extends CommonObject
 
         $result='';
 
-        if (empty($this->ref)) $this->ref=$this->label;
-
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/loan/card.php?id='.$this->rowid.'">';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/loan/card.php?id='.$this->id.'">';
         $linkend='</a>';
 
         if ($withpicto) $result.=($link.img_object($langs->trans("ShowLoan").': '.$this->label,'bill').$linkend.' ');
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
+        if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->label,$maxlen):$this->label).$linkend;
         return $result;
     }
 

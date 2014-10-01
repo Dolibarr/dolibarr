@@ -116,16 +116,16 @@ if ($action == 'add' && $user->rights->loan->write)
 
 if ($action == 'update' && ! $_POST["cancel"] && $user->rights->loan->write)
 {
-	$dateech=dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
-	$dateperiod=dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
-	if (! $dateech)
+	$datestart=dol_mktime(12,0,0, $_POST["startmonth"], $_POST["startday"], $_POST["startyear"]);
+	$dateend=dol_mktime(12,0,0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+	if (! $datestart)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
 		$action = 'edit';
 	}
-	elseif (! $dateperiod)
+	elseif (! $dateend)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")), 'errors');
 		$action = 'edit';
 	}
 	else
@@ -298,7 +298,7 @@ if ($id > 0)
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2">';
+		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $form->showrefnav($object,'id');
 		print "</td></tr>";
 
@@ -360,10 +360,9 @@ if ($id > 0)
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div';
-		}
-
-		if ($action == 'edit') print "</form>\n";
+			print '</div>';
+			print '</form>';
+		} 
 
 		dol_fiche_end();
 
@@ -450,13 +449,13 @@ if ($id > 0)
 			// Emit payment
 			if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/loan/payment.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/loan/payment/payment.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
 			}
 
 			// Classify 'paid'
 			if ($object->paid == 0 && round($staytopay) <=0 && $user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/loan/card.php?id=$object->rowid&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/loan/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
 			}
 
 			// Delete

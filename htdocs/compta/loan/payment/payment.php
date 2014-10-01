@@ -21,12 +21,13 @@
  *		\brief      Page to add payment of a loan
  */
 
-require '../../main.inc.php';
+require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
+$langs->load("loan");
 
 $chid=GETPOST("id");
 $action=GETPOST('action');
@@ -42,7 +43,6 @@ if ($user->societe_id > 0)
 /*
  * Actions
  */
-
 if ($action == 'add_payment')
 {
 	$error=0;
@@ -97,30 +97,30 @@ if ($action == 'add_payment')
     		$db->begin();
 
     		// Create a line of payments
-    		$paiement = new PaymentSocialContribution($db);
-    		$paiement->chid         = $chid;
-    		$paiement->datepaid     = $datepaid;
-    		$paiement->amounts      = $amounts;   // Tableau de montant
-    		$paiement->paymenttype  = $_POST["paymenttype"];
-    		$paiement->num_payment  = $_POST["num_payment"];
-    		$paiement->note         = $_POST["note"];
+    		$payment = new PaymentLoan($db);
+    		$payment->chid         = $chid;
+    		$payment->datepaid     = $datepaid;
+    		$payment->amounts      = $amounts;   // Tableau de montant
+    		$payment->paymenttype  = $_POST["paymenttype"];
+    		$payment->num_payment  = $_POST["num_payment"];
+    		$payment->note         = $_POST["note"];
 
     		if (! $error)
     		{
     		    $paymentid = $payment->create($user);
                 if ($paymentid < 0)
                 {
-                    $errmsg=$paiement->error;
+                    $errmsg=$payment->error;
                     $error++;
                 }
     		}
 
             if (! $error)
             {
-                $result=$paiement->addPaymentToBank($user,'payment_sc','(SocialContributionPayment)',$_POST['accountid'],'','');
+                $result=$payment->addPaymentToBank($user,'payment_loan','(LoanPayment)',$_POST['accountid'],'','');
                 if (! $result > 0)
                 {
-                    $errmsg=$paiement->error;
+                    $errmsg=$payment->error;
                     $error++;
                 }
             }
@@ -180,7 +180,7 @@ if ($_GET["action"] == 'create')
 	print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Loan")."</td>";
 
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/compta/loan/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
-	print '<tr><td>'.$langs->trans("Period")."</td><td colspan=\"2\">".dol_print_date($loan->datestart,'day')."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("DateStart")."</td><td colspan=\"2\">".dol_print_date($loan->datestart,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$loan->label."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount")."</td><td colspan=\"2\">".price($loan->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
@@ -222,14 +222,14 @@ if ($_GET["action"] == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, '',1);  // Show opend bank account list
+	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$loan->accountid, "accountid", 0, '',1);  // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
 	print '<tr><td>'.$langs->trans('Number');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td colspan="2"><input name="num_paiement" type="text" value="'.GETPOST('num_paiement').'"></td></tr>'."\n";
+	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
 
 	print '<tr>';
 	print '<td valign="top">'.$langs->trans("Comments").'</td>';
@@ -241,7 +241,7 @@ if ($_GET["action"] == 'create')
 	print '<br>';
 
 	/*
- 	 * Autres charges impayees
+ 	 * Other loan unpaid
 	 */
 	$num = 1;
 	$i = 0;

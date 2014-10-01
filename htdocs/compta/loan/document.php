@@ -119,7 +119,7 @@ if ($object->id)
     print '<tr><td>'.$langs->trans("Capital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	// Date start
-    print "<tr><td>".$langs->trans("Datestart")."</td>";
+    print "<tr><td>".$langs->trans("DateStart")."</td>";
     print "<td>";
     if ($action == 'edit')
     {
@@ -133,7 +133,7 @@ if ($object->id)
     print "</tr>";
 
     // Date end
-    print "<tr><td>".$langs->trans("Dateend")."</td>";
+    print "<tr><td>".$langs->trans("DateEnd")."</td>";
     print "<td>";
     if ($action == 'edit')
     {

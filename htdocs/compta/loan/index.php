@@ -110,9 +110,7 @@ if ($resql)
 
 		// Ref
 		print '<td width="60">';
-		$loan->id=$obj->rowid;
-		$loan->label=$obj->rowid;
-		$loan->ref=$obj->rowid;
+		$loan->id = $obj->id;
 		print $loan->getNameUrl(1,'20');
 		print '</td>';
 

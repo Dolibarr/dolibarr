@@ -24,8 +24,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/**     \class      PaymentSocialContribution
- *		\brief      Class to manage payments of social contributions
+/**     \class      PaymentLoan
+ *		\brief      Class to manage payments of loans
  */
 class PaymentLoan extends CommonObject
 {
@@ -41,8 +41,8 @@ class PaymentLoan extends CommonObject
 	var $datep='';
     var $amount;            // Total amount of payment
     var $amounts=array();   // Array of amounts
-	var $fk_typepaiement;
-	var $num_paiement;
+	var $fk_typepayment;
+	var $num_payment;
 	var $note;
 	var $fk_bank;
 	var $fk_user_creat;
@@ -59,7 +59,7 @@ class PaymentLoan extends CommonObject
 	}
 
 	/**
-	 *  Create payment of social contribution into database.
+	 *  Create payment of loan into database.
      *  Use this->amounts to have list of lines for the payment
      *
 	 *  @param      User		$user   User making payment
@@ -81,14 +81,14 @@ class PaymentLoan extends CommonObject
 		}
 
 		// Clean parameters
-		if (isset($this->fk_loan)) $this->fk_loan=trim($this->fk_loan);
-		if (isset($this->amount)) $this->amount=trim($this->amount);
-		if (isset($this->fk_typepayment)) $this->fk_typepaiement=trim($this->fk_typepayment);
-		if (isset($this->num_payment)) $this->num_payment=trim($this->num_payment);
-		if (isset($this->note)) $this->note=trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_loan)) 			$this->fk_loan = trim($this->fk_loan);
+		if (isset($this->amount))			$this->amount = trim($this->amount);
+		if (isset($this->fk_typepayment))	$this->fk_typepayment = trim($this->fk_typepayment);
+		if (isset($this->num_payment))		$this->num_payment = trim($this->num_payment);
+		if (isset($this->note))				$this->note = trim($this->note);
+		if (isset($this->fk_bank))			$this->fk_bank = trim($this->fk_bank);
+		if (isset($this->fk_user_creat))	$this->fk_user_creat = trim($this->fk_user_creat);
+		if (isset($this->fk_user_modif))	$this->fk_user_modif = trim($this->fk_user_modif);
 
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
@@ -390,7 +390,7 @@ class PaymentLoan extends CommonObject
             $acc->fetch($accountid);
 
             $total=$this->total;
-            if ($mode == 'payment_sc') $total=-$total;
+            if ($mode == 'payment_loan') $total=-$total;
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
@@ -405,8 +405,8 @@ class PaymentLoan extends CommonObject
                 $emetteur_banque
             );
 
-            // Mise a jour fk_bank dans llx_paiement.
-            // On connait ainsi le paiement qui a genere l'ecriture bancaire
+            // Update fk_bank into llx_paiement.
+            // We know the payment who generated the account write
             if ($bank_line_id > 0)
             {
                 $result=$this->update_fk_bank($bank_line_id);
@@ -416,7 +416,7 @@ class PaymentLoan extends CommonObject
                     dol_print_error($this->db);
                 }
 
-                // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
+                // Add link 'payment_loan' in bank_url between payment and bank transaction
                 $url='';
                 if ($mode == 'payment_loan') $url=DOL_URL_ROOT.'/compta/loan/payment/card.php?id=';
                 if ($url)
@@ -433,11 +433,11 @@ class PaymentLoan extends CommonObject
                 $linkaddedforthirdparty=array();
                 foreach ($this->amounts as $key => $value)
                 {
-                    if ($mode == 'payment_sc')
+                    if ($mode == 'payment_loan')
                     {
-                        $socialcontrib = new ChargeSociales($this->db);
-                        $socialcontrib->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''),'sc');
+                        $loan = new Loan($this->db);
+                        $loan->fetch($key);
+                        $result=$acc->add_url_line($bank_line_id, $loan->id, DOL_URL_ROOT.'/compta/loan/card.php?id=', $loan->type_libelle.(($loan->lib && $loan->lib!=$loan->type_libelle)?' ('.$loan->lib.')':''),'loan');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
@@ -461,14 +461,14 @@ class PaymentLoan extends CommonObject
 
 
 	/**
-	 *  Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
+	 *  Update link between loan's payment and the line generate in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
 	function update_fk_bank($id_bank)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -484,11 +484,11 @@ class PaymentLoan extends CommonObject
 	}
 
 	/**
-	 *  Renvoie nom clicable (avec eventuellement le picto)
+	 *  Return clicable name (with eventually a picto)
 	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 * 	@param	int		$maxlen			Longueur max libelle
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=No picto
+	 * 	@param	int		$maxlen			Max length label
+	 *	@return	string					Chaine with URL
 	 */
 	function getNameUrl($withpicto=0,$maxlen=0)
 	{
@@ -500,12 +500,12 @@ class PaymentLoan extends CommonObject
 
 		if (!empty($this->id))
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/compta/payment/card.php?id='.$this->id.'">';
-			$lienfin='</a>';
+			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment/card.php?id='.$this->id.'">';
+			$linkend='</a>';
 
-			if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment").': '.$this->ref,'payment').$lienfin.' ');
+			if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment").': '.$this->ref,'payment').$linkend.' ');
 			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
+			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
 		}
 
 		return $result;
