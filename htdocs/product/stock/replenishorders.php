@@ -1,6 +1,7 @@
 <?php
 /*
- * Copyright (C) 2013   Cédric Salvador    <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013	Cédric Salvador	<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014	Regis Houssin	<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +45,7 @@ $result=restrictedArea($user,'produit|service');
  * View
  */
 
-$helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
-$helpurl .= 'ES:M&oacute;dulo_Stocks';
+$helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $texte = $langs->trans('ReplenishmentOrders');
 
 llxHeader('', $texte, $helpurl, '');
@@ -132,7 +132,7 @@ if ($sall) {
     $sql .= ' AND (cf.ref LIKE "%' . $db->escape($sall) . '%" ';
     $sql .= 'OR cf.note LIKE "%' . $db->escape($sall) . '%")';
 }
-if ($socid) {
+if (!empty($socid)) {
     $sql .= ' AND s.rowid = ' . $socid;
 }
 
