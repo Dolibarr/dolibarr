@@ -23,6 +23,7 @@ For users:
 - Fix: Withdrawal total amount is double
 - Fix: [ bug #1593 ] Spanish Localtax IRPF not being calculated since 3.6.0 in supplier invoices when adding a line
 - Fix: Web service categorie WDSL declaration is correct
+- Fix: ErrorBadValueForParamNotAString was displayed in virtual product if no base price defined
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
