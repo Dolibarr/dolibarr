@@ -31,8 +31,9 @@ $langs->load("bills");
 $langs->load("loan");
 
 $id=GETPOST('id','int');
-$action=GETPOST("action");
+$action=GETPOST('action');
 $confirm=GETPOST('confirm');
+$cancel=GETPOST('cancel');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -46,17 +47,17 @@ $result = restrictedArea($user, 'loan', $id, '','');
 // Classify paid
 if ($action == 'confirm_paid' && $confirm == 'yes')
 {
-	$loan = new Loan($db);
-	$loan->fetch($id);
-	$result = $loan->set_paid($user);
+	$object = new Loan($db);
+	$object->fetch($id);
+	$result = $object->set_paid($user);
 }
 
 // Delete loan
 if ($action == 'confirm_delete' && $confirm == 'yes')
 {
-	$loan = new Loan($db);
-	$loan->fetch($id);
-	$result=$loan->delete($user);
+	$object = new Loan($db);
+	$object->fetch($id);
+	$result=$object->delete($user);
 	if ($result > 0)
 	{
 		header("Location: index.php");
@@ -72,8 +73,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 // Add loan
 if ($action == 'add' && $user->rights->loan->write)
 {
-	$datestart=dol_mktime(12,0,0, $_POST["startmonth"], $_POST["startday"], $_POST["startyear"]);
-	$dateend=dol_mktime(12,0,0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+	$datestart=dol_mktime(12,0,0, $GETPOST("startmonth"), $GETPOST("startday"), $GETPOST("startyear"));
+	$dateend=dol_mktime(12,0,0, $GETPOST("endmonth"), $GETPOST("endday"), $GETPOST("endyear"));
 	if (! $datestart)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
@@ -91,33 +92,33 @@ if ($action == 'add' && $user->rights->loan->write)
 	}
 	else
 	{
-		$loan = new Loan($db);
+		$object = new Loan($db);
 
-		$loan->label	 = GETPOST("label");
-		$loan->fk_bank	 = GETPOST("accountid");
-		$loan->capital	 = GETPOST("capital");
-		$loan->datestart = $datestart;
-		$loan->dateend	 = $dateend;
-		$loan->nbterm	 = GETPOST("nbterm");
-		$loan->rate		 = GETPOST("rate");
+		$object->label	 = GETPOST("label");
+		$object->fk_bank	 = GETPOST("accountid");
+		$object->capital	 = GETPOST("capital");
+		$object->datestart = $datestart;
+		$object->dateend	 = $dateend;
+		$object->nbterm	 = GETPOST("nbterm");
+		$object->rate		 = GETPOST("rate");
 		
-		$loan->account_capital	 = GETPOST("accountancy_account_capital");
-		$loan->account_insurance = GETPOST("accountancy_account_insurance");
-		$loan->account_interest	 = GETPOST("accountancy_account_interest");		
+		$object->account_capital	 = GETPOST("accountancy_account_capital");
+		$object->account_insurance = GETPOST("accountancy_account_insurance");
+		$object->account_interest	 = GETPOST("accountancy_account_interest");		
 
-		$id=$loan->create($user);
+		$id=$object->create($user);
 		if ($id <= 0)
 		{
-			setEventMessage($loan->error, 'errors');
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
 
 
-if ($action == 'update' && ! $_POST["cancel"] && $user->rights->loan->write)
+if ($action == 'update' && ! $cancel && $user->rights->loan->write)
 {
-	$datestart=dol_mktime(12,0,0, $_POST["startmonth"], $_POST["startday"], $_POST["startyear"]);
-	$dateend=dol_mktime(12,0,0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+	$datestart=dol_mktime(12,0,0, $GETPOST("startmonth"), $GETPOST("startday"), $GETPOST("startyear"));
+	$dateend=dol_mktime(12,0,0, $GETPOST("endmonth"), $GETPOST("endday"), $GETPOST("endyear"));
 	if (! $datestart)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
@@ -130,17 +131,22 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->loan->write)
 	}
 	else
 	{
-		$loan = new Loan($db);
-		$result=$loan->fetch($_GET["id"]);
-
-		$loan->label=$_POST["label"];
-		$loan->datestart=$datestart;
-		$loan->dateend=$dateend;
-
-		$result=$loan->update($user);
-		if ($result <= 0)
+		$object = new Loan($db);
+		if ($object->fetch($id))
 		{
-			setEventMessage($loan->error, 'errors');
+			$object->label		= $GETPOST("label");
+			$object->datestart	= $datestart;
+			$object->dateend	= $dateend;
+		}
+		
+		if ($object->update($id, $user) > 0)
+		{
+			$action = '';
+		}
+		else
+		{
+			$action = 'edit';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -180,7 +186,7 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-		$form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Show list of bank account with courant
+		$form->select_comptes($GETPOST["accountid"],"accountid",0,"courant=1",1);  // Show list of bank account with courant
 		print '</td></tr>';
 	}
 	else
@@ -259,7 +265,7 @@ if ($action == 'create')
 	print '</table>';
 	
     print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
-    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
     print '</form>';
 }
@@ -434,8 +440,8 @@ if ($id > 0)
 		print "</table>";
 		
 		/*
-		*   Boutons actions
-		*/
+		 *   Buttons actions
+		 */
 		if ($action != 'edit')
 		{
 			print "<div class=\"tabsAction\">\n";
@@ -473,7 +479,6 @@ if ($id > 0)
 		dol_print_error('',$object->error);
 	}
 }
-
 
 llxFooter();
 
