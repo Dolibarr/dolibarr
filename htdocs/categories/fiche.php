@@ -143,6 +143,8 @@ if ($action == 'add' && $user->rights->categorie->creer)
 		{
 			$action = 'confirmed';
 			$_POST["addcat"] = '';
+		} else {
+			setEventMessage($object->error,'errors');
 		}
 	}
 }
