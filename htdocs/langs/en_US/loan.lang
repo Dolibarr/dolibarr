@@ -9,6 +9,12 @@ Nbterms=Number of terms
 LoanAccountancyCapitalCode=Accountancy code capital
 LoanAccountancyInsuranceCode=Accountancy code insurance
 LoanAccountancyInterestCode=Accountancy code interest
+Calculator=Simulator
+CalculatorLoan=Loan simulator
+ErrorLoanCapital=<font color=red>Loan amount</font> has to be numeric and greater than zero.
+ErrorLoanLength=<font color=red>Loan length</font> has to be numeric and greater than zero.
+ErrorLoanInterest=<font color=red>Annual interest</font> has to be numeric and greater than zero.
+# Admin
 ConfigLoan=Configuration of the module loan
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accountancy code capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accountancy code interest by default
