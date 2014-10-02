@@ -47,6 +47,8 @@ $(document).ready(function () {
 <?php } ?>
 
 <center>
+<div class="login_vertical_align">
+
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -197,7 +199,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 <?php if (! empty($_SESSION['dol_loginmesg']))
 {
 ?>
-	<div class="center" style="max-width: 500px; margin-left: 10px; margin-right: 10px;"><div class="error">
+	<div class="center login_main_message" style="max-width: 500px; margin-left: 10px; margin-right: 10px;"><div class="error">
 	<?php echo $_SESSION['dol_loginmesg']; ?>
 	</div></div>
 <?php
@@ -268,7 +270,10 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLI
 }
 ?>
 
+
+</div>
 </center>	<!-- end of center -->
+
 
 </body>
 </html>

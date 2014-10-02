@@ -64,7 +64,7 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 
 // Define image path files and other constants
 $fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
-$img_head=dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1);
+$img_head='';
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
 $dol_hide_leftmenu=$conf->dol_hide_leftmenu;
@@ -812,7 +812,10 @@ foreach($mainmenuusedarray as $val)
 
 .bodylogin
 {
-	background: #ffffff url(<?php echo $img_head; ?>) 0 0 no-repeat;
+	background: #f9f9f9;
+}
+.login_vertical_align {
+	padding: 10px;
 }
 form#login {
 	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
@@ -836,22 +839,18 @@ form#login {
 	padding-top:12px;
 	padding-bottom:12px;
 	max-width: 540px;
-	border: 1px solid #C0C0C0;
-	background-color: #E0E0E0;
+	border: 1px solid #A0A0A0;
 
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
 
 	border-radius: 8px;
-	border:solid 1px rgba(168,168,168,.4);
-	border-top:solid 1px f8f8f8;
-	background-color: #f8f8f8;
-	background-image: -o-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -moz-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -webkit-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -ms-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-	background-image: linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
+	border:solid 1px rgba(90,90,90,.4);
+	-webkit-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
+	box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
+
+	background-color: #FFFFFF;
 }
 div#login_left, div#login_right {
 	display: inline-block;
