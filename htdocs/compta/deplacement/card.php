@@ -234,7 +234,7 @@ $form = new Form($db);
 
 /*
  * Action create
-*/
+ */
 if ($action == 'create')
 {
     //WYSIWYG Editor
