@@ -210,7 +210,8 @@ class modProduct extends DolibarrModules
 		{
 			// Exports product multiprice
 			$r++;
-			$this->export_code[$r]=$this->rights_class.'_'.$key;
+			//$this->export_code[$r]=$this->rights_class.'_'.$key; // FIXME $key is not defined
+			$this->export_code[$r]=$this->rights_class;
 			$this->export_label[$r]="ProductsMultiPrice";	// Translation key (used only if key ExportDataset_xxx_z not found)
 			$this->export_permission[$r]=array(array("produit","export"));
 			$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",

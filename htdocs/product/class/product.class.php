@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013-2014 Cedric GROSS	        <c.gross@kreiz-it.fr>
- * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
- * Copyright (C) 2014 	   Philippe Grand 		<philippe.grand@atoo-net.com>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2007-2011	Jean Heimburger			<jean@tiaris.info>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013-2014	Cedric GROSS			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2011-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2856,7 +2856,7 @@ class Product extends CommonObject
 	{
 		global $langs;
 		$langs->load('products');
-		if ($conf->productbatch->enabled) $langs->load("productbatch");
+		if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 		if ($type == 2)
 		{

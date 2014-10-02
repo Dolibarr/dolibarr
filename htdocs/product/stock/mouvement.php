@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -406,8 +406,8 @@ if ($resql)
     if ($search_product_ref) $param.='&search_product_ref='.urlencode($search_product_ref);
     if ($search_product)   $param.='&search_product='.urlencode($search_product);
     if ($search_warehouse) $param.='&search_warehouse='.urlencode($search_warehouse);
-    if ($sref) $param.='&sref='.urlencode($sref);
-    if ($snom) $param.='&snom='.urlencode($snom);
+    if (!empty($sref)) $param.='&sref='.urlencode($sref); // FIXME $sref is not defined
+    if (!empty($snom)) $param.='&snom='.urlencode($snom); // FIXME $snom is not defined
     if ($search_user)    $param.='&search_user='.urlencode($search_user);
     if ($idproduct > 0)  $param.='&idproduct='.$idproduct;
     if ($id) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,0,'');

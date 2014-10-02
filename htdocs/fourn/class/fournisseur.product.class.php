@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,7 +205,7 @@ class ProductFournisseur extends Product
 			{
                 // Call trigger
                 $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE',$user);
-                if ($result < 0) $error++;          
+                if ($result < 0) $error++;
                 // End call triggers
 
 				if (empty($error))
@@ -281,13 +281,13 @@ class ProductFournisseur extends Product
 		                    $error++;
 		                }
 		            }
-					
+
 
 		            if (! $error)
 		            {
                         // Call trigger
                         $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_CREATE',$user);
-                        if ($result < 0) $error++;          
+                        if ($result < 0) $error++;
                         // End call triggers
 
         				if (empty($error))
@@ -468,6 +468,7 @@ class ProductFournisseur extends Product
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_price_id, pfp.ref_fourn,";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.charges, pfp.unitcharges";
+        $sql.= " pfp.remise, pfp.remise_percent";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND pfp.fk_product = ".$prodid;
