@@ -601,8 +601,13 @@ else
 }
 
 // Load array of colors by type
-// TODO
 $colorsbytype=array();
+$sql="SELECT code, color FROM ".MAIN_DB_PREFIX."c_actioncomm";
+$resql=$db->query($sql);
+while ($obj = $db->fetch_object($resql))
+{
+	$colorsbytype[$obj->code]=$obj->color;
+}
 
 // Loop on each user to show calendar
 $todayarray=dol_getdate($now,'fast');
@@ -707,14 +712,15 @@ $db->close();
  * @param   int		$showinfo       Add extended information (used by day view)
  * @param   int		$minheight      Minimum height for each event. 60px by default.
  * @param	boolean	$showheader		Show header
+ * @param	array	$colorsbytype	Array with colors by type
  * @return	void
  */
-function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false)
+function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false, $colorsbytype=array())
 {
 	global $db;
 	global $user, $conf, $langs, $hookmanager, $action;
 	global $filter, $filtera, $filtert, $filterd, $status, $actioncode;	// Filters used into search form
-	global $theme_datacolor;
+	global $theme_datacolor;	// Array with a list of different we can use (come from theme)
 	global $cachethirdparties, $cachecontacts, $colorindexused;
 	global $begin_h, $end_h;
 
@@ -757,12 +763,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				if (in_array($user->id, $keysofuserassigned))
 				{
 					$nummytasks++; $cssclass='family_mytasks';
-					$color=$event->type_color;
+					if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $color=$event->type_color;
 				}
 				else if ($event->type_code == 'ICALEVENT')
 				{
 					$numical++;
-					if (! empty($event->icalname)) {
+					if (! empty($event->icalname))
+					{
 						if (! isset($numicals[dol_string_nospecial($event->icalname)])) {
 							$numicals[dol_string_nospecial($event->icalname)] = 0;
 						}
@@ -779,7 +786,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				else
 				{
 					$numother++; $cssclass='family_other';
+					if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $color=$event->type_color;
 				}
+
 				if ($color < 0)	// Color was not forced. Set color according to color index.
 				{
 					// Define color index if not yet defined
@@ -865,8 +874,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 						$cases2[$h][$event->id]['string']=$event->label;
 						$cases1[$h][$event->id]['typecode']=$event->type_code;
 						$cases2[$h][$event->id]['typecode']=$event->type_code;
-						$cases1[$h][$event->id]['color']='009900';
-						$cases2[$h][$event->id]['color']='009900';
+						$cases1[$h][$event->id]['color']=$color;
+						$cases2[$h][$event->id]['color']=$color;
 					}
 				}
 				$i++;

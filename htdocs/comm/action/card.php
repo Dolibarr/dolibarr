@@ -89,14 +89,16 @@ $hookmanager->initHooks(array('actioncard'));
  */
 
 // Remove user to assigned list
-if (! empty($_POST['removedassigned']))
+if (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')
 {
-	$idtoremove=$_POST['removedassigned'];
+	$idtoremove=GETPOST('removedassigned');
+
 	if (! empty($_SESSION['assignedtouser'])) $tmpassigneduserids=dol_json_decode($_SESSION['assignedtouser'],1);
 	else $tmpassigneduserids=array();
+
 	foreach ($tmpassigneduserids as $key => $val)
 	{
-		if ($val['id'] == $idtoremove) unset($tmpassigneduserids[$key]);
+		if ($val['id'] == $idtoremove || $val['id'] == -1) unset($tmpassigneduserids[$key]);
 	}
 	//var_dump($_POST['removedassigned']);exit;
 	$_SESSION['assignedtouser']=dol_json_encode($tmpassigneduserids);
@@ -357,7 +359,7 @@ if ($action == 'update')
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
-		$object->fk_action   = dol_getIdFromCode($db, $_POST["actioncode"], 'c_actioncomm');
+		$object->fk_action   = dol_getIdFromCode($db, GETPOST("actioncode"), 'c_actioncomm');
 		$object->label       = GETPOST("label");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
@@ -366,10 +368,10 @@ if ($action == 'update')
         $object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
-		$object->contactid   = GETPOST("contactid");
+		$object->contactid   = GETPOST("contactid",'int');
 		//$object->societe->id = $_POST["socid"];			// deprecated
 		//$object->contact->id = $_POST["contactid"];		// deprecated
-		$object->fk_project  = GETPOST("projectid");
+		$object->fk_project  = GETPOST("projectid",'int');
 		$object->note        = GETPOST("note");
 		$object->pnote       = GETPOST("note");
 		$object->fk_element	 = GETPOST("fk_element");
@@ -611,7 +613,7 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-	// Type d'action actifs
+	// Type of event
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
 		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
@@ -863,13 +865,14 @@ if ($id > 0)
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
 
-		// Type
+		// Type of event
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
 			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
 			$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
 			print '</td></tr>';
 		}
+		else print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
 
 		// Title
 		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$object->label.'"></td></tr>';
