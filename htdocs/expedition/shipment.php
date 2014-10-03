@@ -202,7 +202,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Third party
 		print '<tr><td>'.$langs->trans('Company').'</td>';
-		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
+		print '<td colspan="3">'.$soc->getNameUrl(1).'</td>';
 		print '</tr>';
 
 		// Discounts for third party
@@ -460,7 +460,7 @@ if ($id > 0 || ! empty($ref))
 					$product_static->type=$objp->fk_product_type;
 					$product_static->id=$objp->fk_product;
 					$product_static->ref=$objp->ref;
-					$text=$product_static->getNomUrl(1);
+					$text=$product_static->getNameUrl(1);
 					$text.= ' - '.$label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 					print $form->textwithtooltip($text,$description,3,'','',$i);

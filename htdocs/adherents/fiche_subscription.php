@@ -196,7 +196,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     // Member
 	$adh->ref=$adh->getFullName($langs);
     print '<tr>';
-	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
+	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNameUrl(1,0,'subscription').'</td>';
     print '</tr>';
 
     // Date start subscription
@@ -229,7 +229,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 			{
 	    		$bankline=new AccountLine($db);
 		    	$result=$bankline->fetch($subscription->fk_bank);
-				print $bankline->getNomUrl(1,0,'showall');
+				print $bankline->getNameUrl(1,0,'showall');
 			}
 			else
 			{
@@ -307,7 +307,7 @@ if ($rowid && $action != 'edit')
     // Member
 	$adh->ref=$adh->getFullName($langs);
     print '<tr>';
-	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
+	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNameUrl(1,0,'subscription').'</td>';
     print '</tr>';
 
     // Date record
@@ -341,7 +341,7 @@ if ($rowid && $action != 'edit')
 			{
 	    		$bankline=new AccountLine($db);
 		    	$result=$bankline->fetch($subscription->fk_bank);
-		    	print $bankline->getNomUrl(1,0,'showall');
+		    	print $bankline->getNameUrl(1,0,'showall');
 			}
 			else
 			{

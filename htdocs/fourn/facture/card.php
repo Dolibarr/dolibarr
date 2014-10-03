@@ -1218,7 +1218,7 @@ if ($action == 'create')
 
     if ($_REQUEST['socid'] > 0)
     {
-        print $societe->getNomUrl(1);
+        print $societe->getNameUrl(1);
         print '<input type="hidden" name="socid" value="'.$_GET['socid'].'">';
     }
     else
@@ -1385,7 +1385,7 @@ if ($action == 'create')
 	        $langs->load('orders');
 	        $txt=$langs->trans("SupplierOrder");
         }
-        print '<tr><td>'.$txt.'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
+        print '<tr><td>'.$txt.'</td><td colspan="2">'.$objectsrc->getNameUrl(1).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
         if ($mysoc->country_code=='ES')
@@ -1606,7 +1606,7 @@ else
         print '</td></tr>';
 
         // Third party
-        print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1,'supplier');
+        print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNameUrl(1,'supplier');
         print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
         print '</tr>';
 
@@ -1617,13 +1617,13 @@ else
         {
             $facreplaced=new FactureFournisseur($db);
             $facreplaced->fetch($object->fk_facture_source);
-            print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
+            print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNameUrl(1)).')';
         }
         if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
         {
             $facusing=new FactureFournisseur($db);
             $facusing->fetch($object->fk_facture_source);
-            print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNomUrl(1)).')';
+            print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNameUrl(1)).')';
         }
 
         $facidavoir=$object->getListIdAvoirFromInvoice();
@@ -1637,7 +1637,7 @@ else
                 else print ',';
                 $facavoir=new FactureFournisseur($db);
                 $facavoir->fetch($id);
-                print $facavoir->getNomUrl(1);
+                print $facavoir->getNameUrl(1);
             }
             print ')';
         }
@@ -1645,7 +1645,7 @@ else
         {
             $facthatreplace=new FactureFournisseur($db);
             $facthatreplace->fetch($facidnext);
-            print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
+            print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNameUrl(1)).')';
         }
         print '</td></tr>';
 
@@ -1710,7 +1710,7 @@ else
                         $bankaccountstatic->ref=$objp->ref;
                         $bankaccountstatic->label=$objp->ref;
                         print '<td align="right">';
-                        if ($objp->baid > 0) print $bankaccountstatic->getNomUrl(1,'transactions');
+                        if ($objp->baid > 0) print $bankaccountstatic->getNameUrl(1,'transactions');
                         print '</td>';
                     }
                     print '<td align="right">'.price($objp->amount).'</td>';
@@ -1977,7 +1977,7 @@ else
                     print '<input type="hidden" name="idprod" value="'.$object->lines[$i]->fk_product.'">';
                     $product_static=new ProductFournisseur($db);
                     $product_static->fetch($object->lines[$i]->fk_product);
-                    $text=$product_static->getNomUrl(1);
+                    $text=$product_static->getNameUrl(1);
                     $text.= ' - '.$product_static->libelle;
                     print $text;
                     print '<br>';
@@ -2037,7 +2037,7 @@ else
 
                     $product_static=new ProductFournisseur($db);
                     $product_static->fetch($object->lines[$i]->fk_product);
-                    $text=$product_static->getNomUrl(1);
+                    $text=$product_static->getNameUrl(1);
                     $text.= ' - '.$product_static->libelle;
                     $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($object->lines[$i]->description));
                     print $form->textwithtooltip($text,$description,3,'','',$i);

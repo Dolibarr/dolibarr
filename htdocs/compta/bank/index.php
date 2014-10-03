@@ -104,7 +104,7 @@ foreach ($accounts as $key=>$type)
 		$solde = $acc->solde(1);
 
 		print '<tr '.$bc[$var].'>';
-		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+		print '<td width="30%">'.$acc->getNameUrl(1).'</td>';
 		print '<td>'.$acc->bank.'</td>';
 		print '<td>'.$acc->number.'</td>';
 		print '<td align="center">';
@@ -161,7 +161,7 @@ foreach ($accounts as $key=>$type)
 		$solde = $acc->solde(1);
 
 		print "<tr ".$bc[$var].">";
-		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+		print '<td width="30%">'.$acc->getNameUrl(1).'</td>';
 		print '<td>'.$acc->bank.'</td>';
 		print '<td>&nbsp;</td>';
 		print '<td>&nbsp;</td>';
@@ -212,7 +212,7 @@ foreach ($accounts as $key=>$type)
 		$solde = $acc->solde(1);
 
 		print "<tr ".$bc[$var].">";
-		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+		print '<td width="30%">'.$acc->getNameUrl(1).'</td>';
 		print '<td>'.$acc->bank.'</td>';
 		print '<td>'.$acc->number.'</td>';
 		print '<td align="center">';

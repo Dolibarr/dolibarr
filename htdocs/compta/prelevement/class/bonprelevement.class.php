@@ -1112,7 +1112,7 @@ class BonPrelevement extends CommonObject
      *	@param	string	$option		link target
      *	@return	string				URL of target
      */
-    function getNomUrl($withpicto=0,$option='')
+    function getNameUrl($withpicto=0,$option='')
     {
         global $langs;
 

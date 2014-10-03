@@ -301,18 +301,18 @@ foreach($listofdata as $key => $val)
 	$warehousestatict->fetch($val['id_tw']);
 
 	print '<tr '.$bc[$var].'>';
-	print '<td>'.$productstatic->getNomUrl(1).'</td>';
+	print '<td>'.$productstatic->getNameUrl(1).'</td>';
 	print '<td>';
 	$oldref=$productstatic->ref;
 	$productstatic->ref=$productstatic->label;
-	print $productstatic->getNomUrl(1);
+	print $productstatic->getNameUrl(1);
 	$productstatic->ref=$oldref;
 	print '</td>';
 	print '<td>';
-	print $warehousestatics->getNomUrl(1);
+	print $warehousestatics->getNameUrl(1);
 	print '</td>';
 	print '<td>';
-	print $warehousestatict->getNomUrl(1);
+	print $warehousestatict->getNameUrl(1);
 	print '</td>';
 	print '<td align="center">'.$val['qty'].'</td>';
 	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';

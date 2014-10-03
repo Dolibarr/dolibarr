@@ -163,7 +163,7 @@ if ($result)
             $companystatic->id=$obj->fk_societe;
             $companystatic->nom=$obj->nom;
             $companystatic->canvas=$obj->canvas;
-            print $companystatic->getNomUrl(1);
+            print $companystatic->getNameUrl(1);
         }
         // Multicompany enabled
         else if (! empty($conf->multicompany->enabled))
@@ -207,7 +207,7 @@ if ($result)
 	        //$user2->firstname=$obj->firstname2;
 	        $user2->lastname=$user2->login;
 	        $user2->firstname='';
-	        print $user2->getNomUrl(1);
+	        print $user2->getNameUrl(1);
         }
         print '</td>';
 

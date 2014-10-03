@@ -206,14 +206,14 @@ function dol_print_object_info($object)
         print $langs->trans("CreatedBy").': ';
         if (is_object($object->user_creation))
         {
-        	if ($object->user_creation->id) print $object->user_creation->getNomUrl(1);
+        	if ($object->user_creation->id) print $object->user_creation->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_creation);
-            if ($userstatic->id) print $userstatic->getNomUrl(1);
+            if ($userstatic->id) print $userstatic->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         print '<br>';
@@ -233,14 +233,14 @@ function dol_print_object_info($object)
         print $langs->trans("ModifiedBy").': ';
         if (is_object($object->user_modification))
         {
-        	if ($object->user_modification->id) print $object->user_modification->getNomUrl(1);
+        	if ($object->user_modification->id) print $object->user_modification->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_modification);
-            if ($userstatic->id) print $userstatic->getNomUrl(1);
+            if ($userstatic->id) print $userstatic->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         print '<br>';
@@ -260,14 +260,14 @@ function dol_print_object_info($object)
         print $langs->trans("ValidatedBy").': ';
         if (is_object($object->user_validation))
         {
-            if ($object->user_validation->id) print $object->user_validation->getNomUrl(1);
+            if ($object->user_validation->id) print $object->user_validation->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_validation);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         print '<br>';
@@ -287,14 +287,14 @@ function dol_print_object_info($object)
         print $langs->trans("ApprovedBy").': ';
         if (is_object($object->user_approve))
         {
-            if ($object->user_approve->id) print $object->user_approve->getNomUrl(1);
+            if ($object->user_approve->id) print $object->user_approve->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_approve);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         print '<br>';
@@ -314,14 +314,14 @@ function dol_print_object_info($object)
         print $langs->trans("ClosedBy").': ';
         if (is_object($object->user_cloture))
         {
-			if ($object->user_cloture->id) print $object->user_cloture->getNomUrl(1);
+			if ($object->user_cloture->id) print $object->user_cloture->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_cloture);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         print '<br>';
@@ -341,14 +341,14 @@ function dol_print_object_info($object)
         print $langs->trans("ConciliatedBy").': ';
         if (is_object($object->user_rappro))
         {
-			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1);
+			if ($object->user_rappro->id) print $object->user_rappro->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         else
         {
             $userstatic=new User($db);
             $userstatic->fetch($object->user_rappro);
-			if ($userstatic->id) print $userstatic->getNomUrl(1);
+			if ($userstatic->id) print $userstatic->getNameUrl(1);
         	else print $langs->trans("Unknown");
         }
         print '<br>';
@@ -1539,7 +1539,7 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 		{
 			$object = new $classname($db);
 			$res=$object->fetch($objectid);
-			if ($res > 0) $ret=$object->getNomUrl($withpicto,$option);
+			if ($res > 0) $ret=$object->getNameUrl($withpicto,$option);
 			unset($object);
 		}
 	}

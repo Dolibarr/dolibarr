@@ -427,7 +427,7 @@ class DiscountAbsolute
      *	@param		string	$option			Where to link to ('invoice' or 'discount')
      *	@return		string					String with URL
      */
-    function getNomUrl($withpicto,$option='invoice')
+    function getNameUrl($withpicto,$option='invoice')
     {
         global $langs;
 

@@ -553,7 +553,7 @@ class FactureRec extends Facture
 	 *	@param		string	$option			Sur quoi pointe le lien ('', 'withdraw')
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNameUrl($withpicto=0,$option='')
 	{
 		global $langs;
 

@@ -264,7 +264,7 @@ abstract class ActionsAdherentCardCommon
 
         	if (is_object($objsoc) && $objsoc->id > 0)
         	{
-        		$this->tpl['company'] = $objsoc->getNomUrl(1);
+        		$this->tpl['company'] = $objsoc->getNameUrl(1);
         		$this->tpl['company_id'] = $objsoc->id;
         	}
         	else
@@ -338,7 +338,7 @@ abstract class ActionsAdherentCardCommon
         		$objsoc = new Societe($this->db);
 
         		$objsoc->fetch($this->object->socid);
-        		$this->tpl['company'] = $objsoc->getNomUrl(1);
+        		$this->tpl['company'] = $objsoc->getNameUrl(1);
         	}
         	else
         	{

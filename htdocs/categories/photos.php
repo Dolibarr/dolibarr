@@ -139,7 +139,7 @@ if ($object->id)
 
 	print '<tr><td width="20%" class="notopnoleft">';
 	print $langs->trans("AssignedToTheCustomer").'</td><td>';
-	print $soc->getNomUrl(1);
+	print $soc->getNameUrl(1);
 	print '</td></tr>';
 
 	$catsMeres = $object->get_meres ();

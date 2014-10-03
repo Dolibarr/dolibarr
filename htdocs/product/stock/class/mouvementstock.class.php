@@ -504,6 +504,6 @@ class MouvementStock extends CommonObject
 		}
 		
 		$origin->fetch($fk_origin);
-		return $origin->getNomUrl(1);
+		return $origin->getNameUrl(1);
 	}
 }

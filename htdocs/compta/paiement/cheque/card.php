@@ -572,7 +572,7 @@ else
 	print '</tr>';
 
 	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
-	print $accountstatic->getNomUrl(1);
+	print $accountstatic->getNameUrl(1);
 	print '</td></tr>';
 
 	// Nb of cheques
@@ -642,7 +642,7 @@ else
 			$accountlinestatic->rowid=$objp->rowid;
 			if ($accountlinestatic->rowid)
 			{
-				print $accountlinestatic->getNomUrl(1);
+				print $accountlinestatic->getNameUrl(1);
 			}
 			else
 			{

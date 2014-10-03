@@ -195,14 +195,14 @@ if ($object->id > 0)
 
 	// Assigned to
 	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-	if ($object->usertodo->id > 0) print $object->usertodo->getNomUrl(1);
+	if ($object->usertodo->id > 0) print $object->usertodo->getNameUrl(1);
 	print '</td></tr>';
 
 	print '</table><br><br><table class="border" width="100%">';
 
 
 	// Third party - Contact
-	print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id?$object->thirdparty->getNomUrl(1):$langs->trans("None"));
+	print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id?$object->thirdparty->getNameUrl(1):$langs->trans("None"));
 	if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL')
 	{
 		if ($object->thirdparty->fetch($object->thirdparty->id))
@@ -215,7 +215,7 @@ if ($object->id > 0)
 	print '<td>';
 	if ($object->contact->id > 0)
 	{
-		print $object->contact->getNomUrl(1);
+		print $object->contact->getNameUrl(1);
 		if ($object->contact->id && $object->type_code == 'AC_TEL')
 		{
 			if ($object->contact->fetch($object->contact->id))
@@ -239,7 +239,7 @@ if ($object->id > 0)
 		{
 			$project=new Project($db);
 			$project->fetch($object->fk_project);
-			print $project->getNomUrl(1);
+			print $project->getNameUrl(1);
 		}
 		print '</td></tr>';
 	}

@@ -204,7 +204,7 @@ if ($resql)
 
 		print "<tr ".$bc[$var].">";
 		print '<td>';
-        print $thirdpartystatic->getNomUrl(1,'supplier');
+        print $thirdpartystatic->getNameUrl(1,'supplier');
 		print "</td>\n";
 		print '<td>'.$obj->zip.'</td>'."\n";
 		print '<td>'.$obj->town.'</td>'."\n";

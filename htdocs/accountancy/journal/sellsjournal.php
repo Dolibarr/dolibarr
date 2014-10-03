@@ -423,14 +423,14 @@ if ($action == 'export_csv') {
 
 		// Third party
 		print "<td>" . $date . "</td>";
-		print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+		print "<td>" . $invoicestatic->getNameUrl(1) . "</td>";
 		foreach ( $tabttc[$key] as $k => $mt ) {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
 			print "<td>" . length_accounta($k);
 			print "</td><td>" . $langs->trans("ThirdParty");
-			print ' (' . $companystatic->getNomUrl(0, 'customer', 16) . ')';
+			print ' (' . $companystatic->getNameUrl(0, 'customer', 16) . ')';
 			print "</td><td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 		}
@@ -441,7 +441,7 @@ if ($action == 'export_csv') {
 			if ($mt) {
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
-				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				print "<td>" . $invoicestatic->getNameUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";
 				print "<td>" . $invoicestatic->description . "</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
@@ -456,7 +456,7 @@ if ($action == 'export_csv') {
 			if ($mt) {
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
-				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				print "<td>" . $invoicestatic->getNameUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";
 				print "<td>" . $langs->trans("VAT") . "</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";

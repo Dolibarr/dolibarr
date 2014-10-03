@@ -1166,7 +1166,7 @@ class Expedition extends CommonObject
      *	@param      int			$short			Use short labels
      *	@return     string          			String with URL
      */
-	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
+	function getNameUrl($withpicto=0,$option=0,$max=0,$short=0)
 	{
 		global $langs;
 

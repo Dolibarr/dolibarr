@@ -215,7 +215,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
                 $companystatic->name=$obj->name;
                 $companystatic->client=$obj->client;
                 $companystatic->canvas=$obj->canvas;
-                print $companystatic->getNomUrl(1,'',44);
+                print $companystatic->getNameUrl(1,'',44);
 				print "</td>\n";
 				print "<td align=\"right\">";
 				print dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
@@ -269,7 +269,7 @@ if ($resql)
             $companystatic->name=$obj->name;
             $companystatic->client=$obj->client;
             $companystatic->canvas=$obj->canvas;
-            print $companystatic->getNomUrl(1,'prospect',44);
+            print $companystatic->getNameUrl(1,'prospect',44);
 			print '</td></tr>';
 			$i++;
 		}

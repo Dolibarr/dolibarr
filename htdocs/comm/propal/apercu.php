@@ -92,7 +92,7 @@ if ($id > 0 || ! empty($ref))
 		$rowspan=2;
 
 		// Tiers
-		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
+		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNameUrl(1).'</td>';
 		print '</tr>';
 
 		// Ligne info remises tiers

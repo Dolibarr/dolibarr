@@ -1426,7 +1426,7 @@ class FactureFournisseur extends CommonInvoice
      * 	@param		int		$max			Max length of shown ref
      * 	@return		string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$option='',$max=0)
+    function getNameUrl($withpicto=0,$option='',$max=0)
     {
         global $langs;
 

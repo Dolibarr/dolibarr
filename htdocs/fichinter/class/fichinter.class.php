@@ -539,7 +539,7 @@ class Fichinter extends CommonObject
 	 *	@param		string	$option			Options
 	 *	@return		string					String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNameUrl($withpicto=0,$option='')
 	{
 		global $langs;
 

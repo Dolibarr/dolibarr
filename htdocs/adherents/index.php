@@ -170,7 +170,7 @@ if ($conf->use_javascript_ajax)
     $i=0;
     foreach ($AdherentType as $key => $adhtype)
     {
-        $datalabels[]=array($i,$adhtype->getNomUrl(0,dol_size(16)));
+        $datalabels[]=array($i,$adhtype->getNameUrl(0,dol_size(16)));
         $dataval['draft'][]=array($i,isset($MemberToValidate[$key])?$MemberToValidate[$key]:0);
         $dataval['notuptodate'][]=array($i,isset($MembersValidated[$key])?$MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):0);
         $dataval['uptodate'][]=array($i,isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0);
@@ -250,8 +250,8 @@ if ($resql)
 			$staticmember->ref=$staticmember->getFullName($langs);
 			$statictype->id=$obj->typeid;
 			$statictype->libelle=$obj->libelle;
-			print '<td>'.$staticmember->getNomUrl(1,32).'</td>';
-			print '<td>'.$statictype->getNomUrl(1,32).'</td>';
+			print '<td>'.$staticmember->getNameUrl(1,32).'</td>';
+			print '<td>'.$statictype->getNameUrl(1,32).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem),'dayhour').'</td>';
 			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
 			print '</tr>';
@@ -310,8 +310,8 @@ if ($resql)
 				$staticmember->name=$obj->company;
 			}
 			$staticmember->ref=$staticmember->getFullName($langs);
-			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-			print '<td>'.$staticmember->getNomUrl(1,32,'subscription').'</td>';
+			print '<td>'.$subscriptionstatic->getNameUrl(1).'</td>';
+			print '<td>'.$staticmember->getNameUrl(1,32,'subscription').'</td>';
 			print '<td>'.get_date_range($db->jdate($obj->date_start),$db->jdate($obj->date_end)).'</td>';
 			print '<td align="right">'.price($obj->cotisation).'</td>';
 			//print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
@@ -342,7 +342,7 @@ foreach ($AdherentType as $key => $adhtype)
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
-	print '<td>'.$adhtype->getNomUrl(1, dol_size(32)).'</td>';
+	print '<td>'.$adhtype->getNameUrl(1, dol_size(32)).'</td>';
 	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0) > 0) ? $MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';

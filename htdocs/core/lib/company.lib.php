@@ -676,7 +676,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             $contactstatic->civility_id = $obj->civility_id;
-            print $contactstatic->getNomUrl(1);
+            print $contactstatic->getNameUrl(1);
             print '</td>';
 
             print '<td>'.$obj->poste.'</td>';
@@ -835,7 +835,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 			print '<td>';
 			$addressstatic->id = $address->id;
 			$addressstatic->label = $address->label;
-			print $addressstatic->getNomUrl(1);
+			print $addressstatic->getNameUrl(1);
 			print '</td>';
 
 			print '<td>'.$address->name.'</td>';
@@ -987,11 +987,11 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     //$actionstatic->libelle=$libelle;
                     $actionstatic->libelle=$obj->label;
                     $actionstatic->id=$obj->id;
-                    //$out.='<td width="140">'.$actionstatic->getNomUrl(1,16).'</td>';
+                    //$out.='<td width="140">'.$actionstatic->getNameUrl(1,16).'</td>';
 
                     // Title of event
                     //$out.='<td colspan="2">'.dol_trunc($obj->label,40).'</td>';
-                    $out.='<td colspan="2">'.$actionstatic->getNomUrl(1,40).'</td>';
+                    $out.='<td colspan="2">'.$actionstatic->getNameUrl(1,40).'</td>';
 
                     // Contact pour cette action
                     if (empty($objcon->id) && $obj->fk_contact > 0)
@@ -999,7 +999,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                         $contactstatic->lastname=$obj->lastname;
                         $contactstatic->firstname=$obj->firstname;
                         $contactstatic->id=$obj->fk_contact;
-                        $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
+                        $out.='<td width="120">'.$contactstatic->getNameUrl(1,'',10).'</td>';
                     }
                     else
                     {
@@ -1231,7 +1231,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
                 //$actionstatic->libelle=$libelle;
                 $actionstatic->libelle=$histo[$key]['note'];
                 $actionstatic->id=$histo[$key]['id'];
-                $out.=$actionstatic->getNomUrl(1,40);
+                $out.=$actionstatic->getNameUrl(1,40);
             }
             if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing')
             {
@@ -1255,20 +1255,20 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             	{
             		$propalstatic->ref=$langs->trans("ProposalShort");
             		$propalstatic->id=$histo[$key]['fk_element'];
-            		$out.=$propalstatic->getNomUrl(1);
+            		$out.=$propalstatic->getNameUrl(1);
             	}
             	elseif (($histo[$key]['elementtype'] == 'order' || $histo[$key]['elementtype'] == 'commande') && ! empty($conf->commande->enabled))
             	{
             		$orderstatic->ref=$langs->trans("Order");
             		$orderstatic->id=$histo[$key]['fk_element'];
-            		$out.=$orderstatic->getNomUrl(1);
+            		$out.=$orderstatic->getNameUrl(1);
             	}
             	elseif (($histo[$key]['elementtype'] == 'invoice' || $histo[$key]['elementtype'] == 'facture') && ! empty($conf->facture->enabled))
             	{
             		$facturestatic->ref=$langs->trans("Invoice");
             		$facturestatic->id=$histo[$key]['fk_element'];
             		$facturestatic->type=$histo[$key]['ftype'];
-            		$out.=$facturestatic->getNomUrl(1,'compta');
+            		$out.=$facturestatic->getNameUrl(1,'compta');
             	}
             	else $out.='&nbsp;';
             }
@@ -1281,7 +1281,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
                 $contactstatic->lastname=$histo[$key]['lastname'];
                 $contactstatic->firstname=$histo[$key]['firstname'];
                 $contactstatic->id=$histo[$key]['contact_id'];
-                $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
+                $out.='<td width="120">'.$contactstatic->getNameUrl(1,'',10).'</td>';
             }
             else
             {
@@ -1361,7 +1361,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 			$socstatic->id = $obj->rowid;
 			$socstatic->name = $obj->name;
 			$socstatic->canvas = $obj->canvas;
-			print $socstatic->getNomUrl(1);
+			print $socstatic->getNameUrl(1);
 			print '</td>';
 
 			print '<td>'.$obj->address.'</td>';

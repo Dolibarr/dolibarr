@@ -578,7 +578,7 @@ class PaymentSocialContribution extends CommonObject
 	 * 	@param	int		$maxlen			Longueur max libelle
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0)
+	function getNameUrl($withpicto=0,$maxlen=0)
 	{
 		global $langs;
 

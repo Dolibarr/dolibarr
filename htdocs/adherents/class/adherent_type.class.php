@@ -263,7 +263,7 @@ class AdherentType extends CommonObject
      *		@param		int		$maxlen			length max libelle
      *		@return		string					String with URL
      */
-    function getNomUrl($withpicto=0,$maxlen=0)
+    function getNameUrl($withpicto=0,$maxlen=0)
     {
         global $langs;
 

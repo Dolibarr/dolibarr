@@ -956,7 +956,7 @@ else
 
                 print '<td>'.$langs->trans("User").'</td>';
         		print '<td>';
-        		print $userRequest->getNomUrl(1);
+        		print $userRequest->getNameUrl(1);
         		print '</td></tr>';
 
 			    $starthalfday=($cp->halfday == -1 || $cp->halfday == 2)?'afternoon':'morning';
@@ -1056,14 +1056,14 @@ else
                 	$userCreate->fetch($cp->fk_user_create);
 	                print '<tr>';
 	                print '<td>'.$langs->trans('RequestByCP').'</td>';
-	                print '<td>'.$userCreate->getNomUrl(1).'</td>';
+	                print '<td>'.$userCreate->getNameUrl(1).'</td>';
 	                print '</tr>';
                 }
 
                 if (!$edit) {
                     print '<tr>';
                     print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
-                    print '<td>'.$valideur->getNomUrl(1).'</td>';
+                    print '<td>'.$valideur->getNameUrl(1).'</td>';
                     print '</tr>';
                 } else {
                     print '<tr>';

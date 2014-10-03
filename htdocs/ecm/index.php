@@ -652,7 +652,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			$nboffilesinsubdir=$resarray[2];
 
     			// Show link
-    			print $ecmdirstatic->getNomUrl(0,$option,32,'class="fmdirlia jqft ecmjqft"');
+    			print $ecmdirstatic->getNameUrl(0,$option,32,'class="fmdirlia jqft ecmjqft"');
 
     			print '<div class="ecmjqft">';
 
@@ -670,7 +670,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			$userstatic->lastname=$val['login_c'];
     			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
     			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1).'<br>';
+    			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNameUrl(1).'<br>';
     			$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'],"dayhour").'<br>';
     			$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
     			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';

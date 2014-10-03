@@ -168,7 +168,7 @@ foreach($listUsers as $users)
     $userstatic->id=$users['rowid'];
     $userstatic->lastname=$users['name'];
     $userstatic->firstname=$users['firstname'];
-    print $userstatic->getNomUrl(1);
+    print $userstatic->getNameUrl(1);
     print '</td>';
     print '<td style="text-align:center">';
     print '<input type="text" value="'.$holiday->getCPforUser($users['rowid']).'" name="nb_holiday['.$users['rowid'].']" size="5" style="text-align: center;"/>';

@@ -197,9 +197,9 @@ class FormActions
         	{
         		$savlabel=$action->label;
         		$action->label=$action->ref;
-        		$ref=$action->getNomUrl(1);
+        		$ref=$action->getNameUrl(1);
         		$action->label=$savlabel;
-        		$label=$action->getNomUrl(0,38);
+        		$label=$action->getNameUrl(0,38);
 
         		$var=!$var;
         		print '<tr '.$bc[$var].'>';
@@ -220,7 +220,7 @@ class FormActions
         			$userstatic->id = $action->author->id;
         			$userstatic->firstname = $action->author->firstname;
         			$userstatic->lastname = $action->author->lastname;
-        			print $userstatic->getNomUrl(1);
+        			print $userstatic->getNameUrl(1);
         		}
         		print '</td>';
         		print '<td align="right">';

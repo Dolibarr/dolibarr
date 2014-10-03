@@ -1550,7 +1550,7 @@ class Adherent extends CommonObject
      *		@param	string	$option			Page lien
      *		@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$maxlen=0,$option='card')
+    function getNameUrl($withpicto=0,$maxlen=0,$option='card')
     {
         global $langs;
 

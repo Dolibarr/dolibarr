@@ -328,7 +328,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 
-        $result=$localobject->getNomUrl(1);
+        $result=$localobject->getNameUrl(1);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertNotEquals($result, '');
 

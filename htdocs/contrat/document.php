@@ -114,7 +114,7 @@ if ($object->id)
 
     // Societe
     print '<tr><td>'.$langs->trans("Customer").'</td>';
-    print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
+    print '<td colspan="3">'.$object->thirdparty->getNameUrl(1).'</td></tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';

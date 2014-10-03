@@ -187,7 +187,7 @@ if ($result) {
 		// Ref Invoice
 		$facturefournisseur_static->ref = $objp->facnumber;
 		$facturefournisseur_static->id = $objp->facid;
-		print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
+		print '<td>' . $facturefournisseur_static->getNameUrl(1) . '</td>';
 		
 		// Ref Product
 		$product_static->ref = $objp->product_ref;
@@ -195,7 +195,7 @@ if ($result) {
 		$product_static->type = $objp->type;
 		print '<td>';
 		if ($product_static->id)
-			print $product_static->getNomUrl(1);
+			print $product_static->getNameUrl(1);
 		else
 			print '&nbsp;';
 		print '</td>';

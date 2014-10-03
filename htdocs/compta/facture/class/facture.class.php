@@ -786,7 +786,7 @@ class Facture extends CommonInvoice
 	 *      @param  string  $moretitle       Add more text to title tooltip
 	 *      @return string 			         String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='')
+	function getNameUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='')
 	{
 		global $langs;
 

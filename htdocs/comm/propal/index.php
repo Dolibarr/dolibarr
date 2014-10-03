@@ -184,13 +184,13 @@ if (! empty($conf->propal->enabled))
 
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
-				print '<td class="nowrap">'.$propalstatic->getNomUrl(1).'</td>';
+				print '<td class="nowrap">'.$propalstatic->getNameUrl(1).'</td>';
 
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
-				print '<td>'.$companystatic->getNomUrl(1,'customer',24).'</td>';
+				print '<td>'.$companystatic->getNameUrl(1,'customer',24).'</td>';
 
 				print '</tr>';
 				$i++;
@@ -249,7 +249,7 @@ if ($resql)
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding nowrap">';
-			print $propalstatic->getNomUrl(1);
+			print $propalstatic->getNameUrl(1);
 			print '</td>';
 
 			print '<td width="16" class="nobordernopadding nowrap">';
@@ -269,7 +269,7 @@ if ($resql)
 			$companystatic->name=$obj->socname;
 			$companystatic->client=$obj->client;
 			$companystatic->canvas=$obj->canvas;
-			print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
+			print '<td>'.$companystatic->getNameUrl(1,'customer').'</td>';
 
 			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
 			print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,5).'</td>';
@@ -330,7 +330,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
+				print $propalstatic->getNameUrl(1);
 				print '</td>';
 				print '<td width="18" class="nobordernopadding nowrap">';
 				if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
@@ -348,7 +348,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
-				print '<td align="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
+				print '<td align="left">'.$companystatic->getNameUrl(1,'customer',44).'</td>'."\n";
 
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
@@ -417,7 +417,7 @@ if (! empty($conf->propal->enabled))
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="96" class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
+				print $propalstatic->getNameUrl(1);
 				print '</td>';
 
 				print '<td width="16" class="nobordernopadding nowrap">';
@@ -489,7 +489,7 @@ if (! empty($conf->propal->enabled))
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="96" class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
+				print $propalstatic->getNameUrl(1);
 				print '</td>';
 
 				print '<td width="16" class="nobordernopadding nowrap">';

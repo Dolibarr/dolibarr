@@ -303,7 +303,7 @@ class FormMail
         				$langs->load("users");
         				$fuser=new User($this->db);
         				$fuser->fetch($this->fromid);
-        				$out.= $fuser->getNomUrl(1);
+        				$out.= $fuser->getNameUrl(1);
         			}
         			else
         			{
@@ -383,13 +383,13 @@ class FormMail
         				{
         					$soc=new Societe($this->db);
         					$soc->fetch($this->toid);
-        					$out.= $soc->getNomUrl(1);
+        					$out.= $soc->getNameUrl(1);
         				}
         				else if ($this->totype == 'contact')
         				{
         					$contact=new Contact($this->db);
         					$contact->fetch($this->toid);
-        					$out.= $contact->getNomUrl(1);
+        					$out.= $contact->getNameUrl(1);
         				}
         				else
         				{

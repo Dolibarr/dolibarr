@@ -193,12 +193,12 @@ if ($resql)
             print '<tr '.$bc[$var].'><td>';
             $invoicestatic->id=$obj->rowid;
             $invoicestatic->ref=$obj->facnumber;
-            print $invoicestatic->getNomUrl(1,'withdraw');
+            print $invoicestatic->getNameUrl(1,'withdraw');
             print '</td>';
             print '<td>';
             $thirdpartystatic->id=$obj->socid;
             $thirdpartystatic->nom=$obj->nom;
-            print $thirdpartystatic->getNomUrl(1,'customer');
+            print $thirdpartystatic->getNameUrl(1,'customer');
             print '</td>';
             print '<td align="right">';
             print price($obj->total_ttc,0,$langs,0,0,-1,$conf->currency);
@@ -257,7 +257,7 @@ if ($result)
         print "<tr ".$bc[$var]."><td>";
         $bprev->id=$obj->rowid;
         $bprev->ref=$obj->ref;
-        print $bprev->getNomUrl(1);
+        print $bprev->getNameUrl(1);
         print "</td>\n";
         print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 

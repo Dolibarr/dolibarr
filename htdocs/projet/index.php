@@ -128,7 +128,7 @@ if ( $resql )
 		{
 			$socstatic->id=$obj->socid;
 			$socstatic->nom=$obj->nom;
-			print $socstatic->getNomUrl(1);
+			print $socstatic->getNameUrl(1);
 		}
 		else
 		{
@@ -213,7 +213,7 @@ if ( $resql )
 				$result=$userstatic->fetch($obj->userid);
 				if (! $result) $userstatic->id=0;
 			}
-			if ($userstatic->id) $username = $userstatic->getNomUrl(0,0);
+			if ($userstatic->id) $username = $userstatic->getNameUrl(0,0);
 
 			print "<tr ".$bc[$var].">";
 			print '<td>'.$username.'</td>';
@@ -221,7 +221,7 @@ if ( $resql )
 			$projectstatic->id=$obj->projectid;
 			$projectstatic->ref=$obj->ref;
 			$projectstatic->title=$obj->title;
-			print $projectstatic->getNomUrl(1,'',16);
+			print $projectstatic->getNameUrl(1,'',16);
 			//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
 			print '</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a></td>';

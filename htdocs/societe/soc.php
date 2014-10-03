@@ -2005,7 +2005,7 @@ else
             if ($result > 0)
             {
                 $adh->ref=$adh->getFullName($langs);
-                print $adh->getNomUrl(1);
+                print $adh->getNameUrl(1);
             }
             else
             {

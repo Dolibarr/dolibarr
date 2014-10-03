@@ -358,7 +358,7 @@ if ($resql)
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
             print '<td class="nobordernopadding nowrap">';
-            print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
+            print $facturestatic->getNameUrl(1,'',200,0,$notetoshow);
             print $objp->increment;
             print '</td>';
 
@@ -403,7 +403,7 @@ if ($resql)
             $thirdparty->nom=$objp->nom;
             $thirdparty->client=$objp->client;
             $thirdparty->code_client=$objp->code_client;
-            print $thirdparty->getNomUrl(1,'customer');
+            print $thirdparty->getNameUrl(1,'customer');
             print '</td>';
 
             print '<td align="right">'.price($objp->total_ht,0,$langs).'</td>';

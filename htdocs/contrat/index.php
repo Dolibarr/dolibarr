@@ -258,13 +258,13 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 				print '<tr '.$bc[$var].'><td class="nowrap">';
 				$staticcontrat->ref=$obj->ref;
 				$staticcontrat->id=$obj->rowid;
-				print $staticcontrat->getNomUrl(1,'');
+				print $staticcontrat->getNameUrl(1,'');
 				print '</td>';
 				print '<td>';
 				$companystatic->id=$obj->socid;
 				$companystatic->nom=$obj->nom;
 				$companystatic->client=1;
-				print $companystatic->getNomUrl(1,'',16);
+				print $companystatic->getNameUrl(1,'',16);
 				print '</td>';
 				print '</tr>';
 				//$tot_ttc+=$obj->total_ttc;
@@ -337,13 +337,13 @@ if ($result)
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->cid);
 		$staticcontrat->id=$obj->cid;
-		print $staticcontrat->getNomUrl(1,16);
+		print $staticcontrat->getNameUrl(1,16);
 		if ($obj->nb_late) print img_warning($langs->trans("Late"));
 		print '</td>';
 		print '<td>';
 		$staticcompany->id=$obj->socid;
 		$staticcompany->nom=$obj->nom;
-		print $staticcompany->getNomUrl(1,'',20);
+		print $staticcompany->getNameUrl(1,'',20);
 		print '</td>';
 		print '<td align="center">'.dol_print_date($obj->tms,'dayhour').'</td>';
 		//print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
@@ -403,7 +403,7 @@ if ($resql)
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
-		print $staticcontrat->getNomUrl(1,16);
+		print $staticcontrat->getNameUrl(1,16);
 		//if (1 == 1) print img_warning($langs->trans("Late"));
 		print '</td>';
 		print '<td>';
@@ -412,7 +412,7 @@ if ($resql)
     		$productstatic->id=$obj->fk_product;
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
-            print $productstatic->getNomUrl(1,'',20);
+            print $productstatic->getNameUrl(1,'',20);
 		}
 		else
 		{
@@ -424,7 +424,7 @@ if ($resql)
 		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->nom=$obj->nom;
-		print $staticcompany->getNomUrl(1,'',20);
+		print $staticcompany->getNameUrl(1,'',20);
 		print '</td>';
 		print '<td class="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		$dateend=$db->jdate($obj->date_fin_validite);
@@ -484,7 +484,7 @@ if ($resql)
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
-		print $staticcontrat->getNomUrl(1,16);
+		print $staticcontrat->getNameUrl(1,16);
 		print '</td>';
 		print '<td class="nowrap">';
 		if ($obj->fk_product > 0)
@@ -492,7 +492,7 @@ if ($resql)
     		$productstatic->id=$obj->fk_product;
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
-            print $productstatic->getNomUrl(1,'',20);
+            print $productstatic->getNameUrl(1,'',20);
 		}
 		else
 		{
@@ -504,7 +504,7 @@ if ($resql)
 		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->nom=$obj->nom;
-		print $staticcompany->getNomUrl(1,'',20);
+		print $staticcompany->getNameUrl(1,'',20);
 		print '</td>';
 		print '<td width="16" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		print $staticcontratligne->LibStatut($obj->statut,3);
@@ -564,7 +564,7 @@ if ($resql)
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
-		print $staticcontrat->getNomUrl(1,16);
+		print $staticcontrat->getNameUrl(1,16);
 		print '</td>';
 		print '<td class="nowrap">';
 		if ($obj->fk_product > 0)
@@ -572,7 +572,7 @@ if ($resql)
     		$productstatic->id=$obj->fk_product;
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
-            print $productstatic->getNomUrl(1,'',20);
+            print $productstatic->getNameUrl(1,'',20);
 		}
 		else
 		{
@@ -584,7 +584,7 @@ if ($resql)
 		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->nom=$obj->nom;
-		print $staticcompany->getNomUrl(1,'',20);
+		print $staticcompany->getNameUrl(1,'',20);
 		print '</td>';
 		print '<td width="16" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		print $staticcontratligne->LibStatut($obj->statut,3,1);

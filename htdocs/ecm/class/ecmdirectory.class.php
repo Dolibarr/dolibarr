@@ -409,7 +409,7 @@ class EcmDirectory // extends CommonObject
 	 *  @param	string	$more			Add more param on a link
 	 *  @return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$max=0,$more='')
+	function getNameUrl($withpicto=0,$option='',$max=0,$more='')
 	{
 		global $langs;
 

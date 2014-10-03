@@ -57,7 +57,7 @@ if ($prev_id)
 
 		print '<table class="border" width="100%">';
 
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNameUrl(1).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
 

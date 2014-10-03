@@ -540,7 +540,7 @@ if ($rowid > 0)
 		        /*print '<td class="nowrap">';
 		        $membertypestatic->id=$objp->type_id;
 		        $membertypestatic->libelle=$objp->type;
-		        print $membertypestatic->getNomUrl(1,12);
+		        print $membertypestatic->getNameUrl(1,12);
 		        print '</td>';
 				*/
 

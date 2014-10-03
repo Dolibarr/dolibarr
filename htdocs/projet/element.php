@@ -116,7 +116,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
 
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-if (! empty($project->thirdparty->id)) print $project->thirdparty->getNomUrl(1);
+if (! empty($project->thirdparty->id)) print $project->thirdparty->getNameUrl(1);
 else print '&nbsp;';
 print '</td></tr>';
 
@@ -290,7 +290,7 @@ foreach ($listofreferent as $key => $value)
 				print "</td>\n";
 				// Ref
 				print '<td align="left">';
-				print $element->getNomUrl(1);
+				print $element->getNameUrl(1);
 				print "</td>\n";
 
 				// Date
@@ -302,7 +302,7 @@ foreach ($listofreferent as $key => $value)
 
 				// Third party
                 print '<td align="left">';
-                if (is_object($element->client)) print $element->client->getNomUrl(1,'',48);
+                if (is_object($element->client)) print $element->client->getNameUrl(1,'',48);
 				print '</td>';
 
                 // Amount

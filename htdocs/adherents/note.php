@@ -110,7 +110,7 @@ if ($id)
     print '</tr>';
 
     // Type
-    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNameUrl(1)."</td></tr>\n";
 
     // Company
     print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';

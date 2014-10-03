@@ -146,7 +146,7 @@ if ($resql)
 			$companystatic->id=$obj->fk_societe;
             $companystatic->name=$obj->name;
             $companystatic->canvas=$obj->canvas;
-            print $companystatic->getNomUrl(1);
+            print $companystatic->getNameUrl(1);
 		}
 		else
 		{

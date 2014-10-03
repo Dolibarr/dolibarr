@@ -186,7 +186,7 @@ $i=0;
 while ($tmpecmdir && $result > 0)
 {
 	$tmpecmdir->ref=$tmpecmdir->label;
-    $s=$tmpecmdir->getNomUrl(1).$s;
+    $s=$tmpecmdir->getNameUrl(1).$s;
 	if ($tmpecmdir->fk_parent)
 	{
 		$s=' -> '.$s;
@@ -217,7 +217,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMCreationUser").'</td><td>';
 $userecm=new User($db);
 $userecm->fetch($ecmdir->fk_user_c);
-print $userecm->getNomUrl(1);
+print $userecm->getNameUrl(1);
 print '</td></tr>';
 */
 print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';

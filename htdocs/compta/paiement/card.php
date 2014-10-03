@@ -236,7 +236,7 @@ if (! empty($conf->banque->enabled))
     	print '<tr>';
     	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
-		print $bankline->getNomUrl(1,0,'showconciliated');
+		print $bankline->getNameUrl(1,0,'showconciliated');
     	print '</td>';
     	print '</tr>';
 
@@ -246,7 +246,7 @@ if (! empty($conf->banque->enabled))
 		$accountstatic=new Account($db);
         $accountstatic->id=$bankline->fk_account;
 	    $accountstatic->label=$bankline->bank_account_ref.' - '.$bankline->bank_account_label;
-        print $accountstatic->getNomUrl(0);
+        print $accountstatic->getNameUrl(0);
     	print '</td>';
     	print '</tr>';
 
@@ -258,7 +258,7 @@ if (! empty($conf->banque->enabled))
 			print '<tr>';
 	    	print '<td>'.$langs->trans('CheckReceipt').'</td>';
 			print '<td colspan="3">';
-			print $bordereau->getNomUrl(1);
+			print $bordereau->getNameUrl(1);
 	    	print '</td>';
 	    	print '</tr>';
 		}
@@ -316,14 +316,14 @@ if ($resql)
 
             // Invoice
 			print '<td>';
-			print $invoice->getNomUrl(1);
+			print $invoice->getNameUrl(1);
 			print "</td>\n";
 
 			// Third party
 			print '<td>';
 			$thirdpartystatic->id=$objp->socid;
 			$thirdpartystatic->nom=$objp->nom;
-			print $thirdpartystatic->getNomUrl(1);
+			print $thirdpartystatic->getNameUrl(1);
 			print '</td>';
 
 			// Expected to pay

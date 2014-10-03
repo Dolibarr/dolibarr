@@ -168,7 +168,7 @@ if ($resql)
 			// Project url
 			print "<td>";
 			$projectstatic->ref = $objp->ref;
-			print $projectstatic->getNomUrl(1);
+			print $projectstatic->getNameUrl(1);
 			print "</td>";
 
 			// Title
@@ -182,7 +182,7 @@ if ($resql)
 			{
 				$socstatic->id=$objp->socid;
 				$socstatic->nom=$objp->nom;
-				print $socstatic->getNomUrl(1);
+				print $socstatic->getNameUrl(1);
 			}
 			else
 			{

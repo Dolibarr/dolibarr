@@ -120,7 +120,7 @@ if($_GET["id"])
             print '<tr><td>'.$langs->trans("Invoice").'</td>';
 			$facture_static->ref=$objp->facnumber;
 			$facture_static->id=$objp->facid;
-			print '<td>'.$facture_static->getNomUrl(1).'</td>';
+			print '<td>'.$facture_static->getNameUrl(1).'</td>';
             print '</tr>';
 
             print '<tr><td width="20%">Ligne</td>';

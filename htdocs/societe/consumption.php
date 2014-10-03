@@ -337,7 +337,7 @@ if ($sql_select)
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
 		print '<td class="nobordernopadding nowrap" width="100">';
-		print $documentstatic->getNomUrl(1);
+		print $documentstatic->getNameUrl(1);
 		print '</td>';
 		print '<td align="center" width="80">'.dol_print_date($db->jdate($objp->dateprint),'day').'</td>';
 
@@ -359,7 +359,7 @@ if ($sql_select)
 			$product_static->type=$objp->fk_product_type;
 			$product_static->id=$objp->fk_product;
 			$product_static->ref=$objp->ref;
-			$text=$product_static->getNomUrl(1);
+			$text=$product_static->getNameUrl(1);
 		}
 
 		// Product
@@ -409,13 +409,13 @@ if ($sql_select)
 				{
 					$discount=new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNameUrl(0));
 				}
 				elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
 				{
 					$discount=new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNameUrl(0));
 					// Add date of deposit
 					if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
 				}
@@ -467,7 +467,7 @@ if ($sql_select)
 			$productstatic->id = $objp->prod_id;
 			$productstatic->ref = $objp->prod_ref;
 			$productstatic->status = $objp->prod_type;
-			$prodreftxt = $productstatic->getNomUrl(0);
+			$prodreftxt = $productstatic->getNameUrl(0);
 			if(!empty($objp->product_label)) $prodreftxt .= ' - '.$objp->product_label;
 		}
 		// Show range

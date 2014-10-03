@@ -157,13 +157,13 @@ if ($result)
 		print "<td>";
 		$interventionstatic->id=$objp->fichid;
 		$interventionstatic->ref=$objp->ref;
-		print $interventionstatic->getNomUrl(1);
+		print $interventionstatic->getNameUrl(1);
 		print "</td>\n";
 		print '<td>';
 		$companystatic->nom=$objp->nom;
 		$companystatic->id=$objp->socid;
 		$companystatic->client=$objp->client;
-		print $companystatic->getNomUrl(1,'',44);
+		print $companystatic->getNameUrl(1,'',44);
 		print '</td>';
         print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
 		if (empty($conf->global->FICHINTER_DISABLE_DETAILS))

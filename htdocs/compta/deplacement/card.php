@@ -438,7 +438,7 @@ else if ($id)
             print '<tr><td>'.$langs->trans("Person").'</td><td>';
             $userfee=new User($db);
             $userfee->fetch($object->fk_user);
-            print $userfee->getNomUrl(1);
+            print $userfee->getNameUrl(1);
             print '</td></tr>';
 
             // Date
@@ -458,7 +458,7 @@ else if ($id)
             // Where
             print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
             print '<td>';
-            if ($soc->id) print $soc->getNomUrl(1);
+            if ($soc->id) print $soc->getNameUrl(1);
             print '</td></tr>';
 
             // Project

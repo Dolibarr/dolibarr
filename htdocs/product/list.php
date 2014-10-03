@@ -421,7 +421,7 @@ else
     			$product_static->id = $objp->rowid;
     			$product_static->ref = $objp->ref;
     			$product_static->type = $objp->fk_product_type;
-    			print $product_static->getNomUrl(1,'',24);
+    			print $product_static->getNameUrl(1,'',24);
     			print "</td>\n";
 
     			// Label

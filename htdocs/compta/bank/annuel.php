@@ -160,7 +160,7 @@ if ($_GET["account"])
 		{
 			$bankaccount->fetch($aId);
 			$bankaccount->label=$bankaccount->ref;
-			print $bankaccount->getNomUrl(1);
+			print $bankaccount->getNameUrl(1);
 			if ($key < (count($listid)-1)) print ', ';
 		}
 	}

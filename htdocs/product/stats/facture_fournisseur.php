@@ -170,7 +170,7 @@ if ($id > 0 || ! empty($ref))
                     print '<td>';
                     $supplierinvoicestatic->id=$objp->facid;
                     $supplierinvoicestatic->ref=$objp->facnumber;
-					print $supplierinvoicestatic->getNomUrl(1);
+					print $supplierinvoicestatic->getNameUrl(1);
                     print "</td>\n";
                     print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";

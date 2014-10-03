@@ -197,7 +197,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2){
 				print '<td class="nowrap">'.$i."</td>";
 				$company_static->id=$coll->socid;
 				$company_static->nom=$coll->nom;
-				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
+				print '<td class="nowrap">'.$company_static->getNameUrl(1).'</td>';
 				$find = array(' ','.');
 				$replace = array('','');
 				print '<td class="nowrap">'.$intra."</td>";
@@ -270,7 +270,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 				print '<td class="nowrap">'.$i."</td>";
 				$company_static->id=$coll->socid;
 				$company_static->nom=$coll->nom;
-				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
+				print '<td class="nowrap">'.$company_static->getNameUrl(1).'</td>';
 				$find = array(' ','.');
 				$replace = array('','');
 				print '<td class="nowrap">'.$intra."</td>";

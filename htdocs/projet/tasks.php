@@ -221,7 +221,7 @@ if ($id > 0 || ! empty($ref))
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
+	if (! empty($object->thirdparty->id)) print $object->thirdparty->getNameUrl(1);
 	else print '&nbsp;';
 	print '</td>';
 	print '</tr>';

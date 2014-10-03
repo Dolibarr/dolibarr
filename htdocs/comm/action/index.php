@@ -1226,14 +1226,14 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     print '<td class="'.($nowrapontd?'nowrap ':'').'cal_event'.($event->type_code == 'BIRTHDAY'?' cal_event_birthday':'').'">';
                     if ($event->type_code == 'BIRTHDAY') // It's a birthday
                     {
-                        print $event->getNomUrl(1,$maxnbofchar,'cal_event','birthday','contact');
+                        print $event->getNameUrl(1,$maxnbofchar,'cal_event','birthday','contact');
                     }
                     if ($event->type_code != 'BIRTHDAY')
                     {
                         // Picto
                         if (empty($event->fulldayevent))
                         {
-                            //print $event->getNomUrl(2).' ';
+                            //print $event->getNameUrl(2).' ';
                         }
 
                         // Date
@@ -1279,7 +1279,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             {
                                 $savlabel=$event->libelle;
                                 $event->libelle=$daterange;
-                                print $event->getNomUrl(0);
+                                print $event->getNameUrl(0);
                                 $event->libelle=$savlabel;
                             }
                             else
@@ -1299,7 +1299,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                         // Show title
                         if ($event->type_code == 'ICALEVENT') print dol_trunc($event->libelle,$maxnbofchar);
-                        else print $event->getNomUrl(0,$maxnbofchar,'cal_event');
+                        else print $event->getNameUrl(0,$maxnbofchar,'cal_event');
 
                         if ($event->type_code == 'ICALEVENT') print '<br>('.dol_trunc($event->icalname,$maxnbofchar).')';
 
@@ -1315,7 +1315,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                                 $cachethirdparties[$event->societe->id]=$thirdparty;
                             }
                             else $thirdparty=$cachethirdparties[$event->societe->id];
-                            if (! empty($thirdparty->id)) $linerelatedto.=$thirdparty->getNomUrl(1,'',$length);
+                            if (! empty($thirdparty->id)) $linerelatedto.=$thirdparty->getNameUrl(1,'',$length);
                         }
                         if (! empty($event->contact->id) && $event->contact->id > 0)
                         {
@@ -1327,7 +1327,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             }
                             else $contact=$cachecontacts[$event->contact->id];
                             if ($linerelatedto) $linerelatedto.=' / ';
-                            if (! empty($contact->id)) $linerelatedto.=$contact->getNomUrl(1,'',$length);
+                            if (! empty($contact->id)) $linerelatedto.=$contact->getNameUrl(1,'',$length);
                         }
                         if ($linerelatedto) print '<br>'.$linerelatedto;
                     }

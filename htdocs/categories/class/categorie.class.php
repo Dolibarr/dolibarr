@@ -1256,7 +1256,7 @@ class Categorie extends CommonObject
 	 * 	@param		int		$maxlength		Max length of text
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$maxlength=0)
+	function getNameUrl($withpicto=0,$option='',$maxlength=0)
 	{
 		global $langs;
 

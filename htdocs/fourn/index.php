@@ -137,13 +137,13 @@ if (! empty($conf->fournisseur->enabled))
 				print '<tr '.$bc[$var].'><td  class="nowrap">';
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
-				print $commandestatic->getNomUrl(1,'',16);
+				print $commandestatic->getNameUrl(1,'',16);
 				print '</td>';
 				print '<td  class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->nom=$obj->nom;
 				$companystatic->client=0;
-				print $companystatic->getNomUrl(1,'',16);
+				print $companystatic->getNameUrl(1,'',16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
@@ -195,13 +195,13 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
-				print $facturestatic->getNomUrl(1,'');
+				print $facturestatic->getNameUrl(1,'');
 				print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->nom=$obj->nom;
 				$companystatic->client=0;
-				print $companystatic->getNomUrl(1,'',16);
+				print $companystatic->getNameUrl(1,'',16);
 				print '</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
@@ -306,7 +306,7 @@ if (count($companystatic->SupplierCategories))
 		$categstatic->id=$rowid;
 		$categstatic->ref=$label;
 		$categstatic->label=$label;
-		print $categstatic->getNomUrl(1);
+		print $categstatic->getNameUrl(1);
 		print '</td>'."\n";
 		// TODO this page not exist
 		/*

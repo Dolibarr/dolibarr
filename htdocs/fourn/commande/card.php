@@ -1123,7 +1123,7 @@ if ($action=="create")
 
 	if ($socid > 0)
 	{
-		print $societe->getNomUrl(1);
+		print $societe->getNameUrl(1);
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 	}
 	else
@@ -1349,7 +1349,7 @@ elseif (! empty($object->id))
 
 	// Fournisseur
 	print '<tr><td>'.$langs->trans("Supplier")."</td>";
-	print '<td colspan="2">'.$object->thirdparty->getNomUrl(1,'supplier').'</td>';
+	print '<td colspan="2">'.$object->thirdparty->getNameUrl(1,'supplier').'</td>';
 	print '</tr>';
 
 	// Statut
@@ -1377,7 +1377,7 @@ elseif (! empty($object->id))
 
 	// Author
 	print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
-	print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
+	print '<td colspan="2">'.$author->getNameUrl(1).'</td>';
 	print '</tr>';
 
 	// Conditions de reglement par defaut
@@ -1666,7 +1666,7 @@ elseif (! empty($object->id))
 
 				$product_static=new ProductFournisseur($db);
 				$product_static->fetch($line->fk_product);
-				$text=$product_static->getNomUrl(1,'supplier');
+				$text=$product_static->getNameUrl(1,'supplier');
 				$text.= ' - '.$product_static->libelle;
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
 				print $form->textwithtooltip($text,$description,3,'','',$i);
@@ -1746,7 +1746,7 @@ elseif (! empty($object->id))
 			{
 				$product_static=new ProductFournisseur($db);
 				$product_static->fetch($line->fk_product);
-				$text=$product_static->getNomUrl(1,'supplier');
+				$text=$product_static->getNameUrl(1,'supplier');
 				$text.= ' - '.$product_static->libelle;
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
 				print $form->textwithtooltip($text,$description,3,'','',$i);

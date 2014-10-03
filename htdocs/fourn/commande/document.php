@@ -121,7 +121,7 @@ if ($object->id > 0)
 
 	// Fournisseur
 	print '<tr><td>'.$langs->trans("Supplier")."</td>";
-	print '<td colspan="2">'.$object->thirdparty->getNomUrl(1,'supplier').'</td>';
+	print '<td colspan="2">'.$object->thirdparty->getNameUrl(1,'supplier').'</td>';
 	print '</tr>';
 
 	// Statut
@@ -149,7 +149,7 @@ if ($object->id > 0)
 
 	// Auteur
 	print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
-	print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
+	print '<td colspan="2">'.$author->getNameUrl(1).'</td>';
 	print '</tr>';
 
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';

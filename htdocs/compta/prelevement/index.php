@@ -132,13 +132,13 @@ if ($resql)
 
             $var=!$var;
             print '<tr '.$bc[$var].'><td>';
-            print $invoicestatic->getNomUrl(1,'withdraw');
+            print $invoicestatic->getNameUrl(1,'withdraw');
             print '</td>';
 
             print '<td>';
             $thirdpartystatic->id=$obj->socid;
             $thirdpartystatic->nom=$obj->nom;
-            print $thirdpartystatic->getNomUrl(1,'customer');
+            print $thirdpartystatic->getNameUrl(1,'customer');
             print '</td>';
 
             print '<td align="right">';
@@ -206,7 +206,7 @@ if ($result)
         $bprev->id=$obj->rowid;
         $bprev->ref=$obj->ref;
         $bprev->statut=$obj->statut;
-        print $bprev->getNomUrl(1);
+        print $bprev->getNameUrl(1);
         print "</td>\n";
         print '<td>'.dol_print_date($db->jdate($obj->datec),"dayhour")."</td>\n";
         print '<td align="right">'.price($obj->amount)."</td>\n";

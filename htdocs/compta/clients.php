@@ -190,7 +190,7 @@ if ($resql)
 		$thirdpartystatic->id=$obj->rowid;
 		$thirdpartystatic->nom=$obj->nom;
 		$thirdpartystatic->client=$obj->client;
-		print $thirdpartystatic->getNomUrl(1,'compta');
+		print $thirdpartystatic->getNameUrl(1,'compta');
 		print '</td>';
 		print '<td>'.$obj->town.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_client.'&nbsp;</td>';

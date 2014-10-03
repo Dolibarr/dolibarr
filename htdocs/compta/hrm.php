@@ -153,8 +153,8 @@ if ($result)
             $userstatic->lastname=$obj->lastname;
             $userstatic->firstname=$obj->firstname;
             print '<tr '.$bc[$var].'>';
-            print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
-            print '<td>'.$userstatic->getNomUrl(1).'</td>';
+            print '<td>'.$deplacementstatic->getNameUrl(1).'</td>';
+            print '<td>'.$userstatic->getNameUrl(1).'</td>';
             print '<td align="right">'.$obj->km.'</td>';
             print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
             print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut,3).'</td>';

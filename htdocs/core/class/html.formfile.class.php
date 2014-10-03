@@ -1005,7 +1005,7 @@ class FormFile
                 $var=!$var;
                 print '<tr '.$bc[$var].'>';
                 print '<td>';
-                if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1,'document');
+                if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNameUrl(1,'document');
                 else print $langs->trans("ObjectDeleted",($id?$id:$ref));
                 print '</td>';
                 print '<td>';

@@ -210,7 +210,7 @@ if ($result > 0)
             print '<tr>';
             print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
             print '<td colspan="3">';
-            print $bankline->getNomUrl(1,0,'showconciliated');
+            print $bankline->getNameUrl(1,0,'showconciliated');
             print '</td>';
             print '</tr>';
 
@@ -220,7 +220,7 @@ if ($result > 0)
 			$accountstatic=new Account($db);
 	        $accountstatic->id=$bankline->fk_account;
 	        $accountstatic->label=$bankline->bank_account_ref.' - '.$bankline->bank_account_label;
-	        print $accountstatic->getNomUrl(0);
+	        print $accountstatic->getNameUrl(0);
 	    	print '</td>';
 	    	print '</tr>';
         }

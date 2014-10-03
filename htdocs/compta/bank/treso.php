@@ -262,11 +262,11 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					$facturefournstatic->ref=$obj->ref;
 					$facturefournstatic->id=$obj->objid;
 					$facturefournstatic->type=$obj->type;
-					$ref = $facturefournstatic->getNomUrl(1,'');
+					$ref = $facturefournstatic->getNameUrl(1,'');
 
 					$societestatic->id = $obj->socid;
 					$societestatic->nom = $obj->nom;
-					$refcomp=$societestatic->getNomUrl(1,'',24);
+					$refcomp=$societestatic->getNameUrl(1,'',24);
 
 					$paiement = -1*$facturefournstatic->getSommePaiement();	// Payment already done
 				}
@@ -276,11 +276,11 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->objid;
 				$facturestatic->type=$obj->type;
-				$ref = $facturestatic->getNomUrl(1,'');
+				$ref = $facturestatic->getNameUrl(1,'');
 
 				$societestatic->id = $obj->socid;
 				$societestatic->nom = $obj->nom;
-				$refcomp=$societestatic->getNomUrl(1,'',24);
+				$refcomp=$societestatic->getNameUrl(1,'',24);
 
 				$paiement = $facturestatic->getSommePaiement();	// Payment already done
 			}
@@ -289,7 +289,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$socialcontribstatic->ref=$obj->ref;
 				$socialcontribstatic->id=$obj->objid;
 				$socialcontribstatic->lib=$obj->type;
-				$ref = $socialcontribstatic->getNomUrl(1,24);
+				$ref = $socialcontribstatic->getNameUrl(1,24);
 
 				$paiement = -1*$socialcontribstatic->getSommePaiement();	// Payment already done
 			}

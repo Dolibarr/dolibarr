@@ -166,7 +166,7 @@ if ($result) {
 		// Ref facture
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
-		print '<td>' . $facturefourn_static->getNomUrl(1) . '</td>';
+		print '<td>' . $facturefourn_static->getNameUrl(1) . '</td>';
 		
 		// Ref facture supplier
 		$productfourn_static->ref = $objp->product_ref;
@@ -174,7 +174,7 @@ if ($result) {
 		$productfourn_static->type = $objp->type;
 		print '<td>';
 		if ($productfourn_static->id)
-			print $productfourn_static->getNomUrl(1);
+			print $productfourn_static->getNameUrl(1);
 		else
 			print '&nbsp;';
 		print '</td>';

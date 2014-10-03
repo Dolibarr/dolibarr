@@ -225,7 +225,7 @@ if (is_array($coll_list))
 			$company_static->id=$coll->socid;
 			$company_static->nom=$coll->nom;
 			$company_static->client=1;
-			print '<td class="nowrap">'.$company_static->getNomUrl(1,'customer').'</td>';
+			print '<td class="nowrap">'.$company_static->getNameUrl(1,'customer').'</td>';
 			$find = array(' ','.');
 			$replace = array('','');
 			print '<td class="nowrap">'.$intra."</td>";
@@ -306,7 +306,7 @@ if (is_array($coll_list))
 			$company_static->id=$coll->socid;
 			$company_static->nom=$coll->nom;
 			$company_static->fournisseur=1;
-			print '<td class="nowrap">'.$company_static->getNomUrl(1,'supplier').'</td>';
+			print '<td class="nowrap">'.$company_static->getNameUrl(1,'supplier').'</td>';
 			$find = array(' ','.');
 			$replace = array('','');
 			print '<td class="nowrap">'.$intra."</td>";

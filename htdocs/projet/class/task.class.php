@@ -480,7 +480,7 @@ class Task extends CommonObject
      *	@param	int		$option			Sur quoi pointe le lien
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$option='')
+    function getNameUrl($withpicto=0,$option='')
     {
         global $langs;
 

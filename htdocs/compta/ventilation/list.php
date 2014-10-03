@@ -93,14 +93,14 @@ if ($result)
 		// Ref facture
 		$facture_static->ref=$objp->facnumber;
 		$facture_static->id=$objp->facid;
-		print '<td>'.$facture_static->getNomUrl(1).'</td>';
+		print '<td>'.$facture_static->getNameUrl(1).'</td>';
 
 		// Ref produit
 		$product_static->ref=$objp->product_ref;
 		$product_static->id=$objp->product_id;
 		$product_static->type=$objp->type;
 		print '<td>';
-		if ($product_static->id) print $product_static->getNomUrl(1);
+		if ($product_static->id) print $product_static->getNameUrl(1);
 		else print '&nbsp;';
 		print '</td>';
 

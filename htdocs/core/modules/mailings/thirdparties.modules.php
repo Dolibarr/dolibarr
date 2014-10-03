@@ -243,7 +243,7 @@ class mailing_thirdparties extends MailingTargets
 		//$companystatic=new Societe($this->db);
 		//$companystatic->id=$id;
 		//$companystatic->nom='';
-		//return $companystatic->getNomUrl(1);	// Url too long
+		//return $companystatic->getNameUrl(1);	// Url too long
 		return '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$id.'">'.img_object('',"company").'</a>';
 	}
 

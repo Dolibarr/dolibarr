@@ -111,7 +111,7 @@ if ($_GET["id"]) {
 			print '<tr><td>' . $langs->trans("BillsSuppliers") . '</td>';
 			$facturefournisseur_static->ref = $objp->facnumber;
 			$facturefournisseur_static->id = $objp->facid;
-			print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
+			print '<td>' . $facturefournisseur_static->getNameUrl(1) . '</td>';
 			print '</tr>';
 			
 			print '<tr><td width="20%">Ligne</td>';

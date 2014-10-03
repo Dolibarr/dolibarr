@@ -2569,7 +2569,7 @@ class Propal extends CommonObject
      *	@param      string	$get_params    	Parametres added to url
      *	@return     string          		String with URL
      */
-    function getNomUrl($withpicto=0,$option='', $get_params='')
+    function getNameUrl($withpicto=0,$option='', $get_params='')
     {
         global $langs;
 

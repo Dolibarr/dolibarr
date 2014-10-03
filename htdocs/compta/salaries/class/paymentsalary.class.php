@@ -482,7 +482,7 @@ class PaymentSalary extends CommonObject
 	 *	@param	string	$option			link option
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNameUrl($withpicto=0,$option='')
 	{
 		global $langs;
 

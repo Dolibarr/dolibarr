@@ -1773,7 +1773,7 @@ class User extends CommonObject
 	 *	@param	string	$option			On what the link point to
 	 *	@return	string					String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNameUrl($withpicto=0,$option='')
 	{
 		global $langs;
 

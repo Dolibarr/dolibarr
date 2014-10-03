@@ -344,7 +344,7 @@ if ($socid > 0)
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
+				print $langs->trans("CreditNote").' '.$facturestatic->getNameUrl(1);
 				print '</td>';
 			}
 			elseif ($obj->description == '(DEPOSIT)')
@@ -353,7 +353,7 @@ if ($socid > 0)
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNomURl(1);
+				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNameUrl(1);
 				print '</td>';
 			}
 			else
@@ -501,7 +501,7 @@ if ($socid > 0)
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
+				print $langs->trans("CreditNote").' '.$facturestatic->getNameUrl(1);
 				print '</td>';
 			}
 			elseif ($obj->description == '(DEPOSIT)')
@@ -510,7 +510,7 @@ if ($socid > 0)
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNomURl(1);
+				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNameUrl(1);
 				print '</td>';
 			}
 			else

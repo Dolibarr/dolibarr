@@ -417,7 +417,7 @@ class ActionsCardProduct
 							$this->id 		= $obj->rowid;
 							$this->ref 		= $obj->$alias;
 							$this->type 	= $obj->fk_product_type;
-							$datas[$alias] 	= $this->getNomUrl(1,'',24);
+							$datas[$alias] 	= $this->getNameUrl(1,'',24);
 						}
 						else if ($alias == 'stock')
 						{

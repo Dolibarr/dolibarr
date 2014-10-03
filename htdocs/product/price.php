@@ -948,7 +948,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<td>' . $langs->trans('ThirdParty') . '</td>';
 		$staticsoc = new Societe($db);
 		$staticsoc->fetch($prodcustprice->fk_soc);
-		print "<td colspan='2'>" . $staticsoc->getNomUrl(1) . "</td>";
+		print "<td colspan='2'>" . $staticsoc->getNameUrl(1) . "</td>";
 		print '</tr>';
 
 		// VAT
@@ -1057,7 +1057,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);
 
-				print "<td>" . $staticsoc->getNomUrl(1) . "</td>";
+				print "<td>" . $staticsoc->getNameUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
 				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
@@ -1139,7 +1139,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);
 
-				print "<td>" . $staticsoc->getNomUrl(1) . "</td>";
+				print "<td>" . $staticsoc->getNameUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
 				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";

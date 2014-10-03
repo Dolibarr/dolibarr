@@ -235,7 +235,7 @@ while ($tmpecmdir && $result > 0)
 	{
 		$s='<input type="text" name="label" size="40" maxlength="32" value="'.$tmpecmdir->label.'">';
 	}
-	else $s=$tmpecmdir->getNomUrl(1).$s;
+	else $s=$tmpecmdir->getNameUrl(1).$s;
 	if ($tmpecmdir->fk_parent)
 	{
 		$s=' -> '.$s;
@@ -263,7 +263,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMCreationUser").'</td><td>';
 $userecm=new User($db);
 $userecm->fetch($ecmdir->fk_user_c);
-print $userecm->getNomUrl(1);
+print $userecm->getNameUrl(1);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';
 print dol_print_date($ecmdir->date_c,'dayhour');

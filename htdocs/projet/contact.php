@@ -175,7 +175,7 @@ if ($id > 0 || ! empty($ref))
 	// Customer
 	print "<tr><td>".$langs->trans("ThirdParty")."</td>";
 	print '<td colspan="3">';
-	if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1);
+	if ($object->thirdparty->id > 0) print $object->thirdparty->getNameUrl(1);
 	else print '&nbsp;';
 	print '</td></tr>';
 

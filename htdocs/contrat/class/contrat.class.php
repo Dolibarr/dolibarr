@@ -1528,7 +1528,7 @@ class Contrat extends CommonObject
 	 *	@param	int		$maxlength		Max length of ref
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$maxlength=0)
+	function getNameUrl($withpicto=0,$maxlength=0)
 	{
 		global $langs;
 
@@ -2044,7 +2044,7 @@ class ContratLigne extends CommonObject
 	 *  @param	int		$maxlength		Max length
 	 *  @return	string					Chaine avec URL
  	 */
-	function getNomUrl($withpicto=0,$maxlength=0)
+	function getNameUrl($withpicto=0,$maxlength=0)
 	{
 		global $langs;
 

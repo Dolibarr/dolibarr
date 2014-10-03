@@ -496,26 +496,26 @@ if ($resql)
         $productstatic->id=$objp->rowid;
         $productstatic->ref=$objp->product_ref;
         $productstatic->type=$objp->type;
-        print $productstatic->getNomUrl(1,'',16);
+        print $productstatic->getNameUrl(1,'',16);
         print "</td>\n";
         // Product label
         print '<td>';
         $productstatic->id=$objp->rowid;
         $productstatic->ref=$objp->produit;
         $productstatic->type=$objp->type;
-        print $productstatic->getNomUrl(1,'',16);
+        print $productstatic->getNameUrl(1,'',16);
         print "</td>\n";
         // Warehouse
         print '<td>';
         $warehousestatic->id=$objp->entrepot_id;
         $warehousestatic->libelle=$objp->stock;
-        print $warehousestatic->getNomUrl(1);
+        print $warehousestatic->getNameUrl(1);
         print "</td>\n";
         // Author
         print '<td>';
         $userstatic->id=$objp->fk_user_author;
         $userstatic->lastname=$objp->login;
-        print $userstatic->getNomUrl(1);
+        print $userstatic->getNameUrl(1);
         print "</td>\n";
         // Value
         print '<td align="right">';

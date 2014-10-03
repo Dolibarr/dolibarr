@@ -54,7 +54,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print '<input type="hidden" name="lineid" value="'.$linked_resource['rowid'].'" />';
 
 			print '<div class="tagtd">'.$object_resource->type_label.'</div>';
-			print '<div class="tagtd">'.$object_resource->getNomUrl(1).'</div>';
+			print '<div class="tagtd">'.$object_resource->getNameUrl(1).'</div>';
 			print '<div class="tagtd">'.$form->selectyesno('busy',$linked_resource['busy']?1:0,1).'</div>';
 			print '<div class="tagtd">'.$form->selectyesno('mandatory',$linked_resource['mandatory']?1:0,1).'</div>';
 			print '<div class="tagtd"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
@@ -74,7 +74,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print '</div>';
 
 			print '<div class="tagtd">';
-			print $object_resource->getNomUrl(1);
+			print $object_resource->getNameUrl(1);
 			print '</div class="tagtd">';
 
 			print '<div class="tagtd">';

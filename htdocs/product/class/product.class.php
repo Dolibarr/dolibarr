@@ -2780,7 +2780,7 @@ class Product extends CommonObject
 	 *	@param		int		$maxlength		Maxlength of ref
 	 *	@return		string					String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$maxlength=0)
+	function getNameUrl($withpicto=0,$option='',$maxlength=0)
 	{
 		global $langs;
 
