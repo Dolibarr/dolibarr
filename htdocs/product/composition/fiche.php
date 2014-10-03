@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("bills");
 $langs->load("products");
+$langs->load("main");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -292,13 +293,17 @@ if ($id > 0 || ! empty($ref))
 		{
 		    // Price
 			print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
+			
 			if ($object->price_base_type == 'TTC')
 			{
 				print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
 			}
 			else
 			{
-				print price($object->price).' '.$langs->trans($object->price_base_type);
+				print price($object->price);
+				if (!empty($object->price_base_type)) {
+					print ' '.$langs->trans($object->price_base_type);
+				}
 			}
 			print '</td></tr>';
 
@@ -310,7 +315,10 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				print price($object->price_min).' '.$langs->trans($object->price_base_type);
+				print price($object->price_min);
+				if (!empty($object->price_base_type)) {
+					print ' '.$langs->trans($object->price_base_type);
+				}
 			}
 			print '</td></tr>';
 		}
