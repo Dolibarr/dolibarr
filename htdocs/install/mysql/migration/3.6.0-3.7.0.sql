@@ -47,9 +47,9 @@ ALTER TABLE llx_user ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
 
 -- Add module accounting Expert
 ALTER TABLE llx_bookkeeping RENAME TO llx_accounting_bookkeeping; -- To update old user of module Accounting Expert
- 
 
-CREATE TABLE llx_accounting_bookkeeping 
+
+CREATE TABLE llx_accounting_bookkeeping
 (
   rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   doc_date			date NOT NULL,
@@ -79,7 +79,7 @@ ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
 ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
 ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;
 
--- Qual 
+-- Qual
 UPDATE llx_const SET name = 'ACCOUNTING_MODE' WHERE name = 'COMPTA_MODE';
 UPDATE llx_const SET name = 'ACCOUNTING_ACCOUNT_CUSTOMER' WHERE name = 'COMPTA_ACCOUNT_CUSTOMER';
 UPDATE llx_const SET name = 'ACCOUNTING_ACCOUNT_SUPPLIER' WHERE name = 'COMPTA_ACCOUNT_SUPPLIER';
@@ -204,7 +204,7 @@ create table llx_accounting_fiscalyear
 )ENGINE=innodb;
 
 ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref;
-ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30) after ref_ext;
+ALTER TABLE llx_contrat ADD COLUMN ref_supplier varchar(30) after ref_ext;
 
 ALTER TABLE llx_propal ADD COLUMN fk_shipping_method integer AFTER date_livraison;
 ALTER TABLE llx_commande ADD COLUMN fk_shipping_method integer AFTER date_livraison;
