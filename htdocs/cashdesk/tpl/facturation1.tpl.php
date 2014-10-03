@@ -144,7 +144,7 @@ $langs->load("cashdesk");
 			</tr>
 		</table>
 
-		<input class="bouton_ajout_article" type="submit" id="sbmtEnvoyer" value="<?php echo $langs->trans("AddThisArticle"); ?>" />
+		<input class="button bouton_ajout_article" type="submit" id="sbmtEnvoyer" value="<?php echo $langs->trans("AddThisArticle"); ?>" />
 	</form>
 </fieldset>
 
@@ -179,7 +179,7 @@ $langs->load("cashdesk");
 				$langs->load("errors");
 				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cash").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
 			}
-			else print '<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cash").'" onclick="javascript: verifClic(\'ESP\');" />';
+			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cash").'" onclick="javascript: verifClic(\'ESP\');" />';
 			print '</td>';
 			print '<td>';
 			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] < 0)
@@ -187,7 +187,7 @@ $langs->load("cashdesk");
 				$langs->load("errors");
 				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
 			}
-			else print '<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" onclick="javascript: verifClic(\'CB\');" />';
+			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" onclick="javascript: verifClic(\'CB\');" />';
 			print '</td>';
 			print '<td>';
 			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CB']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] < 0)
@@ -195,7 +195,7 @@ $langs->load("cashdesk");
 				$langs->load("errors");
 				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cheque").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
 			}
-			else print '<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cheque").'" onclick="javascript: verifClic(\'CHQ\');" />';
+			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cheque").'" onclick="javascript: verifClic(\'CHQ\');" />';
 			print '</td>';
 			?>
 			</tr>
@@ -203,14 +203,11 @@ $langs->load("cashdesk");
 		<table>
 			<tr>
 				<td>
-				<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
+				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 				<?php
 				echo $langs->trans("DateEcheance").' :';
 				print $form->select_date(-1,'txtDatePaiement');
 				?>
-<!-- <input class="texte2" type="text" id="txtDatePaiement" name="txtDatePaiement" value="" />
-				<input class="bouton_cal" type="image" src="img/calendrier.png" id="btnCalendrier" value="..." title="<?php echo $langs->trans("CalTip"); ?>" />
- -->
  				</td>
 			</tr>
 

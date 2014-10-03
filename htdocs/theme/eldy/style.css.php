@@ -308,46 +308,54 @@ legend { margin-bottom: 8px; }
 fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
 
 
-.button {
+.button, sbmtConnexion {
     font-family: <?php print $fontlist ?>;
-	background-image: url(<?php echo $img_button ?>);
-	background-position: bottom;
-    border: 1px solid #C0C0C0;
-	padding: 0.1em 0.7em;
-	margin: 0em 0.5em;
-    -moz-border-radius:0px 5px 0px 5px;
-	-webkit-border-radius:0px 5px 0px 5px;
-	border-radius:0px 5px 0px 5px;
-    -moz-box-shadow: 2px 2px 3px #DDD;
-    -webkit-box-shadow: 2px 2px 3px #DDD;
-    box-shadow: 2px 2px 3px #DDD;
+	border-color: #c5c5c5;
+	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
+	display: inline-block;
+	padding: 4px 14px;
+	margin-bottom: 0;
+	text-align: center;
+	cursor: pointer;
+	color: #333333;
+	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+	background-color: #f5f5f5;
+	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
+	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+	border: 1px solid #bbbbbb;
+	border-bottom-color: #a2a2a2;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .button:focus  {
-    font-family: <?php print $fontlist ?>;
-	color: #222244;
-	background-image: url(<?php echo $img_button ?>);
-	background-position: bottom;
-    border: 1px solid #C0C0C0;
+	-moz-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .button:hover   {
-	background: #dee7ec;
+	-moz-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .button:disabled {
-	background: #ddd;
-}
-.buttonajax {
-    font-family: <?php print $fontlist ?>;
-	border: 0px;
-	background-image: url(<?php echo $img_button ?>);
-	background-position: bottom;
-	padding: 0.1em 0.7em;
-	margin: 0em 0.5em;
-    -moz-border-radius:0px 5px 0px 5px;
-	-webkit-border-radius:0px 5px 0px 5px;
-	border-radius:0px 5px 0px 5px;
-    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
+	opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    cursor: auto;
 }
 form {
     padding:0px;
@@ -841,16 +849,15 @@ form#login {
 	max-width: 540px;
 	border: 1px solid #A0A0A0;
 
-    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
-
 	border-radius: 8px;
 	border:solid 1px rgba(90,90,90,.4);
+	-moz-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	-webkit-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 
 	background-color: #FFFFFF;
+	background: -webkit-gradient(linear, center top, center bottom, color-stop(0%, #fff), color-stop(100%, #f8f8f8));
+    background: -moz-linear-gradient(top, #fff, #f8f8f8);
 }
 div#login_left, div#login_right {
 	display: inline-block;
