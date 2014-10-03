@@ -396,7 +396,7 @@ if ($action == 'update')
 			$tmplist1=dol_json_decode($_SESSION['assignedtouser'], true); $tmplist2=array();
 			foreach($tmplist1 as $key => $val)
 			{
-				if ($val['id'] && $val['id'] != $assignedtouser) $listofuserid[$val['id']]=$val;
+				if ($val['id'] > 0 && $val['id'] != $assignedtouser) $listofuserid[$val['id']]=$val;
 			}
 		}
 

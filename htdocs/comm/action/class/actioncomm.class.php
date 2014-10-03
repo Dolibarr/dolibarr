@@ -417,7 +417,9 @@ class ActionComm extends CommonObject
             while ($obj = $this->db->fetch_object($resql2))
             {
             	$this->userassigned[$obj->fk_element]=array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
+            	if (empty($this->userownerid)) $this->userownerid=$obj->fk_element;	// If not defined (should not happened, we fix this)
             }
+
         	return 1;
 		}
 		else
@@ -528,6 +530,8 @@ class ActionComm extends CommonObject
 
         $socid=($this->socid?$this->socid:((isset($this->societe->id) && $this->societe->id > 0) ? $this->societe->id : 0));
         $contactid=($this->contactid?$this->contactid:((isset($this->contact->id) && $this->contact->id > 0) ? $this->contact->id : 0));
+		$userownerid=($this->userownerid?$this->userownerid:((isset($this->usertodo->id) && $this->usertodo->id > 0) ? $this->usertodo->id : 0));
+		$userdoneid=($this->userdoneid?$this->userdoneid:((isset($this->userdone->id) && $this->userdone->id > 0) ? $this->userdone->id : 0));
 
         $this->db->begin();
 
@@ -547,8 +551,8 @@ class ActionComm extends CommonObject
         $sql.= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'":"null");
         $sql.= ", transparency = '".$this->transparency."'";
         $sql.= ", fk_user_mod = '".$user->id."'";
-        $sql.= ", fk_user_action=".($this->usertodo->id > 0 ? "'".$this->usertodo->id."'":"null");
-        $sql.= ", fk_user_done=".($this->userdone->id > 0 ? "'".$this->userdone->id."'":"null");
+        $sql.= ", fk_user_action=".($userownerid > 0 ? "'".$userownerid."'":"null");
+        $sql.= ", fk_user_done=".($userdoneid > 0 ? "'".$userdoneid."'":"null");
         if (! empty($this->fk_element)) $sql.= ", fk_element=".($this->fk_element?$this->fk_element:"null");
         if (! empty($this->elementtype)) $sql.= ", elementtype=".($this->elementtype?"'".$this->elementtype."'":"null");
         $sql.= " WHERE id=".$this->id;
