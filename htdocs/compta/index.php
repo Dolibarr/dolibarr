@@ -509,7 +509,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 				$label=$donationstatic->getFullName($langs);
 				if ($objp->societe) $label.=($label?' - ':'').$objp->societe;
 				$donationstatic->ref=$label;
-				print '<td>'.$donationstatic->getNomUrl(1).'</td>';
+				print '<td>'.$donationstatic->getNameUrl(1).'</td>';
                 print '<td align="right">'.price($objp->amount).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
                 print '<td>'.$donationstatic->LibStatut($objp->fk_statut,3).'</td>';

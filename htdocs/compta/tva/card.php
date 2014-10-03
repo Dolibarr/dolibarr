@@ -33,6 +33,7 @@ $langs->load("bills");
 
 $id=GETPOST("id",'int');
 $action=GETPOST('action');
+$cancel=GETPOST('cancel');
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -50,18 +51,18 @@ $hookmanager->initHooks(array('taxvatcard'));
  * Actions
  */
 
-if ($_POST["cancel"] == $langs->trans("Cancel"))
+if ($cancel == $langs->trans("Cancel"))
 {
-	header("Location: reglement.php");
+	header("Location: payment.php");
 	exit;
 }
 
-if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($action == 'add' && $cancel <> $langs->trans("Cancel"))
 {
     $error=0;
 
-	$datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-    $datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+	$datev=dol_mktime(12,0,0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+    $datep=dol_mktime(12,0,0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
 
     $tva->accountid=GETPOST("accountid");
     $tva->type_payment=GETPOST("type_payment");
@@ -101,7 +102,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		if ($ret > 0)
 		{
 			$db->commit();
-			header("Location: reglement.php");
+			header("Location: payment.php");
 			exit;
 		}
 		else
@@ -136,7 +137,7 @@ if ($action == 'delete')
 			if ($result >= 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/tva/reglement.php');
+				header("Location: ".DOL_URL_ROOT.'/compta/tva/payment.php');
 				exit;
 			}
 			else
@@ -181,7 +182,7 @@ if ($id)
 // Formulaire saisie tva
 if ($action == 'create')
 {
-    print "<form name='add' action=\"card.php\" method=\"post\">\n";
+    print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
@@ -199,15 +200,15 @@ if ($action == 'create')
     print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("VATPayment")).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.(GETPOST("label")?GETPOST("label"):$langs->trans("VATPayment")).'"></td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
 
     if (! empty($conf->banque->enabled))
     {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-        $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+        $form->select_comptes(GETPOST("accountid"),"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
         print '</td></tr>';
 
 		// Type payment
@@ -300,8 +301,8 @@ if ($id)
 	print '</div>';
 
 	/*
-	* Boutons d'actions
-	*/
+	 * Buttons of actions
+	 */
 	print "<div class=\"tabsAction\">\n";
 	if ($vatpayment->rappro == 0)
 	{

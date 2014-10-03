@@ -19,7 +19,7 @@
  */
 
 /**
- *	    \file       htdocs/compta/tva/reglement.php
+ *	    \file       htdocs/compta/tva/payment.php
  *      \ingroup    tax
  *		\brief      List of VAT payments
  */
