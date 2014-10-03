@@ -295,7 +295,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				print price($object->price).' '.$langs->trans($object->price_base_type);
+				print price($object->price).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
 			}
 			print '</td></tr>';
 
@@ -307,7 +307,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				print price($object->price_min).' '.$langs->trans($object->price_base_type);
+				print price($object->price_min).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
 			}
 			print '</td></tr>';
 		}
