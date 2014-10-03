@@ -51,8 +51,8 @@ $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
 $mode = GETPOST('mode','alpha');
 
-$fourn_id = GETPOST('mode','int');  // FIXME $fourn_id is not defined
-$texte = '';						// FIXME $texte is not defined
+$fourn_id = GETPOST('fourn_id','int');
+$texte = '';
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
