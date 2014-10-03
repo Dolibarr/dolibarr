@@ -2873,7 +2873,7 @@ class Societe extends CommonObject
     function useLocalTax($localTaxNum=0)
     {
     	$sql  = "SELECT t.localtax1, t.localtax2";
-    	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."c_vat as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
     	$sql .= " AND t.active = 1";
     	if (empty($localTaxNum))   $sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";

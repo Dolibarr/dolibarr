@@ -35,7 +35,7 @@ class Facturation
      * int $remise_percent	=> Remise en pourcent sur le produit en cours
      * int $montant_remise	=> Remise en pourcent sur le produit en cours
      * int $prix		=> Prix HT du produit en cours
-     * int $tva			=> 'rowid' du taux de tva dans llx_c_tva
+     * int $tva			=> 'rowid' du taux de tva dans llx_c_vat
      */
     var $id;
     protected $ref;
@@ -100,7 +100,7 @@ class Facturation
         $product->fetch($this->id);
 
         $sql = "SELECT taux";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_tva";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_vat";
         $sql.= " WHERE rowid = ".$this->tva();
 
         dol_syslog("ajoutArticle", LOG_DEBUG);

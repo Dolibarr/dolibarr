@@ -95,7 +95,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_produc
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_vat ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " WHERE fd.fk_code_ventilation > 0 ";
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity = " . $conf->entity;

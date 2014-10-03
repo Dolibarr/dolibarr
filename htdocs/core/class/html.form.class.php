@@ -3526,7 +3526,7 @@ class Form
     	if ($num > 0) return $num;    // Cache deja charge
 
     	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_vat as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
     	$sql.= " AND t.active = 1";
     	$sql.= " AND c.code IN (".$country_code.")";

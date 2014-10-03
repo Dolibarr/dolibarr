@@ -3046,7 +3046,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_vat as t, ".MAIN_DB_PREFIX."c_country as c";
 	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
 	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
 
@@ -3095,9 +3095,9 @@ function get_localtax_by_third($local)
 {
 	global $db, $mysoc;
 	$sql ="SELECT t.localtax1, t.localtax2 ";
-	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=t.fk_pays";
+	$sql.=" FROM ".MAIN_DB_PREFIX."c_vat as t inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=t.fk_pays";
 	$sql.=" WHERE c.code = '".$mysoc->country_code."' AND t.taux=(SELECT max(tt.taux)";
-	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
+	$sql.=" FROM ".MAIN_DB_PREFIX."c_vat as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
 	$sql.=" WHERE c.code = '".$mysoc->country_code."')";
 
 	$resql=$db->query($sql);
@@ -3134,7 +3134,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_vat as t, ".MAIN_DB_PREFIX."c_country as c";
 	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";
 	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
 
@@ -3269,7 +3269,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 		{
 			// If vat of product for the country not found or not defined, we return higher vat of country.
 			$sql = "SELECT taux as vat_rate";
-			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_vat as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql.= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
 			$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 			$sql.= $db->plimit(1);
@@ -3339,7 +3339,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 	{
 		// If vat of product for the country not found or not defined, we return higher vat of country.
 		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_vat as t, ".MAIN_DB_PREFIX."c_country as c";
 		$sql.= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
 		$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 		$sql.= $db->plimit(1);
