@@ -25,6 +25,8 @@ For users:
 - Fix: Web service categorie WDSL declaration is correct
 - Fix: ErrorBadValueForParamNotAString was displayed in virtual product if no base price defined
 - Fix: Category creation failed and no message output
+- Fix: Lanf for Payment Type
+- Fix: PHPCheckstyle 1.5.5
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
