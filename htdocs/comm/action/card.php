@@ -68,7 +68,7 @@ $result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|
 if ($user->societe_id && $socid) $result = restrictedArea($user,'societe',$socid);
 
 $error=GETPOST("error");
-$donotclearsession=0;
+$donotclearsession=GETPOST('donotclearsession')?GETPOST('donotclearsession'):0;
 
 $cactioncomm = new CActionComm($db);
 $object = new ActionComm($db);
@@ -358,22 +358,22 @@ if ($action == 'update')
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
 		$object->fk_action   = dol_getIdFromCode($db, $_POST["actioncode"], 'c_actioncomm');
-		$object->label       = $_POST["label"];
+		$object->label       = GETPOST("label");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
-		$object->priority    = $_POST["priority"];
-        $object->fulldayevent= $_POST["fullday"]?1:0;
+		$object->priority    = GETPOST("priority");
+        $object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
-		$object->socid       = $_POST["socid"];
-		$object->contactid   = $_POST["contactid"];
+		$object->socid       = GETPOST("socid");
+		$object->contactid   = GETPOST("contactid");
 		//$object->societe->id = $_POST["socid"];			// deprecated
 		//$object->contact->id = $_POST["contactid"];		// deprecated
-		$object->fk_project  = $_POST["projectid"];
-		$object->note        = $_POST["note"];
-		$object->pnote       = $_POST["note"];
-		$object->fk_element	 = $_POST["fk_element"];
-		$object->elementtype = $_POST["elementtype"];
+		$object->fk_project  = GETPOST("projectid");
+		$object->note        = GETPOST("note");
+		$object->pnote       = GETPOST("note");
+		$object->fk_element	 = GETPOST("fk_element");
+		$object->elementtype = GETPOST("elementtype");
 
 		if (! $datef && $percentage == 100)
 		{
@@ -603,6 +603,7 @@ if ($action == 'create')
 	print '<form name="formaction" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="donotclearsession" value="1">';
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
 	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
@@ -1225,7 +1226,7 @@ if ($id > 0)
 
 	// Link to agenda views
 	print '<div id="agendaviewbutton">';
-	print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left">';
+	print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="show_month">';
 	print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
@@ -1234,7 +1235,7 @@ if ($id > 0)
 	//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 	print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
 	print '</form>'."\n";
-	print '<form name="listactionsfilterweek" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left">';
+	print '<form name="listactionsfilterweek" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="show_week">';
 	print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
@@ -1243,7 +1244,7 @@ if ($id > 0)
 	//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 	print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
 	print '</form>'."\n";
-	print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left">';
+	print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="show_day">';
 	print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
@@ -1252,7 +1253,7 @@ if ($id > 0)
 	//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 	print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
 	print '</form>'."\n";
-	print '<form name="listactionsfilterperuser" action="'.DOL_URL_ROOT.'/comm/action/peruser.php" method="POST" style="float: left">';
+	print '<form name="listactionsfilterperuser" action="'.DOL_URL_ROOT.'/comm/action/peruser.php" method="POST" style="float: left; padding-right: 10px;">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="show_peruser">';
 	print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';

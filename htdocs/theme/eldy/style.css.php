@@ -989,10 +989,10 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     background-position:top;
     background-repeat:repeat-x;
 <?php } ?>
-    border-left: 1px solid #CCCCCC;
-    border-right: 1px solid #D0D0D0;
-    border-bottom: 1px solid #DDDDDD;
-    border-top: 1px solid #DDDDDD;
+    border-left: 1px solid #AAA;
+    border-right: 1px solid #CCC;
+    border-bottom: 1px solid #CCC;
+    border-top: 1px solid #CCC;
     border-radius: 5px;
 	-moz-border-radius: 5px;
     -moz-box-shadow: 3px 3px 4px #DDD;
@@ -1021,44 +1021,11 @@ div.blockvmenusearch
     background-image: linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
 <?php } ?>
 
-    border-left: 1px solid #DDDDDD;
-    border-right: 1px solid #CCCCCC;
-    border-bottom: 1px solid #CCCCCC;
-    border-top: 1px solid #E8E8E8;
+    border-left: 1px solid #AAA;
+    border-right: 1px solid #CCC;
+    border-bottom: 1px solid #CCC;
+    border-top: 1px solid #CCC;
     border-radius: 5px;
-	-moz-border-radius: 5px;
-    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
-}
-
-div.blockvmenubookmarksold
-{
-    border-right: 1px solid #555555;
-    border-bottom: 1px solid #555555;
-    font-family: <?php print $fontlist ?>;
-    color: #000000;
-    text-align: <?php print $left; ?>;
-    text-decoration: none;
-    padding-left: 5px;
-    padding-right: 1px;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    margin: 6px 0px 8px 2px;
-    background: #E3E6E8;
-
-<?php if ($usecss3) { ?>
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1b; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1b; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
-    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1b; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1b; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
-    background-image: linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1b; ?>) 90%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
-<?php } ?>
-
-    border-left: 1px solid #CCCCCC;
-    border-right: 1px solid #BBBBBB;
-    border-bottom: 1px solid #BBBBBB;
-	border-radius: 5px;
 	-moz-border-radius: 5px;
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;

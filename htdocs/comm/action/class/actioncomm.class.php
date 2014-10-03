@@ -95,14 +95,16 @@ class ActionComm extends CommonObject
      */
     function __construct($db)
     {
+    	global $langs;
+
         $this->db = $db;
 
         //$this->author = new stdClass();
         //$this->usermod = new stdClass();
         //$this->usertodo = new stdClass();
         //$this->userdone = new stdClass();
-        $this->societe = new stdClass();
-        $this->contact = new stdClass();
+        $this->societe = new stdClass();	// deprecated
+        $this->contact = new stdClass();	// deprecated
     }
 
     /**
@@ -524,6 +526,9 @@ class ActionComm extends CommonObject
             return -1;
         }
 
+        $socid=($this->socid?$this->socid:((isset($this->societe->id) && $this->societe->id > 0) ? $this->societe->id : 0));
+        $contactid=($this->contactid?$this->contactid:((isset($this->contact->id) && $this->contact->id > 0) ? $this->contact->id : 0));
+
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
@@ -534,9 +539,9 @@ class ActionComm extends CommonObject
         $sql.= ", datep2 = ".(strval($this->datef)!='' ? "'".$this->db->idate($this->datef)."'" : 'null');
         $sql.= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null");	// deprecated
         $sql.= ", note = ".($this->note ? "'".$this->db->escape($this->note)."'":"null");
-        $sql.= ", fk_soc =". ($this->societe->id > 0 ? "'".$this->societe->id."'":"null");
+        $sql.= ", fk_soc =". ($this->socid > 0 ? "'".$this->socid."'":"null");
         $sql.= ", fk_project =". ($this->fk_project > 0 ? "'".$this->fk_project."'":"null");
-        $sql.= ", fk_contact =". ($this->contact->id > 0 ? "'".$this->contact->id."'":"null");
+        $sql.= ", fk_contact =". ($contactid > 0 ? "'".$this->contactid."'":"null");
         $sql.= ", priority = '".$this->priority."'";
         $sql.= ", fulldayevent = '".$this->fulldayevent."'";
         $sql.= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'":"null");

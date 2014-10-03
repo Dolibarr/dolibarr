@@ -320,7 +320,7 @@ $sql.= ' a.datea2,';
 $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
-$sql.= ' a.fk_soc, a.fk_contact,';
+$sql.= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype,';
 $sql.= ' ca.code, ca.color';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -414,6 +414,9 @@ if ($resql)
         $event->contactid=$obj->fk_contact;
         //$event->societe->id=$obj->fk_soc;			// deprecated
         //$event->contact->id=$obj->fk_contact;		// deprecated
+
+        $event->fk_element=$obj->fk_element;
+        $event->elementtype=$obj->elementtype;
 
         // Defined date_start_in_calendar and date_end_in_calendar property
         // They are date start and end of action but modified to not be outside calendar view.
@@ -709,7 +712,7 @@ $db->close();
 function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false)
 {
 	global $db;
-	global $user, $conf, $langs;
+	global $user, $conf, $langs, $hookmanager, $action;
 	global $filter, $filtera, $filtert, $filterd, $status, $actioncode;	// Filters used into search form
 	global $theme_datacolor;
 	global $cachethirdparties, $cachecontacts, $colorindexused;
@@ -742,6 +745,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$keysofuserassigned=array_keys($event->userassigned);
 				if (! in_array($username->id,$keysofuserassigned)) continue;	// We discard record if event is from another user than user we want to show
 				//if ($username->id != $event->userownerid) continue;	// We discard record if event is from another user than user we want to show
+
+				$parameters=array();
+				$reshook=$hookmanager->executeHooks('formatEvent',$parameters,$event,$action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 				$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
 
