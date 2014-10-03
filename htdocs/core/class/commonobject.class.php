@@ -2121,11 +2121,11 @@ abstract class CommonObject
 
                     foreach ($tab as $key => $value)
                     {
-                    	// Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
-                        if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
+                    	// Test fetch_array ! is_int($key) because fetch_array result is a mix table with some key as alpha and some key as int (depend db engine)
+                        if ($key != 'rowid' && $key != 'tms' && ! is_int($key))
                         {
-                            // we can add this attribute to adherent object
-                            $this->array_options["options_$key"]=$value;
+                            // we can add this attribute to object properties
+                            $this->array_options["options_".$key]=$value;
                         }
                     }
                 }

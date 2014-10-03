@@ -41,7 +41,7 @@ class Task extends CommonObject
     var $fk_task_parent;
     var $label;
     var $description;
-    var $duration_effective;
+    var $duration_effective;		// total of time spent on this task
     var $planned_workload;
     var $date_c;
     var $date_start;

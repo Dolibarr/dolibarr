@@ -252,12 +252,12 @@ else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
 	$object->fetch($id);
 	$old_date_lim_reglement=$object->date_lim_reglement;
 	$date = dol_mktime(12, 0, 0, $_POST['invoicedatemonth'], $_POST['invoicedateday'], $_POST['invoicedateyear']);
-	if (empty($date)) 
+	if (empty($date))
 	{
 	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 	    header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id.'&action=editinvoicedate');
 	    exit;
-	     
+
 	}
     $object->date=$date;
 	$new_date_lim_reglement=$object->calculate_date_lim_reglement();
@@ -1144,12 +1144,10 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 				// We define price for product
 				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level))
 				{
-					$pu_ht = $prod->multiprices [$object->client->price_level];
-					$pu_ttc = $prod->multiprices_ttc [$object->client->price_level];
-					$price_min = $prod->multiprices_min [$object->client->price_level];
-					$price_base_type = $prod->multiprices_base_type [$object->client->price_level];
-					//$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
-					//$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
+					$pu_ht = $prod->multiprices[$object->client->price_level];
+					$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
+					$price_min = $prod->multiprices_min[$object->client->price_level];
+					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
 				}
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{

@@ -20,7 +20,13 @@ For users:
 - Fix: Extrafield feature select from table should try to translate multiple column when not needed 
 - Fix: cents for indian ruppes are calle paisa and paise.
 - Fix: Invoices payments may be older than invoices.
+- Fix: Withdrawal total amount is double
 - Fix: [ bug #1593 ] Spanish Localtax IRPF not being calculated since 3.6.0 in supplier invoices when adding a line
+- Fix: Web service categorie WDSL declaration is correct
+- Fix: ErrorBadValueForParamNotAString was displayed in virtual product if no base price defined
+- Fix: Category creation failed and no message output
+- Fix: Lanf for Payment Type
+- Fix: PHPCheckstyle 1.5.5
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
