@@ -38,6 +38,8 @@ $langs->load('users');
 $langs->load('holidays');
 $langs->load('trips');
 
+$socid=GETPOST("socid");
+
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
 
@@ -117,7 +119,7 @@ if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAI
 $sql.= " WHERE u.rowid = d.fk_user";
 $sql.= " AND d.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if (!empty($socid)) $sql.= " AND d.fk_soc = ".$socid; // FIXME $socid is not defined
+if (!empty($socid)) $sql.= " AND d.fk_soc = ".$socid;
 $sql.= $db->order("d.tms","DESC");
 $sql.= $db->plimit($max, 0);
 

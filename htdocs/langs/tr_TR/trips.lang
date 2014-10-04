@@ -19,4 +19,4 @@ TF_TRIP=Gezi
 ListTripsAndExpenses=Geziler ve giderler listesi
 ExpensesArea=Geziler ve giderler alanı
 SearchATripAndExpense=Bir gezi ve gider ara
-ClassifyRefunded=Classify 'Refunded'
+ClassifyRefunded=Sınıflandırma 'İade edildi'
