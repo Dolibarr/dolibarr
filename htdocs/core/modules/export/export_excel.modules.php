@@ -190,6 +190,14 @@ class ExportExcel extends ModeleExports
 	            	return -1;
 	            }
 		    }
+		    
+		    if (!empty($conf->global->MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR)) {
+			    $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_discISAM;
+			    $cacheSettings = array (
+			    		'dir' => $conf->global->MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR
+			    );
+			    PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+		    }
 
             $this->workbook = new PHPExcel();
             $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);

@@ -51,6 +51,8 @@ $socid = GETPOST('socid','int');
 $sortorder = GETPOST('sortorder','alpha');
 $sortfield = GETPOST('sortfield','alpha');
 
+$viewstatut=GETPOST('viewstatut');
+
 // Security check
 $orderid = GETPOST('orderid');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -255,6 +257,8 @@ if ($resql)
 	}
 	print "</table>\n";
 	print "</form>\n";
+	
+	print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';
 
 	$db->free($resql);
 }
