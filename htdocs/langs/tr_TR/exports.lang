@@ -125,8 +125,8 @@ BankAccountNumber=Hesap numarası
 BankAccountNumberKey=Anahtar
 SpecialCode=Özel kod
 ExportStringFilter=%% metinde bir ya da fazla karakterin değiştirilmesine izin verir
-ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD : filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD : filters on all previous years/months/days
-ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : bir yıılık yıl/ay/gün süzgeçi<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : yıllar arası yıllar/aylar/günler süzgeçi<br> > YYYY, > YYYYMM, > YYYYMMDD : izleyen tüm yıllar için yıılar/aylar/günler süzgeçi<br> < YYYY, < YYYYMM, < YYYYMMDD : bütün önceki yıllar/aylar/günler süzgeçi
+ExportNumericFilter='NNNNN' bir değere göre süzgeç<br>'NNNNN+NNNNN' bir değerler aralığı süzgeçi<br>'&gt;NNNNN' düşük değerlere göre süzgeç<br>'&gt;NNNNN' yüksek değerlere göre süzgeç
 ## filters
 SelectFilterFields=Süzmek istediğiniz değerleri buraya yazın.
 FilterableFields=Süzülebilir Champs

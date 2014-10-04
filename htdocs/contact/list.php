@@ -39,6 +39,7 @@ $contactid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
+$search_firstlast_only=GETPOST("search_firstlast_only");
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");
 $search_societe=GETPOST("search_societe");
@@ -51,8 +52,8 @@ $search_fax=GETPOST("search_fax");
 $search_email=GETPOST("search_email");
 $search_skype=GETPOST("search_skype");
 $search_priv=GETPOST("search_priv");
-$search_categ = GETPOST("search_categ",'int');
-$search_status		= GETPOST("search_status",'int');
+$search_categ=GETPOST("search_categ",'int');
+$search_statu=GETPOST("search_status",'int');
 if ($search_status=='') $search_status=1; // always display activ customer first
 
 
@@ -74,7 +75,12 @@ $offset = $limit * $page;
 
 $langs->load("companies");
 $titre = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
-if ($type == "c" || $type=="p")
+if ($type == "p")
+{
+	$titre.='  ('.$langs->trans("ThirdPartyProspects").')';
+	$urlfiche="card.php";
+}
+if ($type == "c")
 {
 	$titre.='  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche="card.php";
@@ -92,6 +98,7 @@ else if ($type == "o")
 
 if (GETPOST('button_removefilter'))
 {
+	$search_firstlast_only="";
     $search_lastname="";
     $search_firstname="";
     $search_societe="";
@@ -154,6 +161,9 @@ else
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 
+if ($search_firstlast_only) {
+    $sql .= natural_search(array('p.lastname','p.firstname'), $search_firstlast_only);
+}
 if ($search_lastname) {      // filter on lastname
     $sql .= natural_search('p.lastname', $search_lastname);
 }
@@ -213,7 +223,7 @@ else if ($type == "p")        // filtre sur type
 }
 if ($sall)
 {
-    $sql .= natural_search(array('p.lastname', 'p.firstname', 'p.email'), $sall);
+    $sql .= natural_search(array('p.lastname', 'p.firstname', 'p.email', 's.nom'), $sall);
 }
 if (! empty($socid))
 {
@@ -277,9 +287,12 @@ if ($result)
 
     if ($sall)
     {
-        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
+        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("ThirdParty")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
     }
-
+	if ($search_firstlast_only)
+	{
+        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")."): ".$search_firstlast_only;
+	}
     print '<table class="liste" width="100%">';
 
     // Ligne des titres
