@@ -1089,4 +1089,4 @@ ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER not
 -- Change on table c_tva
 ALTER TABLE llx_c_tva DROP INDEX uk_c_tva_id;
 ALTER TABLE llx_c_tva RENAME TO llx_c_vat;
-ALTER TABLE llx_c_vat ADD UNIQUE INDEX uk_c_vat_id(code);
+ALTER TABLE llx_c_vat ADD UNIQUE INDEX uk_c_vat_id (fk_pays, taux, recuperableonly);
