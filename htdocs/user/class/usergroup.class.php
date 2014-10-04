@@ -5,7 +5,7 @@
  * Copyright (C) 2012	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014	   Alexis Algoud		<alexis@atm-consulting.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -41,6 +41,7 @@ class UserGroup extends CommonObject
 	var $id;			// Group id
 	var $entity;		// Entity of group
 	var $nom;			// Name of group
+	var $name;			// Name of group	// deprecated
 	var $globalgroup;	// Global group
 	var $note;			// Note on group
 	var $datec;			// Creation date of group
@@ -69,7 +70,7 @@ class UserGroup extends CommonObject
 	 *	Charge un objet group avec toutes ces caracteristiques (excpet ->members array)
 	 *
 	 *	@param      int		$id			id du groupe a charger
-	 *	@param      string	$groupname	nom du groupe a charger
+	 *	@param      string	$groupname	name du groupe a charger
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
 	function fetch($id='', $groupname='')
@@ -99,7 +100,7 @@ class UserGroup extends CommonObject
 				$this->ref = $obj->rowid;
 				$this->entity = $obj->entity;
 				$this->name = $obj->name;
-				$this->nom = $obj->name; //Deprecated
+				$this->nom = $obj->name; // Deprecated
 				$this->note = $obj->note;
 				$this->datec = $obj->datec;
 				$this->datem = $obj->datem;
@@ -113,8 +114,8 @@ class UserGroup extends CommonObject
 				$extrafields=new ExtraFields($this->db);
 				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
 				$this->fetch_optionals($this->id,$extralabels);
-			
-		
+
+
 				// Sav current LDAP Current DN
 				//$this->ldap_dn = $this->_load_ldap_dn($this->_load_ldap_info(),0);
 			}
@@ -626,8 +627,8 @@ class UserGroup extends CommonObject
                 if ($result < 0) { $error++; $this->db->rollback(); return -1; }
                 // End call triggers
 			}
-			
-			
+
+
 			// Actions on extra fields (by external module or standard code)
 			$hookmanager->initHooks(array('groupdao'));
 			$parameters=array();
@@ -644,10 +645,10 @@ class UserGroup extends CommonObject
 				}
 			}
 			else if ($reshook < 0) $error++;
-			
+
 			if ($error > 0) { $error++; $this->db->rollback(); return -1; }
 			else $this->db->commit();
-			
+
 			return $this->id;
 		}
 		else
@@ -679,7 +680,7 @@ class UserGroup extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
-		$sql.= " nom = '" . $this->db->escape($this->nom) . "'";
+		$sql.= " nom = '" . $this->db->escape($this->name) . "'";
 		$sql.= ", entity = " . $this->db->escape($entity);
 		$sql.= ", note = '" . $this->db->escape($this->note) . "'";
 		$sql.= " WHERE rowid = " . $this->id;
@@ -695,7 +696,7 @@ class UserGroup extends CommonObject
                 if ($result < 0) { $error++; }
                 // End call triggers
 			}
-			
+
 			// Actions on extra fields (by external module or standard code)
 			$hookmanager->initHooks(array('groupdao'));
 			$parameters=array();
@@ -712,7 +713,7 @@ class UserGroup extends CommonObject
 				}
 			}
 			else if ($reshook < 0) $error++;
-			
+
 			if (! $error)
 			{
 			    $this->db->commit();
@@ -767,8 +768,8 @@ class UserGroup extends CommonObject
 		$info["objectclass"]=explode(',',$conf->global->LDAP_GROUP_OBJECT_CLASS);
 
 		// Champs
-		if ($this->nom && ! empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->nom;
-		//if ($this->nom && ! empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->nom;
+		if ($this->name && ! empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
+		//if ($this->name && ! empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
 		if ($this->note && ! empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = $this->note;
 		if (! empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS))
 		{
@@ -805,7 +806,7 @@ class UserGroup extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 
-		$this->nom='DOLIBARR GROUP SPECIMEN';
+		$this->name='DOLIBARR GROUP SPECIMEN';
 		$this->note='This is a note';
 		$this->datec=time();
 		$this->datem=time();

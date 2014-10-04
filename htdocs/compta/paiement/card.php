@@ -273,7 +273,7 @@ print '</table>';
  */
 
 $disable_delete = 0;
-$sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom, s.rowid as socid';
+$sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql.= ' WHERE pf.fk_facture = f.rowid';
 $sql.= ' AND f.fk_soc = s.rowid';
@@ -322,7 +322,7 @@ if ($resql)
 			// Third party
 			print '<td>';
 			$thirdpartystatic->id=$objp->socid;
-			$thirdpartystatic->nom=$objp->nom;
+			$thirdpartystatic->name=$objp->name;
 			print $thirdpartystatic->getNomUrl(1);
 			print '</td>';
 

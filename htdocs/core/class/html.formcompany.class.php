@@ -222,7 +222,7 @@ class FormCompany
 		$out='';
 
 		// On recherche les departements/cantons/province active d'une region et pays actif
-		$sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, c.label as country, c.code as country_code FROM";
+		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code FROM";
 		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
@@ -270,7 +270,7 @@ class FormCompany
 							$out.= '<option value="'.$obj->rowid.'">';
 						}
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-						$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+						$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
 						$out.= '</option>';
 					}
 					$i++;
@@ -292,7 +292,7 @@ class FormCompany
 	 *   Retourne la liste deroulante des regions actives dont le pays est actif
 	 *   La cle de la liste est le code (il peut y avoir plusieurs entree pour
 	 *   un code donnee mais dans ce cas, le champ pays et lang differe).
-	 *   Ainsi les liens avec les regions se font sur une region independemment de son nom.
+	 *   Ainsi les liens avec les regions se font sur une region independemment de son name.
 	 *
 	 *   @param		string		$selected		Preselected value
 	 *   @param		string		$htmlname		Name of HTML select field
@@ -529,20 +529,20 @@ class FormCompany
 		global $conf, $langs;
 
 		// On recherche les societes
-		$sql = "SELECT s.rowid, s.nom FROM";
+		$sql = "SELECT s.rowid, s.nom as name FROM";
 		$sql.= " ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
-		if ($selected && $conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $sql.= " AND rowid = ".$selected;
+		if ($selected && $conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $sql.= " AND s.rowid = ".$selected;
 		else
 		{
 			// For ajax search we limit here. For combo list, we limit later
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT
 			&& is_array($limitto) && count($limitto))
 			{
-				$sql.= " AND rowid IN (".join(',',$limitto).")";
+				$sql.= " AND s.rowid IN (".join(',',$limitto).")";
 			}
 		}
-		$sql.= " ORDER BY nom ASC";
+		$sql.= " ORDER BY s.nom ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -620,7 +620,7 @@ class FormCompany
 				}
 				else
 				{
-					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
+					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->name.'" '.$htmloption.' />';
 				}
 				print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php','',$minLength);
 				//print '</td>';
@@ -653,14 +653,14 @@ class FormCompany
 						{
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled="disabled"';
-							print ' selected="selected">'.dol_trunc($obj->nom,24).'</option>';
+							print ' selected="selected">'.dol_trunc($obj->name,24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
 						else
 						{
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled="disabled"';
-							print '>'.dol_trunc($obj->nom,24).'</option>';
+							print '>'.dol_trunc($obj->name,24).'</option>';
 						}
 						$i ++;
 					}

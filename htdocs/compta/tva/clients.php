@@ -110,10 +110,10 @@ $fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 // Affiche en-tete du rapport
 if ($modetax==1)	// Calculate on invoice for goods and services
 {
-    $nom=$langs->trans("VATReportByCustomersInDueDebtMode");
+    $name=$langs->trans("VATReportByCustomersInDueDebtMode");
 	$calcmode=$langs->trans("CalcModeVATDebt");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
-    //$nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
+    //$name.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATDueServices");
@@ -138,10 +138,10 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 }
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
-    $nom=$langs->trans("VATReportByCustomersInInputOutputMode");
+    $name=$langs->trans("VATReportByCustomersInInputOutputMode");
     $calcmode=$langs->trans("CalcModeVATEngagement");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
-    //$nom.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=1">','</a>').')';
+    //$name.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=1">','</a>').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATInServices");
@@ -165,7 +165,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$amountsup=$langs->trans("AmountHT");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
@@ -223,7 +223,7 @@ if (is_array($coll_list))
 			print "<tr ".$bc[$var].">";
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
-			$company_static->nom=$coll->nom;
+			$company_static->name=$coll->name;
 			$company_static->client=1;
 			print '<td class="nowrap">'.$company_static->getNomUrl(1,'customer').'</td>';
 			$find = array(' ','.');
@@ -304,7 +304,7 @@ if (is_array($coll_list))
 			print "<tr ".$bc[$var].">";
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
-			$company_static->nom=$coll->nom;
+			$company_static->name=$coll->name;
 			$company_static->fournisseur=1;
 			print '<td class="nowrap">'.$company_static->getNomUrl(1,'supplier').'</td>';
 			$find = array(' ','.');

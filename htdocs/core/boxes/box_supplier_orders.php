@@ -62,7 +62,7 @@ class box_supplier_orders extends ModeleBoxes
 
         if ($user->rights->fournisseur->commande->lire)
         {
-            $sql = "SELECT s.nom, s.rowid as socid,";
+            $sql = "SELECT s.nom as name, s.rowid as socid,";
             $sql.= " c.ref, c.tms, c.rowid,";
             $sql.= " c.fk_statut";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -102,7 +102,7 @@ class box_supplier_orders extends ModeleBoxes
                     'url' => $urls);
 
                     $this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $objp->nom,
+                    'text' => $objp->name,
                     'url' => $urls);
 
                     $this->info_box_contents[$i][4] = array('td' => 'align="right"',

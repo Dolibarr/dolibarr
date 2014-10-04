@@ -396,7 +396,7 @@ if ($conf->produit->enabled)
 	    			$var = !$var;
 
 	    			print '<tr '.$bc[$var].'>';
-	    			print '<td>'.$modBarCode->nom."</td><td>\n";
+	    			print '<td>'.(isset($modBarCode->name)?$modBarCode->name:$modBarCode->nom)."</td><td>\n";
 	    			print $modBarCode->info($langs);
 	    			print '</td>';
 	    			print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";

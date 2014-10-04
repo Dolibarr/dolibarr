@@ -80,7 +80,7 @@ $form=new Form($db);
 llxHeader();
 
 $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut,";
-$sql.= " s.rowid as socid, s.nom,";
+$sql.= " s.rowid as socid, s.nom as name,";
 $sql.= " cd.rowid, cd.description, cd.statut,";
 $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
@@ -225,7 +225,7 @@ if ($resql)
 		// Third party
 		print '<td>';
 		$companystatic->id=$obj->socid;
-		$companystatic->nom=$obj->nom;
+		$companystatic->name=$obj->name;
 		$companystatic->client=1;
 		print $companystatic->getNomUrl(1,'customer',28);
 		print '</td>';

@@ -204,7 +204,7 @@ else
 
 if (! empty($conf->fournisseur->enabled))
 {
-    $sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
+    $sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
     $sql.= ", ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -233,7 +233,7 @@ if (! empty($conf->fournisseur->enabled))
                 print "<tr ".$bc[$var].">";
                 print '<td class="nowrap">';
                 print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
-                print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td></tr>';
+                print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
                 $i++;
             }
         }
@@ -300,7 +300,7 @@ print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 */
 $max=5;
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.tms, s.nom, s.rowid as socid";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.tms, s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -353,7 +353,7 @@ if ($resql)
 
             print '</td>';
 
-            print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
             print '<td>'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
             print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,5).'</td>';
             print '</tr>';
@@ -369,7 +369,7 @@ else dol_print_error($db);
  * Orders to process
 */
 /*
- $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom, s.rowid as socid";
+ $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
 $sql.=" FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -421,7 +421,7 @@ print '</td></tr></table>';
 
 print '</td>';
 
-print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td>';
+print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
 
 print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 

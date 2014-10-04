@@ -66,7 +66,7 @@ class box_factures extends ModeleBoxes
 		{
 			$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.datef as df";
 			$sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
-			$sql.= ", s.nom, s.rowid as socid";
+			$sql.= ", s.nom as name, s.rowid as socid";
 			$sql.= ", f.date_lim_reglement as datelimite";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -113,7 +113,7 @@ class box_factures extends ModeleBoxes
                     'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $objp->nom,
+                    'text' => $objp->name,
                     'maxlength'=>40,
                     'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 

@@ -125,7 +125,7 @@ if ($resql)
 	}
 	print_liste_field_titre($langs->trans("Status"),"ship2bill.php","e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
-	
+
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
@@ -151,9 +151,9 @@ if ($resql)
 	print '<td class="liste_titre" align="center">';
 	print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
 	print '</td>';
-	
+
 	print "</tr>\n";
-	
+
 	$var=True;
 
 	while ($i < min($num,$limit))
@@ -171,7 +171,7 @@ if ($resql)
 		print '<td>';
 		$companystatic->id=$objp->socid;
 		$companystatic->ref=$objp->socname;
-		$companystatic->nom=$objp->socname;
+		$companystatic->name=$objp->socname;
 		print $companystatic->getNomUrl(1);
 		print '</td>';
 		// Date delivery  planed

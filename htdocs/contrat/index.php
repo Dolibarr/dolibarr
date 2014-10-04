@@ -227,7 +227,7 @@ print "</table><br>";
 if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
 	$sql  = "SELECT c.rowid as ref, c.rowid,";
-	$sql.= " s.nom, s.rowid as socid";
+	$sql.= " s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.rowid = c.fk_soc";
@@ -262,7 +262,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 				print '</td>';
 				print '<td>';
 				$companystatic->id=$obj->socid;
-				$companystatic->nom=$obj->nom;
+				$companystatic->name=$obj->name;
 				$companystatic->client=1;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
@@ -298,7 +298,7 @@ $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.d
 $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')",1,0).') as nb_expired,';
 $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')",1,0).') as nb_late,';
 $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
-$sql.= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut, s.nom, s.rowid as socid";
+$sql.= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut, s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."contrat as c";
@@ -342,7 +342,7 @@ if ($result)
 		print '</td>';
 		print '<td>';
 		$staticcompany->id=$obj->socid;
-		$staticcompany->nom=$obj->nom;
+		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
 		print '<td align="center">'.dol_print_date($obj->tms,'dayhour').'</td>';
@@ -369,7 +369,7 @@ print '<br>';
 // Last modified services
 $sql = "SELECT c.ref, c.fk_soc, ";
 $sql.= " cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat, cd.date_fin_validite,";
-$sql.= " s.nom,";
+$sql.= " s.nom as name,";
 $sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
 $sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -423,7 +423,7 @@ if ($resql)
 		print '</td>';
 		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
-		$staticcompany->nom=$obj->nom;
+		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
 		print '<td class="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
@@ -447,7 +447,7 @@ print '<br>';
 
 // Not activated services
 $sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
-$sql.= " s.nom,";
+$sql.= " s.nom as name,";
 $sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
 $sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -503,7 +503,7 @@ if ($resql)
         print '</td>';
 		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
-		$staticcompany->nom=$obj->nom;
+		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
 		print '<td width="16" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
@@ -526,7 +526,7 @@ print '<br>';
 
 // Expired services
 $sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
-$sql.= " s.nom,";
+$sql.= " s.nom as name,";
 $sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
 $sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -583,7 +583,7 @@ if ($resql)
 		print '</td>';
 		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
-		$staticcompany->nom=$obj->nom;
+		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
 		print '<td width="16" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';

@@ -395,7 +395,7 @@ if (! $sortorder) $sortorder="ASC";
 
 $limit = $conf->liste_limit;
 
-$sql = "SELECT s.nom, s.rowid as socid, s.email";
+$sql = "SELECT s.nom as name, s.rowid as socid, s.email";
 $sql.= ", f.rowid as facid, f.facnumber, f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
 $sql.= ", f.datef as df, f.date_lim_reglement as datelimite";
 $sql.= ", f.paye as paye, f.fk_statut, f.type, f.fk_mode_reglement";
@@ -462,7 +462,7 @@ if ($resql)
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	$urlsource.=str_replace('&amp;','&',$param);
 
-	$titre=(! empty($socid)?$langs->trans("BillsCustomersUnpaidForCompany",$soc->nom):$langs->trans("BillsCustomersUnpaid"));
+	$titre=(! empty($socid)?$langs->trans("BillsCustomersUnpaidForCompany",$soc->name):$langs->trans("BillsCustomersUnpaid"));
 	if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
 	else $titre.=' ('.$langs->trans("All").')';
 
@@ -658,7 +658,7 @@ if ($resql)
             print '<td>';
             $thirdparty=new Societe($db);
             $thirdparty->id=$objp->socid;
-            $thirdparty->nom=$objp->nom;
+            $thirdparty->name=$objp->name;
             $thirdparty->client=$objp->client;
             $thirdparty->code_client=$objp->code_client;
             print $thirdparty->getNomUrl(1,'customer');

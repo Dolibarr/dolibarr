@@ -73,7 +73,7 @@ $sql.= " u.tms as datem,";
 $sql.= " u.datelastlogin,";
 $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2,";
-$sql.= " s.nom, s.canvas";
+$sql.= " s.nom as name, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
@@ -161,7 +161,7 @@ if ($result)
         if ($obj->fk_societe)
         {
             $companystatic->id=$obj->fk_societe;
-            $companystatic->nom=$obj->nom;
+            $companystatic->name=$obj->name;
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
         }

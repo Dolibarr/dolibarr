@@ -85,7 +85,7 @@ else
     //$sql.= " c.libelle as paiement_type,";
     $sql.= " c.code as paiement_code,";
     $sql.= " ba.rowid as bid, ba.label,";
-    $sql.= " s.rowid as socid, s.nom";
+    $sql.= " s.rowid as socid, s.nom as name";
     //$sql.= " f.facnumber";
     $sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement as p)";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
@@ -197,7 +197,7 @@ if ($resql)
         if ($objp->socid)
         {
             $companystatic->id=$objp->socid;
-            $companystatic->nom=$objp->nom;
+            $companystatic->name=$objp->name;
             print $companystatic->getNomUrl(1,'',24);
         }
         else print '&nbsp;';
