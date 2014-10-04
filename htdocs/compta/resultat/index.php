@@ -308,7 +308,7 @@ if ($modecompta == 'CREANCES-DETTES')
 else {
 	// TVA reellement deja payee
 	$sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
-	$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+	$sql.= " FROM ".MAIN_DB_PREFIX."vat as t";
 	$sql.= " WHERE amount > 0";
 	$sql.= " AND t.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
@@ -337,7 +337,7 @@ else {
 	}
 	// TVA recuperee
 	$sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
-	$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+	$sql.= " FROM ".MAIN_DB_PREFIX."vat as t";
 	$sql.= " WHERE amount < 0";
 	$sql.= " AND t.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";

@@ -776,7 +776,7 @@ else
     // VAT really already paid
     $amount=0;
     $sql = "SELECT date_format(t.datev,'%Y-%m') as dm, sum(t.amount) as amount";
-    $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+    $sql.= " FROM ".MAIN_DB_PREFIX."vat as t";
     $sql.= " WHERE amount > 0";
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
@@ -817,7 +817,7 @@ else
     // VAT really received
     $amount=0;
     $sql = "SELECT date_format(t.datev,'%Y-%m') as dm, sum(t.amount) as amount";
-    $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+    $sql.= " FROM ".MAIN_DB_PREFIX."vat as t";
     $sql.= " WHERE amount < 0";
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";

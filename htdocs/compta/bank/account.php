@@ -478,7 +478,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		// VAT
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON bu2.fk_bank = b.rowid AND bu2.type='payment_vat'";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."tva as t ON bu2.url_id = t.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."vat as t ON bu2.url_id = t.rowid";
 
 		// Salary payment
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='payment_salary'";

@@ -287,7 +287,7 @@ if ($conf->tax->enabled)
 		print_fiche_titre($langs->trans("VATPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
 		$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm";
-		$sql.= " FROM ".MAIN_DB_PREFIX."tva as pv";
+		$sql.= " FROM ".MAIN_DB_PREFIX."vat as pv";
 		$sql.= " WHERE pv.entity = ".$conf->entity;
 		if ($year > 0)
 		{

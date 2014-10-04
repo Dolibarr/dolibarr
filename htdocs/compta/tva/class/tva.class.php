@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 class Tva extends CommonObject
 {
 	//public $element='tva';			//!< Id that identify managed objects
-	//public $table_element='tva';	//!< Name of table without prefix where object is stored
+	//public $table_element='vat';	//!< Name of table without prefix where object is stored
 
     var $id;
     var $ref;
@@ -61,7 +61,7 @@ class Tva extends CommonObject
     {
         $this->db = $db;
         $this->element = 'tva';
-        $this->table_element = 'tva';
+        $this->table_element = 'vat';
         return 1;
     }
 
@@ -90,7 +90,7 @@ class Tva extends CommonObject
 		// Put here code to add control on parameters values
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."tva(";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."vat(";
 		$sql.= "tms,";
 		$sql.= "datep,";
 		$sql.= "datev,";
@@ -119,7 +119,7 @@ class Tva extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."vat");
 
             // Call trigger
             $result=$this->call_trigger('TVA_CREATE',$user);
@@ -161,7 +161,7 @@ class Tva extends CommonObject
 		// Put here code to add control on parameters values
 
         // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."vat SET";
 
 		$sql.= " tms=".$this->db->idate($this->tms).",";
 		$sql.= " datep=".$this->db->idate($this->datep).",";
@@ -226,7 +226,7 @@ class Tva extends CommonObject
 		$sql.= " b.fk_type,";
 		$sql.= " b.rappro";
 
-        $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+        $sql.= " FROM ".MAIN_DB_PREFIX."vat as t";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
         $sql.= " WHERE t.rowid = ".$id;
 
@@ -284,7 +284,7 @@ class Tva extends CommonObject
 		if ($result < 0) return -1;
 		// End call triggers
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."vat";
 		$sql.= " WHERE rowid=".$this->id;
 
 	   	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -431,7 +431,7 @@ class Tva extends CommonObject
     {
 
         $sql = "SELECT sum(f.amount) as amount";
-        $sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
+        $sql .= " FROM ".MAIN_DB_PREFIX."vat as f";
 
         if ($year)
         {
@@ -505,7 +505,7 @@ class Tva extends CommonObject
         }
 
         // Insert into llx_tva
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."vat (datep";
 		$sql.= ", datev";
 		$sql.= ", amount";
 		$sql.= ", fk_typepayment";
@@ -533,7 +533,7 @@ class Tva extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");    // TODO should be called paiementtva
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."vat");    // TODO should be called paiementtva
 
             // Call trigger
             //XXX: Should be done just befor commit no ?
@@ -605,14 +605,14 @@ class Tva extends CommonObject
     }
 
     /**
-	 *  Update link between payment tva and line generate into llx_bank
+	 *  Update link between payment vat and line generate into llx_bank
      *
      *  @param	int		$id_bank    Id bank account
 	 *	@return	int					<0 if KO, >0 if OK
      */
 	function update_fk_bank($id_bank)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'tva SET fk_bank = '.$id_bank;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'vat SET fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
 		if ($result)
