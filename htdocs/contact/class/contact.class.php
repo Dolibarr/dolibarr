@@ -185,7 +185,7 @@ class Contact extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('CONTACT_CREATE',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
             }
 
@@ -304,7 +304,7 @@ class Contact extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('CONTACT_MODIFY',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
 			}
 
@@ -374,7 +374,7 @@ class Contact extends CommonObject
 			$soc = new Societe($this->db);
 			$soc->fetch($this->socid);
 
-			$info[$conf->global->LDAP_CONTACT_FIELD_COMPANY] = $soc->nom;
+			$info[$conf->global->LDAP_CONTACT_FIELD_COMPANY] = $soc->name;
 			if ($soc->client == 1)      $info["businessCategory"] = "Customers";
 			if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
 			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
@@ -774,7 +774,7 @@ class Contact extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('CONTACT_DELETE',$user);
-            if ($result < 0) { $error++; }            
+            if ($result < 0) { $error++; }
             // End call triggers
 		}
 
@@ -1060,7 +1060,7 @@ class Contact extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('CONTACT_ENABLEDISABLE',$user);
-            if ($result < 0) { $error++; }            
+            if ($result < 0) { $error++; }
             // End call triggers
 		}
 

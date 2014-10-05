@@ -769,7 +769,7 @@ class Form
         $outarray=array();
 
         // On recherche les societes
-        $sql = "SELECT s.rowid, s.nom, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+        $sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
         $sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
@@ -836,11 +836,11 @@ class Form
                     	if (($obj->fournisseur) && (!empty($obj->code_fournisseur))) {
                     		$label .= $obj->code_fournisseur. ' - ';
                     	}
-                    	$label.=' '.$obj->nom;
+                    	$label.=' '.$obj->name;
                     }
                     else
                     {
-                    	$label=$obj->nom;
+                    	$label=$obj->name;
                     }
 
                     if ($showtype)
@@ -996,16 +996,12 @@ class Form
 
         // On recherche les societes
         $sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste";
-        if ($showsoc > 0) {
-        	$sql.= " , s.nom as company";
-        }
+        if ($showsoc > 0) $sql.= " , s.nom as company";
         $sql.= " FROM ".MAIN_DB_PREFIX ."socpeople as sp";
-        if ($showsoc > 0) {
-        	$sql.= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX ."societe as s ON s.rowid=sp.fk_soc ";
-        }
+        if ($showsoc > 0) $sql.= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX ."societe as s ON s.rowid=sp.fk_soc";
         $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
         if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
-        if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut<>0 ";
+        if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut<>0";
         $sql.= " ORDER BY sp.lastname ASC";
 
         dol_syslog(get_class($this)."::select_contacts", LOG_DEBUG);
@@ -1839,7 +1835,7 @@ class Form
 
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
         $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
-        $sql.= " s.nom";
+        $sql.= " s.nom as name";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
@@ -1951,8 +1947,8 @@ class Form
                     }
                     if (! $socid)
                     {
-                        $opt .= " - ".dol_trunc($objp->nom,8);
-                        $outval.=" - ".dol_trunc($objp->nom,8);
+                        $opt .= " - ".dol_trunc($objp->name,8);
+                        $outval.=" - ".dol_trunc($objp->name,8);
                     }
                 }
                 else
@@ -2007,7 +2003,7 @@ class Form
 
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
         $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
-        $sql.= " s.nom";
+        $sql.= " s.nom as name";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
@@ -2044,7 +2040,7 @@ class Form
                     if($num == 1) {
                         $opt .= ' selected="selected"';
                     }
-                    $opt.= '>'.$objp->nom.' - '.$objp->ref_fourn.' - ';
+                    $opt.= '>'.$objp->name.' - '.$objp->ref_fourn.' - ';
 
                     if ($objp->quantity == 1)
                     {
@@ -4433,7 +4429,7 @@ class Form
         $out='';
 
         // On recherche les groupes
-        $sql = "SELECT ug.rowid, ug.nom ";
+        $sql = "SELECT ug.rowid, ug.nom as name";
         if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
             $sql.= ", e.label";
@@ -4478,7 +4474,7 @@ class Form
                     }
                     $out.= '>';
 
-                    $out.= $obj->nom;
+                    $out.= $obj->name;
                     if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
                     {
                         $out.= " (".$obj->label.")";

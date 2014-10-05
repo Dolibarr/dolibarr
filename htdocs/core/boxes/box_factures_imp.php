@@ -63,7 +63,7 @@ class box_factures_imp extends ModeleBoxes
 
 		if ($user->rights->facture->lire)
 		{
-			$sql = "SELECT s.nom, s.rowid as socid,";
+			$sql = "SELECT s.nom as name, s.rowid as socid,";
 			$sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
 			$sql.= " f.amount, f.datef as df,";
 			$sql.= " f.paye, f.fk_statut, f.rowid as facid";
@@ -110,7 +110,7 @@ class box_factures_imp extends ModeleBoxes
                     'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $objp->nom,
+                    'text' => $objp->name,
                     'maxlength'=>44,
                     'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 

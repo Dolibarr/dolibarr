@@ -170,7 +170,7 @@ if ($action == 'add')
 	}
 
 	// Initialisation objet cactioncomm
-	if (! GETPOST('actioncode') > 0)
+	if (! GETPOST('actioncode') > 0)	// actioncode is id
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
@@ -178,62 +178,63 @@ if ($action == 'add')
 	}
 	else
 	{
-		$result=$cactioncomm->fetch(GETPOST('actioncode'));
+		$object->type_code = GETPOST('actioncode');
 	}
 
-	// Initialisation objet actioncomm
-	$object->type_id = $cactioncomm->id;
-	$object->type_code = $cactioncomm->code;
-	$object->priority = GETPOST("priority")?GETPOST("priority"):0;
-	$object->fulldayevent = (! empty($fulldayevent)?1:0);
-	$object->location = GETPOST("location");
-	$object->label = trim(GETPOST('label'));
-	$object->fk_element = GETPOST("fk_element");
-	$object->elementtype = GETPOST("elementtype");
-	if (! GETPOST('label'))
+	if (! $error)
 	{
-		if (GETPOST('actioncode') == 'AC_RDV' && $contact->getFullName($langs))
+		// Initialisation objet actioncomm
+		$object->priority = GETPOST("priority")?GETPOST("priority"):0;
+		$object->fulldayevent = (! empty($fulldayevent)?1:0);
+		$object->location = GETPOST("location");
+		$object->label = trim(GETPOST('label'));
+		$object->fk_element = GETPOST("fk_element");
+		$object->elementtype = GETPOST("elementtype");
+		if (! GETPOST('label'))
 		{
-			$object->label = $langs->transnoentitiesnoconv("TaskRDVWith",$contact->getFullName($langs));
-		}
-		else
-		{
-			if ($langs->trans("Action".$object->type_code) != "Action".$object->type_code)
+			if (GETPOST('actioncode') == 'AC_RDV' && $contact->getFullName($langs))
 			{
-				$object->label = $langs->transnoentitiesnoconv("Action".$object->type_code)."\n";
+				$object->label = $langs->transnoentitiesnoconv("TaskRDVWith",$contact->getFullName($langs));
 			}
-			else $object->label = $cactioncomm->libelle;
+			else
+			{
+				if ($langs->trans("Action".$object->type_code) != "Action".$object->type_code)
+				{
+					$object->label = $langs->transnoentitiesnoconv("Action".$object->type_code)."\n";
+				}
+				else $object->label = $cactioncomm->libelle;
+			}
+		}
+		$object->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;
+		$object->datep = $datep;
+		$object->datef = $datef;
+		$object->percentage = $percentage;
+		$object->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 60;
+
+		$listofuserid=array();
+		if (! empty($_SESSION['assignedtouser'])) $listofuserid=dol_json_decode($_SESSION['assignedtouser']);
+		$i=0;
+		foreach($listofuserid as $key => $value)
+		{
+			if ($i == 0)	// First entry
+			{
+				$usertodo=new User($db);
+				if ($value['id'] > 0)
+				{
+					$usertodo->fetch($value['id']);
+					$object->userownerid = $usertodo->id;
+				}
+				$object->usertodo = $usertodo;
+				$object->transparency = (GETPOST("transparency")=='on'?1:0);
+			}
+
+			$object->userassigned[$value['id']]=array('id'=>$value['id'], 'transparency'=>(GETPOST("transparency")=='on'?1:0));
+
+			$i++;
 		}
 	}
-	$object->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;
-	$object->datep = $datep;
-	$object->datef = $datef;
-	$object->percentage = $percentage;
-	$object->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 60;
 
-	$listofuserid=array();
-	if (! empty($_SESSION['assignedtouser'])) $listofuserid=dol_json_decode($_SESSION['assignedtouser']);
-	$i=0;
-	foreach($listofuserid as $key => $value)
-	{
-		if ($i == 0)	// First entry
-		{
-			$usertodo=new User($db);
-			if ($value['id'] > 0)
-			{
-				$usertodo->fetch($value['id']);
-				$object->userownerid = $usertodo->id;
-			}
-			$object->usertodo = $usertodo;
-			$object->transparency = (GETPOST("transparency")=='on'?1:0);
-		}
-
-		$object->userassigned[$value['id']]=array('id'=>$value['id'], 'transparency'=>(GETPOST("transparency")=='on'?1:0));
-
-		$i++;
-	}
-
-	if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
+	if (! $error && ! empty($conf->global->AGENDA_ENABLE_DONEBY))
 	{
 		$userdone=new User($db);
 		if ($_POST["doneby"] > 0)
@@ -250,10 +251,10 @@ if ($action == 'add')
 
 	if (GETPOST('socid','int') > 0)
 	{
-		$societe = new Societe($db);
-		$societe->fetch(GETPOST('socid','int'));
-		$object->societe = $societe;	// deprecated
-		$object->thirdparty = $societe;
+		$object->socid=GETPOST('socid','int');
+		$object->fetch_thirdparty();
+
+		$object->societe = $object->thirdparty;	// For backward compatibility
 	}
 
 	// Special for module webcal and phenix
@@ -607,6 +608,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="donotclearsession" value="1">';
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
+	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) print '<input type="hidden" name="actioncode" value="'.dol_getIdFromCode($db, 'AC_OTH', 'c_actioncomm').'">';
 
 	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
 	else print_fiche_titre($langs->trans("AddAnAction"));
@@ -620,7 +622,6 @@ if ($action == 'create')
 		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
 		print '</td></tr>';
 	}
-	else print '<input type="hidden" name="actioncode" value="AC_OTH">';
 
 	// Title
 	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
@@ -679,8 +680,15 @@ if ($action == 'create')
 		if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser,'mandatory'=>0,'transparency'=>$object->transparency);	// Owner first
 		$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
 	}
+	else
+	{
+		if (!empty($_SESSION['assignedtouser']))
+		{
+			$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+		}
+	}
 	print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
-	print $langs->trans("MyAvailability").': <input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked="checked"':'').'> '.$langs->trans("Busy");
+	if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").': <input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked="checked"':'').'> '.$langs->trans("Busy");
 	print '</td></tr>';
 
 	// Realised by
@@ -857,6 +865,7 @@ if ($id > 0)
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="ref_ext" value="'.$object->ref_ext.'">';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1'? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
+		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
 
 		dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
 
@@ -872,7 +881,6 @@ if ($id > 0)
 			$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
 			print '</td></tr>';
 		}
-		else print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
 
 		// Title
 		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$object->label.'"></td></tr>';
@@ -922,8 +930,15 @@ if ($id > 0)
 			}
 			$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
 		}
+		else
+		{
+			if (!empty($_SESSION['assignedtouser']))
+			{
+				$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+			}
+		}
 		print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
-		print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked="checked"':'').'">'.$langs->trans("Busy");
+		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked="checked"':'').'">'.$langs->trans("Busy");
 		print '</td></tr>';
 
 		// Realised by
@@ -1085,8 +1100,15 @@ if ($id > 0)
 			}
 			$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
 		}
+		else
+		{
+			if (!empty($_SESSION['assignedtouser']))
+			{
+				$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+			}
+		}
 		print $form->select_dolusers_forevent('view','assignedtouser',1);
-		print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
+		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
 		print '	</td></tr>';
 
 		// Done by

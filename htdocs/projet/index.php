@@ -103,7 +103,7 @@ print_liste_field_titre($langs->trans("NbOfProjects"),"","","","",'align="right"
 print "</tr>\n";
 
 $sql = "SELECT count(p.rowid) as nb";
-$sql.= ", s.nom, s.rowid as socid";
+$sql.= ", s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
@@ -127,7 +127,7 @@ if ( $resql )
 		if ($obj->socid)
 		{
 			$socstatic->id=$obj->socid;
-			$socstatic->nom=$obj->nom;
+			$socstatic->name=$obj->name;
 			print $socstatic->getNameUrl(1);
 		}
 		else

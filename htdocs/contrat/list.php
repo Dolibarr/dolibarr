@@ -96,9 +96,8 @@ if (!empty($search_ref_supplier)) {
 if ($sall) {
     $sql .= natural_search(array('s.nom', 'cd.label', 'cd.description'), $sall);
 }
-$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut,";
-$sql.= " s.nom, s.rowid";
-$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut, s.nom, s.rowid";
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit + 1, $offset);
 
 $resql=$db->query($sql);
@@ -157,7 +156,7 @@ if ($resql)
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
         print '<td>'.$obj->ref_supplier.'</td>';
-        print '<td><a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+        print '<td><a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
         //print '<td align="center">'.dol_print_date($obj->datec).'</td>';
         print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat)).'</td>';
         //print '<td align="center">'.$staticcontrat->LibStatut($obj->statut,3).'</td>';

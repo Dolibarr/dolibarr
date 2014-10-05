@@ -893,7 +893,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$title1='';$title2='';
 		if (isset($cases1[$h]) && $cases1[$h] != '')
 		{
-			$title1=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
+			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
+			if (count($cases1[$h]) > 1) $title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			$string1='&nbsp;';
 			$style1='peruser_notbusy';
 			foreach($cases1[$h] as $id => $ev)
@@ -903,7 +904,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 		if (isset($cases2[$h]) && $cases2[$h] != '')
 		{
-			$title2=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
+			//$title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
+			if (count($cases2[$h]) > 1) $title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			$string2='&nbsp;';
 			$style2='peruser_notbusy';
 			foreach($cases2[$h] as $id => $ev)
@@ -919,7 +921,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		{
 			$ids=array_keys($cases1[$h]);
 			$output = array_slice($cases1[$h], 0, 1);
-			if ($output[0]['string']) $title1.=' - '.$output[0]['string'];
+			if ($output[0]['string']) $title1.=($title1?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color1 = $output[0]['color'];
 		}
 		else if (count($cases1[$h]) > 1) $color1='222222';
@@ -928,7 +930,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		{
 			$ids=array_keys($cases2[$h]);
 			$output = array_slice($cases2[$h], 0, 1);
-			if ($output[0]['string']) $title2.=' - '.$output[0]['string'];
+			if ($output[0]['string']) $title2.=($title2?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color2 = $output[0]['color'];
 		}
 		else if (count($cases2[$h]) > 1) $color2='222222';

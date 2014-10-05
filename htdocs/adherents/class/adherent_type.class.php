@@ -119,7 +119,7 @@ class AdherentType extends CommonObject
         if ($result)
         {
         	$action='update';
-        	
+
         	// Actions on extra fields (by external module or standard code)
         	$hookmanager->initHooks(array('membertypedao'));
         	$parameters=array('membertype'=>$this->id);
@@ -151,21 +151,23 @@ class AdherentType extends CommonObject
      *	Fonction qui permet de supprimer le status de l'adherent
      *
      *	@param      int		$rowid		Id of member type to delete
-     *  @return		int					>0 if OK, < 0 if KO
+     *  @return		int					>0 if OK, 0 if not found, < 0 if KO
      */
-    function delete($rowid)
+    function delete($rowid='')
     {
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type WHERE rowid = $rowid";
+    	if (empty($rowid)) $rowid=$this->id;
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type WHERE rowid = ".$rowid;
 
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ( $this->db->affected_rows($resql) )
+            if ($this->db->affected_rows($resql))
             {
                 return 1;
             }
             else
-            {
+			{
                 return 0;
             }
         }

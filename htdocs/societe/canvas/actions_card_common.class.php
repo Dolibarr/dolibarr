@@ -305,7 +305,7 @@ abstract class ActionsCardCommon
 
             if ($result >= 0)
             {
-                header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$this->object->nom."");
+                header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$this->object->name."");
                 exit;
             }
             else

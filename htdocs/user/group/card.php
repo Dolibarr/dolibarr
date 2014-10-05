@@ -95,12 +95,13 @@ if ($action == 'add')
             setEventMessage($langs->trans("NameNotDefined"), 'errors');
             $action="create";       // Go back to create page
         } else {
-			$object->nom	= trim($_POST["nom"]);
+			$object->nom	= trim($_POST["nom"]);	// For backward compatibility
+			$object->name	= trim($_POST["nom"]);
 			$object->note	= trim($_POST["note"]);
 
 			// Fill array 'array_options' with data from add form
       		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-			
+
       		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
 			else $object->entity = $_POST["entity"];
 
@@ -120,7 +121,7 @@ if ($action == 'add')
                 $db->rollback();
 
                 $langs->load("errors");
-                setEventMessage($langs->trans("ErrorGroupAlreadyExists",$object->nom), 'errors');
+                setEventMessage($langs->trans("ErrorGroupAlreadyExists",$object->name), 'errors');
                 $action="create";       // Go back to create page
             }
         }
@@ -176,7 +177,8 @@ if ($action == 'update')
 
         $object->oldcopy=dol_clone($object);
 
-		$object->nom	= trim($_POST["group"]);
+		$object->name	= trim($_POST["group"]);
+		$object->nom	= $this->name;			// For backward compatibility
 		$object->note	= dol_htmlcleanlastbr($_POST["note"]);
 
 		// Fill array 'array_options' with data from add form
@@ -251,7 +253,7 @@ if ($action == 'create')
     $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
     $doleditor->Create();
     print "</td></tr>\n";
-    
+
 	// Other attributes
     $parameters=array('object' => $object, 'colspan' => ' colspan="2"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -259,7 +261,7 @@ if ($action == 'create')
     {
     	print $object->showOptionals($extrafields,'edit');
     }
-    
+
     print "</table>\n";
 
     print '<center><br><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></center>';
@@ -331,7 +333,7 @@ else
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
 			print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'&nbsp;</td>';
 			print "</tr>\n";
-					
+
 			// Other attributes
             $parameters=array('colspan' => ' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -339,7 +341,7 @@ else
             {
             	print $object->showOptionals($extrafields);
             }
-			
+
 			print "</table>\n";
 
 			print '</div>';
@@ -531,7 +533,7 @@ else
             {
             	print $object->showOptionals($extrafields,'edit');
             }
-			
+
             print "</table>\n";
 
             print '<center><br><input class="button" value="'.$langs->trans("Save").'" type="submit"></center>';

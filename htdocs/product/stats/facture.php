@@ -123,7 +123,7 @@ if ($id > 0 || ! empty($ref))
 
 
         if ($user->rights->facture->lire) {
-            $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
+            $sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client,";
             $sql.= " f.facnumber, f.total as total_ht,";
             $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
@@ -171,7 +171,7 @@ if ($id > 0 || ! empty($ref))
                         $invoicestatic->ref=$objp->facnumber;
                         print $invoicestatic->getNameUrl(1);
                         print "</td>\n";
-                        print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+                        print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';
                         print "<td>".$objp->code_client."</td>\n";
                         print '<td align="center">';
                         print dol_print_date($db->jdate($objp->datef),'day')."</td>";

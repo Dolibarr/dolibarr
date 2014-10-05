@@ -64,8 +64,8 @@ if ($socid > 0)
 
     print '<table class="border" width="100%">';
 
-    // Nom
-    print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
+    // Name
+    print '<tr><td width="20%">'.$langs->trans("Thirdpary").'</td><td width="80%" colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
 
 	// Prefix
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field

@@ -231,7 +231,7 @@ class Deplacement extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " WHERE entity IN (".getEntity('deplacement').")";
 		if ($ref) $sql.= " AND ref ='".$this->db->escape($ref)."'";
-		else $sql.= " AND id = ".$id;
+		else $sql.= " AND rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

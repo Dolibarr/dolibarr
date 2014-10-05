@@ -178,7 +178,7 @@ if ($action == 'cstc')
 $formother=new FormOther($db);
 $form=new Form($db);
 
-$sql = "SELECT s.rowid, s.nom, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
+$sql = "SELECT s.rowid, s.nom as name, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -402,7 +402,7 @@ if ($resql)
 		print '<tr '.$bc[$var].'>';
 		print '<td>';
 		$prospectstatic->id=$obj->rowid;
-		$prospectstatic->nom=$obj->nom;
+		$prospectstatic->name=$obj->name;
         $prospectstatic->status=$obj->status;
         $prospectstatic->code_client=$obj->code_client;
         $prospectstatic->client=$obj->client;

@@ -112,7 +112,7 @@ class Address
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 
-					$this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
+					$this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);
 				}
 
 				$this->db->rollback();
@@ -176,7 +176,7 @@ class Address
 		$this->fax			= preg_replace("/\./","",$this->fax);
 		$this->note			= trim($this->note);
 
-		$result = $this->verify();		// Verifie que nom et label obligatoire
+		$result = $this->verify();		// Verifie que name et label obligatoire
 
 		if ($result >= 0)
 		{
@@ -236,7 +236,7 @@ class Address
 	{
 		global $langs, $conf;
 
-		$sql = 'SELECT rowid, nom, client, fournisseur';
+		$sql = 'SELECT rowid, nom as name, client, fournisseur';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe';
 		$sql .= ' WHERE rowid = '.$socid;
 
@@ -247,7 +247,7 @@ class Address
 			{
 				$obj = $this->db->fetch_object($resqlsoc);
 
-				$this->socname 		= $obj->nom;
+				$this->socname 		= $obj->name;
 				$this->socid		= $obj->rowid;
 				$this->id			= $obj->rowid;
 				$this->client		= $obj->client;
@@ -440,7 +440,7 @@ class Address
 	 */
 	function info($id)
 	{
-		$sql = "SELECT s.rowid, s.nom, datec as date_creation, tms as date_modification,";
+		$sql = "SELECT s.rowid, s.nom as name, datec as date_creation, tms as date_modification,";
 		$sql.= " fk_user_creat, fk_user_modif";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.rowid = ".$id;
@@ -465,7 +465,7 @@ class Address
 					$muser->fetch($obj->fk_user_modif);
 					$this->user_modification = $muser;
 				}
-				$this->ref			     = $obj->nom;
+				$this->ref			     = $obj->name;
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 			}

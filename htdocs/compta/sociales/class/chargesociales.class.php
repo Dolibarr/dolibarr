@@ -106,22 +106,23 @@ class ChargeSociales extends CommonObject
             return -1;
         }
     }
-	/* 
-	 * Check if a social contribution can be created into database 
-	 * 
-	*/
-	function check() {
-		
+
+	/**
+	 * Check if a social contribution can be created into database
+	 *
+	 * @return	boolean		True or false
+	 */
+	function check()
+	{
 		$newamount=price2num($this->amount,'MT');
 
         // Validation parametres
         if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode))
         {
-           
             return false;
         }
-		
-		
+
+
 		return true;
 	}
 
@@ -138,7 +139,8 @@ class ChargeSociales extends CommonObject
         // Nettoyage parametres
         $newamount=price2num($this->amount,'MT');
 
-		if(!$this->check()) {
+		if (!$this->check())
+		{
 			 $this->error="ErrorBadParameter";
 			 return -2;
 		}
@@ -357,7 +359,7 @@ class ChargeSociales extends CommonObject
         global $langs;
         $langs->load('customers');
         $langs->load('bills');
-        
+
         if ($mode == 0)
         {
             if ($statut ==  0) return $langs->trans("Unpaid");

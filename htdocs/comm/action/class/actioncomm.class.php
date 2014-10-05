@@ -108,7 +108,8 @@ class ActionComm extends CommonObject
     }
 
     /**
-     *    Add an action/event into database
+     *    Add an action/event into database.
+     *    $this->type_id OR $this->type_code must be set.
      *
      *    @param	User	$user      		Object user making action
      *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
@@ -144,24 +145,26 @@ class ActionComm extends CommonObject
         $userownerid=isset($this->usertodo->id)?$this->usertodo->id:$this->userownerid;		// For backward compatibility
         $userdoneid=isset($this->userdone->id)?$this->userdone->id:$this->userdoneid;		// For backward compatibility
 
-        if (! $this->type_id && $this->type_code)
+        if (! $this->type_id || ! $this->type_code)
         {
+        	$key=empty($this->type_id)?$this->type_code:$this->type_id;
+
             // Get id from code
             $cactioncomm=new CActionComm($this->db);
-            $result=$cactioncomm->fetch($this->type_code);
+            $result=$cactioncomm->fetch($key);
 
             if ($result > 0)
             {
                 $this->type_id=$cactioncomm->id;
-                $this->code=$cactioncomm->code;
+                $this->type_code=$cactioncomm->code;
             }
             else if ($result == 0)
             {
-                $this->error='Failed to get record with code '.$this->type_code.' from dictionary "type of events"';
+                $this->error='Failed to get record with id '.$this->type_id.' code '.$this->type_code.' from dictionary "type of events"';
                 return -1;
             }
             else
-            {
+			{
                 $this->error=$cactioncomm->error;
                 return -1;
             }
@@ -201,7 +204,7 @@ class ActionComm extends CommonObject
         $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").",";
         $sql.= (isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null").",";	// deprecated
         $sql.= (isset($this->type_id)?$this->type_id:"null").",";
-        $sql.= (isset($this->code)?" '".$this->code."'":"null").",";
+        $sql.= (isset($this->type_code)?" '".$this->type_code."'":"null").",";
         $sql.= (isset($this->socid) && $this->socid > 0?" '".$this->socid."'":"null").",";
         $sql.= (isset($this->fk_project) && $this->fk_project > 0?" '".$this->fk_project."'":"null").",";
         $sql.= " '".$this->db->escape($this->note)."',";

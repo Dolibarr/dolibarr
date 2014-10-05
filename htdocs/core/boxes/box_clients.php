@@ -63,7 +63,7 @@ class box_clients extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom, s.rowid as socid, s.datec, s.tms, s.status";
+			$sql = "SELECT s.nom as name, s.rowid as socid, s.datec, s.tms, s.status";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.client IN (1, 3)";
@@ -93,7 +93,7 @@ class box_clients extends ModeleBoxes
                     'url' => $url.$objp->socid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->nom,
+                    'text' => $objp->name,
                     'url' => $url.$objp->socid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',

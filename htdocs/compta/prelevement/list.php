@@ -63,7 +63,7 @@ llxHeader('',$langs->trans("WithdrawalsLines"));
 
 $sql = "SELECT p.rowid, p.ref, p.statut, p.datec";
 $sql.= " ,f.rowid as facid, f.facnumber, f.total_ttc";
-$sql.= " , s.rowid as socid, s.nom, s.code_client";
+$sql.= " , s.rowid as socid, s.nom as name, s.code_client";
 $sql.= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -162,7 +162,7 @@ if ($result)
           print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
         print '</a></td>';
 
-        print '<td><a href="card.php?id='.$obj->rowid.'">'.$obj->nom."</a></td>\n";
+        print '<td><a href="card.php?id='.$obj->rowid.'">'.$obj->name."</a></td>\n";
 
         print '<td align="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
 

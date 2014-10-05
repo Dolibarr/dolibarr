@@ -780,7 +780,7 @@ class Holiday extends CommonObject
         $groupe = $objet->value;
 
         // On liste les groupes de Dolibarr
-        $sql = "SELECT u.rowid, u.nom";
+        $sql = "SELECT u.rowid, u.nom as name";
         $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as u";
         $sql.= " ORDER BY u.rowid";
 
@@ -798,9 +798,9 @@ class Holiday extends CommonObject
             while ($obj = $this->db->fetch_object($result))
             {
                 if($groupe==$obj->rowid) {
-                    $selectGroup.= '<option value="'.$obj->rowid.'" selected="selected">'.$obj->nom.'</option>'."\n";
+                    $selectGroup.= '<option value="'.$obj->rowid.'" selected="selected">'.$obj->name.'</option>'."\n";
                 } else {
-                    $selectGroup.= '<option value="'.$obj->rowid.'">'.$obj->nom.'</option>'."\n";
+                    $selectGroup.= '<option value="'.$obj->rowid.'">'.$obj->name.'</option>'."\n";
                 }
             }
             $selectGroup.= '</select>'."\n";
@@ -820,7 +820,7 @@ class Holiday extends CommonObject
     /**
      *  Met à jour une option du module Holiday Payés
      *
-     *  @param	string	$name       nom du paramètre de configuration
+     *  @param	string	$name       name du paramètre de configuration
      *  @param	string	$value      vrai si mise à jour OK sinon faux
      *  @return boolean				ok or ko
      */
@@ -842,7 +842,7 @@ class Holiday extends CommonObject
     /**
      *  Retourne la valeur d'un paramètre de configuration
      *
-     *  @param	string	$name       nom du paramètre de configuration
+     *  @param	string	$name       name du paramètre de configuration
      *  @return string      		retourne la valeur du paramètre
      */
     function getConfCP($name)
@@ -955,7 +955,7 @@ class Holiday extends CommonObject
     /**
      *	Retourne un checked si vrai
      *
-     *  @param	string	$name       nom du paramètre de configuration
+     *  @param	string	$name       name du paramètre de configuration
      *  @return string      		retourne checked si > 0
      */
     function getCheckOption($name) {
