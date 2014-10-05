@@ -682,7 +682,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	{
 		// Make substitution
 		$substitutionarray=array(
-			'__FROM_NAME__' => $fromcompany->nom,
+			'__FROM_NAME__' => $fromcompany->name,
 			'__FROM_EMAIL__' => $fromcompany->email,
 			'__TOTAL_TTC__' => $object->total_ttc,
 			'__TOTAL_HT__' => $object->total_ht,

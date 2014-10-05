@@ -64,7 +64,7 @@ class box_actions extends ModeleBoxes
 		{
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage,";
 			$sql.= " ta.code,";
-			$sql.= " s.nom, s.rowid as socid";
+			$sql.= " s.nom as name, s.rowid as socid";
 			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
 			$sql.= MAIN_DB_PREFIX."actioncomm AS a)";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -112,7 +112,7 @@ class box_actions extends ModeleBoxes
                     'url' => ($objp->socid?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid:''));
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-					'text' => dol_trunc($objp->nom,24),
+					'text' => dol_trunc($objp->name,24),
 					'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="left" class="nowrap"',
@@ -155,7 +155,7 @@ class box_actions extends ModeleBoxes
 		global $langs, $conf;
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 				if ($conf->global->SHOW_DIALOG_HOMEPAGE)
-		{		
+		{
 			$actioncejour=false;
 			$contents=$this->info_box_contents;
 			$nblines=count($contents);
@@ -170,7 +170,7 @@ class box_actions extends ModeleBoxes
 					if (isset($contents[$i]))
 					{
 						// on affiche que les évènement du jours ou passé
-						// qui ne sont pas à 100% 
+						// qui ne sont pas à 100%
 						$actioncejour=true;
 						$var=!$var;
 						// TR
@@ -193,8 +193,8 @@ class box_actions extends ModeleBoxes
 						print '</tr>';
 					}
 				}
-				print '</table>'; 
-	
+				print '</table>';
+
 			}
 			print '</div>';
 			if ($actioncejour)

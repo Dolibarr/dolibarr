@@ -590,7 +590,7 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Nmae of table filter ('xxx%')
-	 *  @return	resource				Resource
+	 *  @return	array					List of tables in an array
      */
     function DDLListTables($database, $table='')
     {

@@ -84,7 +84,7 @@ if ($action == 'updateoptions')
 		    setEventMessage($langs->trans("Error"), 'errors');
 		}
 	}
-	
+
 	if (GETPOST('CONTACT_USE_SEARCH_TO_SELECT'))
 	{
 		$contactsearch = GETPOST('activate_CONTACT_USE_SEARCH_TO_SELECT','alpha');
@@ -344,7 +344,7 @@ foreach ($dirsociete as $dirroot)
 
     			$var = !$var;
     			print '<tr '.$bc[$var].'>'."\n";
-    			print '<td width="140">'.$modCodeTiers->nom.'</td>'."\n";
+    			print '<td width="140">'.$modCodeTiers->name.'</td>'."\n";
     			print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
     			print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
 
@@ -420,7 +420,7 @@ foreach ($dirsociete as $dirroot)
     			$var = !$var;
 
     			print '<tr '.$bc[$var].'>';
-    			print '<td>'.$modCodeCompta->nom."</td><td>\n";
+    			print '<td>'.$modCodeCompta->name."</td><td>\n";
     			print $modCodeCompta->info($langs);
     			print '</td>';
     			print '<td class="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
@@ -569,7 +569,7 @@ foreach ($dirsociete as $dirroot)
 					}
 					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn((! empty($module->option_draft_watermark)?$module->option_draft_watermark:''), 1, 1);
-					
+
 					print '<td align="center" class="nowrap">';
 					print $form->textwithpicto('',$htmltooltip,1,0);
 					print '</td>';
@@ -632,19 +632,19 @@ while ($i < $nbofloop)
 	if ($profid[$i][1]!='-')
 	{
 		$var = !$var;
-	
+
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.$profid[$i][0]."</td><td>\n";
 		print $profid[$i][1];
 		print '</td>';
-	
+
 		$idprof_unique ='SOCIETE_IDPROF'.($i+1).'_UNIQUE';
 		$idprof_mandatory ='SOCIETE_IDPROF'.($i+1).'_MANDATORY';
 		$idprof_invoice_mandatory ='SOCIETE_IDPROF'.($i+1).'_INVOICE_MANDATORY';
 		$verif=(empty($conf->global->$idprof_unique)?false:true);
 		$mandatory=(empty($conf->global->$idprof_mandatory)?false:true);
 		$invoice_mandatory=(empty($conf->global->$idprof_invoice_mandatory)?false:true);
-	
+
 		if ($verif)
 		{
 			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.($i+1).'&status=0">';
@@ -657,7 +657,7 @@ while ($i < $nbofloop)
 			print img_picto($langs->trans("Disabled"),'switch_off');
 			print '</a></td>';
 		}
-		
+
 		if ($mandatory)
 		{
 			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.($i+1).'&status=0">';
@@ -670,7 +670,7 @@ while ($i < $nbofloop)
 			print img_picto($langs->trans("Disabled"),'switch_off');
 			print '</a></td>';
 		}
-		
+
 		if ($invoice_mandatory)
 		{
 			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.($i+1).'&status=0">';
@@ -683,7 +683,7 @@ while ($i < $nbofloop)
 			print img_picto($langs->trans("Disabled"),'switch_off');
 			print '</a></td>';
 		}
-		
+
 		print "</tr>\n";
 	}
 	$i++;

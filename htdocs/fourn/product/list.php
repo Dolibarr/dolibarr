@@ -88,7 +88,7 @@ if ($fourn_id)
 
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type,";
 $sql.= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
-$sql.= " s.rowid as socid, s.nom";
+$sql.= " s.rowid as socid, s.nom as name";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
@@ -108,7 +108,7 @@ if ($sref)
 }
 if ($snom)
 {
-	$sql .= natural_search('p.label', $snom);
+	$sql .= natural_search('s.nom', $snom);
 }
 if($catid)
 {
@@ -136,7 +136,7 @@ if ($resql)
 		exit;
 	}
 
-	if (! empty($supplier->id)) $texte = $langs->trans("ListOfSupplierProductForSupplier",$supplier->nom);
+	if (! empty($supplier->id)) $texte = $langs->trans("ListOfSupplierProductForSupplier",$supplier->name);
 	else $texte = $langs->trans("List");
 
 	llxHeader("","",$texte);
@@ -212,7 +212,7 @@ if ($resql)
 
 		print '<td>'.$objp->label.'</td>'."\n";
 
-		$companystatic->nom=$objp->nom;
+		$companystatic->name=$objp->name;
 		$companystatic->id=$objp->socid;
 		print '<td>';
 		if ($companystatic->id > 0) print $companystatic->getNomUrl(1,'supplier');

@@ -954,7 +954,7 @@ function dol_meta_create($object)
 		if (is_dir($dir))
 		{
 			$nblignes = count($object->lines);
-			$client = $object->client->nom . " " . $object->client->address . " " . $object->client->zip . " " . $object->client->town;
+			$client = $object->client->name . " " . $object->client->address . " " . $object->client->zip . " " . $object->client->town;
 			$meta = "REFERENCE=\"" . $object->ref . "\"
 			DATE=\"" . dol_print_date($object->date,'') . "\"
 			NB_ITEMS=\"" . $nblignes . "\"

@@ -268,7 +268,7 @@ if ($action == 'create')
 		}
 		print '<table class="border" width="100%">';
 		print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-		print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+		print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$soc->id.'">'.$soc->name.'</a></b></td>';
 
 		print '<td width="50%" colspan="2">';
 

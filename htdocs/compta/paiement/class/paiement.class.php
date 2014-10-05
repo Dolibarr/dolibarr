@@ -221,7 +221,7 @@ class Paiement extends CommonObject
                             if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice. We do nothing more.");
                             else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
-                            else 
+                            else
                             {
                                 $result=$invoice->set_paid($user,'','');
                                 if ($result<0)
@@ -360,8 +360,8 @@ class Paiement extends CommonObject
 			{
 				// Appel des triggers
 				$result=$this->call_trigger('PAYMENT_DELETE', $user);
-				if ($result < 0) 
-				{ 
+				if ($result < 0)
+				{
 				    $this->db->rollback();
 				    return -1;
 				 }
@@ -483,7 +483,7 @@ class Paiement extends CommonObject
                                     $bank_line_id,
                                     $fac->thirdparty->id,
                                     DOL_URL_ROOT.'/comm/card.php?socid=',
-                                    $fac->thirdparty->nom,
+                                    $fac->thirdparty->name,
                                     'company'
                                 );
                                 if ($result <= 0) dol_print_error($this->db);
@@ -501,7 +501,7 @@ class Paiement extends CommonObject
                                     $bank_line_id,
                                     $fac->thirdparty->id,
                                     DOL_URL_ROOT.'/fourn/card.php?socid=',
-                                    $fac->thirdparty->nom,
+                                    $fac->thirdparty->name,
                                     'company'
                                 );
                                 if ($result <= 0) dol_print_error($this->db);

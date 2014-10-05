@@ -62,7 +62,7 @@ class box_propales extends ModeleBoxes
 
       if ($user->rights->propale->lire)
       {
-      	$sql = "SELECT s.nom, s.rowid as socid,";
+      	$sql = "SELECT s.nom as name, s.rowid as socid,";
         $sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
         $sql.= ", ".MAIN_DB_PREFIX."propal as p";
@@ -106,7 +106,7 @@ class box_propales extends ModeleBoxes
                 'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 				$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-        		'text' => dol_trunc($objp->nom,40),
+        		'text' => dol_trunc($objp->name,40),
         		'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
         		$this->info_box_contents[$i][4] = array('td' => 'align="right"',

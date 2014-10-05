@@ -629,7 +629,7 @@ function updateThirdParty($authentication,$thirdparty)
  * getListOfThirdParties
  *
  * @param	array		$authentication		Array of authentication information
- * @param	array		$filterthirdparty	Filter fields
+ * @param	array		$filterthirdparty	Filter fields (key=>value to filer on. For example 'client'=>2, 'supplier'=>1, 'category'=>idcateg, 'name'=>'searchstring', ...)
  * @return	array							Array result
  */
 function getListOfThirdParties($authentication,$filterthirdparty)
@@ -661,9 +661,10 @@ function getListOfThirdParties($authentication,$filterthirdparty)
         $sql.=" WHERE entity=".$conf->entity;
         foreach($filterthirdparty as $key => $val)
         {
-            if ($key == 'client'   && $val != '')  $sql.=" AND s.client = ".$db->escape($val);
+            if ($key == 'name'     && $val != '')  $sql.=" AND s.name LIKE '%".$db->escape($val)."%'";
+        	if ($key == 'client'   && $val != '')  $sql.=" AND s.client = ".$db->escape($val);
             if ($key == 'supplier' && $val != '')  $sql.=" AND s.fournisseur = ".$db->escape($val);
-            if ($key == 'category'   && $val != '')  $sql.=" AND s.rowid IN (SELECT fk_societe FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
+            if ($key == 'category' && $val != '')  $sql.=" AND s.rowid IN (SELECT fk_societe FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
         }
         dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);
 

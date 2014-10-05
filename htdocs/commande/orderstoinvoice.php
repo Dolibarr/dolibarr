@@ -573,7 +573,7 @@ if (($action != 'create' && $action != 'add') || !$error)
 		{
 			// Company
 			$companystatic->id=$socid;
-			$companystatic->nom=$soc->nom;
+			$companystatic->name=$soc->name;
 			print '<h3>'.$companystatic->getNomUrl(1,'customer').'</h3>';
 		}
 

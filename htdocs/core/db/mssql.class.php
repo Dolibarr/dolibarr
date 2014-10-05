@@ -255,8 +255,12 @@ class DoliDBMssql extends DoliDB
 			{
 				$this->transaction_opened=0;
 				dol_syslog("COMMIT Transaction",LOG_DEBUG);
+				return 1;
 			}
-			return $ret;
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{
@@ -672,7 +676,7 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Nmae of table filter ('xxx%')
-	 *  @return	resource				Resource
+     *  @return	array					List of tables in an array
 	 */
 	function DDLListTables($database,$table='')
 	{

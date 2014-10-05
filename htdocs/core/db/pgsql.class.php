@@ -846,8 +846,8 @@ class DoliDBPgsql extends DoliDB
 	 *  List tables into a database
 	 *
 	 *  @param	string		$database	Name of database
-	 *  @param	string		$table		Nmae of table filter ('xxx%')
-	 *  @return	resource				Resource
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
 	 */
 	function DDLListTables($database, $table='')
 	{
@@ -860,7 +860,7 @@ class DoliDBPgsql extends DoliDB
 		{
 			$listtables[] = $row[0];
 		}
-		return  $listtables;
+		return $listtables;
 	}
 
 	/**

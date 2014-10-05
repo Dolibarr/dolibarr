@@ -13,7 +13,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -49,7 +48,7 @@ if (! empty($idprod))
 	$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
 	$sql.= " pfp.ref_fourn,";
 	$sql.= " pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.remise_percent, pfp.quantity, pfp.unitprice, pfp.charges, pfp.unitcharges,";
-	$sql.= " s.nom";
+	$sql.= " s.nom as name";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pfp.fk_soc";
@@ -75,7 +74,7 @@ if (! empty($idprod))
 				$price = $objp->fprice * (1 - $objp->remise_percent / 100);
 				$unitprice = $objp->unitprice * (1 - $objp->remise_percent / 100);
 
-				$title = $objp->nom.' - '.$objp->ref_fourn.' - ';
+				$title = $objp->name.' - '.$objp->ref_fourn.' - ';
 
 				if ($objp->quantity == 1)
 				{
