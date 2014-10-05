@@ -585,7 +585,7 @@ else
 
 					$companystatic->id=$objp->socid;
 					$companystatic->name=$objp->name;
-					print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
+					print '<td>'.$companystatic->getNameUrl(1,'customer').'</td>';
 
 					print '<td align="right">'.price($objp->total).'</td>'."\n";
 
