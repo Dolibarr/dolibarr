@@ -467,7 +467,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs)) {
 		if (! empty($socid)) {
 			// Company
 			$companystatic->id = $socid;
-			$companystatic->nom = $soc->nom;
+			$companystatic->name = $soc->name;
 			print '<h3>' . $companystatic->getNameUrl(1, 'customer') . '</h3>';
 		}
 		
