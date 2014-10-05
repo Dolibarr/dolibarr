@@ -679,8 +679,15 @@ if ($action == 'create')
 		if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser,'mandatory'=>0,'transparency'=>$object->transparency);	// Owner first
 		$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
 	}
+	else
+	{
+		if (!empty($_SESSION['assignedtouser']))
+		{
+			$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+		}
+	}
 	print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
-	print $langs->trans("MyAvailability").': <input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked="checked"':'').'> '.$langs->trans("Busy");
+	if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").': <input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked="checked"':'').'> '.$langs->trans("Busy");
 	print '</td></tr>';
 
 	// Realised by
@@ -922,8 +929,15 @@ if ($id > 0)
 			}
 			$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
 		}
+		else
+		{
+			if (!empty($_SESSION['assignedtouser']))
+			{
+				$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+			}
+		}
 		print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
-		print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked="checked"':'').'">'.$langs->trans("Busy");
+		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked="checked"':'').'">'.$langs->trans("Busy");
 		print '</td></tr>';
 
 		// Realised by
@@ -1085,8 +1099,15 @@ if ($id > 0)
 			}
 			$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
 		}
+		else
+		{
+			if (!empty($_SESSION['assignedtouser']))
+			{
+				$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+			}
+		}
 		print $form->select_dolusers_forevent('view','assignedtouser',1);
-		print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
+		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
 		print '	</td></tr>';
 
 		// Done by
