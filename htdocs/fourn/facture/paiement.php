@@ -105,8 +105,8 @@ if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='ye
 	            if ($datepaye && ($datepaye < $tmpinvoice->date))
 	            {
 	            	$langs->load("errors");
-	                $error++;
-	                setEventMessage($langs->transnoentities("ErrorPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye,'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), 'errors');
+	                //$error++;
+	                setEventMessage($langs->transnoentities("WarningPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye,'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), 'warnings');
 	            }
             }
 
@@ -468,7 +468,7 @@ if (empty($action))
     {
         $sql .= ' AND p.rowid='.$db->escape($search_ref);
     }
-    if (! empty($search_account))
+    if (! empty($search_account) && $search_account > 0)
     {
         $sql .= ' AND b.fk_account='.$db->escape($search_account);
     }

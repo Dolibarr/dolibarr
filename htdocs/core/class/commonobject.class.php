@@ -1089,7 +1089,6 @@ abstract class CommonObject
         }
     }
 
-
     /**
      *  Save a new position (field rang) for details lines.
      *  You can choose to set position for lines with already a position or lines without any position defined.
@@ -2039,7 +2038,7 @@ abstract class CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
         if (! empty($id))  $sql.= " AND rowid = ".$id;
-        if (! empty($ref)) $sql.= " AND ref = '".$ref."'";
+        if (! empty($ref)) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -2121,11 +2120,11 @@ abstract class CommonObject
 
                     foreach ($tab as $key => $value)
                     {
-                    	// Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
-                        if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
+                    	// Test fetch_array ! is_int($key) because fetch_array result is a mix table with some key as alpha and some key as int (depend db engine)
+                        if ($key != 'rowid' && $key != 'tms' && ! is_int($key))
                         {
-                            // we can add this attribute to adherent object
-                            $this->array_options["options_$key"]=$value;
+                            // we can add this attribute to object properties
+                            $this->array_options["options_".$key]=$value;
                         }
                     }
                 }

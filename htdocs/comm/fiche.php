@@ -821,11 +821,11 @@ if ($id > 0)
 	/*
 	 * Barre d'actions
 	 */
-	
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-	
-	
+
+
 	print '<div class="tabsAction">';
 
 	if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
@@ -933,4 +933,3 @@ dol_htmloutput_mesg('',$mesgs);
 // End of page
 llxFooter();
 $db->close();
-?>

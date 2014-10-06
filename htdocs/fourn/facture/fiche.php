@@ -355,7 +355,11 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
                 if ($result > 0)
                 {
                     $lines = $srcobject->lines;
-                    if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+                    if (empty($lines) && method_exists($srcobject,'fetch_lines'))
+                    {
+                    	$srcobject->fetch_lines();
+                    	$lines = $srcobject->lines;
+                    }
 
                     $num=count($lines);
                     for ($i = 0; $i < $num; $i++)
@@ -513,11 +517,11 @@ elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
 
         }
 
-        $localtax1tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
-        $localtax2tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
+        $localtax1_tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
+        $localtax2_tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
         $remise_percent=GETPOST('remise_percent');
 
-        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1tx, $localtax2tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
+        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
         if ($result >= 0)
         {
             unset($_POST['label']);
@@ -613,13 +617,13 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             $tvatx=get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
             $npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
 
-            $localtax1tx= get_localtax($tvatx, 1, $mysoc,$object->thirdparty);
-            $localtax2tx= get_localtax($tvatx, 2, $mysoc,$object->thirdparty);
+            $localtax1_tx= get_localtax($tvatx, 1, $mysoc,$object->thirdparty);
+            $localtax2_tx= get_localtax($tvatx, 2, $mysoc,$object->thirdparty);
 
             $type = $productsupplier->type;
 
             // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
-            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $qty, $idprod, $remise_percent, '', '', 0, $npr);
+            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, '', '', 0, $npr);
         }
     	if ($idprod == -2 || $idprod == 0)
         {
@@ -658,7 +662,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             $price_base_type = 'HT';
 
             //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-            $result=$object->addline($product_desc, $ht, $tva_tx, $localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
+            $result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
         }
         else
 		{
@@ -666,7 +670,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             $ht = $ttc / (1 + ($tva_tx / 100));
             $price_base_type = 'HT';
             //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-            $result=$object->addline($product_desc, $ht, $tva_tx,$localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
+            $result=$object->addline($product_desc, $ht, $tva_tx,$localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
         }
     }
 
@@ -1312,26 +1316,26 @@ if ($action == 'create')
 
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
+	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
+	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id, 'mode_reglement_id', 'DBIT');
 	print '</td></tr>';
 
 	// Project
-	if (! empty($conf->projet->enabled))
-	{
-		$formproject=new FormProjets($db);
+	if (! empty($conf->projet->enabled)) {
+		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
-		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		$formproject->select_projects(-1, $projectid, 'projectid');
+		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
+		$formproject->select_projects($soc->id, $projectid, 'projectid');
 		print '</td></tr>';
 	}
 
-    print '<tr><td>'.$langs->trans('NotePublic').'</td>';
+	// Public note
+	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
     print '<td>';
     $doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
     print $doleditor->Create(1);
@@ -1775,11 +1779,11 @@ else
 		print '</td><td colspan="2">';
 		if ($action == 'editmode')
 		{
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'DBIT');
 		}
 		else
 		{
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none', 'DBIT');
 		}
 		print '</td></tr>';
 
@@ -1855,11 +1859,11 @@ else
             print '</td><td colspan="3">';
             if ($action == 'classify')
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,'projectid');
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1', $object->fk_project, 'projectid');
             }
             else
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,'none');
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
             }
             print '</td>';
             print '</tr>';

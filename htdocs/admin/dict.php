@@ -473,7 +473,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
 	    }*/
     }
-    if (isset($_POST["country"]) && $_POST["country"]=='0') {
+    if (isset($_POST["country"]) && $_POST["country"]=='0')
+    {
         $ok=0;
         setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")),'errors');
     }
@@ -532,7 +533,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
-            $_POST=array('id'=>$id);	// Clean $_POST array, we keep only
+            setEventMessage($langs->transnoentities("RecordSaved"));
+        	$_POST=array('id'=>$id);	// Clean $_POST array, we keep only
         }
         else
         {

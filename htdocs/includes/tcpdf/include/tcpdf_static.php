@@ -1,13 +1,13 @@
 <?php
 //============================================================+
 // File name   : tcpdf_static.php
-// Version     : 1.0.000
+// Version     : 1.0.004
 // Begin       : 2002-08-03
-// Last Update : 2013-04-01
+// Last Update : 2014-09-02
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2002-2013 Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2002-2014 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -38,7 +38,7 @@
  * This is a PHP class that contains static methods for the TCPDF class.<br>
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 1.0.000
+ * @version 1.0.004
  */
 
 /**
@@ -46,7 +46,7 @@
  * Static methods used by the TCPDF class.
  * @package com.tecnick.tcpdf
  * @brief PHP class for generating PDF documents without requiring external extensions.
- * @version 1.0.000
+ * @version 1.0.004
  * @author Nicola Asuni - info@tecnick.com
  */
 class TCPDF_STATIC {
@@ -55,7 +55,7 @@ class TCPDF_STATIC {
 	 * Current TCPDF version.
 	 * @private static
 	 */
-	private static $tcpdf_version = '6.0.021';
+	private static $tcpdf_version = '6.0.093';
 
 	/**
 	 * String alias for total number of pages.
@@ -137,7 +137,7 @@ class TCPDF_STATIC {
 	public static function set_mqr($mqr) {
 		if (!defined('PHP_VERSION_ID')) {
 			$version = PHP_VERSION;
-			define('PHP_VERSION_ID', (($version{0} * 10000) + ($version{2} * 100) + $version{4}));
+			define('PHP_VERSION_ID', (($version[0] * 10000) + ($version[2] * 100) + $version[4]));
 		}
 		if (PHP_VERSION_ID < 50300) {
 			@set_magic_quotes_runtime($mqr);
@@ -153,7 +153,7 @@ class TCPDF_STATIC {
 	public static function get_mqr() {
 		if (!defined('PHP_VERSION_ID')) {
 			$version = PHP_VERSION;
-			define('PHP_VERSION_ID', (($version{0} * 10000) + ($version{2} * 100) + $version{4}));
+			define('PHP_VERSION_ID', (($version[0] * 10000) + ($version[2] * 100) + $version[4]));
 		}
 		if (PHP_VERSION_ID < 50300) {
 			return @get_magic_quotes_runtime();
@@ -1092,13 +1092,13 @@ class TCPDF_STATIC {
 
 	/**
 	 * Returns a temporary filename for caching object on filesystem.
-	 * @param $name (string) Prefix to add to the file name.
+	 * @param $type (string) Type of file (name of the subdir on the tcpdf cache folder).
 	 * @return string filename.
 	 * @since 4.5.000 (2008-12-31)
 	 * @public static
 	 */
-	public static function getObjFilename($name) {
-		return tempnam(K_PATH_CACHE, $name.'_');
+	public static function getObjFilename($type='tmp') {
+		return tempnam(K_PATH_CACHE, '__tcpdf_'.$type.'_'.md5(uniqid('', true).rand().microtime(true)).'_');
 	}
 
 	/**
@@ -1358,7 +1358,6 @@ class TCPDF_STATIC {
 		}
 		$seed .= uniqid('', true);
 		$seed .= rand();
-		$seed .= getmypid();
 		$seed .= __FILE__;
 		if (isset($_SERVER['REMOTE_ADDR'])) {
 			$seed .= $_SERVER['REMOTE_ADDR'];
@@ -1428,7 +1427,7 @@ class TCPDF_STATIC {
 	 * @public static
 	 */
 	public static function _RC4($key, $text, &$last_enc_key, &$last_enc_key_c) {
-		if (function_exists('mcrypt_decrypt') AND ($out = @mcrypt_decrypt(MCRYPT_ARCFOUR, $key, $text, MCRYPT_MODE_STREAM, ''))) {
+		if (function_exists('mcrypt_encrypt') AND ($out = @mcrypt_encrypt(MCRYPT_ARCFOUR, $key, $text, MCRYPT_MODE_STREAM, ''))) {
 			// try to use mcrypt function if exist
 			return $out;
 		}
@@ -1569,7 +1568,7 @@ class TCPDF_STATIC {
 		$length = strlen($name);
 		for ($i = 0; $i < $length; ++$i) {
 			$chr = $name[$i];
-			if (preg_match('/[0-9a-zA-Z]/', $chr) == 1) {
+			if (preg_match('/[0-9a-zA-Z#_=-]/', $chr) == 1) {
 				$escname .= $chr;
 			} else {
 				$escname .= sprintf('#%02X', ord($chr));
@@ -2165,7 +2164,7 @@ class TCPDF_STATIC {
 				$attrib = strtolower(trim($attrib[0]));
 				if (!empty($attrib)) {
 					// check if matches class, id, attribute, pseudo-class or pseudo-element
-					switch ($attrib{0}) {
+					switch ($attrib[0]) {
 						case '.': { // class
 							if (in_array(substr($attrib, 1), $class)) {
 								$valid = true;
@@ -2232,7 +2231,7 @@ class TCPDF_STATIC {
 							break;
 						}
 						case ':': { // pseudo-class or pseudo-element
-							if ($attrib{1} == ':') { // pseudo-element
+							if ($attrib[1] == ':') { // pseudo-element
 								// pseudo-elements are not supported!
 								// (::first-line, ::first-letter, ::before, ::after)
 							} else { // pseudo-class
@@ -2451,13 +2450,23 @@ class TCPDF_STATIC {
 
 	/**
 	 * Serialize an array of parameters to be used with TCPDF tag in HTML code.
-	 * @param $pararray (array) parameters array
-	 * @return sting containing serialized data
+	 * @param $data (array) parameters array
+	 * @return string containing serialized data
 	 * @since 4.9.006 (2010-04-02)
 	 * @public static
 	 */
-	public static function serializeTCPDFtagParameters($pararray) {
-		return urlencode(serialize($pararray));
+	public static function serializeTCPDFtagParameters($data) {
+		return urlencode(json_encode($data));
+	}
+
+	/**
+	 * Unserialize parameters to be used with TCPDF tag in HTML code.
+	 * @param $data (string) serialized data
+	 * @return array containing unserialized data
+	 * @public static
+	 */
+	public static function unserializeTCPDFtagParameters($data) {
+		return json_decode(urldecode($data), true);
 	}
 
 	/**
@@ -2733,7 +2742,7 @@ class TCPDF_STATIC {
 	 * @param $flags (int) The flags as specified on the preg_split PHP function.
 	 * @return Returns an array containing substrings of subject split along boundaries matched by pattern.modifier
 	 * @author Nicola Asuni
-	 * @since 6.0.021
+	 * @since 6.0.023
 	 * @public static
 	 */
 	public static function pregSplit($pattern, $modifiers, $subject, $limit=NULL, $flags=NULL) {
@@ -2748,8 +2757,89 @@ class TCPDF_STATIC {
 			$ret[] = "\n";
 			$subject = substr($subject, ($nl + 1));
 		}
-		if (!empty($subject)) {
+		if (strlen($subject) > 0) {
 			$ret = array_merge($ret, preg_split($pattern.$modifiers, $subject, $limit, $flags));
+		}
+		return $ret;
+	}
+
+	/**
+	 * Reads entire file into a string.
+	 * The file can be also an URL.
+	 * @param $file (string) Name of the file or URL to read.
+	 * @return The function returns the read data or FALSE on failure. 
+	 * @author Nicola Asuni
+	 * @since 6.0.025
+	 * @public static
+	 */
+	public static function fileGetContents($file) {
+		//$file = html_entity_decode($file);
+		// array of possible alternative paths/URLs
+		$alt = array($file);
+		// replace URL relative path with full real server path
+		if ((strlen($file) > 1)
+			AND ($file[0] == '/')
+			AND ($file[1] != '/')
+			AND !empty($_SERVER['DOCUMENT_ROOT'])
+			AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
+			$findroot = strpos($file, $_SERVER['DOCUMENT_ROOT']);
+			if (($findroot === false) OR ($findroot > 1)) {
+				if (substr($_SERVER['DOCUMENT_ROOT'], -1) == '/') {
+					$tmp = substr($_SERVER['DOCUMENT_ROOT'], 0, -1).$file;
+				} else {
+					$tmp = $_SERVER['DOCUMENT_ROOT'].$file;
+				}
+				$alt[] = htmlspecialchars_decode(urldecode($tmp));
+			}
+		}
+		// URL mode
+		$url = $file;
+		// check for missing protocol
+		if (preg_match('%^/{2}%', $url)) {
+			if (preg_match('%^([^:]+:)//%i', K_PATH_URL, $match)) {
+				$url = $match[1].str_replace(' ', '%20', $url);
+				$alt[] = $url;
+			}
+		}
+		$urldata = @parse_url($url);
+		if (!isset($urldata['query']) OR (strlen($urldata['query']) <= 0)) {
+			if (strpos($url, K_PATH_URL) === 0) {
+				// convert URL to full server path
+				$tmp = str_replace(K_PATH_URL, K_PATH_MAIN, $url);
+				$tmp = htmlspecialchars_decode(urldecode($tmp));
+				$alt[] = $tmp;
+			}
+		}
+		if (isset($_SERVER['SCRIPT_URI'])) {
+			$urldata = @parse_url($_SERVER['SCRIPT_URI']);
+			$alt[] = $urldata['scheme'].'://'.$urldata['host'].(($file[0] == '/') ? '' : '/').$file;
+		}
+		foreach ($alt as $f) {
+			$ret = @file_get_contents($f);
+			if (($ret === FALSE)
+				AND !ini_get('allow_url_fopen')
+				AND function_exists('curl_init')
+				AND preg_match('%^(https?|ftp)://%', $f)) {
+				// try to get remote file data using cURL
+				$cs = curl_init(); // curl session
+				curl_setopt($cs, CURLOPT_URL, $f);
+				curl_setopt($cs, CURLOPT_BINARYTRANSFER, true);
+				curl_setopt($cs, CURLOPT_FAILONERROR, true);
+				curl_setopt($cs, CURLOPT_RETURNTRANSFER, true);
+				if ((ini_get('open_basedir') == '') AND (!ini_get('safe_mode'))) {
+					curl_setopt($cs, CURLOPT_FOLLOWLOCATION, true);
+				}
+				curl_setopt($cs, CURLOPT_CONNECTTIMEOUT, 5);
+				curl_setopt($cs, CURLOPT_TIMEOUT, 30);
+				curl_setopt($cs, CURLOPT_SSL_VERIFYPEER, false);
+				curl_setopt($cs, CURLOPT_SSL_VERIFYHOST, false);
+				curl_setopt($cs, CURLOPT_USERAGENT, 'TCPDF');
+				$ret = curl_exec($cs);
+				curl_close($cs);
+			}
+			if ($ret !== FALSE) {
+				break;
+			}
 		}
 		return $ret;
 	}

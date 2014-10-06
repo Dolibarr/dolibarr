@@ -131,7 +131,7 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
+
 llxFooter();
 
 $db->close();
-?>

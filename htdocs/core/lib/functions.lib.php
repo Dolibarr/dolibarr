@@ -373,38 +373,43 @@ function dol_string_unaccent($str)
 {
 	if (utf8_check($str))
 	{
+		// See http://www.utf8-chartable.de/
 		$string = rawurlencode($str);
 		$replacements = array(
-		'%C3%80' => 'A','%C3%81' => 'A',
-		'%C3%88' => 'E','%C3%89' => 'E',
-		'%C3%8C' => 'I','%C3%8D' => 'I',
-		'%C3%92' => 'O','%C3%93' => 'O',
-		'%C3%99' => 'U','%C3%9A' => 'U',
-		'%C3%A0' => 'a','%C3%A1' => 'a','%C3%A2' => 'a',
+		'%C3%80' => 'A','%C3%81' => 'A','%C3%82' => 'A','%C3%83' => 'A','%C3%84' => 'A','%C3%85' => 'A',
+		'%C3%88' => 'E','%C3%89' => 'E','%C3%8A' => 'E','%C3%8B' => 'E',
+		'%C3%8C' => 'I','%C3%8D' => 'I','%C3%8E' => 'I','%C3%8F' => 'I',
+		'%C3%92' => 'O','%C3%93' => 'O','%C3%94' => 'O','%C3%95' => 'O','%C3%96' => 'O',
+		'%C3%99' => 'U','%C3%9A' => 'U','%C3%9B' => 'U','%C3%9C' => 'U',
+		'%C3%A0' => 'a','%C3%A1' => 'a','%C3%A2' => 'a','%C3%A3' => 'a','%C3%A4' => 'a','%C3%A5' => 'a',
+		'%C3%A7' => 'c',
 		'%C3%A8' => 'e','%C3%A9' => 'e','%C3%AA' => 'e','%C3%AB' => 'e',
-		'%C3%AC' => 'i','%C3%AD' => 'i','%C3%AE' => 'i',
-		'%C3%B2' => 'o','%C3%B3' => 'o',
-		'%C3%B9' => 'u','%C3%BA' => 'u'
+		'%C3%AC' => 'i','%C3%AD' => 'i','%C3%AE' => 'i','%C3%AF' => 'i',
+		'%C3%B1' => 'n',
+		'%C3%B2' => 'o','%C3%B3' => 'o','%C3%B4' => 'o','%C3%B5' => 'o','%C3%B6' => 'o',
+		'%C3%B9' => 'u','%C3%BA' => 'u','%C3%BB' => 'u','%C3%BC' => 'u',
+		'%C3%BF' => 'y'
 		);
 		$string=strtr($string, $replacements);
 		return rawurldecode($string);
 	}
 	else
 	{
+		// See http://www.ascii-code.com/
 		$string = strtr(
 			$str,
-			"\xC0\xC1\xC2\xC3\xC5\xC7
+			"\xC0\xC1\xC2\xC3\xC4\xC5\xC7
 			\xC8\xC9\xCA\xCB\xCC\xCD\xCE\xCF\xD0\xD1
 			\xD2\xD3\xD4\xD5\xD8\xD9\xDA\xDB\xDD
-			\xE0\xE1\xE2\xE3\xE5\xE7\xE8\xE9\xEA\xEB
+			\xE0\xE1\xE2\xE3\xE4\xE5\xE7\xE8\xE9\xEA\xEB
 			\xEC\xED\xEE\xEF\xF0\xF1\xF2\xF3\xF4\xF5\xF8
-			\xF9\xFA\xFB\xFD\xFF",
-			"AAAAAC
+			\xF9\xFA\xFB\xFC\xFD\xFF",
+			"AAAAAAC
 			EEEEIIIIDN
 			OOOOOUUUY
-			aaaaaceeee
+			aaaaaaceeee
 			iiiidnooooo
-			uuuyy"
+			uuuuyy"
 		);
 		$string = strtr($string, array("\xC4"=>"Ae", "\xC6"=>"AE", "\xD6"=>"Oe", "\xDC"=>"Ue", "\xDE"=>"TH", "\xDF"=>"ss", "\xE4"=>"ae", "\xE6"=>"ae", "\xF6"=>"oe", "\xFC"=>"ue", "\xFE"=>"th"));
 		return $string;
@@ -3765,7 +3770,7 @@ function make_substitutions($chaine,$substitutionarray)
 /**
  *  Complete the $substitutionarray with more entries
  *
- *  @param  array		&$substitutionarray		Array substitution old value => new value value
+ *  @param  array		$substitutionarray		Array substitution old value => new value value
  *  @param  Translate	$outputlangs            If we want substitution from special constants, we provide a language
  *  @param  Object		$object                 If we want substitution from special constants, we provide data in a source object
  *  @param  Mixed		$parameters       		Add more parameters (useful to pass product lines)
@@ -4104,7 +4109,7 @@ function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *  or descending output and uses optionally natural case insensitive sorting (which
  *  can be optionally case sensitive as well).
  *
- *  @param      array		&$array      		Array to sort (array of array('key','otherkey1','otherkey2'...))
+ *  @param      array		$array      		Array to sort (array of array('key','otherkey1','otherkey2'...))
  *  @param      string		$index				Key in array to use for sorting criteria
  *  @param      int			$order				Sort order
  *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard" sort (asort)
@@ -4267,6 +4272,7 @@ function dol_eval($s,$returnvalue=0)
 	global $langs, $user, $conf;
 	global $leftmenu;
 	global $rights;
+	global $object;
 
 	//print $s."<br>\n";
 	if ($returnvalue) return @eval('return '.$s.';');
@@ -4324,8 +4330,8 @@ function picto_from_langcode($codelang)
  *  @param	Conf		$conf           Object conf
  *  @param  Translate	$langs          Object langs
  *  @param  Object		$object         Object object
- *  @param  array		&$head          Object head
- *  @param  int			&$h             New position to fill
+ *  @param  array		$head          Object head
+ *  @param  int			$h             New position to fill
  *  @param  string		$type           Value for object where objectvalue can be
  *                              		'thirdparty'       to add a tab in third party view
  *		                              	'intervention'     to add a tab in intervention view

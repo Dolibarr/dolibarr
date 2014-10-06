@@ -420,7 +420,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 /**
  *   	Show header of page for PDF generation
  *
- *   	@param      PDF			&$pdf     		Object PDF
+ *   	@param      PDF			$pdf     		Object PDF
  *      @param      Translate	$outputlangs	Object lang for output
  * 		@param		int			$page_height	Height of page
  *      @return	void
@@ -430,7 +430,7 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 	global $conf;
 
 	// Add a background image on document
-	if (! empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))
+	if (! empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))		// Warning, this option make TCPDF generation beeing crazy and some content disappeared behin the image
 	{
         $pdf->SetAutoPageBreak(0,0);	// Disable auto pagebreak before adding image
 		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X)?$conf->global->MAIN_USE_BACKGROUND_ON_PDF_X:0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y)?$conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y:0), 0, $page_height);
@@ -441,7 +441,7 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 /**
  *      Add a draft watermark on PDF files
  *
- *      @param	PDF      	&$pdf           Object PDF
+ *      @param	PDF      	$pdf           Object PDF
  *      @param  Translate	$outputlangs	Object lang
  *      @param  int		    $h		        Height of PDF
  *      @param  int		    $w		        Width of PDF
@@ -481,7 +481,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 /**
  *  Show bank informations for PDF generation
  *
- *  @param	PDF			&$pdf            		Object PDF
+ *  @param	PDF			$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
@@ -643,7 +643,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 /**
  *  Show footer of page for PDF generation
  *
- *	@param	PDF			&$pdf     		The PDF factory
+ *	@param	PDF			$pdf     		The PDF factory
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
  * 	@param	Societe		$fromcompany	Object company
@@ -798,7 +798,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	if ($line)	// Free text
 	{
 		$pdf->SetXY($dims['lm'],-$posy);
-		$pdf->MultiCell($width, 3, $line, 0, $align, 0);
+		$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 		$posy-=$freetextheight;
 	}
 
@@ -838,7 +838,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	}
 
 	// Show page nb only on iso languages (so default Helvetica font)
-	if (mb_strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica')
+	if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica')
 	{
 		$pdf->SetXY(-20,-$posy);
 		//print 'xxx'.$pdf->PageNo().'-'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
@@ -852,7 +852,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 /**
  *	Show linked objects for PDF generation
  *
- *	@param	PDF			&$pdf				Object PDF
+ *	@param	PDF			$pdf				Object PDF
  *	@param	object		$object				Object
  *	@param  Translate	$outputlangs		Object lang
  *	@param  int			$posx				X
@@ -890,7 +890,7 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$al
 /**
  *	Output line description into PDF
  *
- *  @param  PDF				&$pdf               PDF object
+ *  @param  PDF				$pdf               PDF object
  *	@param	Object			$object				Object
  *	@param	int				$i					Current line number
  *  @param  Translate		$outputlangs		Object lang for output
@@ -1587,13 +1587,13 @@ function pdf_getLinkedObjects($object,$outputlangs)
 		{
 			$outputlangs->load('orders');
 			$outputlangs->load('sendings');
-			
+
 			$num=count($objects);
 			for ($i=0;$i<$num;$i++)
 			{
 				$objects[$i]->fetchObjectLinked();
 				$order = $objects[$i]->linkedObjects['commande'][0];
-				
+
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
 				$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($objects[$i]->ref);

@@ -153,4 +153,4 @@ WarningCloseAlways=هشدار، بسته شدن انجام می شود حتی ا
 WarningUsingThisBoxSlowDown=اخطار، با استفاده از این جعبه کاهش سرعت به طور جدی تمام صفحات نشان دادن جعبه.
 WarningClickToDialUserSetupNotComplete=راه اندازی از اطلاعات ClickToDial برای کاربر شما کامل نیست (ClickToDial زبانه دیدن بر روی کارت کاربر خود را).
 WarningNotRelevant=عملیات بی ربط برای این مجموعه داده
-WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=قابلیت غیر فعال زمانی که راه اندازی صفحه نمایش برای فرد نابینا یا از مرورگرهای متن بهینه شده است.

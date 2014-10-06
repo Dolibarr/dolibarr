@@ -242,6 +242,10 @@ a:hover { text-decoration: underline; color: #000000;}
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
 }
+textarea.cke_source:focus
+{
+	box-shadow: none;
+}
 
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
@@ -682,7 +686,7 @@ div.mainmenu.click2dial {
 }
 
 div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1) ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1) ?>);
 }
 
 div.mainmenu.commercial {
@@ -862,6 +866,9 @@ div#login_left, div#login_right {
 }
 table.login_table tr td table.none tr td {
 	padding: 2px;
+}
+#securitycode {
+	min-width: 60px;
 }
 #img_securitycode {
 	border: 1px solid #DDDDDD;
@@ -2493,6 +2500,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /*  CKEditor                                                                      */
 /* ============================================================================== */
 
+.cke_editable 
+{
+	margin: 5px !important;
+}
 .cke_editor table, .cke_editor tr, .cke_editor td
 {
     border: 0px solid #FF0000 !important;

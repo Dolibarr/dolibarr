@@ -4,10 +4,16 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
+<<<<<<< HEAD
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013-2014 Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+=======
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013	   Cedric GROSS	        <c.gross@kreiz-it.fr>
+ * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
+>>>>>>> refs/remotes/origin/3.5
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -602,7 +608,7 @@ class Product extends CommonObject
                 foreach ($this->stock_warehouse as $idW => $ObjW)
                 {
                     $qty_batch = 0;
-                    foreach ($ObjW->detail_batch as $detail)    
+                    foreach ($ObjW->detail_batch as $detail)
                     {
                         $qty_batch += $detail->qty;
                     }
@@ -615,12 +621,12 @@ class Product extends CommonObject
                         $ObjBatch->qty = $ObjW->real - $qty_batch;
                         $ObjBatch->fk_product_stock = $ObjW->id;
                         if ($ObjBatch->create($user,1) < 0)
-                        { 
+                        {
                             $error++;
                             $this->errors=$ObjBatch->errors;
                         }
                     }
-                }    
+                }
             }
 	        // For automatic creation
 	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
@@ -768,6 +774,7 @@ class Product extends CommonObject
 	function delete($id=0)
 	{
 		global $conf,$user,$langs;
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -993,6 +1000,62 @@ class Product extends CommonObject
 		}
 	}
 
+	/*
+	 * Sets an accountancy code for a product.
+	 * Also calls PRODUCT_MODIFY trigger when modified
+	 *
+	 * @param string $type It can be 'buy' or 'sell'
+	 * @param string $value Accountancy code
+	 * @return int <0 KO >0 OK
+	 */
+	public function setAccountancyCode($type, $value)
+	{
+		global $user, $langs, $conf;
+
+		$this->db->begin();
+
+		if ($type == 'buy') {
+			$field = 'accountancy_code_buy';
+		} elseif ($type == 'sell') {
+			$field = 'accountancy_code_sell';
+		} else {
+			return -1;
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ";
+		$sql.= "$field = '".$this->db->escape($value)."'";
+		$sql.= " WHERE rowid = ".$this->id;
+
+		dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+
+		if ($resql)
+		{
+			// Call triggers
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('PRODUCT_MODIFY',$this,$user,$langs,$conf);
+			if ($result < 0)
+			{
+				$this->errors=$interface->errors;
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
+			$this->$field = $value;
+
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
 	/**
 	 *	Load array this->multilangs
 	 *
@@ -1212,7 +1275,7 @@ class Product extends CommonObject
 		if ($newvat == '') $newvat=$this->tva_tx;
 		if (! empty($newminprice) && ($newminprice > $newprice))
 		{
-			$this->error='ErrorPricCanBeLowerThanMinPrice';
+			$this->error='ErrorPriceCantBeLowerThanMinPrice';
 			return -1;
 		}
 
@@ -1344,12 +1407,13 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, label, description, url, note, customcode, fk_country, price, price_ttc,";
+		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch";
+		$sql.= " ,ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
@@ -1369,6 +1433,7 @@ class Product extends CommonObject
 
 				$this->id						= $obj->rowid;
 				$this->ref						= $obj->ref;
+				$this->ref_ext					= $obj->ref_ext;
 				$this->libelle					= $obj->label;		// TODO deprecated
 				$this->label					= $obj->label;
 				$this->description				= $obj->description;
@@ -1423,10 +1488,12 @@ class Product extends CommonObject
 				$this->date_modification		= $obj->tms;
 				$this->import_key				= $obj->import_key;
 				$this->entity					= $obj->entity;
+				
+				$this->ref_ext					= $obj->ref_ext;
 
 				$this->db->free($resql);
-				
-				
+
+
 				// Retreive all extrafield for thirdparty
 				// fetch optionals attributes and labels
 				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
@@ -1793,7 +1860,7 @@ class Product extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *  Charge tableau des stats contrat pour le produit/service
 	 *
@@ -2976,7 +3043,7 @@ class Product extends CommonObject
 	function load_virtual_stock()
 	{
 		global $conf;
-		
+
 		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 		{
 			$stock_commande_client=$stock_commande_fournisseur=0;
@@ -2999,7 +3066,7 @@ class Product extends CommonObject
 				$result=$this->load_stats_commande_fournisseur(0,'3');
 				if ($result < 0) dol_print_error($db,$this->error);
 				$stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
-				
+
 				$result=$this->load_stats_reception(0,'3');
 				if ($result < 0) dol_print_error($db,$this->error);
 				$stock_reception_fournisseur=$this->stats_reception['qty'];

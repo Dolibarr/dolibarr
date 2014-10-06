@@ -442,6 +442,7 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/nltechno*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/pos*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/test`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/teclib*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
@@ -460,8 +461,8 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/license.txt`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/PHPExcel/Shared/PDF`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/PHPExcel/Shared/PCLZip`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.33`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-20100919`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-*`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/savant`;
@@ -610,9 +611,6 @@ if ($nboftargetok) {
 
             print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
 
-            #print "Create directory $RPMDIR\n";
-            #$ret=`mkdir -p "$RPMDIR"`;
-
     		print "Remove target ".$FILENAMERPM."...\n";
     		unlink("$NEWDESTI/".$FILENAMERPM);
     		print "Remove target ".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm...\n";
@@ -620,13 +618,13 @@ if ($nboftargetok) {
 
     		print "Create directory $BUILDROOT/$FILENAMETGZ2\n";
     		$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2`;
+    		
             print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ2\n";
     		$cmd="cp -pr '$BUILDROOT/$PROJECT' '$BUILDROOT/$FILENAMETGZ2'";
             $ret=`$cmd`;
 
-			# Set owners
-            #print "Set owners on files/dir\n";
-		    #$ret=`chown -R root.root $BUILDROOT/$FILENAMETGZ2`;
+            # Removed files we don't need
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/htdocs/includes/ckeditor/_source`;
 
             print "Set permissions on files/dir\n";
 		    $ret=`chmod -R 755 $BUILDROOT/$FILENAMETGZ2`;
@@ -747,10 +745,18 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/rpm`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/zip`;
             # Removed duplicate license files
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/_source/LICENSE.md`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/_source/plugins/scayt/LICENSE.md`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/_source/plugins/wsc/LICENSE.md`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/LICENSE.md`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/plugins/scayt/LICENSE.md`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/plugins/wsc/LICENSE.md`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/jquery/plugins/flot/LICENSE.txt`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.34/LICENSE`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/tcpdf/fonts/freefont-20120503/COPYING`;
+            # Removed files we don't need
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/_source`;
+            
             # Rename upstream changelog to match debian rules
 			$ret=`mv $BUILDROOT/$PROJECT.tmp/ChangeLog $BUILDROOT/$PROJECT.tmp/changelog`;
 			

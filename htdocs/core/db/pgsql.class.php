@@ -298,6 +298,9 @@ class DoliDBPgsql extends DoliDB
             $line=str_replace(' LIKE \'',' ILIKE \'',$line);
             $line=str_replace(' LIKE BINARY \'',' LIKE \'',$line);
 
+            // Replace INSERT IGNORE into INSERT
+            $line=preg_replace('/^INSERT IGNORE/','INSERT',$line);
+
 			// Delete using criteria on other table must not declare twice the deleted table
 			// DELETE FROM tabletodelete USING tabletodelete, othertable -> DELETE FROM tabletodelete USING othertable
 			if (preg_match('/DELETE FROM ([a-z_]+) USING ([a-z_]+), ([a-z_]+)/i',$line,$reg))
@@ -981,7 +984,8 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
-		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."' with password '".$this->escape($dolibarr_main_db_pass)."'";
+		// Note: using ' on user does not works with pgsql
+		$sql = "CREATE USER ".$this->escape($dolibarr_main_db_user)." with password '".$this->escape($dolibarr_main_db_pass)."'";
 
 		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);

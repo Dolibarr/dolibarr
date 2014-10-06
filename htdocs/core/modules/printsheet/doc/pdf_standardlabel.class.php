@@ -99,7 +99,7 @@ class pdf_standardlabel
 	 * Methode qui permet de modifier la taille des caracteres
 	 * Cela modiera aussi l'espace entre chaque ligne
 	 *
-	 * @param    PDF    &$pdf      PDF
+	 * @param    PDF    $pdf      PDF
 	 * @param    int    $pt        point
 	 * @return   void
 	 */
@@ -117,7 +117,7 @@ class pdf_standardlabel
 	 * - %LOGO% is replace with company logo
 	 * - %PHOTO% is replace with photo provided as parameter
 	 *
-	 * @param   PDF	    	&$pdf		    PDF
+	 * @param   PDF	    	$pdf		    PDF
 	 * @param   string		$textleft       Text left
 	 * @param   string     	$header         Header
 	 * @param   string     	$footer         Footer
@@ -292,7 +292,7 @@ class pdf_standardlabel
 	/**
 	 * Print dot line
 	 *
-	 * @param	PDF		&$pdf				PDF
+	 * @param	PDF		$pdf				PDF
 	 * @param 	int		$x1					X1
 	 * @param 	int		$y1					Y1
 	 * @param 	int		$x2					X2
@@ -333,7 +333,7 @@ class pdf_standardlabel
 	/**
 	 * Fonction realisant une croix aux 4 coins des cartes
 	 *
-	 * @param PDF	&$pdf				PDF
+	 * @param PDF	$pdf				PDF
 	 * @param int	$x1					X1
 	 * @param int	$y1					Y1
 	 * @param int	$x2					X2
@@ -404,7 +404,7 @@ class pdf_standardlabel
 	/**
 	 * Set format
 	 *
-	 * @param    PDF       &$pdf    PDF
+	 * @param    PDF       $pdf    PDF
 	 * @param    string    $format  Format
 	 * @return   void
 	 */

@@ -273,7 +273,7 @@ class DoliDBMysqli extends DoliDB
                 $this->lastqueryerror = $query;
                 $this->lasterror = $this->error();
                 $this->lasterrno = $this->errno();
-                dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+                dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno." ".$this->lasterror, LOG_WARNING);
             }
             $this->lastquery=$query;
             $this->_results = $ret;
@@ -829,12 +829,12 @@ class DoliDBMysqli extends DoliDB
         $resql=$this->query($sql);
         if (! $resql)
         {
-            if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS') 
+            if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS')
             {
             	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             	return -1;
             }
-            else 
+            else
             {
             	// If user already exists, we continue to set permissions
             	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);

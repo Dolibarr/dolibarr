@@ -8,7 +8,7 @@
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2014 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
@@ -391,7 +391,7 @@ class Facture extends CommonInvoice
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
 							$this->lines[$i]->label,
-							''
+							$this->lines[$i]->array_options
 						);
 						if ($result < 0)
 						{
@@ -592,6 +592,10 @@ class Facture extends CommonInvoice
 		$error=0;
 
 		$this->db->begin();
+
+		// get extrafields so they will be clone
+		foreach($this->lines as $line)
+			$line->fetch_optionals($line->rowid);
 
 		// Load source object
 		$objFrom = dol_clone($this);
@@ -1564,11 +1568,11 @@ class Facture extends CommonInvoice
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
 				if ($result < 0) {
-					$error++; 
+					$error++;
 					$this->errors=$interface->errors;
 					$this->db->rollback();
 					return -1;
-					
+
 				}
 				// Fin appel triggers
 
@@ -3574,7 +3578,7 @@ class FactureLigne  extends CommonInvoiceLine
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result = $interface->run_triggers('LINEBILL_INSERT',$this,$user,$langs,$conf);
-				if ($result < 0) 
+				if ($result < 0)
 				{
 					$error++;
 					$this->errors=$interface->errors;

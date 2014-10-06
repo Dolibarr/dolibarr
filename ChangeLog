@@ -2,6 +2,32 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.6.1 compared to 3.6.* *****
+For users:
+- Fix: Can upload files on services.
+- Fix: sql errors on updat fichinter.
+- Fix: debian script syntax error.
+- Fix: error "menu param is not inside list" into pos module.
+- Fix: Salary payments are not reflected on the reporting sheets.
+- Fix: Unsubscribe emailing not working.
+- Fix: Trigger on create category call failed because user is not passed on card.
+- Fix: list event view lost type event filter.
+- Fix: Save also code event.
+- Fix: VAT payment - Add control on field date value.
+- Fix: Salaries payment - Field date value is now required and add control on it.
+- Fix: Iban was used instead of Bic into SEPA file.
+- Fix: Must unaccent strings into SEPA file.
+- Fix: Extrafield feature select from table should try to translate multiple column when not needed 
+- Fix: cents for indian ruppes are calle paisa and paise.
+- Fix: Invoices payments may be older than invoices.
+- Fix: Withdrawal total amount is double
+- Fix: [ bug #1593 ] Spanish Localtax IRPF not being calculated since 3.6.0 in supplier invoices when adding a line
+- Fix: Web service categorie WDSL declaration is correct
+- Fix: ErrorBadValueForParamNotAString was displayed in virtual product if no base price defined
+- Fix: Category creation failed and no message output
+- Fix: Lanf for Payment Type
+- Fix: PHPCheckstyle 1.5.5
+
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
 - New: Update ckeditor to version 4.
@@ -111,9 +137,34 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 
 
 ***** ChangeLog for 3.5.5 compared to 3.5.4 *****
+Fix: Holiday module was broken. Initializaion of amount of holidays failed.
 Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas.
-Fix: Fusion PDF button on unpaid invoice is no more displayed 
-Fix: Unpaid invoice launch fusion PDF action even if it is only search (with enter keyboard input instead of lens click)
+Fix: Fusion PDF button on unpaid invoice is no more displayed.
+Fix: Unpaid invoice launch fusion PDF action even if it is only search (with enter keyboard input instead of lens click).
+Fix: Pb when showing log list of holiday module with some mysql versions.
+Fix: Error with bad timezone pushed by some browsers.
+Fix: shipping list SQL request was not filtering on shipping element
+Fix: debian package provided by dolibarr team must use embedded libraries.
+Fix: [ bug #1528 ] Leopard Services numeration module description is not translated.
+Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas.
+Fix: [ bug #1534 ] Unknown error when deleting a product photo under special circumstances.
+Fix: Update impayees.php
+Fix: Link product, In list view and label product.
+Fix: visible task into area "time" for "My task" must limit task to tasks i am assigned to.
+Fix: When disabled, all fields to add time into task line must be disabled.
+Fix: Missing include files.lib.php in some pages that use dol_delete_recursive
+Fix: [ bug #1558 ] Product/service edit page title shows new Ref instead of old ref.
+Fix: [ bug #1553 ] Saving User displays setup removes menu.
+Fix: [ bug #1544 ] Can remove date from invoice.
+Fix: list event view lost type event filter.
+Fix: Add code save on create event.
+Fix: SQL injection.
+Fix: [ bug #1589 ] Menu type in "Edit menu" page is not translated
+Fix: [ bug #1591 ] Linked object block shows Total HT/TTC even if not having permission to read them
+Fix: [ bug #1577 ] When creating new Private individual third, selected third type is ignored
+Fix: [ bug #1555 ] Update accountancy code of products does not throw PRODUCT_MODIFY trigger
+Fix: [ bug #1548 ] Supplier payment card shows type in French
+Fix: [ bug #1546 ] Incorrect page number when searching in the list of bank transactions
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.
@@ -423,6 +474,7 @@ Fix: Add a limit into list to avoid browser to hang when database is too large.
 Fix: [ bug #1212 ] 'jqueryFileTree.php' directory traversal vulnerability
 Fix: Agenda and Banks module were not working with multicompany module
 Fix: [ bug #1317 ] Removing a category does not remove all child categories
+Fix: [ bug #1380 ] Customer invoices are not grouped in company results report.
 
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
 Fix: field's problem into company's page (RIB).

@@ -160,14 +160,7 @@ if (empty($reshook))
 
         $object->forme_juridique_code  = GETPOST('forme_juridique_code');
         $object->effectif_id           = GETPOST('effectif_id');
-        if (GETPOST("private") == 1)
-        {
-            $object->typent_id         = dol_getIdFromCode($db,'TE_PRIVATE','c_typent');
-        }
-        else
-        {
-            $object->typent_id         = GETPOST('typent_id');
-        }
+        $object->typent_id         = GETPOST('typent_id');
 
         $object->client                = GETPOST('client');
         $object->fournisseur           = GETPOST('fournisseur');
@@ -1069,12 +1062,11 @@ else
             $res=$object->fetch_optionals($object->id,$extralabels);
             //if ($res < 0) { dol_print_error($db); exit; }
 
-
 	        $head = societe_prepare_head($object);
 
 	        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
-
+	         
             // Load object modCodeTiers
             $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
             if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
@@ -1110,7 +1102,9 @@ else
             {
                 $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
             }
-
+            
+            $object->oldcopy=dol_clone($object);
+            
             if (GETPOST('nom'))
             {
                 // We overwrite with values if posted
@@ -1142,7 +1136,7 @@ else
                 $object->barcode				= GETPOST('barcode');
                 $object->forme_juridique_code	= GETPOST('forme_juridique_code');
                 $object->default_lang			= GETPOST('default_lang');
-
+                
                 $object->tva_assuj				= GETPOST('assujtva_value');
                 $object->tva_intra				= GETPOST('tva_intra');
                 $object->status					= GETPOST('status');
@@ -1179,7 +1173,7 @@ else
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="socid" value="'.$object->id.'">';
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
-
+            
             print '<table class="border" width="100%">';
 
             // Name
@@ -1215,6 +1209,7 @@ else
             if ((!$object->code_client || $object->code_client == -1) && $modCodeClient->code_auto)
             {
                 $tmpcode=$object->code_client;
+                if (empty($tmpcode) && ! empty($object->oldcopy->code_client)) $tmpcode=$object->oldcopy->code_client; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
                 if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
                 print '<input type="text" name="code_client" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
             }
@@ -1247,6 +1242,7 @@ else
                 if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
                 {
                     $tmpcode=$object->code_fournisseur;
+                    if (empty($tmpcode) && ! empty($object->oldcopy->code_fournisseur)) $tmpcode=$object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
                     if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
                     print '<input type="text" name="code_fournisseur" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
                 }
@@ -1449,7 +1445,7 @@ else
             print '<tr class="hideonsmartphone">';
             print '<td>'.$langs->trans("Logo").'</td>';
             print '<td colspan="3">';
-            if ($object->logo) print $form->showphoto('societe',$object,50);
+            if ($object->logo) print $form->showphoto('societe',$object);
             $caneditfield=1;
             if ($caneditfield)
             {
@@ -1524,7 +1520,7 @@ else
         print '</tr>';
 
         // Logo+barcode
-        $rowspan=4;
+        $rowspan=6;
         if (! empty($conf->global->SOCIETE_USEPREFIX)) $rowspan++;
         if (! empty($object->client)) $rowspan++;
         if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire)) $rowspan++;
@@ -1534,9 +1530,9 @@ else
         if ($showlogo || $showbarcode)
         {
             $htmllogobar.='<td rowspan="'.$rowspan.'" style="text-align: center;" width="25%">';
-            if ($showlogo)   $htmllogobar.=$form->showphoto('societe',$object,50);
+            if ($showlogo)   $htmllogobar.=$form->showphoto('societe',$object);
             if ($showlogo && $showbarcode) $htmllogobar.='<br><br>';
-            if ($showbarcode) $htmllogobar.=$form->showbarcode($object,50);
+            if ($showbarcode) $htmllogobar.=$form->showbarcode($object);
             $htmllogobar.='</td>';
         }
 
@@ -1615,12 +1611,12 @@ else
         if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
 
         // EMail
-        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print dol_print_email($object->email,0,$object->id,'AC_EMAIL');
         print '</td></tr>';
 
         // Web
-        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print dol_print_url($object->url);
         print '</td></tr>';
 
@@ -1969,7 +1965,6 @@ else
 	        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
 	        {
 				print '<div class="fichecenter"><div class="fichethirdleft">';
-	        	//print '<table width="100%"><tr><td valign="top" width="50%">';
 	            print '<a name="builddoc"></a>'; // ancre
 
 	            /*

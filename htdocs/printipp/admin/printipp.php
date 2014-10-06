@@ -149,7 +149,7 @@ if ($mode == 'config' && $user->admin)
     print $langs->trans("PRINTIPP_PASSWORD").'</td><td>';
     print '<input size="32" type="text" name="PRINTIPP_PASSWORD" value="'.$conf->global->PRINTIPP_PASSWORD.'">';
     print '</td></tr>';
-    
+
     //$var=true;
     //print '<tr class="liste_titre">';
     //print '<td>'.$langs->trans("OtherParameter").'</td>';
@@ -181,7 +181,7 @@ if ($mode == 'test' && $user->admin)
     print '<td>Media</td>';
     print '<td>Supported</td>';
     print "</tr>\n";
-    
+
     $list = $printer->getlist_available_printers();
     $var = true;
     foreach ($list as $value)
@@ -203,13 +203,13 @@ if ($mode == 'test' && $user->admin)
         print "</tr>\n";
     }
     print '</table>';
-    
+
     if (count($list) == 0) print $langs->trans("NoPrinterFound");
 }
 
 dol_fiche_end();
 
+
 llxFooter();
 
 $db->close();
-?>
