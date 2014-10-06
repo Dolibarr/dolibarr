@@ -66,7 +66,7 @@ $result=restrictedArea($user,'contrat',$id);
 $usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:0);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('contractcard'));
+$hookmanager->initHooks(array('contractcard','globalcard'));
 
 $object = new Contrat($db);
 $extrafields = new ExtraFields($db);

@@ -88,7 +88,7 @@ $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype,$objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('productcard'));
+$hookmanager->initHooks(array('productcard','globalcard'));
 
 
 
