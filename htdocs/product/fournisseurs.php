@@ -60,7 +60,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service&fournisseur',$fieldvalue,'product&product','','',$fieldtype);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('pricesuppliercard'));
+$hookmanager->initHooks(array('pricesuppliercard','globalcard'));
 $product = new ProductFournisseur($db);
 $product->fetch($id,$ref);
 

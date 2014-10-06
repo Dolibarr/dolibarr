@@ -74,7 +74,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('interventioncard'));
+$hookmanager->initHooks(array('interventioncard','globalcard'));
 
 $object = new Fichinter($db);
 $extrafields = new ExtraFields($db);

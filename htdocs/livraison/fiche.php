@@ -65,7 +65,7 @@ if ($id > 0 || ! empty($ref)) {
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('deliverycard'));
+$hookmanager->initHooks(array('deliverycard','globalcard'));
 
 /*
  * Actions

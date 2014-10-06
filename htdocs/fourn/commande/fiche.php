@@ -72,7 +72,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('ordersuppliercard'));
+$hookmanager->initHooks(array('ordersuppliercard','globalcard'));
 
 $object = new CommandeFournisseur($db);
 $extrafields = new ExtraFields($db);

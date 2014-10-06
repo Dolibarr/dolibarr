@@ -57,7 +57,7 @@ if( ! $user->rights->resource->read)
 
 $object = new Resource($db);
 
-$hookmanager->initHooks(array('resource_card'));
+$hookmanager->initHooks(array('resource_card','globalcard'));
 $parameters=array('resource_id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 

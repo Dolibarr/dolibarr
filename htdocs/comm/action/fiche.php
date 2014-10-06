@@ -75,7 +75,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 //var_dump($_POST);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('actioncard'));
+$hookmanager->initHooks(array('actioncard','globalcard'));
 
 
 /*

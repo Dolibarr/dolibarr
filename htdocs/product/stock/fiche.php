@@ -49,7 +49,7 @@ $mesg = '';
 $result=restrictedArea($user,'stock');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('warehousecard'));
+$hookmanager->initHooks(array('warehousecard','globalcard'));
 
 
 /*
