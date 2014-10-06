@@ -93,7 +93,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,$objecttype,$objectid,$dbtablename,'','',$fieldid);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('categorycard'));
+$hookmanager->initHooks(array('categorycard','globalcard'));
 
 
 /*

@@ -50,7 +50,7 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 if (! $user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('projecttaskcard'));
+$hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
 $object = new Task($db);
 $extrafields = new ExtraFields($db);

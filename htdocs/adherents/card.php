@@ -108,7 +108,7 @@ if ($rowid)
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('membercard'));
+$hookmanager->initHooks(array('membercard','globalcard'));
 
 
 /*
