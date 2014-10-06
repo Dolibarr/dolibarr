@@ -9,8 +9,8 @@ Nbterms=Nombre d'échéances
 LoanAccountancyCapitalCode=Compte comptable capital
 LoanAccountancyInsuranceCode=Compte comptable assurance
 LoanAccountancyInterestCode=Compte comptable intérêts
-Calculator=Simulateur
-CalculatorLoan=Simulateur d'emprunt
+ConfirmDeleteLoan=Confirmation de supression de cet emprunt
+ConfirmPayLoan=Confirmation que cet emprunt est classé comme payé
 ErrorLoanCapital=<font color=red>Le capital de l'emprunt</font> doit être au format numérique et supérieur à zéro.
 ErrorLoanLength=<font color=red>La durée de l'emprunt</font> doit être au format numérique et supérieur à zéro.
 ErrorLoanInterest=<font color=red>Les intérêts d'emprunt</font> doivent être au format numérique et supérieur à zéro.

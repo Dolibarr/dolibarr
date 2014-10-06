@@ -297,7 +297,7 @@ if ($id > 0)
 
 		if ($action == 'edit')
 		{
-			print "<form name=\"loan\" action=\"card.php?id=$object->id&amp;action=update\" method=\"post\">";
+			print '<form name="loan" action="' . $_SERVER["PHP_SELF"] . '?id=$object->id&amp;action=update" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		}
 

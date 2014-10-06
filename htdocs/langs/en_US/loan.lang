@@ -9,8 +9,8 @@ Nbterms=Number of terms
 LoanAccountancyCapitalCode=Accountancy code capital
 LoanAccountancyInsuranceCode=Accountancy code insurance
 LoanAccountancyInterestCode=Accountancy code interest
-Calculator=Simulator
-CalculatorLoan=Loan simulator
+ConfirmDeleteLoan=Confirm deleting this loan
+ConfirmPayLoan=Confirm classify paid this loan 
 ErrorLoanCapital=<font color=red>Loan amount</font> has to be numeric and greater than zero.
 ErrorLoanLength=<font color=red>Loan length</font> has to be numeric and greater than zero.
 ErrorLoanInterest=<font color=red>Annual interest</font> has to be numeric and greater than zero.
