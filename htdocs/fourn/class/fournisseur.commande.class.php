@@ -2040,7 +2040,7 @@ class CommandeFournisseur extends CommonOrder
 
                 if ($string == $result->code)
                 {
-                    $string = $obj->libelle != '-' ? $obj->libelle : '';
+                    $string = $result->libelle != '-' ? $result->libelle : '';
                 }
 
                 return $string;
