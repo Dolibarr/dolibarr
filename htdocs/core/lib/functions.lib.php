@@ -4147,7 +4147,11 @@ function setEventMessages($mesg, $mesgs, $style='mesgs')
 {
 	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
 	if (empty($mesgs)) setEventMessage($mesg, $style);
-	else setEventMessage($mesgs, $style);
+	else
+	{
+		if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
+		setEventMessage($mesgs, $style);
+	}
 }
 
 /**
