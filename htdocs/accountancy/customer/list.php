@@ -227,9 +227,8 @@ if ($result) {
 		$i ++;
 	}
 
-	print '<tr><td colspan="8">&nbsp;</td></tr><tr><td colspan="8" align="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '"></td></tr>';
-
 	print '</table>';
+	print '<br><div align="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '"></div>';
 	print '</form>';
 } else {
 	print $db->error();
