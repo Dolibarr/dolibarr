@@ -26,13 +26,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 
 
 /**
- *      \class 		mod_codecompta_panicum
- *		\brief 		Class to manage accountancy code of thirdparties with Panicum rules
+ *		Class to manage accountancy code of thirdparties with Panicum rules
  */
 class mod_codecompta_panicum extends ModeleAccountancyCode
 {
 	var $nom='Panicum';
-    var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
+	var $name='Panicum';
+	var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
 
 
 	/**
@@ -51,7 +51,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 */
 	function info($langs)
 	{
-		return $langs->trans("ModuleCompanyCode".$this->nom);
+		return $langs->trans("ModuleCompanyCode".$this->name);
 	}
 
 	/**

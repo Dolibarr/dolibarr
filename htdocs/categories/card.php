@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+/* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
+ * Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
+ * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 		}
 	}
 
-	
+
 
 	$object->label			= $label;
 	$object->description	= dol_htmlcleanlastbr($description);
@@ -125,7 +125,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	$object->type			= $type;
 
 	if ($parent != "-1") $object->fk_parent = $parent;
-	
+
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 	if (! $object->label)
@@ -243,6 +243,7 @@ if ($user->rights->categorie->creer)
 		print $form->select_all_categories($type, $catorigin);
 		print '</td></tr>';
 
+		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{

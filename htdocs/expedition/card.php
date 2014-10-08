@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		Francis Appels			<francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ if ($id > 0 || ! empty($ref))
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('expeditioncard'));
+$hookmanager->initHooks(array('expeditioncard','globalcard'));
 
 /*
  * Actions
@@ -1433,6 +1434,18 @@ else if ($id || $ref)
 					$entrepot = new Entrepot($db);
 					$entrepot->fetch($lines[$i]->entrepot_id);
 					print $entrepot->getNomUrl(1);
+				} 
+				else if (count($lines[$i]->details_entrepot) > 1)
+				{
+					$detail = '';
+					foreach ($lines[$i]->details_entrepot as $detail_entrepot) {
+						if ($detail_entrepot->entrepot_id > 0) {
+							$entrepot = new Entrepot($db);
+							$entrepot->fetch($detail_entrepot->entrepot_id);
+							$detail.= $langs->trans("DetailWarehouseFormat",$entrepot->libelle,$detail_entrepot->qty_shipped).'<br/>';
+						}
+					}
+					print $form->textwithtooltip($langs->trans("DetailWarehouseNumber"),$detail);
 				}
 				print '</td>';
 			}
@@ -1440,6 +1453,7 @@ else if ($id || $ref)
 			// Batch number managment
 			if (! empty($conf->productbatch->enabled)) {
 				if (isset($lines[$i]->detail_batch) ) {
+					$flagBatch = true;
 					print '<td align="center">';
 					$detail = '';
 					foreach ($lines[$i]->detail_batch as $dbatch) {
@@ -1526,10 +1540,17 @@ else if ($id || $ref)
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans($label).'</a>';
 			}
 		}
-
+        
 		if ($user->rights->expedition->supprimer)
 		{
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+			if (empty($conf->productbatch->enabled) || (!empty($conf->productbatch->enabled) && !$conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !isset($flagBatch))
+			{
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#">'.$langs->trans('Delete').'</a>';
+			}
 		}
 
 		print '</div>';

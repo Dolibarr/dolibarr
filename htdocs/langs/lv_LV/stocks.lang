@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - stocks
-WarehouseCard=Noliktava karte
+WarehouseCard=Noliktava kartiņa
 Warehouse=Noliktava
 Warehouses=Noliktavas
 NewWarehouse=Jauns noliktavu / Noliktavas platība
@@ -35,7 +35,7 @@ Unit=Vienība
 StockCorrection=Labot krājumus
 StockTransfer=Krājumu pārvietošana
 StockMovement=Pārvietot
-StockMovements=Krājumu pārvieošanas
+StockMovements=Krājumu pārvietošanas
 LabelMovement=Kustību nosaukums
 NumberOfUnit=Vienību skaits
 UnitPurchaseValue=Vienības iepirkuma cena
@@ -73,7 +73,7 @@ MininumStockShort=Krājumu min
 StockUpShort=Krājumi
 IdWarehouse=Id noliktava
 DescWareHouse=Apraksts noliktava
-LieuWareHouse=Lokalizācija noliktava
+LieuWareHouse=Lokālā noliktava
 WarehousesAndProducts=Noliktavas un produkti
 AverageUnitPricePMPShort=Vidējais svērtais ieejas cena
 AverageUnitPricePMP=Vidējais svērtais ieejas cena

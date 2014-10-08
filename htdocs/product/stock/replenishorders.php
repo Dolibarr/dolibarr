@@ -1,6 +1,7 @@
 <?php
 /*
- * Copyright (C) 2013   Cédric Salvador    <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013	Cédric Salvador	<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014	Regis Houssin	<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +45,7 @@ $result=restrictedArea($user,'produit|service');
  * View
  */
 
-$helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
-$helpurl .= 'ES:M&oacute;dulo_Stocks';
+$helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $texte = $langs->trans('ReplenishmentOrders');
 
 llxHeader('', $texte, $helpurl, '');
@@ -77,7 +77,7 @@ if (!$sortfield) $sortfield = 'cf.date_creation';
 
 $offset = $conf->liste_limit * $page ;
 
-$sql = 'SELECT s.rowid as socid, s.nom, cf.date_creation as dc,';
+$sql = 'SELECT s.rowid as socid, s.nom as name, cf.date_creation as dc,';
 $sql.= ' cf.rowid, cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,';
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande_fournisseur as cf';
@@ -132,7 +132,7 @@ if ($sall) {
     $sql .= ' AND (cf.ref LIKE "%' . $db->escape($sall) . '%" ';
     $sql .= 'OR cf.note LIKE "%' . $db->escape($sall) . '%")';
 }
-if ($socid) {
+if (!empty($socid)) {
     $sql .= ' AND s.rowid = ' . $socid;
 }
 
@@ -273,7 +273,7 @@ if ($resql)
             print '<td>'.
                  '<a href="' . $href .'">'.
                  img_object($langs->trans('ShowCompany'), 'company'). ' '.
-                 $obj->nom . '</a></td>';
+                 $obj->name . '</a></td>';
 
             // Author
             $userstatic->id = $obj->fk_user_author;

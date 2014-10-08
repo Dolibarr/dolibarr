@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Simon Tosser			<simon@kornog-computing.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@ $langs->load("stocks");
 $langs->load("companies");
 
 $action=GETPOST('action');
+$cancel=GETPOST('cancel');
+$confirm=GETPOST('confirm');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -47,7 +49,7 @@ if (! $sortorder) $sortorder="DESC";
 $result=restrictedArea($user,'stock');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('warehousecard'));
+$hookmanager->initHooks(array('warehousecard','globalcard'));
 
 
 /*
@@ -59,17 +61,17 @@ if ($action == 'add' && $user->rights->stock->creer)
 {
 	$object = new Entrepot($db);
 
-	$object->ref         = $_POST["ref"];
-	$object->libelle     = $_POST["libelle"];
-	$object->description = $_POST["desc"];
-	$object->statut      = $_POST["statut"];
-	$object->lieu        = $_POST["lieu"];
-	$object->address     = $_POST["address"];
-	$object->zip         = $_POST["zipcode"];
-	$object->town        = $_POST["town"];
-	$object->country_id  = $_POST["country_id"];
+	$object->ref         = GETPOST("ref");
+	$object->libelle     = GETPOST("libelle");
+	$object->description = GETPOST("desc");
+	$object->statut      = GETPOST("statut");
+	$object->lieu        = GETPOST("lieu");
+	$object->address     = GETPOST("address");
+	$object->zip         = GETPOST("zipcode");
+	$object->town        = GETPOST("town");
+	$object->country_id  = GETPOST("country_id");
 
-	if ($object->libelle) {
+	if (! empty($object->libelle)) {
 		$id = $object->create($user);
 		if ($id > 0)
 		{
@@ -87,7 +89,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 }
 
 // Delete warehouse
-if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->stock->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
 {
 	$object = new Entrepot($db);
 	$object->fetch($_REQUEST["id"]);
@@ -105,19 +107,19 @@ if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->right
 }
 
 // Modification entrepot
-if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 {
 	$object = new Entrepot($db);
 	if ($object->fetch($id))
 	{
-		$object->libelle     = $_POST["libelle"];
-		$object->description = $_POST["desc"];
-		$object->statut      = $_POST["statut"];
-		$object->lieu        = $_POST["lieu"];
-		$object->address     = $_POST["address"];
-		$object->zip         = $_POST["zipcode"];
-		$object->town        = $_POST["town"];
-		$object->country_id  = $_POST["country_id"];
+		$object->libelle     = GETPOST("libelle");
+		$object->description = GETPOST("desc");
+		$object->statut      = GETPOST("statut");
+		$object->lieu        = GETPOST("lieu");
+		$object->address     = GETPOST("address");
+		$object->zip         = GETPOST("zipcode");
+		$object->town        = GETPOST("town");
+		$object->country_id  = GETPOST("country_id");
 
 		if ( $object->update($id, $user) > 0)
 		{
@@ -136,7 +138,7 @@ if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	}
 }
 
-if ($_POST["cancel"] == $langs->trans("Cancel"))
+if ($cancel == $langs->trans("Cancel"))
 {
 	$action = '';
 }
@@ -162,37 +164,36 @@ if ($action == 'create')
 	print "<form action=\"card.php\" method=\"post\">\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="type" value="'.$type.'">'."\n";
 
 	print '<table class="border" width="100%">';
 
 	// Ref
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
 
-	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
+	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.(!empty($object->lieu)?$object->lieu:'').'"></td></tr>';
 
 	// Description
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('desc',$object->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
+	$doleditor=new DolEditor('desc',(!empty($object->description)?$object->description:''),'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
 	$doleditor->Create();
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
-	print $object->address;
+	print (!empty($object->address)?$object->address:'');
 	print '</textarea></td></tr>';
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-	print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
+	print $formcompany->select_ziptown((!empty($object->zip)?$object->zip:''),'zipcode',array('town','selectcountry_id','state_id'),6);
 	print '</td><td>'.$langs->trans('Town').'</td><td>';
-	print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
+	print $formcompany->select_ziptown((!empty($object->town)?$object->town:''),'town',array('zipcode','selectcountry_id','state_id'));
 	print '</td></tr>';
 
 	// Country
 	print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-	print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
+	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code),'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
 

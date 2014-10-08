@@ -106,7 +106,7 @@ print "</table>";
 print '</form>';
 
 $sql = "SELECT";
-if ($agentid > 0) $sql.= " s.rowid as socid, s.nom, s.code_client, s.client,";
+if ($agentid > 0) $sql.= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 $sql.= " u.rowid as agent, u.login, u.lastname, u.firstname,";
 $sql.= " sum(d.total_ht) as selling_price,";
 $sql.= " sum(".$db->ifsql('d.total_ht <=0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
@@ -201,7 +201,7 @@ if ($result)
 			print "<tr ".$bc[$var].">";
 			if ($agentid > 0) {
 				$companystatic->id=$objp->socid;
-				$companystatic->nom=$objp->nom;
+				$companystatic->name=$objp->name;
 				$companystatic->client=$objp->client;
 				print "<td>".$companystatic->getNomUrl(1,'customer')."</td>\n";
 			}

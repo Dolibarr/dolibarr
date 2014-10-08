@@ -182,7 +182,7 @@ class pdf_crabe extends ModelePDFFactures
 			}
 		}
 		if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
-				
+
 		if ($conf->facture->dir_output)
 		{
 			$object->fetch_thirdparty();
@@ -369,7 +369,7 @@ class pdf_crabe extends ModelePDFFactures
 						// $pdf->Image does not increase value return by getY, so we save it manually
 						$posYAfterImage=$curY+$imglinesize['height'];
 					}
-					
+
 					// Description of product line
 					$curX = $this->posxdesc-1;
 
@@ -407,7 +407,7 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription=$pdf->GetY();
-					
+
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
@@ -487,7 +487,7 @@ class pdf_crabe extends ModelePDFFactures
 					$this->tva[$vatrate] += $tvaligne;
 
 					if ($posYAfterImage > $posYAfterDescription) $nexY=$posYAfterImage;
-					
+
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
@@ -1241,7 +1241,7 @@ class pdf_crabe extends ModelePDFFactures
 				//$pdf->MultiCell($this->posxtva-$this->posxpicture-1,2, $outputlangs->transnoentities("Photo"),'','C');
 			}
 		}
-		
+
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
@@ -1479,12 +1479,12 @@ class pdf_crabe extends ModelePDFFactures
 			{
 				// On peut utiliser le nom de la societe du contact
 				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
-				else $socname = $object->client->nom;
+				else $socname = $object->client->name;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
 			else
 			{
-				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 			}
 
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');

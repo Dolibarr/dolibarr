@@ -1090,7 +1090,7 @@ class Adherent extends CommonObject
                 $this->ref				= $obj->rowid;
                 $this->id				= $obj->rowid;
                 $this->ref_ext			= $obj->ref_ext;
-                $this->civility_id		= $obj->civility;
+                $this->civility_id		= $obj->civility_id;
                 $this->firstname		= $obj->firstname;
                 $this->lastname			= $obj->lastname;
                 $this->login			= $obj->login;

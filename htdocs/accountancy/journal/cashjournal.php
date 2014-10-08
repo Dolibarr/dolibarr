@@ -171,7 +171,7 @@ if ($result) {
 			} else if ($links[$key]['type'] == 'company') {
 
 				$societestatic->id = $links[$key]['url_id'];
-				$societestatic->nom = $links[$key]['label'];
+				$societestatic->name = $links[$key]['label'];
 				$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 				$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
 			} else if ($links[$key]['type'] == 'sc') {
@@ -448,14 +448,14 @@ if ($action == 'export_csv') {
 
 	llxHeader('', $langs->trans("CashJournal"), '');
 
-	$nom = $langs->trans("CashJournal");
+	$name = $langs->trans("CashJournal");
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = time();
 	$description = $langs->trans("DescCashJournal") . '<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
-	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
+	report_header($name, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
 
 	print '<input type="button" class="button" style="float: right;" value="Export CSV" onclick="launch_export();" />';
 

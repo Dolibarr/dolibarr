@@ -104,7 +104,7 @@ print '</tr>';
 
 // Name
 print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
-print '<td width="75%" class="valeur">'.$fgroup->nom;
+print '<td width="75%" class="valeur">'.$fgroup->name;
 if (!$fgroup->entity)
 {
 	print img_picto($langs->trans("GlobalGroup"),'redstar');

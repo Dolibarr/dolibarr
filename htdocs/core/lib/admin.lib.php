@@ -70,7 +70,7 @@ function versioncompare($versionarray1,$versionarray2)
         if ($operande1 < $operande2) { $ret = -$level; break; }
         if ($operande1 > $operande2) { $ret = $level; break; }
     }
-    //print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret;
+    //print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret.'<br>'."\n";
     return $ret;
 }
 
@@ -712,7 +712,7 @@ function activateModule($value,$withdeps=1)
     // Test if Dolibarr version ok
     $verdol=versiondolibarrarray();
     $vermin=isset($objMod->need_dolibarr_version)?$objMod->need_dolibarr_version:0;
-    //print 'eee'.versioncompare($verdol,$vermin).join(',',$verdol).' - '.join(',',$vermin);exit;
+    //print 'eee '.versioncompare($verdol,$vermin).' - '.join(',',$verdol).' - '.join(',',$vermin);exit;
     if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
     {
         return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));

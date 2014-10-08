@@ -44,7 +44,7 @@ $result = restrictedArea($user, 'salaries', '', '', '');
 $sal = new PaymentSalary($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('salarycard'));
+$hookmanager->initHooks(array('salarycard','globalcard'));
 
 
 

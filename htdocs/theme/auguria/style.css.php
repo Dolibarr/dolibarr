@@ -64,7 +64,7 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 // Define image path files and other constants
 $fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 $img_liste_titre=dol_buildpath($path.'/theme/'.$theme.'/img/menus/trtitle.png',1);
-$img_head=dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1);
+$img_head='';
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
 $dol_hide_leftmenu=$conf->dol_hide_leftmenu;
@@ -108,7 +108,7 @@ body {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
-	background: #ffffff url(<?php echo $img_head; ?>) 0 0 no-repeat;
+	background-color: #FCFCFC;
 <?php } ?>
 	color: #101010;
 	font-size: <?php print $fontsize ?>px;
@@ -182,14 +182,6 @@ legend { margin-bottom: 8px; }
 	background-image: url(<?php echo $img_button ?>);
 	background-position: bottom;
     padding: 0px 2px 0px 2px;
-    margin: 0px 0px 0px 0px;
-}
-.buttonajax {
-    font-family: <?php print $fontlist ?>;
-	border: 0px;
-	background-image: url(<?php echo $img_button ?>);
-	background-position: bottom;
-    padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 form {

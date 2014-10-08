@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -53,22 +53,33 @@ $id = GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'expedition',$id,'livraison','livraison');
 
+$object = new Livraison($db);
 
+// Load object
+if ($id > 0 || ! empty($ref)) {
+	$ret = $object->fetch($id, $ref);
+	if ($ret > 0)
+		$ret = $object->fetch_thirdparty();
+	if ($ret < 0)
+		dol_print_error('', $object->error);
+}
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('deliverycard','globalcard'));
 
 /*
  * Actions
  */
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 if ($action == 'add')
 {
 	$db->begin();
 
-	// Creation de l'objet livraison
-	$delivery = new Livraison($db);
-
-	$delivery->date_livraison   = time();
-	$delivery->note             = $_POST["note"];
-	$delivery->commande_id      = $_POST["commande_id"];
+	$object->date_livraison   = time();
+	$object->note             = $_POST["note"];
+	$object->commande_id      = $_POST["commande_id"];
 
 	if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 	{
@@ -78,7 +89,7 @@ if ($action == 'add')
 	// On boucle sur chaque ligne de commande pour completer objet livraison
 	// avec qte a livrer
 	$commande = new Commande($db);
-	$commande->fetch($delivery->commande_id);
+	$commande->fetch($object->commande_id);
 	$commande->fetch_lines();
 	$num=count($commande->lines);
 	for ($i = 0; $i < $num; $i++)
@@ -87,20 +98,20 @@ if ($action == 'add')
 		$idl = "idl".$i;
 		if ($_POST[$qty] > 0)
 		{
-			$delivery->addline($_POST[$idl],$_POST[$qty]);
+			$object->addline($_POST[$idl],$_POST[$qty]);
 		}
 	}
 
-	$ret=$delivery->create($user);
+	$ret=$object->create($user);
 	if ($ret > 0)
 	{
 		$db->commit();
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$delivery->id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
 	else
 	{
-		setEventMessage($delivery->error, 'errors');
+		setEventMessage($object->error, 'errors');
 		$db->rollback();
 
 		$_GET["commande_id"]=$_POST["commande_id"];
@@ -110,10 +121,6 @@ if ($action == 'add')
 
 else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition->livraison->valider)
 {
-	$object = new Livraison($db);
-	$object->fetch($id);
-	$object->fetch_thirdparty();
-
 	$result = $object->valid($user);
 
 	// Define output language
@@ -140,10 +147,6 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->livraison->supprimer)
 {
-	$object = new Livraison($db);
-	$object->fetch($id);
-	$object->fetch_thirdparty();
-
 	$db->begin();
 	$result=$object->delete();
 
@@ -162,14 +165,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 
 if ($action == 'setdate_livraison' && $user->rights->expedition->livraison->creer)
 {
-	$object = new Livraison($db);
-	$object->fetch($id);
-	$object->fetch_thirdparty();
-
-	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
     $datedelivery=dol_mktime(GETPOST('liv_hour','int'), GETPOST('liv_min','int'), 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'), GETPOST('liv_year','int'));
-
-    $object->fetch($id);
     $result=$object->set_date_livraison($user,$datedelivery);
     if ($result < 0)
     {
@@ -182,10 +178,6 @@ if ($action == 'setdate_livraison' && $user->rights->expedition->livraison->cree
  */
 if ($action == 'builddoc')	// En get ou en post
 {
-	$object = new Livraison($db);
-	$object->fetch($id);
-	$object->fetch_thirdparty();
-
 	// Save last template used to generate document
 	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
@@ -216,16 +208,11 @@ elseif ($action == 'remove_file')
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	$object = new Livraison($db);
-	if ($object->fetch($id))
-	{
-		$object->fetch_thirdparty();
-		$upload_dir =	$conf->expedition->dir_output . "/receipt";
-		$file =	$upload_dir	. '/' .	GETPOST('file');
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-	}
+	$upload_dir =	$conf->expedition->dir_output . "/receipt";
+	$file =	$upload_dir	. '/' .	GETPOST('file');
+	$ret=dol_delete_file($file,0,0,0,$object);
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 }
 
 
@@ -256,7 +243,7 @@ if ($action == 'create')
 	$commande = new Commande($db);
 	$commande->livraison_array();
 
-	if ($commande->fetch($_GET["commande_id"]))
+	if ($commande->fetch(GETPOST("commande_id")))
 	{
 		$soc = new Societe($db);
 		$soc->fetch($commande->socid);
@@ -271,7 +258,7 @@ if ($action == 'create')
 		/*
 		 *   Commande
 		 */
-		print '<form action="card.php" method="post">';
+		print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
@@ -281,7 +268,7 @@ if ($action == 'create')
 		}
 		print '<table class="border" width="100%">';
 		print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-		print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+		print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$soc->id.'">'.$soc->name.'</a></b></td>';
 
 		print '<td width="50%" colspan="2">';
 
@@ -461,29 +448,29 @@ else
 /*                                                                             */
 /* *************************************************************************** */
 {
-	if ($id > 0)
+	if ($object->id > 0)
 	{
-		$delivery = new Livraison($db);
-		$result = $delivery->fetch($id);
-		$delivery->fetch_thirdparty();
-
 		// Origin of a 'livraison' (delivery) is ALWAYS 'expedition' (shipment).
 		// However, origin of shipment in future may differs (commande, proposal, ...)
+		// TODO REGIS:
+		// Je ne suis pas d'accord, beaucoup entreprises n'utilisent pas les bons d'expéditions car ces derniers sont gérés par le transporteur,
+		// donc les bons de livraisons peuvent avoir une origine différente de 'expedition'
+		// les bons de livraisons et d'expéditions devraient être considérés comme des objets à part entière, voir des modules différents comme une propal ou autres.
 
 		$expedition=new Expedition($db);
-		$result = $expedition->fetch($delivery->origin_id);
+		$result = $expedition->fetch($object->origin_id);
 		$typeobject = $expedition->origin;	// example: commande
-		if ($delivery->origin_id > 0)
+		if ($object->origin_id > 0)
 		{
-			$delivery->fetch_origin();
+			$object->fetch_origin();
 		}
 
-		if ($delivery->id > 0)
+		if ($object->id > 0)
 		{
 			$soc = new Societe($db);
-			$soc->fetch($delivery->socid);
+			$soc->fetch($object->socid);
 
-			$head=delivery_prepare_head($delivery);
+			$head=delivery_prepare_head($object);
 			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), 0, 'sending');
 
 			/*
@@ -493,7 +480,7 @@ else
 			if ($action == 'delete')
 			{
 				$expedition_id = GETPOST("expid");
-				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$delivery->ref),'confirm_delete','','',1);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$object->ref),'confirm_delete','','',1);
 
 			}
 
@@ -502,7 +489,7 @@ else
 			 */
 			if ($action == 'valid')
 			{
-				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$delivery->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$delivery->ref),'confirm_valid','','',1);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$object->ref),'confirm_valid','','',1);
 
 			}
 
@@ -513,7 +500,7 @@ else
 			print '<table class="border" width="100%">';
 
 			// Shipment
-			if (($delivery->origin == 'shipment' || $delivery->origin == 'expedition') && $delivery->origin_id > 0)
+			if (($object->origin == 'shipment' || $object->origin == 'expedition') && $object->origin_id > 0)
 			{
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
 
@@ -528,7 +515,7 @@ else
 
 			// Ref
 			print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-			print '<td colspan="3">'.$delivery->ref.'</td></tr>';
+			print '<td colspan="3">'.$object->ref.'</td></tr>';
 
 			// Client
 			print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
@@ -559,12 +546,12 @@ else
 
 			// Ref client
 			print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
-			print '<td colspan="3">'.$delivery->ref_customer."</a></td>\n";
+			print '<td colspan="3">'.$object->ref_customer."</a></td>\n";
 			print '</tr>';
 
 			// Date
 			print '<tr><td>'.$langs->trans("DateCreation").'</td>';
-			print '<td colspan="3">'.dol_print_date($delivery->date_creation,'daytext')."</td>\n";
+			print '<td colspan="3">'.dol_print_date($object->date_creation,'daytext')."</td>\n";
 			print '</tr>';
 
 			// Date delivery real / Received
@@ -573,21 +560,21 @@ else
 			print $langs->trans('DateReceived');
 			print '</td>';
 
-			if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$delivery->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+			if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($action == 'editdate_livraison')
 			{
-				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$delivery->id.'" method="post">';
+				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
-				$form->select_date($delivery->date_delivery?$delivery->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
+				$form->select_date($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
 			else
 			{
-				print $delivery->date_delivery ? dol_print_date($delivery->date_delivery,'dayhourtext') : '&nbsp;';
+				print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhourtext') : '&nbsp;';
 			}
 			print '</td>';
 			print '</tr>';
@@ -595,7 +582,7 @@ else
 			// Note Public
             print '<tr><td>'.$langs->trans("NotePublic").'</td>';
             print '<td colspan="3">';
-            print nl2br($delivery->note_public);
+            print nl2br($object->note_public);
             /*$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
             print $doleditor->Create(1);*/
             print "</td></tr>";
@@ -603,7 +590,7 @@ else
 			// Note Private
             print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
             print '<td colspan="3">';
-            print nl2br($delivery->note_private);
+            print nl2br($object->note_private);
             /*$doleditor = new DolEditor('note_pprivate', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
             print $doleditor->Create(1);*/
             print "</td></tr>";
@@ -611,14 +598,14 @@ else
 
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td>';
-			print '<td colspan="3">'.$delivery->getLibStatut(4)."</td>\n";
+			print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
 			print '</tr>';
 
 			if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 			{
 				// Entrepot
 				$entrepot = new Entrepot($db);
-				$entrepot->fetch($delivery->entrepot_id);
+				$entrepot->fetch($object->entrepot_id);
 				print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
 				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
 				print '</tr>';
@@ -630,7 +617,7 @@ else
 			 * Lignes produits
 			 */
 
-			$num_prod = count($delivery->lines);
+			$num_prod = count($object->lines);
 			$i = 0; $total = 0;
 
 			print '<table class="noborder" width="100%">';
@@ -651,66 +638,65 @@ else
 				$var=!$var;
 
 				print "<tr ".$bc[$var].">";
-				if ($delivery->lines[$i]->fk_product > 0)
+				if ($object->lines[$i]->fk_product > 0)
 				{
 					$product = new Product($db);
-					$product->fetch($delivery->lines[$i]->fk_product);
+					$product->fetch($object->lines[$i]->fk_product);
 
 					// Define output language
 					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 					{
-						$delivery->fetch_thirdparty();
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-						if (empty($newlang)) $newlang=$delivery->client->default_lang;
+						if (empty($newlang)) $newlang=$object->client->default_lang;
 						if (! empty($newlang))
 						{
 							$outputlangs = new Translate("",$conf);
 							$outputlangs->setDefaultLang($newlang);
 						}
 
-						$label = (! empty($product->multilangs[$outputlangs->defaultlang]["label"])) ? $product->multilangs[$outputlangs->defaultlang]["label"] : $delivery->lines[$i]->product_label;
+						$label = (! empty($product->multilangs[$outputlangs->defaultlang]["label"])) ? $product->multilangs[$outputlangs->defaultlang]["label"] : $object->lines[$i]->product_label;
 					}
 					else
-						$label = ( ! empty($delivery->lines[$i]->label)?$delivery->lines[$i]->label:$delivery->lines[$i]->product_label);
+						$label = ( ! empty($object->lines[$i]->label)?$object->lines[$i]->label:$object->lines[$i]->product_label);
 
 					print '<td>';
 
 					// Affiche ligne produit
-					$text = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$delivery->lines[$i]->fk_product.'">';
-					if ($delivery->lines[$i]->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
+					$text = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$object->lines[$i]->fk_product.'">';
+					if ($object->lines[$i]->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
 					else $text.= img_object($langs->trans('ShowProduct'),'product');
-					$text.= ' '.$delivery->lines[$i]->product_ref.'</a>';
+					$text.= ' '.$object->lines[$i]->product_ref.'</a>';
 					$text.= ' - '.$label;
-					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($delivery->lines[$i]->description));
+					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($object->lines[$i]->description));
 					//print $description;
 					print $form->textwithtooltip($text,$description,3,'','',$i);
-					print_date_range($delivery->lines[$i]->date_start,$delivery->lines[$i]->date_end);
+					print_date_range($object->lines[$i]->date_start,$object->lines[$i]->date_end);
 					if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
 					{
-						print (! empty($delivery->lines[$i]->description) && $delivery->lines[$i]->description!=$delivery->lines[$i]->product_label)?'<br>'.dol_htmlentitiesbr($delivery->lines[$i]->description):'';
+						print (! empty($object->lines[$i]->description) && $object->lines[$i]->description!=$object->lines[$i]->product_label)?'<br>'.dol_htmlentitiesbr($object->lines[$i]->description):'';
 					}
 				}
 				else
 				{
 					print "<td>";
-					if ($delivery->lines[$i]->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
+					if ($object->lines[$i]->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
 					else $text = img_object($langs->trans('Product'),'product');
 
-					if (! empty($delivery->lines[$i]->label)) {
-						$text.= ' <strong>'.$delivery->lines[$i]->label.'</strong>';
-						print $form->textwithtooltip($text,$delivery->lines[$i]->description,3,'','',$i);
+					if (! empty($object->lines[$i]->label)) {
+						$text.= ' <strong>'.$object->lines[$i]->label.'</strong>';
+						print $form->textwithtooltip($text,$object->lines[$i]->description,3,'','',$i);
 					} else {
-						print $text.' '.nl2br($delivery->lines[$i]->description);
+						print $text.' '.nl2br($object->lines[$i]->description);
 					}
 
 					print_date_range($objp->date_start,$objp->date_end);
 					print "</td>\n";
 				}
 
-				print '<td align="center">'.$delivery->lines[$i]->qty_asked.'</td>';
-				print '<td align="center">'.$delivery->lines[$i]->qty_shipped.'</td>';
+				print '<td align="center">'.$object->lines[$i]->qty_asked.'</td>';
+				print '<td align="center">'.$object->lines[$i]->qty_shipped.'</td>';
 
 				print "</tr>";
 
@@ -730,20 +716,20 @@ else
 			{
 				print '<div class="tabsAction">';
 
-				if ($delivery->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
+				if ($object->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
 				{
-					print '<a class="butAction" href="card.php?id='.$delivery->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 				}
 
 				if ($user->rights->expedition->livraison->supprimer)
 				{
 					if ($conf->expedition_bon->enabled)
 					{
-						print '<a class="butActionDelete" href="card.php?id='.$delivery->id.'&amp;expid='.$delivery->origin_id.'&amp;action=delete&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$delivery->origin_id).'">'.$langs->trans("Delete").'</a>';
+						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id).'">'.$langs->trans("Delete").'</a>';
 					}
 					else
 					{
-						print '<a class="butActionDelete" href="card.php?id='.$delivery->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 					}
 				}
 
@@ -757,22 +743,22 @@ else
 		 	 * Documents generated
 			 */
 
-			$deliveryref = dol_sanitizeFileName($delivery->ref);
-			$filedir = $conf->expedition->dir_output . "/receipt/" . $deliveryref;
-			$urlsource = $_SERVER["PHP_SELF"]."?id=".$delivery->id;
+			$objectref = dol_sanitizeFileName($object->ref);
+			$filedir = $conf->expedition->dir_output . "/receipt/" . $objectref;
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
 			$genallowed=$user->rights->expedition->livraison->creer;
 			$delallowed=$user->rights->expedition->livraison->supprimer;
 
-			$somethingshown=$formfile->show_documents('livraison',$deliveryref,$filedir,$urlsource,$genallowed,$delallowed,$delivery->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+			$somethingshown=$formfile->show_documents('livraison',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)
 		 	 */
-			if ($delivery->origin == 'expedition')
+			if ($object->origin == 'expedition')
 			{
 				$shipment = new Expedition($db);
-				$shipment->fetch($delivery->origin_id);
+				$shipment->fetch($object->origin_id);
 
 				$somethingshown=$shipment->showLinkedObjectBlock();
 			}

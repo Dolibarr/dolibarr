@@ -88,7 +88,7 @@ if (! $sortorder) $sortorder="ASC";
 
 if ($user->rights->fournisseur->facture->lire)
 {
-	$sql = "SELECT s.rowid as socid, s.nom,";
+	$sql = "SELECT s.rowid as socid, s.nom as name,";
 	$sql.= " f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc,";
 	$sql.= " f.datef as df, f.date_lim_reglement as datelimite, ";
 	$sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
@@ -144,7 +144,7 @@ if ($user->rights->fournisseur->facture->lire)
 		$sql .= " AND f.ref_supplier LIKE '%".GETPOST('sf_re')."%'";
 	}
 
-	$sql.= " GROUP BY s.rowid, s.nom, f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, s.rowid, s.nom";
+	$sql.= " GROUP BY s.rowid, s.nom, f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql.=$db->order($sortfield,$sortorder);
 	if (! in_array("f.ref_supplier",explode(',',$sortfield))) $sql.= ", f.ref_supplier DESC";
@@ -173,7 +173,7 @@ if ($user->rights->fournisseur->facture->lire)
 		if (! empty($late)) $param.='&late='.urlencode($late);
 		$urlsource=str_replace('&amp;','&',$param);
 
-		$titre=($socid?$langs->trans("BillsSuppliersUnpaidForCompany",$soc->nom):$langs->trans("BillsSuppliersUnpaid"));
+		$titre=($socid?$langs->trans("BillsSuppliersUnpaidForCompany",$soc->name):$langs->trans("BillsSuppliersUnpaid"));
 
 		if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
 	    else $titre.=' ('.$langs->trans("All").')';
@@ -250,7 +250,7 @@ if ($user->rights->fournisseur->facture->lire)
 
 				print '<td>';
 				$companystatic->id=$objp->socid;
-				$companystatic->nom=$objp->nom;
+				$companystatic->name=$objp->name;
 				print $companystatic->getNomUrl(1,'supplier',32);
 				print '</td>';
 

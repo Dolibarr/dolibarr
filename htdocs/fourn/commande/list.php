@@ -51,6 +51,8 @@ $socid = GETPOST('socid','int');
 $sortorder = GETPOST('sortorder','alpha');
 $sortfield = GETPOST('sortfield','alpha');
 
+$viewstatut=GETPOST('viewstatut');
+
 // Security check
 $orderid = GETPOST('orderid');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -66,7 +68,7 @@ if ($socid > 0)
 {
 	$fourn = new Fournisseur($db);
 	$fourn->fetch($socid);
-	$title .= ' ('.$fourn->nom.')';
+	$title .= ' ('.$fourn->name.')';
 }
 
 llxHeader('',$title);
@@ -85,7 +87,7 @@ $offset = $conf->liste_limit * $page ;
  * Mode Liste
  */
 
-$sql = "SELECT s.rowid as socid, s.nom, cf.date_commande as dc,";
+$sql = "SELECT s.rowid as socid, s.nom as name, cf.date_commande as dc,";
 $sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ttc, cf.fk_user_author,cf.date_livraison,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s,";
@@ -216,7 +218,7 @@ if ($resql)
 
 		// Company
 		print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
-		print $obj->nom.'</a></td>'."\n";
+		print $obj->name.'</a></td>'."\n";
 
 		// Author
 		$userstatic->id=$obj->fk_user_author;
@@ -255,6 +257,8 @@ if ($resql)
 	}
 	print "</table>\n";
 	print "</form>\n";
+	
+	print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';
 
 	$db->free($resql);
 }

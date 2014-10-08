@@ -63,17 +63,17 @@ if ($prev_id)
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
-	
+
 		// Status
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
 		print '<td>'.$bon->getLibStatut(1).'</td>';
 		print '</tr>';
-	
+
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
 			$muser->fetch($bon->user_trans);
-	
+
 			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($bon->date_trans,'day');
 			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
@@ -87,19 +87,19 @@ if ($prev_id)
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
-	
+
 		print '</table>';
-	
+
 		print '<br>';
-	
+
 		print '<table class="border" width="100%"><tr><td width="20%">';
 		print $langs->trans("WithdrawalFile").'</td><td>';
 		$relativepath = 'receipts/'.$bon->ref;
 		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
 		print '</td></tr></table>';
-	
+
 		dol_fiche_end();
-      	
+
     }
   	else
     {
@@ -114,7 +114,7 @@ $offset = $conf->liste_limit * $page ;
  */
 $sql = "SELECT pf.rowid";
 $sql.= ",f.rowid as facid, f.facnumber as ref, f.total_ttc";
-$sql.= ", s.rowid as socid, s.nom, pl.statut";
+$sql.= ", s.rowid as socid, s.nom as name, pl.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture as pf";
@@ -166,7 +166,7 @@ if ($result)
       	print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
       	print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
-      	print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
+      	print img_object($langs->trans("ShowCompany"),"company"). ' '.$obj->name."</a></td>\n";
 
       	print '<td align="center">'.price($obj->total_ttc)."</td>\n";
 

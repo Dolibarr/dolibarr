@@ -79,8 +79,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("other");
 
 			$object->actiontypecode='AC_OTH_AUTO';
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
-            $object->actionmsg=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("NewCompanyToDolibarr",$object->name);
+            $object->actionmsg=$langs->transnoentities("NewCompanyToDolibarr",$object->name);
             if (! empty($object->prefix)) $object->actionmsg.=" (".$object->prefix.")";
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 

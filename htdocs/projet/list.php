@@ -39,7 +39,7 @@ if ($socid > 0)
 {
 	$soc = new Societe($db);
 	$soc->fetch($socid);
-	$title .= ' (<a href="list.php">'.$soc->nom.'</a>)';
+	$title .= ' (<a href="list.php">'.$soc->name.'</a>)';
 }
 if (!$user->rights->projet->lire) accessforbidden();
 
@@ -78,7 +78,7 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$min
 
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
-$sql.= ", s.nom, s.rowid as socid";
+$sql.= ", s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
@@ -181,7 +181,7 @@ if ($resql)
 			if ($objp->socid)
 			{
 				$socstatic->id=$objp->socid;
-				$socstatic->nom=$objp->nom;
+				$socstatic->name=$objp->name;
 				print $socstatic->getNomUrl(1);
 			}
 			else

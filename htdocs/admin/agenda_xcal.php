@@ -142,7 +142,7 @@ print "</center>";
 
 print "</form>\n";
 
-print '</div>';
+dol_fiche_end();
 
 clearstatcache();
 

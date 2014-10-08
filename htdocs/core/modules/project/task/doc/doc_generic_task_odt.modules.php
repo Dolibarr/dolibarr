@@ -438,7 +438,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				// Make substitution
 				$substitutionarray=array(
-				'__FROM_NAME__' => $this->emetteur->nom,
+				'__FROM_NAME__' => $this->emetteur->name,
 				'__FROM_EMAIL__' => $this->emetteur->email,
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);

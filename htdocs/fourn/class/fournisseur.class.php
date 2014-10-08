@@ -184,7 +184,7 @@ class Fournisseur extends Societe
 
 		$arr = array();
 
-		$sql = "SELECT s.rowid, s.nom";
+		$sql = "SELECT s.rowid, s.nom as name";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE s.fournisseur = 1";
@@ -196,16 +196,14 @@ class Fournisseur extends Societe
 		if ($resql)
 		{
 			while ($obj=$this->db->fetch_object($resql))
-	  {
-	  	$arr[$obj->rowid] = stripslashes($obj->nom);
-	  }
-
+			{
+				$arr[$obj->rowid] = $obj->name;
+			}
 		}
 		else
 		{
 			dol_print_error($this->db);
-			$this->error=$this->db->error();
-
+			$this->error=$this->db->lasterror();
 		}
 		return $arr;
 	}

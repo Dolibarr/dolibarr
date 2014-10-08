@@ -190,7 +190,7 @@ if ($id)
 		print '<td colspan="3">'.$langs->trans("WithdrawalRefused").'</td></tr>';
 
 		//Select yes/no
-		print '<tr><td class="valid">'.$langs->trans("WithdrawalRefusedConfirm").' '.$soc->nom.' ?</td>';
+		print '<tr><td class="valid">'.$langs->trans("WithdrawalRefusedConfirm").' '.$soc->name.' ?</td>';
 		print '<td colspan="2" class="valid">';
 		print $form->selectyesno("confirm",1,0);
 		print '</td></tr>';
@@ -257,7 +257,7 @@ if ($id)
 	 */
 	$sql = "SELECT pf.rowid";
 	$sql.= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc";
-	$sql.= " , s.rowid as socid, s.nom";
+	$sql.= " , s.rowid as socid, s.nom as name";
 	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 	$sql.= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
@@ -308,7 +308,7 @@ if ($id)
 			print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
-			print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
+			print img_object($langs->trans("ShowCompany"),"company"). ' '.$obj->name."</a></td>\n";
 
 			print '<td align="right">'.price($obj->total_ttc)."</td>\n";
 

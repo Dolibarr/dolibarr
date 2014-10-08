@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014       Francis Appels          <francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1068,7 +1069,7 @@ class Expedition extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql.= " WHERE ed.fk_expedition = ".$this->id;
 		$sql.= " AND ed.fk_origin_line = cd.rowid";
-		$sql.= " ORDER BY cd.rang";
+		$sql.= " ORDER BY cd.rang, ed.fk_origin_line";
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1078,6 +1079,8 @@ class Expedition extends CommonObject
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$lineindex = 0;
+			$originline = 0;
 
 			$this->total_ht = 0;
 			$this->total_tva = 0;
@@ -1087,13 +1090,25 @@ class Expedition extends CommonObject
 
 			while ($i < $num)
 			{
-				$line = new ExpeditionLigne($this->db);
-				$obj = $this->db->fetch_object($resql);
-
+				$obj = $this->db->fetch_object($resql);			    
+			    
+			    if ($originline == $obj->fk_origin_line) {	
+			        $line->entrepot_id       = 0; // entrepod_id in details_entrepot
+				    $line->qty_shipped    	+= $obj->qty_shipped;				    
+				} else {
+				    $line = new ExpeditionLigne($this->db);
+				    $line->entrepot_id    	= $obj->fk_entrepot;
+				    $line->qty_shipped    	= $obj->qty_shipped;
+				}
+				
+				$detail_entrepot              = new stdClass;
+				$detail_entrepot->entrepot_id = $obj->fk_entrepot;
+				$detail_entrepot->qty_shipped = $obj->qty_shipped;
+				$line->details_entrepot[]     = $detail_entrepot;
+				
                 $line->line_id          = $obj->line_id;
 				$line->fk_origin_line 	= $obj->fk_origin_line;
 				$line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
-				$line->entrepot_id    	= $obj->fk_entrepot;
 				$line->fk_product     	= $obj->fk_product;
 				$line->fk_product_type	= $obj->fk_product_type;
 				$line->ref				= $obj->product_ref;		// TODO deprecated
@@ -1103,7 +1118,6 @@ class Expedition extends CommonObject
 				$line->label			= $obj->custom_label;
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
-				$line->qty_shipped    	= $obj->qty_shipped;
 				$line->weight         	= $obj->weight;
 				$line->weight_units   	= $obj->weight_units;
 				$line->length         	= $obj->length;
@@ -1116,7 +1130,7 @@ class Expedition extends CommonObject
 				// For invoicing
 				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->fk_product_type);	// We force type to 0
 				$line->desc	         	= $obj->description;		// We need ->desc because some code into CommonObject use desc (property defined for other elements)
-				$line->qty 				= $obj->qty_shipped;
+				$line->qty 				= $line->qty_shipped;
 				$line->total_ht			= $tabprice[0];
 				$line->total_localtax1 	= $tabprice[9];
 				$line->total_localtax2 	= $tabprice[10];
@@ -1141,11 +1155,25 @@ class Expedition extends CommonObject
                      * May be conf is not well initialized for dark reason 
                      */
                     require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-					$line->detail_batch=ExpeditionLigneBatch::FetchAll($this->db,$obj->line_id);
+                    if ($originline != $obj->fk_origin_line) {
+                        $line->detail_batch = ExpeditionLigneBatch::FetchAll($this->db,$obj->line_id);
+                    } else {
+                        $line->detail_batch = array_merge($line->detail_batch,ExpeditionLigneBatch::FetchAll($this->db,$obj->line_id));
+                    }
 				}
-				$this->lines[$i] = $line;
+				if ($originline != $obj->fk_origin_line) {
+				    $this->lines[$lineindex] = $line;
+				    $lineindex++;
+				} else {
+				    $line->total_ht			+= $tabprice[0];
+				    $line->total_localtax1 	+= $tabprice[9];
+				    $line->total_localtax2 	+= $tabprice[10];
+				    $line->total_ttc	 	+= $tabprice[2];
+				    $line->total_tva	 	+= $tabprice[1];
+				}
 
 				$i++;
+				$originline = $obj->fk_origin_line;	
 			}
 			$this->db->free($resql);
 			return 1;

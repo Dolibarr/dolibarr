@@ -249,7 +249,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $datefacture=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
     $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
 
-    $sql = 'SELECT s.nom, s.rowid as socid,';
+    $sql = 'SELECT s.nom as name, s.rowid as socid,';
     $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
@@ -274,14 +274,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<input type="hidden" name="facid" value="'.$facid.'">';
             print '<input type="hidden" name="ref_supplier" value="'.$obj->ref_supplier.'">';
             print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
-            print '<input type="hidden" name="societe" value="'.$obj->nom.'">';
+            print '<input type="hidden" name="societe" value="'.$obj->name.'">';
 
             print '<table class="border" width="100%">';
 
             print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('Payment').'</td>';
             print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
             $supplierstatic->id=$obj->socid;
-            $supplierstatic->name=$obj->nom;
+            $supplierstatic->name=$obj->name;
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
@@ -460,7 +460,7 @@ if (empty($action))
     $search_company=GETPOST('search_company');
 
     $sql = 'SELECT p.rowid as pid, p.datep as dp, p.amount as pamount, p.num_paiement,';
-    $sql.= ' s.rowid as socid, s.nom,';
+    $sql.= ' s.rowid as socid, s.nom as name,';
     $sql.= ' c.libelle as paiement_type,';
     $sql.= ' ba.rowid as bid, ba.label,';
     if (!$user->rights->societe->client->voir) $sql .= ' sc.fk_soc, sc.fk_user,';
@@ -565,7 +565,7 @@ if (empty($action))
             print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 
             print '<td>';
-            if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->nom,32).'</a>';
+            if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->name,32).'</a>';
             else print '&nbsp;';
             print '</td>';
 

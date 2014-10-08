@@ -320,7 +320,7 @@ $sql.= ' a.datea2,';
 $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
-$sql.= ' a.fk_soc, a.fk_contact,';
+$sql.= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype,';
 $sql.= ' ca.code, ca.color';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -414,6 +414,9 @@ if ($resql)
         $event->contactid=$obj->fk_contact;
         //$event->societe->id=$obj->fk_soc;			// deprecated
         //$event->contact->id=$obj->fk_contact;		// deprecated
+
+        $event->fk_element=$obj->fk_element;
+        $event->elementtype=$obj->elementtype;
 
         // Defined date_start_in_calendar and date_end_in_calendar property
         // They are date start and end of action but modified to not be outside calendar view.
@@ -598,8 +601,13 @@ else
 }
 
 // Load array of colors by type
-// TODO
 $colorsbytype=array();
+$sql="SELECT code, color FROM ".MAIN_DB_PREFIX."c_actioncomm";
+$resql=$db->query($sql);
+while ($obj = $db->fetch_object($resql))
+{
+	$colorsbytype[$obj->code]=$obj->color;
+}
 
 // Loop on each user to show calendar
 $todayarray=dol_getdate($now,'fast');
@@ -704,14 +712,15 @@ $db->close();
  * @param   int		$showinfo       Add extended information (used by day view)
  * @param   int		$minheight      Minimum height for each event. 60px by default.
  * @param	boolean	$showheader		Show header
+ * @param	array	$colorsbytype	Array with colors by type
  * @return	void
  */
-function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false)
+function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false, $colorsbytype=array())
 {
 	global $db;
-	global $user, $conf, $langs;
+	global $user, $conf, $langs, $hookmanager, $action;
 	global $filter, $filtera, $filtert, $filterd, $status, $actioncode;	// Filters used into search form
-	global $theme_datacolor;
+	global $theme_datacolor;	// Array with a list of different we can use (come from theme)
 	global $cachethirdparties, $cachecontacts, $colorindexused;
 	global $begin_h, $end_h;
 
@@ -743,6 +752,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				if (! in_array($username->id,$keysofuserassigned)) continue;	// We discard record if event is from another user than user we want to show
 				//if ($username->id != $event->userownerid) continue;	// We discard record if event is from another user than user we want to show
 
+				$parameters=array();
+				$reshook=$hookmanager->executeHooks('formatEvent',$parameters,$event,$action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 				$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
 
 				// Define $color (Hex string like '0088FF') and $cssclass of event
@@ -750,12 +763,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				if (in_array($user->id, $keysofuserassigned))
 				{
 					$nummytasks++; $cssclass='family_mytasks';
-					$color=$event->type_color;
+					if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $color=$event->type_color;
 				}
 				else if ($event->type_code == 'ICALEVENT')
 				{
 					$numical++;
-					if (! empty($event->icalname)) {
+					if (! empty($event->icalname))
+					{
 						if (! isset($numicals[dol_string_nospecial($event->icalname)])) {
 							$numicals[dol_string_nospecial($event->icalname)] = 0;
 						}
@@ -772,7 +786,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				else
 				{
 					$numother++; $cssclass='family_other';
+					if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $color=$event->type_color;
 				}
+
 				if ($color < 0)	// Color was not forced. Set color according to color index.
 				{
 					// Define color index if not yet defined
@@ -858,8 +874,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 						$cases2[$h][$event->id]['string']=$event->label;
 						$cases1[$h][$event->id]['typecode']=$event->type_code;
 						$cases2[$h][$event->id]['typecode']=$event->type_code;
-						$cases1[$h][$event->id]['color']='009900';
-						$cases2[$h][$event->id]['color']='009900';
+						$cases1[$h][$event->id]['color']=$color;
+						$cases2[$h][$event->id]['color']=$color;
 					}
 				}
 				$i++;
@@ -877,7 +893,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$title1='';$title2='';
 		if (isset($cases1[$h]) && $cases1[$h] != '')
 		{
-			$title1=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
+			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
+			if (count($cases1[$h]) > 1) $title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			$string1='&nbsp;';
 			$style1='peruser_notbusy';
 			foreach($cases1[$h] as $id => $ev)
@@ -887,7 +904,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 		if (isset($cases2[$h]) && $cases2[$h] != '')
 		{
-			$title2=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
+			//$title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
+			if (count($cases2[$h]) > 1) $title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			$string2='&nbsp;';
 			$style2='peruser_notbusy';
 			foreach($cases2[$h] as $id => $ev)
@@ -903,7 +921,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		{
 			$ids=array_keys($cases1[$h]);
 			$output = array_slice($cases1[$h], 0, 1);
-			if ($output[0]['string']) $title1.=' - '.$output[0]['string'];
+			if ($output[0]['string']) $title1.=($title1?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color1 = $output[0]['color'];
 		}
 		else if (count($cases1[$h]) > 1) $color1='222222';
@@ -912,7 +930,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		{
 			$ids=array_keys($cases2[$h]);
 			$output = array_slice($cases2[$h], 0, 1);
-			if ($output[0]['string']) $title2.=' - '.$output[0]['string'];
+			if ($output[0]['string']) $title2.=($title2?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color2 = $output[0]['color'];
 		}
 		else if (count($cases2[$h]) > 1) $color2='222222';

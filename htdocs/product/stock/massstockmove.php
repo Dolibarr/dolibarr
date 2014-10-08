@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2013   Laurent Destaileur	<ely@users.sourceforge.net>
+/* Copyright (C) 2013	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2014	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,7 +229,7 @@ $warehousestatict = new Entrepot($db);
 
 $title = $langs->trans('MassMovement');
 
-llxHeader('', $title, $helpurl, '');
+llxHeader('', $title);
 
 print_fiche_titre($langs->trans("MassStockMovement")).'<br><br>';
 
@@ -248,6 +249,8 @@ print '<input type="hidden" name="action" value="addline">';
 
 print '<table class="liste" width="100%">';
 //print '<div class="tagtable centpercent">';
+
+$param='';
 
 print '<tr class="liste_titre">';
 print getTitleFieldOfList($langs->trans('ProductRef'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);

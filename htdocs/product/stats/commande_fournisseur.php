@@ -110,7 +110,7 @@ if ($id > 0 || ! empty($ref))
 		print "</table>";
 		print '</div>';
 
-		$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
+		$sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client,";
 		$sql.= " c.rowid, c.total_ht as total_ht, c.ref,";
 		$sql.= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid, d.qty";
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -164,7 +164,7 @@ if ($id > 0 || ! empty($ref))
 					print "<tr ".$bc[$var].">";
 					print '<td>'.$commandestatic->getNomUrl(1)."</td>\n";
 					print "</a></td>\n";
-					print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+					print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";
 					print '<td align="center">'.dol_print_date($db->jdate($objp->date_commande))."</td>";
 					print "<td align=\"center\">".$objp->qty."</td>\n";

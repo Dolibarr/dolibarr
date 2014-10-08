@@ -72,3 +72,7 @@ DocumentModelTyphon=More complete document model for delivery receipts (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
 SumOfProductVolumes=Sum of product volumes
 SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

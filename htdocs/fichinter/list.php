@@ -71,7 +71,7 @@ llxHeader('', $langs->trans("Intervention"));
 $sql = "SELECT";
 $sql.= " f.ref, f.rowid as fichid, f.fk_statut, f.description,";
 $sql.= " fd.description as descriptiondetail, fd.date as dp, fd.duree,";
-$sql.= " s.nom, s.rowid as socid, s.client";
+$sql.= " s.nom as name, s.rowid as socid, s.client";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir && empty($socid))
 	$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -160,7 +160,7 @@ if ($result)
 		print $interventionstatic->getNomUrl(1);
 		print "</td>\n";
 		print '<td>';
-		$companystatic->nom=$objp->nom;
+		$companystatic->name=$objp->name;
 		$companystatic->id=$objp->socid;
 		$companystatic->client=$objp->client;
 		print $companystatic->getNomUrl(1,'',44);
