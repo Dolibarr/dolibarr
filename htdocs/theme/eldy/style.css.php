@@ -105,7 +105,7 @@ $colorbacklineimpairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+roun
 $colorbacklinepair1='255,255,255';    // line pair
 $colorbacklinepair2='255,255,255';    // line pair
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));
-$colorbackbody='#fcfcfc';
+$colorbackbody='#f9f9f9';
 $colortext='40,40,40';
 $fontsize='12';
 $fontsizesmaller='11';
@@ -123,8 +123,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABCARD2='210,210,210';     // card
     $conf->global->THEME_ELDY_BACKTABCARD1='234,234,234';
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-    //$conf->global->THEME_ELDY_BACKBODY='#ffffff url('.$img_head.') 0 0 no-repeat;';
-    $conf->global->THEME_ELDY_BACKBODY='#fcfcfc;';
+    $conf->global->THEME_ELDY_BACKBODY='#f9f9f9;';
     $conf->global->THEME_ELDY_LINEPAIR1='242,242,242';
     $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
     $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
@@ -820,7 +819,7 @@ foreach($mainmenuusedarray as $val)
 
 .bodylogin
 {
-	background: #f9f9f9;
+	background: #f0f0f0;
 }
 .login_vertical_align {
 	padding: 10px;
