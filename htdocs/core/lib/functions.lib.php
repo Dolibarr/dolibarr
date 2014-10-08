@@ -1809,13 +1809,13 @@ function img_picto($titlealt, $picto, $options = '', $pictoisfullpath = false, $
 	}
 	else
 	{
-		// By default, we search $url/theme/$theme/img/$picto
+		// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 		$url = DOL_URL_ROOT;
 		$theme = $conf->theme;
 
 		$path = 'theme/'.$theme;
 		if (! empty($conf->global->MAIN_OVERWRITE_THEME_PATH)) $path = $conf->global->MAIN_OVERWRITE_THEME_PATH.'/theme/'.$theme;	// If the theme does not have the same name as the module
-		else if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) $path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;  // TODO helpful ?
+		else if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) $path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;  // To allow an external module to overwrite image resources whatever is activated theme
 		else if (! empty($conf->modules_parts['theme']) && array_key_exists($theme, $conf->modules_parts['theme'])) $path = $theme.'/theme/'.$theme;	// If the theme have the same name as the module
 
 		// If we ask an image into $url/$mymodule/img (instead of default path)
@@ -1827,10 +1827,10 @@ function img_picto($titlealt, $picto, $options = '', $pictoisfullpath = false, $
 		// Clean parameters
 		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
 		// If alt path are defined, define url where img file is, according to physical path
-		foreach ($conf->file->dol_document_root as $type => $dirroot)	// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir/htdocs", ...)
+		foreach ($conf->file->dol_document_root as $type => $dirroot)	// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir0/htdocs", ...)
 		{
 			if ($type == 'main') continue;
-			if (file_exists($dirroot.'/'.$path.'/img/'.$picto))
+			if (file_exists($dirroot.'/'.$path.'/img/'.$picto))	// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommanded
 			{
 				$url=DOL_URL_ROOT.$conf->file->dol_url_root[$type];
 				break;
