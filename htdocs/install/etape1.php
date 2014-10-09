@@ -214,7 +214,9 @@ if (! $error)
             {
                 print '<div class="error">'.$db->error.'</div>';
                 if (! $db->connected) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+                //print '<a href="#" onClick="javascript: history.back();">';
                 print $langs->trans("ErrorGoBackAndCorrectParameters");
+                //print '</a>';
                 $error++;
             }
         }
@@ -223,7 +225,9 @@ if (! $error)
     {
         print "<br>\nFailed to include_once(\"".$main_dir."/core/db/".$db_type.".class.php\")<br>\n";
         print '<div class="error">'.$langs->trans("ErrorWrongValueForParameter",$langs->transnoentities("WebPagesDirectory")).'</div>';
+        //print '<a href="#" onClick="javascript: history.back();">';
         print $langs->trans("ErrorGoBackAndCorrectParameters");
+        //print '</a>';
         $error++;
     }
 }
