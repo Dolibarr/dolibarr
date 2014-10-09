@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014	   Teddy Andreotti		<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ function dol_decode($chain)
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		int			$type		Type of hash (0:auto, 1:sha1, 2:sha1+md5)
+ * 	@param		int			$type		Type of hash (0:auto, 1:sha1, 2:sha1+md5, 3:password_hash if phpversion >= 5.5.0 or md5)
  * 	@return		string					Hash of string
  */
 function dol_hash($chain,$type=0)
@@ -86,6 +87,7 @@ function dol_hash($chain,$type=0)
 
 	if ($type == 1) return sha1($chain);
 	else if ($type == 2) return sha1(md5($chain));
+	else if ($type == 3 && version_compare(PHP_VERSION, '5.5.0') >= 0) return password_hash($chain, PASSWORD_DEFAULT);
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') return sha1($chain);
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') return sha1(md5($chain));
 	else return md5($chain);

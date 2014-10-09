@@ -9,6 +9,7 @@
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014	   Teddy Andreotti		<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1344,7 +1345,7 @@ class User extends CommonObject
 		}
 
 		// Crypte avec md5
-		$password_crypted = dol_hash($password);
+		$password_crypted = dol_hash($password, 3); // Use best password_hash.
 
 		// Mise a jour
 		if (! $changelater)

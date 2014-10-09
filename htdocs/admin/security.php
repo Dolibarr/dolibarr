@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013 Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2014	   Teddy Andreotti		<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,13 @@ if ($action == 'activate_encrypt')
 
     $sql = "SELECT u.rowid, u.pass, u.pass_crypted";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE u.pass IS NOT NULL AND LENGTH(u.pass) < 32"; // Not a MD5 value
+
+	if(version_compare(PHP_VERSION, '5.5.0') >= 0){
+		// Use best password_hash().
+		$sql.= " WHERE u.pass IS NOT NULL AND LENGTH(u.pass) < 60"; // Not a Password_value with bcrypt
+	}else{
+		$sql.= " WHERE u.pass IS NOT NULL AND LENGTH(u.pass) < 32"; // Not a MD5
+	}
 
     $resql=$db->query($sql);
     if ($resql)
@@ -74,10 +81,11 @@ if ($action == 'activate_encrypt')
         while ($i < $numrows)
         {
             $obj=$db->fetch_object($resql);
-            if (dol_hash($obj->pass))
+
+            if(dol_hash($obj->pass, 3))
             {
                 $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-                $sql.= " SET pass_crypted = '".dol_hash($obj->pass)."', pass = NULL";
+                $sql.= " SET pass_crypted = '".dol_hash($obj->pass, 3)."', pass = NULL";
                 $sql.= " WHERE rowid=".$obj->rowid;
                 //print $sql;
 
