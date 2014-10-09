@@ -325,7 +325,7 @@ if ($object->type == 0)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
-				print $prod->getNomUrl(1,'category');
+				print $prod->getNameUrl(1,'category');
 				print "</td>\n";
 				print '<td valign="top">'.$prod->libelle."</td>\n";
 				// Link to delete from category
@@ -376,7 +376,7 @@ if ($object->type == 1)
 				print "\t<tr ".$bc[$var].">\n";
 
 				print '<td class="nowrap" valign="top">';
-				print $soc->getNomUrl(1,'category_supplier');
+				print $soc->getNameUrl(1,'category_supplier');
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
@@ -430,7 +430,7 @@ if($object->type == 2)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
-				print $soc->getNomUrl(1,'category');
+				print $soc->getNameUrl(1,'category');
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
@@ -483,7 +483,7 @@ if ($object->type == 3)
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
 				$member->ref=$member->login;
-				print $member->getNomUrl(1,0,'category');
+				print $member->getNameUrl(1,0,'category');
 				print "</td>\n";
 				print '<td valign="top">'.$member->lastname."</td>\n";
 				print '<td valign="top">'.$member->firstname."</td>\n";
@@ -536,7 +536,7 @@ if($object->type == 4)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td class="nowrap" valign="top">';
-				print $contact->getNomUrl(1,'category');
+				print $contact->getNameUrl(1,'category');
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
