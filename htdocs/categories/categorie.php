@@ -207,8 +207,7 @@ if (empty($reshook))
 			}
 			else
 			{
-				setEventMessage($cat->error,'errors');
-				setEventMessage($cat->errors,'errors');
+				setEventMessages($cat->error,$this->errors,'errors');
 			}
 		}
 	}
@@ -628,7 +627,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 	// Form to add record into a category
 	if ($showclassifyform)
 	{
-		print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php">';
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';

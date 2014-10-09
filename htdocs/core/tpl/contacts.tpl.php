@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2012      Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,7 +209,7 @@ $userstatic=new User($db);
 			?>
 			<?php if ($object->statut >= 0) echo '</a>'; ?>
 		</div>
-		<div class="tagtd nowrap" align="center">
+		<div class="tagtd nowrap" align="right">
 			<?php if ($permission) { ?>
 				&nbsp;<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletecontact&amp;lineid='.$tab[$i]['rowid']; ?>"><?php echo img_delete(); ?></a>
 			<?php } ?>
