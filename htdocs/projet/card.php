@@ -45,7 +45,7 @@ $mine = GETPOST('mode')=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('projectcard'));
+$hookmanager->initHooks(array('projectcard','globalcard'));
 
 $object = new Project($db);
 $extrafields = new ExtraFields($db);

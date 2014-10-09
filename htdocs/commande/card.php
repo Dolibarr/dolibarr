@@ -90,7 +90,7 @@ if ($id > 0 || ! empty($ref)) {
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('ordercard'));
+$hookmanager->initHooks(array('ordercard','globalcard'));
 
 $permissionnote = $user->rights->commande->creer; // Used by the include of actions_setnotes.inc.php
 

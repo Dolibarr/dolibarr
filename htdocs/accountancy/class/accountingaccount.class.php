@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ class AccountingAccount
 	{
 		if ($rowid || $account_number)
 		{
-			$sql = "SELECT rowid, datec, tms, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, labe, fk_user_author, fk_user_modifn active";
+			$sql = "SELECT rowid, datec, tms, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, fk_user_author, fk_user_modif, active";
 			$sql.= " FROM " . MAIN_DB_PREFIX . "accountingaccount WHERE";
 			if ($rowid) {
 				$sql .= " rowid = '" . $rowid . "'";

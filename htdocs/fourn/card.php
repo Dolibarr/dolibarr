@@ -50,7 +50,7 @@ $result = restrictedArea($user, 'societe&fournisseur', $id, '&societe');
 $object = new Fournisseur($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('suppliercard'));
+$hookmanager->initHooks(array('suppliercard','globalcard'));
 
 /*
  * Action

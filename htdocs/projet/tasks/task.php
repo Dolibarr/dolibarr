@@ -50,7 +50,7 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 if (! $user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('projecttaskcard'));
+$hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
 $object = new Task($db);
 $extrafields = new ExtraFields($db);
@@ -58,9 +58,11 @@ $projectstatic = new Project($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
+
 /*
  * Actions
-*/
+ */
 
 if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 {
@@ -91,11 +93,10 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 		$result=$object->update($user);
-		
+
 		if ($result < 0)
 		{
-		    setEventMessage($object->error,'errors');
-		    setEventMessage($object->errors,'errors');
+		    setEventMessages($object->error,$object->errors,'errors');
 		}
 	}
 	else
@@ -121,8 +122,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 		}
 		else
 		{
-			$langs->load("errors");
-			setEventMessage($langs->trans($object->error), 'errors');
+		    setEventMessages($object->error,$object->errors,'errors');
 			$action='';
 		}
 	}

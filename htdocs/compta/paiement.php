@@ -67,7 +67,7 @@ if ($facid > 0)
 }
 
 // Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('paiementcard'));
+$hookmanager->initHooks(array('paiementcard','globalcard'));
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks

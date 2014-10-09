@@ -111,3 +111,4 @@ ExtraFieldsCategories=Complementary attributes
 CategoriesSetup=Categories setup
 CategorieRecursiv=Link with parent category automatically
 CategorieRecursivHelp=If activated, product will also linked to parent category when adding into a subcategory
+AddProductServiceIntoCategory=Add the following product/service

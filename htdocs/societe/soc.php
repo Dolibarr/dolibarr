@@ -77,7 +77,7 @@ if (! empty($canvas))
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('thirdpartycard'));
+$hookmanager->initHooks(array('thirdpartycard','globalcard'));
 
 
 /*
