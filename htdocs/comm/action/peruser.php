@@ -47,6 +47,11 @@ $usergroup = GETPOST("usergroup","int",3);
 //$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 $showbirthday = 0;
 
+// If not choice done on calendar owner, we filter on user.
+if (empty($filtert) && empty($conf->AGENDA_ALL_CALENDARS))
+{
+	$filtert=$user->id;
+}
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -557,30 +562,32 @@ while ($i < 7)
 }
 echo "</tr>\n";
 
+
 // Define $usernames
 $usernames = array(); //init
-/* Use this to have list of users only if users have events
+$usernamesid = array();
+/* Use this to have list of users only if users have events */
 foreach ($eventarray as $daykey => $notused)
 {
-   $annee = date('Y',$daykey);
-   $mois = date('m',$daykey);
-   $jour = date('d',$daykey);
-   //if ($day==$jour && $month==$mois && $year==$annee)
-   //{
-      //Tout les events à la même date :
-      foreach ($eventarray[$daykey] as $index => $event)
-      {
-         $myuser = new User($db);
-         $user_id = $event->usertodo->id;
-         $myuser->fetch($user_id);
-         $username = $myuser->getFullName($langs);
-         if (! in_array($username, $usernames))
-         {
-            $usernames[] = $username;
-         }
-      }
-   //}
-}*/
+   // Get all assigned users for each event
+   foreach ($eventarray[$daykey] as $index => $event)
+   {
+	   	$event->fetch_userassigned();
+		$listofuserid=$event->userassigned;
+		foreach($listofuserid as $userid => $tmp)
+		{
+		   	if (! in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
+		}
+   }
+}
+foreach($usernamesid as $id)
+{
+	$tmpuser=new User($db);
+	$result=$tmpuser->fetch($id);
+	$usernames[]=$tmpuser;
+}
+
+/*
 if ($filtert > 0)
 {
 	$tmpuser = new User($db);
@@ -598,7 +605,7 @@ else
 	$tmpgroup = new UserGroup($db);
 	//$tmpgroup->fetch($usergroup); No fetch, we want all users for all groups
 	$usernames = $tmpgroup->listUsersForGroup();
-}
+}*/
 
 // Load array of colors by type
 $colorsbytype=array();

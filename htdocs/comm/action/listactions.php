@@ -56,6 +56,12 @@ $filterd = GETPOST("userdone","int",3)?GETPOST("userdone","int",3):GETPOST("filt
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
+// If not choice done on calendar owner, we filter on user.
+if (empty($filtert) && empty($conf->AGENDA_ALL_CALENDARS))
+{
+	$filtert=$user->id;
+}
+
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -98,6 +104,7 @@ $hookmanager->initHooks(array('agendalist'));
 /*
  *	Actions
  */
+
 if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday"))
 {
 	$param='';
@@ -144,7 +151,7 @@ $sql.= " a.fk_contact, a.note, a.label, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle,";
 $sql.= " ua.login as loginauthor, ua.rowid as useridauthor,";
 $sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
-$sql.= " ud.login as logindone, ud.rowid as useriddone,";
+//$sql.= " ud.login as logindone, ud.rowid as useriddone,";
 $sql.= " sp.lastname, sp.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c,";
 $sql.= " ".MAIN_DB_PREFIX.'user as u,';
@@ -154,7 +161,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON a.fk_user_author = ua.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
+//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
 if ($usergroup > 0) $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ugu";
 $sql.= " WHERE c.id = a.fk_action";
 $sql.= ' AND a.fk_user_author = u.rowid';
@@ -244,7 +251,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ActionUserAsk"),$_SERVER["PHP_SELF"],"ua.login",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AffectedTo"),$_SERVER["PHP_SELF"],"ut.login",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ActionsOwnedBy"),$_SERVER["PHP_SELF"],"ut.login",$param,"","",$sortfield,$sortorder);
 	//print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
