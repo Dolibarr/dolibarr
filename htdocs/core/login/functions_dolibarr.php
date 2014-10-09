@@ -76,7 +76,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				//can update password security and use md5
 				if (version_compare(PHP_VERSION, '5.5.0') >= 0 && strlen($passcrypted) == 32) {
 					if ($passcrypted == dol_hash($passtyped)) {
-						$newpasscrypted = password_hash($passcrypted, PASSWORD_DEFAULT);
+						$newpasscrypted = password_hash($passtyped, PASSWORD_DEFAULT);
 
 						$edituser = new User($db);
 						$result   = $edituser->fetch('', GETPOST('username'));
@@ -91,8 +91,8 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 					}
 				// use password_hash better security
 				} else if (version_compare(PHP_VERSION, '5.5.0') >= 0 && strlen($passcrypted) > 32) {
-					if ($passcrypted == password_hash($passcrypted, PASSWORD_DEFAULT)) {
-						$passok = true;
+					if (password_verify($passtyped,$passcrypted)) {
+						//$passok = true;
 						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - " . password_get_info($passcrypted));
 					}
 				//php version didn't support password_hash()
