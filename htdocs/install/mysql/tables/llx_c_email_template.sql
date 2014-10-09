@@ -23,6 +23,7 @@ create table llx_c_email_template
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
   module          varchar(32),                    -- Nom du module en rapport avec le modele
   type_template   varchar(32),  				  -- template for which type of email (send invoice by email, send order, ...)
+  lang            varchar(6),
   private         smallint DEFAULT 0 NOT NULL,    -- Template public or private
   fk_user         integer,                        -- Id utilisateur si modele prive, sinon null
   datec           datetime,

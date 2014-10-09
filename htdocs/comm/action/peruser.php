@@ -48,7 +48,7 @@ $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = 0;
 
 // If not choice done on calendar owner, we filter on user.
-if (empty($filtert) && empty($conf->AGENDA_ALL_CALENDARS))
+if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 {
 	$filtert=$user->id;
 }
