@@ -361,14 +361,19 @@ class ActionComm extends CommonObject
 
                 $this->authorid             = $obj->fk_user_author;
                 $this->usermodid			= $obj->fk_user_mod;
+
+                if (!is_object($this->author)) $this->author = new stdClass(); // For avoid warning
                 $this->author->id			= $obj->fk_user_author;		// deprecated
                 $this->author->firstname	= $obj->firstname;			// deprecated
                 $this->author->lastname		= $obj->lastname;			// deprecated
+                if (!is_object($this->usermod)) $this->usermod = new stdClass(); // For avoid warning
                 $this->usermod->id			= $obj->fk_user_mod;		// deprecated
 
                 $this->userownerid			= $obj->fk_user_action;
                 $this->userdoneid			= $obj->fk_user_done;
+                if (!is_object($this->usertodo)) $this->usertodo = new stdClass(); // For avoid warning
                 $this->usertodo->id			= $obj->fk_user_action;		// deprecated
+                if (!is_object($this->userdone)) $this->userdone = new stdClass(); // For avoid warning
                 $this->userdone->id			= $obj->fk_user_done;		// deprecated
                 $this->priority				= $obj->priority;
                 $this->fulldayevent			= $obj->fulldayevent;
