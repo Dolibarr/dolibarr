@@ -66,31 +66,31 @@ Lineofinvoice=Línea de la factura
 VentilatedinAccount=Contabilizada con éxito en la cuenta contable
 NotVentilatedinAccount=Cuenta sin contabilización en la contabilidad
 
-ACCOUNTINGEX_SEPARATORCSV=separador CSV
+ACCOUNTING_SEPARATORCSV=Separador CSV
 
-ACCOUNTINGEX_LIMIT_LIST_VENTILATION=Número de elementos a contabilizar que se muestran por página (máximo recomendado: 50)
-ACCOUNTINGEX_LIST_SORT_VENTILATION_TODO=Ordenar las páginas de contabilización "A contabilizar" por los elementos más recientes
-ACCOUNTINGEX_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "Contabilizadas" por los elementos más recientes
+ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a contabilizar que se muestran por página (máximo recomendado: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ordenar las páginas de contabilización "A contabilizar" por los elementos más recientes
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "Contabilizadas" por los elementos más recientes
 
 AccountLength=Longitud de las cuentas contables mostradas en Dolibarr
 AccountLengthDesc=Función para simular una longitud de cuenta contable sustituyendo los espacios por cero. Esta función sólo afecta a la pantalla, no cambia las cuentas contables registradas en Dolibarr. Esta función es necesaria para la exportación, para ser compatible con algunos programas.
-ACCOUNTINGEX_LENGTH_GACCOUNT=Longitud de las cuentas generales
-ACCOUNTINGEX_LENGTH_AACCOUNT=Longitud de las subcuentas
+ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas generales
+ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas
 
-ACCOUNTINGEX_SELL_JOURNAL=Diario de ventas
-ACCOUNTINGEX_PURCHASE_JOURNAL=Diario de compras
-ACCOUNTINGEX_BANK_JOURNAL=Diario bancario
-ACCOUNTINGEX_CASH_JOURNAL=Diario de caja
-ACCOUNTINGEX_MISCELLANEOUS_JOURNAL=Diario de operaciones diversas
-ACCOUNTINGEX_SOCIAL_JOURNAL=Diario social
+ACCOUNTING_SELL_JOURNAL=Diario de ventas
+ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
+ACCOUNTING_BANK_JOURNAL=Diario bancario
+ACCOUNTING_CASH_JOURNAL=Diario de caja
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario de operaciones diversas
+ACCOUNTING_SOCIAL_JOURNAL=Diario social
 
-ACCOUNTINGEX_ACCOUNT_TRANSFER_CASH=Cuenta de caja
-ACCOUNTINGEX_ACCOUNT_SUSPENSE=Cuenta operaciones pendientes de asignar
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cuenta de caja
+ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta operaciones pendientes de asignar
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (si no se define en el producto)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta contable predeterminada para los productos vendidos (si no se define en el producto)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (si no se define en el servicio)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servico)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servicio)
 
 Doctype=Tipo de documento
 Docdate=Fecha

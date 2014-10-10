@@ -204,3 +204,6 @@ ACCOUNTING_VAT_ACCOUNT=Código contable por defecto para el IVA repercutido
 ACCOUNTING_VAT_BUY_ACCOUNT=Código contable por defecto para el IVA soportado
 ACCOUNTING_ACCOUNT_CUSTOMER=Cuenta contable por defecto para clientes
 ACCOUNTING_ACCOUNT_SUPPLIER=Cuenta contable por defecto para proveedores
+CloneTax=Clonar una carga social
+ConfirmCloneTax=Confirme la clonación de la carga social
+CloneTaxForNextMonth=Clonarla para el próximo mes
