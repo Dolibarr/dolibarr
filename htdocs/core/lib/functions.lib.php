@@ -1244,7 +1244,11 @@ function dol_hideMail($mail, $replace="*", $nbreplace=8, $nbdisplaymail=4, $nbdi
 	$string_replace = '';
 	$mail_name = $tab[0];
 	$mail_domaine = $tab2[0];
-	$mail_tld = $displaytld ? ".".$tab2[1] : " ";
+	$mail_tld = '';
+
+	for($i=1; $i < count($tab2) && $displaytld ;$i++){
+		$mail_tld .= '.'.$tab2[$i];
+	}
 
 	for($i=0; $i < $nbreplace; $i++){
 		$string_replace .= $replace;
