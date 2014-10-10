@@ -2375,7 +2375,7 @@ table.cal_month    { border-spacing: 0px; }
 .cal_past          { }
 .cal_peruser       { padding: 0px; }
 .peruser_busy      { background: #CC8888; }
-.peruser_notbusy   { background: #EEDDDD; }
+.peruser_notbusy   { background: #EEDDDD; opacity: 0.5; }
 table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 6px; border-radius: 6px;
 						-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
 						moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
