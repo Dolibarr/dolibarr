@@ -1225,6 +1225,42 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 }
 
 /**
+ * 	Returns a hidden email.
+ *  Hide part of email.
+ *
+ * 	@param 		string		$mail				Email
+ * 	@param 		string		$replace			Replacement caractaire ( defaul : *)
+ * 	@param 		int			$nbreplace			Number of replacement caractaire (default : 8)
+ * 	@param 		int			$nbdisplaymail		Number of caractaire unchanged (default: 4)
+ * 	@param 		int			$nbdisplaydomain	Number of caractaire unchanged of domain (default: 3)
+ * 	@param 		bool		$displaytld			Display tld (default: true)
+ * 	@return		string							Return hiden email or '';
+ */
+function dol_hideMail($mail, $replace="*", $nbreplace=8, $nbdisplaymail=4, $nbdisplaydomain=3, $displaytld=true){
+	if(!isValidEmail($mail))return ' ';
+	$tab = explode('@', $mail);
+	$tab2 = explode('.',$tab[1]);
+	$string_replace = '';
+	$mail_name = $tab[0];
+	$mail_domaine = $tab2[0];
+	$mail_tld = $displaytld ? ".".$tab2[1] : " ";
+
+	for($i=0; $i < $nbreplace; $i++){
+		$string_replace .= $replace;
+	}
+
+	if(strlen($mail_name) > $nbdisplaymail){
+		$mail_name = substr($mail_name, 0, $nbdisplaymail);
+	}
+
+	if(strlen($mail_domaine) > $nbdisplaydomain){
+		$mail_domaine = substr($mail_domaine, strlen($mail_domaine)-$nbdisplaydomain);
+	}
+
+	return $mail_name . $string_replace . $mail_domaine . $mail_tld;
+}
+
+/**
  * Show Skype link
  *
  * @param	string		$skype			Skype to show (only skype, without 'Name of recipient' before)

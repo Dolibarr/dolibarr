@@ -130,7 +130,8 @@ if ($action == 'buildnewpassword' && $username)
                     // Success
                     if ($edituser->send_password($user,$newpassword,1) > 0)
                     {
-                        $message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent",$edituser->login,$edituser->email).'</div>';
+
+                        $message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent",$edituser->login,dol_hideMail($edituser->email)).'</div>';
                         //$message.=$newpassword;
                         $username='';
                     }
