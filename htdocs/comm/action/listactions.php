@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -115,6 +115,22 @@ $form=new Form($db);
 
 // Define list of all external calendars
 $listofextcals=array();
+/*if (empty($conf->global->AGENDA_DISABLE_EXT) && $conf->global->AGENDA_EXT_NB > 0)
+{
+    $i=0;
+    while($i < $conf->global->AGENDA_EXT_NB)
+    {
+        $i++;
+        $paramkey='AGENDA_EXT_SRC'.$i;
+        $url=$conf->global->$paramkey;
+        $paramkey='AGENDA_EXT_NAME'.$i;
+        $namecal = $conf->global->$paramkey;
+        $paramkey='AGENDA_EXT_COLOR'.$i;
+        $colorcal = $conf->global->$paramkey;
+        if ($url && $namecal) $listofextcals[]=array('src'=>$url,'name'=>$namecal,'color'=>$colorcal);
+    }
+}
+*/
 
 $param='';
 if ($status) $param="&status=".$status;
@@ -195,7 +211,7 @@ if ($resql)
     $head = calendars_prepare_head('');
 
     dol_fiche_head($head, 'card', $langs->trans('Events'), 0, 'list');
-    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,-1,$actioncode);
+    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$filterg,$pid,$socid,-1,$actioncode);
     dol_fiche_end();
 
     // Add link to show birthdays
@@ -229,7 +245,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ActionUserAsk"),$_SERVER["PHP_SELF"],"ua.login",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AffectedTo"),$_SERVER["PHP_SELF"],"ut.login",$param,"","",$sortfield,$sortorder);
-	//print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
@@ -254,7 +270,11 @@ if ($resql)
 		print $actionstatic->getNomUrl(1,28);
 		print '</td>';
 
-		// Start date
+		// Titre
+		//print '<td>';
+		//print dol_trunc($obj->label,12);
+		//print '</td>';
+
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->dp),"day");
 		$late=0;
@@ -265,7 +285,6 @@ if ($resql)
 		if ($late) print img_warning($langs->trans("Late")).' ';
 		print '</td>';
 
-		// End date
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->dp2),"day");
 		print '</td>';
@@ -322,7 +341,6 @@ if ($resql)
 		print '</td>';
 
 		// User did
-		/*
 		print '<td align="left">';
 		if ($obj->useriddone)
 		{
@@ -333,7 +351,6 @@ if ($resql)
 		}
 		else print '&nbsp;';
 		print '</td>';
-		*/
 
 		// Status/Percent
 		print '<td align="right" class="nowrap">'.$actionstatic->LibStatut($obj->percent,6).'</td>';
@@ -354,3 +371,4 @@ else
 $db->close();
 
 llxFooter();
+?>

@@ -970,12 +970,12 @@ else
 
         // Note Public
         print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
-        print nl2br($object->note_public);
+        print $object->note_public;
         print '</td></tr>';
 
         // Note Private
         print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
-        print nl2br($object->note_private);
+        print $object->note_private;
 
 	 	// Statut
 		print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
