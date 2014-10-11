@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2014	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
@@ -478,6 +478,50 @@ function clean_url($url,$http=1)
     }
     else return $url;
 }
+
+
+
+/**
+ * 	Returns an email value with obfuscated parts.
+ *
+ * 	@param 		string		$mail				Email
+ * 	@param 		string		$replace			Replacement character (defaul : *)
+ * 	@param 		int			$nbreplace			Number of replacement character (default : 8)
+ * 	@param 		int			$nbdisplaymail		Number of character unchanged (default: 4)
+ * 	@param 		int			$nbdisplaydomain	Number of character unchanged of domain (default: 3)
+ * 	@param 		bool		$displaytld			Display tld (default: true)
+ * 	@return		string							Return email with hidden parts or '';
+ */
+function dolObfuscateEmail($mail, $replace="*", $nbreplace=8, $nbdisplaymail=4, $nbdisplaydomain=3, $displaytld=true)
+{
+	if(!isValidEmail($mail))return '';
+	$tab = explode('@', $mail);
+	$tab2 = explode('.',$tab[1]);
+	$string_replace = '';
+	$mail_name = $tab[0];
+	$mail_domaine = $tab2[0];
+	$mail_tld = '';
+
+	for($i=1; $i < count($tab2) && $displaytld ;$i++)
+	{
+		$mail_tld .= '.'.$tab2[$i];
+	}
+
+	for($i=0; $i < $nbreplace; $i++){
+		$string_replace .= $replace;
+	}
+
+	if(strlen($mail_name) > $nbdisplaymail){
+		$mail_name = substr($mail_name, 0, $nbdisplaymail);
+	}
+
+	if(strlen($mail_domaine) > $nbdisplaydomain){
+		$mail_domaine = substr($mail_domaine, strlen($mail_domaine)-$nbdisplaydomain);
+	}
+
+	return $mail_name . $string_replace . $mail_domaine . $mail_tld;
+}
+
 
 /**
  * 	Return lines of an html table from an array
