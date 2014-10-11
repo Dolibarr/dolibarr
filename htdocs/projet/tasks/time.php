@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -181,7 +181,7 @@ if (! empty($project_ref) && ! empty($withproject))
 
 /*
  * View
-*/
+ */
 
 llxHeader("",$langs->trans("Task"));
 
@@ -193,7 +193,7 @@ if ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Fiche projet en mode visu
-	*/
+ 	 */
 	if ($object->fetch($id) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
@@ -292,9 +292,37 @@ if ($id > 0 || ! empty($ref))
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
+		// Date start
+		print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
+		print dol_print_date($object->date_start,'dayhour');
+		print '</td></tr>';
+		
+		// Date end
+		print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
+		print dol_print_date($object->date_end,'dayhour');
+		print '</td></tr>';
+		
 		// Planned workload
-		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">'.convertSecondToTime($object->planned_workload,'allhourmin').'</td></tr>';
-
+		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
+		print convertSecondToTime($object->planned_workload,'allhourmin');
+		print '</td></tr>';
+		
+		// Progress declared
+		print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+		print $object->progress.' %';
+		print '</td></tr>';
+		
+		// Progress calculated
+		print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
+		if ($object->planned_workload)
+		{
+			$tmparray=$object->getSummaryOfTimeSpent();
+			if ($tmparray['total_duration'] > 0) print round($tmparray['total_duration']/$object->planned_workload*100, 2).' %';
+			else print '0 %';
+		}
+		else print '';
+		print '</td></tr>';
+		
 		// Project
 		if (empty($withproject))
 		{
@@ -316,7 +344,7 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		 * Add time spent
-		*/
+		 */
 		if ($user->rights->projet->creer)
 		{
 			print '<br>';
@@ -333,7 +361,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td width="100">'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("By").'</td>';
 			print '<td>'.$langs->trans("Note").'</td>';
-			print '<td>'.$langs->trans("Progress").'</td>';
+			print '<td>'.$langs->trans("ProgressDeclared").'</td>';
 			print '<td align="right">'.$langs->trans("Duration").'</td>';
 			print '<td width="80">&nbsp;</td>';
 			print "</tr>\n";
@@ -363,14 +391,14 @@ if ($id > 0 || ! empty($ref))
 			print '<textarea name="timespent_note" cols="80" rows="'.ROWS_3.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
 			print '</td>';
 
-			// Progress
+			// Progress declared
 			print '<td class="nowrap">';
-			print $formother->select_percent($object->progress,'progress');
+			print $formother->select_percent(GETPOST('progress')?GETPOST('progress'):$object->progress,'progress');
 			print '</td>';
 
 			// Duration
 			print '<td class="nowrap" align="right">';
-			print $form->select_duration('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''),0,'text');
+			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, 'text');
 			print '</td>';
 
 			print '<td align="center">';
@@ -384,7 +412,7 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		 *  List of time spent
-		*/
+		 */
 		$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user, t.note";
 		$sql.= ", u.lastname, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";

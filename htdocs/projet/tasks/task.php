@@ -351,8 +351,8 @@ if ($id > 0 || ! empty($ref))
 			print $form->select_duration('planned_workload',$object->planned_workload,0,'text');
 			print '</td></tr>';
 
-			// Progress
-			print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
+			// Progress declared
+			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 			print $formother->select_percent($object->progress,'progress');
 			print '</td></tr>';
 
@@ -383,7 +383,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			/*
 			 * Fiche tache en mode visu
-			*/
+			 */
 			$param=($withproject?'&withproject=1':'');
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
@@ -440,14 +440,20 @@ if ($id > 0 || ! empty($ref))
 			print convertSecondToTime($object->planned_workload,'allhourmin');
 			print '</td></tr>';
 
-			// Progress
+			// Progress declared
 			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 			print $object->progress.' %';
 			print '</td></tr>';
 
-			// Progress
+			// Progress calculated
 			print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
-			print $object->progress.' %';
+			if ($object->planned_workload)
+			{
+				$tmparray=$object->getSummaryOfTimeSpent();
+				if ($tmparray['total_duration'] > 0) print round($tmparray['total_duration']/$object->planned_workload*100, 2).' %';
+				else print '0 %';
+			}
+			else print '';
 			print '</td></tr>';
 
 			// Description
@@ -504,7 +510,7 @@ if ($id > 0 || ! empty($ref))
 
 			/*
 			 * Documents generes
-			*/
+			 */
 			$filename=dol_sanitizeFileName($projectstatic->ref). "/". dol_sanitizeFileName($object->ref);
 			$filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref). "/" .dol_sanitizeFileName($object->ref);
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;

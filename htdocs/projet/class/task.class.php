@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  *
@@ -141,8 +141,9 @@ class Task extends CommonObject
             }
         }
 
-        //Update extrafield
-        if (!$error) {
+        // Update extrafield
+        if (! $error) 
+        {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
         		$result=$this->insertExtraFields();
@@ -814,6 +815,47 @@ class Task extends CommonObject
 
         if ($ret >=0) $this->db->commit();
         return $ret;
+    }
+
+    /**
+     *  Calculate total of time spent for task
+     *
+     *  @param	int		$id 		Id of object (here task)
+     *  @return array		        Array of info for task array('min_date', 'max_date', 'total_duration')
+     */
+    function getSummaryOfTimeSpent($id='')
+    {
+        global $langs;
+
+        if (empty($id)) $id=$this->id;
+        
+        $result=array();
+        
+        $sql = "SELECT";
+        $sql.= " MIN(t.task_datehour) as min_date,";
+        $sql.= " MAX(t.task_datehour) as max_date,";
+        $sql.= " SUM(t.task_duration) as total_duration";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
+        $sql.= " WHERE t.fk_task = ".$id;
+
+        dol_syslog(get_class($this)."::getSummaryOfTimeSpent", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+
+            $result['min_date'] = $obj->min_date;
+            $result['max_date'] = $obj->max_date;
+            $result['total_duration'] = $obj->total_duration;
+
+            $this->db->free($resql);
+            return $result;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return $result;
+        }
     }
 
     /**
