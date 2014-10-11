@@ -135,7 +135,7 @@ if ($result) {
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 	print '<input type="hidden" name="action" value="import">';
 	
-	$var = True;
+	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
