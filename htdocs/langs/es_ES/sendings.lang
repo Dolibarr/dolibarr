@@ -74,5 +74,5 @@ SumOfProductVolumes=Suma del volumen de los productos
 SumOfProductWeights=Suma del peso de los productos
 
 # warehouse details
-DetailWarehouseNumber= Warehouse details
-DetailWarehouseFormat= W:%s (Qty : %d)
+DetailWarehouseNumber= Detalles del almacén
+DetailWarehouseFormat= Alm.:%s (Cant. : %d)

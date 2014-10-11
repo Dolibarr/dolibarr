@@ -1,22 +1,14 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
-#
 About = Acerca de
 CronAbout = Acerca de Cron
 CronAboutPage = Acerca de Cron
-
-#
 # Right
-#
 Permission23101 = Leer tareas programadas
 Permission23102 = Crear/actualizar tareas programadas
 Permission23103 = Borrar tarea programada
 Permission23104 = Ejecutar tarea programada
-
-#
 # Admin
-#
 CronSetup= Configuración del módulo Programador
 URLToLaunchCronJobs=URL para ejecutar tareas Cron
 OrToLaunchASpecificJob=O para ejecutar una tarea en concreto
@@ -24,20 +16,12 @@ KeyForCronAccess=Clave para la URL para ejecutar tareas Cron
 FileToLaunchCronJobs=Comando para ejecutar tareas Cron
 CronExplainHowToRunUnix=En entorno Unix debes usar crontab para ejecutar el comando cada varios minutos
 CronExplainHowToRunWin=En un entorno de Microsoft(tm) Windows puedes usar el programador de tareas para ejecutar el comando cada varios minutos
-
-
-#
 # Menu
-#
 CronJobs=Tareas programadas
 CronListActive= Tareas Activas
 CronListInactive= Tareas Inactivas
 CronListActive= Tareas Activas
-
-
-#
 # Page list
-#
 CronDateLastRun=Últ. ejec.
 CronLastOutput=Res. ult. ejec.
 CronLastResult=Últ. cód. res.
@@ -70,10 +54,7 @@ CronLabel=Descripcion
 CronNbRun=Núm. ejec.
 CronEach=Toda(s)
 JobFinished=Tareas lanzadas y finalizadas
-
-#
 #Page card
-#
 CronAdd= Tarea Nueva
 CronHourStart= Fecha y hora de inicio de la tarea
 CronEvery= Y ejecutar la tarea cada
@@ -95,20 +76,12 @@ CronObjectHelp=El nombre del objeto a cargar. <BR> Por ejemplo para realizar un 
 CronMethodHelp=El métpdp a lanzar. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, el valor del método es <i>fecth</i>
 CronArgsHelp=Los argumentos del método. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, los valores pueden ser <i>0, ProductRef</i>
 CronCommandHelp=El comando en línea del sistema a ejecutar.
-
-#
 # Info
-#
 CronInfoPage=Información
-
-
-#
 # Common
-#
 CronType=Tipo de tarea
 CronType_method=Llamar a un método de clase Dolibarr
 CronType_command=Comando Shell
 CronMenu=Programador
 CronCannotLoadClass=No se puede cargar la clase %s u objeto %s
-
 UseMenuModuleToolsToAddCronJobs=Ir a "Inicio - Utilidades módulos - Lista de tareas Cron" para ver y editar tareas programadas.
