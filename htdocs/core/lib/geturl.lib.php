@@ -72,6 +72,16 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     	curl_setopt($ch, CURLOPT_POST, 1);	// POST
     	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// Setting param x=a&y=z as POST fields
     }
+    else if ($postorget == 'PUT')
+    {
+    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
+    	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Length: ' . strlen($params)));
+    	if ( ! is_array($params) )
+		parse_str($params, $array_params);
+
+    	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_params));	// Setting param x=a&y=z as PUT fields
+    	
+    }
     else if ($postorget == 'HEAD')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
