@@ -99,10 +99,6 @@ class ActionComm extends CommonObject
 
         $this->db = $db;
 
-        //$this->author = new stdClass();
-        //$this->usermod = new stdClass();
-        //$this->usertodo = new stdClass();
-        //$this->userdone = new stdClass();
         $this->societe = new stdClass();	// deprecated
         $this->contact = new stdClass();	// deprecated
     }
@@ -142,8 +138,8 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
-        $userownerid=isset($this->usertodo->id)?$this->usertodo->id:$this->userownerid;		// For backward compatibility
-        $userdoneid=isset($this->userdone->id)?$this->userdone->id:$this->userdoneid;		// For backward compatibility
+        $userownerid=$this->userownerid;
+        $userdoneid=$this->userdoneid;
 
         if (! $this->type_id || ! $this->type_code)
         {
@@ -371,10 +367,6 @@ class ActionComm extends CommonObject
 
                 $this->userownerid			= $obj->fk_user_action;
                 $this->userdoneid			= $obj->fk_user_done;
-                if (!is_object($this->usertodo)) $this->usertodo = new stdClass(); // For avoid warning
-                $this->usertodo->id			= $obj->fk_user_action;		// deprecated
-                if (!is_object($this->userdone)) $this->userdone = new stdClass(); // For avoid warning
-                $this->userdone->id			= $obj->fk_user_done;		// deprecated
                 $this->priority				= $obj->priority;
                 $this->fulldayevent			= $obj->fulldayevent;
                 $this->location				= $obj->location;
@@ -530,7 +522,7 @@ class ActionComm extends CommonObject
         if ($this->fk_project < 0) $this->fk_project = 0;
 
         // Check parameters
-        if ($this->percentage == 0 && $this->userdone->id > 0)
+        if ($this->percentage == 0 && $this->userdoneid > 0)
         {
             $this->error="ErrorCantSaveADoneUserWithZeroPercentage";
             return -1;
@@ -538,8 +530,8 @@ class ActionComm extends CommonObject
 
         $socid=($this->socid?$this->socid:((isset($this->societe->id) && $this->societe->id > 0) ? $this->societe->id : 0));
         $contactid=($this->contactid?$this->contactid:((isset($this->contact->id) && $this->contact->id > 0) ? $this->contact->id : 0));
-		$userownerid=($this->userownerid?$this->userownerid:((isset($this->usertodo->id) && $this->usertodo->id > 0) ? $this->usertodo->id : 0));
-		$userdoneid=($this->userdoneid?$this->userdoneid:((isset($this->userdone->id) && $this->userdone->id > 0) ? $this->userdone->id : 0));
+		$userownerid=($this->userownerid?$this->userownerid:0);
+		$userdoneid=($this->userdoneid?$this->userdoneid:0);
 
         $this->db->begin();
 

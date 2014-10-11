@@ -491,12 +491,9 @@ if ($resql)
         $event->type_code=$obj->code;
         $event->libelle=$obj->label;
         $event->percentage=$obj->percent;
-        //$event->author->id=$obj->fk_user_author;	// user id of creator
-        $event->authorid=$obj->fk_user_author;	// user id of creator
+        $event->authorid=$obj->fk_user_author;		// user id of creator
         $event->userownerid=$obj->fk_user_action;	// user id of owner
         $event->fetch_userassigned();				// This load $event->userassigned
-        //$event->usertodo->id=$obj->fk_user_action;	// user id of owner
-        //$event->userdone->id=$obj->fk_user_done;	// deprecated
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;

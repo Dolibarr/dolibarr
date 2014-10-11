@@ -409,7 +409,6 @@ if ($resql)
         $event->authorid=$obj->fk_user_author;		// user id of creator
         $event->userownerid=$obj->fk_user_action;	// user id of owner
         $event->fetch_userassigned();				// This load $event->userassigned
-        //$event->userdone->id=$obj->fk_user_done;	// deprecated
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;

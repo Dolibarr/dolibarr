@@ -100,8 +100,7 @@ if ($object->id > 0)
 	$author->fetch($object->author->id);
 	$object->author=$author;
 
-	if ($object->contact->id > 0) $object->fetch_contact($object->contact->id);
-	if ($object->usertodo->id > 0) { $tmpuser=new User($db); $res=$tmpuser->fetch($object->usertodo->id); $object->usertodo=$tmpuser; }
+	$object->fetch_contact();
 
 	$head=actions_prepare_head($object);
 
@@ -195,7 +194,11 @@ if ($object->id > 0)
 
 	// Assigned to
 	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-	if ($object->usertodo->id > 0) print $object->usertodo->getNomUrl(1);
+	if ($object->userownerid > 0)
+	{
+		$tmpuser=new User($object->userownerid);
+		print $tmpuser->getNomUrl(1);
+	}
 	print '</td></tr>';
 
 	print '</table><br><br><table class="border" width="100%">';
