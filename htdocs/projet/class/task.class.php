@@ -60,6 +60,7 @@ class Task extends CommonObject
     var $timespent_duration;
     var $timespent_old_duration;
     var $timespent_date;
+    var $timespent_datehour;		// More accurate start date (same than timespent_date but includes hours, minutes and seconds)
     var $timespent_fk_user;
     var $timespent_note;
 
@@ -744,18 +745,21 @@ class Task extends CommonObject
 
         // Clean parameters
         if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
-
+		if (empty($this->timespent_datehour)) $this->timespent_datehour = $this->timespent_date;
+		
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (";
         $sql.= "fk_task";
         $sql.= ", task_date";
+        $sql.= ", task_datehour";
         $sql.= ", task_duration";
         $sql.= ", fk_user";
         $sql.= ", note";
         $sql.= ") VALUES (";
         $sql.= $this->id;
         $sql.= ", '".$this->db->idate($this->timespent_date)."'";
+        $sql.= ", '".$this->db->idate($this->timespent_datehour)."'";
         $sql.= ", ".$this->timespent_duration;
         $sql.= ", ".$this->timespent_fk_user;
         $sql.= ", ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
@@ -919,12 +923,14 @@ class Task extends CommonObject
         $ret = 0;
 
         // Clean parameters
+        if (empty($this->timespent_datehour)) $this->timespent_datehour = $this->timespent_date;
         if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
-
+        
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
         $sql.= " task_date = '".$this->db->idate($this->timespent_date)."',";
+        $sql.= " task_datehour = '".$this->db->idate($this->timespent_datehour)."',";
         $sql.= " task_duration = ".$this->timespent_duration.",";
         $sql.= " fk_user = ".$this->timespent_fk_user.",";
         $sql.= " note = ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
