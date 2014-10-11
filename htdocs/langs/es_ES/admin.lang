@@ -219,6 +219,7 @@ AutomaticIfJavascriptDisabled=Automático si Javascript está desactivado
 AvailableOnlyIfJavascriptNotDisabled=Disponible solamente si Javascript esta activado
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=Disponible solamente si Javascript y Ajax están activados
 Required=Requerido
+UsedOnlyWithTypeOption=Used by some agenda option only
 Security=Seguridad
 Passwords=Contraseñas
 DoNotStoreClearPassword=No almacenar la contraseña sin cifrar en la base

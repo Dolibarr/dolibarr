@@ -45,6 +45,8 @@ ErrorModuleRequireDolibarrVersion=خطأ ، هذا النموذج يتطلب ن�
 ErrorDecimalLargerThanAreForbidden=خطأ, برنامج دوليبار <b>%s</b> الحالي لا يدعم دقة أعلى من الحالية
 DictionarySetup=Dictionary setup
 Dictionary=Dictionaries
+Chartofaccounts=Chart of accounts
+Fiscalyear=Fiscal years
 ErrorReservedTypeSystemSystemAuto=القيمة 'system' و 'systemauto' لهذا النوع محفوظ. يمكنك إستخدام 'user' كقيمة لإضافة السجل الخاص بك
 ErrorCodeCantContainZero=لا يمكن إستخدام القيمة 0 لهذا الكود
 DisableJavascript=Disable JavaScript and Ajax functions (Recommended for blind person or text browsers)
@@ -217,6 +219,7 @@ AutomaticIfJavascriptDisabled=تلقائيا إذا تم تعطيل جافاسك
 AvailableOnlyIfJavascriptNotDisabled=متاحا إلا إذا كان جافا سكريبت غير المعوقين
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=متاحا إلا إذا كان جافا سكريبت غير المعوقين
 Required=مطلوب
+UsedOnlyWithTypeOption=Used by some agenda option only
 Security=الأمن
 Passwords=كلمة السر
 DoNotStoreClearPassword=لا تخزن كلمات السر في قاعدة بيانات واضحة في

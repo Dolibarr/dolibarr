@@ -24,10 +24,12 @@ NameAndSignatureOfInternalContact=Sekkuja nimi ja allkiri:
 NameAndSignatureOfExternalContact=Kliendi nimi ja allkiri:
 DocumentModelStandard=Sekkumiste tüüpvormi mudel
 InterventionCardsAndInterventionLines=Sekkumised ja sekkumiste read
-ClassifyBilled=Liigita "Arve esitatud"
+InterventionClassifyBilled=Classify "Billed"
+InterventionClassifyUnBilled=Classify "Unbilled"
 StatusInterInvoiced=Arve esitatud
 RelatedInterventions=Seotud sekkumised
 ShowIntervention=Näita sekkumist
+SendInterventionRef=Submission of intervention %s
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Sekkumise järelkontrolliga tegelev müügiesindaja
 TypeContact_fichinter_internal_INTERVENING=Sekkuv

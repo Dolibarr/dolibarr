@@ -111,3 +111,4 @@ ExtraFieldsCategories=Komplementære attributter
 CategoriesSetup=Kategori-oppsett
 CategorieRecursiv=Link med overordnet kategori automatisk
 CategorieRecursivHelp=Hvis aktivert, vil produktet også knyttes til overordnet kategori når du legger inn en underkategori
+AddProductServiceIntoCategory=Add the following product/service

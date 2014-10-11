@@ -66,31 +66,31 @@ Lineofinvoice=发票行
 VentilatedinAccount=在会计账户成功通风
 NotVentilatedinAccount=不通风的会计账户
 
-ACCOUNTINGEX_SEPARATORCSV=CSV的”分隔符“
+ACCOUNTING_SEPARATORCSV=Separator CSV
 
-ACCOUNTINGEX_LIMIT_LIST_VENTILATION=待显示的一个页面的元素个数（最大推荐：50）
-ACCOUNTINGEX_LIST_SORT_VENTILATION_TODO=由最近的元素开始通气“有通风”页面的排序
-ACCOUNTINGEX_LIST_SORT_VENTILATION_DONE=由最近的元素开始的通风“通风”的页面排序
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
 
 AccountLength=会计长度账户显示在的Dolibarr
 AccountLengthDesc=功能允许由零的数字代替空格假装会计账户的长度。这个函数只接触了显示屏，它不修改的Dolibarr登记的会计科目。为出口，这个功能是必要的，以与特定的软件兼容。
-ACCOUNTINGEX_LENGTH_GACCOUNT=一般账户的长度
-ACCOUNTINGEX_LENGTH_AACCOUNT=第三方账户的长度
+ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
 
-ACCOUNTINGEX_SELL_JOURNAL=卖杂志
-ACCOUNTINGEX_PURCHASE_JOURNAL=购买杂志
-ACCOUNTINGEX_BANK_JOURNAL=银行的”日记账“
-ACCOUNTINGEX_CASH_JOURNAL=现金的”日记账“
-ACCOUNTINGEX_MISCELLANEOUS_JOURNAL=其他的”日记帐“
-ACCOUNTINGEX_SOCIAL_JOURNAL=社交的”日记帐“
+ACCOUNTING_SELL_JOURNAL=Sell journal
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
+ACCOUNTING_BANK_JOURNAL=Bank journal
+ACCOUNTING_CASH_JOURNAL=Cash journal
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
+ACCOUNTING_SOCIAL_JOURNAL=Social journal
 
-ACCOUNTINGEX_ACCOUNT_TRANSFER_CASH=转让帐户
-ACCOUNTINGEX_ACCOUNT_SUSPENSE=等待的帐户
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
+ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
 
-COMPTA_PRODUCT_BUY_ACCOUNT=会计帐户默认情况下，购买的产品（如果在产品表没有定义）
-COMPTA_PRODUCT_SOLD_ACCOUNT=会计帐户默认为销售的产品（如果在产品表没有定义）
-COMPTA_SERVICE_BUY_ACCOUNT=会计帐户默认情况下，该买的服务（如果服务表没有定义）
-COMPTA_SERVICE_SOLD_ACCOUNT=会计帐户默认为卖服务（如果服务表没有定义）
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
 
 Doctype=文件类型
 Docdate=日期

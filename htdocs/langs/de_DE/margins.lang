@@ -38,4 +38,4 @@ BuyingCost=Kosten
 UnitCharges=Unit charges
 Charges=Charges
 AgentContactType=Commercial agent contact type
-AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+AgentContactTypeDetails=Setzen Sie fest welcher Kontakt-Typ (auf Rechnungen verknüpft) für Gewinnspannenbericht bei Handelsvertretern verwendet wird.

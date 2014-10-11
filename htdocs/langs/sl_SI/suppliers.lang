@@ -40,3 +40,5 @@ AddSupplierInvoice=Kreirajte račun dobavitelja
 ListOfSupplierProductForSupplier=Seznam proizvodov in cen dobavitelja <b>%s</b>
 NoneOrBatchFileNeverRan=Nobena datoteka ali paket <b>%s</b> nedavno ni bila zagnana
 SentToSuppliers=Pošlji dobaviteljem
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

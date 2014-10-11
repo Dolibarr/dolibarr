@@ -54,7 +54,7 @@ StatsOnShipmentsOnlyValidated=Štatistiky vykonaná na zásielky iba overených.
 DateDeliveryPlanned=Čelné termín dodania
 DateReceived=Dátum doručenia obdržal
 SendShippingByEMail=Poslať zásielku EMail
-SendShippingRef=Poslať zásielok %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Udalosti na zásielky
 LinkToTrackYourPackage=Odkaz pre sledovanie balíkov
 ShipmentCreationIsDoneFromOrder=Pre túto chvíľu, je vytvorenie novej zásielky vykonať z objednávky karty.
@@ -66,11 +66,13 @@ CarrierList=Zoznam dopravcov
 SendingMethodCATCH=Chytiť zákazníka
 SendingMethodTRANS=Prepravca
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Jednoduchý model pre dokument o doručenie
 DocumentModelTyphon=Viac Celý dokument model pre potvrdenie o doručení (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konštantná EXPEDITION_ADDON_NUMBER nie je definované
 SumOfProductVolumes=Súčet objemov produktov
 SumOfProductWeights=Súčet hmotností produktov
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

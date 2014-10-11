@@ -111,4 +111,4 @@ ExtraFieldsCategories=Attributs supplémentaires
 CategoriesSetup=Configuration du module catégories
 CategorieRecursiv=Lier avec les catégories parentes
 CategorieRecursivHelp=Si activé : quand un élément est ajouté dans une catégorie, l'ajouter aussi dans toutes les catégories parentes
-AddProductServiceIntoCategory=Add the following product/service
+AddProductServiceIntoCategory=Ajouter le produit/service suivant

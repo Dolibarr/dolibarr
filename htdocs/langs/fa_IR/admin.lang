@@ -45,6 +45,8 @@ ErrorModuleRequireDolibarrVersion=خطا، این ماژول نیاز به Dolib
 ErrorDecimalLargerThanAreForbidden=خطا، دقت بالاتر <b>از٪ s</b> پشتیبانی نمی شود.
 DictionarySetup=راه اندازی فرهنگ لغت
 Dictionary=واژه نامه ها
+Chartofaccounts=Chart of accounts
+Fiscalyear=Fiscal years
 ErrorReservedTypeSystemSystemAuto=ارزش 'سیستم' و 'systemauto برای نوع محفوظ است. شما می توانید 'کاربر' به عنوان ارزش برای اضافه کردن رکورد خود استفاده کنید
 ErrorCodeCantContainZero=کد می تواند مقدار 0 را شامل نمی شود
 DisableJavascript=توابع غیر فعال کردن جاوا اسکریپت و آژاکس (توصیه شده برای فرد نابینا یا مرورگرهای متنی)
@@ -217,6 +219,7 @@ AutomaticIfJavascriptDisabled=به صورت خودکار اگر جاوا اسک�
 AvailableOnlyIfJavascriptNotDisabled=فقط در صورت های جاوا اسکریپت غیر فعال است
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=فقط در صورت های جاوا اسکریپت غیر فعال است
 Required=ضروری
+UsedOnlyWithTypeOption=Used by some agenda option only
 Security=امنیت
 Passwords=کلمه عبور
 DoNotStoreClearPassword=آیا بدون رمز عبور روشن ذخیره در پایگاه داده، اما ذخیره تنها مقدار رمز شده (فعال توصیه می شود)

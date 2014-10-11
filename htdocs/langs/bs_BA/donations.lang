@@ -30,3 +30,4 @@ SearchADonation=Traži donaciju
 DonationRecipient=Primalac donacije
 ThankYou=Hvala Vam
 IConfirmDonationReception=Primalac potvrđuje prijem, kao donacija, slijedeći iznos
+MinimumAmount=Minimum amount is  %s
