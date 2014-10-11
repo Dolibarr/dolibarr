@@ -99,7 +99,7 @@ print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">'
 print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder" width="100%">';
-$var = True;
+$var = true;
 
 print '<tr class="liste_titre">';
 print '<td colspan="2">' . $langs->trans("Modelcsv") . '</td>';

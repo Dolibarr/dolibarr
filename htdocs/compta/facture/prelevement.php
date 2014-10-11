@@ -491,7 +491,7 @@ if ($object->id > 0)
 	print '<td align="center">'.$langs->trans("WithdrawalReceipt").'</td>';
 	print '<td align="center">'.$langs->trans("User").'</td><td>&nbsp;</td><td>&nbsp;</td>';
 	print '</tr>';
-	$var=True;
+	$var=true;
 
 	if ($result_sql)
 	{

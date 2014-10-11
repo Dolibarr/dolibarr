@@ -160,7 +160,7 @@ if ($result) {
 	print '</td>';
 	print '</tr>';
 	
-	$var = True;
+	$var = true;
 	
 	while ( $i < min($num, $limit) ) {
 		$obj = $db->fetch_object($resql);
