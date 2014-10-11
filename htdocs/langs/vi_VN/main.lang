@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - main
-DIRECTION=lít
+DIRECTION=ltr
 # Note for Chinese:
 # msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified Chinese
@@ -7,21 +7,21 @@ DIRECTION=lít
 FONTFORPDF=Helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
-SeparatorThousand=,
-FormatDateShort=% M /% d /% Y
-FormatDateShortInput=% M /% d /% Y
-FormatDateShortJava=MM / dd / yyyy
-FormatDateShortJavaInput=MM / dd / yyyy
-FormatDateShortJQuery=dd / mm / yyyy
-FormatDateShortJQueryInput=dd / mm / yyyy
-FormatHourShort=% I:% M% p
-FormatHourShortDuration=% H:% M
-FormatDateTextShort=% B% d,% Y
-FormatDateText=% B% d,% Y
-FormatDateHourShort=% M /% d /% Y% I:% M% p
-FormatDateHourSecShort=% M /% d /% Y% I:% M:% S% p
-FormatDateHourTextShort=% B% d,% Y,% I:% M% p
-FormatDateHourText=% B% d,% Y,% I:% M% p
+SeparatorThousand=None
+FormatDateShort=%m/%d/%Y
+FormatDateShortInput=%m/%d/%Y
+FormatDateShortJava=MM/dd/yyyy
+FormatDateShortJavaInput=MM/dd/yyyy
+FormatDateShortJQuery=mm/dd/yy
+FormatDateShortJQueryInput=mm/dd/yy
+FormatHourShort=%I:%M %p
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%b %d, %Y
+FormatDateText=%B %d, %Y
+FormatDateHourShort=%m/%d/%Y %I:%M %p
+FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
+FormatDateHourTextShort=%b %d, %Y, %I:%M %p
+FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=Kết nối cơ sở dữ liệu
 NoTranslation=Không có bản dịch
 NoRecordFound=Không có hồ sơ tìm thấy
