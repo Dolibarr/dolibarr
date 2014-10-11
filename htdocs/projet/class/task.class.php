@@ -785,6 +785,7 @@ class Task extends CommonObject
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
             $sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
+			$sql.= ", progress = " . $this->progress;
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);

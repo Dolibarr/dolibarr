@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load('projects');
 
@@ -83,11 +84,11 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 		else
 		{
 			$object->timespent_note = $_POST["timespent_note"];
+			$object->progress = GETPOST('progress', 'int');
 			$object->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
 			$object->timespent_duration+= $_POST["timespent_durationmin"]*60;		// We store duration in seconds
 			$object->timespent_date = dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 			$object->timespent_fk_user = $_POST["userid"];
-
 			$result=$object->addTimeSpent($user);
 			if ($result >= 0)
 			{
@@ -185,6 +186,7 @@ if (! empty($project_ref) && ! empty($withproject))
 llxHeader("",$langs->trans("Task"));
 
 $form = new Form($db);
+$formother = new FormOther($db);
 $userstatic = new User($db);
 
 if ($id > 0 || ! empty($ref))
@@ -331,6 +333,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td width="100">'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("By").'</td>';
 			print '<td>'.$langs->trans("Note").'</td>';
+			print '<td>'.$langs->trans("Progress").'</td>';
 			print '<td align="right">'.$langs->trans("Duration").'</td>';
 			print '<td width="80">&nbsp;</td>';
 			print "</tr>\n";
@@ -358,6 +361,11 @@ if ($id > 0 || ! empty($ref))
 			// Note
 			print '<td class="nowrap">';
 			print '<textarea name="timespent_note" cols="80" rows="'.ROWS_3.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
+			print '</td>';
+
+			// Progress
+			print '<td class="nowrap">';
+			print $formother->select_percent($object->progress,'progress');
 			print '</td>';
 
 			// Duration

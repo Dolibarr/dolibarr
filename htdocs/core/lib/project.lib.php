@@ -445,7 +445,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  *
  * @param	string	   	$inc					?
  * @param   string		$parent					?
- * @param   Object		$lines					?
+ * @param   Task[]		$lines					?
  * @param   int			$level					?
  * @param   string		$projectsrole			?
  * @param   string		$tasksrole				?
@@ -455,8 +455,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  */
 function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
 {
-	global $user, $bc, $langs;
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+
+	global $db, $user, $bc, $langs;
 	global $form, $projectstatic, $taskstatic;
+
+	$formother = new FormOther($db);
 
 	$lastprojectid=0;
 
@@ -526,7 +530,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 
 				// Progress declared %
 				print '<td align="right">';
-				print $lines[$i]->progress.' %';
+				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
 				print '</td>';
 
 				// Time spent
