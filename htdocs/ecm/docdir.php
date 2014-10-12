@@ -197,7 +197,7 @@ if (empty($action) || $action == 'delete_section')
 	print $langs->trans("ECMSection").': ';
 	print img_picto('','object_dir').' ';
 	print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php">'.$langs->trans("ECMRoot").'</a>';
-	//print ' -> <b>'.$ecmdir->getNameUrl(1).'</b><br>';
+	//print ' -> <b>'.$ecmdir->getObjectUrl(1).'</b><br>';
 	print "<br><br>";
 */
 

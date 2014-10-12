@@ -93,7 +93,7 @@ if ($object->id > 0)
 	print "</tr>\n";
 
 	// Company
-	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$object->thirdparty->getNameUrl(1,'supplier').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$object->thirdparty->getObjectUrl(1,'supplier').'</td></tr>';
 
 	// Type
 	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';
@@ -102,13 +102,13 @@ if ($object->id > 0)
 	{
 		$facreplaced=new FactureFournisseur($db);
 		$facreplaced->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNameUrl(1)).')';
+		print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getObjectUrl(1)).')';
 	}
 	if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
 	{
 		$facusing=new FactureFournisseur($db);
 		$facusing->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNameUrl(1)).')';
+		print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getObjectUrl(1)).')';
 	}
 
 	$facidavoir=$object->getListIdAvoirFromInvoice();
@@ -122,7 +122,7 @@ if ($object->id > 0)
 			else print ',';
 			$facavoir=new FactureFournisseur($db);
 			$facavoir->fetch($fid);
-			print $facavoir->getNameUrl(1);
+			print $facavoir->getObjectUrl(1);
 		}
 		print ')';
 	}
@@ -130,7 +130,7 @@ if ($object->id > 0)
 	{
 		$facthatreplace=new FactureFournisseur($db);
 		$facthatreplace->fetch($facidnext);
-		print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNameUrl(1)).')';
+		print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getObjectUrl(1)).')';
 	}
 	print '</td></tr>';
 

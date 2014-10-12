@@ -238,7 +238,7 @@ if ($user->rights->fournisseur->facture->lire)
 				print '<td class="nowrap">';
 				$facturestatic->id=$objp->facid;
 				$facturestatic->ref=$objp->ref;
-				print $facturestatic->getNameUrl(1);
+				print $facturestatic->getObjectUrl(1);
 				print "</td>\n";
 
 				print '<td class="nowrap">'.dol_trunc($objp->ref_supplier,12)."</td>\n";
@@ -251,7 +251,7 @@ if ($user->rights->fournisseur->facture->lire)
 				print '<td>';
 				$companystatic->id=$objp->socid;
 				$companystatic->name=$objp->name;
-				print $companystatic->getNameUrl(1,'supplier',32);
+				print $companystatic->getObjectUrl(1,'supplier',32);
 				print '</td>';
 
 				print "<td align=\"right\">".price($objp->total_ht)."</td>";

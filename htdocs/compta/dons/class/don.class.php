@@ -706,7 +706,7 @@ class Don extends CommonObject
      *	@param	int		$withpicto		0=No picto, 1=Include picto into the link, 2=Only picto
      *	@return	string					Chaine with URL
      */
-    function getNameUrl($withpicto=0)
+    function getObjectUrl($withpicto=0)
     {
         global $langs;
 

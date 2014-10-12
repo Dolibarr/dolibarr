@@ -250,7 +250,7 @@ if ($id > 0 || ! empty($ref))
 				
 						// Ref
 						print "<td>";
-						print $memberstatic->getNameUrl(1);
+						print $memberstatic->getObjectUrl(1);
 						print "</td>\n";
 				
 						// Lastname
@@ -267,7 +267,7 @@ if ($id > 0 || ! empty($ref))
 						$membertypestatic->id=$objp->type_id;
 						$membertypestatic->libelle=$objp->type;
 						print '<td class="nowrap">';
-						print $membertypestatic->getNameUrl(1,32);
+						print $membertypestatic->getObjectUrl(1,32);
 						print '</td>';
 				
 						// Moral/Physique

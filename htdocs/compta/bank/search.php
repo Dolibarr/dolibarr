@@ -279,7 +279,7 @@ if ($resql)
 			{
 				$companystatic->id=$objp->url_id;
 				$companystatic->name=$objp->labelurl;
-				print $companystatic->getNameUrl(1);
+				print $companystatic->getObjectUrl(1);
 			}
 			else
 			{
@@ -303,7 +303,7 @@ if ($resql)
 			print '<td align="left" class="nowrap">';
 			$bankaccountstatic->id=$objp->bankid;
 			$bankaccountstatic->label=$objp->bankref;
-			print $bankaccountstatic->getNameUrl(1);
+			print $bankaccountstatic->getObjectUrl(1);
 			print "</td>\n";
 			print "</tr>";
 		}

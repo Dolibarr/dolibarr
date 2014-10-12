@@ -105,7 +105,7 @@ if ($contact->socid > 0)
 	$objsoc = new Societe($db);
 	$objsoc->fetch($contact->socid);
 
-	print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNameUrl(1).'</td></tr>';
+	print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getObjectUrl(1).'</td></tr>';
 }
 else
 {

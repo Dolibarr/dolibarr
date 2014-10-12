@@ -75,7 +75,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 
 		// Company
-		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNameUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getObjectUrl(1).'</td></tr>';
 
 		print "</table>";
 

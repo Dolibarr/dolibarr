@@ -1020,7 +1020,7 @@ if ($action == 'create')
 		print '<table class="border" width="100%">';
 
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
-		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>'.$soc->getNameUrl(1).'</td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>'.$soc->getObjectUrl(1).'</td></tr>';
 
 		print '<input type="hidden" name="action" value="add">';
 
@@ -1110,7 +1110,7 @@ if ($action == 'create')
         {
         	$newclassname=$classname;
         	if ($newclassname=='Propal') $newclassname='CommercialProposal';
-        	print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNameUrl(1).'</td></tr>';
+        	print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getObjectUrl(1).'</td></tr>';
         }
 
         print '</table>';
@@ -1231,7 +1231,7 @@ else if ($id > 0 || ! empty($ref))
 	print '</td></tr>';
 
 	// Third party
-	print "<tr><td>".$langs->trans("Company").'</td><td colspan="3">'.$object->client->getNameUrl(1)."</td></tr>";
+	print "<tr><td>".$langs->trans("Company").'</td><td colspan="3">'.$object->client->getObjectUrl(1)."</td></tr>";
 
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 	{
@@ -1316,7 +1316,7 @@ else if ($id > 0 || ! empty($ref))
                 $contratstatic = new Contrat($db);
                 $contratstatic->fetch($object->fk_contrat);
                 //print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-                print $contratstatic->getNameUrl(0,'',1);
+                print $contratstatic->getObjectUrl(0,'',1);
             }
             else
             {

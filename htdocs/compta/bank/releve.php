@@ -232,7 +232,7 @@ else
 	$mesprevnext ="<a href=\"releve.php?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_previous()."</a> &nbsp;";
 	$mesprevnext.= $langs->trans("AccountStatement")." $num";
 	$mesprevnext.=" &nbsp; <a href=\"releve.php?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_next()."</a>";
-	print_fiche_titre($langs->trans("AccountStatement").' '.$num.', '.$langs->trans("BankAccount").' : '.$acct->getNameUrl(0),$mesprevnext);
+	print_fiche_titre($langs->trans("AccountStatement").' '.$num.', '.$langs->trans("BankAccount").' : '.$acct->getObjectUrl(0),$mesprevnext);
 	print '<br>';
 
 	print "<form method=\"post\" action=\"releve.php\">";
@@ -337,14 +337,14 @@ else
 				{
 					$paymentstatic->id=$links[$key]['url_id'];
 					$paymentstatic->ref=$langs->trans("Payment");
-					print ' '.$paymentstatic->getNameUrl(1);
+					print ' '.$paymentstatic->getObjectUrl(1);
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='payment_supplier')
 				{
 					$paymentsupplierstatic->id=$links[$key]['url_id'];
 					$paymentsupplierstatic->ref=$langs->trans("Payment");;
-					print ' '.$paymentsupplierstatic->getNameUrl(1);
+					print ' '.$paymentsupplierstatic->getObjectUrl(1);
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='payment_sc')
@@ -359,7 +359,7 @@ else
 				{
 					$paymentvatstatic->id=$links[$key]['url_id'];
 					$paymentvatstatic->ref=$langs->trans("Payment");
-					print ' '.$paymentvatstatic->getNameUrl(1);
+					print ' '.$paymentvatstatic->getObjectUrl(1);
 				}
 				elseif ($links[$key]['type']=='banktransfert') {
 					// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
@@ -369,11 +369,11 @@ else
 						$bankstatic->id=$banklinestatic->fk_account;
 						$bankstatic->label=$banklinestatic->bank_account_label;
 						print ' ('.$langs->trans("from").' ';
-						print $bankstatic->getNameUrl(1,'transactions');
+						print $bankstatic->getObjectUrl(1,'transactions');
 						print ' '.$langs->trans("toward").' ';
 						$bankstatic->id=$objp->bankid;
 						$bankstatic->label=$objp->bankref;
-						print $bankstatic->getNameUrl(1,'');
+						print $bankstatic->getObjectUrl(1,'');
 						print ')';
 					}
 					else
@@ -381,12 +381,12 @@ else
 						$bankstatic->id=$objp->bankid;
 						$bankstatic->label=$objp->bankref;
 						print ' ('.$langs->trans("from").' ';
-						print $bankstatic->getNameUrl(1,'');
+						print $bankstatic->getObjectUrl(1,'');
 						print ' '.$langs->trans("toward").' ';
 						$banklinestatic->fetch($links[$key]['url_id']);
 						$bankstatic->id=$banklinestatic->fk_account;
 						$bankstatic->label=$banklinestatic->bank_account_label;
-						print $bankstatic->getNameUrl(1,'transactions');
+						print $bankstatic->getObjectUrl(1,'transactions');
 						print ')';
 					}
 				}

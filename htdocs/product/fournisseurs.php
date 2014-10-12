@@ -151,7 +151,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 				$error++;
 
 				$product->fetch($product->product_id_already_linked);
-				$productLink = $product->getNameUrl(1,'supplier');
+				$productLink = $product->getObjectUrl(1,'supplier');
 
 				setEventMessage($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink), 'errors');
 			}
@@ -286,7 +286,7 @@ if ($id || $ref)
 				{
 					$supplier=new Fournisseur($db);
 					$supplier->fetch($socid);
-					print $supplier->getNameUrl(1);
+					print $supplier->getObjectUrl(1);
 					print '<input type="hidden" name="id_fourn" value="'.$socid.'">';
 					print '<input type="hidden" name="ref_fourn" value="'.$product->fourn_ref.'">';
 					print '<input type="hidden" name="ref_fourn_price_id" value="'.$rowid.'">';

@@ -132,13 +132,13 @@ if ($resql)
 		print '<td>';
 		$invoicestatic->id=$obj->rowid;
 		$invoicestatic->ref=$obj->facnumber;
-		print $invoicestatic->getNameUrl(1,'withdraw');
+		print $invoicestatic->getObjectUrl(1,'withdraw');
 		print '</td>';
 
 		print '<td>';
 		$thirdpartystatic->id=$obj->socid;
 		$thirdpartystatic->name=$obj->name;
-		print $thirdpartystatic->getNameUrl(1,'customer');
+		print $thirdpartystatic->getObjectUrl(1,'customer');
 		print '</td>';
 
         print '<td align="right">'.price($obj->total_ttc).'</td>';

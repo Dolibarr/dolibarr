@@ -120,7 +120,7 @@ if ($resql) {
 		$product_static->type = $objp->type;
 		print '<td>';
 		if ($product_static->id)
-			print $product_static->getNameUrl(1);
+			print $product_static->getObjectUrl(1);
 		else
 			print '&nbsp;';
 		print '</td>';

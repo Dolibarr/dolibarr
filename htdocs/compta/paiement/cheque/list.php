@@ -148,7 +148,7 @@ if ($resql)
 		$checkdepositstatic->id=$objp->rowid;
 		$checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
 		$checkdepositstatic->statut=$objp->statut;
-		print $checkdepositstatic->getNameUrl(1);
+		print $checkdepositstatic->getObjectUrl(1);
 		print '</td>';
 
 		// Date

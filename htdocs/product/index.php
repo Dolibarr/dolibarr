@@ -289,7 +289,7 @@ if ($result)
 			$product_static->id=$objp->rowid;
 			$product_static->ref=$objp->ref;
 			$product_static->type=$objp->fk_product_type;
-			print $product_static->getNameUrl(1,'',16);
+			print $product_static->getObjectUrl(1,'',16);
 			print "</td>\n";
 			print '<td>'.dol_trunc($objp->label,32).'</td>';
 			print "<td>";

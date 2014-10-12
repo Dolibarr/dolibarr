@@ -1664,7 +1664,7 @@ class Societe extends CommonObject
      *		@param	int		$maxlen			Max length of text
      *		@return	string					String with URL
      */
-    function getNameUrl($withpicto=0,$option='',$maxlen=0)
+    function getObjectUrl($withpicto=0,$option='',$maxlen=0)
     {
         global $conf,$langs;
 

@@ -158,7 +158,7 @@ $userstatic=new User($db);
 			if ($tab[$i]['socid'] > 0)
 			{
 				$companystatic->fetch($tab[$i]['socid']);
-				echo $companystatic->getNameUrl(1);
+				echo $companystatic->getObjectUrl(1);
 			}
 			if ($tab[$i]['socid'] < 0)
 			{
@@ -177,14 +177,14 @@ $userstatic=new User($db);
 				$userstatic->id=$tab[$i]['id'];
 				$userstatic->lastname=$tab[$i]['lastname'];
 				$userstatic->firstname=$tab[$i]['firstname'];
-				echo $userstatic->getNameUrl(1);
+				echo $userstatic->getObjectUrl(1);
 			}
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->id=$tab[$i]['id'];
 				$contactstatic->lastname=$tab[$i]['lastname'];
 				$contactstatic->firstname=$tab[$i]['firstname'];
-				echo $contactstatic->getNameUrl(1);
+				echo $contactstatic->getObjectUrl(1);
 			}
 			?>
 		</div>

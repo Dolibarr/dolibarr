@@ -863,7 +863,7 @@ class ActionComm extends CommonObject
      * 		@param	int		$overwritepicto		1=Overwrite picto
      *		@return	string						Chaine avec URL
      */
-    function getNameUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto='')
+    function getObjectUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto='')
     {
         global $langs;
 

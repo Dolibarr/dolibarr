@@ -579,7 +579,7 @@ if ($rowid)
     print '</tr>';
 
     // Type
-    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNameUrl(1)."</td></tr>\n";
+    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getObjectUrl(1)."</td></tr>\n";
 
     // Company
     print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
@@ -646,7 +646,7 @@ if ($rowid)
             {
                 $company=new Societe($db);
                 $result=$company->fetch($object->fk_soc);
-                print $company->getNameUrl(1);
+                print $company->getObjectUrl(1);
             }
             else
             {
@@ -763,7 +763,7 @@ if ($rowid)
                 print "<tr ".$bc[$var].">";
                 $cotisationstatic->ref=$objp->crowid;
                 $cotisationstatic->id=$objp->crowid;
-                print '<td>'.$cotisationstatic->getNameUrl(1).'</td>';
+                print '<td>'.$cotisationstatic->getObjectUrl(1).'</td>';
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
@@ -775,7 +775,7 @@ if ($rowid)
                     {
                         $accountstatic->label=$objp->label;
                         $accountstatic->id=$objp->baid;
-                        print $accountstatic->getNameUrl(1);
+                        print $accountstatic->getObjectUrl(1);
                     }
                     else
                     {
@@ -980,7 +980,7 @@ if ($rowid)
                     print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(! empty($invoiceonly)?' checked="checked"':'');
                     //if (empty($object->fk_soc)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionInvoiceOnly");
-                    if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNameUrl(1).')';
+                    if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getObjectUrl(1).')';
                     else
 					{
                     	print ' (';
@@ -999,7 +999,7 @@ if ($rowid)
                     print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(! empty($bankviainvoice)?' checked="checked"':'');
                     //if (empty($object->fk_soc)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionBankViaInvoice");
-                    if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNameUrl(1).')';
+                    if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getObjectUrl(1).')';
                     else
 					{
                     	print ' (';

@@ -692,7 +692,7 @@ if ($action == 'create')
 	{
 		$societe = new Societe($db);
 		$societe->fetch(GETPOST('socid','int'));
-		print $societe->getNameUrl(1);
+		print $societe->getObjectUrl(1);
 		print '<input type="hidden" id="socid" name="socid" value="'.GETPOST('socid','int').'">';
 	}
 	else
@@ -1099,7 +1099,7 @@ if ($id > 0)
 			{
 				$tmpuser=new User($db);
 				$tmpuser->fetch($object->userdoneid);
-				print $tmpuser->getNameUrl(1);
+				print $tmpuser->getObjectUrl(1);
 			}
 			print '</td></tr>';
 		}
@@ -1113,7 +1113,7 @@ if ($id > 0)
 		// Third party - Contact
 		if ($conf->societe->enabled)
 		{
-			print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id?$object->thirdparty->getNameUrl(1):$langs->trans("None"));
+			print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id?$object->thirdparty->getObjectUrl(1):$langs->trans("None"));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL')
 			{
 				if ($object->thirdparty->fetch($object->thirdparty->id))
@@ -1126,7 +1126,7 @@ if ($id > 0)
 			print '<td>';
 			if ($object->contactid > 0)
 			{
-				print $object->contact->getNameUrl(1);
+				print $object->contact->getObjectUrl(1);
 				if ($object->contactid && $object->type_code == 'AC_TEL')
 				{
 					if ($object->contact->fetch($object->contactid))
@@ -1150,7 +1150,7 @@ if ($id > 0)
 			{
 				$project=new Project($db);
 				$project->fetch($object->fk_project);
-				print $project->getNameUrl(1,'',1);
+				print $project->getObjectUrl(1,'',1);
 			}
 			print '</td></tr>';
 		}

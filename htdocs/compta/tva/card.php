@@ -286,7 +286,7 @@ if ($id)
 	    	print '<tr>';
 	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td colspan="3">';
-			print $bankline->getNameUrl(1,0,'showall');
+			print $bankline->getObjectUrl(1,0,'showall');
 	    	print '</td>';
 	    	print '</tr>';
 		}

@@ -165,14 +165,14 @@ if ($resql)
 		print "<td>";
 		$shipment->id=$objp->rowid;
 		$shipment->ref=$objp->ref;
-		print $shipment->getNameUrl(1);
+		print $shipment->getObjectUrl(1);
 		print "</td>\n";
 		// Third party
 		print '<td>';
 		$companystatic->id=$objp->socid;
 		$companystatic->ref=$objp->socname;
 		$companystatic->name=$objp->socname;
-		print $companystatic->getNameUrl(1);
+		print $companystatic->getObjectUrl(1);
 		print '</td>';
 		// Date delivery  planed
 		print "<td align=\"center\">";

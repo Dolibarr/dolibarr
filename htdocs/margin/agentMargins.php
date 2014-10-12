@@ -203,7 +203,7 @@ if ($result)
 				$companystatic->id=$objp->socid;
 				$companystatic->name=$objp->name;
 				$companystatic->client=$objp->client;
-				print "<td>".$companystatic->getNameUrl(1,'customer')."</td>\n";
+				print "<td>".$companystatic->getObjectUrl(1,'customer')."</td>\n";
 			}
 			else {
 				$userstatic->fetch($objp->agent);

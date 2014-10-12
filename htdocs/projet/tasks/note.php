@@ -134,7 +134,7 @@ if ($object->id > 0)
 
 		// Company
 		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNameUrl(1);
+		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getObjectUrl(1);
 		else print '&nbsp;';
 		print '</td>';
 		print '</tr>';
@@ -191,12 +191,12 @@ if ($object->id > 0)
 	if (empty($withproject))
 	{
 		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-		print $projectstatic->getNameUrl(1);
+		print $projectstatic->getObjectUrl(1);
 		print '</td></tr>';
 
 		// Third party
 		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNameUrl(1);
+		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getObjectUrl(1);
 		else print'&nbsp;';
 		print '</td></tr>';
 	}

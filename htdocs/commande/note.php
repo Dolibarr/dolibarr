@@ -99,7 +99,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Customer
 	print "<tr><td>".$langs->trans("Company")."</td>";
-	print '<td colspan="3">'.$soc->getNameUrl(1).'</td></tr>';
+	print '<td colspan="3">'.$soc->getObjectUrl(1).'</td></tr>';
 
 	print "</table>";
 

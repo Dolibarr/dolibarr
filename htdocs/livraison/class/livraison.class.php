@@ -641,7 +641,7 @@ class Livraison extends CommonObject
 	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNameUrl($withpicto=0)
+	function getObjectUrl($withpicto=0)
 	{
 		global $langs;
 

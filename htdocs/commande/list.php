@@ -338,7 +338,7 @@ if ($resql)
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 		print '<td class="nobordernopadding nowrap">';
-		print $generic_commande->getNameUrl(1,($viewstatut != 2?0:$objp->fk_statut));
+		print $generic_commande->getObjectUrl(1,($viewstatut != 2?0:$objp->fk_statut));
 		print '</td>';
 
 		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
@@ -370,7 +370,7 @@ if ($resql)
 		$companystatic->name=$objp->name;
 		$companystatic->client=$objp->client;
 		print '<td>';
-		print $companystatic->getNameUrl(1,'customer');
+		print $companystatic->getObjectUrl(1,'customer');
 
 		// If module invoices enabled and user with invoice creation permissions
 		if (! empty($conf->facture->enabled) && ! empty($conf->global->ORDER_BILLING_ALL_CUSTOMER))

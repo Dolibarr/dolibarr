@@ -153,14 +153,14 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				print '<tr '.$bc[$var].'><td  class="nowrap">';
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
-				print $propalstatic->getNameUrl(1);
+				print $propalstatic->getObjectUrl(1);
 				print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
-				print $companystatic->getNameUrl(1,'customer',16);
+				print $companystatic->getObjectUrl(1,'customer',16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
 				$i++;
@@ -223,7 +223,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 				$companystatic->name=$obj->name;
 				$companystatic->client=$obj->client;
                 $companystatic->canvas=$obj->canvas;
-				print $companystatic->getNameUrl(1,'customer',16);
+				print $companystatic->getObjectUrl(1,'customer',16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
@@ -288,7 +288,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 				$companystatic->client=$objp->client;
                 $companystatic->canvas=$objp->canvas;
 				print '<tr '.$bc[$var].'>';
-				print '<td class="nowrap">'.$companystatic->getNameUrl(1,'customer',48).'</td>';
+				print '<td class="nowrap">'.$companystatic->getObjectUrl(1,'customer',48).'</td>';
 				print '<td align="right" nowrap>';
 				print $companystatic->getLibCustProspStatut();
 				print "</td>";
@@ -344,7 +344,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
                 $companystatic->name=$objp->name;
                 $companystatic->canvas=$objp->canvas;
                 print '<tr '.$bc[$var].'>';
-				print '<td class="nowrap">'.$companystatic->getNameUrl(1,'supplier',44).'</td>';
+				print '<td class="nowrap">'.$companystatic->getObjectUrl(1,'supplier',44).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
 				print '</tr>';
 				$var=!$var;
@@ -422,7 +422,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
                 $companystatic->id=$objp->rowid;
                 $companystatic->name=$objp->name;
                 $companystatic->canvas=$objp->canvas;
-                print $companystatic->getNameUrl(1,'customer',44);
+                print $companystatic->getObjectUrl(1,'customer',44);
 				print '</td>'."\n";
 				print "<td align=\"right\">".$staticcontrat->LibStatut($obj->statut,3)."</td></tr>\n";
 				$var=!$var;
@@ -483,7 +483,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td class="nobordernopadding nowrap">';
-				print $propalstatic->getNameUrl(1);
+				print $propalstatic->getObjectUrl(1);
 				print '</td>';
 				print '<td width="18" class="nobordernopadding nowrap">';
 				if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));

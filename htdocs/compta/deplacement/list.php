@@ -144,10 +144,10 @@ if ($resql)
         $userstatic->id = $obj->rowid;
         $userstatic->lastname = $obj->lastname;
         $userstatic->firstname = $obj->firstname;
-        print $userstatic->getNameUrl(1);
+        print $userstatic->getObjectUrl(1);
         print '</td>';
 
-        if ($obj->socid) print '<td>'.$soc->getNameUrl(1).'</td>';
+        if ($obj->socid) print '<td>'.$soc->getObjectUrl(1).'</td>';
         else print '<td>&nbsp;</td>';
 
         print '<td align="right">'.$obj->km.'</td>';

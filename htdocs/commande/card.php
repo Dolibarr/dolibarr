@@ -1478,7 +1478,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
 	if ($socid > 0) {
 		print '<td colspan="2">';
-		print $soc->getNameUrl(1);
+		print $soc->getObjectUrl(1);
 		print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 		print '</td>';
 	} else {
@@ -1628,7 +1628,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		$newclassname = $classname;
 		if ($newclassname == 'Propal')
 			$newclassname = 'CommercialProposal';
-		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNameUrl(1) . '</td></tr>';
+		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getObjectUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1 RE
@@ -1922,7 +1922,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 		// Third party
 		print '<tr><td>' . $langs->trans('Company') . '</td>';
-		print '<td colspan="3">' . $soc->getNameUrl(1) . '</td>';
+		print '<td colspan="3">' . $soc->getObjectUrl(1) . '</td>';
 		print '</tr>';
 
 		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {

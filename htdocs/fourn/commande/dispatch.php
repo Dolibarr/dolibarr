@@ -193,7 +193,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Fournisseur
 		print '<tr><td>'.$langs->trans("Supplier")."</td>";
-		print '<td colspan="2">'.$soc->getNameUrl(1,'supplier').'</td>';
+		print '<td colspan="2">'.$soc->getObjectUrl(1,'supplier').'</td>';
 		print '</tr>';
 
 		// Statut
@@ -221,7 +221,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Auteur
 		print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
-		print '<td colspan="2">'.$author->getNameUrl(1).'</td>';
+		print '<td colspan="2">'.$author->getObjectUrl(1).'</td>';
 		print '</tr>';
 
 		print "</table>";
@@ -465,7 +465,7 @@ if ($id > 0 || ! empty($ref))
 					print '<td align="right">';
 					$warehouse_static->id=$objp->warehouse_id;
 					$warehouse_static->libelle=$objp->entrepot;
-					print $warehouse_static->getNameUrl(1);
+					print $warehouse_static->getObjectUrl(1);
 					print '</td>';
 					print "</tr>\n";
 

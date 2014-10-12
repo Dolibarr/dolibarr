@@ -874,7 +874,7 @@ class Account extends CommonObject
      *      @param  string	$mode           ''=Link to card, 'transactions'=Link to transactions card
      *		@return	string					Chaine avec URL
      */
-    function getNameUrl($withpicto=0, $mode='')
+    function getObjectUrl($withpicto=0, $mode='')
     {
         global $langs;
 
@@ -1423,7 +1423,7 @@ class AccountLine extends CommonObject
      *		@param	string	$option			Option ('showall')
      *		@return	string					Chaine avec URL
      */
-    function getNameUrl($withpicto=0,$maxlen=0,$option='')
+    function getObjectUrl($withpicto=0,$maxlen=0,$option='')
     {
         global $langs;
 
@@ -1442,7 +1442,7 @@ class AccountLine extends CommonObject
             $accountstatic=new Account($this->db);
             $accountstatic->id=$this->fk_account;
             $accountstatic->label=$this->bank_account_label;
-            $result.=$accountstatic->getNameUrl(0).', ';
+            $result.=$accountstatic->getObjectUrl(0).', ';
         }
         if ($option == 'showall' || $option == 'showconciliated')
         {

@@ -507,7 +507,7 @@ class Entrepot extends CommonObject
 	 *	@param		string	$option			What point the link
 	 *	@return		string					String with URL
 	 */
-	function getNameUrl($withpicto=0,$option='')
+	function getObjectUrl($withpicto=0,$option='')
 	{
 		global $langs;
 

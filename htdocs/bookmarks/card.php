@@ -247,7 +247,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 		{
 			$fuser=new User($db);
 			$fuser->fetch($bookmark->fk_user);
-			print $fuser->getNameUrl(1);
+			print $fuser->getObjectUrl(1);
 		}
 		else
 		{

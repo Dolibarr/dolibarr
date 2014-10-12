@@ -101,7 +101,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Third party
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	if ($object->thirdparty->id > 0) print $object->thirdparty->getNameUrl(1);
+	if ($object->thirdparty->id > 0) print $object->thirdparty->getObjectUrl(1);
 	else print'&nbsp;';
 	print '</td></tr>';
 

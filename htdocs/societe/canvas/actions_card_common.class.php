@@ -599,7 +599,7 @@ abstract class ActionsCardCommon
             		$userstatic->id=$val['id'];
             		$userstatic->lastname=$val['name'];
             		$userstatic->firstname=$val['firstname'];
-            		$this->tpl['sales_representatives'].= $userstatic->getNameUrl(1);
+            		$this->tpl['sales_representatives'].= $userstatic->getObjectUrl(1);
             		$i++;
             		if ($i < $nbofsalesrepresentative) $this->tpl['sales_representatives'].= ', ';
             	}
@@ -615,7 +615,7 @@ abstract class ActionsCardCommon
                 if ($result > 0)
                 {
                     $adh->ref=$adh->getFullName($langs);
-                    $this->tpl['linked_member'] = $adh->getNameUrl(1);
+                    $this->tpl['linked_member'] = $adh->getObjectUrl(1);
                 }
                 else
                 {

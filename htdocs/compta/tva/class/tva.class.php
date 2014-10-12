@@ -633,7 +633,7 @@ class Tva extends CommonObject
 	 *	@param	string	$option			link option
 	 *	@return	string					Chaine with URL
 	 */
-	function getNameUrl($withpicto=0,$option='')
+	function getObjectUrl($withpicto=0,$option='')
 	{
 		global $langs;
 

@@ -157,7 +157,7 @@ if ($_socid > 0)
 			print '<td>'.$obj->price_level.' </td>';
 			$userstatic->id=$obj->uid;
 			$userstatic->lastname=$obj->login;
-			print '<td align="right">'.$userstatic->getNameUrl(1).'</td>';
+			print '<td align="right">'.$userstatic->getObjectUrl(1).'</td>';
 			print '</tr>';
 			$i++;
 		}

@@ -946,7 +946,7 @@ if ($action == 'create')
 	if($socid>0)
 	{
 		print '<td colspan="2">';
-		print $soc->getNameUrl(1);
+		print $soc->getObjectUrl(1);
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 		print '</td>';
 	}
@@ -1143,7 +1143,7 @@ else
 
         // Customer
         print "<tr><td>".$langs->trans("Customer")."</td>";
-        print '<td colspan="3">'.$object->thirdparty->getNameUrl(1).'</td></tr>';
+        print '<td colspan="3">'.$object->thirdparty->getObjectUrl(1).'</td></tr>';
 
         // Ligne info remises tiers
         print '<tr><td>'.$langs->trans('Discount').'</td><td colspan="3">';
@@ -1328,12 +1328,12 @@ else
                         $productstatic->id=$objp->fk_product;
                         $productstatic->type=$objp->ptype;
                         $productstatic->ref=$objp->pref;
-                        print $productstatic->getNameUrl(1,'',20);
+                        print $productstatic->getObjectUrl(1,'',20);
                         if ($objp->label)
                         {
                         	print ' - ';
                         	$productstatic->ref=$objp->label;
-                        	print $productstatic->getNameUrl(0,'',16);
+                        	print $productstatic->getObjectUrl(0,'',16);
                         }
                         if ($objp->description) print '<br>'.dol_nl2br($objp->description);
                         print '</td>';
@@ -1431,7 +1431,7 @@ else
                         $productstatic->id=$objp->fk_product;
                         $productstatic->type=$objp->ptype;
                         $productstatic->ref=$objp->pref;
-                        print $productstatic->getNameUrl(1,'',20);
+                        print $productstatic->getObjectUrl(1,'',20);
                         print $objp->label?' - '.dol_trunc($objp->label,16):'';
                         print '<br>';
                     }

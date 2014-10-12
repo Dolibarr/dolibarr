@@ -113,7 +113,7 @@ if ($id > 0 || ! empty($ref))
 		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 		print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$object->thirdparty->getNameUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$object->thirdparty->getObjectUrl(1).'</td></tr>';
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 		print "</table>\n";

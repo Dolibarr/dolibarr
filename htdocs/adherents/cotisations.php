@@ -141,10 +141,10 @@ if ($result)
         print "<tr ".$bc[$var].">";
 
         // Ref
-        print '<td>'.$cotisation->getNameUrl(1).'</td>';
+        print '<td>'.$cotisation->getObjectUrl(1).'</td>';
 
         // Lastname
-        print '<td>'.$adherent->getNameUrl(1).'</td>';
+        print '<td>'.$adherent->getObjectUrl(1).'</td>';
 
         // Login
         print '<td>'.$adherent->login.'</td>';
@@ -162,7 +162,7 @@ if ($result)
                 $accountstatic->id=$objp->fk_account;
                 $accountstatic->fetch($objp->fk_account);
                 //$accountstatic->label=$objp->label;
-                print '<td>'.$accountstatic->getNameUrl(1).'</td>';
+                print '<td>'.$accountstatic->getObjectUrl(1).'</td>';
             }
             else
             {

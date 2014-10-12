@@ -310,7 +310,7 @@ if ($id)
 	print '<tr><td>'.$langs->trans("Person").'</td><td>';
 	$usersal=new User($db);
 	$usersal->fetch($salpayment->fk_user);
-	print $usersal->getNameUrl(1);
+	print $usersal->getObjectUrl(1);
 	print '</td></tr>';
 
 	// Label
@@ -346,7 +346,7 @@ if ($id)
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td colspan="3">';
-			print $bankline->getNameUrl(1,0,'showall');
+			print $bankline->getObjectUrl(1,0,'showall');
 			print '</td>';
 			print '</tr>';
 		}

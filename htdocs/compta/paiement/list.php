@@ -187,7 +187,7 @@ if ($resql)
         print '<td width="40">';
         $paymentstatic->id=$objp->rowid;
         $paymentstatic->ref=$objp->rowid;
-        print $paymentstatic->getNameUrl(1);
+        print $paymentstatic->getObjectUrl(1);
         print '</td>';
 
         print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
@@ -198,7 +198,7 @@ if ($resql)
         {
             $companystatic->id=$objp->socid;
             $companystatic->name=$objp->name;
-            print $companystatic->getNameUrl(1,'',24);
+            print $companystatic->getObjectUrl(1,'',24);
         }
         else print '&nbsp;';
         print '</td>';
@@ -209,7 +209,7 @@ if ($resql)
         {
             $accountstatic->id=$objp->bid;
             $accountstatic->label=$objp->label;
-            print $accountstatic->getNameUrl(1);
+            print $accountstatic->getObjectUrl(1);
         }
         else print '&nbsp;';
         print '</td>';

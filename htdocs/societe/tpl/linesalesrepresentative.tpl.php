@@ -29,7 +29,7 @@
                 $userstatic->id=$val['id'];
                 $userstatic->lastname=$val['lastname'];
                 $userstatic->firstname=$val['firstname'];
-                print $userstatic->getNameUrl(1);
+                print $userstatic->getObjectUrl(1);
                 $i++;
                 if ($i < $nbofsalesrepresentative) print ', ';
             }

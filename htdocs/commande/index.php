@@ -252,7 +252,7 @@ if ($resql)
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding nowrap">';
-			print $commandestatic->getNameUrl(1);
+			print $commandestatic->getObjectUrl(1);
 			print '</td>';
 
 			print '<td width="16" class="nobordernopadding nowrap">';
@@ -321,7 +321,7 @@ if (! empty($conf->commande->enabled))
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="96" class="nobordernopadding nowrap">';
-				print $commandestatic->getNameUrl(1);
+				print $commandestatic->getObjectUrl(1);
 				print '</td>';
 
 				print '<td width="16" class="nobordernopadding nowrap">';
@@ -392,7 +392,7 @@ if (! empty($conf->commande->enabled))
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="96" class="nobordernopadding nowrap">';
-				print $commandestatic->getNameUrl(1);
+				print $commandestatic->getObjectUrl(1);
 				print '</td>';
 
 				print '<td width="16" class="nobordernopadding nowrap">';

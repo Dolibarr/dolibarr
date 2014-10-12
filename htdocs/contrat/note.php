@@ -82,7 +82,7 @@ if ($id > 0 || ! empty($ref))
 
     // Societe
     print '<tr><td>'.$langs->trans("Customer").'</td>';
-    print '<td colspan="3">'.$object->thirdparty->getNameUrl(1).'</td></tr>';
+    print '<td colspan="3">'.$object->thirdparty->getObjectUrl(1).'</td></tr>';
 
 	// Ligne info remises tiers
     print '<tr><td>'.$langs->trans('Discount').'</td><td>';

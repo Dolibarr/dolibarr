@@ -188,7 +188,7 @@ if ($id > 0 || ! empty($ref))
     		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
     		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    		if (! empty($projectstatic->thridparty->id)) print $projectstatic->thridparty->getNameUrl(1);
+    		if (! empty($projectstatic->thridparty->id)) print $projectstatic->thridparty->getObjectUrl(1);
     		else print '&nbsp;';
     		print '</td>';
     		print '</tr>';
@@ -253,13 +253,13 @@ if ($id > 0 || ! empty($ref))
 		if (empty($withproject))
 		{
     		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-    		print $projectstatic->getNameUrl(1);
+    		print $projectstatic->getObjectUrl(1);
     		print '</td></tr>';
 
     		// Customer
     		print "<tr><td>".$langs->trans("ThirdParty")."</td>";
     		print '<td colspan="3">';
-    		if ($projectstatic->thridparty->id > 0) print $projectstatic->thridparty->getNameUrl(1);
+    		if ($projectstatic->thridparty->id > 0) print $projectstatic->thridparty->getObjectUrl(1);
     		else print '&nbsp;';
     		print '</td></tr>';
 		}
@@ -408,7 +408,7 @@ if ($id > 0 || ! empty($ref))
 				if ($tab[$i]['socid'] > 0)
 				{
 					$companystatic->fetch($tab[$i]['socid']);
-					print $companystatic->getNameUrl(1);
+					print $companystatic->getObjectUrl(1);
 				}
 				if ($tab[$i]['socid'] < 0)
 				{
@@ -427,14 +427,14 @@ if ($id > 0 || ! empty($ref))
                     $userstatic->id=$tab[$i]['id'];
                     $userstatic->lastname=$tab[$i]['lastname'];
                     $userstatic->firstname=$tab[$i]['firstname'];
-                    print $userstatic->getNameUrl(1);
+                    print $userstatic->getObjectUrl(1);
                 }
                 if ($tab[$i]['source']=='external')
                 {
                     $contactstatic->id=$tab[$i]['id'];
                     $contactstatic->lastname=$tab[$i]['lastname'];
                     $contactstatic->firstname=$tab[$i]['firstname'];
-                    print $contactstatic->getNameUrl(1);
+                    print $contactstatic->getObjectUrl(1);
                 }
 				print '</td>';
 

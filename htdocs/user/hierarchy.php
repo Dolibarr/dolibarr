@@ -78,7 +78,7 @@ foreach($fulltree as $key => $val)
 	$userstatic->firstname=$val['firstname'];
 	$userstatic->lastname=$val['lastname'];
 	$userstatic->statut=$val['statut'];
-	$li=$userstatic->getNameUrl(1,'').' ('.$val['login'].(empty($conf->multicompany->enabled)?'':' - '.$langs->trans("Instance").' '.$val['entity']).')';
+	$li=$userstatic->getObjectUrl(1,'').' ('.$val['login'].(empty($conf->multicompany->enabled)?'':' - '.$langs->trans("Instance").' '.$val['entity']).')';
 
 	$data[] = array(
 		'rowid'=>$val['rowid'],

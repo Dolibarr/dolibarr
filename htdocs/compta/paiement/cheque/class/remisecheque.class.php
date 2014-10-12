@@ -764,7 +764,7 @@ class RemiseCheque extends CommonObject
 	 *		@param	string	$option			Sur quoi pointe le lien
 	 *		@return	string					Chaine avec URL
 	 */
-	function getNameUrl($withpicto=0,$option='')
+	function getObjectUrl($withpicto=0,$option='')
 	{
 		global $langs;
 

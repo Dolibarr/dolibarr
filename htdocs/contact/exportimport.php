@@ -77,7 +77,7 @@ if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     	$objsoc = new Societe($db);
     	$objsoc->fetch($contact->socid);
 
-    	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNameUrl(1).'</td></tr>';
+    	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getObjectUrl(1).'</td></tr>';
     }
     else
     {

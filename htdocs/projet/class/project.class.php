@@ -742,7 +742,7 @@ class Project extends CommonObject
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      * 	@return	string					Chaine avec URL
      */
-    function getNameUrl($withpicto=0, $option='', $addlabel=0)
+    function getObjectUrl($withpicto=0, $option='', $addlabel=0)
     {
         global $langs;
 

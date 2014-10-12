@@ -353,7 +353,7 @@ if (! empty($id) && $action == 'edit')
 
 	// Ref
 	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
-	print $object->getNameUrl();
+	print $object->getObjectUrl();
 	print '</td>';
 	print '</tr>';
 

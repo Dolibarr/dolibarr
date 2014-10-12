@@ -343,7 +343,7 @@ if ($result)
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 		print '<td class="nobordernopadding nowrap">';
-		print $objectstatic->getNameUrl(1);
+		print $objectstatic->getObjectUrl(1);
 		print '</td>';
 
 		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
@@ -379,7 +379,7 @@ if ($result)
 		$companystatic->client=$objp->client;
 		$companystatic->code_client=$objp->code_client;
 		print '<td>';
-		print $companystatic->getNameUrl(1,'customer');
+		print $companystatic->getObjectUrl(1,'customer');
 		print '</td>';
 
 		// Town

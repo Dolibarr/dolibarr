@@ -1399,7 +1399,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    {
 	        $thirdpartystatic=new Societe($db);
 	        $thirdpartystatic->fetch($user->societe_id);
-	        $companylink=' ('.$thirdpartystatic->getNameUrl('','').')';
+	        $companylink=' ('.$thirdpartystatic->getObjectUrl('','').')';
 	        $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 	    }
 	    $logintext='<div class="login"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'"';

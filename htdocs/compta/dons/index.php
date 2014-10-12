@@ -176,7 +176,7 @@ if ($resql)
             $donation_static->ref=$obj->ref?$obj->ref:$obj->rowid;
 
             print '<td width="96" class="nobordernopadding nowrap">';
-            print $donation_static->getNameUrl(1);
+            print $donation_static->getObjectUrl(1);
             print '</td>';
 
             print '<td class="nobordernopadding">';

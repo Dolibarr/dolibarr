@@ -355,11 +355,11 @@ if (! empty($holiday->holiday))
 		print '<td>';
 		$holidaystatic->id=$infos_CP['rowid'];
 		$holidaystatic->ref=$infos_CP['rowid'];
-		print $holidaystatic->getNameUrl(1);
+		print $holidaystatic->getObjectUrl(1);
 		print '</td>';
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
-		print '<td>'.$userstatic->getNameUrl('1').'</td>';
-		print '<td>'.$approbatorstatic->getNameUrl('1').'</td>';
+		print '<td>'.$userstatic->getObjectUrl('1').'</td>';
+		print '<td>'.$approbatorstatic->getObjectUrl('1').'</td>';
 		print '<td align="center">'.dol_print_date($infos_CP['date_debut'],'day').'</td>';
 		print '<td align="center">'.dol_print_date($infos_CP['date_fin'],'day').'</td>';
 		print '<td align="right">';

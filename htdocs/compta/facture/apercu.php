@@ -101,7 +101,7 @@ if ($id > 0 || ! empty($ref))
 
         // Societe
         print '<tr><td>'.$langs->trans("Company").'</td>';
-        print '<td colspan="5">'.$soc->getNameUrl(1,'compta').'</td>';
+        print '<td colspan="5">'.$soc->getObjectUrl(1,'compta').'</td>';
         print '</tr>';
 
         // Type
@@ -111,13 +111,13 @@ if ($id > 0 || ! empty($ref))
         {
             $facreplaced=new Facture($db);
             $facreplaced->fetch($object->fk_facture_source);
-            print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNameUrl(1)).')';
+            print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getObjectUrl(1)).')';
         }
         if ($object->type == Facture::TYPE_CREDIT_NOTE)
         {
             $facusing=new Facture($db);
             $facusing->fetch($object->fk_facture_source);
-            print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNameUrl(1)).')';
+            print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getObjectUrl(1)).')';
         }
 
         $facidavoir=$object->getListIdAvoirFromInvoice();
@@ -131,7 +131,7 @@ if ($id > 0 || ! empty($ref))
                 else print ',';
                 $facavoir=new Facture($db);
                 $facavoir->fetch($id);
-                print $facavoir->getNameUrl(1);
+                print $facavoir->getObjectUrl(1);
             }
             print ')';
         }
@@ -139,7 +139,7 @@ if ($id > 0 || ! empty($ref))
         {
             $facthatreplace=new Facture($db);
             $facthatreplace->fetch($objectidnext);
-            print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNameUrl(1)).')';
+            print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getObjectUrl(1)).')';
         }
         print '</td></tr>';
 

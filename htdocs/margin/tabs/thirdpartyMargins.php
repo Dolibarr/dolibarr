@@ -200,7 +200,7 @@ if ($socid > 0)
 					print '<td>';
 					$invoicestatic->id=$objp->facid;
 					$invoicestatic->ref=$objp->facnumber;
-					print $invoicestatic->getNameUrl(1);
+					print $invoicestatic->getObjectUrl(1);
 					print "</td>\n";
 					print "<td align=\"center\">";
 					print dol_print_date($db->jdate($objp->datef),'day')."</td>";

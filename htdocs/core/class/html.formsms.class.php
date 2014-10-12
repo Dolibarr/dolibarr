@@ -152,7 +152,7 @@ function limitChars(textarea, limit, infodiv)
                     $langs->load("users");
                     $fuser=new User($this->db);
                     $fuser->fetch($this->fromid);
-                    print $fuser->getNameUrl(1);
+                    print $fuser->getObjectUrl(1);
                     print ' &nbsp; ';
                 }
                 if ($this->fromsms)

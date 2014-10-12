@@ -512,14 +512,14 @@ class ProductFournisseur extends Product
      *	@param	int		$withpicto	Add picto
      *	@param	string	$option		Target of link ('', 'customer', 'prospect', 'supplier')
      *	@return	string				String with supplier price
-	 *  TODO Remove this method. Use getNameUrl directly.
+	 *  TODO Remove this method. Use getObjectUrl directly.
      */
     function getSocNomUrl($withpicto=0,$option='supplier')
     {
         $cust = new Fournisseur($this->db);
         $cust->fetch($this->fourn_id);
 
-        return $cust->getNameUrl($withpicto,$option);
+        return $cust->getObjectUrl($withpicto,$option);
     }
 
     /**

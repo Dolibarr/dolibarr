@@ -880,7 +880,7 @@ class Contact extends CommonObject
 	 *  @param		string		$moreparam		Add more param into URL
 	 *	@return		string						String with URL
 	 */
-	function getNameUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
+	function getObjectUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
 	{
 		global $langs;
 

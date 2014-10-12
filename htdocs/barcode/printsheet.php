@@ -68,7 +68,7 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$producttmp->getNameUrl()), 'warnings');
+			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$producttmp->getObjectUrl()), 'warnings');
 		}
 	}
 }
@@ -85,7 +85,7 @@ if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
 
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$thirdpartytmp->getNameUrl()), 'warnings');
+			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$thirdpartytmp->getObjectUrl()), 'warnings');
 		}
 	}
 }
@@ -375,11 +375,11 @@ print '<br>';
 
 if ($producttmp->id > 0)
 {
-	print $langs->trans("BarCodeDataForProduct",$producttmp->getNameUrl(1)).'<br>';
+	print $langs->trans("BarCodeDataForProduct",$producttmp->getObjectUrl(1)).'<br>';
 }
 if ($thirdpartytmp->id > 0)
 {
-	print $langs->trans("BarCodeDataForThirdparty",$thirdpartytmp->getNameUrl(1)).'<br>';
+	print $langs->trans("BarCodeDataForThirdparty",$thirdpartytmp->getObjectUrl(1)).'<br>';
 }
 
 print '<div class="tagtable">';

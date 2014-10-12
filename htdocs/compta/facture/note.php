@@ -88,7 +88,7 @@ if ($id > 0 || ! empty($ref))
 	$result=$discount->fetch(0,$object->id);
 	if ($result > 0)
 	{
-		$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNameUrl(1,'discount')).')';
+		$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getObjectUrl(1,'discount')).')';
 	}
 	if ($result < 0)
 	{
@@ -110,7 +110,7 @@ if ($id > 0 || ! empty($ref))
 
     // Company
     print '<tr><td>'.$langs->trans("Company").'</td>';
-    print '<td colspan="3">'.$soc->getNameUrl(1,'compta').'</td>';
+    print '<td colspan="3">'.$soc->getObjectUrl(1,'compta').'</td>';
 
     print "</table>";
 

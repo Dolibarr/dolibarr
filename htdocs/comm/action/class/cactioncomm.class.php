@@ -177,7 +177,7 @@ class CActionComm
      *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
      *  @return string			      	Label of action type
      */
-    function getNameUrl($withpicto=0)
+    function getObjectUrl($withpicto=0)
     {
         global $langs;
 

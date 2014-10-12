@@ -787,7 +787,7 @@ if ($account)
 		{
 			$bankaccount->fetch($id);
 			$bankaccount->label=$bankaccount->ref;
-			print $bankaccount->getNameUrl(1);
+			print $bankaccount->getObjectUrl(1);
 			if ($key < (count($listid)-1)) print ', ';
 		}
 	}

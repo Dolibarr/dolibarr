@@ -653,7 +653,7 @@ class Holiday extends CommonObject
      *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
      *	@return		string						String with URL
      */
-    function getNameUrl($withpicto=0)
+    function getObjectUrl($withpicto=0)
     {
     	global $langs;
 

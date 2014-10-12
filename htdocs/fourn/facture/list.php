@@ -266,7 +266,7 @@ if ($resql)
 		$facturestatic->id=$obj->facid;
 		$facturestatic->ref=$obj->ref;
 		$facturestatic->ref_supplier=$obj->ref_supplier;
-		print $facturestatic->getNameUrl(1);
+		print $facturestatic->getObjectUrl(1);
 		$filename=dol_sanitizeFileName($obj->ref);
 		$filedir=$conf->fournisseur->dir_output.'/facture' . '/' . dol_sanitizeFileName($obj->facid).'/0/'.dol_sanitizeFileName($obj->ref);
 		print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
@@ -280,7 +280,7 @@ if ($resql)
 		print '<td>';
 		$supplierstatic->id=$obj->socid;
 		$supplierstatic->name=$obj->name;
-		print $supplierstatic->getNameUrl(1,'',12);
+		print $supplierstatic->getObjectUrl(1,'',12);
 		print '<td align="right">'.price($obj->total_ht).'</td>';
 		print '<td align="right">'.price($obj->total_ttc).'</td>';
 		$total+=$obj->total_ht;

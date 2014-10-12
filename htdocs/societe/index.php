@@ -291,26 +291,26 @@ if ($result)
             $thirdparty_static->datem=$db->jdate($objp->datem);
             $thirdparty_static->status=$objp->status;
             $thirdparty_static->canvas=$objp->canvas;
-            print $thirdparty_static->getNameUrl(1);
+            print $thirdparty_static->getObjectUrl(1);
             print "</td>\n";
             // Type
             print '<td align="center">';
             if ($thirdparty_static->client==1 || $thirdparty_static->client==3)
             {
             	$thirdparty_static->name=$langs->trans("Customer");
-            	print $thirdparty_static->getNameUrl(0,'customer');
+            	print $thirdparty_static->getObjectUrl(0,'customer');
             }
             if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
             if (($thirdparty_static->client==2 || $thirdparty_static->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
             {
             	$thirdparty_static->name=$langs->trans("Prospect");
-            	print $thirdparty_static->getNameUrl(0,'prospect');
+            	print $thirdparty_static->getObjectUrl(0,'prospect');
             }
             if (! empty($conf->fournisseur->enabled) && $thirdparty_static->fournisseur)
             {
                 if ($thirdparty_static->client) print " / ";
             	$thirdparty_static->name=$langs->trans("Supplier");
-            	print $thirdparty_static->getNameUrl(0,'supplier');
+            	print $thirdparty_static->getObjectUrl(0,'supplier');
             }
             print '</td>';
             // Last modified date

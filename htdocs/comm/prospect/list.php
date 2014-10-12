@@ -407,7 +407,7 @@ if ($resql)
         $prospectstatic->code_client=$obj->code_client;
         $prospectstatic->client=$obj->client;
         $prospectstatic->fk_prospectlevel=$obj->fk_prospectlevel;
-		print $prospectstatic->getNameUrl(1,'prospect');
+		print $prospectstatic->getObjectUrl(1,'prospect');
         print '</td>';
         print "<td>".$obj->zip."&nbsp;</td>";
 		print "<td>".$obj->town."&nbsp;</td>";

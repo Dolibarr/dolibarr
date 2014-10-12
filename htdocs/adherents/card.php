@@ -1047,7 +1047,7 @@ else
 		}
 		else
 		{
-			print $adht->getNameUrl(1);
+			print $adht->getObjectUrl(1);
 			print '<input type="hidden" name="typeid" value="'.$object->typeid.'">';
 		}
 		print "</td></tr>";
@@ -1146,7 +1146,7 @@ else
 			{
 				$company=new Societe($db);
 				$result=$company->fetch($object->fk_soc);
-				print $company->getNameUrl(1);
+				print $company->getObjectUrl(1);
 			}
 			else
 			{
@@ -1383,7 +1383,7 @@ else
 		print '</tr>';
 
 		// Type
-		print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNameUrl(1)."</td></tr>\n";
+		print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getObjectUrl(1)."</td></tr>\n";
 
 		// Company
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
@@ -1488,7 +1488,7 @@ else
 				{
 					$company=new Societe($db);
 					$result=$company->fetch($object->fk_soc);
-					print $company->getNameUrl(1);
+					print $company->getObjectUrl(1);
 				}
 				else
 				{

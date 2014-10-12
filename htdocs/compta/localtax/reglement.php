@@ -71,7 +71,7 @@ if ($result)
 
 		$localtax_static->id=$obj->rowid;
 		$localtax_static->ref=$obj->rowid;
-		print "<td>".$localtax_static->getNameUrl(1)."</td>\n";
+		print "<td>".$localtax_static->getObjectUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
         print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
         $total = $total + $obj->amount;

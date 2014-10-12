@@ -376,7 +376,7 @@ if ($result)
 		$contactstatic->firstname='';
 		$contactstatic->id=$obj->cidp;
 		$contactstatic->statut=$obj->statut;
-		print $contactstatic->getNameUrl(1,'',20);
+		print $contactstatic->getObjectUrl(1,'',20);
 		print '</td>';
 
 		// Firstname

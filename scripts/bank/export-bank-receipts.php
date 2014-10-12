@@ -329,11 +329,11 @@ if ($resql)
 					$bankstatic->id=$banklinestatic->fk_account;
 					$bankstatic->label=$banklinestatic->bank_account_label;
 					$comment.= ' ('.$langs->transnoentitiesnoconv("from").' ';
-					$comment.= $bankstatic->getNameUrl(1,'transactions');
+					$comment.= $bankstatic->getObjectUrl(1,'transactions');
 					$comment.= ' '.$langs->transnoentitiesnoconv("toward").' ';
 					$bankstatic->id=$objp->bankid;
 					$bankstatic->label=$objp->bankref;
-					$comment.= $bankstatic->getNameUrl(1,'');
+					$comment.= $bankstatic->getObjectUrl(1,'');
 					$comment.= ')';
 				}
 				else
@@ -342,12 +342,12 @@ if ($resql)
 					$bankstatic->id=$objp->bankid;
 					$bankstatic->label=$objp->bankref;
 					$comment.= ' ('.$langs->transnoentitiesnoconv("from").' ';
-					$comment.= $bankstatic->getNameUrl(1,'');
+					$comment.= $bankstatic->getObjectUrl(1,'');
 					$comment.= ' '.$langs->transnoentitiesnoconv("toward").' ';
 					$banklinestatic->fetch($links[$key]['url_id']);
 					$bankstatic->id=$banklinestatic->fk_account;
 					$bankstatic->label=$banklinestatic->bank_account_label;
-					$comment.= $bankstatic->getNameUrl(1,'transactions');
+					$comment.= $bankstatic->getObjectUrl(1,'transactions');
 					$comment.= ')';
 				}
 			}

@@ -217,7 +217,7 @@ foreach ($tabfac as $key => $val)
 		),
 		array(
 			'var' => $tabttc[$key],
-			'label' => $langs->trans('ThirdParty').' ('.$companystatic->getNameUrl(0, 'supplier', 16).')',
+			'label' => $langs->trans('ThirdParty').' ('.$companystatic->getObjectUrl(0, 'supplier', 16).')',
 			'nomtcheck' => true,
 			'inv' => true
 		)
@@ -231,7 +231,7 @@ foreach ($tabfac as $key => $val)
 			{
 				print "<tr ".$bc[$var]." >";
 				print "<td>".dol_print_date($val["date"])."</td>";
-				print "<td>".$invoicestatic->getNameUrl(1)."</td>";
+				print "<td>".$invoicestatic->getObjectUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
 				if (isset($line['inv']))

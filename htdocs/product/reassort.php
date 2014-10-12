@@ -307,7 +307,7 @@ if ($resql)
 		$product_static->ref=$objp->ref;
 		$product_static->id=$objp->rowid;
 		$product_static->type=$objp->fk_product_type;
-		print $product_static->getNameUrl(1,'',16);
+		print $product_static->getObjectUrl(1,'',16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
 		print '<td>'.$objp->label.'</td>';

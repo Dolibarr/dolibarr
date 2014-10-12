@@ -168,7 +168,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Customer
 	print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-	print '<td colspan="3">'.$object->thirdparty->getNameUrl(1).'</td>';
+	print '<td colspan="3">'.$object->thirdparty->getObjectUrl(1).'</td>';
 	print "</tr>";
 
 	// Linked documents
@@ -179,7 +179,7 @@ if ($id > 0 || ! empty($ref))
 		$objectsrc->fetch($object->$typeobject->id);
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
-		print $objectsrc->getNameUrl(1,'commande');
+		print $objectsrc->getObjectUrl(1,'commande');
 		print "</td>\n";
 		print '</tr>';
 	}
@@ -190,7 +190,7 @@ if ($id > 0 || ! empty($ref))
 		$objectsrc->fetch($object->$typeobject->id);
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
-		print $objectsrc->getNameUrl(1,'expedition');
+		print $objectsrc->getObjectUrl(1,'expedition');
 		print "</td>\n";
 		print '</tr>';
 	}

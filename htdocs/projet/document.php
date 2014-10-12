@@ -122,7 +122,7 @@ if ($object->id > 0)
 
 	// Company
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	if (! empty($object->thirdparty->id)) print $object->thirdparty->getNameUrl(1);
+	if (! empty($object->thirdparty->id)) print $object->thirdparty->getObjectUrl(1);
 	else print '&nbsp;';
 	print '</td></tr>';
 

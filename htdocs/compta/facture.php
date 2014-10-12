@@ -1976,7 +1976,7 @@ if ($action == 'create')
 	if ($soc->id > 0)
 	{
 		print '<td colspan="2">';
-		print $soc->getNameUrl(1);
+		print $soc->getObjectUrl(1);
 		print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 		// Outstanding Bill
 		$outstandigBills = $soc->get_OutstandingBill();
@@ -2347,14 +2347,14 @@ if ($action == 'create')
 		elseif ($newclassname == 'Fichinter')
 			$newclassname = 'Intervention';
 
-		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNameUrl(1);
+		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getObjectUrl(1);
 		//We check if Origin document has already an invoice attached to it
 		$objectsrc->fetchObjectLinked($originid,'','','facture');
 		$cntinvoice=count($objectsrc->linkedObjects['facture']);
 		if ($cntinvoice>=1)
 		{
 		    setEventMessage('WarningBillExist','warnings');
-		    echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['facture'])->getNameUrl(1).')';
+		    echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['facture'])->getObjectUrl(1).')';
 		}
 		echo '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
@@ -2749,7 +2749,7 @@ if ($action == 'create')
 	$discount = new DiscountAbsolute($db);
 	$result = $discount->fetch(0, $object->id);
 	if ($result > 0) {
-		$morehtmlref = ' (' . $langs->trans("CreditNoteConvertedIntoDiscount", $discount->getNameUrl(1, 'discount')) . ')';
+		$morehtmlref = ' (' . $langs->trans("CreditNoteConvertedIntoDiscount", $discount->getObjectUrl(1, 'discount')) . ')';
 	}
 	if ($result < 0) {
 		dol_print_error('', $discount->error);
@@ -2791,7 +2791,7 @@ if ($action == 'create')
 	if ($action == 'editthirdparty') {
 		$form->form_thirdparty($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, 'socid');
 	} else {
-		print ' &nbsp;' . $soc->getNameUrl(1, 'compta');
+		print ' &nbsp;' . $soc->getObjectUrl(1, 'compta');
 		print ' &nbsp; ';
 		print '(<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?socid=' . $object->socid . '">' . $langs->trans('OtherBills') . '</a>';
 		// Outstanding Bill
@@ -2813,12 +2813,12 @@ if ($action == 'create')
 	if ($object->type == Facture::TYPE_REPLACEMENT) {
 		$facreplaced = new Facture($db);
 		$facreplaced->fetch($object->fk_facture_source);
-		print ' (' . $langs->transnoentities("ReplaceInvoice", $facreplaced->getNameUrl(1)) . ')';
+		print ' (' . $langs->transnoentities("ReplaceInvoice", $facreplaced->getObjectUrl(1)) . ')';
 	}
 	if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 		$facusing = new Facture($db);
 		$facusing->fetch($object->fk_facture_source);
-		print ' (' . $langs->transnoentities("CorrectInvoice", $facusing->getNameUrl(1)) . ')';
+		print ' (' . $langs->transnoentities("CorrectInvoice", $facusing->getObjectUrl(1)) . ')';
 	}
 
 	$facidavoir = $object->getListIdAvoirFromInvoice();
@@ -2832,14 +2832,14 @@ if ($action == 'create')
 				print ',';
 			$facavoir = new Facture($db);
 			$facavoir->fetch($id);
-			print $facavoir->getNameUrl(1);
+			print $facavoir->getObjectUrl(1);
 		}
 		print ')';
 	}
 	if ($objectidnext > 0) {
 		$facthatreplace = new Facture($db);
 		$facthatreplace->fetch($objectidnext);
-		print ' (' . $langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNameUrl(1)) . ')';
+		print ' (' . $langs->transnoentities("ReplacedByInvoice", $facthatreplace->getObjectUrl(1)) . ')';
 	}
 	print '</td></tr>';
 
@@ -3020,7 +3020,7 @@ if ($action == 'create')
 					$bankaccountstatic->label = $objp->ref;
 					print '<td align="right">';
 					if ($bankaccountstatic->id)
-						print $bankaccountstatic->getNameUrl(1, 'transactions');
+						print $bankaccountstatic->getObjectUrl(1, 'transactions');
 					print '</td>';
 				}
 				print '<td align="right">' . price($sign * $objp->amount) . '</td>';
@@ -3068,7 +3068,7 @@ if ($action == 'create')
 					print $langs->trans("CreditNote") . ' ';
 				if ($invoice->type == Facture::TYPE_DEPOSIT)
 					print $langs->trans("Deposit") . ' ';
-				print $invoice->getNameUrl(0);
+				print $invoice->getObjectUrl(0);
 				print ' :</td>';
 				print '<td align="right">' . price($obj->amount_ttc) . '</td>';
 				print '<td align="right">';

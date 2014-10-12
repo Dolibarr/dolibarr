@@ -204,7 +204,7 @@ if ($id > 0 || ! empty($ref))
                         print '<td>';
                         $invoicestatic->id=$objp->facid;
                         $invoicestatic->ref=$objp->facnumber;
-                        print $invoicestatic->getNameUrl(1);
+                        print $invoicestatic->getObjectUrl(1);
                         print "</td>\n";
                         print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';
                         print "<td>".$objp->code_client."</td>\n";

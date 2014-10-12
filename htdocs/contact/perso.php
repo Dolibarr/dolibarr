@@ -111,7 +111,7 @@ if ($action == 'edit')
             $objsoc = new Societe($db);
             $objsoc->fetch($object->socid);
 
-            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNameUrl(1).'</td>';
+            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getObjectUrl(1).'</td>';
         }
         else
         {
@@ -179,7 +179,7 @@ else
             $objsoc = new Societe($db);
             $objsoc->fetch($object->socid);
 
-            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNameUrl(1).'</td></tr>';
+            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getObjectUrl(1).'</td></tr>';
         }
 
         else

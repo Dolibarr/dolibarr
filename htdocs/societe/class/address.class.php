@@ -417,7 +417,7 @@ class Address
 	 *	@param		string		$option			Where the link point to
 	 *	@return		string						String with URL
 	 */
-	function getNameUrl($withpicto=0,$option='')
+	function getObjectUrl($withpicto=0,$option='')
 	{
 		global $langs;
 

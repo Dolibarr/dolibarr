@@ -610,7 +610,7 @@ if ($resql)
 		$entrepotstatic->id=$obj->rowid;
 		$entrepotstatic->libelle=$obj->label;
 		print '<tr '.$bc[$var].'>';
-		print '<td colspan="4">'.$entrepotstatic->getNameUrl(1).'</td>';
+		print '<td colspan="4">'.$entrepotstatic->getObjectUrl(1).'</td>';
 		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
 		// PMP
 		print '<td align="right">'.(price2num($obj->pmp)?price2num($obj->pmp,'MU'):'').'</td>'; // Ditto : Show PMP from movement or from product

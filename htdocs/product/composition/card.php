@@ -219,11 +219,11 @@ if ($id > 0 || ! empty($ref))
 					if (! empty($conf->stock->enabled)) $productstatic->load_stock();
 					//var_dump($value);
 					//print '<pre>'.$productstatic->ref.'</pre>';
-					//print $productstatic->getNameUrl(1).'<br>';
+					//print $productstatic->getObjectUrl(1).'<br>';
 					//print $value[0];	// This contains a tr line.
 					print '<tr>';
-					//print '<td>'.$productstatic->getNameUrl(1,'composition').' ('.$value['nb'].($value['nb_total'] > $value['nb']?'->'.$value['nb_total']:'').') &nbsp &nbsp</td>';
-					print '<td>'.$productstatic->getNameUrl(1,'composition').' ('.$value['nb'].') &nbsp &nbsp</td>';
+					//print '<td>'.$productstatic->getObjectUrl(1,'composition').' ('.$value['nb'].($value['nb_total'] > $value['nb']?'->'.$value['nb_total']:'').') &nbsp &nbsp</td>';
+					print '<td>'.$productstatic->getObjectUrl(1,'composition').' ('.$value['nb'].') &nbsp &nbsp</td>';
 					if (! empty($conf->stock->enabled)) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
 					print '</tr>';
 				}
@@ -248,7 +248,7 @@ if ($id > 0 || ! empty($ref))
 					$productstatic->type=$value["fk_product_type"];
 					$productstatic->ref=$value['label'];
 					print '<tr>';
-					print '<td>'.$productstatic->getNameUrl(1,'composition').'</td>';;
+					print '<td>'.$productstatic->getObjectUrl(1,'composition').'</td>';;
 					print '</tr>';
 				}
 				print '</table>';
@@ -334,14 +334,14 @@ if ($id > 0 || ! empty($ref))
 				$productstatic->id=$value['id'];
 				$productstatic->type=$value['type'];
 				//print '<pre>'.$productstatic->ref.'</pre>';
-				//print $productstatic->getNameUrl(1).'<br>';
+				//print $productstatic->getObjectUrl(1).'<br>';
 				//var_dump($value);
 				print '<tr>';
 				if ($value['level'] <= 1)
 				{
 					$notdefined=0;
 					$productstatic->ref=$value['fullpath'];
-					print '<td>'.$productstatic->getNameUrl(1,'composition').' ('.$value['nb'].')</td>';
+					print '<td>'.$productstatic->getObjectUrl(1,'composition').' ('.$value['nb'].')</td>';
 					print '<td align="right">';
 					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0)
 					{
@@ -362,7 +362,7 @@ if ($id > 0 || ! empty($ref))
 					{
 						print ' &nbsp; &nbsp; ';
 					}
-					print $productstatic->getNameUrl(1,'composition').' ('.$value['nb'].')</td>';
+					print $productstatic->getObjectUrl(1,'composition').' ('.$value['nb'].')</td>';
 					print '<td><td>';
 					print '<td><td>';
 					if (! empty($conf->stock->enabled)) print '<td align="right"></td>';	// Real stock
@@ -397,7 +397,7 @@ if ($id > 0 || ! empty($ref))
 				$productstatic->type=$value["fk_product_type"];
 				$productstatic->ref=$value['label'];
 				print '<tr>';
-				print '<td>'.$productstatic->getNameUrl(1,'composition').'</td>';;
+				print '<td>'.$productstatic->getObjectUrl(1,'composition').'</td>';;
 				print '</tr>';
 			}
 			print '</table>';
@@ -500,7 +500,7 @@ if ($id > 0 || ! empty($ref))
 						$productstatic->libelle=$objp->label;
 						$productstatic->type=$objp->type;
 
-						print '<td>'.$productstatic->getNameUrl(1,'',24).'</td>';
+						print '<td>'.$productstatic->getObjectUrl(1,'',24).'</td>';
 						$labeltoshow=$objp->label;
 						if ($conf->global->MAIN_MULTILANGS && $objp->labelm) $labeltoshow=$objp->labelm;
 

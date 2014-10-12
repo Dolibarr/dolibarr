@@ -154,7 +154,7 @@ if ($object->id > 0)
 	$result=$discount->fetch(0,$object->id);
 	if ($result > 0)
 	{
-		$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNameUrl(1,'discount')).')';
+		$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getObjectUrl(1,'discount')).')';
 	}
 	if ($result < 0)
 	{
@@ -176,7 +176,7 @@ if ($object->id > 0)
 
 	// Third party
 	print '<tr><td>'.$langs->trans('Company').'</td>';
-	print '<td colspan="5">'.$object->thirdparty->getNameUrl(1,'compta');
+	print '<td colspan="5">'.$object->thirdparty->getObjectUrl(1,'compta');
 	print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
 	print '</tr>';
 
@@ -187,13 +187,13 @@ if ($object->id > 0)
 	{
 		$facreplaced=new Facture($db);
 		$facreplaced->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNameUrl(1)).')';
+		print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getObjectUrl(1)).')';
 	}
 	if ($object->type == Facture::TYPE_CREDIT_NOTE)
 	{
 		$facusing=new Facture($db);
 		$facusing->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNameUrl(1)).')';
+		print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getObjectUrl(1)).')';
 	}
 
 	$facidavoir=$object->getListIdAvoirFromInvoice();
@@ -207,7 +207,7 @@ if ($object->id > 0)
 			else print ',';
 			$facavoir=new Facture($db);
 			$facavoir->fetch($id);
-			print $facavoir->getNameUrl(1);
+			print $facavoir->getObjectUrl(1);
 		}
 		print ')';
 	}
@@ -216,7 +216,7 @@ if ($object->id > 0)
 	{
 		$facthatreplace=new Facture($db);
 		$facthatreplace->fetch($facidnext);
-		print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNameUrl(1)).')';
+		print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getObjectUrl(1)).')';
 	}
 	*/
 	print '</td></tr>';
@@ -560,7 +560,7 @@ if ($object->id > 0)
 			$withdrawreceipt=new BonPrelevement($db);
 			$withdrawreceipt->id=$obj->fk_prelevement_bons;
 			$withdrawreceipt->ref=$obj->ref;
-			print $withdrawreceipt->getNameUrl(1);
+			print $withdrawreceipt->getObjectUrl(1);
 			print "</td>\n";
 
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';

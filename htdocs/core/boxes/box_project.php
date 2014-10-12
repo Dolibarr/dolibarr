@@ -97,7 +97,7 @@ class box_project extends ModeleBoxes
 					$projectstatic->fetch($objp->rowid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-					'text' =>$projectstatic->getNameUrl(1)
+					'text' =>$projectstatic->getObjectUrl(1)
 					);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="left"',

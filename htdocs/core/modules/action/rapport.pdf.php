@@ -246,7 +246,7 @@ class CommActionRapport
 				if ($obj->fk_project > 0)
 				{
 					$projectstatic->fetch($obj->fk_project);
-					$text.=($status?' - ':'').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode($projectstatic->getNameUrl(0, 'nolink'));
+					$text.=($status?' - ':'').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode($projectstatic->getObjectUrl(0, 'nolink'));
 				}
 
 				//print 'd'.$text; exit;

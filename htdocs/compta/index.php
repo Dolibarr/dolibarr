@@ -181,13 +181,13 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
-				print $facturestatic->getNameUrl(1,'');
+				print $facturestatic->getObjectUrl(1,'');
 				print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=1;
-				print $companystatic->getNameUrl(1,'',16);
+				print $companystatic->getObjectUrl(1,'',16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
@@ -250,13 +250,13 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$facturesupplierstatic->ref=$obj->ref;
 				$facturesupplierstatic->id=$obj->rowid;
 				$facturesupplierstatic->type=$obj->type;
-				print $facturesupplierstatic->getNameUrl(1,'',16);
+				print $facturesupplierstatic->getObjectUrl(1,'',16);
 				print '</td>';
 				print '<td>';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=1;
-				print $companystatic->getNameUrl(1,'',16);
+				print $companystatic->getObjectUrl(1,'',16);
 				print '</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
@@ -336,7 +336,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
-				print $facturestatic->getNameUrl(1,'');
+				print $facturestatic->getObjectUrl(1,'');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
 				if ($obj->fk_statut == 1 && ! $obj->paye && $db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
@@ -353,7 +353,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$thirdpartystatic->id=$obj->socid;
 				$thirdpartystatic->name=$obj->name;
 				$thirdpartystatic->client=1;
-				print $thirdpartystatic->getNameUrl(1,'customer',44);
+				print $thirdpartystatic->getObjectUrl(1,'customer',44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
@@ -428,13 +428,13 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print '<tr '.$bc[$var].'><td>';
 				$facstatic->ref=$obj->ref;
 				$facstatic->id=$obj->rowid;
-				print $facstatic->getNameUrl(1,'');
+				print $facstatic->getObjectUrl(1,'');
 				print '</td>';
 				print '<td>';
 				$thirdpartystatic->id=$obj->socid;
 				$thirdpartystatic->name=$obj->name;
 				$thirdpartystatic->fournisseur=1;
-				print $thirdpartystatic->getNameUrl(1,'supplier',44);
+				print $thirdpartystatic->getObjectUrl(1,'supplier',44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
@@ -509,7 +509,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 				$label=$donationstatic->getFullName($langs);
 				if ($objp->societe) $label.=($label?' - ':'').$objp->societe;
 				$donationstatic->ref=$label;
-				print '<td>'.$donationstatic->getNameUrl(1).'</td>';
+				print '<td>'.$donationstatic->getObjectUrl(1).'</td>';
                 print '<td align="right">'.price($objp->amount).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
                 print '<td>'.$donationstatic->LibStatut($objp->fk_statut,3).'</td>';
@@ -573,7 +573,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					$chargestatic->ref=$obj->libelle;
 					$chargestatic->lib=$obj->libelle;
 					$chargestatic->paye=$obj->paye;
-					print '<td>'.$chargestatic->getNameUrl(1).'</td>';
+					print '<td>'.$chargestatic->getObjectUrl(1).'</td>';
 					print '<td align="center">'.dol_print_date($obj->date_ech,'day').'</td>';
 					print '<td align="right">'.price($obj->amount).'</td>';
 					print '<td align="right">'.price($obj->sumpaid).'</td>';
@@ -659,7 +659,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="110" class="nobordernopadding nowrap">';
-				print $commandestatic->getNameUrl(1);
+				print $commandestatic->getObjectUrl(1);
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
 				print '&nbsp;';
@@ -677,7 +677,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
                 $societestatic->id=$obj->socid;
                 $societestatic->name=$obj->name;
                 $societestatic->client=1;
-                print $societestatic->getNameUrl(1,'customer',44);
+                print $societestatic->getObjectUrl(1,'customer',44);
 				print '</a></td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
@@ -759,7 +759,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
-				print $facturestatic->getNameUrl(1,'');
+				print $facturestatic->getObjectUrl(1,'');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
 				if ($db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
@@ -776,7 +776,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $societestatic->id=$obj->socid;
                 $societestatic->name=$obj->name;
                 $societestatic->client=1;
-				print $societestatic->getNameUrl(1,'customer',44);
+				print $societestatic->getObjectUrl(1,'customer',44);
 				print '</a></td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
@@ -860,12 +860,12 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print '<tr '.$bc[$var].'><td>';
 				$facstatic->ref=$obj->ref;
 				$facstatic->id=$obj->rowid;
-				print $facstatic->getNameUrl(1,'');
+				print $facstatic->getObjectUrl(1,'');
 				print '</td>';
                 $societestatic->id=$obj->socid;
                 $societestatic->name=$obj->name;
                 $societestatic->client=0;
-				print '<td>'.$societestatic->getNameUrl(1, 'supplier', 44).'</td>';
+				print '<td>'.$societestatic->getObjectUrl(1, 'supplier', 44).'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';

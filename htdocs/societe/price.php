@@ -316,7 +316,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<td>' . $langs->trans('Product') . '</td>';
 		$staticprod = new Product($db);
 		$staticprod->fetch($prodcustprice->fk_product);
-		print "<td>" . $staticprod->getNameUrl(1) . "</td>";
+		print "<td>" . $staticprod->getObjectUrl(1) . "</td>";
 		print '</tr>';
 
 		// VAT
@@ -421,7 +421,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
 
-				print "<td>" . $staticprod->getNameUrl(1) . "</td>";
+				print "<td>" . $staticprod->getObjectUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
 				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
@@ -503,7 +503,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
 
-				print "<td>" . $staticprod->getNameUrl(1) . "</td>";
+				print "<td>" . $staticprod->getObjectUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
 				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";

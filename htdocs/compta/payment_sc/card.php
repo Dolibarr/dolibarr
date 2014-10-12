@@ -193,7 +193,7 @@ if (! empty($conf->banque->enabled))
     	print '<tr>';
     	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
-		print $bankline->getNameUrl(1,0,'showall');
+		print $bankline->getObjectUrl(1,0,'showall');
     	print '</td>';
     	print '</tr>';
     }
@@ -244,7 +244,7 @@ if ($resql)
 			// Ref
 			print '<td>';
 			$socialcontrib->fetch($objp->scid);
-			print $socialcontrib->getNameUrl(1);
+			print $socialcontrib->getObjectUrl(1);
 			print "</td>\n";
 			// Type
             print '<td>';
