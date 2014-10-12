@@ -27,12 +27,14 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $action=GETPOST('action','alpha');
 $name=GETPOST('name','alpha');
 $id=GETPOST('id', 'int');
+$value=GETPOST('value', 'int');
 
+$object = new GenericObject($db);
 /*
  * View
  */
@@ -42,24 +44,15 @@ top_httphead();
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Registering the location of boxes
-if (! empty($action) && ! empty($name) &&! empty($id))
+if (! empty($action) && ! empty($id))
 {
     //$entity = GETPOST('entity','int');
 
     if ($user->rights->produit->creer) {
-        if ($action == 'set' && $name== 'status') {
-            $sql = "UPDATE llx_product SET tosell=1 WHERE rowid=".$id;
-            $resql = $db->query($sql);
-        } else if ($action == 'set' && $name== 'status_buy') {
-            $sql = "UPDATE llx_product SET tobuy=1 WHERE rowid=".$id;
-            $resql = $db->query($sql);
-        } else if ($action == 'del' && $name== 'status') {
-            $sql = "UPDATE llx_product SET tosell=0 WHERE rowid=".$id;
-            $resql = $db->query($sql);
-        } else if ($action == 'del' && $name== 'status_buy') {
-            $sql = "UPDATE llx_product SET tobuy=0 WHERE rowid=".$id;
-            $resql = $db->query($sql);
-        }
+        if ($action == 'setstatus') 
+            $object->setValueFrom('tosell', $value, 'product', $id);
+        else if ($action == 'setstatus_buy') 
+            $object->setValueFrom('tobuy', $value, 'product', $id);
         
     }
 }
