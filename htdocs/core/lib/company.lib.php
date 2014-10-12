@@ -676,7 +676,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             $contactstatic->civility_id = $obj->civility_id;
-            print $contactstatic->getNomUrl(1);
+            print $contactstatic->getNomUrl(1,'',0,'&backtopage='.urlencode($backtopage));
             print '</td>';
 
             print '<td>'.$obj->poste.'</td>';
