@@ -253,7 +253,7 @@ if ($_GET["action"] == 'create')
 	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
-	$var=True;
+	$var=true;
 	$total=0;
 	$totalrecu=0;
 

@@ -266,6 +266,7 @@ Afternoon=Afternoon
 Quadri=Quadri
 MonthOfDay=Month of the day
 HourShort=H
+MinuteShort=mn
 Rate=Rate
 UseLocalTax=Include tax
 Bytes=Bytes
@@ -679,7 +680,7 @@ ViewPrivateNote=View notes
 XMoreLines=%s line(s) hidden
 PublicUrl=Public URL
 AddBox=Add box
-
+SelectElementAndClickRefresh=Select an element and click Refresh
 # Week day
 Monday=Monday
 Tuesday=Tuesday

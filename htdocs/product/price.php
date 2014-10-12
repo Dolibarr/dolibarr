@@ -410,10 +410,14 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 
 			// Prix mini
 			print '<tr><td>' . $langs->trans("MinPrice") . ' ' . $i . '</td><td>';
-			if ($object->multiprices_base_type ["$i"] == 'TTC') {
+			if (empty($object->multiprices_base_type["$i"])) $object->multiprices_base_type["$i"]="HT";
+			if ($object->multiprices_base_type["$i"] == 'TTC') 
+			{
 				print price($object->multiprices_min_ttc["$i"]) . ' ' . $langs->trans($object->multiprices_base_type["$i"]);
-			} else {
-				print price($object->multiprices_min["$i"]) . ' ' . $langs->trans(empty($object->multiprices_base_type["$i"])?'HT':$object->multiprices_base_type["$i"]);
+			} 
+			else
+			{
+				print price($object->multiprices_min["$i"]) . ' ' . $langs->trans($object->multiprices_base_type["$i"]);
 			}
 			print '</td></tr>';
 
