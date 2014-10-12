@@ -13,7 +13,7 @@ LastSendings=Senaste %s transporter
 SearchASending=Sök efter transport
 StatisticsOfSendings=Statistik för transporter
 NbOfSendings=Antal transporter
-# NumberOfShipmentsByMonth=Number of shipments by month
+NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Frakt-kort
 NewSending=Ny leverans
 CreateASending=Skapa en sändning
@@ -50,27 +50,29 @@ Enlevement=Fått av kunden
 DocumentModelSimple=Enkel förlagan
 DocumentModelMerou=Merou A5-modellen
 WarningNoQtyLeftToSend=Varning, att inga produkter väntar sändas.
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Hyvlat leveransdatum
 DateReceived=Datum leverans fick
 SendShippingByEMail=Skicka leverans via e-post
-SendShippingRef=Skicka transport %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Evenemang på leverans
 LinkToTrackYourPackage=Länk till spåra ditt paket
 ShipmentCreationIsDoneFromOrder=För närvarande är skapandet av en ny leverans sker från ordern kortet.
-# RelatedShippings=Related shippings
-# ShipmentLine=Shipment line
-# CarrierList=List of transporters
+RelatedShippings=Related shippings
+ShipmentLine=Shipment line
+CarrierList=List of transporters
 
 # Sending methods
 SendingMethodCATCH=Fångst av kunden
 SendingMethodTRANS=Transporter
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Enkel handling modell för leverans kvitton
 DocumentModelTyphon=Mer komplett dokument modell för leverans intäkter (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER definieras inte
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

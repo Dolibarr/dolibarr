@@ -3987,7 +3987,7 @@ class Form
         {
         	print '<input type="text" size="3" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').' class="flat" value="'.((int) $hourSelected).'">';
         }
-        print $langs->trans('Hours');
+        print ' '.$langs->trans('HourShort');
 
         if ($minunderhours) print '<br>';
         else print "&nbsp;";
@@ -4000,7 +4000,7 @@ class Form
             print '>'.$min.'</option>';
         }
         print "</select>";
-        print $langs->trans('Minutes'). "&nbsp;";
+        print ' '.$langs->trans('MinuteShort'). "&nbsp;";
     }
 
 

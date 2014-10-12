@@ -54,7 +54,7 @@ StatsOnShipmentsOnlyValidated=Statistiques effectuées sur les expéditions vali
 DateDeliveryPlanned=Date de livraison prévue
 DateReceived=Date de réception réelle
 SendShippingByEMail=Envoyer bon d'expédition par email
-SendShippingRef=Envoi bon d'expédition %s
+SendShippingRef=Envoi du bordereau d'expédition %s
 ActionsOnShipping=Événements sur l'expédition
 LinkToTrackYourPackage=Lien pour le suivi de votre colis
 ShipmentCreationIsDoneFromOrder=Pour le moment, la création d'une nouvelle expédition se fait depuis la fiche commande.
@@ -66,11 +66,13 @@ CarrierList=Liste des transporteurs
 SendingMethodCATCH=Enlèvement par le client
 SendingMethodTRANS=Transporteur
 SendingMethodCOLSUI=Colissimo Suivi
-
 # ModelDocument
 DocumentModelSirocco=Modèle de bon de réception/livraison simple
 DocumentModelTyphon=Modèle de bon de réception/livraison complet (logo…)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER non définie
 SumOfProductVolumes=Somme des volumes des produits
 SumOfProductWeights=Somme des poids des produits
+
+# warehouse details
+DetailWarehouseNumber= Détail de l'entrepôt
+DetailWarehouseFormat= W:%s (Qté : %d)

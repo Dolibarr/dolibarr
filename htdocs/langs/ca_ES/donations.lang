@@ -30,3 +30,4 @@ SearchADonation=Cercar una donació
 DonationRecipient=Beneficiari
 ThankYou=Moltes gràcies
 IConfirmDonationReception=El beneficiari confirma la recepció, com a donació, de la següent quantitat
+MinimumAmount=Minimum amount is  %s

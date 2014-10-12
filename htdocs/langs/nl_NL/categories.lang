@@ -111,3 +111,4 @@ ExtraFieldsCategories=Complementaire kenmerken
 CategoriesSetup=Opzetten categorieën 
 CategorieRecursiv=Automatisch linken met bovenliggende categorie
 CategorieRecursivHelp=Indien geactiveerd zal het product ook gelinkt worden met de bovenliggende categorie wanneer een subcategorie toegevoegd wordt.
+AddProductServiceIntoCategory=Add the following product/service

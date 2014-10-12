@@ -74,7 +74,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		//print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
 		//print $form->select_dolusers($filtera, 'userasked', 1, '', ! $canedit);
 		//print ' &nbsp; '.$langs->trans("or") . ' ';
-		print $langs->trans("ActionAffectedTo").' &nbsp; ';
+		print $langs->trans("ActionsOwnedBy").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone">';
 		//print $langs->trans("User");
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);

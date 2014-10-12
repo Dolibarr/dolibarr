@@ -24,10 +24,12 @@ NameAndSignatureOfInternalContact=Ime i potpis servisera:
 NameAndSignatureOfExternalContact=Ime i potpis kupca:
 DocumentModelStandard=Standardni dokument za intervencije
 InterventionCardsAndInterventionLines=Intervencije i tekstovi intervencija
-ClassifyBilled=Klasifikuj "Fakturisane"
+InterventionClassifyBilled=Classify "Billed"
+InterventionClassifyUnBilled=Classify "Unbilled"
 StatusInterInvoiced=Fakturisano
 RelatedInterventions=Povezane intervencije
 ShowIntervention=Prikaži intervenciju
+SendInterventionRef=Submission of intervention %s
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Predstavnik koji kontroliše intervenciju
 TypeContact_fichinter_internal_INTERVENING=Serviser

@@ -494,7 +494,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		print '</tr>';
 		if ($num)
 		{
-			$var = True;
+			$var = true;
 			$total_ttc = $totalam = $total = 0;
 
 			$var=true;
@@ -908,7 +908,7 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("TasksToDo").'</td>';
 	print "</tr>\n";
-	$var = True;
+	$var = true;
 	$i = 0;
 	while ($i < $db->num_rows($resql))
 	{

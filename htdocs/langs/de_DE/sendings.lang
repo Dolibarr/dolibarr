@@ -50,11 +50,11 @@ Enlevement=Vom Kunden erhalten
 DocumentModelSimple=Einfache Dokumentvorlage
 DocumentModelMerou=Merou A5-Modell
 WarningNoQtyLeftToSend=Achtung, keine Produkte für den Versand
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Versandstatistik (nur Freigegebene). Das Datum ist das der Freigabe (geplantes Lieferdatum ist nicht immer bekannt).
 DateDeliveryPlanned=Geplantes Zustellungsdatum
 DateReceived=Datum der Zustellung
 SendShippingByEMail=Verand per E-Mail
-SendShippingRef=Senden Lieferung %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Anmerkungen zur Sendung
 LinkToTrackYourPackage=Link zur Sendungsnachverfolgung
 ShipmentCreationIsDoneFromOrder=Aktuell ist die Erstellung der neuen Sendung über die Bestellkarte erfolgt.
@@ -66,11 +66,13 @@ CarrierList=Liste der Transporter
 SendingMethodCATCH=Abholung durch Kunden
 SendingMethodTRANS=Spedition
 SendingMethodCOLSUI=Expressversand
-
 # ModelDocument
 DocumentModelSirocco=Einfache Dokumentvorlage für die Lieferungscheine
 DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferungscheine (Logo, ...)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstante EXPEDITION_ADDON_NUMBER nicht definiert
 SumOfProductVolumes=Summe der Produktevolumen
 SumOfProductWeights=Summe der Produktegewichte
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

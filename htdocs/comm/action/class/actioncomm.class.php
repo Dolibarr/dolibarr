@@ -99,10 +99,6 @@ class ActionComm extends CommonObject
 
         $this->db = $db;
 
-        //$this->author = new stdClass();
-        //$this->usermod = new stdClass();
-        //$this->usertodo = new stdClass();
-        //$this->userdone = new stdClass();
         $this->societe = new stdClass();	// deprecated
         $this->contact = new stdClass();	// deprecated
     }
@@ -142,8 +138,8 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
-        $userownerid=isset($this->usertodo->id)?$this->usertodo->id:$this->userownerid;		// For backward compatibility
-        $userdoneid=isset($this->userdone->id)?$this->userdone->id:$this->userdoneid;		// For backward compatibility
+        $userownerid=$this->userownerid;
+        $userdoneid=$this->userdoneid;
 
         if (! $this->type_id || ! $this->type_code)
         {
@@ -361,15 +357,16 @@ class ActionComm extends CommonObject
 
                 $this->authorid             = $obj->fk_user_author;
                 $this->usermodid			= $obj->fk_user_mod;
+
+                if (!is_object($this->author)) $this->author = new stdClass(); // For avoid warning
                 $this->author->id			= $obj->fk_user_author;		// deprecated
                 $this->author->firstname	= $obj->firstname;			// deprecated
                 $this->author->lastname		= $obj->lastname;			// deprecated
+                if (!is_object($this->usermod)) $this->usermod = new stdClass(); // For avoid warning
                 $this->usermod->id			= $obj->fk_user_mod;		// deprecated
 
                 $this->userownerid			= $obj->fk_user_action;
                 $this->userdoneid			= $obj->fk_user_done;
-                $this->usertodo->id			= $obj->fk_user_action;		// deprecated
-                $this->userdone->id			= $obj->fk_user_done;		// deprecated
                 $this->priority				= $obj->priority;
                 $this->fulldayevent			= $obj->fulldayevent;
                 $this->location				= $obj->location;
@@ -419,7 +416,7 @@ class ActionComm extends CommonObject
 
             while ($obj = $this->db->fetch_object($resql2))
             {
-            	$this->userassigned[$obj->fk_element]=array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
+            	if ($obj->fk_element > 0) $this->userassigned[$obj->fk_element]=array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
             	if (empty($this->userownerid)) $this->userownerid=$obj->fk_element;	// If not defined (should not happened, we fix this)
             }
 
@@ -525,7 +522,7 @@ class ActionComm extends CommonObject
         if ($this->fk_project < 0) $this->fk_project = 0;
 
         // Check parameters
-        if ($this->percentage == 0 && $this->userdone->id > 0)
+        if ($this->percentage == 0 && $this->userdoneid > 0)
         {
             $this->error="ErrorCantSaveADoneUserWithZeroPercentage";
             return -1;
@@ -533,8 +530,8 @@ class ActionComm extends CommonObject
 
         $socid=($this->socid?$this->socid:((isset($this->societe->id) && $this->societe->id > 0) ? $this->societe->id : 0));
         $contactid=($this->contactid?$this->contactid:((isset($this->contact->id) && $this->contact->id > 0) ? $this->contact->id : 0));
-		$userownerid=($this->userownerid?$this->userownerid:((isset($this->usertodo->id) && $this->usertodo->id > 0) ? $this->usertodo->id : 0));
-		$userdoneid=($this->userdoneid?$this->userdoneid:((isset($this->userdone->id) && $this->userdone->id > 0) ? $this->userdone->id : 0));
+		$userownerid=($this->userownerid?$this->userownerid:0);
+		$userdoneid=($this->userdoneid?$this->userdoneid:0);
 
         $this->db->begin();
 

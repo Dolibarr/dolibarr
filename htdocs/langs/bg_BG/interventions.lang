@@ -24,10 +24,12 @@ NameAndSignatureOfInternalContact=Име и подпис на намеса:
 NameAndSignatureOfExternalContact=Име и подпис на клиента:
 DocumentModelStandard=Стандартен документ модел за интервенции
 InterventionCardsAndInterventionLines=Interventions and lines of interventions
-ClassifyBilled=Класифициране 'Таксувана'
+InterventionClassifyBilled=Classify "Billed"
+InterventionClassifyUnBilled=Classify "Unbilled"
 StatusInterInvoiced=Таксува
 RelatedInterventions=Подобни интервенции
 ShowIntervention=Покажи намеса
+SendInterventionRef=Submission of intervention %s
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Представител проследяване намеса
 TypeContact_fichinter_internal_INTERVENING=Намеса

@@ -600,10 +600,12 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 				// multiprix
 				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
 				{
-					$pu_ht = $prod->multiprices [$object->thirdparty->price_level];
-					$pu_ttc = $prod->multiprices_ttc [$object->thirdparty->price_level];
-					$price_min = $prod->multiprices_min [$object->thirdparty->price_level];
-					$price_base_type = $prod->multiprices_base_type [$object->thirdparty->price_level];
+					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
+					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
+					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+					if (isset($prod->multiprices_tva_tx[$object->client->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					if (isset($prod->multiprices_recuperableonly[$object->client->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
 					$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
 					$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 				}
@@ -616,13 +618,19 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 					$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
 
 					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-					if ($result) {
-						if (count($prodcustprice->lines) > 0) {
+					if ($result >= 0) 
+					{
+						if (count($prodcustprice->lines) > 0)
+						{
 							$pu_ht = price($prodcustprice->lines [0]->price);
 							$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 							$price_base_type = $prodcustprice->lines [0]->price_base_type;
 							$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
 						}
+					}
+					else 
+					{
+						setEventMessage($prodcustprice->error,'errors');
 					}
 				}
 
@@ -1875,9 +1883,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 			// Local taxes
 		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
-			$nbrow ++;
+			$nbrow++;
 		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0 )
-			$nbrow ++;
+			$nbrow++;
 
 		print '<table class="border" width="100%">';
 
@@ -2529,7 +2537,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 			if (is_array($contactarr) && count($contactarr) > 0) {
 				foreach ($contactarr as $contact) {
-					if ($contact ['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
+					if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
 						$contactstatic = new Contact($db);
 						$contactstatic->fetch($contact ['id']);
 						$custcontact = $contactstatic->getFullName($langs, 1);
@@ -2537,15 +2545,15 @@ if ($action == 'create' && $user->rights->commande->creer) {
 				}
 
 				if (! empty($custcontact)) {
-					$formmail->substit ['__CONTACTCIVNAME__'] = $custcontact;
+					$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
 				}
 			}
 
 			// Tableau des parametres complementaires
-			$formmail->param ['action'] = 'send';
-			$formmail->param ['models'] = 'order_send';
-			$formmail->param ['orderid'] = $object->id;
-			$formmail->param ['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+			$formmail->param['action'] = 'send';
+			$formmail->param['models'] = 'order_send';
+			$formmail->param['orderid'] = $object->id;
+			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 
 			// Init list of files
 			if (GETPOST("mode") == 'init') {

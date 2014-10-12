@@ -320,7 +320,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</td></tr>';
 
 	// Progress
-	print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 	print $formother->select_percent($progress,'progress');
 	print '</td></tr>';
 

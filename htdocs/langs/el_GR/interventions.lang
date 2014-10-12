@@ -24,10 +24,12 @@ NameAndSignatureOfInternalContact=Όνομα και υπογραφή του πα
 NameAndSignatureOfExternalContact=Όνομα και υπογραφή του πελάτη:
 DocumentModelStandard=Τυπικό είδος εγγράφου παρέμβασης
 InterventionCardsAndInterventionLines=Παρεμβάσεις και τις γραμμές των παρεμβάσεων
-ClassifyBilled=Ταξινόμηση "Τιμολογημένων"
+InterventionClassifyBilled=Ταξινομήστε τα "Τιμολογημένα"
+InterventionClassifyUnBilled=Ταξινομήστε τα μη "Τιμολογημένα"
 StatusInterInvoiced=Τιμολογείται
 RelatedInterventions=Οι παρεμβάσεις που σχετίζονται
 ShowIntervention=Εμφάνιση παρέμβασης
+SendInterventionRef=Υποβολή παρέμβασης %s
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Αντιπρόσωπος που παρακολουθεί την παρέμβαση
 TypeContact_fichinter_internal_INTERVENING=Παρεμβαίνων

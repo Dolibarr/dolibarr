@@ -1453,7 +1453,6 @@ else if ($id || $ref)
 			// Batch number managment
 			if (! empty($conf->productbatch->enabled)) {
 				if (isset($lines[$i]->detail_batch) ) {
-					$flagBatch = true;
 					print '<td align="center">';
 					$detail = '';
 					foreach ($lines[$i]->detail_batch as $dbatch) {
@@ -1543,14 +1542,7 @@ else if ($id || $ref)
         
 		if ($user->rights->expedition->supprimer)
 		{
-			if (empty($conf->productbatch->enabled) || (!empty($conf->productbatch->enabled) && !$conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !isset($flagBatch))
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" href="#">'.$langs->trans('Delete').'</a>';
-			}
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 		}
 
 		print '</div>';

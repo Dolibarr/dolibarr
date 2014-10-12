@@ -111,3 +111,4 @@ ExtraFieldsCategories=Tamamlayıcı öznitelikler
 CategoriesSetup=Kategori ayarları
 CategorieRecursiv=Ana kategoriyle otomatik bağlantılı
 CategorieRecursivHelp=Etkinse, ürün bir alt kategoriye eklenirken aynı zamanda ana kategoriye de eklenecektir
+AddProductServiceIntoCategory=Add the following product/service

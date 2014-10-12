@@ -228,7 +228,7 @@ if ($action == 'create')
 				if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td align="right">'.$langs->trans("CurrentProductPrice").'</td>';
 				print "</tr>\n";
 			}
-			$var=True;
+			$var=true;
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($result);
@@ -447,7 +447,7 @@ else
 
 			$num = count($object->lines);
 			$i = 0;
-			$var=True;
+			$var=true;
 			while ($i < $num)
 			{
 				$var=!$var;
@@ -572,7 +572,7 @@ else
 
 			if ($num > 0)
 			{
-				$var=True;
+				$var=true;
 				while ($i < min($num,$limit))
 				{
 					$objp = $db->fetch_object($resql);

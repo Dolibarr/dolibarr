@@ -770,12 +770,12 @@ else if ($action == 'addline' && $user->rights->propal->creer) {
 				// On defini prix unitaire
 				if (! empty($conf->global->PRODUIT_MULTIPRICES) && $object->thirdparty->price_level)
 				{
-					$pu_ht = $prod->multiprices [$object->thirdparty->price_level];
-					$pu_ttc = $prod->multiprices_ttc [$object->thirdparty->price_level];
-					$price_min = $prod->multiprices_min [$object->thirdparty->price_level];
-					$price_base_type = $prod->multiprices_base_type [$object->thirdparty->price_level];
-					$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-					$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
+					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
+					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+					if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+					if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 				}
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{

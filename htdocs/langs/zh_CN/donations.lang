@@ -30,3 +30,4 @@ SearchADonation=搜索捐赠
 DonationRecipient=受捐赠者
 ThankYou=谢谢您
 IConfirmDonationReception=接受者声明接收，捐款，数额如下
+MinimumAmount=Minimum amount is  %s

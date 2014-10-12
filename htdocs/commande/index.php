@@ -187,7 +187,7 @@ if (! empty($conf->commande->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
+			$var = true;
 			while ($i < $num)
 			{
 				$var=!$var;
@@ -238,7 +238,7 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		$var = True;
+		$var = true;
 		while ($i < $num)
 		{
 			$var=!$var;
@@ -308,7 +308,7 @@ if (! empty($conf->commande->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
+			$var = true;
 			while ($i < $num)
 			{
 				$var=!$var;
@@ -379,7 +379,7 @@ if (! empty($conf->commande->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
+			$var = true;
 			while ($i < $num)
 			{
 				$var=!$var;

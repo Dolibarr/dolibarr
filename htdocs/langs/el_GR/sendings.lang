@@ -54,7 +54,7 @@ StatsOnShipmentsOnlyValidated=Στατιστικά στοιχεία σχετικ
 DateDeliveryPlanned=Προγραμματισμένη ημερομηνία παράδοσης
 DateReceived=Παράδοση Ημερομηνία παραλαβής
 SendShippingByEMail=Στείλτε αποστολή με e-mail
-SendShippingRef=Στείλτε αποστολή %s
+SendShippingRef=Υποβολή της αποστολής %s
 ActionsOnShipping=Εκδηλώσεις για την αποστολή
 LinkToTrackYourPackage=Σύνδεσμος για να παρακολουθείτε το πακέτο σας
 ShipmentCreationIsDoneFromOrder=Προς το παρόν, η δημιουργία μιας νέας αποστολής γίνεται από την κάρτα παραγγελίας.
@@ -66,11 +66,13 @@ CarrierList=Κατάλογος των μεταφορέων
 SendingMethodCATCH=Πιάσε τον πελάτη
 SendingMethodTRANS=Μεταφορέας
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Απλό μοντέλο έγγραφο για αποδεικτικά παράδοσης
 DocumentModelTyphon=Πληρέστερο πρότυπο έγγραφο για αποδεικτικά παράδοσης (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Σταθερή EXPEDITION_ADDON_NUMBER δεν ορίζεται
 SumOfProductVolumes=Άθροισμα όγκου του προϊόντος
 SumOfProductWeights=Άθροισμα το βάρος των προϊόντων
+
+# warehouse details
+DetailWarehouseNumber= Λεπτομέρειες Αποθήκης
+DetailWarehouseFormat= W:%s (Ποσότητα : %d)

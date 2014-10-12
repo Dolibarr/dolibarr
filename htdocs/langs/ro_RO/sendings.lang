@@ -54,7 +54,7 @@ StatsOnShipmentsOnlyValidated=Statisticil ectuate privind numai livrările valid
 DateDeliveryPlanned=Data de livrare planificată
 DateReceived=Data de livrare reală
 SendShippingByEMail=Trimite dispoziţia de livrare prin e-mail
-SendShippingRef=Trimite dispoziţia de livrare  %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Evenimente pe livrare
 LinkToTrackYourPackage=Link pentru a urmări pachetul dvs
 ShipmentCreationIsDoneFromOrder=Pentru moment, crearea unei noi livrări se face din fişa comenzii.
@@ -66,11 +66,13 @@ CarrierList=Lista transportatori
 SendingMethodCATCH=Colectată de client
 SendingMethodTRANS=Transportator
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Model simplu pentru dispoziţie de livrare
 DocumentModelTyphon=Model complet pentru dispoziţie de livrare  (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constanta EXPEDITION_ADDON_NUMBER nu este definită
 SumOfProductVolumes=Volumul total al produselor
 SumOfProductWeights=Greutatea totală a produselor
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

@@ -54,7 +54,7 @@ StatsOnShipmentsOnlyValidated=Statistika põhineb vaid kinnitatud saadetistel. K
 DateDeliveryPlanned=Plaanitud kohaletoimetamise aeg
 DateReceived=Saadetise kättesaamise kuupäev
 SendShippingByEMail=Saada saadetis e-postiga
-SendShippingRef=Läheta saadetis %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Saatmisel toimuvad tegevused
 LinkToTrackYourPackage=Paki jälgimise link
 ShipmentCreationIsDoneFromOrder=Praegu luuakse saadetised tellimuse kaardilt.
@@ -66,11 +66,13 @@ CarrierList=Vedajate nimekiri
 SendingMethodCATCH=Kliendi saak
 SendingMethodTRANS=Transportija
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Lihtne saatelehtede dokumendi mudel
 DocumentModelTyphon=Täiuslikum saatelehtede dokumendi mudel (logo jne)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER on määratlemata
 SumOfProductVolumes=Toodete ruumala summa
 SumOfProductWeights=Toodete kaalude summa
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

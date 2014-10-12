@@ -135,6 +135,8 @@ ErrorWarehouseMustDiffers=Les entrepôts source et destination doivent être dif
 ErrorBadFormat=Mauvais format
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Erreur, cet adhérent n'est lié à aucun tiers. Lier l'adhérent à un tiers existant ou créer un nouveau tiers pour le lier avant de créer l'adhésion avec facture.
 ErrorThereIsSomeDeliveries=Erreur, il y a des bordereaux de réception liées à ces expéditions. La suppression est refusée.
+ErrorCantDeletePaymentReconciliated=Impossible d'effacer un paiement qui a généré une écriture bancaire qui a été rapprochée
+ErrorCantDeletePaymentSharedWithPayedInvoice=Impossible d'effacer un paiement qui porte sur au moins une facture qui est à l'état payée.
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées
@@ -153,4 +155,5 @@ WarningUsingThisBoxSlowDown=Attention, l'utilisation de cette boite provoque de 
 WarningClickToDialUserSetupNotComplete=La configuration ClickToDial pour votre compte utilisateur n'est pas complète (voir l'onglet ClickToDial sur votre fiche utilisateur)
 WarningNotRelevant=Opération non pertinente pour cet ensemble de données
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Fonction désactivé quand l'affichage est en mode optimisé pour les personnes aveugles ou les navigateurs textes.
-WarningPaymentDateLowerThanInvoiceDate=La date de paiement (%s) est inférieure à la date de facturaction (%s) de la facture %s.
+WarningPaymentDateLowerThanInvoiceDate=La date de paiement (%s) est inférieure à la date de facturation (%s) de la facture %s.
+WarningTooManyDataPleaseUseMoreFilters=Trop de données. Utilisez des filtres plus précis.

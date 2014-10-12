@@ -1404,6 +1404,7 @@ class Product extends CommonObject
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch";
+		$sql.= " ,ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
@@ -1478,6 +1479,8 @@ class Product extends CommonObject
 				$this->date_modification		= $obj->tms;
 				$this->import_key				= $obj->import_key;
 				$this->entity					= $obj->entity;
+				
+				$this->ref_ext					= $obj->ref_ext;
 
 				$this->db->free($resql);
 
@@ -2814,8 +2817,8 @@ class Product extends CommonObject
 		if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
 
 		if ($withpicto) {
-			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->ref,'product').$lienfin.' ');
-			if ($this->type == 1) $result.=($lien.img_object($langs->trans("ShowService").' '.$this->ref,'service').$lienfin.' ');
+			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->label,'product').$lienfin.' ');
+			if ($this->type == 1) $result.=($lien.img_object($langs->trans("ShowService").' '.$this->label,'service').$lienfin.' ');
 		}
 		$result.=$lien.$newref.$lienfin;
 		return $result;

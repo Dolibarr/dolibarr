@@ -177,7 +177,7 @@ if ($resql)
 	print '</td>';
 	print "</tr>\n";
 
-	$var=True;
+	$var=true;
 
 	while ($i < min($num,$conf->liste_limit))
 	{

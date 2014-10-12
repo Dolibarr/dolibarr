@@ -629,7 +629,7 @@ class FormFile
 
 			 	if (count($file_list) == 0 && $headershown)
 	            {
-    	        	$out.='<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
+    	        	$out.='<tr '.$bc[0].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
         	    }
 
                 $this->numoffiles++;
@@ -1150,7 +1150,7 @@ class FormFile
         $nboflinks = count($links);
         if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-        $var = true;
+        $var = false;
         foreach ($links as $link)
         {
             $var =! $var;

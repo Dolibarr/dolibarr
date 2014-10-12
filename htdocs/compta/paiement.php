@@ -509,7 +509,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
-                $var=True;
+                $var=true;
                 $total=0;
                 $totalrecu=0;
                 $totalrecucreditnote=0;
@@ -687,7 +687,7 @@ if (! GETPOST('action'))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=True;
+        $var=true;
 
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
         print '<table class="noborder" width="100%">';

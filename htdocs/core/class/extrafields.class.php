@@ -154,7 +154,7 @@ class ExtraFields
 	{
 		$table=$elementtype.'_extrafields';
 
-		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
+		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
 		{
 			if ($type=='boolean') {
 				$typedb='int';
@@ -226,8 +226,7 @@ class ExtraFields
 		// Clean parameters
 		if (empty($pos)) $pos=0;
 
-
-		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
+		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
 		{
 			if(is_array($param) and count($param) > 0)
 			{

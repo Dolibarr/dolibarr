@@ -24,10 +24,12 @@ NameAndSignatureOfInternalContact=Naam en handtekening van de uitvoerder:
 NameAndSignatureOfExternalContact=Naam en handtekening van de afnemer:
 DocumentModelStandard=Standaard modeldocument voor interventies
 InterventionCardsAndInterventionLines=Inteventiebladen en -regels
-ClassifyBilled=Classificeren "Gefactureerd"
+InterventionClassifyBilled=Classify "Billed"
+InterventionClassifyUnBilled=Classify "Unbilled"
 StatusInterInvoiced=Gefactureerd
 RelatedInterventions=Interventies
 ShowIntervention=Tonen tussenkomst
+SendInterventionRef=Submission of intervention %s
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Vertegenwoordiger die de nabehandeling van de interventie doet
 TypeContact_fichinter_internal_INTERVENING=Tussenliggende

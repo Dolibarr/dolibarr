@@ -149,6 +149,8 @@ UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 a
 UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author > 0 and (fk_user_action is null or fk_user_action = 0);
 
 
+UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS NULL and task_date IS NOT NULL;
+
 
 -- Requests to clean old tables or external modules tables
 

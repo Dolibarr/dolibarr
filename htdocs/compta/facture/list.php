@@ -333,7 +333,7 @@ if ($resql)
 
     if ($num > 0)
     {
-        $var=True;
+        $var=true;
         $total_ht=0;
         $total_tva=0;
         $total_ttc=0;
