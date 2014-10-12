@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Add number of active notification into tab title (like we do for notes and documents)
 - New: Can add product into category from category card.
 - New: PDF event report show project and status of event.
 - New: Can filter on status on interventions.
