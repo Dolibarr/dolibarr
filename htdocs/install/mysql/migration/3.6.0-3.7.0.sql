@@ -1086,3 +1086,6 @@ CREATE TABLE llx_usergroup_extrafields (
 ALTER TABLE llx_usergroup_extrafields ADD INDEX idx_usergroup_extrafields (fk_object);
 
 ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER note_public;
+
+ALTER TABLE llx_c_country ADD COLUMN favorite tinyint DEFAULT 0 AFTER active;
+UPDATE llx_c_country SET favorite = '1' WHERE rowid = '0';

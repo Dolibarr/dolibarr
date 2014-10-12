@@ -131,7 +131,7 @@ $tabsql=array();
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
 $tabsql[3] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
-$tabsql[4] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_country";
+$tabsql[4] = "SELECT rowid   as rowid, code, label, active, favorite FROM ".MAIN_DB_PREFIX."c_country";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays=c.rowid and c.active=1";
@@ -677,6 +677,46 @@ if ($action == $acts[1])
     }
 }
 
+// favorite
+if ($action == $acts[0])
+{
+    if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
+    else { $rowidcol="rowid"; }
+
+    if ($rowid) {
+        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'";
+    }
+    elseif ($_GET["code"]) {
+        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$_GET["code"]."'";
+    }
+
+    $result = $db->query($sql);
+    if (!$result)
+    {
+        dol_print_error($db);
+    }
+}
+
+// disable favorite
+if ($action == $acts[1])
+{
+    if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
+    else { $rowidcol="rowid"; }
+
+    if ($rowid) {
+        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'";
+    }
+    elseif ($_GET["code"]) {
+        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$_GET["code"]."'";
+    }
+
+    $result = $db->query($sql);
+    if (!$result)
+    {
+        dol_print_error($db);
+    }
+}
+
 
 /*
  * View
@@ -813,7 +853,7 @@ if ($id)
              }
              if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
         }
-        print '<td colspan="3">';
+        print '<td colspan="4">';
         print '<input type="hidden" name="id" value="'.$id.'">';
         print '&nbsp;</td>';
         print '</tr>';
@@ -928,8 +968,11 @@ if ($id)
                     print getTitleFieldOfList($valuetoshow,0,$_SERVER["PHP_SELF"],($sortable?$fieldlist[$field]:''),($page?'page='.$page.'&':'').'&id='.$id,"","align=".$align,$sortfield,$sortorder);
                 }
             }
-            print getTitleFieldOfList($langs->trans("Status"),0,$_SERVER["PHP_SELF"],"active",($page?'page='.$page.'&':'').'&id='.$id,"",'align="center"',$sortfield,$sortorder);
-            print '<td colspan="2"  class="liste_titre">&nbsp;</td>';
+			// Favorite - Only activated on country dictionary
+            if ($id == 4) print getTitleFieldOfList($langs->trans("Favorite"),0,$_SERVER["PHP_SELF"],"favorite",($page?'page='.$page.'&':'').'&id='.$id,"",'align="center"',$sortfield,$sortorder);
+			
+			print getTitleFieldOfList($langs->trans("Status"),0,$_SERVER["PHP_SELF"],"active",($page?'page='.$page.'&':'').'&id='.$id,"",'align="center"',$sortfield,$sortorder);
+            print '<td colspan="3"  class="liste_titre">&nbsp;</td>';
             print '</tr>';
 
             // Lines with values
@@ -1141,6 +1184,16 @@ if ($id)
                     if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $isdisable=0; $isdisable = 0; }
 
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?$obj->code:'').'&amp;id='.$id.'&amp;';
+					
+					// Favorite
+					// Only activated on country dictionary
+                    if ($id == 4)
+					{
+						print '<td align="center" class="nowrap">';
+						if ($iserasable) print '<a href="'.$url.'action='.$acts[$obj->favorite].'">'.$actl[$obj->favorite].'</a>';
+						else print $langs->trans("AlwaysActive");
+						print '</td>';
+					}
 
                     // Active
                     print '<td align="center" class="nowrap">';

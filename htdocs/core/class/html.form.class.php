@@ -14,6 +14,7 @@
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2013      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014      Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -477,9 +478,10 @@ class Form
 
         $out='';
         $countryArray=array();
+		$favorite=array();
         $label=array();
 
-        $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label";
+        $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_country";
         $sql.= " WHERE active = 1";
         //$sql.= " ORDER BY code ASC";
@@ -502,11 +504,12 @@ class Form
                     $countryArray[$i]['code_iso'] 	= $obj->code_iso;
                     $countryArray[$i]['code_iso3'] 	= $obj->code_iso3;
                     $countryArray[$i]['label']		= ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                    $label[$i] = dol_string_unaccent($countryArray[$i]['label']);
+                    $favorite[$i]					= $obj->favorite;
+					$label[$i] = dol_string_unaccent($countryArray[$i]['label']);
                     $i++;
                 }
 
-                array_multisort($label, SORT_ASC, $countryArray);
+                array_multisort($favorite, SORT_DESC, $label, SORT_ASC, $countryArray);
 
                 foreach ($countryArray as $row)
                 {
