@@ -90,6 +90,20 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentMenuHandler").'</td><td colspan="2">';
 print $conf->standard_menu;
 print '</td></tr>'."\n";
+$var=!$var;
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("Screen").'</td><td colspan="2">';
+print $_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
+print '</td></tr>'."\n";
+$var=!$var;
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("Session").'</td><td colspan="2">';
+$i=0;
+foreach($_SESSION as $key => $val)
+{
+	if ($i > 0) print ', ';
+	print $key.' => '.$val;
+	$i++;
+}
+print '</td></tr>'."\n";
 print '</table>';
 print '<br>';
 
@@ -310,6 +324,22 @@ foreach($configfileparameters as $key => $value)
 			print "<td>";
 			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$newkey});
 			else if ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
+			else if ($newkey == 'dolibarr_main_document_root_alt')
+			{
+				$tmparray=explode(',',${$newkey});
+				$i=0;
+				foreach($tmparray as $value2)
+				{
+					if ($i > 0) print ', ';
+					print $value2;
+					if (! is_readable($value2)) 
+					{
+						$langs->load("errors");
+						print ' '.img_warning($langs->trans("ErrorCantReadDir",$value2));
+					}
+					++$i;
+				}
+			}
 			else print ${$newkey};
 			if ($newkey == 'dolibarr_main_url_root' && $newkey != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
 			print "</td>";

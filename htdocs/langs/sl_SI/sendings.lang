@@ -54,7 +54,7 @@ StatsOnShipmentsOnlyValidated=Statistika na osnovi potrjenih pošiljk. Uporablje
 DateDeliveryPlanned=Planiran datum dobave
 DateReceived=Datum prejema dobave
 SendShippingByEMail=Pošlji odpremnico po e-mailu
-SendShippingRef=Pošlji odpremnico %s
+SendShippingRef=Oddaja pošiljke %s
 ActionsOnShipping=Aktivnosti v zvezi z odpremnico
 LinkToTrackYourPackage=Povezave za sledenje vaše pošiljke
 ShipmentCreationIsDoneFromOrder=Za trenutek je oblikovanje nove pošiljke opravi od naročila kartice.
@@ -72,3 +72,7 @@ DocumentModelTyphon=Popolnejši vzorec dobavnice (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined==
 SumOfProductVolumes=Vsota volumnov proizvodov
 SumOfProductWeights=Vsota tež proizvodov
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

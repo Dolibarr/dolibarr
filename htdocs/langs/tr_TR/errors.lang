@@ -133,9 +133,10 @@ ErrorPHPNeedModule=Hata, bu özelliği kulanmak için PHP nizde <b>%s</b> modül
 ErrorOpenIDSetupNotComplete=Dolibarr yapılandırma dosyasını OpenID kimlik doğrulamaya izin verecek şekilde ayarladınız, ancak OpenID hizmetine ait URL, %s değişmezine tanımlanmamıştır
 ErrorWarehouseMustDiffers=Kaynak ve hedef depo farklı olmalıdır
 ErrorBadFormat=Hatalı biçim!
-ErrorPaymentDateLowerThanInvoiceDate=Ödeme tarihi (%s) fatura tarihinden (%s) önce bu faturada %s olamaz.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Hata, bu üye henüz bir üçüncü partiye bağlanmamıştır. Üyeyi varolan bir üçüncü partiye bağlayın ya da faturayla abonelik oluşturmadan önce yeni bir üçüncü parti oluşturun.
 ErrorThereIsSomeDeliveries=Hata, bu sevkiyata bağlı bazı teslimatlar var. Silme işlemi reddedildi.
+ErrorCantDeletePaymentReconciliated=Uzlaştırılmış bir banka işlemi oluşturulmuş bir ödeme silinemez
+ErrorCantDeletePaymentSharedWithPayedInvoice=Ödendi durumunda olan en az bir faturayla paylaşılan bir ödeme silinemez
 
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış
@@ -153,4 +154,6 @@ WarningCloseAlways=Uyarı, kaynak ve hedef öğeleri arasında tutar farklı da 
 WarningUsingThisBoxSlowDown=Uyarı, bu kutuyu kullanmak kutuyu gösteren tüm sayfaları ciddi olarak yavaşlatır.
 WarningClickToDialUserSetupNotComplete=Kullanıcınızın ClickToDial bilgileri ayarı tamamlanmamış (kullanıcı kartınızdaki ClickToDial tabına bakın)
 WarningNotRelevant=Bu veri kümesi için alakasız işlem
-WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Bu özellik, ekran görme engelliler için ya da metin tarayıcılar için ayarlandığında devre dışı kalır.
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
+WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters

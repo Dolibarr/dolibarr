@@ -73,6 +73,7 @@ $hookmanager->initHooks(array('customerlist'));
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x"))
@@ -149,7 +150,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit +1, $offset);
 
-dol_syslog('comm/list.php: sql='.$sql,LOG_DEBUG);
+dol_syslog('comm/list.php:', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -269,7 +270,7 @@ if ($result)
         print '<td align="center">'.$thirdpartystatic->getLibStatut(3);
         print '</td>';
         print '<td></td>';
-        
+
         $parameters=array('obj' => $obj);
         $formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 

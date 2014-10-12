@@ -645,6 +645,7 @@ OptionalFieldsSetup=Configuración de los atributos opcionales
 URLPhoto=Url de la foto/logo
 SetLinkToThirdParty=Vincular a otro tercero
 CreateDraft=Crear borrador
+SetToDraft=Volver a borrador
 ClickToEdit=Clic para editar
 ObjectDeleted=Objeto %s eliminado
 ByCountry=Par país

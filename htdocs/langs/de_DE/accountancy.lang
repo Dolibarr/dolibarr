@@ -1,0 +1,158 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=Buchhaltung
+Globalparameters=Globale Parameter
+Chartofaccounts=Kontenplan
+Fiscalyear=Fiskalische Jahre
+Menuaccount=Buchhaltung Konten
+Menuthirdpartyaccount=Partnerkonten
+MenuTools=Werkzeuge
+
+ConfigAccountingExpert=Configuration of the module accounting expert
+Journaux=Journale
+JournalFinancial=Finanz-Journale
+Exports=Exports
+Modelcsv=Exportmodell
+Selectmodelcsv=Wählen Sie ein Exportmodell
+Modelcsv_normal=Klassischer Export
+Modelcsv_CEGID=Export zu CEGID Expert
+BackToChartofaccounts=Return chart of accounts
+Back=Rückkehr 
+
+Definechartofaccounts=Kontenplan definieren
+Selectchartofaccounts=Kontenplan wählen
+Validate=Freigeben
+Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
+AccountAccounting=Buchhaltungs Konto
+Ventilation=Erörterung
+ToDispatch=Zu versenden
+Dispatched=Versandt
+
+CustomersVentilation=Ventilation customers
+SuppliersVentilation=Ventilation suppliers
+TradeMargin=Handelsspanne
+Reports=Berichte
+ByCustomerInvoice=Nach Kundenrechnungen
+ByMonth=Nach Monat
+NewAccount=Neues Buchhaltungskonto
+Update=Aktualisieren
+List=Liste
+Create=Erstelle
+UpdateAccount=Modification of an accounting account
+UpdateMvts=Modification of a movement
+WriteBookKeeping=Record accounts in general ledger
+Bookkeeping=Hauptbuch
+AccountBalanceByMonth=Kontostand pro Monat
+
+AccountingVentilation=Accounting ventilation
+AccountingVentilationSupplier=Accounting ventilation supplier
+AccountingVentilationCustomer=Accounting ventilation customer
+Line=Zeile
+
+CAHTF=Total purchase supplier HT
+InvoiceLines=Lines of invoice to be ventilated
+InvoiceLinesDone=Ventilated lines of invoice
+IntoAccount=In the accounting account
+
+Ventilate=erörtern
+VentilationAuto=Automatic ventilation
+
+Processing=Processing
+EndProcessing=The end of processing
+AnyLineVentilate=Any lines to ventilate
+SelectedLines=Gewählte Zeilen
+Lineofinvoice=Rechnungszeile
+VentilatedinAccount=Ventilated successfully in the accounting account
+NotVentilatedinAccount=Not ventilated in the accounting account
+
+ACCOUNTING_SEPARATORCSV=Separator CSV
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
+
+AccountLength=Length of the accounting accounts shown in Dolibarr
+AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+
+ACCOUNTING_SELL_JOURNAL=Sell journal
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
+ACCOUNTING_BANK_JOURNAL=Bank journal
+ACCOUNTING_CASH_JOURNAL=Cash journal
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
+ACCOUNTING_SOCIAL_JOURNAL=Social journal
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
+ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+
+Doctype=Dokumententyp
+Docdate=Datum
+Docref=Referenz
+Numerocompte=Konto
+Code_tiers=Thirdparty
+Labelcompte=Label account
+Debit=Soll
+Credit=Haben
+Amount=Betrag
+Sens=Sens
+Codejournal=Journal
+
+DelBookKeeping=Delete the records of the general ledger
+
+SellsJournal=Verkaufsjournal
+PurchasesJournal=Einkaufsjournal
+DescSellsJournal=Verkaufsjournal
+DescPurchasesJournal=Einkaufsjournal
+BankJournal=Bank journal
+DescBankJournal=Bank journal including all the types of payments other than cash
+CashJournal=Cash journal
+DescCashJournal=Cash journal including the type of payment cash
+
+CashPayment=Barzahlung
+
+SupplierInvoicePayment=Rechnungszahlung (Lieferant)
+CustomerInvoicePayment=Rechnungszahlung (Kunde)
+
+ThirdPartyAccount=Thirdparty account
+
+NewAccountingMvt=Neue Änderung
+NumMvts=Number of movement
+ListeMvts=List of the movement
+ErrorDebitCredit=Soll und Haben können nicht gleichzeitig eingegeben werden
+
+ReportThirdParty=List thirdparty account
+DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+
+ListAccounts=List of the accounting accounts
+
+Pcgversion=Version des Plans
+Pcgtype=Kontenklasse
+Pcgsubtype=Unterkontenklasse
+Accountparent=Root of the account
+Active=Auszug
+
+NewFiscalYear=Neues fiskalisches Jahr
+
+DescVentilCustomer=Consult here the annual accounting ventilation of your invoices customers
+TotalVente=Total turnover HT
+TotalMarge=Gesamt-Spanne
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
+DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
+ChangeAccount=Change the accounting account for lines selected by the account:
+Vide=-
+DescVentilSupplier=Consult here the annual accounting ventilation of your invoices suppliers
+DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+
+ValidateHistory=Automatisch geltend machen
+
+ErrorAccountancyCodeIsAlreadyUse=Fehler, Sie können dieses Buchaltungskonto nicht löschen, da es benutzt wird.
+
+FicheVentilation=Ventilation card

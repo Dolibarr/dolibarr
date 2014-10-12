@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2004-2013  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,31 +26,88 @@
 
 
 /**
- *		Parent class of boxes
+ * Class ModeleBoxes
+ *
+ * Boxes parent class
  */
 class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" boxes
 {
-	var $db;
-	var $error='';
-	var $max=5;
-	var $enabled=1;
-
-	var $rowid;
-	var $id;
-	var $position;
-	var $box_order;
-	var $fk_user;
-	var $sourcefile;
-	var $class;
-	var $box_id;
-	var $note;
-
+	/**
+	 * @var DoliDB Database handler
+	 */
+	public $db;
 
 	/**
-	 *	Constructor
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var int Maximum lines
+	 */
+	public $max = 5;
+
+	/**
+	 * @var int Status
+	 */
+	public $enabled=1;
+
+	/**
+	 * @var int Box definition database ID
+	 */
+	public $rowid;
+
+	/**
+	 * @var int ID
+	 * @deprecated Same as box_id?
+	 */
+	public $id;
+
+	/**
+	 * @var int Position?
+	 */
+	public $position;
+
+	/**
+	 * @var string Display order
+	 */
+	public $box_order;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+	/**
+	 * @var string Source file
+	 */
+	public $sourcefile;
+
+	/**
+	 * @var string Class name
+	 */
+	public $class;
+
+	/**
+	 * @var string ID
+	 */
+	public $box_id;
+
+	/**
+	 * @var string Alphanumeric ID
+	 */
+	public $boxcode;
+
+	/**
+	 * @var string Note
+	 */
+	public $note;
+
+	/**
+	 * Constructor
 	 *
-	 *	@param	DoliDB	$db			Database handler
-     *  @param	string	$param		More parameters
+	 * @param   DoliDB  $db     Database handler
+     * @param   string  $param  More parameters
 	 */
 	function __construct($db,$param='')
 	{
@@ -57,9 +115,9 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	}
 
 	/**
-	 *  Return last error message
+	 * Return last error message
 	 *
-	 *  @return	string				Error message
+	 * @return  string  Error message
 	 */
 	function error()
 	{
@@ -68,10 +126,11 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 
 
 	/**
-	 *  Load a box line from its rowid
+	 * Load a box line from its rowid
 	 *
-	 *  @param	int		$rowid		Row id to load
-	 *  @return	int					<0 if KO, >0 if OK
+	 * @param   int $rowid  Row id to load
+	 *
+	 * @return  int         <0 if KO, >0 if OK
 	 */
 	function fetch($rowid)
 	{
@@ -110,11 +169,12 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 
 
 	/**
-	 *	Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
+	 *Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
+	 * @param   array   $head       Array with properties of box title
+	 * @param   array   $contents   Array with properties of box lines
+	 *
+	 * @return  void
 	 */
 	function showBox($head, $contents)
 	{
@@ -162,7 +222,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 			if (! empty($head['sublink'])) print '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
 			if (! empty($head['subpicto'])) print img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
 			if (! empty($head['sublink'])) '</a>';
-			if ($conf->use_javascript_ajax)
+			if (! empty($conf->use_javascript_ajax))
 			{
 				print '</td><td class="nocellnopadd boxclose nowrap">';
 				// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object

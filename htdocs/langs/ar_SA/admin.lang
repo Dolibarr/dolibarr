@@ -45,6 +45,8 @@ ErrorModuleRequireDolibarrVersion=خطأ ، هذا النموذج يتطلب ن�
 ErrorDecimalLargerThanAreForbidden=خطأ, برنامج دوليبار <b>%s</b> الحالي لا يدعم دقة أعلى من الحالية
 DictionarySetup=Dictionary setup
 Dictionary=Dictionaries
+Chartofaccounts=Chart of accounts
+Fiscalyear=Fiscal years
 ErrorReservedTypeSystemSystemAuto=القيمة 'system' و 'systemauto' لهذا النوع محفوظ. يمكنك إستخدام 'user' كقيمة لإضافة السجل الخاص بك
 ErrorCodeCantContainZero=لا يمكن إستخدام القيمة 0 لهذا الكود
 DisableJavascript=Disable JavaScript and Ajax functions (Recommended for blind person or text browsers)
@@ -133,7 +135,7 @@ Box=مربع
 Boxes=مربعات
 MaxNbOfLinesForBoxes=الحد الأقصى لعدد الخطوط في المربعات
 PositionByDefault=الطلبية الإفتراضية
-Position=الطلبية
+Position=Position
 MenusDesc=يمكن لرؤساء القوائم تعريف المحتوى لعمودين من القوائم (عمود افقي وعمود عمودي).
 MenusEditorDesc=محرر القوائم يسمح لك بتعريف مدخلات شخصية في القوائم. استخدامها بعناية لتجنب التأثير على برنامج دوليبار وجعله غير مستقر بالإضافة إلى جعل روابط القوائم غير متاحة. <br> بعض النماذج تظيف خانات في القوائم (في القائمة <b>الكل</b> في معظم الحالات). إذا أزلت بعض هذه القيود عن طريق الخطأ ، يمكنك ان تستعيدها وتعطيل وتمكين النموذج.
 MenuForUsers=قائمة للمستخدمين
@@ -217,6 +219,7 @@ AutomaticIfJavascriptDisabled=تلقائيا إذا تم تعطيل جافاسك
 AvailableOnlyIfJavascriptNotDisabled=متاحا إلا إذا كان جافا سكريبت غير المعوقين
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=متاحا إلا إذا كان جافا سكريبت غير المعوقين
 Required=مطلوب
+UsedOnlyWithTypeOption=Used by some agenda option only
 Security=الأمن
 Passwords=كلمة السر
 DoNotStoreClearPassword=لا تخزن كلمات السر في قاعدة بيانات واضحة في
@@ -257,6 +260,9 @@ MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=بروتوكول نقل البري
 MAIN_MAIL_EMAIL_FROM=مرسل البريد الإلكتروني للرسائل البريد الإلكتروني تلقائيا (افتراضيا في php.ini : <b>٪)</b>
 MAIN_MAIL_ERRORS_TO=أرسلت مرسل البريد الإلكتروني المستخدمة في رسائل البريد الإلكتروني عائدات خطأ
 MAIN_MAIL_AUTOCOPY_TO= إرسال منهجية خفية الكربون نسخة من جميع رسائل البريد الإلكتروني المرسلة إلى
+MAIN_MAIL_AUTOCOPY_PROPOSAL_TO= Send systematically a hidden carbon-copy of proposals sent by email to
+MAIN_MAIL_AUTOCOPY_ORDER_TO= Send systematically a hidden carbon-copy of orders sent by email to
+MAIN_MAIL_AUTOCOPY_INVOICE_TO= Send systematically a hidden carbon-copy of invoice sent by emails to
 MAIN_DISABLE_ALL_MAILS=تعطيل جميع رسائل البريد الإلكتروني الإرسال (لأغراض الاختبار أو تجريبية)
 MAIN_MAIL_SENDMODE=طريقة استخدام لإرسال رسائل البريد الإلكتروني
 MAIN_MAIL_SMTPS_ID=إذا الهوية SMTP التوثيق اللازم
@@ -514,12 +520,16 @@ Module6000Name=Workflow
 Module6000Desc=Workflow management
 Module20000Name=Holidays
 Module20000Desc=Declare and follow employees holidays
+Module39000Name=Product batch
+Module39000Desc=Batch number, eat-by and sell-by date management on products
 Module50000Name=PayBox
 Module50000Desc=وحدة لتقديم على صفحة الدفع عبر الإنترنت عن طريق بطاقة الائتمان مع PayBox
 Module50100Name=نقطة البيع
 Module50100Desc=نقطة بيع وحدة
 Module50200Name= باي بال
 Module50200Desc= وحدة لتقديم على صفحة الدفع عبر الإنترنت عن طريق بطاقة الائتمان مع بايبال
+Module50400Name=Accounting (advanced)
+Module50400Desc=Accounting management (double parties)
 Module54000Name=PrintIPP
 Module54000Desc=Print via Cups IPP Printer.
 Module55000Name=Open Poll
@@ -575,9 +585,6 @@ Permission92=إنشاء / تعديل المساهمات الاجتماعية و�
 Permission93=حذف المساهمات الاجتماعية وضريبة القيمة المضافة
 Permission94=تصدير المساهمات الاجتماعية
 Permission95=قراءة تقارير
-Permission96=ارسال الإعداد
-Permission97=قراءة ارسال الفواتير والمحاسبة
-Permission98=ارسال الفاتورة 'sخطوط المحاسبة
 Permission101=قراءة الإرسال
 Permission102=إنشاء / تعديل الإرسال
 Permission104=صحة الإرسال
@@ -1075,6 +1082,7 @@ NotificationsDesc=إشعارات البريد الإلكتروني ميزة تس
 ModelModules=وثائق قوالب
 DocumentModelOdt=Generate documents from OpenDocuments templates (.ODT or .ODS files for OpenOffice, KOffice, TextEdit,...)
 WatermarkOnDraft=علامة مائية على مشروع الوثيقة
+JSOnPaimentBill=Activate feature to autofill payment lines on payment form
 CompanyIdProfChecker=المهنية معرف فريد
 MustBeUnique=يجب أن تكون فريدة من نوعها؟
 MustBeMandatory=Mandatory to create third parties ?
@@ -1533,3 +1541,4 @@ Opened=Opened
 Closed=Closed
 
 Format=Format
+TypePaymentDesc=0:Customer payment type, 1:Supplier payment type, 2:Both customers and suppliers payment type

@@ -26,7 +26,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function contract_prepare_head($object)
 {
@@ -34,7 +34,7 @@ function contract_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/contrat/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("ContractCard");
 	$head[$h][2] = 'card';
 	$h++;

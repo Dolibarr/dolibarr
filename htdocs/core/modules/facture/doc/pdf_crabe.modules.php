@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2013	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -153,6 +153,36 @@ class pdf_crabe extends ModelePDFFactures
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
+		$nblignes = count($object->lines);
+
+		// Loop on each lines to detect if there is at least one image to show
+		$realpatharray=array();
+		if (! empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE))
+		{
+			for ($i = 0 ; $i < $nblignes ; $i++)
+			{
+				if (empty($object->lines[$i]->fk_product)) continue;
+
+				$objphoto = new Product($this->db);
+				$objphoto->fetch($object->lines[$i]->fk_product);
+
+				$pdir = get_exdir($object->lines[$i]->fk_product,2) . $object->lines[$i]->fk_product ."/photos/";
+				$dir = $conf->product->dir_output.'/'.$pdir;
+
+				$realpath='';
+				foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+				{
+					$filename=$obj['photo'];
+					//if ($obj['photo_vignette']) $filename='thumbs/'.$obj['photo_vignette'];
+					$realpath = $dir.$filename;
+					break;
+				}
+
+				if ($realpath) $realpatharray[$i]=$realpath;
+			}
+		}
+		if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
+
 		if ($conf->facture->dir_output)
 		{
 			$object->fetch_thirdparty();
@@ -184,9 +214,19 @@ class pdf_crabe extends ModelePDFFactures
 
 			if (file_exists($dir))
 			{
-				$nblignes = count($object->lines);
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
-                $pdf=pdf_getInstance($this->format);
+				// Create pdf instance
+				$pdf=pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
 				$heightforinfotot = 50;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
@@ -298,17 +338,43 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$pdf->SetTextColor(0,0,0);
 
+					// Define size of image if we need it
+					$imglinesize=array();
+					if (! empty($realpatharray[$i])) $imglinesize=pdf_getSizeForImage($realpatharray[$i]);
+
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
+					$showpricebeforepagebreak=1;
+					$posYAfterImage=0;
+					$posYAfterDescription=0;
+
+					// We start with Photo of product line
+					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforinfotot)))	// If photo too high, we moved completely on new page
+					{
+						$pdf->AddPage('','',true);
+						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						$pdf->setPage($pageposbefore+1);
+
+						$curY = $tab_top_newpage;
+						$showpricebeforepagebreak=0;
+					}
+
+					if (isset($imglinesize['width']) && isset($imglinesize['height']))
+					{
+						$curX = $this->posxpicture-1;
+						$pdf->Image($realpatharray[$i], $curX + (($this->posxtva-$this->posxpicture-$imglinesize['width'])/2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
+						// $pdf->Image does not increase value return by getY, so we save it manually
+						$posYAfterImage=$curY+$imglinesize['height'];
+					}
+
 					// Description of product line
 					$curX = $this->posxdesc-1;
 
-					$showpricebeforepagebreak=1;
-
 					$pdf->startTransaction();
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -316,7 +382,7 @@ class pdf_crabe extends ModelePDFFactures
 						$pageposafter=$pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc);
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
 						$pageposafter=$pdf->getPage();
 						$posyafter=$pdf->GetY();
 						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
@@ -340,6 +406,7 @@ class pdf_crabe extends ModelePDFFactures
 					{
 						$pdf->commitTransaction();
 					}
+					$posYAfterDescription=$pdf->GetY();
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
@@ -347,7 +414,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-					// We suppose that a too long description is moved completely on next page
+					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
@@ -404,7 +471,7 @@ class pdf_crabe extends ModelePDFFactures
 					if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
 					&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) // and there is local tax
 					{
-						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
+						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0, $object->thirdparty, $mysoc);
 						$localtax1_type = $localtaxtmp_array[0];
 						$localtax2_type = $localtaxtmp_array[2];
 					}
@@ -418,6 +485,8 @@ class pdf_crabe extends ModelePDFFactures
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]='';
 					$this->tva[$vatrate] += $tvaligne;
+
+					if ($posYAfterImage > $posYAfterDescription) $nexY=$posYAfterImage;
 
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
@@ -501,11 +570,6 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->Output($file,'F');
 
 				// Add pdfgeneration hook
-				if (! is_object($hookmanager))
-				{
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-					$hookmanager=new HookManager($this->db);
-				}
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
@@ -624,7 +688,6 @@ class pdf_crabe extends ModelePDFFactures
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -663,7 +726,6 @@ class pdf_crabe extends ModelePDFFactures
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -885,7 +947,7 @@ class pdf_crabe extends ModelePDFFactures
 				//{
 					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
 					{
-						if (in_array((string) $localtax_type, array('1','3','5','7'))) continue;
+						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
@@ -918,7 +980,7 @@ class pdf_crabe extends ModelePDFFactures
 				//{
 					foreach( $this->localtax2 as $localtax_type => $localtax_rate )
 					{
-						if (in_array((string) $localtax_type, array('1','3','5','7'))) continue;
+						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
@@ -1112,7 +1174,6 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', 1);
 
-			// Fin
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetTextColor(0,0,0);
 		}
@@ -1169,6 +1230,16 @@ class pdf_crabe extends ModelePDFFactures
 
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
+		}
+
+		if (! empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE))
+		{
+			$pdf->line($this->posxpicture-1, $tab_top, $this->posxpicture-1, $tab_top + $tab_height);
+			if (empty($hidetop))
+			{
+				//$pdf->SetXY($this->posxpicture-1, $tab_top+1);
+				//$pdf->MultiCell($this->posxtva-$this->posxpicture-1,2, $outputlangs->transnoentities("Photo"),'','C');
+			}
 		}
 
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
@@ -1408,12 +1479,12 @@ class pdf_crabe extends ModelePDFFactures
 			{
 				// On peut utiliser le nom de la societe du contact
 				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
-				else $socname = $object->client->nom;
+				else $socname = $object->client->name;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
 			else
 			{
-				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 			}
 
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
@@ -1457,7 +1528,8 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'FACTURE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		$showdetails=0;
+		return pdf_pagefoot($pdf,$outputlangs,'FACTURE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }

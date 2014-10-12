@@ -164,12 +164,12 @@ class FormOther
         global $langs;
 
         $sql = "SELECT e.rowid, e.code, e.libelle, e.price, e.organization,";
-        $sql.= " p.libelle as pays";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_pays as p";
-        $sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
-        $sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
+        $sql.= " c.label as country";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_country as c";
+        $sql.= " WHERE e.active = 1 AND e.fk_pays = c.rowid";
+        $sql.= " ORDER BY country, e.organization ASC, e.code ASC";
 
-    	dol_syslog(get_class($this).'::select_ecotaxes sql='.$sql);
+    	dol_syslog(get_class($this).'::select_ecotaxes', LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -223,11 +223,11 @@ class FormOther
     	$out='';
 
     	$sql = "SELECT r.taux";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_pays as p";
-    	$sql.= " WHERE r.active = 1 AND r.fk_pays = p.rowid";
-    	$sql.= " AND p.code = '".$country_code."'";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
+    	$sql.= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
+    	$sql.= " AND c.code = '".$country_code."'";
 
-    	dol_syslog(get_class($this).'::select_revenue_stamp sql='.$sql);
+    	dol_syslog(get_class($this).'::select_revenue_stamp', LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
@@ -491,7 +491,7 @@ class FormOther
                 {
                     if ($lines[$i]->fk_project != $lastprojectid)	// Break found on project
                     {
-                        if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="disabled">----------</option>';
+                        if ($i > 0) print '<option value="0" disabled="disabled">----------</option>';
                         print '<option value="'.$lines[$i]->fk_project.'_0"';
                         if ($selectedproject == $lines[$i]->fk_project) print ' selected="selected"';
                         print '>';	// Project -> Task
@@ -760,7 +760,7 @@ class FormOther
 
         $montharray = monthArray($langs);	// Get array
 
-        $select_month = '<select class="flat" name="'.$htmlname.'">';
+        $select_month = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
         if ($useempty)
         {
             $select_month .= '<option value="0">&nbsp;</option>';
@@ -1138,7 +1138,7 @@ class FormOther
         $sql.= " FROM ".MAIN_DB_PREFIX.$dictionarytable;
         $sql.= " ORDER BY ".$labelfield;
 
-        dol_syslog(get_class($this)."::select_dictionary sql=".$sql);
+        dol_syslog(get_class($this)."::select_dictionary", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {

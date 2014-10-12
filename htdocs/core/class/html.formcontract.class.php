@@ -67,7 +67,7 @@ class FormContract
 		if ($socid == 0) $sql.= " AND (c.fk_soc = 0 OR c.fk_soc IS NULL)";
 		else $sql.= " AND c.fk_soc = ".$socid;
 
-		dol_syslog(get_class($this)."::select_contract sql=".$sql);
+		dol_syslog(get_class($this)."::select_contract", LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{

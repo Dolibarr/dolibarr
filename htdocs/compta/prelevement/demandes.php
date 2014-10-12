@@ -67,7 +67,7 @@ if (! $sortfield) $sortfield="f.facnumber";
  */
 
 $sql= "SELECT f.facnumber, f.rowid, f.total_ttc,";
-$sql.= " s.nom, s.rowid as socid,";
+$sql.= " s.nom as name, s.rowid as socid,";
 $sql.= " pfd.date_demande as date_demande,";
 $sql.= " pfd.fk_user_demande";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
@@ -137,7 +137,7 @@ if ($resql)
 
 		print '<td>';
 		$thirdpartystatic->id=$obj->socid;
-		$thirdpartystatic->nom=$obj->nom;
+		$thirdpartystatic->name=$obj->name;
 		print $thirdpartystatic->getNomUrl(1,'customer');
 		print '</td>';
 

@@ -1,5 +1,5 @@
 [unix_http_server]
-file=<%= @unix_socket_file %>
+file=<%= @run_path %>/<%= @unix_socket_file %>
 chmod=<%= @unix_socket_mode %>
 chown=<%= @unix_socket_owner %>:<%= @unix_socket_group %>
 <% if @unix_auth -%>
@@ -8,7 +8,7 @@ password=<%= @unix_socket_password %>
 <% end -%>
 
 [supervisorctl]
-serverurl=unix://<%= @unix_socket_file %>
+serverurl=unix://<%= @run_path %>/<%= @unix_socket_file %>
 <% if @unix_auth -%>
 username=<%= @unix_username %>
 password=<%= @unix_password %>

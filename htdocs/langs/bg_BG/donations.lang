@@ -30,3 +30,4 @@ SearchADonation=Търсене на дарение
 DonationRecipient=Получател на дарението
 ThankYou=Благодарим Ви!
 IConfirmDonationReception=Получателят декларира, че е получил дарение на стойност
+MinimumAmount=Minimum amount is  %s

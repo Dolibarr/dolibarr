@@ -19,12 +19,17 @@
 // Variable $upload_dir must be defined when entering here
 
 // Send file/link
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
-    if ($object->id) {
-        dol_add_file_process($upload_dir, 0, 1, 'userfile');
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
+{
+    if ($object->id)
+    {
+        dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
     }
-} elseif (GETPOST('linkit') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
-    if ($object->id) {
+}
+elseif (GETPOST('linkit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
+{
+    if ($object->id)
+    {
         $link = GETPOST('link', 'alpha');
         if ($link)
         {

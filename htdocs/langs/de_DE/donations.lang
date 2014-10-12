@@ -29,4 +29,5 @@ LastModifiedDonations=Letzten %s geänderten Spenden
 SearchADonation=Spende suchen
 DonationRecipient=Spenden Empfänger
 ThankYou=Danke
-# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount
+IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount
+MinimumAmount=Minimum amount is  %s

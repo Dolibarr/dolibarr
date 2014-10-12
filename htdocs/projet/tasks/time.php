@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load('projects');
 
@@ -73,22 +74,31 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 	if (! $error)
 	{
 		$object->fetch($id);
+		$object->fetch_projet();
 
-		$object->timespent_note = $_POST["timespent_note"];
-		$object->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
-		$object->timespent_duration+= $_POST["timespent_durationmin"]*60;		// We store duration in seconds
-		$object->timespent_date = dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
-		$object->timespent_fk_user = $_POST["userid"];
-
-		$result=$object->addTimeSpent($user);
-		if ($result >= 0)
+		if (empty($object->projet->statut))
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessage($langs->trans("ProjectMustBeValidatedFirst"),'errors');
+			$error++;
 		}
 		else
 		{
-			setEventMessage($langs->trans($object->error),'errors');
-			$error++;
+			$object->timespent_note = $_POST["timespent_note"];
+			$object->progress = GETPOST('progress', 'int');
+			$object->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
+			$object->timespent_duration+= $_POST["timespent_durationmin"]*60;		// We store duration in seconds
+			$object->timespent_date = dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
+			$object->timespent_fk_user = $_POST["userid"];
+			$result=$object->addTimeSpent($user);
+			if ($result >= 0)
+			{
+				setEventMessage($langs->trans("RecordSaved"));
+			}
+			else
+			{
+				setEventMessage($langs->trans($object->error),'errors');
+				$error++;
+			}
 		}
 	}
 	else
@@ -141,7 +151,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->c
 	$object->fetchTimeSpent($_GET['lineid']);
 	$result = $object->delTimeSpent($user);
 
-	if (!$result)
+	if ($result < 0)
 	{
 		$langs->load("errors");
 		setEventMessage($langs->trans($object->error),'errors');
@@ -176,17 +186,18 @@ if (! empty($project_ref) && ! empty($withproject))
 llxHeader("",$langs->trans("Task"));
 
 $form = new Form($db);
+$formother = new FormOther($db);
 $userstatic = new User($db);
 
 if ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Fiche projet en mode visu
-	*/
+ 	 */
 	if ($object->fetch($id) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = dol_clone($projectstatic);
 
@@ -221,7 +232,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Thirdparty
 			print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-			if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
+			if (! empty($projectstatic->thirdparty->id)) print $projectstatic->thirdparty->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td>';
 			print '</tr>';
@@ -255,8 +266,6 @@ if ($id > 0 || ! empty($ref))
 		$head=task_prepare_head($object);
 		dol_fiche_head($head, 'task_time', $langs->trans("Task"),0,'projecttask');
 
-		dol_htmloutput_mesg($mesg);
-
 		if ($action == 'deleteline')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
@@ -277,12 +286,43 @@ if ($id > 0 || ! empty($ref))
 			$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-		print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 		print '</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
+		// Date start
+		print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
+		print dol_print_date($object->date_start,'dayhour');
+		print '</td></tr>';
+		
+		// Date end
+		print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
+		print dol_print_date($object->date_end,'dayhour');
+		print '</td></tr>';
+		
+		// Planned workload
+		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
+		print convertSecondToTime($object->planned_workload,'allhourmin');
+		print '</td></tr>';
+		
+		// Progress declared
+		print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+		print $object->progress.' %';
+		print '</td></tr>';
+		
+		// Progress calculated
+		print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
+		if ($object->planned_workload)
+		{
+			$tmparray=$object->getSummaryOfTimeSpent();
+			if ($tmparray['total_duration'] > 0) print round($tmparray['total_duration']/$object->planned_workload*100, 2).' %';
+			else print '0 %';
+		}
+		else print '';
+		print '</td></tr>';
+		
 		// Project
 		if (empty($withproject))
 		{
@@ -292,7 +332,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Third party
 			print '<td>'.$langs->trans("ThirdParty").'</td><td>';
-			if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
+			if ($projectstatic->thirdparty->id) print $projectstatic->thirdparty->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td></tr>';
 		}
@@ -328,7 +368,7 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		 * Add time spent
-		*/
+		 */
 		if ($user->rights->projet->creer)
 		{
 			print '<br>';
@@ -345,6 +385,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td width="100">'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("By").'</td>';
 			print '<td>'.$langs->trans("Note").'</td>';
+			print '<td>'.$langs->trans("ProgressDeclared").'</td>';
 			print '<td align="right">'.$langs->trans("Duration").'</td>';
 			print '<td width="80">&nbsp;</td>';
 			print "</tr>\n";
@@ -359,13 +400,14 @@ if ($id > 0 || ! empty($ref))
 
 			// Contributor
 			print '<td class="nowrap">';
-			$restrictaddtimetocontactoftask=0;
-			if (empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS))
-			{
-				$restrictaddtimetocontactoftask=$object->getListContactId('internal');
-			}
 			print img_object('','user');
-			print $form->select_dolusers($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$restrictaddtimetocontactoftask);	// Note: If user is not allowed it will be disabled into combo list and userid not posted
+			$contactsoftask=$object->getListContactId('internal');
+			if (count($contactsoftask)>0) {
+				$userid=$contactsoftask[0];
+				$form->select_users($userid,'userid',0,'',0,'',$contactsoftask);
+			}else {
+				print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
+			}
 			print '</td>';
 
 			// Note
@@ -373,9 +415,14 @@ if ($id > 0 || ! empty($ref))
 			print '<textarea name="timespent_note" cols="80" rows="'.ROWS_3.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
 			print '</td>';
 
+			// Progress declared
+			print '<td class="nowrap">';
+			print $formother->select_percent(GETPOST('progress')?GETPOST('progress'):$object->progress,'progress');
+			print '</td>';
+
 			// Duration
 			print '<td class="nowrap" align="right">';
-			print $form->select_duration('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''),0,'text');
+			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, 'text');
 			print '</td>';
 
 			print '<td align="center">';
@@ -389,7 +436,7 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		 *  List of time spent
-		*/
+		 */
 		$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user, t.note";
 		$sql.= ", u.lastname, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
@@ -454,7 +501,15 @@ if ($id > 0 || ! empty($ref))
 			print '<td>';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print $form->select_dolusers($task_time->fk_user,'userid_line');
+				$contactsoftask=$object->getListContactId('internal');
+				if (!in_array($task_time->fk_user,$contactsoftask)) {
+					$contactsoftask[]=$task_time->fk_user;
+				}
+				if (count($contactsoftask)>0) {
+					$form->select_users($task_time->fk_user,'userid_line',0,'',0,'',$contactsoftask);
+				}else {
+					print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
+				}
 			}
 			else
 			{

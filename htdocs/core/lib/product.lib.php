@@ -29,7 +29,7 @@
  *
  * @param   Object	$object		Object related to tabs
  * @param	User	$user		Object user
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function product_prepare_head($object, $user)
 {
@@ -39,7 +39,7 @@ function product_prepare_head($object, $user)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/card.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
@@ -83,13 +83,13 @@ function product_prepare_head($object, $user)
 	// Sub products
 	if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
 	{
-		$head[$h][0] = DOL_URL_ROOT."/product/composition/fiche.php?id=".$object->id;
+		$head[$h][0] = DOL_URL_ROOT."/product/composition/card.php?id=".$object->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 		$head[$h][2] = 'subproduct';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/stats/card.php?id=".$object->id;
 	$head[$h][1] = $langs->trans('Statistics');
 	$head[$h][2] = 'stats';
 	$h++;

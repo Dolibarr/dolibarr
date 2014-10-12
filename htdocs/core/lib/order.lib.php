@@ -29,7 +29,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function commande_prepare_head($object)
 {
@@ -42,7 +42,7 @@ function commande_prepare_head($object)
 
 	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/commande/card.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("OrderCard");
 		$head[$h][2] = 'order';
 		$h++;

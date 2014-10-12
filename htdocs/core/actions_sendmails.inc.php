@@ -26,7 +26,8 @@
 
 // $id must be defined
 // $actiontypecode must be defined
-
+// $paramname must be defined
+// $mode must be defined
 
 /*
  * Add file in email form
@@ -115,6 +116,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
 			$message = $_POST['message'];
 			$sendtocc = $_POST['sendtocc'];
+			$sendtobcc='';
+			if ($mode == 'emailfromproposal') $sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO);
+			if ($mode == 'emailfromorder')    $sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO);
+			if ($mode == 'emailfrominvoice')  $sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
+
 			$deliveryreceipt = $_POST['deliveryreceipt'];
 
 			if ($action == 'send' || $action == 'relance')
@@ -141,7 +147,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 			// Send mail
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
 			if ($mailfile->error)
 			{
 				$mesgs[]='<div class="error">'.$mailfile->error.'</div>';

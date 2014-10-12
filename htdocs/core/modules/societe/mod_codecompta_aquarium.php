@@ -32,7 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 class mod_codecompta_aquarium extends ModeleAccountancyCode
 {
 	var $nom='Aquarium';
-    var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
+	var $name='Aquarium';
+	var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
 
 	var	$prefixcustomeraccountancycode;
 	var	$prefixsupplieraccountancycode;
@@ -73,7 +74,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$texte.= '<table class="nobordernopadding" width="100%">';
 		$s1= $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER.'">',$tooltip,1,1);
 		$s2= $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER.'">',$tooltip,1,1);
-		$texte.= '<tr><td>'.$langs->trans("ModuleCompanyCode".$this->nom,$s1,$s2)."<br>\n";
+		$texte.= '<tr><td>'.$langs->trans("ModuleCompanyCode".$this->name,$s1,$s2)."<br>\n";
 		$texte.= '</td>';
 		$texte.= '<td align="left">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
         $texte.= '</tr></table>';
@@ -109,7 +110,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$i = 0;
 		$this->db = $db;
 
-		dol_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".(! empty($societe->nom)?$societe->nom:''));
+		dol_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".(! empty($societe->name)?$societe->name:''));
 
 		// Regle gestion compte compta
 		$codetouse='';
@@ -178,7 +179,6 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		else
 		{
 			$this->error=$db->error()." sql=".$sql;
-			dol_syslog("mod_codecompta_aquarium::verif error".$this->error, LOG_ERR);
 			return -1;		// Erreur
 		}
 	}

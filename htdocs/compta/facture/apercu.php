@@ -375,7 +375,7 @@ if ($id > 0 || ! empty($ref))
             {
                 $project = New Project($db);
                 $project->fetch($object->fk_project);
-                print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$object->fk_project.'">'.$project->title.'</a>';
+                print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'">'.$project->title.'</a>';
             }
             else
             {

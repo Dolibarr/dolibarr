@@ -85,7 +85,7 @@ if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! em
 	&& ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
 {
 	$langs->load("products");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/liste.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
+	$searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
 	$nbofsearch++;
 }
 
@@ -93,14 +93,14 @@ if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! em
 	&& ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
 {
 	$langs->load("products");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/liste.php', DOL_URL_ROOT.'/fourn/product/liste.php', img_object('','product').' '.$langs->trans("SupplierRef"), 'products', 'srefsupplier');
+	$searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/list.php', DOL_URL_ROOT.'/fourn/product/list.php', img_object('','product').' '.$langs->trans("SupplierRef"), 'products', 'srefsupplier');
 	$nbofsearch++;
 }
 
 if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
 {
 	$langs->load("members");
-	$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
+	$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
 	$nbofsearch++;
 }
 

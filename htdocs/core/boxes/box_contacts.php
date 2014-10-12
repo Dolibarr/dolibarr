@@ -61,7 +61,7 @@ class box_contacts extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT sp.rowid, sp.lastname, sp.firstname, sp.civilite as civility_id, sp.datec, sp.tms, sp.fk_soc,";
+			$sql = "SELECT sp.rowid, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc,";
 			$sql.= " s.nom as socname";
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
@@ -96,11 +96,11 @@ class box_contacts extends ModeleBoxes
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/contact/fiche.php?id=".$objp->rowid);
+                    'url' => DOL_URL_ROOT."/contact/card.php?id=".$objp->rowid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $contactstatic->getFullName($langs,0),
-                    'url' => DOL_URL_ROOT."/contact/fiche.php?id=".$objp->rowid);
+                    'url' => DOL_URL_ROOT."/contact/card.php?id=".$objp->rowid);
 
                     $this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
     				'logo' => ($objp->fk_soc > 0?'company':''),

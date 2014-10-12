@@ -77,7 +77,7 @@ if ($resql)
   print "<tr ".$bc[$var].">";
   print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
   print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
+  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
   print '</td></tr>';
   print "</table>\n";
 }

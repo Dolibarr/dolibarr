@@ -19,3 +19,4 @@ TF_TRIP=Viagem
 ListTripsAndExpenses=Lista de viagens e despesas
 ExpensesArea=Viagens e área de despesas
 SearchATripAndExpense=Procure uma viagem e despesas
+ClassifyRefunded=Classify 'Refunded'

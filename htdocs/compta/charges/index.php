@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,7 +208,7 @@ if ($conf->tax->enabled)
 	//$sql.= $db->plimit($limit+1,$offset);
 	//print $sql;
 
-	dol_syslog("compta/charges/index.php: select payment sql=".$sql);
+	dol_syslog("compta/charges/index.php: select payment", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -352,6 +353,108 @@ if ($conf->tax->enabled)
 		    dol_print_error($db);
 		}
 	}
+}
+//localtax
+if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+{
+	$j=1;
+	$numlt=3;
+}
+elseif($mysoc->localtax1_assuj=="1")
+{
+	$j=1;
+	$numlt=2;
+}
+elseif($mysoc->localtax2_assuj=="1")
+{
+	$j=2;
+	$numlt=3;
+}
+else
+{
+	$j=0;
+	$numlt=0;
+}
+
+while($j<$numlt)
+{
+	if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
+	{
+		print "<br>";
+
+		$tva = new Tva($db);
+
+		print_fiche_titre($langs->transcountry(($j==1?"LT1Payments":"LT2Payments"),$mysoc->country_code).($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
+
+
+		$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm, pv.datep as dp";
+		$sql.= " FROM ".MAIN_DB_PREFIX."localtax as pv";
+		$sql.= " WHERE pv.entity = ".$conf->entity." AND localtaxtype = ".$j ;
+		if ($year > 0)
+		{
+			// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
+			// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+			$sql.= " AND pv.datev between '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+		}
+		if (preg_match('/^pv/',$sortfield)) $sql.= $db->order($sortfield,$sortorder);
+
+		$result = $db->query($sql);
+		if ($result)
+		{
+			$num = $db->num_rows($result);
+			$i = 0;
+			$total = 0 ;
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre">';
+			print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"pv.datev","",$param,'width="120"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"pv.label","",$param,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pv.rowid","",$param,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"pv.datep","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
+			print "</tr>\n";
+			$var=1;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($result);
+
+				$total = $total + $obj->amount;
+
+				$var=!$var;
+				print "<tr ".$bc[$var].">";
+				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
+
+				print "<td>".$obj->label."</td>\n";
+
+				print '<td align="right">'.price($obj->amount)."</td>";
+
+				// Ref payment
+				$tva_static->id=$obj->rowid;
+				$tva_static->ref=$obj->rowid;
+				print '<td align="left">'.$tva_static->getNomUrl(1)."</td>\n";
+
+				print '<td align="center">'.dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
+				print '<td align="right">'.price($obj->amount)."</td>";
+				print "</tr>\n";
+
+				$i++;
+			}
+			print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
+			print '<td align="right">'.price($total)."</td>";
+			print '<td align="center">&nbsp;</td>';
+			print '<td align="center">&nbsp;</td>';
+			print '<td align="right">'.price($total)."</td>";
+			print "</tr>";
+
+			print "</table>";
+			$db->free($result);
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+	$j++;
 }
 
 

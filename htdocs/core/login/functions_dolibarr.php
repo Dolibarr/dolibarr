@@ -58,7 +58,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 		$sql.=' WHERE '.$usernamecol." = '".$db->escape($usertotest)."'";
 		$sql.=' AND '.$entitycol." IN (0," . ($entity ? $entity : 1) . ")";
 
-		dol_syslog("functions_dolibarr::check_user_password_dolibarr sql=".$sql);
+		dol_syslog("functions_dolibarr::check_user_password_dolibarr", LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{

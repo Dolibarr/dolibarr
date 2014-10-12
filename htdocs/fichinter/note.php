@@ -60,8 +60,6 @@ $form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	dol_htmloutput_mesg($mesg);
-
 	$societe = new Societe($db);
 	if ($societe->fetch($object->socid))
 	{

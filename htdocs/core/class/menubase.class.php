@@ -162,7 +162,7 @@ class Menubase
         $sql.= " '".$this->user."'";
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -174,7 +174,6 @@ class Menubase
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -232,12 +231,11 @@ class Menubase
         $sql.= " usertype='".$this->user."'";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -277,7 +275,7 @@ class Menubase
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -311,7 +309,6 @@ class Menubase
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -330,12 +327,11 @@ class Menubase
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog(get_class($this)."::delete sql=".$sql);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -516,7 +512,7 @@ class Menubase
 
 //$tmp1=dol_microtime_float();
 //print '>>> 1 0<br>';
-        dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)." sql=".$sql);
+        dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {

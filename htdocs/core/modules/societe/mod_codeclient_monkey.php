@@ -28,12 +28,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 
 
 /**
- *	\class 		mod_codeclient_monkey
- *	\brief 		Classe permettant la gestion monkey des codes tiers
+ *	Classe permettant la gestion monkey des codes tiers
  */
 class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
 	var $nom='Monkey';					// Nom du modele
+	var $name='Monkey';					// Nom du modele
 	var $code_modifiable;				// Code modifiable
 	var $code_modifiable_invalide;		// Code modifiable si il est invalide
 	var $code_modifiable_null;			// Code modifiables si il est null
@@ -52,6 +52,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	function __construct()
 	{
 		$this->nom = "Monkey";
+		$this->name = "Monkey";
 		$this->version = "dolibarr";
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
@@ -124,6 +125,8 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
 		$sql.= " AND entity IN (".getEntity('societe', 1).")";
 
+		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
+
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -133,7 +136,6 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::getNextValue sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
@@ -225,7 +227,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$sql.= " AND entity IN (".getEntity('societe', 1).")";
 		if ($soc->id > 0) $sql.= " AND rowid <> ".$soc->id;
 
-		dol_syslog(get_class($this)."::verif_dispo sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::verif_dispo", LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{

@@ -142,20 +142,44 @@ update llx_societe set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_societe_double;
 
 
-UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid
+UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
 
 
 UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 and (fk_user_action is null or fk_user_action = 0);
 UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author > 0 and (fk_user_action is null or fk_user_action = 0);
 
 
--- Requests to clean old tables or fields
+UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS NULL and task_date IS NOT NULL;
+
+
+-- Requests to clean old tables or external modules tables
 
 -- DROP TABLE llx_c_methode_commande_fournisseur;
 -- DROP TABLE llx_c_source;
+-- DROP TABLE llx_congespayes;
+-- DROP TABLE llx_congespayes_config;
+-- DROP TABLE llx_congespayes_log;
+-- DROP TABLE llx_congespayes_events;
+-- DROP TABLE llx_congespayes_users;
+-- DROP TABLE llx_compta;
+-- DROP TABLE llx_compta_compte_generaux;
+-- DROP TABLE llx_compta_account;
+-- DROP TABLE llx_cabinetmed*;
 -- DROP TABLE llx_cond_reglement;
 -- DROP TABLE llx_expedition_methode;
 -- DROP TABLE llx_product_fournisseur;
+-- DROP TABLE llx_element_rang;
+-- DROP TABLE llx_dolicloud_customers;
+-- DROP TABLE llx_dolicloud_emailstemplates;
+-- DROP TABLE llx_dolicloud_stats;
+-- DROP TABLE llx_submitew_message;
+-- DROP TABLE llx_submitew_targets;
+-- DROP TABLE llx_submitew_targets_param;
+-- DROP TABLE llx_pos_cash;
+-- DROP TABLE llx_pos_control_cash;
+-- DROP TABLE llx_pos_facture;
+-- DROP TABLE llx_pos_moviments;
+-- DROP TABLE llx_pos_ticketdet;
 
 -- To replace amount on all invoice and lines when forgetting to apply a 20% vat
 -- update llx_facturedet set tva_tx = 20 where tva_tx = 0;
@@ -163,7 +187,3 @@ UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author >
 -- update llx_facturedet set total_tva = total_ttc - total_ht where total_vat = 0;
 -- update llx_facture set total = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
 -- update llx_facture set tva = total_ttc - total where tva = 0;
-
-
-
-

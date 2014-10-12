@@ -104,8 +104,6 @@ if ($result)
 
 	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines);
 
-	dol_htmloutput_mesg($mesg);
-
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
     print '<table class="noborder" width="100%">';

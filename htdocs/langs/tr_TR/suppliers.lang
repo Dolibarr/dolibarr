@@ -40,3 +40,5 @@ AddSupplierInvoice=Tedarikçi faturası oluştur
 ListOfSupplierProductForSupplier=Tedarikçi <b>%s</b> için ürün ve fiyat listesi
 NoneOrBatchFileNeverRan=Hiçbiri veya toplu <b>%s</b> yürütülmedi
 SentToSuppliers=Tedarikçilere gönderilen
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

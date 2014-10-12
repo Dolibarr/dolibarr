@@ -1,3 +1,7 @@
+# Class: supervisord::pip
+#
+# Optional class to install setuptool and pip
+#
 class supervisord::pip inherits supervisord {
 
   Exec {

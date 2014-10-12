@@ -52,12 +52,14 @@ create table llx_facture_fourn
 
   fk_statut				smallint DEFAULT 0 NOT NULL,
 
-  fk_user_author		integer,                       -- createur de la facture
-  fk_user_valid			integer,                       -- valideur de la facture
+  fk_user_author		integer,                       -- user making creation
+  fk_user_modif         integer,                       -- user making last change
+  fk_user_valid			integer,                       -- user validating
 
   fk_facture_source		integer,                       -- facture origine si facture avoir
   fk_projet				integer,                       -- projet auquel est associee la facture
 
+  fk_account            integer,                       -- bank account
   fk_cond_reglement		integer,   	                   -- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement		integer,                	   -- mode de reglement (CHQ, VIR, ...)
   date_lim_reglement 	date,                          -- date limite de reglement

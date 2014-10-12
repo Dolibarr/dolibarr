@@ -119,6 +119,17 @@ class pdf_paiement
 		$year = sprintf("%04d",$year);
 		$file = $dir . "/payments-".$year."-".$month.".pdf";
 
+		// Add pdfgeneration hook
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('pdfgeneration'));
+		$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+		global $action;
+		$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
         $pdf=pdf_getInstance($this->format);
         $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
 
@@ -156,7 +167,7 @@ class pdf_paiement
 		if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
 		$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 
-		dol_syslog(get_class($this)."::write_file sql=".$sql);
+		dol_syslog(get_class($this)."::write_file", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -228,6 +239,18 @@ class pdf_paiement
 		$pdf->Close();
 
 		$pdf->Output($file,'F');
+
+		// Add pdfgeneration hook
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('pdfgeneration'));
+		$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+		global $action;
+		$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 

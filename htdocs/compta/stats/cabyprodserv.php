@@ -39,7 +39,7 @@ if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta'
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->COMPTA_MODE;
+$modecompta = $conf->global->ACCOUNTING_MODE;
 if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
 
 $sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -212,7 +212,7 @@ if ($modecompta == 'CREANCES-DETTES')
     $sql.= " GROUP BY p.rowid";
     $sql.= " ORDER BY p.ref";
 
-    dol_syslog("cabyprodserv sql=".$sql);
+    dol_syslog("cabyprodserv", LOG_DEBUG);
     $result = $db->query($sql);
     if ($result) {
 	$num = $db->num_rows($result);
@@ -336,7 +336,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		    // Product
 		     $fullname=$name[$key];
 		    if ($key >= 0) {
-			$linkname='<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$fullname.'</a>';
+			$linkname='<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$fullname.'</a>';
 		    } else {
 			$linkname=$langs->trans("PaymentsNotLinkedToProduct");
 		    }

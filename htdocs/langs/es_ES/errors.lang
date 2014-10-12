@@ -135,6 +135,8 @@ ErrorWarehouseMustDiffers=El almacén de origen y destino deben de ser diferente
 ErrorBadFormat=¡El formato es erróneo!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, este miembro aún no está enlazado a un tercero. Enlace el miembro a un tercero existente o cree un tercero nuevo antes de crear la suscripción con la factura.
 ErrorThereIsSomeDeliveries=Error, hay entregas vinculadas a este envío. No se puede eliminar.
+ErrorCantDeletePaymentReconciliated=No se puede eliminar un pago que ha generado una transacción bancaria que se encuentra conciliada
+ErrorCantDeletePaymentSharedWithPayedInvoice=No se puede eliminar un pago de varias factura con alguna factura con estado Pagada
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos
@@ -154,3 +156,4 @@ WarningClickToDialUserSetupNotComplete=La configuración de ClickToDial para su 
 WarningNotRelevant=Operación irrelevante para este conjunto de datos
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funcionalidad desactivada cuando la configuración de visualización es optimizada para personas ciegas o navegadores de texto.
 WarningPaymentDateLowerThanInvoiceDate=La fecha de pago (%s) es anterior a la fecha (%s) de la factura %s.
+WarningTooManyDataPleaseUseMoreFilters=Demasiados datos. Utilice más filtros

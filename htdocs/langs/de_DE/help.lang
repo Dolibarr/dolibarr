@@ -25,4 +25,4 @@ LinkToGoldMember=Sie können einen, vom System für Ihre Sprache (%s) automatisc
 PossibleLanguages=Unterstützte Sprachen
 MakeADonation=Unterstützen Sie das Projekt über eine Spende
 SubscribeToFoundation=Helfen auch Sie dem Dolibarr Projekt und unterstützen uns mit einer Abo-Spende.
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SeeOfficalSupport=Für offizielle Dolibarr Unterstützung in Ihrer Sprache: br><b><a href="%s" target="_blank">%s</a></b>

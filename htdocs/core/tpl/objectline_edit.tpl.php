@@ -60,7 +60,7 @@ $coldisplay=-1; // We remove first td
 
 	<?php if ($line->fk_product > 0) { ?>
 
-		<a href="<?php echo DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product; ?>">
+		<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
 		<?php
 		if ($line->product_type==1) echo img_object($langs->trans('ShowService'),'service');
 		else print img_object($langs->trans('ShowProduct'),'product');
@@ -96,7 +96,7 @@ $coldisplay=-1; // We remove first td
 	<td align="right"><?php $coldisplay++; ?><?php echo $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type); ?></td>
 
 	<td align="right"><?php $coldisplay++; ?><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
-	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
+	<?php if ($inputalsopricewithtax) { ?>
 	<td align="right"><?php $coldisplay++; ?><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="<?php echo price($pu_ttc,0,'',0); ?>"></td>
 	<?php } ?>
 
@@ -107,7 +107,7 @@ $coldisplay=-1; // We remove first td
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
 	?>
-		<input size="3" type="text" class="flat" name="qty" value="<?php echo $line->qty; ?>">
+		<input size="3" type="text" class="flat" name="qty" id="qty" value="<?php echo $line->qty; ?>">
 	<?php } else { ?>
 		&nbsp;
 	<?php } ?>
@@ -115,7 +115,7 @@ $coldisplay=-1; // We remove first td
 
 	<td align="right" nowrap><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) { ?>
-		<input size="1" type="text" class="flat" name="remise_percent" value="<?php echo $line->remise_percent; ?>">%
+		<input size="1" type="text" class="flat" name="remise_percent" id="remise_percent" value="<?php echo $line->remise_percent; ?>">%
 	<?php } else { ?>
 		&nbsp;
 	<?php } ?>

@@ -46,7 +46,7 @@ abstract class ModeleProductCode
      */
     function getNom($langs)
     {
-        return $this->nom;
+        return empty($this->name)?$this->nom:$this->name;
     }
 
 
@@ -97,6 +97,7 @@ abstract class ModeleProductCode
         if ($this->version == 'development') return $langs->trans("VersionDevelopment");
         if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
         if ($this->version == 'dolibarr') return DOL_VERSION;
+        if ($this->version) return $this->version;
         return $langs->trans("NotAvailable");
     }
 
@@ -146,7 +147,7 @@ abstract class ModeleProductCode
         $langs->load("admin");
 
         $s='';
-        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->nom.'</b><br>';
+        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
         if ($type == -1) $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
         if ($type == 0)  $s.=$langs->trans("ProductCodeDesc").'<br>';
         if ($type == 1)  $s.=$langs->trans("ServiceCodeDesc").'<br>';

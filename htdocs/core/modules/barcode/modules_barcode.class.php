@@ -62,7 +62,7 @@ abstract class ModeleNumRefBarCode
         $langs->load("bills");
         return $langs->trans("NoDescription");
     }
-	
+
     /**     Return model name
      *
      *		@param	Translate	$langs		Object langs
@@ -70,10 +70,10 @@ abstract class ModeleNumRefBarCode
      */
     function getNom($langs)
     {
-        return $this->nom;
+        return empty($this->name)?$this->nom:$this->name;
     }
-	
-    /**     Return a numbering example 
+
+    /**     Return a numbering example
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example
@@ -96,7 +96,7 @@ abstract class ModeleNumRefBarCode
         global $langs;
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
     }
-	
+
 	/**     Return version of module
      *
      *      @return     string      Version
@@ -109,9 +109,10 @@ abstract class ModeleNumRefBarCode
         if ($this->version == 'development') return $langs->trans("VersionDevelopment");
         if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
         if ($this->version == 'dolibarr') return DOL_VERSION;
+        if ($this->version) return $this->version;
         return $langs->trans("NotAvailable");
     }
-	
+
     /**
      *      Return description of module parameters
      *
@@ -127,7 +128,7 @@ abstract class ModeleNumRefBarCode
         $langs->load("admin");
 
         $s='';
-        $s.=$langs->trans("Name").': <b>'.$this->nom.'</b><br>';
+        $s.=$langs->trans("Name").': <b>'.$this->name.'</b><br>';
         $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
         if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
         $s.='<br>';
@@ -170,6 +171,6 @@ abstract class ModeleNumRefBarCode
 
         return $s;
     }
-    
+
 }
 

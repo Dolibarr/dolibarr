@@ -48,7 +48,7 @@ $select_pricing_rules=array(
 'PRODUIT_MULTIPRICES'=>$langs->trans('MultiPricesAbility'),		// Several prices according to a customer level
 'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer')		// Different price for each customer
 );
-if ($conf->global->MAIN_FEATURES_LEVEL==2) 
+if ($conf->global->MAIN_FEATURES_LEVEL==2)
 {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity');
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity');
@@ -91,12 +91,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -125,7 +125,7 @@ if ($action == 'pricingrule')
 			else
 			{
 				$multirule=explode('&',$princingrules);
-				foreach($multirule as $rulesselected) 
+				foreach($multirule as $rulesselected)
 				{
 					$res = dolibarr_set_const($db, $rulesselected, 1, 'chaine', 0, '', $conf->entity);
 				}
@@ -137,8 +137,8 @@ if ($action == 'pricingrule')
 				$res = dolibarr_set_const($db, $rule, 0, 'chaine', 0, '', $conf->entity);
 			}
 		}
-		
-	}	
+
+	}
 }
 else if ($action == 'sousproduits')
 {
@@ -178,11 +178,11 @@ if($action)
 
  	if (! $error)
     {
-        $mesg = '<font class="ok">'.$langs->trans("SetupSaved").'</font>';
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = '<font class="error">'.$langs->trans("Error").'</font>';
+	    setEventMessage($langs->trans("Error"), 'errors');
     }
 }
 
@@ -262,7 +262,7 @@ foreach ($dirproduct as $dirroot)
 
     			$var = !$var;
     			print '<tr '.$bc[$var].'>'."\n";
-    			print '<td width="140">'.$modCodeProduct->nom.'</td>'."\n";
+    			print '<td width="140">'.$modCodeProduct->name.'</td>'."\n";
     			print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
     			print '<td class="nowrap">'.$modCodeProduct->getExample($langs).'</td>'."\n";
 
@@ -505,13 +505,12 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 	}
 	else
 	{
+		//TODO: Translate
 		print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
 	}
 
 	print '</table>';
 }
-
-dol_htmloutput_mesg($mesg);
 
 llxFooter();
 

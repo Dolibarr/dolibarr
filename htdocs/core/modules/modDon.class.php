@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +20,17 @@
 
 /**
  *	\defgroup   don     Module donation
- *	\brief      Module pour gerer le suivi des dons
+ *	\brief      Module to manage the follow-up of the donations
  *	\file       htdocs/core/modules/modDon.class.php
  *	\ingroup    don
- *	\brief      Fichier de description et activation du module Don
+ *	\brief      Description and activation file for module Donation
  */
 
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Don
+ *	Class to describe and enable module Donation
  */
 class modDon  extends DolibarrModules
 {
@@ -66,15 +67,43 @@ class modDon  extends DolibarrModules
 		$this->config_page_url = array("dons.php");
 
 		// Constants
-		$this->const = array();
-		$r=0;
+		$this->const = array ();
 
-		$this->const[$r][0] = "DON_ADDON_MODEL";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "html_cerfafr";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation de recu de dons';
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const[0] = array (
+				"DON_ADDON_MODEL",
+				"chaine",
+				"html_cerfafr",
+				"Nom du gestionnaire de generation de recu de dons",
+				"0"
+		);
+		$this->const[1] = array (
+				"DONATION_ART200",
+				"yesno",
+				"0",
+				"Option Française - Eligibilité Art200 du CGI",
+				"0"
+		);
+		$this->const[2] = array (
+				"DONATION_ART238",
+				"yesno",
+				"0",
+				"Option Française - Eligibilité Art238 bis du CGI",
+				"0"
+		);
+		$this->const[3] = array (
+				"DONATION_ART885",
+				"yesno",
+				"0",
+				"Option Française - Eligibilité Art885-0 V bis du CGI",
+				"0"
+		);
+		$this->const[4] = array (
+				"DONATION_MESSAGE",
+				"chaine",
+				"Thank you",
+				"Message affiché sur le récépissé de versements ou dons",
+				"0"
+		);
 
 		// Boxes
 		$this->boxes = array();

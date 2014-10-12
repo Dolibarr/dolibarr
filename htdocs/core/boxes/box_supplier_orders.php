@@ -62,7 +62,7 @@ class box_supplier_orders extends ModeleBoxes
 
         if ($user->rights->fournisseur->commande->lire)
         {
-            $sql = "SELECT s.nom, s.rowid as socid,";
+            $sql = "SELECT s.nom as name, s.rowid as socid,";
             $sql.= " c.ref, c.tms, c.rowid,";
             $sql.= " c.fk_statut";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -86,8 +86,8 @@ class box_supplier_orders extends ModeleBoxes
                     $objp = $db->fetch_object($result);
                     $datem=$db->jdate($objp->tms);
 
-                    $urlo = DOL_URL_ROOT."/fourn/commande/fiche.php?id=".$objp->rowid;
-                    $urls = DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid;
+                    $urlo = DOL_URL_ROOT."/fourn/commande/card.php?id=".$objp->rowid;
+                    $urls = DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid;
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
@@ -102,7 +102,7 @@ class box_supplier_orders extends ModeleBoxes
                     'url' => $urls);
 
                     $this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $objp->nom,
+                    'text' => $objp->name,
                     'url' => $urls);
 
                     $this->info_box_contents[$i][4] = array('td' => 'align="right"',

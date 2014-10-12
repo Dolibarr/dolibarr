@@ -116,6 +116,13 @@ if ($action == 'setconditions' && $user->rights->commande->creer)
 	if ($result < 0) dol_print_error($db,$commande->error);
 }
 
+// shipping method
+if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
+    $commande = new Commande($db);
+    $commande->fetch($id);
+    $result=$commande->setShippingMethod(GETPOST('shipping_method_id', 'int'));
+}
+
 
 
 /*
@@ -262,6 +269,23 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 
+        // Shipping Method
+        print '<tr><td>';
+        print '<table width="100%" class="nobordernopadding"><tr><td>';
+        print $langs->trans('SendingMethod');
+        print '</td>';
+        if ($action != 'editshippingmethod' && $user->rights->expedition->creer)
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($action == 'editshippingmethod') {
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->shipping_method_id, 'shipping_method_id', 1);
+        } else {
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->shipping_method_id, 'none');
+        }
+        print '</td>';
+        print '</tr>';
+
 		// Terms of payment
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -363,7 +387,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " ORDER BY cd.rang, cd.rowid";
 
 		//print $sql;
-		dol_syslog("shipment.php sql=".$sql, LOG_DEBUG);
+		dol_syslog("shipment.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -539,7 +563,7 @@ if ($id > 0 || ! empty($ref))
 							{
 								$img=img_warning($langs->trans("StockTooLow"));
 							}
-							print '<tr><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/fiche.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
+							print '<tr><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
 							print '<td align="center"> '.$value['nb_total'].'</td>';
 							print '<td>&nbsp</td>';
 							print '<td>&nbsp</td>';
@@ -582,7 +606,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				if ($user->rights->expedition->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("NewSending").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("NewSending").'</a>';
 					if ($toBeShippedTotal <= 0)
 					{
 						print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
@@ -604,9 +628,10 @@ if ($id > 0 || ! empty($ref))
 			{
 				print_titre($langs->trans("NewSending"));
 
-				print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/fiche.php">';
+				print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/card.php">';
 				print '<input type="hidden" name="action" value="create">';
 				print '<input type="hidden" name="id" value="'.$commande->id.'">';
+                print '<input type="hidden" name="shipping_method_id" value="'.$commande->shipping_method_id.'">';
 				print '<input type="hidden" name="origin" value="commande">';
 				print '<input type="hidden" name="origin_id" value="'.$commande->id.'">';
 				print '<table class="border" width="100%">';
@@ -622,7 +647,7 @@ if ($id > 0 || ! empty($ref))
 					print $formproduct->selectWarehouses(-1,'entrepot_id','',1);
 					if (count($formproduct->cache_warehouses) <= 0)
 					{
-						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">'.$langs->trans("AddOne").'</a>';
+						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("AddOne").'</a>';
 					}
 					print '</td>';
 				}

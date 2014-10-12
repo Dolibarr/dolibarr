@@ -52,7 +52,6 @@ $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 $adht = new AdherentType($db);
 $errmsg='';
-$errmsgs=array();
 
 $defaultdelay=1;
 $defaultdelayunit='y';
@@ -108,7 +107,7 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 		{
 			$langs->load("errors");
 			$errmsg=$langs->trans($company->error);
-			$errmsgs=$company->errors;
+			setEventMessage($company->errors, 'errors');
 		}
 		else
 		{
@@ -129,7 +128,7 @@ if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights
         if ($_POST["userid"] != $user->id && $_POST["userid"] != $object->user_id)
         {
             $error++;
-            $mesg='<div class="error">'.$langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly").'</div>';
+            setEventMessage($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), 'errors');
         }
     }
 
@@ -165,7 +164,7 @@ if ($action == 'setsocid')
                     $thirdparty=new Societe($db);
                     $thirdparty->fetch(GETPOST('socid','int'));
                     $error++;
-                    $mesg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name).'</div>';
+	                setEventMessage($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name), 'errors');
                 }
             }
 
@@ -277,12 +276,12 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         $db->begin();
 
         // Create subscription
-        $crowid=$object->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend, $option);
+        $crowid=$object->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
         if ($crowid <= 0)
         {
             $error++;
             $errmsg=$object->error;
-            $errmsgs=$object->errors;
+	        setEventMessage($object->errors, 'errors');
         }
 
         if (! $error)
@@ -300,14 +299,14 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 $insertid=$acct->addline($dateop, $operation, $label, $cotisation, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
                 if ($insertid > 0)
                 {
-                    $inserturlid=$acct->add_url_line($insertid, $object->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $object->getFullname($langs), 'member');
+                    $inserturlid=$acct->add_url_line($insertid, $object->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $object->getFullname($langs), 'member');
                     if ($inserturlid > 0)
                     {
                         // Met a jour la table cotisation
                         $sql ="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid;
                         $sql.=" WHERE rowid=".$crowid;
 
-                        dol_syslog("card_subscriptions::cotisation sql=".$sql);
+                        dol_syslog("card_subscriptions::cotisation", LOG_DEBUG);
                         $resql = $db->query($sql);
                         if (! $resql)
                         {
@@ -444,7 +443,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         if (! ($bank_line_id > 0))
                         {
                             $errmsg=$paiement->error;
-                            $errmsgs=$paiement->errors;
+	                        setEventMessage($paiement->errors, 'errors');
                             $error++;
                         }
                     }
@@ -454,8 +453,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         // Update fk_bank into subscription table
                         $sql = 'UPDATE '.MAIN_DB_PREFIX.'cotisation SET fk_bank='.$bank_line_id;
                         $sql.= ' WHERE rowid='.$crowid;
-                        dol_syslog('sql='.$sql);
-                        $result = $db->query($sql);
+
+	                    $result = $db->query($sql);
                         if (! $result)
                         {
                             $error++;
@@ -483,7 +482,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 						}
                     	// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
 						//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-							facture_pdf_create($db, $invoice, $invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+	                    $invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 
                     }
@@ -555,7 +555,7 @@ if ($rowid)
     print '<input type="hidden" name="rowid" value="'.$object->id.'">';
     print '<table class="border" width="100%">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
 
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
@@ -689,7 +689,7 @@ if ($rowid)
     dol_fiche_end();
 
 
-    dol_htmloutput_errors($errmsg,$errmsgs);
+    dol_htmloutput_errors($errmsg);
 
 
     /*

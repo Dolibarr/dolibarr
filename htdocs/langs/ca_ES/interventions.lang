@@ -24,10 +24,12 @@ NameAndSignatureOfInternalContact=Nom i signatura del participant:
 NameAndSignatureOfExternalContact=Nom i signatura del client:
 DocumentModelStandard=Document model estàndard per a intervencions
 InterventionCardsAndInterventionLines=Fitxes i línies d'intervenció
-ClassifyBilled=Classificar "Facturado"
+InterventionClassifyBilled=Classify "Billed"
+InterventionClassifyUnBilled=Classify "Unbilled"
 StatusInterInvoiced=Facturado
 RelatedInterventions=Intervencions adjuntes
 ShowIntervention=Mostrar intervenció
+SendInterventionRef=Submission of intervention %s
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable seguiment de la intervenció
 TypeContact_fichinter_internal_INTERVENING=Interventor

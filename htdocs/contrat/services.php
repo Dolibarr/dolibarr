@@ -80,7 +80,7 @@ $form=new Form($db);
 llxHeader();
 
 $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut,";
-$sql.= " s.rowid as socid, s.nom,";
+$sql.= " s.rowid as socid, s.nom as name,";
 $sql.= " cd.rowid, cd.description, cd.statut,";
 $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
@@ -113,7 +113,7 @@ $sql .= $db->order($sortfield,$sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
 //print $sql;
-dol_syslog("contrat/services.php sql=".$sql);
+dol_syslog("contrat/services.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -136,24 +136,24 @@ if ($resql)
 	if ($mode == "4" && $filter != "expired") $title=$langs->trans("ListOfRunningServices");
 	if ($mode == "4" && $filter == "expired") $title=$langs->trans("ListOfExpiredServices");
 	if ($mode == "5") $title=$langs->trans("ListOfClosedServices");
-	print_barre_liste($title, $page, "services.php", $param, $sortfield, $sortorder,'',$num);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
 	print '<table class="liste" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Contract"),"services.php", "c.rowid",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Service"),"services.php", "p.description",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),"services.php", "s.nom",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Contract"),$_SERVER["PHP_SELF"], "c.rowid",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Service"),$_SERVER["PHP_SELF"], "p.description",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"], "s.nom",$param,"","",$sortfield,$sortorder);
 	// Date debut
-	if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),"services.php", "cd.date_ouverture_prevue",$param,'',' align="center"',$sortfield,$sortorder);
-	if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),"services.php", "cd.date_ouverture",$param,'',' align="center"',$sortfield,$sortorder);
+	if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),$_SERVER["PHP_SELF"], "cd.date_ouverture_prevue",$param,'',' align="center"',$sortfield,$sortorder);
+	if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),$_SERVER["PHP_SELF"], "cd.date_ouverture",$param,'',' align="center"',$sortfield,$sortorder);
 	// Date fin
-	if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),"services.php", "cd.date_fin_validite",$param,'',' align="center"',$sortfield,$sortorder);
-	else print_liste_field_titre($langs->trans("DateEndRealShort"),"services.php", "cd.date_cloture",$param,'',' align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"services.php", "cd.statut,c.statut",$param,"","align=\"right\"",$sortfield,$sortorder);
+	if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),$_SERVER["PHP_SELF"], "cd.date_fin_validite",$param,'',' align="center"',$sortfield,$sortorder);
+	else print_liste_field_titre($langs->trans("DateEndRealShort"),$_SERVER["PHP_SELF"], "cd.date_cloture",$param,'',' align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"], "cd.statut,c.statut",$param,"","align=\"right\"",$sortfield,$sortorder);
 	print "</tr>\n";
 
-	print '<form method="POST" action="services.php">';
+	print '<form method="POST" action="'. $_SERVER["PHP_SELF"] .'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	print '<tr class="liste_titre">';
@@ -225,7 +225,7 @@ if ($resql)
 		// Third party
 		print '<td>';
 		$companystatic->id=$obj->socid;
-		$companystatic->nom=$obj->nom;
+		$companystatic->name=$obj->name;
 		$companystatic->client=1;
 		print $companystatic->getNomUrl(1,'customer',28);
 		print '</td>';

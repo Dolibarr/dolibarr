@@ -69,7 +69,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
 					$result=$bankline->update_conciliation($user,$_POST["cat"]);
 					if ($result < 0)
 					{
-						$mesg.=$bankline->error;
+						setEventMessage($bankline->error, 'errors');
 						$error++;
 						break;
 					}
@@ -81,7 +81,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
     {
     	$error++;
     	$langs->load("errors");
-        $mesg='<div class="error">'.$langs->trans("ErrorPleaseTypeBankTransactionReportName").'</div>';
+	    setEventMessage($langs->trans("ErrorPleaseTypeBankTransactionReportName"), 'errors');
     }
 
     if (! $error)
@@ -183,8 +183,6 @@ if ($resql)
     print_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>');
     print '<br>';
 
-    dol_htmloutput_mesg($mesg);
-
     // Show last bank receipts
     $nbmax=5;
     $liste="";
@@ -265,11 +263,13 @@ if ($resql)
 		{
 			print '<td align="center" class="nowrap">';
 			print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv),"day")."</span>";
-			print ' <span>&nbsp; ';
+			print ' &nbsp';
+			print '<span>';
 			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
 			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
-			print img_edit_add() ."</a></span>";
+			print img_edit_add() ."</a>";
+			print '</span>';
 			print '</td>';
 		}
 		else
@@ -327,7 +327,7 @@ if ($resql)
 			else if ($links[$key]['type']=='payment_sc')
 			{
 			    // We don't show anything because there is 1 payment for 1 social contribution and we already show link to social contribution
-				/*print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
+				/*print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
 				print img_object($langs->trans('ShowPayment'),'payment').' ';
 				print $langs->trans("SocialContributionPayment");
 				print '</a>';*/
@@ -347,7 +347,7 @@ if ($resql)
 				print '</a>';
 			}
 			else if ($links[$key]['type']=='member') {
-				print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
+				print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
 				print img_object($langs->trans('ShowMember'),'user').' ';
 				print $links[$key]['label'];
 				print '</a>';

@@ -62,10 +62,11 @@ if ($actionsave)
 	// Save agendas
 	while ($i <= $MAXAGENDA)
 	{
-		$name=trim(GETPOST('agenda_ext_name'.$i,'alpha'));
-		$src=trim(GETPOST('agenda_ext_src'.$i,'alpha'));
-		$color=trim(GETPOST('agenda_ext_color'.$i,'alpha'));
+		$name=trim(GETPOST('AGENDA_EXT_NAME'.$i,'alpha'));
+		$src=trim(GETPOST('AGENDA_EXT_SRC'.$i,'alpha'));
+		$color=trim(GETPOST('AGENDA_EXT_COLOR'.$i,'alpha'));
 		if ($color=='-1') $color='';
+		$enabled=trim(GETPOST('AGENDA_EXT_ENABLED'.$i,'alpha'));
 
 		if (! empty($src) && ! dol_is_url($src))
 		{
@@ -81,6 +82,8 @@ if ($actionsave)
 		$res=dolibarr_set_const($db,'AGENDA_EXT_SRC'.$i,$src,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
 		$res=dolibarr_set_const($db,'AGENDA_EXT_COLOR'.$i,$color,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		$res=dolibarr_set_const($db,'AGENDA_EXT_ENABLED'.$i,$enabled,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
 		$i++;
 	}
@@ -195,19 +198,20 @@ while ($i <= $MAXAGENDA)
 	$name='AGENDA_EXT_NAME'.$key;
 	$src='AGENDA_EXT_SRC'.$key;
 	$color='AGENDA_EXT_COLOR'.$key;
+	$enabled='AGENDA_EXT_ENABLED'.$key;
 
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
 	// Nb
 	print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";
 	// Name
-	print '<td><input type="text" class="flat hideifnotset" name="agenda_ext_name'.$key.'" value="'. (GETPOST('agenda_ext_name'.$key)?GETPOST('agenda_ext_name'.$key):$conf->global->$name) . '" size="28"></td>';
+	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_NAME'.$key.'" value="'. (GETPOST('AGENDA_EXT_NAME'.$key)?GETPOST('AGENDA_EXT_NAME'.$key):$conf->global->$name) . '" size="28"></td>';
 	// URL
-	print '<td><input type="url" class="flat hideifnotset" name="agenda_ext_src'.$key.'" value="'. (GETPOST('agenda_ext_src'.$key)?GETPOST('agenda_ext_src'.$key):$conf->global->$src) . '" size="60"></td>';
+	print '<td><input type="url" class="flat hideifnotset" name="AGENDA_EXT_SRC'.$key.'" value="'. (GETPOST('AGENDA_EXT_SRC'.$key)?GETPOST('AGENDA_EXT_SRC'.$key):$conf->global->$src) . '" size="60"></td>';
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowrap" align="right">';
 	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
-	print $formother->selectColor((GETPOST("agenda_ext_color".$key)?GETPOST("agenda_ext_color".$key):$conf->global->$color), "agenda_ext_color".$key, 'extsitesconfig', 1, '', 'hideifnotset');
+	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR".$key)?GETPOST("AGENDA_EXT_COLOR".$key):$conf->global->$color), "AGENDA_EXT_COLOR".$key, 'extsitesconfig', 1, '', 'hideifnotset');
 	print '</td>';
 	print "</tr>";
 	$i++;

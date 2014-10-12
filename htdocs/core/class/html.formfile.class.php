@@ -355,6 +355,15 @@ class FormFile
                     $modellist=ModelePDFFactures::liste_modeles($this->db);
                 }
             }
+            elseif ($modulepart == 'contract')
+            {
+            	if (is_array($genallowed)) $modellist=$genallowed;
+            	else
+            	{
+            		include_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
+            		$modellist=ModelePDFContract::liste_modeles($this->db);
+            	}
+            }
             elseif ($modulepart == 'project')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
@@ -465,14 +474,14 @@ class FormFile
             // Model
             if (! empty($modellist))
             {
-                $out.= '<th align="center" class="formdoc liste_titre">';
+                $out.= '<th align="center" class="formdoc liste_titre maxwidthonsmartphone">';
                 $out.= '<span class="hideonsmartphone">'.$langs->trans('Model').' </span>';
                 if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
                 {
                     $arraykeys=array_keys($modellist);
                     $modelselected=$arraykeys[0];
                 }
-                $out.= $form->selectarray('model',$modellist,$modelselected,$showempty,0,0);
+                $out.= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', '');
                 $out.= '</th>';
             }
             else
@@ -483,7 +492,7 @@ class FormFile
             }
 
             // Language code (if multilang)
-            $out.= '<th align="center" class="formdoc liste_titre">';
+            $out.= '<th align="center" class="formdoc liste_titre maxwidthonsmartphone">';
             if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && ! $forcenomultilang && (! empty($modellist) || $showempty))
             {
                 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -499,7 +508,7 @@ class FormFile
 
             // Button
             $addcolumforpicto=($delallowed || $printer || $morepicto);
-            $out.= '<th align="center" colspan="'.($addcolumforpicto?'2':'1').'" class="formdocbutton liste_titre">';
+            $out.= '<th align="center" colspan="'.($addcolumforpicto?'2':'1').'" class="formdocbutton liste_titre maxwidthonsmartphone">';
             $genbutton = '<input class="button" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
             $genbutton.= ' type="submit" value="'.$buttonlabel.'"';
             if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $genbutton.= ' disabled="disabled"';
@@ -620,7 +629,7 @@ class FormFile
 
 			 	if (count($file_list) == 0 && $headershown)
 	            {
-    	        	$out.='<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
+    	        	$out.='<tr '.$bc[0].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
         	    }
 
                 $this->numoffiles++;
@@ -759,7 +768,7 @@ class FormFile
 
 			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-			$var=true;
+			$var=false;
 			foreach($filearray as $key => $file)      // filearray must be only files here
 			{
 				if ($file['name'] != '.'
@@ -936,6 +945,16 @@ class FormFile
         	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
         	$object_instance=new Project($this->db);
         }
+        else if ($modulepart == 'fichinter')
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+        	$object_instance=new Fichinter($this->db);
+        }
+        else if ($modulepart == 'user')
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+        	$object_instance=new User($this->db);
+        }
 
         $var=true;
         foreach($filearray as $key => $file)
@@ -962,7 +981,9 @@ class FormFile
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'product')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'tax')              { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'project')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'project')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'fichinter')        { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'user')             { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
 
                 if (! $id && ! $ref) continue;
 
@@ -1129,7 +1150,7 @@ class FormFile
         $nboflinks = count($links);
         if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-        $var = true;
+        $var = false;
         foreach ($links as $link)
         {
             $var =! $var;

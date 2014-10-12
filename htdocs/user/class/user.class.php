@@ -72,8 +72,10 @@ class User extends CommonObject
 	var $datem;
 
 	//! If this is defined, it is an external user
-	var $societe_id;
-	var $contact_id;
+	var $societe_id;	// deprecated
+	var $contact_id;	// deprecated
+	var $socid;
+	var $contactid;
 
 	var $fk_member;
 	var $fk_user;
@@ -101,6 +103,10 @@ class User extends CommonObject
 
 	var $accountancy_code;				// Accountancy code in prevision of the complete accountancy module
 	var $thm;							// Average cost of employee
+	var $tjm;							// Average cost of employee
+	var $salary;						// Monthly salary
+	var $salaryextra;					// Monthly salary extra
+	var $weeklyhours;					// Weekly hours
 
 
 	/**
@@ -156,6 +162,10 @@ class User extends CommonObject
 		$sql.= " u.openid as openid,";
 		$sql.= " u.accountancy_code,";
 		$sql.= " u.thm,";
+		$sql.= " u.tjm,";
+		$sql.= " u.salary,";
+		$sql.= " u.salaryextra,";
+		$sql.= " u.weeklyhours,";
 		$sql.= " u.ref_int, u.ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
@@ -181,7 +191,7 @@ class User extends CommonObject
 			$sql.= " AND u.rowid = ".$id;
 		}
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -219,14 +229,20 @@ class User extends CommonObject
 				$this->entity		= $obj->entity;
 				$this->accountancy_code		= $obj->accountancy_code;
 				$this->thm			= $obj->thm;
+				$this->tjm			= $obj->tjm;
+				$this->salary		= $obj->salary;
+				$this->salaryextra	= $obj->salaryextra;
+				$this->weeklyhours	= $obj->weeklyhours;
 
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->datelastlogin		= $this->db->jdate($obj->datel);
 				$this->datepreviouslogin	= $this->db->jdate($obj->datep);
 
-				$this->societe_id           = $obj->fk_societe;
-				$this->contact_id           = $obj->fk_socpeople;
+				$this->societe_id           = $obj->fk_societe;		// deprecated
+				$this->contact_id           = $obj->fk_socpeople;	// deprecated
+				$this->socid                = $obj->fk_societe;
+				$this->contactid            = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
 
@@ -251,7 +267,6 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
@@ -261,7 +276,7 @@ class User extends CommonObject
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 			$sql.= " WHERE fk_user = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
-			//dol_syslog(get_class($this).'::fetch load personalized conf sql='.$sql, LOG_DEBUG);
+			//dol_syslog(get_class($this).'::fetch load personalized conf', LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -279,7 +294,6 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog(get_class($this)."::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql, LOG_ERR);
 				return -2;
 			}
 		}
@@ -537,7 +551,7 @@ class User extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getrights sql='.$sql, LOG_DEBUG);
+		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -587,7 +601,7 @@ class User extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getrights sql='.$sql, LOG_DEBUG);
+		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -664,15 +678,13 @@ class User extends CommonObject
 		$sql.= " WHERE rowid = ".$this->id;
 		$result = $this->db->query($sql);
 
-		dol_syslog(get_class($this)."::setstatus sql=".$sql);
+		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
 		if ($result)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('USER_ENABLEDISABLE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('USER_ENABLEDISABLE',$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
 		}
 
 		if ($error)
@@ -703,13 +715,15 @@ class User extends CommonObject
 
 		$this->fetch($this->id);
 
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
 		// Supprime droits
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id;
+
 		if (! $error && ! $this->db->query($sql))
 		{
 			$error++;
         	$this->error = $this->db->lasterror();
-        	dol_syslog(get_class($this)."::delete error -1 ".$this->error, LOG_ERR);
 		}
 
 		// Remove group
@@ -718,7 +732,6 @@ class User extends CommonObject
 		{
 			$error++;
         	$this->error = $this->db->lasterror();
-        	dol_syslog(get_class($this)."::delete error -2 ".$this->error, LOG_ERR);
 		}
 
 		// Si contact, supprime lien
@@ -729,7 +742,6 @@ class User extends CommonObject
 			{
 				$error++;
 	        	$this->error = $this->db->lasterror();
-	        	dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
 			}
 		}
 
@@ -748,23 +760,25 @@ class User extends CommonObject
         if (! $error)
         {
 	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->id;
-	       	dol_syslog(get_class($this)."::delete sql=".$sql);
+	       	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 	       	if (! $this->db->query($sql))
 	       	{
 	       		$error++;
 	       		$this->error = $this->db->lasterror();
-	       		dol_syslog(get_class($this)."::delete error -5 ".$this->error, LOG_ERR);
 	       	}
         }
 
 		if (! $error)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('USER_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('USER_DELETE',$user);
+	        if ($result < 0)
+	        {
+	            $error++;
+	            $this->db->rollback();
+			    return -1;
+	        }
+            // End call triggers
 
 			$this->db->commit();
 			return 1;
@@ -811,7 +825,7 @@ class User extends CommonObject
 		$sql.= " WHERE login ='".$this->db->escape($this->login)."'";
 		$sql.= " AND entity IN (0,".$this->db->escape($conf->entity).")";
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -831,7 +845,7 @@ class User extends CommonObject
 				$sql.= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->ldap_sid."',".$this->db->escape($this->entity).")";
 				$result=$this->db->query($sql);
 
-				dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				if ($result)
 				{
 					$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."user");
@@ -866,12 +880,10 @@ class User extends CommonObject
 
 					if (! $notrigger)
 					{
-						// Appel des triggers
-						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-						$interface = new Interfaces($this->db);
-						$result = $interface->run_triggers('USER_CREATE',$this,$user,$langs,$conf);
-						if ($result < 0) { $error++; $this->errors=$interface->errors; }
-						// Fin appel triggers
+                        // Call trigger
+                        $result=$this->call_trigger('USER_CREATE',$user);
+            	        if ($result < 0) { $error++; }
+                        // End call triggers
 					}
 
 					if (! $error)
@@ -881,7 +893,7 @@ class User extends CommonObject
 					}
 					else
 					{
-						$this->error=$interface->error;
+						//$this->error=$interface->error;
 						dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 						$this->db->rollback();
 						return -3;
@@ -890,7 +902,6 @@ class User extends CommonObject
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -2;
 				}
@@ -899,7 +910,6 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -950,15 +960,13 @@ class User extends CommonObject
 			$sql.= " WHERE rowid=".$this->id;
 			$resql=$this->db->query($sql);
 
-			dol_syslog(get_class($this)."::create_from_contact sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::create_from_contact", LOG_DEBUG);
 			if ($resql)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface = new Interfaces($this->db);
-				$result = $interface->run_triggers('USER_CREATE_FROM_CONTACT',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('USER_CREATE_FROM_CONTACT',$user);
+                if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+                // End call triggers
 
 				$this->db->commit();
 				return $this->id;
@@ -966,7 +974,6 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog(get_class($this)."::create_from_contact ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -1;
@@ -1025,7 +1032,7 @@ class User extends CommonObject
 				$sql.= " SET fk_societe=".$member->fk_soc;
 				$sql.= " WHERE rowid=".$this->id;
 
-				dol_syslog(get_class($this)."::create_from_member sql=".$sql, LOG_DEBUG);
+				dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -1035,7 +1042,6 @@ class User extends CommonObject
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::create_from_member - 1 - ".$this->error, LOG_ERR);
 
 					$this->db->rollback();
 					return -1;
@@ -1051,8 +1057,6 @@ class User extends CommonObject
 		else
 		{
 			// $this->error deja positionne
-			dol_syslog(get_class($this)."::create_from_member - 2 - ".$this->error, LOG_ERR);
-
 			$this->db->rollback();
 			return -2;
 		}
@@ -1168,15 +1172,19 @@ class User extends CommonObject
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
-		$sql.= ", thm = ".(isset($this->thm)?$this->thm:"null");	// If not set, we use null
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
 		$sql.= ", fk_user = ".($this->fk_user > 0?"'".$this->db->escape($this->fk_user)."'":"null");
+		if (isset($this->thm) || $this->thm != '')                 $sql.= ", thm= ".($this->thm != ''?"'".$this->db->escape($this->thm)."'":"null");
+		if (isset($this->tjm) || $this->tjm != '')                 $sql.= ", tjm= ".($this->tjm != ''?"'".$this->db->escape($this->tjm)."'":"null");
+		if (isset($this->salary) || $this->salary != '')           $sql.= ", salary= ".($this->salary != ''?"'".$this->db->escape($this->salary)."'":"null");
+		if (isset($this->salaryextra) || $this->salaryextra != '') $sql.= ", salaryextra= ".($this->salaryextra != ''?"'".$this->db->escape($this->salaryextra)."'":"null");
+		$sql.= ", weeklyhours= ".($this->weeklyhours != ''?"'".$this->db->escape($this->weeklyhours)."'":"null");
 		$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1197,13 +1205,13 @@ class User extends CommonObject
 			if ($this->fk_member > 0)
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->fk_member;
-				dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+				dol_syslog(get_class($this)."::update", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
 			}
 			// Set link to user
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member =".($this->fk_member>0?$this->fk_member:'null')." where rowid = ".$this->id;
-			dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::update", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
 
@@ -1271,12 +1279,10 @@ class User extends CommonObject
 
 			if (! $error && ! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('USER_MODIFY',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('USER_MODIFY',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
 			}
 
 			if (! $error)
@@ -1286,7 +1292,6 @@ class User extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->lasterror();
 				dol_syslog(get_class($this)."::update error=".$this->error,LOG_ERR);
 				$this->db->rollback();
 				return -1;
@@ -1295,7 +1300,6 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::update error=".$this->error,LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -1367,6 +1371,8 @@ class User extends CommonObject
 		{
 		    if (! is_object($this->oldcopy)) $this->oldcopy=dol_clone($this);
 
+		    $this->db->begin();
+
 		    $sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql.= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql.= " pass_temp = null";
@@ -1380,7 +1386,7 @@ class User extends CommonObject
 			}
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::setPassword sql=hidden", LOG_DEBUG);
+			dol_syslog(get_class($this)."::setPassword", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -1420,23 +1426,24 @@ class User extends CommonObject
 
 					if (! $error && ! $notrigger)
 					{
-						// Appel des triggers
-						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-						$interface=new Interfaces($this->db);
-						$result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$langs,$conf);
-						if ($result < 0) $this->errors=$interface->errors;
-						// Fin appel triggers
+                        // Call trigger
+                        $result=$this->call_trigger('USER_NEW_PASSWORD',$user);
+                        if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+                        // End call triggers
 					}
 
+					$this->db->commit();
 					return $this->pass;
 				}
 				else
 				{
+				    $this->db->rollback();
 					return 0;
 				}
 			}
 			else
 			{
+			    $this->db->rollback();
 				dol_print_error($this->db);
 				return -1;
 			}
@@ -1449,7 +1456,7 @@ class User extends CommonObject
 			$sql.= " SET pass_temp = '".$this->db->escape($password)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::setPassword sql=hidden", LOG_DEBUG);	// No log
+			dol_syslog(get_class($this)."::setPassword", LOG_DEBUG);	// No log
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -1617,7 +1624,7 @@ class User extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_clicktodial";
 		$sql .= " WHERE fk_user = ".$this->id;
 
-		dol_syslog(get_class($this).'::update_clicktodial sql='.$sql);
+		dol_syslog(get_class($this).'::update_clicktodial', LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_clicktodial";
@@ -1628,7 +1635,7 @@ class User extends CommonObject
 		$sql .= ", '". $this->db->escape($this->clicktodial_password) ."'";
 		$sql .= ", '". $this->db->escape($this->clicktodial_poste) ."')";
 
-		dol_syslog(get_class($this).'::update_clicktodial sql='.$sql);
+		dol_syslog(get_class($this).'::update_clicktodial', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1677,12 +1684,10 @@ class User extends CommonObject
 			{
 			    $this->newgroupid=$group;
 
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('USER_SETINGROUP',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+			    // Call trigger
+                $result=$this->call_trigger('USER_SETINGROUP',$user);
+	            if ($result < 0) { $error++; }
+                // End call triggers
 			}
 
 			if (! $error)
@@ -1692,7 +1697,6 @@ class User extends CommonObject
 			}
 			else
 			{
-				$this->error=$interface->error;
 				dol_syslog(get_class($this)."::SetInGroup ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -1701,7 +1705,6 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::SetInGroup ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1735,12 +1738,10 @@ class User extends CommonObject
 			{
 			    $this->oldgroupid=$group;
 
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('USER_REMOVEFROMGROUP',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+			    // Call trigger
+                $result=$this->call_trigger('USER_REMOVEFROMGROUP',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
 			}
 
 			if (! $error)
@@ -1759,7 +1760,6 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::RemoveFromGroup ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1779,7 +1779,7 @@ class User extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($withpicto)
@@ -1804,12 +1804,12 @@ class User extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($option == 'xxx')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 			$lienfin='</a>';
 		}
 
@@ -2199,7 +2199,7 @@ class User extends CommonObject
 		$sql.= " WHERE fk_user <> 0";
 		$sql.= " AND entity IN (".getEntity('user',1).")";
 
-		dol_syslog(get_class($this)."::load_parentof sql=".$sql);
+		dol_syslog(get_class($this)."::load_parentof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2249,7 +2249,7 @@ class User extends CommonObject
 		{
 			$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 		}
-		dol_syslog(get_class($this)."::get_full_tree get user list sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_full_tree get user list", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2301,7 +2301,7 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::get_full_tree dol_sort_array", LOG_DEBUG);
 		$this->users=dol_sort_array($this->users, 'fullname', 'asc', true, false);
 
-		//$this->debug_users();
+		//var_dump($this->users);
 
 		return $this->users;
 	}
@@ -2340,25 +2340,6 @@ class User extends CommonObject
 		$this->users[$id_user]['level']=dol_strlen(preg_replace('/[^_]/i','',$this->users[$id_user]['fullpath']));
 
 		return;
-	}
-
-	/**
-	 *	Affiche contenu de $this->users
-	 *
-	 *	@return	void
-	 */
-	function debug_users()
-	{
-		// Affiche $this->users
-		foreach($this->users as $key => $val)
-		{
-			print 'id: '.$this->users[$key]['id'];
-			print ' name: '.$this->users[$key]['name'];
-			print ' parent: '.$this->users[$key]['fk_user'];
-			print ' fullpath: '.$this->users[$key]['fullpath'];
-			print ' fullname: '.$this->users[$key]['fullname'];
-			print "<br>\n";
-		}
 	}
 
 }

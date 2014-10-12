@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - errors
 
 # No errors
-NoErrorCommitIsDone=No error, we commit
+NoErrorCommitIsDone=Kein Fehler, wir führen fort
 # Errors
 Error=Fehler
 Errors=Fehler
-ErrorButCommitIsDone=Errors found but we validate despite this
+ErrorButCommitIsDone=Fehler aufgetreten, Freigabe erfolgt dennoch
 ErrorBadEMail=E-Mail %s ist nicht korrekt
 ErrorBadUrl=URL %s ist nicht korrekt
 ErrorLoginAlreadyExists=Login %s existiert bereits.
@@ -63,7 +63,7 @@ ErrorSizeTooLongForVarcharType=Die Größe überschreitet das Maximum für den T
 ErrorNoValueForSelectType=Bitte Wert für Auswahlliste eingeben
 ErrorNoValueForCheckBoxType=Bitte Wert für Checkbox-Liste eingeben
 ErrorNoValueForRadioType=Bitte Wert für Radiobutton-Liste eingeben
-ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
+ErrorBadFormatValueList=Die Liste darf nicht mehr als ein <u>%s</u> enthalten, muss aber mindestens eines aus "llave,valores" beinhalten
 ErrorFieldCanNotContainSpecialCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen enthalten.
 ErrorFieldCanNotContainSpecialNorUpperCharacters=Das Feld <b>%s</b> darf weder Sonderzeichen noch Großbuchstaben enthalten.
 ErrorNoAccountancyModuleLoaded=Kein Buchhaltungsmodul aktiviert
@@ -133,9 +133,10 @@ ErrorPHPNeedModule=Fehler, Ihr PHP muss das Modul <b>%s</b> installiert haben um
 ErrorOpenIDSetupNotComplete=Sie haben im Dolibarr Konfigurationsfile eingestellt, dass die Anmeldung mit OpenID möglich ist, aber die URL zum OpenID Service ist noch nicht in %s definiert.
 ErrorWarehouseMustDiffers=Quell- und Ziel-Lager müssen unterschiedlich sein
 ErrorBadFormat=Falsches Format!
-ErrorPaymentDateLowerThanInvoiceDate=Zahlungsdatum (%s) darf nicht vor Rechnungsdatum (%s) liegen für Rechnung %s.
-ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Fehler: Dieses Mitglied ist noch nicht mit einem Partner verbunden. Verknüpfen Sie das Mitglied zuerst mit einem vorhandenen Partner oder legen Sie einen neuen an, bevor Sie ein Abonnement mit Rechnung erstellen.
 ErrorThereIsSomeDeliveries=Fehler: Lieferung(en) zu dieser Sendung vorhanden. Löschen nicht möglich.
+ErrorCantDeletePaymentReconciliated=Eine Zahlung, deren Bank-Transaktion schon abgeglichen wurde, kann nicht gelöscht werden
+ErrorCantDeletePaymentSharedWithPayedInvoice=Eine Zahlung, die zu mindestens einer als bezahlt markierten Rechnung gehört, kann nicht entfernt werden
 
 # Warnings
 WarningMandatorySetupNotComplete=Zwingend notwendige Parameter sind noch nicht definiert
@@ -149,8 +150,10 @@ WarningsOnXLines=Warnhinweise in <b>%s</b> Quellzeilen
 WarningNoDocumentModelActivated=Für das Erstellen von Dokumenten ist keine Vorlage gewählt. Eine Vorlage wird standardmäßig ausgewählt, bis Sie die Moduleinstellungen angepasst haben.
 WarningLockFileDoesNotExists=Warnung, wenn Setup abgeschlossen ist, müssen Sie die Installations- und Migration-Tools deaktivieren. Dazu fügen Sie die Datei <b>install.lock</b> dem Verzeichnis <b> %s</b> hinzu. Das fehlend dieser Datei stelle eine Sicherheitslücke dar.
 WarningUntilDirRemoved=Diese Warnung bleibt so lange bestehen, bis die Sicherheitslücke geschlossen wurde (nur für Administratoren sichtbar).
-WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
+WarningCloseAlways=Achtung: es wird auch dann geschlossen, wenn der Betrag zwischen Quelle und Ziel unterschiedlich ist. Aktivieren Sie dieses Feature mit Bedacht.
 WarningUsingThisBoxSlowDown=Warnung: Der Einsatz dieser Box verlangsamt sämtliche Seiten mit dieser Box spürbar.
 WarningClickToDialUserSetupNotComplete=Die ClickToDial-Informationen für Ihren Benutzer sind nicht vollständig (siehe Registerkarte ClickToDial auf Ihrer Benutzerkarte).
-WarningNotRelevant=Irrelevant operation for this dataset
-WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.
+WarningNotRelevant=Operation für dieses Daten-Set nicht relevant
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funktion deaktiviert, wenn die Bildschirm-Ausgabe für Blinde oder Text-Browser optimiert ist.
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
+WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters

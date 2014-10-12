@@ -37,9 +37,6 @@ $action=GETPOST('action','alpha');
 $month=GETPOST('month');
 $year=GETPOST('year');
 
-$mesg='';
-$mesgs=array();
-
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -64,7 +61,7 @@ if ($action == 'builddoc')
 	$result=$cat->write_file(GETPOST('id','int'));
 	if ($result < 0)
 	{
-		$mesg=$cat->error;
+		setEventMessage($cat->error, 'errors');
 	}
 }
 
@@ -89,15 +86,13 @@ $sql.= " ORDER BY year DESC, month DESC, df DESC";
 $sql.= $db->plimit($limit+1,$offset);
 
 //print $sql;
-dol_syslog("select sql=".$sql);
+dol_syslog("select", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-	print_barre_liste($langs->trans("Actions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
-
-	dol_htmloutput_mesg($mesg,$mesgs);
+	print_barre_liste($langs->trans("Actions"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
 
 	$i = 0;
 	print '<table class="noborder" width="100%">';

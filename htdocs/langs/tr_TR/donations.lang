@@ -30,3 +30,4 @@ SearchADonation=Bağış ara
 DonationRecipient=Bağış alıcısı
 ThankYou=Teşekkürler
 IConfirmDonationReception=Alıcı, bağış olarak aşağıdaki tutarı aldığını belirtir
+MinimumAmount=Minimum amount is  %s

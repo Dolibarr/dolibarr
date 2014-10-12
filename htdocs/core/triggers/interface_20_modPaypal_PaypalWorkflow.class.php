@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012  Regis Houssin  <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,80 +22,31 @@
  *      \brief      Trigger file for paypal workflow
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
  *  Class of triggers for paypal module
  */
-class InterfacePaypalWorkflow
+class InterfacePaypalWorkflow extends DolibarrTriggers
 {
-    var $db;
+	public $picto = 'paypal@paypal';
+	public $family = 'paypal';
+	public $description = "Triggers of this module allows to manage paypal workflow";
+	public $version = self::VERSION_DOLIBARR;
 
-    /**
-     *   Constructor
-     *
-     *   @param		DoliDB		$db      Database handler
-     */
-    function __construct($db)
-    {
-        $this->db = $db;
-
-        $this->name = preg_replace('/^Interface/i','',get_class($this));
-        $this->family = "paypal";
-        $this->description = "Triggers of this module allows to manage paypal workflow";
-        $this->version = 'dolibarr';            // 'development', 'experimental', 'dolibarr' or version
-        $this->picto = 'paypal@paypal';
-    }
-
-
-    /**
-     *  Renvoi nom du lot de triggers
-     *
-     *  @return     string      Nom du lot de triggers
-     */
-    function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     *  Renvoi descriptif du lot de triggers
-     *
-     *  @return     string      Descriptif du lot de triggers
-     */
-    function getDesc()
-    {
-        return $this->description;
-    }
-
-    /**
-     *  Renvoi version du lot de triggers
-     *
-     *  @return     string      Version du lot de triggers
-     */
-    function getVersion()
-    {
-        global $langs;
-        $langs->load("admin");
-
-        if ($this->version == 'development') return $langs->trans("Development");
-        elseif ($this->version == 'experimental') return $langs->trans("Experimental");
-        elseif ($this->version == 'dolibarr') return DOL_VERSION;
-        elseif ($this->version) return $this->version;
-        else return $langs->trans("Unknown");
-    }
-
-    /**
-     *  Fonction appelee lors du declenchement d'un evenement Dolibarr.
-     *  D'autres fonctions run_trigger peuvent etre presentes dans core/triggers
-     *
-     *      @param	string		$action		Event action code
-     *      @param  Object		$object     Object
-     *      @param  User		$user       Object user
-     *      @param  Translate	$langs      Object langs
-     *      @param  conf		$conf       Object conf
-     *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
-     */
-	function run_trigger($action,$object,$user,$langs,$conf)
+	/**
+	 * Function called when a Dolibarrr business event is done.
+	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
+	 *
+	 * @param string		$action		Event action code
+	 * @param Object		$object     Object
+	 * @param User			$user       Object user
+	 * @param Translate		$langs      Object langs
+	 * @param conf			$conf       Object conf
+	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 */
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
     {
         // Mettre ici le code a executer en reaction de l'action
         // Les donnees de l'action sont stockees dans $object

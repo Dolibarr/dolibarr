@@ -76,7 +76,7 @@ class FormProduct
 		$sql.= " AND e.statut = 1";
 		$sql.= " ORDER BY e.label";
 
-		dol_syslog(get_class($this).'::loadWarehouses sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

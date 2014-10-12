@@ -58,9 +58,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *	Constructor
 	 *
 	 *  @param	DoliDB		$db     	Database handler
-	 *  @param	Object		$object		Supplier invoice
 	 */
-	function __construct($db,$object)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -90,12 +89,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 
 		$this->franchise=!$mysoc->tva_assuj;
-
-        // Get source company
-        if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
-        if (! is_object($object->thirdparty)) $object->thirdparty=$mysoc;	// If fetch_thirdparty fails, object has no socid (specimen)
-        $this->emetteur=$object->thirdparty;
-        if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
         // Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -138,6 +131,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	function write_file($object, $outputlangs='', $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$hookmanager;
+
+		// Get source company
+		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
+		if (! is_object($object->thirdparty)) $object->thirdparty=$mysoc;	// If fetch_thirdparty fails, object has no socid (specimen)
+		$this->emetteur=$object->thirdparty;
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -184,6 +183,17 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 			if (file_exists($dir))
 			{
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
@@ -861,7 +871,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -1006,12 +1015,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			{
 				// On peut utiliser le nom de la societe du contact
 				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
-				else $socname = $mysoc->nom;
+				else $socname = $mysoc->name;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
 			else
 			{
-				$carac_client_name=$outputlangs->convToOutputCharset($mysoc->nom);
+				$carac_client_name=$outputlangs->convToOutputCharset($mysoc->name);
 			}
 
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$mysoc,((!empty($object->contact))?$object->contact:null),$usecontact,'target');
@@ -1053,7 +1062,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		$showdetails=0;
+		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }

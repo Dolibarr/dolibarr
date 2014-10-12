@@ -137,7 +137,7 @@ class Opensurveysondage extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -147,12 +147,10 @@ class Opensurveysondage extends CommonObject
 			{
 				global $langs, $conf;
 
-	            //// Call triggers
-	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('OPENSURVEY_CREATE',$this,$user,$langs,$conf);
-	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
+                // Call trigger
+                $result=$this->call_trigger('OPENSURVEY_CREATE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
 			}
         }
 
@@ -201,7 +199,7 @@ class Opensurveysondage extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as t";
         $sql.= " WHERE t.id_sondage = '".$this->db->escape($numsurvey)."'";
 
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -242,7 +240,6 @@ class Opensurveysondage extends CommonObject
         else
        {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             $ret=-1;
         }
 
@@ -286,7 +283,7 @@ class Opensurveysondage extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -344,12 +341,10 @@ class Opensurveysondage extends CommonObject
 		{
 			if (! $notrigger)
 			{
-		        //// Call triggers
-		        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        $interface=new Interfaces($this->db);
-		        $result=$interface->run_triggers('OPENSURVEY_DELETE',$this,$user,$langs,$conf);
-		        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
+                // Call trigger
+                $result=$this->call_trigger('OPENSURVEY_DELETE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
 			}
 		}
 
@@ -357,16 +352,16 @@ class Opensurveysondage extends CommonObject
 		{
 
 			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage = '".$this->db->escape($numsondage)."'";
-			dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage = '".$this->db->escape($numsondage)."'";
-			dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."opensurvey_sondage";
     		$sql.= " WHERE id_sondage = '".$this->db->escape($numsondage)."'";
 
-    		dol_syslog(get_class($this)."::delete sql=".$sql);
+    		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
     		$resql = $this->db->query($sql);
         	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
@@ -397,7 +392,7 @@ class Opensurveysondage extends CommonObject
 	function fetch_lines()
 	{
 		$ret=array();
-		$sql = "SELECT id_users, nom, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql = "SELECT id_users, nom as name, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql.= " WHERE id_sondage = '".$this->db->escape($this->id_sondage)."'";
 		$resql=$this->db->query($sql);
 
@@ -408,7 +403,7 @@ class Opensurveysondage extends CommonObject
 			while ($i < $num)
 			{
 				$obj=$this->db->fetch_object($resql);
-				$tmp=array('id_users'=>$obj->id_users, 'nom'=>$obj->nom, 'reponses'=>$obj->reponses);
+				$tmp=array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
 
 				$ret[]=$tmp;
 				$i++;
@@ -479,7 +474,6 @@ class Opensurveysondage extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
 		$sql.= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."')";
 		$resql = $this->db->query($sql);
-		dol_syslog("sql=".$sql);
 
 		if (!$resql) {
 			return false;

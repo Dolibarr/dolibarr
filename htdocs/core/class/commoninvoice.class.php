@@ -47,7 +47,7 @@ abstract class CommonInvoice extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;
 		$sql.= ' WHERE '.$field.' = '.$this->id;
 
-		dol_syslog(get_class($this)."::getSommePaiement sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -154,9 +154,9 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *  Return label of object status
 	 *
-	 *  @param      int		$mode            0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
-	 *  @param      double	$alreadypaid     0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
-	 *  @return     string			         Label
+	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+	 *  @param      double	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @return     string			        Label
 	 */
 	function getLibStatut($mode=0,$alreadypaid=-1)
 	{
@@ -308,7 +308,7 @@ abstract class CommonInvoice extends CommonObject
 		if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
 		else $sqltemp.= " WHERE c.code='".$this->db->escape($cond_reglement)."'";
 
-		dol_syslog(get_class($this).'::calculate_date_lim_reglement sql='.$sqltemp);
+		dol_syslog(get_class($this).'::calculate_date_lim_reglement', LOG_DEBUG);
 		$resqltemp=$this->db->query($sqltemp);
 		if ($resqltemp)
 		{
@@ -358,10 +358,14 @@ abstract class CommonInvoice extends CommonObject
 	}
 }
 
+
+
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
+
 /**
  *	Parent class of all other business classes for details of elements (invoices, contracts, proposals, orders, ...)
  */
-abstract class CommonInvoiceLine extends CommonObject
+abstract class CommonInvoiceLine extends CommonObjectLine
 {
 }
 

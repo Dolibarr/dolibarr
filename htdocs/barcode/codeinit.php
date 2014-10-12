@@ -37,8 +37,6 @@ $forbarcode=GETPOST('forbarcode');
 $fk_barcode_type=GETPOST('fk_barcode_type');
 $eraseallbarcode=GETPOST('eraseallbarcode');
 
-$mesg='';
-
 $action=GETPOST('action');
 
 $producttmp=new Product($db);
@@ -126,7 +124,7 @@ if ($action == 'initbarcodeproducts')
 			$sql.=$db->order("datec","ASC");
 			$sql.=$db->plimit($maxperinit);
 
-			dol_syslog("codeinit sql=".$sql, LOG_DEBUG);
+			dol_syslog("codeinit", LOG_DEBUG);
 			$resql=$db->query($sql);
 			if ($resql)
 			{
@@ -197,8 +195,6 @@ print '<br>';
 
 print $langs->trans("MassBarcodeInitDesc").'<br>';
 print '<br>';
-
-dol_htmloutput_errors($mesg);
 
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
 //print '<br>';
@@ -291,7 +287,7 @@ if ($conf->product->enabled || $conf->product->service)
 	{
 		print $langs->trans("BarCodeNumberManager").": ";
 		$objproduct=new Product($db);
-		print '<b>'.$modBarCodeProduct->nom.'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
+		print '<b>'.(isset($modBarCodeProduct->name)?$modBarCodeProduct->name:$modBarCodeProduct->nom).'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
 		$disabled=0;
 	}
 	else

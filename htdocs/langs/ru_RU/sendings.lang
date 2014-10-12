@@ -13,8 +13,8 @@ LastSendings=Последнее %s отправок
 SearchASending=Поиск направления
 StatisticsOfSendings=Статистика отправок
 NbOfSendings=Число отправок
-# NumberOfShipmentsByMonth=Number of shipments by month
-# SendingCard=Shipping card
+NumberOfShipmentsByMonth=Number of shipments by month
+SendingCard=Shipping card
 NewSending=Новые направления
 CreateASending=Создать отправке
 CreateSending=Создать отправке
@@ -50,27 +50,29 @@ Enlevement=Полученной клиентом
 DocumentModelSimple=Простая модель документа
 DocumentModelMerou=Mérou модели A5
 WarningNoQtyLeftToSend=Внимание, без продуктов, ожидающих отправки.
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Планируемая дата поставки
 DateReceived=Дата доставки получили
 SendShippingByEMail=Отправить доставкой по EMail
-SendShippingRef=Отправить доставки %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Acions на судоходство
 LinkToTrackYourPackage=Ссылка на дорожку ваш пакет
 ShipmentCreationIsDoneFromOrder=На данный момент, создание новой партии производится с целью карту.
-# RelatedShippings=Related shippings
-# ShipmentLine=Shipment line
-# CarrierList=List of transporters
+RelatedShippings=Related shippings
+ShipmentLine=Shipment line
+CarrierList=List of transporters
 
 # Sending methods
 SendingMethodCATCH=Catch заказчиком
 SendingMethodTRANS=Transporter
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Простая модель документа для доставки квитанций
 DocumentModelTyphon=Более полная модель документа для доставки квитанций (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Постоянное EXPEDITION_ADDON_NUMBER не определена
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

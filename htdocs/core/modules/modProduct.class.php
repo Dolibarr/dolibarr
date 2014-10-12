@@ -198,7 +198,7 @@ class modProduct extends DolibarrModules
 		        $this->export_entities_array[$r][$fieldname]='product';
 		    }
 		}
-		// End add axtra fields
+		// End add extra fields
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
@@ -210,14 +210,14 @@ class modProduct extends DolibarrModules
 		{
 			// Exports product multiprice
 			$r++;
-			$this->export_code[$r]=$this->rights_class.'_'.$key;
+			$this->export_code[$r]=$this->rights_class.'_'.$r;
 			$this->export_label[$r]="ProductsMultiPrice";	// Translation key (used only if key ExportDataset_xxx_z not found)
 			$this->export_permission[$r]=array(array("produit","export"));
 			$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",
-				'pr.price_base_type'=>"PriceBase",'pr.price_level'=>"PriceLevel",
-				'pr.price'=>"HT",'pr.price_ttc'=>"TTC",
-				'pr.price_min'=>"MinPriceHT",'pr.price_min_ttc'=>"MinPriceTTC",
-				'pr.tva_tx'=>'VATRate',
+				'pr.price_base_type'=>"PriceLevelPriceBase",'pr.price_level'=>"PriceLevel",
+				'pr.price'=>"PriceLevelUnitPriceHT",'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
+				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
+				'pr.tva_tx'=>'PriceLevelVATRate',
 				'pr.date_price'=>'DateCreation');
 			//$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.length'=>"Number",'p.surface'=>"Number",'p.volume'=>"Number",'p.weight'=>"Number",'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Number",'p.price_ttc'=>"Number",'p.tva_tx'=>'Number','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date');
 			$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",
@@ -304,11 +304,11 @@ class modProduct extends DolibarrModules
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('pr'=>MAIN_DB_PREFIX.'product_price');
 			$this->import_tables_creator_array[$r]=array('pr'=>'fk_user_author');	// Fields to store import user id
-			$this->import_fields_array[$r]=array('pr.fk_product'=>"Id*",
-				'pr.price_base_type'=>"PriceBase",'pr.price_level'=>"PriceLevel",
-				'pr.price'=>"HT",'pr.price_ttc'=>"TTC",
-				'pr.price_min'=>"MinPriceHT",'pr.price_min_ttc'=>"MinPriceTTC",
-				'pr.tva_tx'=>'VATRate',
+			$this->import_fields_array[$r]=array('pr.fk_product'=>"ProductRowid*",
+				'pr.price_base_type'=>"PriceLevelPriceBase",'pr.price_level'=>"PriceLevel",
+				'pr.price'=>"PriceLevelUnitPriceHT",'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
+				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
+				'pr.tva_tx'=>'PriceLevelVATRate',
 				'pr.date_price'=>'DateCreation*');
 			$this->import_regex_array[$r]=array('pr.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
 			$this->import_examplevalues_array[$r]=array('pr.fk_product'=>"1",
@@ -332,7 +332,6 @@ class modProduct extends DolibarrModules
 	 */
 	function init($options='')
 	{
-		// Permissions
 		$this->remove($options);
 
 		$sql = array();

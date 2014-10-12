@@ -254,7 +254,7 @@ class ExtraFields
 			$sql.= " '".$params."'";
 			$sql.=')';
 
-			dol_syslog(get_class($this)."::create_label sql=".$sql);
+			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				return 1;
@@ -285,7 +285,6 @@ class ExtraFields
 			if ($result < 0)
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			}
 
 			$result=$this->delete_label($attrname,$elementtype);
@@ -317,7 +316,7 @@ class ExtraFields
 			$sql.= " AND entity IN  (0,".$conf->entity.')';
 			$sql.= " AND elementtype = '".$elementtype."'";
 
-			dol_syslog(get_class($this)."::delete_label sql=".$sql);
+			dol_syslog(get_class($this)."::delete_label", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -398,7 +397,7 @@ class ExtraFields
 					{
 						$sql="ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
 					}
-					dol_syslog(get_class($this).'::update sql='.$sql);
+					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql=$this->db->query($sql,1,'dml');
 					return 1;
 				}
@@ -453,7 +452,7 @@ class ExtraFields
 			$sql_del.= " WHERE name = '".$attrname."'";
 			$sql_del.= " AND entity = ".$conf->entity;
 			$sql_del.= " AND elementtype = '".$elementtype."'";
-			dol_syslog(get_class($this)."::update_label sql=".$sql_del);
+			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
 			$resql1=$this->db->query($sql_del);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
@@ -479,7 +478,7 @@ class ExtraFields
 			$sql.= " '".$pos."',";
 			$sql.= " '".$param."'";
 			$sql.= ")";
-			dol_syslog(get_class($this)."::update_label sql=".$sql);
+			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
 			$resql2=$this->db->query($sql);
 
 			if ($resql1 && $resql2)
@@ -514,7 +513,7 @@ class ExtraFields
 
 
 	/**
-	 * 	Load array this->attribute_label
+	 * 	Load array this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
 	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', societe', 'facture', 'propal', 'product', ...)
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
@@ -536,7 +535,7 @@ class ExtraFields
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
 		$sql.= " ORDER BY pos";
 
-		dol_syslog(get_class($this)."::fetch_name_optionals_label sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_name_optionals_label", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -673,7 +672,7 @@ class ExtraFields
 		elseif ($type == 'select')
 		{
 			$out = '';
-			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
+			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out.= ajax_combobox('options_'.$key.$keyprefix, array(), $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
@@ -754,7 +753,7 @@ class ExtraFields
 				$sql.=preg_replace('/^ AND /','',$sqlwhere);
 				//print $sql;
 
-				dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
+				dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -964,7 +963,7 @@ class ExtraFields
 			$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
 			//$sql.= ' AND entity = '.$conf->entity;
 
-			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
+			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{

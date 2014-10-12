@@ -145,7 +145,8 @@ if (file_exists($fullpathselecteddir))
     		    {
 					if (empty($val['fullrelativename']))	// If we did not find entry into database, but found a directory (dol_is_dir was ok at previous test)
 					{
-    		    		$val['fullrelativename']=$file; $val['id']=0;
+    		    		$val['fullrelativename']=$file;
+    		    		$val['id']=0;
     		    		$val['label']=$file;
     		    		$val['description']='';
     		    		$nboffilesinsubdir=$langs->trans("Unknown");

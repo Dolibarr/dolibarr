@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  *
 * This program is free software; you can redistribute it and/or modify
@@ -289,7 +289,9 @@ if ($what == 'postgresql')
     if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
 
     //$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
-    $param=" --no-tablespaces --inserts -h ".$dolibarr_main_db_host;
+    //$param="-F c";
+    $param="-F p";
+    $param.=" --no-tablespaces --inserts -h ".$dolibarr_main_db_host;
     $param.=" -U ".$dolibarr_main_db_user;
     if (! empty($dolibarr_main_db_port)) $param.=" -p ".$dolibarr_main_db_port;
     if (GETPOST("sql_compat") && GETPOST("sql_compat") == 'ANSI') $param.="  --disable-dollar-quoting";
@@ -416,7 +418,7 @@ function backup_tables($outputfile, $tables='*')
 
     // Print headers and global mysql config vars
     $sqlhead = '';
-    $sqlhead .= "-- ".getStaticMember($db, 'label')." dump via php
+    $sqlhead .= "-- ".$db::LABEL." dump via php
 --
 -- Host: ".$db->db->host_info."    Database: ".$db->database_name."
 -- ------------------------------------------------------
@@ -464,11 +466,11 @@ function backup_tables($outputfile, $tables='*')
 	        fwrite($handle, "\n--\n-- Dumping data for table `".$table."`\n--\n");
 	        if (!GETPOST("nobin_nolocks")) fwrite($handle, "LOCK TABLES `".$table."` WRITE;\n"); // Lock the table before inserting data (when the data will be imported back)
 	        if (GETPOST("nobin_disable_fk")) fwrite($handle, "ALTER TABLE `".$table."` DISABLE KEYS;\n");
-        
+
 	        $sql='SELECT * FROM '.$table;
 	        $result = $db->query($sql);
 	        $num_fields = $db->num_rows($result);
-	        while($row = $db->fetch_row($result)) 
+	        while($row = $db->fetch_row($result))
 	        {
 	            // For each row of data we print a line of INSERT
 	            fwrite($handle,'INSERT '.$delayed.$ignore.'INTO `'.$table.'` VALUES (');
@@ -497,7 +499,7 @@ function backup_tables($outputfile, $tables='*')
 	        fwrite($handle,"\n\n\n");
 	    }
     }
-    
+
     /* Backup Procedure structure*/
     /*
      $result = $db->query('SHOW PROCEDURE STATUS');

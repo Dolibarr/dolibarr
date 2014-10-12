@@ -55,7 +55,7 @@ DraftOrWaitingShipped=Brouillon ou validée pas encore expédiée
 MenuOrdersToBill=Commandes délivrées
 MenuOrdersToBill2=Commandes à facturer
 SearchOrder=Rechercher une commande
-SearchACustomerOrder=Rechercher code client
+SearchACustomerOrder=Rechercher une commande client
 ShipProduct=Expédier produit
 Discount=Remise
 CreateOrder=Créer Commande
@@ -101,7 +101,6 @@ RelatedOrders=Commandes rattachées
 OnProcessOrders=Commandes en cours de traitement
 RefOrder=Réf. commande
 RefCustomerOrder=Réf. commande client
-CustomerOrder=Commande client
 RefCustomerOrderShort=Réf. com. client
 SendOrderByMail=Envoyer commande par mail
 ActionsOnOrder=Événements sur la commande
@@ -132,8 +131,6 @@ Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON non définie
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Échec chargement du fichier module '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Échec chargement du fichier module '%s'
 Error_OrderNotChecked=Pas de commandes à facturer sélectionnées
-
-
 # Sources
 OrderSource0=Proposition commerciale
 OrderSource1=Internet
@@ -144,7 +141,6 @@ OrderSource5=Commercial
 OrderSource6=Magasin
 QtyOrdered=Qté commandée
 AddDeliveryCostLine=Ajouter une ligne de frais port indiquant le poids de la commande
-
 # Documents models
 PDFEinsteinDescription=Modèle de commande complet (logo…)
 PDFEdisonDescription=Modèle de commande simple
@@ -155,7 +151,6 @@ OrderByFax=Fax
 OrderByEMail=Email
 OrderByWWW=En ligne
 OrderByPhone=Téléphone
-
 CreateInvoiceForThisCustomer=Facturer commandes
 NoOrdersToInvoice=Pas de commandes facturables
 CloseProcessedOrdersAutomatically=Classer automatiquement à "Traitées" les commandes sélectionnées.

@@ -91,6 +91,7 @@ $hookmanager->initHooks(array('propallist'));
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x"))
@@ -141,7 +142,7 @@ if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
 
-$sql = 'SELECT s.rowid, s.nom, s.town, s.client, s.code_client,';
+$sql = 'SELECT s.rowid, s.nom as name, s.town, s.client, s.code_client,';
 $sql.= ' p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
@@ -245,7 +246,7 @@ if ($result)
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
 	if ($search_town)		 $param.='&search_town='.$search_town;
-	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->nom:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -370,11 +371,11 @@ if ($result)
 		print $objp->ref_client;
 		print '</td>';
 
-		$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
+		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$objp->rowid;
 
 		// Company
 		$companystatic->id=$objp->rowid;
-		$companystatic->nom=$objp->nom;
+		$companystatic->name=$objp->name;
 		$companystatic->client=$objp->client;
 		$companystatic->code_client=$objp->code_client;
 		print '<td>';

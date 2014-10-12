@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accountin
 
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->COMPTA_MODE);
+$modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->ACCOUNTING_MODE);
 
 
 /*
@@ -124,7 +125,7 @@ $sql.= " GROUP BY dm";
 $sql.= " ORDER BY dm";
 
 //print $sql;
-dol_syslog("get customers invoices sql=".$sql);
+dol_syslog("get customers invoices", LOG_DEBUG);
 $result=$db->query($sql);
 if ($result)
 {
@@ -158,7 +159,7 @@ if ($modecompta != 'CREANCES-DETTES')
 	$sql.= " GROUP BY dm";
 	$sql.= " ORDER BY dm";
 
-	dol_syslog("get old customers payments not linked to invoices sql=".$sql);
+	dol_syslog("get old customers payments not linked to invoices", LOG_DEBUG);
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -209,7 +210,7 @@ $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY dm";
 
-dol_syslog("get suppliers invoices sql=".$sql);
+dol_syslog("get suppliers invoices", LOG_DEBUG);
 $result=$db->query($sql);
 if ($result)
 {
@@ -250,7 +251,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " AND f.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
-	dol_syslog("get vat to pay sql=".$sql);
+	dol_syslog("get vat to pay", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -281,7 +282,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " AND f.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
-	dol_syslog("get vat to receive back sql=".$sql);
+	dol_syslog("get vat to receive back", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -312,7 +313,7 @@ else {
 	$sql.= " AND t.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
-	dol_syslog("get vat really paid sql=".$sql);
+	dol_syslog("get vat really paid", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -341,7 +342,7 @@ else {
 	$sql.= " AND t.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
-	dol_syslog("get vat really received back sql=".$sql);
+	dol_syslog("get vat really received back", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -391,7 +392,7 @@ else
 $sql.= " AND cs.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, dm";
 
-dol_syslog("get social contributions deductible=0  sql=".$sql);
+dol_syslog("get social contributions deductible=0 ", LOG_DEBUG);
 $result=$db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -441,7 +442,7 @@ else
 $sql.= " AND cs.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, dm";
 
-dol_syslog("get social contributions paid deductible=1 sql=".$sql);
+dol_syslog("get social contributions paid deductible=1", LOG_DEBUG);
 $result=$db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -480,7 +481,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 $sql.= " WHERE p.entity = ".$conf->entity;
 $sql.= " GROUP BY p.label, dm";
 
-dol_syslog("get social salaries payments  sql=".$sql);
+dol_syslog("get social salaries payments");
 $result=$db->query($sql);
 if ($result)
 {
@@ -498,6 +499,45 @@ if ($result)
 
 			if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
 			$decaiss_ttc[$obj->dm] += $obj->amount;
+
+			$i++;
+		}
+	}
+}
+else
+{
+	dol_print_error($db);
+}
+
+/*
+ * get dunning paiement
+*/
+$subtotal_ht = 0;
+$subtotal_ttc = 0;
+$sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+$sql.= " FROM ".MAIN_DB_PREFIX."don as p";
+$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " AND fk_statut=2";
+$sql.= " GROUP BY p.societe,  p.firstname, p.lastname, dm";
+
+dol_syslog("get social salaries payments");
+$result=$db->query($sql);
+if ($result)
+{
+	$num = $db->num_rows($result);
+	$var=false;
+	$i = 0;
+	if ($num)
+	{
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($result);
+
+			if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
+			$encaiss[$obj->dm] += $obj->amount;
+
+			if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
+			$encaiss_ttc[$obj->dm] += $obj->amount;
 
 			$i++;
 		}

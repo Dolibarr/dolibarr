@@ -116,7 +116,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		}
 		else
 		{
-			dol_syslog("mod_expedition_safor::getNextValue sql=".$sql);
+			dol_syslog("mod_expedition_safor::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 

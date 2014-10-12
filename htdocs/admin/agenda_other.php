@@ -26,6 +26,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 
 if (!$user->admin)
     accessforbidden();
@@ -70,10 +71,19 @@ if (preg_match('/del_(.*)/',$action,$reg))
 	}
 }
 
+if ($action == 'set')
+{
+	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', GETPOST('AGENDA_DEFAULT_FILTER_TYPE'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
+}
+
 
 /**
  * View
  */
+
+$formactions=new FormActions($db);
 
 llxHeader();
 
@@ -86,42 +96,70 @@ $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'other', $langs->trans("Agenda"), 0, 'action');
 
-print_titre($langs->trans("OtherOptions"));
+//print_titre($langs->trans("OtherOptions"));
 
 $var=true;
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
+print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="center" width="20">&nbsp;</td>'."\n";
-print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+print '<td align="center">&nbsp;</td>'."\n";
+print '<td align="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 // Manual or automatic
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE").'</td>'."\n";
-print '<td align="center" width="20">&nbsp;</td>'."\n";
-
-print '<td align="center" width="100">'."\n";
-if ($conf->use_javascript_ajax)
+print '<td align="center">&nbsp;</td>'."\n";
+print '<td align="right">'."\n";
+//print ajax_constantonoff('AGENDA_USE_EVENT_TYPE');	Do not use ajax here, we need to reload page to change other combo list
+if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
-	print ajax_constantonoff('AGENDA_USE_EVENT_TYPE');
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_USE_EVENT_TYPE">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
 else
 {
-	if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_USE_EVENT_TYPE">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_USE_EVENT_TYPE">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-	}
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_USE_EVENT_TYPE">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }
 print '</td></tr>'."\n";
 
+// AGENDA_DEFAULT_FILTER_TYPE
+$var=!$var;
+print '<tr '.$bc[$var].'>'."\n";
+print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
+print '<td align="center">&nbsp;</td>'."\n";
+print '<td align="right" class="nowrap">'."\n";
+print $formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), 1);
+print '</td></tr>'."\n";
+
+// AGENDA_DEFAULT_FILTER_STATUS
+$var=!$var;
+print '<tr '.$bc[$var].'>'."\n";
+print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
+print '<td align="center">&nbsp;</td>'."\n";
+print '<td align="right">'."\n";
+$formactions->form_select_status_action('agenda',$conf->global->AGENDA_DEFAULT_FILTER_STATUS,1,'AGENDA_DEFAULT_FILTER_STATUS',1,2);
+print '</td></tr>'."\n";
+
+// AGENDA_DEFAULT_VIEW
+$var=!$var;
+print '<tr '.$bc[$var].'>'."\n";
+print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
+print '<td align="center">&nbsp;</td>'."\n";
+print '<td align="right">'."\n";
+$tmplist=array('show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_list'=>$langs->trans("ViewList"), 'show_peruser'=>$langs->trans("ViewPerUser"));
+print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
+print '</td></tr>'."\n";
+
 print '</table>';
+
+print '<center><input class="button" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></center>';
+
+print '</form>';
 
 dol_fiche_end();
 

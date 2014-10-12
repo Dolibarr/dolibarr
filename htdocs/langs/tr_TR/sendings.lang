@@ -54,7 +54,7 @@ StatsOnShipmentsOnlyValidated=İstatistikler yalnızca doğrulanmış sevkiyatla
 DateDeliveryPlanned=Planlanan teslim tarihi
 DateReceived=Teslim alınan tarih
 SendShippingByEMail=Sevkiyatı EPostayla gönder
-SendShippingRef=%s sevkiyatını gönder
+SendShippingRef=% Nakliyatının yapılması
 ActionsOnShipping=Sevkiyat eylemleri
 LinkToTrackYourPackage=Paketinizi izleyeceğiniz bağlantı
 ShipmentCreationIsDoneFromOrder=Şu an için, yeni bir sevkiyatın oluşturulması sipariş kartından yapılmıştır.
@@ -72,3 +72,7 @@ DocumentModelTyphon=Teslimat makbuzları için daha fazla eksiksiz doküman mode
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER değişmezi tanımlanmamış
 SumOfProductVolumes=Ürün hacimleri toplamı
 SumOfProductWeights=Ürün ağırlıkları toplamı
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

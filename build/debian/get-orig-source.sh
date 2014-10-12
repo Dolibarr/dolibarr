@@ -1,10 +1,9 @@
 #!/bin/sh
-# Scan for new official sources and download file
-# run with debian/get-orig-source.sh [x.y.z]
 
 tmpdir=$(mktemp -d)
-echo "tmpdir = $tmpdir"
 
+
+# Download source file
 if [ -n "$1" ]; then
     uscan_opts="--download-version=$1"
 fi

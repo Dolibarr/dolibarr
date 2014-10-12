@@ -209,14 +209,6 @@ legend { margin-bottom: 8px; }
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }
-.buttonajax {
-    font-family: <?php print $fontlist ?>;
-	border: 0px;
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
-	background-position: bottom;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-}
 form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
@@ -257,6 +249,9 @@ div.inline-block
 }
 .nounderline {
     text-decoration: none;
+}
+.cursorpointer {
+	cursor: pointer;
 }
 
 
@@ -364,16 +359,8 @@ div.ficheaddleft {
 /* ============================================================================== */
 
 <?php
-if (! empty($conf->dol_optimize_smallscreen))
-{
-	$minwidthtmenu=70;
-	$heightmenu=39;
-}
-else
-{
-	$minwidthtmenu=70;
-	$heightmenu=39;
-}
+$minwidthtmenu=70;
+$heightmenu=39;
 ?>
 
 /* This theme is bugged. If width not large enough, menu are not wrapped on next line
@@ -392,7 +379,6 @@ div.tmenu {
     border-left: 0px;
     padding: 0px;
     margin: 5px 0px 10px 0px;
-    font-size: 13px;
     background-image : url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_mainNav.jpg',1); ?>);
     background-repeat: no-repeat;
     background-color: #996644;
@@ -414,7 +400,9 @@ div.mainmenu {
 }
 */
 
-<?php if (empty($conf->dol_optimize_smallscreen)) {
+
+/* Do not load menu img if hidden to save bandwidth */
+<?php if (empty($dol_hide_topmenu)) {
 
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
@@ -789,6 +777,12 @@ div.blockvmenusearch div.menu_titre {
 	padding-top: 1px;
 	padding-bottom: 1px;
 	min-height: 14px;
+}
+
+#blockvmenusearch form
+{
+	clear: both;
+	margin-bottom: 14px;
 }
 
 div.blockvmenubookmarks
@@ -1939,13 +1933,18 @@ td.hidden {
 
 table.cal_month    { border-spacing: 0px; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
+.cal_current_month_peruserleft { border-top: 0; border-left: solid 3px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
+.cal_other_month_peruserleft { border-top: 0; border-left: solid 3px #6C7C7B !important; border-right: 0; }
 .cal_current_month_right { border-right: solid 1px #E0E0E0; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
 .cal_other_month   { background: #DDDDDD; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 3px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FFFFFF; border: solid 2px #C0C0C0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser { background: #FFFFFF; border-right: solid 1px #6C7C7B; border-top: solid 1px #A0A0A0; border-bottom: solid 1px #A0A0A0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_peruserleft { background: #FFFFFF; border-left: solid 3px #6C7C7B; border-top: solid 1px #A0A0A0; border-right: solid 1px #6C7C7B; border-bottom: solid 1px #A0A0A0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event    { border-collapse: collapse; margin-bottom: 1px; }
 table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 ul.cal_event       { padding-right: 2px; padding-top: 1px; border: none; list-style-type: none; margin: 0 auto; padding-left: 0px; padding-start: 0px; -khtml-padding-start: 0px; -o-padding-start: 0px; -webkit-padding-start: 0px; -webkit-padding-start: 0px; }
@@ -1954,6 +1953,8 @@ li.cal_event       { border: none; list-style-type: none; }
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; }
+.peruser_busy      { background: #CC8888; }
+.peruser_notbusy   { background: #EEDDDD; }
 
 
 /* ============================================================================== */
@@ -2486,6 +2487,11 @@ div.ecmjqft {
 .paginate_enabled_previous:hover, .paginate_enabled_next:hover
 {
 	text-decoration: underline !important;
+}
+.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled, .paginate_button_disabled {
+	opacity: .35;
+	filter: Alpha(Opacity=35);
+	background-image: none;
 }
 
 

@@ -43,7 +43,10 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
+
 <center>
+<div class="login_vertical_align">
+
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
@@ -132,7 +135,7 @@ if (! empty($hookmanager->resArray['options'])) {
 </form>
 
 
-<div class="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
+<div class="center login_main_home" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
 <?php if ($mode == 'dolibarr' || ! $disabled) { ?>
 	<font style="font-size: 12px;">
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
@@ -148,16 +151,16 @@ if (! empty($hookmanager->resArray['options'])) {
 <br>
 
 <?php if ($message) { ?>
-	<div class="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
+	<div class="center login_main_message" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
 	<?php echo dol_htmloutput_mesg($message,'','',1); ?>
 	</div>
 <?php } ?>
 
+
+</div>
 </center>	<!-- end of center -->
 
-<br>
 
 </body>
 </html>
-
 <!-- END PHP TEMPLATE -->

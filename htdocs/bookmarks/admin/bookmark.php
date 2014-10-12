@@ -42,12 +42,12 @@ if ($action == 'setvalue')
 	if (! $error)
 	{
 		$db->commit();
-		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		setEventMessage($langs->trans("SetupSaved"));
 	}
 	else
 	{
 		$db->rollback();
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -81,8 +81,6 @@ print $langs->trans("NbOfBoomarkToShow").'</td><td>';
 print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="'.$conf->global->BOOKMARKS_SHOW_IN_MENU.'">';
 print '</td></tr>';
 print '</table><br /><center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center></form>';
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

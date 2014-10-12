@@ -1,28 +1,28 @@
 <?php
 /**
- *	PHPExcel
+ * PHPExcel
  *
- *	Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
- *	This library is free software; you can redistribute it and/or
- *	modify it under the terms of the GNU Lesser General Public
- *	License as published by the Free Software Foundation; either
- *	version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- *	This library is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *	Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- *	You should have received a copy of the GNU Lesser General Public
- *	License along with this library; if not, write to the Free Software
- *	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *	@category	PHPExcel
- *	@package	PHPExcel
- *	@copyright	Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
- *	@license	http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- *	@version	1.7.6, 2011-02-27
+ * @category	PHPExcel
+ * @package	PHPExcel
+ * @copyright	Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @license	http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
+ * @version	1.7.8, 2012-10-12
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category	PHPExcel
  * @package		PHPExcel
- * @copyright	Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright	Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_DocumentProperties
 {
@@ -196,7 +196,7 @@ class PHPExcel_DocumentProperties
 	 * @return	PHPExcel_DocumentProperties
 	 */
 	public function setCreated($pValue = null) {
-		if (is_null($pValue)) {
+		if ($pValue === NULL) {
 			$pValue = time();
 		} elseif (is_string($pValue)) {
 			if (is_numeric($pValue)) {
@@ -226,7 +226,7 @@ class PHPExcel_DocumentProperties
 	 * @return	PHPExcel_DocumentProperties
 	 */
 	public function setModified($pValue = null) {
-		if (is_null($pValue)) {
+		if ($pValue === NULL) {
 			$pValue = time();
 		} elseif (is_string($pValue)) {
 			if (is_numeric($pValue)) {
@@ -439,12 +439,12 @@ class PHPExcel_DocumentProperties
 	 * @return	PHPExcel_DocumentProperties
 	 */
 	public function setCustomProperty($propertyName,$propertyValue='',$propertyType=NULL) {
-		if ((is_null($propertyType)) || (!in_array($propertyType,array(self::PROPERTY_TYPE_INTEGER,
+		if (($propertyType === NULL) || (!in_array($propertyType,array(self::PROPERTY_TYPE_INTEGER,
 																	   self::PROPERTY_TYPE_FLOAT,
 																	   self::PROPERTY_TYPE_STRING,
 																	   self::PROPERTY_TYPE_DATE,
 																	   self::PROPERTY_TYPE_BOOLEAN)))) {
-			if (is_null($propertyValue)) {
+			if ($propertyValue === NULL) {
 				$propertyType = self::PROPERTY_TYPE_STRING;
 			} elseif (is_float($propertyValue)) {
 				$propertyType = self::PROPERTY_TYPE_FLOAT;

@@ -966,8 +966,8 @@ if ($nboftargetok) {
     	}
     }
 
-    # Build package for each target
-    #------------------------------
+    # Publish package for each target
+    #--------------------------------
     foreach my $target (keys %CHOOSEDPUBLISH) 
     {
         if ($CHOOSEDPUBLISH{$target} < 0) { next; }
@@ -1045,9 +1045,7 @@ if ($nboftargetok) {
 				print "$command\n";	
 				my $ret=`$command 2>&1`;
 				print "$ret\n";
-	    		
 	    	}
-
     	}
     }    
 }

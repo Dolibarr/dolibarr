@@ -70,7 +70,7 @@ if (GETPOST('button_removefilter'))
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('membertypecard'));
+$hookmanager->initHooks(array('membertypecard','globalcard'));
 
 /*
  *	Actions
@@ -237,8 +237,6 @@ if ($action == 'create')
 
 	print_fiche_titre($langs->trans("NewMemberType"));
 
-	if ($mesg) print '<div class="error">'.$mesg.'</div>';
-
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
@@ -355,7 +353,7 @@ if ($rowid > 0)
 		}
 
 		// Add
-		print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?action=create&typeid='.$adht->id.'">'.$langs->trans("AddMember").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$adht->id.'">'.$langs->trans("AddMember").'</a></div>';
 
 		// Delete
 		if ($user->rights->adherent->configurer)
@@ -366,7 +364,7 @@ if ($rowid > 0)
 		print "</div>";
 
 
-		// Show list of members (nearly same code than in page liste.php)
+		// Show list of members (nearly same code than in page list.php)
 
 		$membertypestatic=new AdherentType($db);
 
@@ -528,11 +526,11 @@ if ($rowid > 0)
 		        print '<tr '.$bc[$var].'>';
 		        if ($objp->societe != '')
 		        {
-		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
+		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
 		        }
 		        else
 		        {
-		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,32).'</a></td>'."\n";
+		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,32).'</a></td>'."\n";
 		        }
 
 		        // Login
@@ -590,12 +588,12 @@ if ($rowid > 0)
 		        print '<td align="center">';
 				if ($user->rights->adherent->creer)
 				{
-					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=edit&return=liste.php">'.img_edit().'</a>';
+					print '<a href="card.php?rowid='.$objp->rowid.'&action=edit&return=list.php">'.img_edit().'</a>';
 				}
 				print '&nbsp;';
 				if ($user->rights->adherent->supprimer)
 				{
-					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=resign&return=liste.php">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
+					print '<a href="card.php?rowid='.$objp->rowid.'&action=resign&return=list.php">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
 		        }
 				print "</td>";
 

@@ -58,6 +58,8 @@ $sortfield		= GETPOST("sortfield",'alpha');
 $sortorder		= GETPOST("sortorder",'alpha');
 $viewstatut		= GETPOST('viewstatut');
 
+$error = 0;
+
 if (! $sortfield) $sortfield='c.rowid';
 if (! $sortorder) $sortorder='DESC';
 
@@ -71,7 +73,8 @@ if ($action == 'create')
 {
 	if (is_array($selected) == false)
 	{
-		$mesgs = array('<div class="error">'.$langs->trans('Error_OrderNotChecked').'</div>');
+		$error++;
+		setEventMessage($langs->trans('Error_OrderNotChecked'), 'errors');
 	}
 	else
 	{
@@ -90,7 +93,7 @@ $hookmanager->initHooks(array('orderstoinvoice'));
  * Actions
  */
 
-if (($action == 'create' || $action == 'add') && empty($mesgs))
+if (($action == 'create' || $action == 'add') && !$error)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -248,7 +251,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 										}
 										else
 										{
-											$mesgs[]=$discount->error;
+											setEventMessage($discount->error, 'errors');
 											$error++;
 											break;
 										}
@@ -317,7 +320,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 							}
 							else
 							{
-								$mesgs[]=$objectsrc->error;
+								setEventMessage($objectsrc->error, 'errors');
 								$error++;
 							}
 							$ii++;
@@ -325,7 +328,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 					}
 					else
 					{
-						$mesgs[]=$object->error;
+						setEventMessage($object->error, 'errors');
 						$error++;
 					}
 				}
@@ -345,7 +348,8 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 			$action='create';
 			$_GET["origin"]=$_POST["origin"];
 			$_GET["originid"]=$_POST["originid"];
-			$mesgs[]='<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
+			$error++;
 		}
 	}
 }
@@ -361,7 +365,7 @@ $formfile = new FormFile($db);
 $companystatic = new Societe($db);
 
 // Mode creation
-if ($action == 'create' && empty($mesgs))
+if ($action == 'create' && !$error)
 {
 	$facturestatic=new Facture($db);
 
@@ -501,7 +505,7 @@ if ($action == 'create' && empty($mesgs))
 
 
 //Mode liste
-if (($action != 'create' && $action != 'add') || ! empty($mesgs))
+if (($action != 'create' && $action != 'add') || !$error)
 {
 	llxHeader();
 	?>
@@ -569,16 +573,16 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		{
 			// Company
 			$companystatic->id=$socid;
-			$companystatic->nom=$soc->nom;
+			$companystatic->name=$soc->name;
 			print '<h3>'.$companystatic->getNomUrl(1,'customer').'</h3>';
 		}
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans('Ref'),'orderstoinvoice.php','c.ref','','&amp;socid='.$socid,'',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('RefCustomerOrder'),'orderstoinvoice.php','c.ref_client','','&amp;socid='.$socid,'',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('OrderDate'),'orderstoinvoice.php','c.date_commande','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('DeliveryDate'),'orderstoinvoice.php','c.date_livraison','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'c.ref','','&amp;socid='.$socid,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('RefCustomerOrder'),$_SERVER["PHP_SELF"],'c.ref_client','','&amp;socid='.$socid,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Status'),'','','','','align="right"');
 		print_liste_field_titre($langs->trans('GenerateBill'),'','','','','align="center"');
 		print '</tr>';
@@ -618,7 +622,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		print '</form>';
 
 		print '<form name="orders2invoice" action="orderstoinvoice.php" method="GET">';
-		$var=True;
+		$var=true;
 		$generic_commande = new Commande($db);
 
 		while ($i < $num)
@@ -696,8 +700,6 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 	}
 
 }
-
-dol_htmloutput_mesg($mesg,$mesgs);
 
 llxFooter();
 $db->close();

@@ -329,7 +329,6 @@ if ($virtualdiffersfromphysical)
 	print '</table>';
 }
 
-
 llxFooter();
 
 $db->close();

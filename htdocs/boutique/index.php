@@ -41,19 +41,23 @@ print '<tr><td valign="top" width="40%" class="notopnoleft">';
 /*
  * Turnover
  */
+
 print_titre($langs->trans('SalesTurnover'));
 
 print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Month").'</td>';
 print '<td align="right">'.$langs->trans("Total").'</td></tr>';
 
 $now=dol_now();
 
-$sql = "SELECT sum(t.value) as value, MONTH(o.date_purchased) as mois";
-$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
-$sql .= " JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o ON o.orders_id = t.orders_id";
-$sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(".$dbosc->idate($now).")";
-$sql .= " GROUP BY mois ORDER BY mois";
+$sql = "SELECT SUM(t.value) as value, MONTH(o.date_purchased) as month";
+$sql.= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
+$sql.= " JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o ON o.orders_id = t.orders_id";
+//$sql.= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(".$dbosc->idate($now).")";
+$sql.= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR('".$db->idate($now)."')";
+$sql.= " GROUP BY month";
+$sql.= " ORDER BY month";
+//print $sql;exit;
 
 $result=$dbosc->query($sql);
 if ($result)
@@ -116,7 +120,7 @@ if ($resql)
 		{
 
 			$obj = $dbosc->fetch_object($resql);
-			print "<tr><td>$obj->orders_id</td><td>$obj->customers_name</td><td>".price($obj->value)."</td><td>$obj->payment_method</td></tr>";
+			print "<tr><td>".$obj->orders_id."</td><td>".$obj->customers_name."</td><td>".price($obj->value)."</td><td>".$obj->payment_method."</td></tr>";
 			$i++;
 		}
 		print "</table><br>";
@@ -128,7 +132,7 @@ else
 }
 
 /*
- * Last 5 commands in wait
+ * Last 5 orders on hold
  */
 $sql = "SELECT o.orders_id, o.customers_name, o.date_purchased, t.value, o.payment_method";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
@@ -200,7 +204,7 @@ else
 
 print '</td></tr><tr>';
 /*
- * Last customers who commanded
+ * Last customers who ordered
  */
 $sql = "SELECT o.orders_id, o.customers_name, o.delivery_country, o.date_purchased, t.value, s.orders_status_name as statut";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
@@ -235,6 +239,7 @@ else
 }
 print '</tr></table>';
 
-$dbosc->close();
 
 llxFooter();
+
+$dbosc->close();

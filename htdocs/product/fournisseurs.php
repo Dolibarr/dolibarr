@@ -43,7 +43,7 @@ $rowid=GETPOST('rowid','int');
 $action=GETPOST('action', 'alpha');
 $socid=GETPOST('socid', 'int');
 $backtopage=GETPOST('backtopage','alpha');
-$error=0; $mesg = '';
+$error=0;
 
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['search_fourn_id']))
@@ -60,13 +60,9 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service&fournisseur',$fieldvalue,'product&product','','',$fieldtype);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('pricesuppliercard'));
+$hookmanager->initHooks(array('pricesuppliercard','globalcard'));
 $product = new ProductFournisseur($db);
 $product->fetch($id,$ref);
-
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
-$error=$hookmanager->error; $errors=$hookmanager->errors;
-
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -80,8 +76,8 @@ if (! $sortorder) $sortorder="ASC";
  */
 
 $parameters=array('socid'=>$socid, 'id_prod'=>$id);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if ($action == 'remove_pf')
 {
@@ -92,7 +88,7 @@ if ($action == 'remove_pf')
 		{
 			$result=$product->remove_product_fournisseur_price($rowid);
 			$action = '';
-			$mesg = '<div class="ok">'.$langs->trans("PriceRemoved").'.</div>';
+			setEventMessage($langs->trans("PriceRemoved"));
 		}
 	}
 }
@@ -112,27 +108,27 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
     if ($tva_tx == '')
     {
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("VATRateForSupplierProduct")).'</div>';
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("VATRateForSupplierProduct")), 'errors');
     }
 	if (empty($quantity))
 	{
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")), 'errors');
 	}
 	if (empty($ref_fourn))
 	{
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")), 'errors');
 	}
 	if ($id_fourn <= 0)
 	{
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")), 'errors');
 	}
 	if ($_POST["price"] < 0 || $_POST["price"] == '')
 	{
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")), 'errors');
 	}
 
 	$product = new ProductFournisseur($db);
@@ -140,7 +136,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 	if ($result <= 0)
 	{
 	    $error++;
-	    $mesg=$product->error;
+		setEventMessage($product->error, 'errors');
 	}
 
 	if (! $error)
@@ -157,12 +153,12 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 				$product->fetch($product->product_id_already_linked);
 				$productLink = $product->getNomUrl(1,'supplier');
 
-				$mesg='<div class="error">'.$langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink).'</div>';
+				setEventMessage($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink), 'errors');
 			}
 			else if ($ret < 0)
 			{
 				$error++;
-				$mesg='<div class="error">'.$product->error.'</div>';
+				setEventMessage($product->error, 'errors');
 			}
 		}
 
@@ -177,7 +173,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 			if ($ret < 0)
 			{
 				$error++;
-				$mesg='<div class="error">'.$product->error.'</div>';
+				setEventMessage($product->error, 'errors');
 			}
 		}
 
@@ -263,10 +259,6 @@ if ($id || $ref)
 			print '</table>';
 
 			print "</div>\n";
-
-
-			dol_htmloutput_mesg($mesg);
-
 
 			// Form to add or update a price
 			if (($action == 'add_price' || $action == 'updateprice' ) && ($user->rights->produit->creer || $user->rights->service->creer))

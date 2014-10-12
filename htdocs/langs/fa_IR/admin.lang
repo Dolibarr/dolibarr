@@ -45,6 +45,8 @@ ErrorModuleRequireDolibarrVersion=خطا، این ماژول نیاز به Dolib
 ErrorDecimalLargerThanAreForbidden=خطا، دقت بالاتر <b>از٪ s</b> پشتیبانی نمی شود.
 DictionarySetup=راه اندازی فرهنگ لغت
 Dictionary=واژه نامه ها
+Chartofaccounts=Chart of accounts
+Fiscalyear=Fiscal years
 ErrorReservedTypeSystemSystemAuto=ارزش 'سیستم' و 'systemauto برای نوع محفوظ است. شما می توانید 'کاربر' به عنوان ارزش برای اضافه کردن رکورد خود استفاده کنید
 ErrorCodeCantContainZero=کد می تواند مقدار 0 را شامل نمی شود
 DisableJavascript=توابع غیر فعال کردن جاوا اسکریپت و آژاکس (توصیه شده برای فرد نابینا یا مرورگرهای متنی)
@@ -133,7 +135,7 @@ Box=جعبه
 Boxes=جعبه
 MaxNbOfLinesForBoxes=حداکثر تعداد خطوط برای جعبه
 PositionByDefault=به طور پیش فرض منظور
-Position=سفارش
+Position=Position
 MenusDesc=مدیران منوها محتوا از 2 میله منو (نوار افقی و نوار عمودی) را تعریف کنیم.
 MenusEditorDesc=ویرایشگر منو به شما اجازه تعریف نوشته های شخصی در منوها. استفاده از آن را به دقت برای جلوگیری از ساخت dolibarr نوشته های ناپایدار و منو برای همیشه غیر قابل دسترس. <br> برخی از ماژول اضافه کردن ورودی در منو (در منو <b>همه</b> در اغلب موارد). اگر برخی از این نوشته های به اشتباه حذف خواهند، شما می توانید آنها را غیر فعال و reenabling ماژول بازگرداند.
 MenuForUsers=منو برای کاربران
@@ -217,6 +219,7 @@ AutomaticIfJavascriptDisabled=به صورت خودکار اگر جاوا اسک�
 AvailableOnlyIfJavascriptNotDisabled=فقط در صورت های جاوا اسکریپت غیر فعال است
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=فقط در صورت های جاوا اسکریپت غیر فعال است
 Required=ضروری
+UsedOnlyWithTypeOption=Used by some agenda option only
 Security=امنیت
 Passwords=کلمه عبور
 DoNotStoreClearPassword=آیا بدون رمز عبور روشن ذخیره در پایگاه داده، اما ذخیره تنها مقدار رمز شده (فعال توصیه می شود)
@@ -257,6 +260,9 @@ MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=SMTP / SMTPS هاست (به PHP ب
 MAIN_MAIL_EMAIL_FROM=فرستنده ایمیل برای ایمیل های خودکار (به طور پیش فرض در فایل php.ini <b>اجرا:٪ بازدید کنندگان)</b>
 MAIN_MAIL_ERRORS_TO=فرستنده ایمیل مورد استفاده برای خطا را برمی گرداند ایمیل های فرستاده شده
 MAIN_MAIL_AUTOCOPY_TO= ارسال سیستماتیک مخفی کربن کپی از همه ایمیل های ارسال شده به
+MAIN_MAIL_AUTOCOPY_PROPOSAL_TO= Send systematically a hidden carbon-copy of proposals sent by email to
+MAIN_MAIL_AUTOCOPY_ORDER_TO= Send systematically a hidden carbon-copy of orders sent by email to
+MAIN_MAIL_AUTOCOPY_INVOICE_TO= Send systematically a hidden carbon-copy of invoice sent by emails to
 MAIN_DISABLE_ALL_MAILS=غیر فعال کردن همه sendings ایمیل (برای تست و یا دموی)
 MAIN_MAIL_SENDMODE=روش استفاده برای ارسال ایمیل
 MAIN_MAIL_SMTPS_ID=SMTP ID اگر احراز هویت مورد نیاز
@@ -514,12 +520,16 @@ Module6000Name=گردش کار
 Module6000Desc=مدیریت گردش کار
 Module20000Name=تعطیلات
 Module20000Desc=اعلام و کارکنان تعطیلات را دنبال
+Module39000Name=Product batch
+Module39000Desc=Batch number, eat-by and sell-by date management on products
 Module50000Name=خزانه
 Module50000Desc=ماژول برای ارائه یک صفحه پرداخت آنلاین از طریق کارت اعتباری با خزانه
 Module50100Name=نقطه ای از فروش
 Module50100Desc=نقطه ای از ماژول فروش
 Module50200Name= پی پال
 Module50200Desc= ماژول برای ارائه یک صفحه پرداخت آنلاین از طریق کارت اعتباری با پی پال
+Module50400Name=Accounting (advanced)
+Module50400Desc=Accounting management (double parties)
 Module54000Name=PrintIPP
 Module54000Desc=چاپ از طریق جام IPP پرینتر.
 Module55000Name=نظرسنجی گسترش
@@ -575,9 +585,6 @@ Permission92=ایجاد / تغییر مشارکتهای اجتماعی و مال
 Permission93=حذف کمک های اجتماعی و مالیات بر ارزش افزوده
 Permission94=کمک های اجتماعی صادرات
 Permission95=دفعات بازدید: گزارش
-Permission96=راه اندازی اعزام
-Permission97=خوانده شده فاکتور اعزام حسابداری
-Permission98=خطوط حسابداری فاکتور اعزام
 Permission101=خوانده شده sendings
 Permission102=ایجاد / تغییر sendings
 Permission104=اعتبارسنجی sendings
@@ -1075,6 +1082,7 @@ NotificationsDesc=ایمیل های اطلاعیه قابلیت اجازه می 
 ModelModules=اسناد قالب
 DocumentModelOdt=تولید اسناد از OpenDocuments قالب (. ODT و یا فایل های ODS برای آفیس اپن سورس کنند، KOffice، TextEdit، ...)
 WatermarkOnDraft=تعیین میزان مد آب در پیش نویس سند
+JSOnPaimentBill=Activate feature to autofill payment lines on payment form
 CompanyIdProfChecker=قوانین در حرفه شناسه
 MustBeUnique=باید منحصر به فرد باشد؟
 MustBeMandatory=اجباری برای ایجاد اشخاص ثالث؟
@@ -1533,3 +1541,4 @@ Opened=افتتاح شد
 Closed=بسته
 
 Format=قالب
+TypePaymentDesc=0:Customer payment type, 1:Supplier payment type, 2:Both customers and suppliers payment type

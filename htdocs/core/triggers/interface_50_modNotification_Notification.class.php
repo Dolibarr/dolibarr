@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,19 @@
  *  \ingroup    notification
  *  \brief      File of class of triggers for notification module
  */
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 
 /**
  *  Class of triggers for notification module
  */
-class InterfaceNotification
+class InterfaceNotification extends DolibarrTriggers
 {
-    var $db;
+	public $family = 'notification';
+	public $description = "Triggers of this module send email notifications according to Notification module setup.";
+	public $version = self::VERSION_DOLIBARR;
+	public $picto = 'email';
+
     var $listofmanagedevents=array(
     	'BILL_VALIDATE',
     	'ORDER_VALIDATE',
@@ -40,187 +45,87 @@ class InterfaceNotification
         'SHIPPING_VALIDATE'
    	);
 
-    /**
-     *   Constructor
-     *
-     *   @param		DoliDB		$db      Database handler
-     */
-    function __construct($db)
-    {
-        $this->db = $db;
-
-        $this->name = preg_replace('/^Interface/i','',get_class($this));
-        $this->family = "notification";
-        $this->description = "Triggers of this module send email notifications according to Notification module setup.";
-        $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
-        $this->picto = 'email';
-    }
-
-    /**
-     *   Return name of trigger file
-     *
-     *   @return     string      Name of trigger file
-     */
-    function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     *   Return description of trigger file
-     *
-     *   @return     string      Description of trigger file
-     */
-    function getDesc()
-    {
-        return $this->description;
-    }
-
-    /**
-     *   Return version of trigger file
-     *
-     *   @return     string      Version of trigger file
-     */
-    function getVersion()
-    {
-        global $langs;
-        $langs->load("admin");
-
-        if ($this->version == 'experimental') return $langs->trans("Experimental");
-        elseif ($this->version == 'dolibarr') return DOL_VERSION;
-        elseif ($this->version) return $this->version;
-        else return $langs->trans("Unknown");
-    }
-
-    /**
-     *      Function called when a Dolibarrr business event is done.
-     *      All functions "run_trigger" are triggered if file is inside directory htdocs/core/triggers
-     *
-     *      @param	string		$action		Event action code
-     *      @param  Object		$object     Object
-     *      @param  User		$user       Object user
-     *      @param  Translate	$langs      Object langs
-     *      @param  conf		$conf       Object conf
-     *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
-     */
-	function run_trigger($action,$object,$user,$langs,$conf)
-    {
+	/**
+	 * Function called when a Dolibarrr business event is done.
+	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
+	 *
+	 * @param string		$action		Event action code
+	 * @param Object		$object     Object
+	 * @param User		    $user       Object user
+	 * @param Translate 	$langs      Object langs
+	 * @param conf		    $conf       Object conf
+	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 */
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	{
 		if (empty($conf->notification->enabled)) return 0;     // Module not active, we do nothing
 
 		require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 
-		if ($action == 'BILL_VALIDATE')
-		{
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		$langs->load("other");
 
-            $ref = dol_sanitizeFileName($object->ref);
-            $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
-            if (! file_exists($filepdf)) $filepdf='';
-            $filepdf='';	// We can't add PDF as it is not generated yet.
-            $langs->load("other");
-			$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$object->ref);
+		switch ($action) {
+			case 'BILL_VALIDATE':
+				$dir_output = $conf->facture->dir_output;
+				$object_type = 'facture';
+				$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$object->ref);
+				break;
+			case 'ORDER_VALIDATE':
+				$dir_output = $conf->commande->dir_output;
+				$object_type = 'order';
+				$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$object->ref);
+				break;
+			case 'PROPAL_VALIDATE':
+				$dir_output = $conf->propal->dir_output;
+				$object_type = 'propal';
+				$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$object->ref);
+				break;
+			case 'FICHINTER_VALIDATE':
+				$dir_output = $conf->facture->dir_output;
+				$object_type = 'ficheinter';
+				$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
+				break;
+			case 'ORDER_SUPPLIER_APPROVE':
+				$dir_output = $conf->fournisseur->dir_output.'/commande/';
+				$object_type = 'order_supplier';
+				$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+				$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->getFullName($langs));
+				$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+				break;
+			case 'ORDER_SUPPLIER_REFUSE':
+				$dir_output = $conf->fournisseur->dir_output.'/commande/';
+				$object_type = 'order_supplier';
+				$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+				$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->getFullName($langs));
+				$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+				break;
+			case 'SHIPPING_VALIDATE':
+				$dir_output = $conf->expedition->dir_output.'/sending/';
+				$object_type = 'order_supplier';
+				$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$object->ref);
+				break;
 
-            $notify = new Notify($this->db);
-            $notify->send($action, $object->socid, $mesg, 'facture', $object->id, $filepdf);
+			default:
+				return 0;
+
 		}
 
-		elseif ($action == 'ORDER_VALIDATE')
-		{
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-            $ref = dol_sanitizeFileName($object->ref);
-            $filepdf = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
-            if (! file_exists($filepdf)) $filepdf='';
-            $filepdf='';	// We can't add PDF as it is not generated yet.
-            $langs->load("other");
-			$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$object->ref);
+		$ref = dol_sanitizeFileName($object->ref);
+		$pdf_path = "$dir_output/$ref/$ref.pdf";
 
-            $notify = new Notify($this->db);
-            $notify->send($action, $object->socid, $mesg, 'order', $object->id, $filepdf);
+		if (!file_exists($pdf_path)) {
+			// We can't add PDF as it is not generated yet.
+			$filepdf = '';
+		} else {
+			$filepdf = $pdf_path;
 		}
 
-		elseif ($action == 'PROPAL_VALIDATE')
-		{
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		$notify = new Notify($this->db);
+		$notify->send($action, $object->socid, $mesg, $object_type, $object->id, $filepdf);
 
-            $ref = dol_sanitizeFileName($object->ref);
-            $filepdf = $conf->propal->dir_output . '/' . $ref . '/' . $ref . '.pdf';
-            if (! file_exists($filepdf)) $filepdf='';
-            $filepdf='';	// We can't add PDF as it is not generated yet.
-            $langs->load("other");
-			$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$object->ref);
-
-            $notify = new Notify($this->db);
-            $notify->send($action, $object->socid, $mesg, 'propal', $object->id, $filepdf);
-		}
-
-		elseif ($action == 'FICHINTER_VALIDATE')
-		{
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-            $ref = dol_sanitizeFileName($object->ref);
-            $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
-            if (! file_exists($filepdf)) $filepdf='';
-            $filepdf='';	// We can't add PDF as it is not generated yet.
-            $langs->load("other");
-			$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
-
-            $notify = new Notify($this->db);
-            $notify->send($action, $object->socid, $mesg, 'ficheinter', $object->id, $filepdf);
-		}
-
-		elseif ($action == 'ORDER_SUPPLIER_APPROVE')
-		{
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-            $ref = dol_sanitizeFileName($object->ref);
-            $filepdf = $conf->fournisseur->dir_output . '/commande/' . $ref . '/' . $ref . '.pdf';
-            if (! file_exists($filepdf)) $filepdf='';
-            $mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-			$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->getFullName($langs));
-			$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
-
-            $notify = new Notify($this->db);
-            $notify->send($action, $object->socid, $mesg, 'order_supplier', $object->id, $filepdf);
-		}
-
-		elseif ($action == 'ORDER_SUPPLIER_REFUSE')
-		{
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-            $ref = dol_sanitizeFileName($object->ref);
-            $filepdf = $conf->fournisseur->dir_output . '/commande/' . $ref . '/' . $ref . '.pdf';
-            if (! file_exists($filepdf)) $filepdf='';
-			$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-			$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->getFullName($langs));
-			$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
-
-            $notify = new Notify($this->db);
-            $notify->send($action, $object->socid, $mesg, 'order_supplier', $object->id, $filepdf);
-		}
-        elseif ($action == 'SHIPPING_VALIDATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-            $ref = dol_sanitizeFileName($object->ref);
-            $filepdf = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
-            if (! file_exists($filepdf)) $filepdf='';
-            $mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$object->ref);
-
-
-            $notify = new Notify($this->db);
-            $notify->send($action, $object->socid, $mesg, 'expedition', $object->id, $filepdf);
-        }
-
-		// If not found
-/*
-        else
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
-			return -1;
-        }
-*/
-		return 0;
+		return 1;
     }
 
 
@@ -231,14 +136,14 @@ class InterfaceNotification
      */
     function getListOfManagedEvents()
     {
-        global $conf,$langs;
+        global $conf;
 
         $ret=array();
 
         $sql = "SELECT rowid, code, label, description, elementtype";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
         $sql.= $this->db->order("elementtype, code");
-        dol_syslog("Get list of notifications sql=".$sql);
+        dol_syslog("Get list of notifications", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

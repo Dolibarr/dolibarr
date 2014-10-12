@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Andre Cianfarani             <acianfa@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin                <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@capnetworks.com>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Philippe Grand			    <philippe.grand@atoo-net.com>
@@ -117,6 +117,35 @@ else if ($action == 'specimen')
 	}
 }
 
+// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
+if ($action == 'setModuleOptions')
+{
+	$post_size=count($_POST);
+
+	$db->begin();
+
+	for($i=0;$i < $post_size;$i++)
+	{
+		if (array_key_exists('param'.$i,$_POST))
+		{
+			$param=GETPOST("param".$i,'alpha');
+			$value=GETPOST("value".$i,'alpha');
+			if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+		}
+	}
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		$db->rollback();
+		setEventMessage($langs->trans("Error"),'errors');
+	}
+}
+
 // Activate a model
 if ($action == 'set')
 {
@@ -191,14 +220,6 @@ else if ($action == 'set_COMMANDE_FREE_TEXT')
     {
         setEventMessage($langs->trans("Error"),'errors');
     }
-}
-else if ($action=='setModuleOptions') {
-	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF_ODT_PATH",GETPOST('value1'),'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->COMMANDE_ADDON_PDF_ODT_PATH = GETPOST('value1');
-	}
 }
 
 

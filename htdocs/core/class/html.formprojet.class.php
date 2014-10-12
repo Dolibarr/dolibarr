@@ -80,7 +80,7 @@ class FormProjets
 		if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		$sql.= " ORDER BY p.ref ASC";
 
-		dol_syslog(get_class($this)."::select_projects sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_projects", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -109,18 +109,23 @@ class FormProjets
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.' - '.dol_trunc($obj->title,$maxlength).'</option>';
+							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.' '.dol_trunc($obj->title,$maxlength).'</option>';
 						}
 						else
 						{
 							$disabled=0;
 							$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
-							if (! $obj->fk_statut > 0)
+							if ($obj->fk_statut == 0)
 							{
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("Draft");
 							}
-							if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+							else if ($obj->fk_statut == 2)
+							{
+								$disabled=1;
+								$labeltoshow.=' - '.$langs->trans("Closed");
+							}
+							else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
 							{
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
@@ -201,7 +206,7 @@ class FormProjets
 		$sql.= ' AND entity='.getEntity('project');
 		$sql.= " ORDER BY ref DESC";
 
-		dol_syslog(get_class($this).'::select_element sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::select_element', LOG_DEBUG);
 
 		$resql=$this->db->query($sql);
 		if ($resql)

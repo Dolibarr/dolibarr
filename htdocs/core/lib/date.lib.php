@@ -131,12 +131,13 @@ function getServerTimeZoneInt($refgmtdate='now')
  *
  *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
- *  @param      int			$duration_unit      Unit of added delay (d, m, y, w)
- *  @return     int      			        New timestamp
+ *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h)
+ *  @return     int      			        	New timestamp
  */
 function dol_time_plus_duree($time,$duration_value,$duration_unit)
 {
 	if ($duration_value == 0)  return $time;
+	if ($duration_unit == 'h') return $time + (3600*$duration_value);
 	if ($duration_unit == 'w') return $time + (3600*24*7*$duration_value);
 	if ($duration_value > 0) $deltastring="+".abs($duration_value);
 	if ($duration_value < 0) $deltastring="-".abs($duration_value);
@@ -524,8 +525,8 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
     }
 	$tmpmonth = $prev_month;
 	$tmpyear = $prev_year;
-    
-    //Get first day of next week
+
+	//Get first day of next week
 	$tmptime=dol_mktime(12,0,0,$month,$tmpday,$year,1,0);
 	$tmptime-=24*60*60*7;
 	$tmparray=dol_getdate($tmptime,true);
@@ -654,6 +655,49 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 			$mois_paques = date("m", $date_paques);
 			if($jour_paques == $jour && $mois_paques == $mois) $ferie=true;
 			// Paques
+
+			// Calul des samedis et dimanches
+			$jour_julien = unixtojd($timestampStart);
+			$jour_semaine = jddayofweek($jour_julien, 0);
+			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
+			//Samedi (6) et dimanche (0)
+		}
+
+		if ($countrycode == 'ES')
+		{
+			$countryfound=1;
+
+			// Definition des dates feriees fixes
+			if($jour == 1 && $mois == 1)   $ferie=true; // Año nuevo
+			if($jour == 6 && $mois == 1)   $ferie=true; // Día Reyes
+			if($jour == 1 && $mois == 5)   $ferie=true; // 1 Mayo
+			if($jour == 15 && $mois == 8)  $ferie=true; // 15 Agosto
+			if($jour == 12 && $mois == 10)  $ferie=true; // Día Hispanidad
+			if($jour == 1 && $mois == 11)  $ferie=true; // 1 noviembre
+			if($jour == 6 && $mois == 12) $ferie=true; // Constitución
+			if($jour == 8 && $mois == 12)  $ferie=true; // Inmaculada
+			if($jour == 25 && $mois == 12) $ferie=true; // 25 diciembre
+
+			// Calcul día de Pascua
+			$date_paques = easter_date($annee);
+			$jour_paques = date("d", $date_paques);
+			$mois_paques = date("m", $date_paques);
+			if($jour_paques == $jour && $mois_paques == $mois) $ferie=true;
+			// Paques
+
+			// Viernes Santo
+            $date_viernes = mktime(
+                date("H", $date_paques),
+                date("i", $date_paques),
+                date("s", $date_paques),
+                date("m", $date_paques),
+                date("d", $date_paques) -2,
+                date("Y", $date_paques)
+            );
+			$jour_viernes = date("d", $date_viernes);
+			$mois_viernes = date("m", $date_viernes);
+			if($jour_viernes == $jour && $mois_viernes == $mois) $ferie=true;
+			//Viernes Santo
 
 			// Calul des samedis et dimanches
 			$jour_julien = unixtojd($timestampStart);

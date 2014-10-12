@@ -85,6 +85,7 @@ ClassifyPaid=Klasifikaci &quot;Zaplaceno&quot;
 ClassifyPaidPartially=Klasifikovat &quot;Placené částečně&quot;
 ClassifyCanceled=Klasifikovat &quot;Opuštěné&quot;
 ClassifyClosed=Klasifikaci &quot;uzavřeným&quot;
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Vytvořit fakturu
 AddBill=Přidat fakturu nebo dobropis
 AddToDraftInvoices=Přidat k návrhu fakturu
@@ -197,8 +198,8 @@ Rest=Až do
 AmountExpected=Nárokované částky
 ExcessReceived=Nadbytek obdržel
 EscompteOffered=Sleva nabídl (platba před semestru)
-SendBillRef=Poslat faktury %s
-SendReminderBillRef=Poslat faktury %s (připomínka)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Trvalé příkazy
 StandingOrder=Trvalý příkaz
 NoDraftBills=Žádné návrhy faktury
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Celkem dva nové slevy musí být roven pů
 ConfirmRemoveDiscount=Jste si jisti, že chcete odstranit tuto slevu?
 RelatedBill=Související faktura
 RelatedBills=Související faktury
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Bezprostřední
@@ -315,7 +318,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% předem, 50%% při dodání
 FixAmount=Fix množství
 VarAmount=Variabilní částka (%% celk.)
-
 # PaymentType
 PaymentTypeVIR=Bankovní vklad
 PaymentTypeShortVIR=Bankovní vklad

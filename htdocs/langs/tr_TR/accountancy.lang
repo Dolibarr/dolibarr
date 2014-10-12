@@ -1,0 +1,158 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=Muhasebe
+Globalparameters=Genel parametreler
+Chartofaccounts=Hesap planı
+Fiscalyear=Mali yıllar
+Menuaccount=Muhasebe hesapları
+Menuthirdpartyaccount=Üçüncü parti hesapları
+MenuTools=Araçlar
+
+ConfigAccountingExpert=Hesap uzmanı modülü yapılandırması
+Journaux=Günlükler
+JournalFinancial=Mali günlükler
+Exports=Dışaaktarımlar
+Modelcsv=Dışaaktarım modeli
+Selectmodelcsv=Bir dışaaktarım modeli seç
+Modelcsv_normal=Klasik dışaaktarım
+Modelcsv_CEGID=CEGID Uzmanına yönelik dışaaktarım
+BackToChartofaccounts=Hesap planı geliri
+Back=Gelir
+
+Definechartofaccounts=Hesap planı tanımla
+Selectchartofaccounts=Hesap planı seç
+Validate=Doğrula
+Addanaccount=Muhasebe hesabı ekle
+AccountAccounting=Muhasebe hesabı
+Ventilation=Ventilation
+ToDispatch=Gönderilecek
+Dispatched=Gönderilmiş
+
+CustomersVentilation=Ventilation customers
+SuppliersVentilation=Ventilation suppliers
+TradeMargin=Ticaret marjı
+Reports=Raporlar
+ByCustomerInvoice=Müşteri faturalarına göre
+ByMonth=Aya göre
+NewAccount=Yeni muhasebe hesabı
+Update=Güncelle
+List=Liste
+Create=Oluştur
+UpdateAccount=Bir muhasebe hesabının değiştirilmesi
+UpdateMvts=Bir hareketin değiştirilmesi
+WriteBookKeeping=Büyük defter hesap kayıtları
+Bookkeeping=Büyük Defter
+AccountBalanceByMonth=Aylık hesap bakiyesi
+
+AccountingVentilation=Accounting ventilation
+AccountingVentilationSupplier=Accounting ventilation supplier
+AccountingVentilationCustomer=Accounting ventilation customer
+Line=Satır
+
+CAHTF=Total purchase supplier HT
+InvoiceLines=Lines of invoice to be ventilated
+InvoiceLinesDone=Ventilated lines of invoice
+IntoAccount=Muhasebe hesabında
+
+Ventilate=Ventilate
+VentilationAuto=Automatic ventilation
+
+Processing=İşleme
+EndProcessing=İşleme sonu
+AnyLineVentilate=Any lines to ventilate
+SelectedLines=Seçilen satırlar
+Lineofinvoice=Fatura satırı
+VentilatedinAccount=Ventilated successfully in the accounting account
+NotVentilatedinAccount=Not ventilated in the accounting account
+
+ACCOUNTING_SEPARATORCSV=Separator CSV
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
+
+AccountLength=Dolibarr'da gösterilen muhasebe hesapları uzunluğu
+AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+
+ACCOUNTING_SELL_JOURNAL=Sell journal
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
+ACCOUNTING_BANK_JOURNAL=Bank journal
+ACCOUNTING_CASH_JOURNAL=Cash journal
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
+ACCOUNTING_SOCIAL_JOURNAL=Social journal
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
+ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+
+Doctype=Belge türü
+Docdate=Tarih
+Docref=Referans
+Numerocompte=Hesap
+Code_tiers=Üçüncü parti
+Labelcompte=Hesap etiketi
+Debit=Borç
+Credit=Alacak
+Amount=Tutar
+Sens=Sens (borsa haberleri yayınlama günlüğü)
+Codejournal=Günlük
+
+DelBookKeeping=Büyük defter kayıtlarını sil
+
+SellsJournal=Satış günlüğü
+PurchasesJournal=Satınalma günlüğü
+DescSellsJournal=Satış günlüğü
+DescPurchasesJournal=Satınalma günlüğü
+BankJournal=Banka günlüğü
+DescBankJournal=Nakitten dışında her türlü ödemeyi içeren banka günlüğü
+CashJournal=Kasa günlüğü
+DescCashJournal=Nakit ödeme türünü içeren kasa günlüğü
+
+CashPayment=Nakit ödeme
+
+SupplierInvoicePayment=Tedarikçi faturası ödemesi
+CustomerInvoicePayment=Müşteri faturası ödemesi
+
+ThirdPartyAccount=Üçüncü parti hesabı
+
+NewAccountingMvt=Yeni hareket
+NumMvts=Hareket sayısı
+ListeMvts=Hareket listesi
+ErrorDebitCredit=Borç ve Alacak aynı anda bir değere sahip olamaz
+
+ReportThirdParty=Üçüncü parti hesabını listele
+DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+
+ListAccounts=Muhasebe hesapları listesi
+
+Pcgversion=Plan sürümü
+Pcgtype=Hesap sınıfı
+Pcgsubtype=Hesap sınıfı altında
+Accountparent=Hesabın kökü
+Active=Hesap özeti
+
+NewFiscalYear=Yeni mali yıl
+
+DescVentilCustomer=Consult here the annual accounting ventilation of your invoices customers
+TotalVente=Toplam ciro HT
+TotalMarge=Toplam satışlar oranı
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
+DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
+ChangeAccount=Change the accounting account for lines selected by the account:
+Vide=-
+DescVentilSupplier=Consult here the annual accounting ventilation of your invoices suppliers
+DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
+DescVentilDoneSupplier=Burada tedarikçi faturaları ve muhasebe hesapları satırları listesine başvurun
+
+ValidateHistory=Otomatikman doğrula
+
+ErrorAccountancyCodeIsAlreadyUse=Hata, kullanıldığı için bu muhasebe hesabını silemezsiniz
+
+FicheVentilation=Havalandırma kartı

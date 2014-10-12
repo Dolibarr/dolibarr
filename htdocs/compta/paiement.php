@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,14 +67,17 @@ if ($facid > 0)
 }
 
 // Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('paiementcard'));
+$hookmanager->initHooks(array('paiementcard','globalcard'));
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 
 /*
  * Actions
  */
+
 if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='yes'))
 {
     $error = 0;
@@ -236,7 +240,7 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
             }
         }
         if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/compta/facture.php?facid='.$invoiceid;
-        else $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+        else $loc = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id;
         header('Location: '.$loc);
         exit;
     }
@@ -374,19 +378,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						});
 			';
 
-			// Add user helper to input amount on invoices
-			if (! empty($conf->global->MAIN_JS_ON_PAYMENT) && $facture->type != 2)
-			{
-				print '	$("#payment_form").find("img").click(function() {
-							callForResult(jQuery(this).attr("id"));
-						});
-
-						$("#amountpayment").change(function() {
-							callForResult();
-						});';
-			}
-
 			print '	});'."\n";
+			if(!empty($conf->global->FAC_AUTO_FILLJS)){
+				//Add js for AutoFill
+				print ' $(document).ready(function () {';
+				print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
+								$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value")).trigger("change");
+							});';
+				print '	});'."\n";
+			}
 			print '	</script>'."\n";
 		}
 
@@ -412,7 +412,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<td>'.$langs->trans('Comments').'</td></tr>';
 
         $rowspan=5;
-        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT)) $rowspan++;
 
         // Payment mode
         print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
@@ -437,24 +436,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<td colspan="2">&nbsp;</td>';
         }
         print "</tr>\n";
-
-        // Payment amount
-        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
-        {
-            print '<tr><td><span class="fieldrequired">'.$langs->trans('AmountPayment').'</span></td>';
-            print '<td>';
-            if ($action == 'add_paiement')
-            {
-                print '<input id="amountpayment" name="amountpaymenthidden" size="8" type="text" value="'.(empty($_POST['amountpayment'])?'':$_POST['amountpayment']).'" disabled="disabled">';
-                print '<input name="amountpayment" type="hidden" value="'.(empty($_POST['amountpayment'])?'':$_POST['amountpayment']).'">';
-            }
-            else
-            {
-                print '<input id="amountpayment" name="amountpayment" size="8" type="text" value="'.(empty($_POST['amountpayment'])?'':$_POST['amountpayment']).'">';
-            }
-            print '</td>';
-            print '</tr>';
-        }
 
         // Cheque number
         print '<tr><td>'.$langs->trans('Numero');
@@ -528,7 +509,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
-                $var=True;
+                $var=true;
                 $total=0;
                 $totalrecu=0;
                 $totalrecucreditnote=0;
@@ -578,10 +559,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     if ($action != 'add_paiement')
                     {
-                        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
-                        {
-                            print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="'.$objp->facid.'"');
-                        }
+						if(!empty($conf->global->FAC_AUTO_FILLJS))
+							print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
                         print '<input type=hidden name="'.$nameRemain.'" value="'.$remaintopay.'">';
                         print '<input type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
                     }
@@ -708,15 +687,15 @@ if (! GETPOST('action'))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=True;
+        $var=true;
 
-        print_barre_liste($langs->trans('Payments'), $page, 'paiement.php','',$sortfield,$sortorder,'',$num);
+        print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans('Invoice'),'paiement.php','facnumber','','','',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Type'),'paiement.php','libelle','','','',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Amount'),'paiement.php','fa_amount','','','align="right"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'facnumber','','','',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','','','',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'libelle','','','',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'fa_amount','','','align="right"',$sortfield,$sortorder);
         print '<td>&nbsp;</td>';
         print "</tr>\n";
 

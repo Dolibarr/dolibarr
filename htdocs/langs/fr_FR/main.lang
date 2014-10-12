@@ -645,6 +645,7 @@ OptionalFieldsSetup=Configuration des attributs complémentaires
 URLPhoto=URL de la photo/logo
 SetLinkToThirdParty=Lier vers un autre tiers
 CreateDraft=Créer brouillon
+SetToDraft=Retour en brouillon
 ClickToEdit=Cliquer ici pour éditer
 ObjectDeleted=Objet %s supprimé
 ByCountry=Par pays

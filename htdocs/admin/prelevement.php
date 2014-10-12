@@ -55,7 +55,7 @@ if ($action == "set")
     if (! $res > 0) $error++;
 
     $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT','int');
-    $account = new Account($db, $id);
+    $account = new Account($db);
 
     if($account->fetch($id)>0)
     {
