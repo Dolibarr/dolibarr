@@ -1420,12 +1420,20 @@ else
 
             // Status (to sell)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
-            print $object->getLibStatut(2,0);
+            if (! empty($conf->use_javascript_ajax)) {
+                print ajax_productonoff($object->id, 'status');
+            } else {
+                print $object->getLibStatut(2,0);
+            }
             print '</td></tr>';
 
             // Status (to buy)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
-            print $object->getLibStatut(2,1);
+            if (! empty($conf->use_javascript_ajax)) {
+                print ajax_productonoff($object->id, 'status_buy');
+            } else {
+                print $object->getLibStatut(2,1);
+            }
             print '</td></tr>';
 
 			// Batch number management (to batch)
