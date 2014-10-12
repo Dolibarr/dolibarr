@@ -18,6 +18,7 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
 ALTER TABLE llx_bank_account ADD COLUMN fk_user_author integer;
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN color varchar(9);
@@ -1086,3 +1087,6 @@ CREATE TABLE llx_usergroup_extrafields (
 ALTER TABLE llx_usergroup_extrafields ADD INDEX idx_usergroup_extrafields (fk_object);
 
 ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER note_public;
+
+ALTER TABLE llx_c_email_template ADD UNIQUE INDEX uk_c_email_template(label, lang);
+ALTER TABLE llx_c_email_template ADD INDEX idx_type(type_template);
