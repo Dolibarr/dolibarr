@@ -25,6 +25,8 @@
  *  \brief      Trigger file for agenda module
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
  *  Class of triggered functions for agenda module
@@ -580,11 +582,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->durationp   = 0;
 		$actioncomm->punctual    = 1;
 		$actioncomm->percentage  = -1;   // Not applicable
-		$actioncomm->contact     = $contactforaction;
 		$actioncomm->societe     = $societeforaction;
-		$actioncomm->author      = $user;   // User saving action
-		$actioncomm->usertodo    = $user;	// User action is assigned to (owner of action)
-		//$actioncomm->userdone    = $user;	// User doing action (deprecated, not used anymore)
+		$actioncomm->contact     = $contactforaction;
+		$actioncomm->socid       = $societeforaction->id;
+		$actioncomm->contactid   = $contactforaction->id;
+		$actioncomm->authorid    = $user->id;   // User saving action
+		$actioncomm->userownerid = $user->id;	// Owner of action
+		//$actioncomm->userdone    = $user;	    // User doing action (not used anymore)
+		//$actioncomm->userdoneid  = $user->id;	// User doing action (not used anymore)
 
 		$actioncomm->fk_element  = $object->id;
 		$actioncomm->elementtype = $object->element;

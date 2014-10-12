@@ -133,9 +133,10 @@ ErrorPHPNeedModule=Σφάλμα, η PHP σας πρέπει να έχει το m
 ErrorOpenIDSetupNotComplete=Μπορείτε να ρυθμίσετε το Dolibarr αρχείο config να επιτρέψει OpenID ταυτότητα, αλλά το URL OpenID υπηρεσίας δεν ορίζεται σε συνεχή %s
 ErrorWarehouseMustDiffers=Η πηγή και ο στόχος των αποθηκών πρέπει να είναι διαφορετικός.
 ErrorBadFormat=Κακή μορφή!
-ErrorPaymentDateLowerThanInvoiceDate=Ημερομηνία πληρωμής (%s) δεν μπορεί να είναι πριν από την ημερομηνία έκδοσης του τιμολογίου (%s) για το τιμολόγιο %s.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Σφάλμα, το μέλος αυτό δεν έχει ακόμη συνδεθεί με οποιουσδήποτε άλλους κατασκευαστές. Μέλος του συνδέσμου σε έναν υπάρχοντα Πελ./Προμ. ή να δημιουργήσετε ένα νέο κατασκευαστή πριν από τη δημιουργία τιμολογίου με συνδρομή.
 ErrorThereIsSomeDeliveries=Σφάλμα υπάρχουν κάποιες παραδόσεις που συνδέονται με την εν λόγω αποστολή. Η διαγραφή απορρίφθηκε.
+ErrorCantDeletePaymentReconciliated=Δεν μπορείτε να διαγράψετε μια πληρωμή με τραπεζική συναλλαγή που είχε φτάσει σε συμβιβασμό
+ErrorCantDeletePaymentSharedWithPayedInvoice=Δεν μπορείτε να διαγράψετε μια πληρωμή που σχετίζεται με ένα τουλάχιστον τιμολόγιο με καθεστώς πληρωμένο
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
@@ -154,3 +155,5 @@ WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all page
 WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
 WarningNotRelevant=Irrelevant operation for this dataset
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Απενεργοποιημένη λειτουργία όταν οι ρυθμίσεις της οθόνης έχουν προσαρμοστεί για χρήση από άτομα με προβλήματα όρασης ή φυλλομετρητές κειμένου.
+WarningPaymentDateLowerThanInvoiceDate=Η ημερομηνία πληρωμής (%s) είναι νωρίτερα από την ημερομηνία του τιμολογίου (%s) για το τιμολόγιο %s.
+WarningTooManyDataPleaseUseMoreFilters=Πάρα πολλά στοιχεία. Παρακαλούμε χρησιμοποιήστε περισσότερα φίλτρα

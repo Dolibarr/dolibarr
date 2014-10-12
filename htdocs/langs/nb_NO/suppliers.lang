@@ -40,3 +40,5 @@ AddSupplierInvoice=Opprett innkjøpsfaktura
 ListOfSupplierProductForSupplier=Oversikt over produkter og priser for leverandøren <b>%s</b>
 NoneOrBatchFileNeverRan=Ingen eller batch <b>%s</b> ikke løp nylig
 SentToSuppliers=Sendt til leverandører
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

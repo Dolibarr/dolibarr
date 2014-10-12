@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -445,7 +445,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  *
  * @param	string	   	$inc					?
  * @param   string		$parent					?
- * @param   Object		$lines					?
+ * @param   Task[]		$lines					?
  * @param   int			$level					?
  * @param   string		$projectsrole			?
  * @param   string		$tasksrole				?
@@ -455,8 +455,14 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  */
 function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
 {
-	global $user, $bc, $langs;
-	global $form, $projectstatic, $taskstatic;
+	global $db, $user, $bc, $langs;
+	global $form, $formother, $projectstatic, $taskstatic;
+
+	if (! is_object($formother)) 
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($db);
+	}
 
 	$lastprojectid=0;
 
@@ -526,7 +532,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 
 				// Progress declared %
 				print '<td align="right">';
-				print $lines[$i]->progress.' %';
+				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
 				print '</td>';
 
 				// Time spent

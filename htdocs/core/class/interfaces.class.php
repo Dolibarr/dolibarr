@@ -23,12 +23,12 @@
  *   \brief			Fichier de la classe de gestion des triggers
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/DolibarrTriggers.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
  *   Class to manage triggers
  */
-
 class Interfaces
 {
     var $dir;				// Directory with all core and external triggers files

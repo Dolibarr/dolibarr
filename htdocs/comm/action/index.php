@@ -46,6 +46,11 @@ $filterd = GETPOST("userdone","int",3)?GETPOST("userdone","int",3):GETPOST("filt
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
+// If not choice done on calendar owner, we filter on user.
+if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
+{
+	$filtert=$user->id;
+}
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -486,12 +491,9 @@ if ($resql)
         $event->type_code=$obj->code;
         $event->libelle=$obj->label;
         $event->percentage=$obj->percent;
-        //$event->author->id=$obj->fk_user_author;	// user id of creator
-        $event->authorid=$obj->fk_user_author;	// user id of creator
+        $event->authorid=$obj->fk_user_author;		// user id of creator
         $event->userownerid=$obj->fk_user_action;	// user id of owner
         $event->fetch_userassigned();				// This load $event->userassigned
-        //$event->usertodo->id=$obj->fk_user_action;	// user id of owner
-        //$event->userdone->id=$obj->fk_user_done;	// deprecated
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;

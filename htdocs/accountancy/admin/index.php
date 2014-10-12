@@ -191,7 +191,7 @@ print "<br>\n";
  *  Define Chart of accounts
  */
 print '<table class="noborder" width="100%">';
-$var = True;
+$var = true;
 
 print '<tr class="liste_titre">';
 print '<td colspan="3">';
@@ -211,7 +211,7 @@ $sql .= " AND fk_pays = " . $mysoc->country_id;
 dol_syslog('accountancy/admin/index.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 
-$var = True;
+$var = true;
 
 if ($resql) {
 	$num = $db->num_rows($resql);

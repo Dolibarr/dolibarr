@@ -30,3 +30,4 @@ SearchADonation=جستجوی یک کمک مالی
 DonationRecipient=دریافت کننده کمک مالی
 ThankYou=با تشکر از شما
 IConfirmDonationReception=گیرنده اعلام پذیرش، به عنوان یک کمک مالی، از مقدار زیر
+MinimumAmount=Minimum amount is  %s

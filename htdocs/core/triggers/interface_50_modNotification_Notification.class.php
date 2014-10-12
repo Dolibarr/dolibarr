@@ -22,6 +22,7 @@
  *  \ingroup    notification
  *  \brief      File of class of triggers for notification module
  */
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 
 /**

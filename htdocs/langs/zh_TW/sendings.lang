@@ -13,7 +13,7 @@ LastSendings=有 %s 筆最新的出貨項目
 SearchASending=搜尋出貨項目
 StatisticsOfSendings=統計出貨量
 NbOfSendings=出貨數量
-# NumberOfShipmentsByMonth=Number of shipments by month
+NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=出貨卡
 NewSending=建立出貨
 CreateASending=建立一個新的出貨單
@@ -50,27 +50,29 @@ Enlevement=得到了客戶
 DocumentModelSimple=簡單的文件範本
 DocumentModelMerou=Merou A5 範本
 WarningNoQtyLeftToSend=警告，沒有產品等待裝運。
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=預計交貨日期
 DateReceived=交貨收到日期
 SendShippingByEMail=通過電子郵件發送貨物
-SendShippingRef=發送貨物%s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=對裝運的事件
 LinkToTrackYourPackage=鏈接到追蹤您的包裹
 ShipmentCreationIsDoneFromOrder=就目前而言，從這個訂單而建立的出貨單已經完成。
 RelatedShippings=相關出貨清單
-# ShipmentLine=Shipment line
-# CarrierList=List of transporters
+ShipmentLine=Shipment line
+CarrierList=List of transporters
 
 # Sending methods
 SendingMethodCATCH=按客戶捕捉
 SendingMethodTRANS=運輸車
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=簡單的送貨單文檔模型
 DocumentModelTyphon=更多的送貨單（logo. ..完整的文檔模型）
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=沒有定義的常數EXPEDITION_ADDON_NUMBER
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

@@ -23,6 +23,8 @@
  *  \brief      Trigger file for workflows
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
  *  Class of triggers for workflow module

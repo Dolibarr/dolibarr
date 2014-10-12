@@ -13,7 +13,7 @@ LastSendings=Last %s  sendingar
 SearchASending=Leita að sendingunni
 StatisticsOfSendings=Tölfræði fyrir sendingar
 NbOfSendings=Fjöldi sendinga
-# NumberOfShipmentsByMonth=Number of shipments by month
+NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Shipping kort
 NewSending=New sendingunni
 CreateASending=Búa til sendingu
@@ -50,27 +50,29 @@ Enlevement=Fengið við viðskiptavini
 DocumentModelSimple=Einföld skjal líkan
 DocumentModelMerou=Merou A5 líkan
 WarningNoQtyLeftToSend=Aðvörun, að engar vörur sem bíður sendar.
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Flugvél fæðingardag
 DateReceived=Date sending berast
 SendShippingByEMail=Senda sendingu með tölvupósti
-SendShippingRef=Senda sendingunni %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Viðburðir á sendingunni
 LinkToTrackYourPackage=Tengill til að fylgjast með pakka
 ShipmentCreationIsDoneFromOrder=Í augnablikinu er sköpun af a nýr sendingunni gert úr þeirri röð kortinu.
-# RelatedShippings=Related shippings
-# ShipmentLine=Shipment line
-# CarrierList=List of transporters
+RelatedShippings=Related shippings
+ShipmentLine=Shipment line
+CarrierList=List of transporters
 
 # Sending methods
 SendingMethodCATCH=Afli eftir viðskiptavina
 SendingMethodTRANS=Transporter
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Einföld skjal líkan fyrir kvittunum sending
 DocumentModelTyphon=Meira heill skjal líkan fyrir kvittunum sending (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER skilgreind ekki
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

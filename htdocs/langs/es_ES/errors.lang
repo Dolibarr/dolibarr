@@ -156,3 +156,4 @@ WarningClickToDialUserSetupNotComplete=La configuración de ClickToDial para su 
 WarningNotRelevant=Operación irrelevante para este conjunto de datos
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funcionalidad desactivada cuando la configuración de visualización es optimizada para personas ciegas o navegadores de texto.
 WarningPaymentDateLowerThanInvoiceDate=La fecha de pago (%s) es anterior a la fecha (%s) de la factura %s.
+WarningTooManyDataPleaseUseMoreFilters=Demasiados datos. Utilice más filtros

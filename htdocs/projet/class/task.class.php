@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  *
@@ -42,7 +42,7 @@ class Task extends CommonObject
     var $fk_task_parent;
     var $label;
     var $description;
-    var $duration_effective;
+    var $duration_effective;		// total of time spent on this task
     var $planned_workload;
     var $date_c;
     var $date_start;
@@ -60,6 +60,7 @@ class Task extends CommonObject
     var $timespent_duration;
     var $timespent_old_duration;
     var $timespent_date;
+    var $timespent_datehour;		// More accurate start date (same than timespent_date but includes hours, minutes and seconds)
     var $timespent_fk_user;
     var $timespent_note;
 
@@ -141,8 +142,9 @@ class Task extends CommonObject
             }
         }
 
-        //Update extrafield
-        if (!$error) {
+        // Update extrafield
+        if (! $error) 
+        {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
         		$result=$this->insertExtraFields();
@@ -743,18 +745,21 @@ class Task extends CommonObject
 
         // Clean parameters
         if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
-
+		if (empty($this->timespent_datehour)) $this->timespent_datehour = $this->timespent_date;
+		
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (";
         $sql.= "fk_task";
         $sql.= ", task_date";
+        $sql.= ", task_datehour";
         $sql.= ", task_duration";
         $sql.= ", fk_user";
         $sql.= ", note";
         $sql.= ") VALUES (";
         $sql.= $this->id;
         $sql.= ", '".$this->db->idate($this->timespent_date)."'";
+        $sql.= ", '".$this->db->idate($this->timespent_datehour)."'";
         $sql.= ", ".$this->timespent_duration;
         $sql.= ", ".$this->timespent_fk_user;
         $sql.= ", ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
@@ -785,6 +790,7 @@ class Task extends CommonObject
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
             $sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
+			$sql.= ", progress = " . $this->progress;
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
@@ -813,6 +819,47 @@ class Task extends CommonObject
 
         if ($ret >=0) $this->db->commit();
         return $ret;
+    }
+
+    /**
+     *  Calculate total of time spent for task
+     *
+     *  @param	int		$id 		Id of object (here task)
+     *  @return array		        Array of info for task array('min_date', 'max_date', 'total_duration')
+     */
+    function getSummaryOfTimeSpent($id='')
+    {
+        global $langs;
+
+        if (empty($id)) $id=$this->id;
+        
+        $result=array();
+        
+        $sql = "SELECT";
+        $sql.= " MIN(t.task_datehour) as min_date,";
+        $sql.= " MAX(t.task_datehour) as max_date,";
+        $sql.= " SUM(t.task_duration) as total_duration";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
+        $sql.= " WHERE t.fk_task = ".$id;
+
+        dol_syslog(get_class($this)."::getSummaryOfTimeSpent", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+
+            $result['min_date'] = $obj->min_date;
+            $result['max_date'] = $obj->max_date;
+            $result['total_duration'] = $obj->total_duration;
+
+            $this->db->free($resql);
+            return $result;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return $result;
+        }
     }
 
     /**
@@ -876,12 +923,14 @@ class Task extends CommonObject
         $ret = 0;
 
         // Clean parameters
+        if (empty($this->timespent_datehour)) $this->timespent_datehour = $this->timespent_date;
         if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
-
+        
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
         $sql.= " task_date = '".$this->db->idate($this->timespent_date)."',";
+        $sql.= " task_datehour = '".$this->db->idate($this->timespent_datehour)."',";
         $sql.= " task_duration = ".$this->timespent_duration.",";
         $sql.= " fk_user = ".$this->timespent_fk_user.",";
         $sql.= " note = ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
