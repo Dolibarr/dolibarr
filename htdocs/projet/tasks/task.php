@@ -450,7 +450,7 @@ if ($id > 0 || ! empty($ref))
 			if ($object->planned_workload)
 			{
 				$tmparray=$object->getSummaryOfTimeSpent();
-				if ($tmparray['total_duration'] > 0) print round($tmparray['total_duration']/$object->planned_workload*100, 2).' %';
+				if ($tmparray['total_duration'] > 0) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
 				else print '0 %';
 			}
 			else print '';

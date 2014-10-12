@@ -337,6 +337,30 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 		}
 
+		// Date start
+		print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
+		print dol_print_date($object->date_start,'dayhour');
+		print '</td></tr>';
+
+		// Date end
+		print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
+		print dol_print_date($object->date_end,'dayhour');
+		print '</td></tr>';
+
+		// Planned workload
+		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">'.convertSecondToTime($object->planned_workload,'allhourmin').'</td></tr>';
+
+		// Declared progress
+		print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+		print $object->progress.' %';
+		print '</td></tr>';
+
+		// Calculated progress
+		print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
+		if ($object->planned_workload) print round(100 * $object->duration_effective / $object->planned_workload,2).' %';
+		else print '';
+		print '</td></tr>';
+
 		print '</table>';
 
 		dol_fiche_end();
