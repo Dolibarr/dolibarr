@@ -30,7 +30,6 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $action=GETPOST('action','alpha');
-$name=GETPOST('name','alpha');
 $id=GETPOST('id', 'int');
 $value=GETPOST('value', 'int');
 
