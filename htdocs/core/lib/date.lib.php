@@ -482,7 +482,7 @@ function dol_get_last_day($year,$month=12,$gm=false)
  * 	@param		int		$month		Month
  *  @param		int		$year		Year
  * 	@param		int		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
- *	@return		array				year,month, week,first_day,prev_year,prev_month,prev_day
+ *	@return		array				year,month,week,first_day,prev_year,prev_month,prev_day
  */
 function dol_get_first_day_week($day,$month,$year,$gm=false)
 {
@@ -532,7 +532,7 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
     $prev_day   = $tmparray['mday'];
 
     //Check prev day of week is in same month than first day or not
-    if ($prev_day>$tmpday)
+	if ($prev_day > $tmpday)
     {
     	$prev_month = $month-1;
 		$prev_year  = $year;
@@ -544,7 +544,7 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
     	}
     }
 
-    $week = date("W",dol_mktime(0,0,0,$month,$tmpday,$year,$gm));
+    $week = date("W",dol_mktime(0,0,0,$tmpmonth,$tmpday,$tmpyear,$gm));
 
 	return array('year' => $year, 'month' => $month, 'week' => $week, 'first_day' => $tmpday, 'first_month' => $tmpmonth, 'first_year' => $tmpyear, 'prev_year' => $prev_year, 'prev_month' => $prev_month, 'prev_day' => $prev_day);
 }
