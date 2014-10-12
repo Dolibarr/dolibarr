@@ -18,6 +18,7 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
 ALTER TABLE llx_bank_account ADD COLUMN fk_user_author integer;
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN color varchar(9);
@@ -1092,3 +1093,6 @@ ALTER TABLE llx_tva RENAME TO llx_vat;
 ALTER TABLE llx_c_tva DROP INDEX uk_c_tva_id;
 ALTER TABLE llx_c_tva RENAME TO llx_c_vat;
 ALTER TABLE llx_c_vat ADD UNIQUE INDEX uk_c_vat_id (fk_pays, taux, recuperableonly);
+
+ALTER TABLE llx_c_email_template ADD UNIQUE INDEX uk_c_email_template(label, lang);
+ALTER TABLE llx_c_email_template ADD INDEX idx_type(type_template);

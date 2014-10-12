@@ -37,7 +37,7 @@
  */
 function societe_prepare_head($object)
 {
-    global $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
     $h = 0;
     $head = array();
 
@@ -109,8 +109,29 @@ function societe_prepare_head($object)
         // Notifications
         if (! empty($conf->notification->enabled))
         {
+        	$nbNote = 0;
+        	$sql = "SELECT COUNT(n.rowid) as nb";
+        	$sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n";
+        	$sql.= " WHERE fk_soc = ".$object->id;
+        	$resql=$db->query($sql);
+        	if ($resql)
+        	{
+        		$num = $db->num_rows($resql);
+        		$i = 0;
+        		while ($i < $num)
+        		{
+        			$obj = $db->fetch_object($resql);
+        			$nbNote=$obj->nb;
+        			$i++;
+        		}
+        	}
+        	else {
+        		dol_print_error($db);
+        	}
+        	 
         	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
         	$head[$h][1] = $langs->trans("Notifications");
+			if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
         	$head[$h][2] = 'notify';
         	$h++;
         }
@@ -676,7 +697,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             $contactstatic->civility_id = $obj->civility_id;
-            print $contactstatic->getNameUrl(1);
+            print $contactstatic->getNameUrl(1,'',0,'&backtopage='.urlencode($backtopage));
             print '</td>';
 
             print '<td>'.$obj->poste.'</td>';

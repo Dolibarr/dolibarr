@@ -877,20 +877,21 @@ class Contact extends CommonObject
 	 *	@param		int			$withpicto		Include picto with link
 	 *	@param		string		$option			Where the link point to
 	 *	@param		int			$maxlen			Max length of
+	 *  @param		string		$moreparam		Add more param into URL
 	 *	@return		string						String with URL
 	 */
-	function getNameUrl($withpicto=0,$option='',$maxlen=0)
+	function getNameUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
 	{
 		global $langs;
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'">';
 		$lienfin='</a>';
 
 		if ($option == 'xxx')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'">';
 			$lienfin='</a>';
 		}
 

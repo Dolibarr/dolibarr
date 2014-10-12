@@ -2157,7 +2157,7 @@ else
 
 	        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
 	        {
-				print '<div class="fichecenter"><div class="fichethirdleft">';
+				print '<div class="fichecenter"><div class="fichehalfleft">';
 	            print '<a name="builddoc"></a>'; // ancre
 
 	            /*
@@ -2172,7 +2172,7 @@ else
 
 	            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
 
-				print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 				print '</div></div></div>';

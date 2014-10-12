@@ -1692,7 +1692,7 @@ table.noborder, table.formdoc, div.noborder {
 	border-right-style: solid;
 
 	border-left-width: 1px;
-	border-left-color: #CCCCCC;
+	border-left-color: #B0B0B0;
 	border-left-style: solid;
 
 	border-bottom-width: 1px;
