@@ -174,11 +174,17 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
         }
         else if (! empty($feature2))	// This should be used for future changes
         {
+           	$tmpreadok=1;
         	foreach($feature2 as $subfeature)
         	{
-        		if (! empty($subfeature) && empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) { $readok=0; $nbko++; }
-        		else if (empty($subfeature) && empty($user->rights->$feature->lire) && empty($user->rights->$feature->read)) { $readok=0; $nbko++; }
-        		else { $readok=1; break; } // Break is to bypass second test if the first is ok
+        		if (! empty($subfeature) && empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) { $tmpreadok=0; }
+        		else if (empty($subfeature) && empty($user->rights->$feature->lire) && empty($user->rights->$feature->read)) { $tmpreadok=0; }
+        		else { $tmpreadok=1; break; } // Break is to bypass second test if the first is ok
+        	}
+        	if (! $tmpreadok)	// We found a test on feature that is ko
+        	{
+        		$readok=0;	// All tests are ko (we manage here the and, the or will be managed later using $nbko).
+        		$nbko++;
         	}
         }
         else if (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is for old permissions
