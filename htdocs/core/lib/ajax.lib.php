@@ -468,12 +468,11 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
  *  @param  int     $entity     Entity to set
  *  @return void
  */
-function ajax_productonoff($id, $code, $input=array(), $entity=null)
+function ajax_productonoff($id, $code, $input=array())
 {
     require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
     global $conf, $langs, $db;
 
-    $entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
     $object = new Product($db);
     $object->fetch($id);
 
@@ -484,10 +483,9 @@ function ajax_productonoff($id, $code, $input=array(), $entity=null)
             // Set constant
             $("#set_'.$code.'").click(function() {
                 $.get( "'.DOL_URL_ROOT.'/core/ajax/productonoff.php", {
-                    action: \'set\',
-                    name: \''.$code.'\',
-                    id: \''.$id.'\',
-                    entity: \''.$entity.'\'
+                    action: \'set'.$code.'\',
+                    value: \'1\',
+                    id: \''.$id.'\'
                 },
                 function() {
                     $("#set_'.$code.'").hide();
@@ -513,10 +511,9 @@ function ajax_productonoff($id, $code, $input=array(), $entity=null)
             // Del constant
             $("#del_'.$code.'").click(function() {
                 $.get( "'.DOL_URL_ROOT.'/core/ajax/productonoff.php", {
-                    action: \'del\',
-                    name: \''.$code.'\',
-                    id: \''.$id.'\',
-                    entity: \''.$entity.'\'
+                    action: \'set'.$code.'\',
+                    value: \'0\',
+                    id: \''.$id.'\'
                 },
                 function() {
                     $("#del_'.$code.'").hide();
