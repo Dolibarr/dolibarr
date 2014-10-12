@@ -218,7 +218,7 @@ if ($action == 'add')
 		{
 			if ($i == 0)	// First entry
 			{
-				if ($value['id'] > 0) $usertodo->fetch($value['id']);
+				if ($value['id'] > 0) $object->userownerid=$value['id'];
 				$object->transparency = (GETPOST("transparency")=='on'?1:0);
 			}
 

@@ -98,6 +98,7 @@ For users, new experimental module (need to set feature level of instance to exp
 			Hydroflex		 		 120 euros
 			Asysteo			 		 120 euros
 			Fournisseur médical		 120 euros
+- Removed: unmaintained OScommerce module
 
 For translators:
 - Update language files.
@@ -130,6 +131,7 @@ For developers:
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
+- Deprecated module "oscommerce" were removed.
 - Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
 - Some field into database were renamed from "libelle" to "label".
 - Table llx_c_pays were renamed into llx_c_country.  
