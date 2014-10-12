@@ -3053,6 +3053,14 @@ border-top-right-radius: 6px;
 	background-image: -o-linear-gradient( #ddd,#d1d1d1 ) !important;
 	background-image: linear-gradient( #ddd,#d1d1d1 ) !important;
 }
+.lilevel2
+{
+	padding-left: 22px;
+}
+.lilevel3
+{
+	padding-left: 54px;
+}
 
 <?php
 if (is_object($db)) $db->close();

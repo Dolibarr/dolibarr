@@ -2449,6 +2449,14 @@ ul.ulmenu {
 	background-image: -o-linear-gradient( #eee,#e1e1e1 ) !important;
 	background-image: linear-gradient( #eee,#e1e1e1 ) !important;
 }
+.lilevel2
+{
+	padding-left: 22px;
+}
+.lilevel3
+{
+	padding-left: 54px;
+}
 
 <?php
 if (is_object($db)) $db->close();
