@@ -465,7 +465,6 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
  *  @param  int     $id         Id product to set
  *  @param  string  $code       Name of constant : status or status_buy
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
- *  @param  int     $entity     Entity to set
  *  @return void
  */
 function ajax_productonoff($id, $code, $input=array())
