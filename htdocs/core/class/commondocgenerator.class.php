@@ -290,6 +290,10 @@ abstract class CommonDocGenerator
    			'current_datehour'=>dol_print_date($now,'dayhour','tzuser'),
    			'current_server_date'=>dol_print_date($now,'day','tzserver'),
    			'current_server_datehour'=>dol_print_date($now,'dayhour','tzserver'),
+   			'current_date_locale'=>dol_print_date($now,'day','tzuser',$outputlangs),
+   			'current_datehour_locale'=>dol_print_date($now,'dayhour','tzuser',$outputlangs),
+   			'current_server_date_locale'=>dol_print_date($now,'day','tzserver',$outputlangs),
+   			'current_server_datehour_locale'=>dol_print_date($now,'dayhour','tzserver',$outputlangs),
     	);
 
     	return $array_other;
@@ -357,7 +361,8 @@ abstract class CommonDocGenerator
 		$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
 
 		$array_key.'_note_private'=>$object->note,
-		$array_key.'_note'=>$object->note_public,
+		$array_key.'_note_public'=>$object->note_public,
+		$array_key.'_note'=>$object->note_public,			// For backward compatibility
 		// Payments
 		$array_key.'_already_payed_locale'=>price($alreadypayed, 0, $outputlangs),
 		$array_key.'_remain_to_pay_locale'=>price($object->total_ttc - $sumpayed, 0, $outputlangs),

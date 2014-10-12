@@ -18,6 +18,7 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
 ALTER TABLE llx_bank_account ADD COLUMN fk_user_author integer;
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN color varchar(9);
@@ -1089,3 +1090,6 @@ ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER not
 
 ALTER TABLE llx_c_country ADD COLUMN favorite tinyint DEFAULT 0 AFTER active;
 UPDATE llx_c_country SET favorite = '1' WHERE rowid = '0';
+
+ALTER TABLE llx_c_email_template ADD UNIQUE INDEX uk_c_email_template(label, lang);
+ALTER TABLE llx_c_email_template ADD INDEX idx_type(type_template);

@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: extrafields for projects and tasks are exported to ODT documents.
 - New: Add number of active notification into tab title (like we do for notes and documents)
 - New: Can add product into category from category card.
 - New: PDF event report show project and status of event.
@@ -85,7 +86,7 @@ For users:
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 
-For users, new experimental module:
+For users, new experimental module (need to set feature level of instance to experimental to see them):
 - New: Module Accounting Expert to manage accountancy
 		Special Thanks to developpers :
 			Olivier Geffroy
