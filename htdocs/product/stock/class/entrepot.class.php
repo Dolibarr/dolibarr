@@ -499,13 +499,24 @@ class Entrepot extends CommonObject
 		}
 	}
 
-
 	/**
-	 *	Return clickable name (possibility with the pictogram)
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Page link
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='')
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option);
+    }
+	
+	/**
+	 *	Return clicable name (possibility with the pictogram)
 	 *
-	 *	@param		int		$withpicto		with pictogram
-	 *	@param		string	$option			What point the link
-	 *	@return		string					String with URL
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			What point the link
+	 *	@return	string					String with URL
 	 */
 	function getObjectUrl($withpicto=0,$option='')
 	{

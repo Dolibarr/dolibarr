@@ -2568,13 +2568,26 @@ class Propal extends CommonObject
         }
     }
 
+	/**
+     *	Return clicable link of object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Where point the link ('compta', 'expedition', 'document', ...)
+     *	@param	string	$get_params    	Parameters added to url
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='',$get_params='')
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->get_params);
+    }
+
     /**
      *	Return clicable link of object (with eventually picto)
      *
-     *	@param      int		$withpicto		Add picto into link
-     *	@param      string	$option			Where point the link ('compta', 'expedition', 'document', ...)
-     *	@param      string	$get_params    	Parametres added to url
-     *	@return     string          		String with URL
+     *	@param	int		$withpicto		Add picto into link
+     *	@param	string	$option			Where point the link ('compta', 'expedition', 'document', ...)
+     *	@param	string	$get_params    	Parameters added to url
+     *	@return	string          		String with URL
      */
     function getObjectUrl($withpicto=0,$option='', $get_params='')
     {

@@ -734,13 +734,26 @@ class Project extends CommonObject
         }
     }
 
-    /**
-     * 	Renvoie nom clicable (avec eventuellement le picto)
+	/**
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
      *
-     * 	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     * 	@param	string	$option			Variant ('', 'nolink')
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Page link
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
-     * 	@return	string					Chaine avec URL
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='',$addlabel=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->addlabel);
+    }
+	
+    /**
+     * 	Return clicable object (with eventually the picto)
+     *
+     * 	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Variant ('', 'nolink')
+     * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
+     * 	@return	string					Strin with URL
      */
     function getObjectUrl($withpicto=0, $option='', $addlabel=0)
     {

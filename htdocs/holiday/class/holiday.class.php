@@ -646,13 +646,23 @@ class Holiday extends CommonObject
 
     }
 
-
-    /**
-     *	Return clicable name (with picto eventually)
+	/**
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
      *
-     *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
-     *	@return		string						String with URL
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@return	string					String with URL
      */
+    function getNomUrl($withpicto=0)
+    {
+        return $this->getObjectUrl($this->withpicto);
+    }
+
+	/**
+	 *	Return clicable object (with eventually the picto)
+	 *
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@return	string					String with URL
+	 */
     function getObjectUrl($withpicto=0)
     {
     	global $langs;

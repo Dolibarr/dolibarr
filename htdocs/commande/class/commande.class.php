@@ -2688,15 +2688,28 @@ class Commande extends CommonOrder
         }
     }
 
+	/**
+     *	Return clicable link of object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+	 *  @param  string	$option         Where point the link
+	 *  @param  int		$max            Maxlength of ref
+	 *  @param  int		$short          1=Return just URL
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->max,$this->short);
+    }
 
     /**
      *	Return clicable link of object (with eventually picto)
      *
-     *	@param      int			$withpicto      Add picto into link
-     *	@param      int			$option         Where point the link (0=> main card, 1,2 => shipment)
-     *	@param      int			$max          	Max length to show
-     *	@param      int			$short			Use short labels
-     *	@return     string          			String with URL
+     *	@param	int		$withpicto      Add picto into link
+     *	@param	int		$option         Where point the link (0=> main card, 1,2 => shipment)
+     *	@param	int		$max          	Max length to show
+     *	@param	int		$short			Use short labels
+     *	@return	string         			String with URL
      */
     function getObjectUrl($withpicto=0,$option=0,$max=0,$short=0)
     {

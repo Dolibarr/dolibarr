@@ -572,13 +572,25 @@ class PaymentSocialContribution extends CommonObject
 	}
 
 	/**
-	 *  Renvoie nom clicable (avec eventuellement le picto)
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$maxlength		Max length of ref
+	 *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$maxlength=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->maxlength);
+    }
+	
+	/**
+	 *	Return clicable object (with eventually the picto)
 	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 * 	@param	int		$maxlen			Longueur max libelle
-	 *	@return	string					Chaine avec URL
-	 */
-	function getObjectUrl($withpicto=0,$maxlen=0)
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$maxlength		Max length of ref
+	 *	@return	string					String with URL
+ 	 */
+	function getObjectUrl($withpicto=0,$maxlength=0)
 	{
 		global $langs;
 
@@ -593,7 +605,7 @@ class PaymentSocialContribution extends CommonObject
 
 			if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment").': '.$this->ref,'payment').$lienfin.' ');
 			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
+			if ($withpicto != 2) $result.=$lien.($maxlength?dol_trunc($this->ref,$maxlength):$this->ref).$lienfin;
 		}
 
 		return $result;

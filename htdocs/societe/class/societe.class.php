@@ -1655,14 +1655,26 @@ class Societe extends CommonObject
         }
     }
 
+	/**
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$maxlen			length max label
+     *	@param	string	$option			Page link
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='',$maxlen=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->maxlen);
+    }
 
     /**
-     *    	Return a link on thirdparty (with picto)
+     *  Return a link on thirdparty (with picto)
      *
-     *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
-     *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
-     *		@param	int		$maxlen			Max length of text
-     *		@return	string					String with URL
+     *	@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto into link, 2=Picto only)
+     *	@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
+     *	@param	int		$maxlen			Max length of text
+     *	@return	string					String with URL
      */
     function getObjectUrl($withpicto=0,$option='',$maxlen=0)
     {

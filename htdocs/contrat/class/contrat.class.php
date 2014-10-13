@@ -1521,13 +1521,24 @@ class Contrat extends CommonObject
 		}
 	}
 
-
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$maxlength		Max length of ref
+	 *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$maxlength=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->maxlength);
+    }
+	
+	/**
+	 *	Return clicable name (with eventually the picto)
 	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	@param	int		$maxlength		Max length of ref
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$maxlength		Max length of ref
+	 *	@return	string					String with URL
 	 */
 	function getObjectUrl($withpicto=0,$maxlength=0)
 	{
@@ -2039,11 +2050,23 @@ class ContratLigne extends CommonObject
 	}
 
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$maxlength		Max length of ref
+	 *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$maxlength=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->maxlength);
+    }
+
+	/**
+	 *	Return clicable object (with eventually the picto)
 	 *
-	 *  @param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *  @param	int		$maxlength		Max length
-	 *  @return	string					Chaine avec URL
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$maxlength		Max length of ref
+	 *	@return	string					String with URL
  	 */
 	function getObjectUrl($withpicto=0,$maxlength=0)
 	{

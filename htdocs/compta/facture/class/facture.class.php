@@ -781,6 +781,21 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+     *	Return clicable link of object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+	 *  @param  string	$option         Where point the link
+	 *  @param  int		$max            Maxlength of ref
+	 *  @param  int		$short          1=Return just URL
+	 *  @param  string  $moretitle      Add more text to title tooltip
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='')
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->max,$this->short,$this->moretitle);
+    }
+	
+	/**
 	 *      Return clicable link of object (with eventually picto)
 	 *
 	 *      @param	int		$withpicto       Add picto into link

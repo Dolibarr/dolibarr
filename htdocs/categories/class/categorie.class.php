@@ -1249,12 +1249,25 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *	Return name and link of category (with picto)
-	 *
-	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
-	 * 	@param		int		$maxlength		Max length of text
-	 *	@return		string					Chaine avec URL
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Page link
+     *	@param	int		$maxlength		length max label
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='',$maxlength=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->maxlength);
+    }
+	
+	/**
+	 *  Return clicable object (with eventually the picto)
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Page link
+	 * 	@param	int		$maxlength		Max length of text
+	 *	@return	string					String with URL
 	 */
 	function getObjectUrl($withpicto=0,$option='',$maxlength=0)
 	{

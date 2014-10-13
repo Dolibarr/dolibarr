@@ -399,6 +399,19 @@ class EcmDirectory // extends CommonObject
 		$this->description='This is a directory';
 	}
 
+	/**
+     *	Return clicable link for object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Page link
+	 *  @param	int		$max			Max length
+	 *  @param	string	$more			Add more param on a link
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='',$max=0,$more='')
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->max,$this->more);
+    }	
 
 	/**
 	 *  Return directory name you can click (and picto)

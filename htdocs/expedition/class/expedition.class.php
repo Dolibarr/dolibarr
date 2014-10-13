@@ -1185,6 +1185,20 @@ class Expedition extends CommonObject
 	}
 
 	/**
+     *	Return clicable link for object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$option			Page link
+	 *  @param	int		$max			Max length
+	 *  @param  int		$short			Use short labels
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->max,$this->short);
+    }	
+	
+	/**
      *	Return clicable link of object (with eventually picto)
      *
      *	@param      int			$withpicto      Add picto into link
