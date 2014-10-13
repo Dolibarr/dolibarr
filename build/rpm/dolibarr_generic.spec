@@ -242,7 +242,6 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/asterisk
 %_datadir/dolibarr/htdocs/barcode
 %_datadir/dolibarr/htdocs/bookmarks
-%_datadir/dolibarr/htdocs/boutique
 %_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories
 %_datadir/dolibarr/htdocs/comm

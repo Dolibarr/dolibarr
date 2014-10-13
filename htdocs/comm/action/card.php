@@ -218,7 +218,7 @@ if ($action == 'add')
 		{
 			if ($i == 0)	// First entry
 			{
-				if ($value['id'] > 0) $usertodo->fetch($value['id']);
+				if ($value['id'] > 0) $object->userownerid=$value['id'];
 				$object->transparency = (GETPOST("transparency")=='on'?1:0);
 			}
 
@@ -287,19 +287,21 @@ if ($action == 'add')
 			{
 				unset($_SESSION['assignedtouser']);
 
+				if ($user->id != $object->ownerid) $moreparam="&usertodo=-1";	// We force to remove filter so created record is visible when going back to per user view.
+
 				$db->commit();
 				if (! empty($backtopage))
 				{
-					dol_syslog("Back to ".$backtopage);
-					header("Location: ".$backtopage);
+					dol_syslog("Back to ".$backtopage.$moreparam);
+					header("Location: ".$backtopage.$moreparam);
 				}
 				elseif($idaction)
 				{
-					header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction);
+					header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction.$moreparam);
 				}
 				else
 				{
-					header("Location: ".DOL_URL_ROOT.'/comm/action/index.php');
+					header("Location: ".DOL_URL_ROOT.'/comm/action/index.php'.($moreparam?'?'.$moreparam:''));
 				}
 				exit;
 			}
