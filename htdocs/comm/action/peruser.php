@@ -956,7 +956,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases1[$h]) > 1) $title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			$string1='&nbsp;';
-			$style1='peruser_notbusy';
+			if (empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) $style1='peruser_notbusy';
+			else $style1='peruser_busy';
 			foreach($cases1[$h] as $id => $ev)
 			{
 				if ($ev['busy']) $style1='peruser_busy';
@@ -967,7 +968,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			//$title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases2[$h]) > 1) $title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			$string2='&nbsp;';
-			$style2='peruser_notbusy';
+			if (empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) $style2='peruser_notbusy';
+			else $style2='peruser_busy';
 			foreach($cases2[$h] as $id => $ev)
 			{
 				if ($ev['busy']) $style2='peruser_busy';
