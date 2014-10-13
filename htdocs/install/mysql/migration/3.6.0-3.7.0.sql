@@ -1088,8 +1088,8 @@ ALTER TABLE llx_usergroup_extrafields ADD INDEX idx_usergroup_extrafields (fk_ob
 
 ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER note_public;
 
-ALTER TABLE llx_c_email_template ADD UNIQUE INDEX uk_c_email_template(label, lang);
-ALTER TABLE llx_c_email_template ADD INDEX idx_type(type_template);
+ALTER TABLE llx_c_email_templates ADD UNIQUE INDEX uk_c_email_templates(label, lang);
+ALTER TABLE llx_c_email_templates ADD INDEX idx_type(type_template);
 
 -- Remove OSC module
 DELETE FROM llx_const WHERE name = 'MAIN_MODULE_BOUTIQUE';
