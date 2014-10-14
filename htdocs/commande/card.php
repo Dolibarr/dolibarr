@@ -618,7 +618,7 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 					$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
 
 					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-					if ($result >= 0) 
+					if ($result >= 0)
 					{
 						if (count($prodcustprice->lines) > 0)
 						{
@@ -628,7 +628,7 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 							$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
 						}
 					}
-					else 
+					else
 					{
 						setEventMessage($prodcustprice->error,'errors');
 					}
@@ -2152,9 +2152,16 @@ if ($action == 'create' && $user->rights->commande->creer) {
 				}
 				else
 				{
-					print '<tr><td';
+					print '<tr><td>';
+					print '<table width="100%" class="nobordernopadding"><tr><td';
 					if (! empty($extrafields->attribute_required [$key])) print ' class="fieldrequired"';
-					print '>' . $label . '</td><td colspan="5">';
+					print '>' . $label . '</td>';
+					if (($object->statut == 0 || $extrafields->attribute_alwayseditable[$key]) && $user->rights->propal->creer && ($action != 'edit_extras' || GETPOST('attribute') != $key))
+						print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
+					
+					print '</tr></table>';
+					print '<td colspan="5">';
+					
 					// Convert date into timestamp format
 					if (in_array($extrafields->attribute_type [$key], array('date','datetime')))
 					{

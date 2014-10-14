@@ -3341,10 +3341,16 @@ if ($action == 'create')
 			if ($extrafields->attribute_type [$key] == 'separate') {
 				print $extrafields->showSeparator($key);
 			} else {
-				print '<tr><td';
-				if (! empty($extrafields->attribute_required [$key]))
-					print ' class="fieldrequired"';
-				print '>' . $label . '</td><td colspan="5">';
+				print '<tr><td>';
+				print '<table width="100%" class="nobordernopadding"><tr><td';
+				if (! empty($extrafields->attribute_required [$key])) print ' class="fieldrequired"';
+				print '>' . $label . '</td>';
+				if (($object->statut == 0 || $extrafields->attribute_alwayseditable[$key]) && $user->rights->propal->creer && ($action != 'edit_extras' || GETPOST('attribute') != $key))
+					print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
+				
+				print '</tr></table>';
+				print '<td colspan="5">';
+				
 				// Convert date into timestamp format
 				if (in_array($extrafields->attribute_type [$key], array('date','datetime'))) {
 					$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
