@@ -1200,8 +1200,10 @@ else if ($action == 'down' && $user->rights->propal->creer) {
 		$action = 'edit_extras';
 }
 
-if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->creer) {
-	if ($action == 'addcontact') {
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->creer)
+{
+	if ($action == 'addcontact')
+	{
 		if ($object->id > 0) {
 			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 			$result = $object->add_contact($contactid, $_POST ["type"], $_POST ["source"]);

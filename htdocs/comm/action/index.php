@@ -219,10 +219,10 @@ if (empty($action) || $action=='show_month')
 
     $max_day_in_prev_month = date("t",dol_mktime(0,0,0,$prev_month,1,$prev_year));  // Nb of days in previous month
     $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));                 // Nb of days in next month
-    // tmpday is a negative or null cursor to know how many days before the 1 to show on month view (if tmpday=0 we start on monday)
-    $tmpday = -date("w",dol_mktime(0,0,0,$month,1,$year))+2;
+    // tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
+    $tmpday = -date("w",dol_mktime(12,0,0,$month,1,$year,true))+2;		// date('w') is 0 fo sunday
     $tmpday+=((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)-1);
-    if ($tmpday >= 1) $tmpday -= 7;
+    if ($tmpday >= 1) $tmpday -= 7;	// If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
     // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
     $firstdaytoshow=dol_mktime(0,0,0,$prev_month,$max_day_in_prev_month+$tmpday,$prev_year);
     $next_day=7 - ($max_day_in_month+1-$tmpday) % 7;
@@ -918,7 +918,7 @@ if (empty($action) || $action == 'show_month')      // View by month
         echo " <tr>\n";
         for ($iter_day = 0; $iter_day < 7; $iter_day++)
         {
-            /* Show days before the beginning of the current month (previous month)  */
+        	/* Show days before the beginning of the current month (previous month)  */
             if ($tmpday <= 0)
             {
                 $style='cal_other_month cal_past';
@@ -931,21 +931,20 @@ if (empty($action) || $action == 'show_month')      // View by month
             elseif ($tmpday <= $max_day_in_month)
             {
                 $curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
-
                 $style='cal_current_month';
                 if ($iter_day == 6) $style.=' cal_current_month_right';
                 $today=0;
                 if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
                 if ($today) $style='cal_today';
                 if ($curtime < $todaytms) $style.=' cal_past';
-
+				//var_dump($todayarray['mday']."==".$tmpday." && ".$todayarray['mon']."==".$month." && ".$todayarray['year']."==".$year.' -> '.$style);
                 echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
                 show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "  </td>\n";
             }
             /* Show days after the current month (next month) */
             else
-            {
+			{
                 $style='cal_other_month';
                 if ($iter_day == 6) $style.=' cal_other_month_right';
                 echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';

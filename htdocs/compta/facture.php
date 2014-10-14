@@ -1775,8 +1775,10 @@ else if ($action == 'print_file' and $user->rights->printipp->read) {
 	$action = '';
 }
 
-if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer) {
-	if ($action == 'addcontact') {
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer)
+{
+	if ($action == 'addcontact')
+	{
 		$result = $object->fetch($id);
 
 		if ($result > 0 && $id > 0) {
@@ -3324,12 +3326,13 @@ if ($action == 'create')
 
 	// Other attributes (TODO Move this into an include)
 	$res = $object->fetch_optionals($object->id, $extralabels);
-	$parameters = array('colspan' => ' colspan="2"');
+	$parameters = array('colspan' => ' colspan="5"', "cols" => 5);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
 	                                                                                      // hook
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
-
-		foreach ($extrafields->attribute_label as $key => $label) {
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		foreach ($extrafields->attribute_label as $key => $label)
+		{
 			if ($action == 'edit_extras') {
 				$value = (isset($_POST["options_" . $key]) ? $_POST["options_" . $key] : $object->array_options ["options_" . $key]);
 			} else {

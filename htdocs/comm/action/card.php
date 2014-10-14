@@ -287,17 +287,18 @@ if ($action == 'add')
 			{
 				unset($_SESSION['assignedtouser']);
 
-				if ($user->id != $object->ownerid) $moreparam="&usertodo=-1";	// We force to remove filter so created record is visible when going back to per user view.
+				$moreparam='';
+				if ($user->id != $object->ownerid) $moreparam="usertodo=-1";	// We force to remove filter so created record is visible when going back to per user view.
 
 				$db->commit();
 				if (! empty($backtopage))
 				{
-					dol_syslog("Back to ".$backtopage.$moreparam);
-					header("Location: ".$backtopage.$moreparam);
+					dol_syslog("Back to ".$backtopage.($moreparam?(preg_match('/\?/',$backtopage)?'&'.$moreparam:'?'.$moreparam):''));
+					header("Location: ".$backtopage.($moreparam?(preg_match('/\?/',$backtopage)?'&'.$moreparam:'?'.$moreparam):''));
 				}
 				elseif($idaction)
 				{
-					header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction.$moreparam);
+					header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction.($moreparam?'&'.$moreparam:''));
 				}
 				else
 				{
@@ -379,8 +380,6 @@ if ($action == 'update')
 
 		// Users
 		$listofuserid=array();
-		$assignedtouser=(! empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : 0);
-		if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>($user->id == $assignedtouser ? $transparency : ''));	// Owner first
 		if (! empty($_SESSION['assignedtouser']))	// Now concat assigned users
 		{
 			// Restore array with key with same value than param 'id'
@@ -390,11 +389,18 @@ if ($action == 'update')
 				if ($val['id'] > 0 && $val['id'] != $assignedtouser) $listofuserid[$val['id']]=$val;
 			}
 		}
+		else {
+			$assignedtouser=(! empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : 0);
+			if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>($user->id == $assignedtouser ? $transparency : ''));	// Owner first
+		}
 
-		$object->userassigned=array();	// Clear old content
+		$object->userassigned=array();	$object->userownerid=0; // Clear old content
+		$i=0;
 		foreach($listofuserid as $key => $val)
 		{
+			if ($i == 0) $object->userownerid = $val['id'];
 			$object->userassigned[$val['id']]=array('id'=>$val['id'], 'mandatory'=>0, 'transparency'=>($user->id == $val['id'] ? $transparency : ''));
+			$i++;
 		}
 
 		if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
@@ -1070,7 +1076,7 @@ if ($id > 0)
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
-			if (is_object($object->userownerid)) $listofuserid[$object->userownerid]=array('id'=>$object->userownerid,'transparency'=>$object->transparency);	// Owner first
+			if ($object->userownerid > 0) $listofuserid[$object->userownerid]=array('id'=>$object->userownerid,'transparency'=>$object->transparency);	// Owner first
 			if (! empty($object->userassigned))	// Now concat assigned users
 			{
 				// Restore array with key with same value than param 'id'

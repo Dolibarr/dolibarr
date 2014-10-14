@@ -680,7 +680,7 @@ class FormMail
 
 	/**
 	 *      Return template of email
-	 *      Search into table c_email_template
+	 *      Search into table c_email_templates
 	 *
 	 * 		@param	DoliDB		$db				Database handler
 	 * 		@param	string		$type_template	Get message for key module
