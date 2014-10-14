@@ -419,7 +419,7 @@ if (count($amount)) {
 		    $thirdparty_static->id=$key;
 		    $thirdparty_static->name=$fullname;
 		    $thirdparty_static->client=1;
-		    $linkname=$thirdparty_static->getNomUrl(1,'customer');
+		    $linkname=$thirdparty_static->getObjectUrl(1,'customer');
 		} else {
 			$linkname=$langs->trans("PaymentsNotLinkedToInvoice");
 		}

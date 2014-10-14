@@ -7,6 +7,7 @@
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014      Alexandre Spangaro			<alexandre.spangaro@gmail.com>		
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,49 +184,20 @@ else if ($action == 'setmod')
 	dolibarr_set_const($db, "FICHEINTER_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
-else if ($action == 'set_FICHINTER_FREE_TEXT')
+else if ($action == 'update')
 {
-	$freetext= GETPOST('FICHINTER_FREE_TEXT','alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+    $error = 0;
 
-	if (! $res > 0) $error++;
+    $value1 = GETPOST('FICHINTER_PRINT_PRODUCTS','alpha');
+	dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS",$value1,'chaine',0,'',$conf->entity);
 
- 	if (! $error)
-    {
-        setEventMessage($langs->trans("SetupSaved"));
-    }
-    else
-    {
-        setEventMessage($langs->trans("Error"),'errors');
-    }
-}
+    $value2 = GETPOST('FICHINTER_DRAFT_WATERMARK','alpha');
+	dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",$value2,'chaine',0,'',$conf->entity);
 
-else if ($action == 'set_FICHINTER_DRAFT_WATERMARK')
-{
-	$draft= GETPOST('FICHINTER_DRAFT_WATERMARK','alpha');
-
-	$res = dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        setEventMessage($langs->trans("SetupSaved"));
-    }
-    else
-    {
-        setEventMessage($langs->trans("Error"),'errors');
-    }
-}
-
-elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
-{
-	$val = GETPOST('FICHINTER_PRINT_PRODUCTS','alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS",($val == 'on'),'bool',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
-
- 	if (! $error)
+    $value3 = GETPOST('FICHINTER_FREE_TEXT','alpha');
+	dolibarr_set_const($db, "FICHINTER_FREE_TEXT",$value3,'chaine',0,'',$conf->entity);
+	
+    if (! $error)
     {
         setEventMessage($langs->trans("SetupSaved"));
     }
@@ -511,55 +483,40 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
-print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 $var=true;
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_FICHINTER_FREE_TEXT">';
+print '<input type="hidden" name="action" value="update">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnInterventions").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 print '<textarea name="FICHINTER_FREE_TEXT" class="flat" cols="120">'.$conf->global->FICHINTER_FREE_TEXT.'</textarea>';
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
+print '</td></tr>';
 
 //Use draft Watermark
 $var=!$var;
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"set_FICHINTER_DRAFT_WATERMARK\">";
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraftInterventionCards").'<br>';
 print '<input size="50" class="flat" type="text" name="FICHINTER_DRAFT_WATERMARK" value="'.$conf->global->FICHINTER_DRAFT_WATERMARK.'">';
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
+print '</td></tr>';
 
 // print products on fichinter
 $var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_FICHINTER_PRINT_PRODUCTS">';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("PrintProductsOnFichinter").' ('.$langs->trans("PrintProductsOnFichinterDetails").')</td>';
 print '<td align="center"><input type="checkbox" name="FICHINTER_PRINT_PRODUCTS" ';
 if ($conf->global->FICHINTER_PRINT_PRODUCTS)
 	print 'checked="checked" ';
 print '/>';
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-
-print '</form>';
-
+print '</td></tr>';
 
 print '</table>';
 
-print '<br>';
+print '<br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+
+print '</form>';
 
 $db->close();
 

@@ -871,6 +871,20 @@ class Contact extends CommonObject
 	}
 
 	/**
+     *	Return clicable link for object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+	 *	@param	string	$option			Where the link point to
+	 *	@param	int		$maxlen			Max length of ref
+	 *  @param	string	$moreparam		Add more param into URL
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->maxlen,$this->moreparam);
+    }
+
+	/**
 	 *  Return name of contact with link (and eventually picto)
 	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
@@ -880,7 +894,7 @@ class Contact extends CommonObject
 	 *  @param		string		$moreparam		Add more param into URL
 	 *	@return		string						String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
+	function getObjectUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
 	{
 		global $langs;
 

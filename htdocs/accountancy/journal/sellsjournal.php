@@ -95,7 +95,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_produc
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_vat ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " WHERE fd.fk_code_ventilation > 0 ";
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity = " . $conf->entity;
@@ -423,14 +423,14 @@ if ($action == 'export_csv') {
 
 		// Third party
 		print "<td>" . $date . "</td>";
-		print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+		print "<td>" . $invoicestatic->getObjectUrl(1) . "</td>";
 		foreach ( $tabttc[$key] as $k => $mt ) {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
 			print "<td>" . length_accounta($k);
 			print "</td><td>" . $langs->trans("ThirdParty");
-			print ' (' . $companystatic->getNomUrl(0, 'customer', 16) . ')';
+			print ' (' . $companystatic->getObjectUrl(0, 'customer', 16) . ')';
 			print "</td><td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 		}
@@ -441,7 +441,7 @@ if ($action == 'export_csv') {
 			if ($mt) {
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
-				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				print "<td>" . $invoicestatic->getObjectUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";
 				print "<td>" . $invoicestatic->description . "</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
@@ -456,7 +456,7 @@ if ($action == 'export_csv') {
 			if ($mt) {
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
-				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				print "<td>" . $invoicestatic->getObjectUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";
 				print "<td>" . $langs->trans("VAT") . "</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";

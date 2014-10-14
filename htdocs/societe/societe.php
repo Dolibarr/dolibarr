@@ -411,7 +411,7 @@ if ($resql)
         $companystatic->fournisseur=$obj->fournisseur;
         $companystatic->code_client=$obj->code_client;
         $companystatic->code_fournisseur=$obj->code_fournisseur;
-		print $companystatic->getNomUrl(1,'',100);
+		print $companystatic->getObjectUrl(1,'',100);
 		print "</td>\n";
 		// Barcode
 		if (! empty($conf->barcode->enabled))
@@ -428,19 +428,19 @@ if ($resql)
 		if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 		{
 	  		$companystatic->name=$langs->trans("Customer");
-		    $s.=$companystatic->getNomUrl(0,'customer');
+		    $s.=$companystatic->getObjectUrl(0,'customer');
 		}
 		if (($obj->client==2 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
             if ($s) $s.=" / ";
 		    $companystatic->name=$langs->trans("Prospect");
-            $s.=$companystatic->getNomUrl(0,'prospect');
+            $s.=$companystatic->getObjectUrl(0,'prospect');
 		}
 		if (! empty($conf->fournisseur->enabled) && $obj->fournisseur)
 		{
 			if ($s) $s.=" / ";
             $companystatic->name=$langs->trans("Supplier");
-            $s.=$companystatic->getNomUrl(0,'supplier');
+            $s.=$companystatic->getObjectUrl(0,'supplier');
 		}
 		print $s;
 		print '</td>';

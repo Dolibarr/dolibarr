@@ -137,7 +137,7 @@ if ($id > 0 || ! empty($ref))
 		$object->fetch_thirdparty();
 
 	print "<tr><td>".$langs->trans("Company")."</td>";
-	print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+	print '<td colspan="3">'.$object->client->getObjectUrl(1).'</td></tr>';
 	print "</table>";
 
 	print '</div>';

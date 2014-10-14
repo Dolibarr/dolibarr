@@ -281,7 +281,7 @@ if ($id > 0)
 		print '<td>'.$langs->trans('Skype').'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
   	}
 
-	// Assujeti a TVA ou pas
+	// Assujetti a TVA ou pas
 	print '<tr>';
 	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
 	print yn($object->tva_assuj);
@@ -463,7 +463,7 @@ if ($id > 0)
         if ($result > 0)
         {
             $adh->ref=$adh->getFullName($langs);
-            print $adh->getNomUrl(1);
+            print $adh->getObjectUrl(1);
         }
         else
         {
@@ -662,7 +662,7 @@ if ($id > 0)
 				print '<td class="nowrap">';
 				$contrat->id=$objp->id;
 				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
-				print $contrat->getNomUrl(1,12);
+				print $contrat->getObjectUrl(1,12);
 				print "</td>\n";
 				print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td width="20">&nbsp;</td>';
@@ -785,7 +785,7 @@ if ($id > 0)
 				$facturestatic->id=$objp->facid;
 				$facturestatic->ref=$objp->facnumber;
 				$facturestatic->type=$objp->type;
-				print $facturestatic->getNomUrl(1);
+				print $facturestatic->getObjectUrl(1);
 				print '</td>';
 				if ($objp->df > 0)
 				{

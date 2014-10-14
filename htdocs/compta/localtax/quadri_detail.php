@@ -262,7 +262,7 @@ else
 				'localtax1'=> $x_coll[$my_coll_rate]['localtax1_list'][$id],
 				'localtax2'=> $x_coll[$my_coll_rate]['localtax2_list'][$id],
 				'vat'       =>$x_coll[$my_coll_rate]['vat_list'][$id],
-				'link'      =>$invoice_customer->getNomUrl(1,'',12));
+				'link'      =>$invoice_customer->getObjectUrl(1,'',12));
 		}
 	}
 	// tva paid
@@ -298,7 +298,7 @@ else
 				'localtax1'=> $x_paye[$my_paye_rate]['localtax1_list'][$id],
 				'localtax2'=> $x_paye[$my_paye_rate]['localtax2_list'][$id],
 				'vat'       =>$x_paye[$my_paye_rate]['vat_list'][$id],
-				'link'      =>$invoice_supplier->getNomUrl(1,'',12));
+				'link'      =>$invoice_supplier->getObjectUrl(1,'',12));
 		}
 	}
 	//now we have an array (x_both) indexed by rates for coll and paye
@@ -373,7 +373,7 @@ else
 						$product_static->id=$fields['pid'];
 						$product_static->ref=$fields['pref'];
 						$product_static->type=$fields['ptype'];
-						print $product_static->getNomUrl(1);
+						print $product_static->getObjectUrl(1);
 						if (dol_string_nohtmltag($fields['descr'])) print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']),16);
 					}
 					else
@@ -417,7 +417,7 @@ else
 						if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 						{
 							$payment_static->id=$fields['payment_id'];
-							print $payment_static->getNomUrl(2);
+							print $payment_static->getObjectUrl(2);
 						}
 						if ($type == 0)
 						{
@@ -540,7 +540,7 @@ else
 						$product_static->id=$fields['pid'];
 						$product_static->ref=$fields['pref'];
 						$product_static->type=$fields['ptype'];
-						print $product_static->getNomUrl(1);
+						print $product_static->getObjectUrl(1);
 						if (dol_string_nohtmltag($fields['descr'])) print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']),16);
 					}
 					else
@@ -577,7 +577,7 @@ else
 						if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 						{
 							$paymentfourn_static->id=$fields['payment_id'];
-							print $paymentfourn_static->getNomUrl(2);
+							print $paymentfourn_static->getObjectUrl(2);
 						}
 						if ($type == 0)
 						{

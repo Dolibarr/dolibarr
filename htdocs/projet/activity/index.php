@@ -104,7 +104,7 @@ if ( $resql )
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
+		print $projectstatic->getObjectUrl(1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
@@ -159,7 +159,7 @@ if ( $resql )
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
+		print $projectstatic->getObjectUrl(1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
@@ -220,7 +220,7 @@ if ( $resql )
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
+		print $projectstatic->getObjectUrl(1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
@@ -271,7 +271,7 @@ if ( $resql )
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
+		print $projectstatic->getObjectUrl(1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
@@ -318,7 +318,7 @@ if ( $resql )
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
+		print $projectstatic->getObjectUrl(1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";

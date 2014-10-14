@@ -238,7 +238,7 @@ print '<td class="notopnoleftnoright" valign="top" width="50%">';
  */
 
 $sql = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm";
-$sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
+$sql.= " FROM ".MAIN_DB_PREFIX."vat as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.datev >= '".$db->idate(dol_get_first_day($y,1,false))."'";
 $sql.= " AND f.datev <= '".$db->idate(dol_get_last_day($y,12,false))."'";

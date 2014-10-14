@@ -478,7 +478,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		// VAT
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON bu2.fk_bank = b.rowid AND bu2.type='payment_vat'";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."tva as t ON bu2.url_id = t.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."vat as t ON bu2.url_id = t.rowid";
 
 		// Salary payment
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='payment_salary'";
@@ -551,7 +551,7 @@ if ($id > 0 || ! empty($ref))
 					dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
 					$bordereaustatic = new RemiseCheque($db);
 					$bordereaustatic->id = $objp->fk_bordereau;
-					$label .= ' '.$bordereaustatic->getNomUrl(2);
+					$label .= ' '.$bordereaustatic->getObjectUrl(2);
 				}
 				print $label;
 				print "</td>\n";
@@ -579,13 +579,13 @@ if ($id > 0 || ! empty($ref))
 					{
 						$paymentstatic->id=$links[$key]['url_id'];
 						$paymentstatic->ref=$links[$key]['url_id'];
-						print ' '.$paymentstatic->getNomUrl(2);
+						print ' '.$paymentstatic->getObjectUrl(2);
 					}
 					elseif ($links[$key]['type']=='payment_supplier')
 					{
 						$paymentsupplierstatic->id=$links[$key]['url_id'];
 						$paymentsupplierstatic->ref=$links[$key]['url_id'];
-						print ' '.$paymentsupplierstatic->getNomUrl(2);
+						print ' '.$paymentsupplierstatic->getObjectUrl(2);
 					}
 					elseif ($links[$key]['type']=='payment_sc')
 					{
@@ -598,13 +598,13 @@ if ($id > 0 || ! empty($ref))
 					{
 						$paymentvatstatic->id=$links[$key]['url_id'];
 						$paymentvatstatic->ref=$links[$key]['url_id'];
-						print ' '.$paymentvatstatic->getNomUrl(2);
+						print ' '.$paymentvatstatic->getObjectUrl(2);
 					}
 					elseif ($links[$key]['type']=='payment_salary')
 					{
 						$paymentsalstatic->id=$links[$key]['url_id'];
 						$paymentsalstatic->ref=$links[$key]['url_id'];
-						print ' '.$paymentsalstatic->getNomUrl(2);
+						print ' '.$paymentsalstatic->getObjectUrl(2);
 					}
 					elseif ($links[$key]['type']=='banktransfert')
 					{
@@ -615,11 +615,11 @@ if ($id > 0 || ! empty($ref))
 							$bankstatic->id=$banklinestatic->fk_account;
 							$bankstatic->label=$banklinestatic->bank_account_label;
 							print ' ('.$langs->trans("TransferFrom").' ';
-							print $bankstatic->getNomUrl(1,'transactions');
+							print $bankstatic->getObjectUrl(1,'transactions');
 							print ' '.$langs->trans("toward").' ';
 							$bankstatic->id=$objp->bankid;
 							$bankstatic->label=$objp->bankref;
-							print $bankstatic->getNomUrl(1,'');
+							print $bankstatic->getObjectUrl(1,'');
 							print ')';
 						}
 						else
@@ -627,12 +627,12 @@ if ($id > 0 || ! empty($ref))
 							$bankstatic->id=$objp->bankid;
 							$bankstatic->label=$objp->bankref;
 							print ' ('.$langs->trans("TransferFrom").' ';
-							print $bankstatic->getNomUrl(1,'');
+							print $bankstatic->getObjectUrl(1,'');
 							print ' '.$langs->trans("toward").' ';
 							$banklinestatic->fetch($links[$key]['url_id']);
 							$bankstatic->id=$banklinestatic->fk_account;
 							$bankstatic->label=$banklinestatic->bank_account_label;
-							print $bankstatic->getNomUrl(1,'transactions');
+							print $bankstatic->getObjectUrl(1,'transactions');
 							print ')';
 						}
 						//var_dump($links);
@@ -681,13 +681,13 @@ if ($id > 0 || ! empty($ref))
 					{
 						$societestatic->id=$links[$key]['url_id'];
 						$societestatic->name=$links[$key]['label'];
-						print $societestatic->getNomUrl(1,'',16);
+						print $societestatic->getObjectUrl(1,'',16);
 					}
 					else if ($links[$key]['type']=='user')
 					{
 						$userstatic->id=$links[$key]['url_id'];
 						$userstatic->lastname=$links[$key]['label'];
-						print $userstatic->getNomUrl(1,'');
+						print $userstatic->getObjectUrl(1,'');
 					}
 					else if ($links[$key]['type']=='sc')
 					{
@@ -703,13 +703,13 @@ if ($id > 0 || ! empty($ref))
 							$chargestatic->lib=$links[$key]['label'];
 						}
 						$chargestatic->ref=$chargestatic->lib;
-						print $chargestatic->getNomUrl(1,16);
+						print $chargestatic->getObjectUrl(1,16);
 					}
 					else if ($links[$key]['type']=='member')
 					{
 						$memberstatic->id=$links[$key]['url_id'];
 						$memberstatic->ref=$links[$key]['label'];
-						print $memberstatic->getNomUrl(1,16,'card');
+						print $memberstatic->getObjectUrl(1,16,'card');
 					}
 				}
 				print '</td>';

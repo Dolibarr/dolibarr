@@ -180,7 +180,7 @@ if ($resql)
 			$chargesociale_static->id=$obj->id;
 			$chargesociale_static->lib=$obj->id;
 			$chargesociale_static->ref=$obj->id;
-			print $chargesociale_static->getNomUrl(1,'20');
+			print $chargesociale_static->getObjectUrl(1,'20');
 			print '</td>';
 
 			// Label

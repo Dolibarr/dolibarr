@@ -160,7 +160,7 @@ if ($resql)
 		{
         	$userstatic->id=$obj->fk_user;
 	    	$userstatic->lastname=$obj->login;
-			print $userstatic->getNomUrl(1);
+			print $userstatic->getObjectUrl(1);
 		}
 		else
 		{

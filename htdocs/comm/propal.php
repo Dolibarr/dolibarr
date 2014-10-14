@@ -1351,7 +1351,7 @@ if ($action == 'create')
 	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
 	if ($socid > 0) {
 		print '<td colspan="2">';
-		print $soc->getNomUrl(1);
+		print $soc->getObjectUrl(1);
 		print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 		print '</td>';
 	} else {
@@ -1509,7 +1509,7 @@ if ($action == 'create')
 		elseif ($newclassname == 'Fichinter')
 			$newclassname = 'Intervention';
 
-		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
+		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getObjectUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0 ) 		// Localtax1
@@ -1743,7 +1743,7 @@ if ($action == 'create')
 	print '</tr>';
 
 	// Company
-	print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="5">' . $soc->getNomUrl(1) . '</td>';
+	print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="5">' . $soc->getObjectUrl(1) . '</td>';
 	print '</tr>';
 
 	// Ligne info remises tiers

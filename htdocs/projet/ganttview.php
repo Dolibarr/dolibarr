@@ -120,7 +120,7 @@ if ($id > 0 || ! empty($ref))
     print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
+    if (! empty($object->thirdparty->id)) print $object->thirdparty->getObjectUrl(1);
     else print '&nbsp;';
     print '</td>';
     print '</tr>';
@@ -206,7 +206,7 @@ if (count($tasksarray)>0)
 		$tasks[$taskcursor]['task_is_group']=0;
 		$tasks[$taskcursor]['task_milestone']=0;
 		$tasks[$taskcursor]['task_percent_complete']=$val->progress;
-		//$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
+		//$tasks[$taskcursor]['task_name']=$task->getObjectUrl(1);
 		$tasks[$taskcursor]['task_name']=$val->label;
 		$tasks[$taskcursor]['task_start_date']=$val->date_start;
 		$tasks[$taskcursor]['task_end_date']=$val->date_end;

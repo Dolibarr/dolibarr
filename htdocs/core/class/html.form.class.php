@@ -1333,7 +1333,7 @@ class Form
 		{
 			if ($value['id'] == $ownerid) continue;
 			$userstatic->fetch($value['id']);
-			$out.=$userstatic->getNomUrl(1);
+			$out.=$userstatic->getObjectUrl(1);
 			if ($i == 0) { $ownerid = $value['id']; $out.=' ('.$langs->trans("Owner").')'; }
 			if ($nbassignetouser > 1 && $action != 'view') $out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
 			//$out.=' '.($value['mandatory']?$langs->trans("Mandatory"):$langs->trans("Optional"));
@@ -3059,7 +3059,7 @@ class Form
                 $projet = new Project($this->db);
                 $projet->fetch($selected);
                 //print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-                print $projet->getNomUrl(0,'',1);
+                print $projet->getObjectUrl(0,'',1);
             }
             else
             {
@@ -3259,7 +3259,7 @@ class Form
                 //print $this->cache_contacts[$selected];
                 $theuser=new User($this->db);
                 $theuser->fetch($selected);
-                print $theuser->getNomUrl(1);
+                print $theuser->getObjectUrl(1);
             } else {
                 print "&nbsp;";
             }
@@ -3449,7 +3449,7 @@ class Form
                 require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
                 $soc = new Societe($this->db);
                 $soc->fetch($selected);
-                print $soc->getNomUrl($langs);
+                print $soc->getObjectUrl($langs);
             }
             else
             {
@@ -3522,7 +3522,7 @@ class Form
     	if ($num > 0) return $num;    // Cache deja charge
 
     	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_vat as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
     	$sql.= " AND t.active = 1";
     	$sql.= " AND c.code IN (".$country_code.")";

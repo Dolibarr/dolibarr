@@ -533,13 +533,25 @@ class Fichinter extends CommonObject
 	}
 
 	/**
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Page link
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='')
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option);
+    }
+	
+	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param		int		$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
-	 *	@param		string	$option			Options
-	 *	@return		string					String with URL
+	 *	@param	int		$withpicto		0=_No picto, 1=Include picto into link, 2=Only Picto
+	 *	@param	string	$option			Options
+	 *	@return	string					String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getObjectUrl($withpicto=0,$option='')
 	{
 		global $langs;
 

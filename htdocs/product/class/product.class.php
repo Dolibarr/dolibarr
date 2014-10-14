@@ -2776,6 +2776,19 @@ class Product extends CommonObject
 	}
 
 	/**
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+	 *	@param	string	$option			Page link
+	 *	@param	int		$maxlength		Max length of ref
+	 *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='',$maxlength=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->maxlength);
+    }
+	 
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param		int		$withpicto		Add picto into link
@@ -2783,7 +2796,7 @@ class Product extends CommonObject
 	 *	@param		int		$maxlength		Maxlength of ref
 	 *	@return		string					String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$maxlength=0)
+	function getObjectUrl($withpicto=0,$option='',$maxlength=0)
 	{
 		global $langs;
 

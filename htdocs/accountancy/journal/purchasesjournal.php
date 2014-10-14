@@ -89,7 +89,7 @@ $sql .= " fd.rowid as fdid, fd.description, fd.total_ttc, fd.tva_tx, fd.total_ht
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur, s.fournisseur,";
 $sql .= " s.code_compta_fournisseur, p.accountancy_code_buy , ct.accountancy_code_buy as account_tva, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva as ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_vat as ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_product";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
@@ -417,7 +417,7 @@ if ($action == 'export_csv') {
 			if ($mt) {
 				print "<tr " . $bc[$var] . " >";
 				print "<td>" . $date . "</td>";
-				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				print "<td>" . $invoicestatic->getObjectUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";
 				print "<td>" . $invoicestatic->description . "</td>";
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
@@ -431,7 +431,7 @@ if ($action == 'export_csv') {
 			if ($mt) {
 				print "<tr " . $bc[$var] . " >";
 				print "<td>" . $date . "</td>";
-				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				print "<td>" . $invoicestatic->getObjectUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td><td>" . $langs->trans("VAT") . "</td>";
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
@@ -442,7 +442,7 @@ if ($action == 'export_csv') {
 
 		// Third party
 		print "<td>" . $date . "</td>";
-		print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+		print "<td>" . $invoicestatic->getObjectUrl(1) . "</td>";
 
 		foreach ( $tabttc[$key] as $k => $mt ) {
 			$companystatic->id = $tabcompany[$key]['id'];
@@ -450,7 +450,7 @@ if ($action == 'export_csv') {
 
 			print "<td>" . length_accounta($k);
 			print "</td><td>" . $langs->trans("ThirdParty");
-			print ' (' . $companystatic->getNomUrl(0, 'supplier', 16) . ')';
+			print ' (' . $companystatic->getObjectUrl(0, 'supplier', 16) . ')';
 			print "</td>";
 			print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
 			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";

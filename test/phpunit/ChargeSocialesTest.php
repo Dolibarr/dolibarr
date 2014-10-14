@@ -201,7 +201,7 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $result=$localobject->getNomUrl(1);
+        $result=$localobject->getObjectUrl(1);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertNotEquals($result, '');
 

@@ -252,14 +252,26 @@ class Cotisation extends CommonObject
 		}
 	}
 
-
 	/**
-	 *  Renvoie nom clicable (avec eventuellement le picto)
-	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	@return	string					Chaine avec URL
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$maxlen			length max label
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$maxlen=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->maxlen);
+    }
+	
+    /**
+     *  Return clicable object (with eventually the picto)
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$maxlen			length max label
+     *	@return	string					String with URL
 	 */
-	function getNomUrl($withpicto=0)
+	function getObjectUrl($withpicto=0,$maxlen=0)
 	{
 		global $langs;
 
@@ -273,10 +285,9 @@ class Cotisation extends CommonObject
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$lien.$this->ref.$lienfin;
+		$result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
 		return $result;
 	}
-
 
     /**
      *  Charge les informations d'ordre info dans l'objet cotisation

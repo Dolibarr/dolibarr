@@ -519,7 +519,7 @@ else
 
 			// Client
 			print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-			print '<td align="3">'.$soc->getNomUrl(1).'</td>';
+			print '<td align="3">'.$soc->getObjectUrl(1).'</td>';
 			print "</tr>";
 
 			// Document origine
@@ -529,7 +529,7 @@ else
 				$order=new Commande($db);
 				$order->fetch($expedition->origin_id);
 				print '<td colspan="3">';
-				print $order->getNomUrl(1,'commande');
+				print $order->getObjectUrl(1,'commande');
 				print "</td>\n";
 				print '</tr>';
 			}
@@ -539,7 +539,7 @@ else
 				$propal->fetch($expedition->origin_id);
 				print '<tr><td>'.$langs->trans("RefProposal").'</td>';
 				print '<td colspan="3">';
-				print $propal->getNomUrl(1,'expedition');
+				print $propal->getObjectUrl(1,'expedition');
 				print "</td>\n";
 				print '</tr>';
 			}

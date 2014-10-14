@@ -162,7 +162,7 @@ if ($id > 0 || ! empty($ref))
 					$commandestatic->statut=$objp->statut;
 
 					print "<tr ".$bc[$var].">";
-					print '<td>'.$commandestatic->getNomUrl(1)."</td>\n";
+					print '<td>'.$commandestatic->getObjectUrl(1)."</td>\n";
 					print "</a></td>\n";
 					print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";

@@ -205,7 +205,7 @@ if ($resql)
 		$productstatic->id=$objp->rowid;
 		$productstatic->ref=$objp->ref;
 		$productstatic->type=$objp->fk_product_type;
-		print $productstatic->getNomUrl(1,'supplier');
+		print $productstatic->getObjectUrl(1,'supplier');
 		print '</td>';
 
 		print '<td>'.$objp->ref_fourn.'</td>';
@@ -215,7 +215,7 @@ if ($resql)
 		$companystatic->name=$objp->name;
 		$companystatic->id=$objp->socid;
 		print '<td>';
-		if ($companystatic->id > 0) print $companystatic->getNomUrl(1,'supplier');
+		if ($companystatic->id > 0) print $companystatic->getObjectUrl(1,'supplier');
 		print '</td>';
 
 		print '<td align="right">'.price($objp->price).'</td>';

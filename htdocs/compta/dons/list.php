@@ -157,7 +157,7 @@ if ($resql)
 		$donationstatic->ref=$objp->rowid;
 		$donationstatic->lastname=$objp->lastname;
 		$donationstatic->firstname=$objp->firstname;
-		print "<td>".$donationstatic->getNomUrl(1)."</td>\n";
+		print "<td>".$donationstatic->getObjectUrl(1)."</td>\n";
         print "<td>".$objp->societe."</td>\n";
 		print "<td>".$donationstatic->getFullName($langs)."</td>\n";
 		print '<td align="center">'.dol_print_date($db->jdate($objp->datedon),'day').'</td>';
@@ -171,7 +171,7 @@ if ($resql)
 				$projectstatic->id=$objp->pid;
 				$projectstatic->public=$objp->public;
 				$projectstatic->title=$objp->title;
-				print $projectstatic->getNomUrl(1);
+				print $projectstatic->getObjectUrl(1);
 			}
 			else print '&nbsp;';
 			print "</td>\n";

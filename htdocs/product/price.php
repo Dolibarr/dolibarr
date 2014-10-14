@@ -410,6 +410,12 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 
 			// Prix mini
 			print '<tr><td>' . $langs->trans("MinPrice") . ' ' . $i . '</td><td>';
+<<<<<<< HEAD
+			if ($object->multiprices_base_type ["$i"] == 'TTC') {
+				print price($object->multiprices_min_ttc["$i"]) . ' ' . $langs->trans($object->multiprices_base_type["$i"]);
+			} else {
+				print price($object->multiprices_min["$i"]) . ' ' . $langs->trans(empty($object->multiprices_base_type["$i"])?'HT':$object->multiprices_base_type["$i"]);
+=======
 			if (empty($object->multiprices_base_type["$i"])) $object->multiprices_base_type["$i"]="HT";
 			if ($object->multiprices_base_type["$i"] == 'TTC') 
 			{
@@ -418,6 +424,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 			else
 			{
 				print price($object->multiprices_min["$i"]) . ' ' . $langs->trans($object->multiprices_base_type["$i"]);
+>>>>>>> Upstream/develop
 			}
 			print '</td></tr>';
 
@@ -955,7 +962,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<td>' . $langs->trans('ThirdParty') . '</td>';
 		$staticsoc = new Societe($db);
 		$staticsoc->fetch($prodcustprice->fk_soc);
-		print "<td colspan='2'>" . $staticsoc->getNomUrl(1) . "</td>";
+		print "<td colspan='2'>" . $staticsoc->getObjectUrl(1) . "</td>";
 		print '</tr>';
 
 		// VAT
@@ -1064,7 +1071,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);
 
-				print "<td>" . $staticsoc->getNomUrl(1) . "</td>";
+				print "<td>" . $staticsoc->getObjectUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
 				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
@@ -1146,7 +1153,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);
 
-				print "<td>" . $staticsoc->getNomUrl(1) . "</td>";
+				print "<td>" . $staticsoc->getObjectUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
 				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";

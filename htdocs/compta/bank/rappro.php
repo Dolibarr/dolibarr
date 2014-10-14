@@ -303,26 +303,26 @@ if ($resql)
             else if ($newline == 1) print '<br>';
             if ($links[$key]['type']=='payment') {
 	            $paymentstatic->id=$links[$key]['url_id'];
-	            print ' '.$paymentstatic->getNomUrl(2);
+	            print ' '.$paymentstatic->getObjectUrl(2);
                 $newline=0;
             }
             elseif ($links[$key]['type']=='payment_supplier') {
 				$paymentsupplierstatic->id=$links[$key]['url_id'];
 				$paymentsupplierstatic->ref=$links[$key]['label'];
-				print ' '.$paymentsupplierstatic->getNomUrl(1);
+				print ' '.$paymentsupplierstatic->getObjectUrl(1);
                 $newline=0;
 			}
             elseif ($links[$key]['type']=='company') {
                 $societestatic->id=$links[$key]['url_id'];
                 $societestatic->name=$links[$key]['label'];
-                print $societestatic->getNomUrl(1,'',24);
+                print $societestatic->getObjectUrl(1,'',24);
                 $newline=0;
             }
 			else if ($links[$key]['type']=='sc') {
 				$chargestatic->id=$links[$key]['url_id'];
 				$chargestatic->ref=$links[$key]['url_id'];
 				$chargestatic->lib=$langs->trans("SocialContribution");
-				print ' '.$chargestatic->getNomUrl(1);
+				print ' '.$chargestatic->getObjectUrl(1);
 			}
 			else if ($links[$key]['type']=='payment_sc')
 			{
@@ -338,7 +338,7 @@ if ($resql)
 				$paymentvatstatic->id=$links[$key]['url_id'];
 				$paymentvatstatic->ref=$links[$key]['url_id'];
 				$paymentvatstatic->ref=$langs->trans("VATPayment");
-				print ' '.$paymentvatstatic->getNomUrl(1);
+				print ' '.$paymentvatstatic->getObjectUrl(1);
 			}
 			else if ($links[$key]['type']=='banktransfert') {
 				print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';

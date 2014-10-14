@@ -260,7 +260,7 @@ if ($result)
         $thirdpartystatic->code_client=$obj->code_client;
         $thirdpartystatic->canvas=$obj->canvas;
         $thirdpartystatic->status=$obj->status;
-        print $thirdpartystatic->getNomUrl(1);
+        print $thirdpartystatic->getObjectUrl(1);
 		print '</td>';
 		print '<td>'.$obj->zip.'</td>';
         print '<td>'.$obj->town.'</td>';

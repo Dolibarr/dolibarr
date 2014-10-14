@@ -1655,16 +1655,28 @@ class Societe extends CommonObject
         }
     }
 
-
-    /**
-     *    	Return a link on thirdparty (with picto)
+	/**
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
      *
-     *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
-     *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
-     *		@param	int		$maxlen			Max length of text
-     *		@return	string					String with URL
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Page link
+     *	@param	int		$maxlen			length max label
+     *	@return	string					String with URL
      */
     function getNomUrl($withpicto=0,$option='',$maxlen=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->maxlen);
+    }
+
+    /**
+     *  Return a link on thirdparty (with picto)
+     *
+     *	@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto into link, 2=Picto only)
+     *	@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
+     *	@param	int		$maxlen			Max length of text
+     *	@return	string					String with URL
+     */
+    function getObjectUrl($withpicto=0,$option='',$maxlen=0)
     {
         global $conf,$langs;
 
@@ -2873,7 +2885,7 @@ class Societe extends CommonObject
     function useLocalTax($localTaxNum=0)
     {
     	$sql  = "SELECT t.localtax1, t.localtax2";
-    	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."c_vat as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
     	$sql .= " AND t.active = 1";
     	if (empty($localTaxNum))   $sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";

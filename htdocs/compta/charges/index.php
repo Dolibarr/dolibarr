@@ -137,7 +137,7 @@ if ($conf->salaries->enabled)
 		        // Ref payment
 				    $sal_static->id=$obj->rowid;
 			    	$sal_static->ref=$obj->rowid;
-		        print '<td align="left">'.$sal_static->getNomUrl(1)."</td>\n";
+		        print '<td align="left">'.$sal_static->getObjectUrl(1)."</td>\n";
 
 		        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
 		        print '<td align="right">'.price($obj->amount)."</td>";
@@ -233,7 +233,7 @@ if ($conf->tax->enabled)
 			$socialcontrib->id=$obj->rowid;
 			$socialcontrib->ref=$obj->libelle;
 			$socialcontrib->lib=$obj->libelle;
-			print $socialcontrib->getNomUrl(1,'20');
+			print $socialcontrib->getObjectUrl(1,'20');
 			print '</td>';
 			// Type
 			print '<td><a href="../sociales/index.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
@@ -242,7 +242,7 @@ if ($conf->tax->enabled)
 			// Ref payment
 			$payment_sc_static->id=$obj->pid;
 			$payment_sc_static->ref=$obj->pid;
-			print '<td>'.$payment_sc_static->getNomUrl(1)."</td>\n";
+			print '<td>'.$payment_sc_static->getObjectUrl(1)."</td>\n";
 			// Date payment
 			print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day').'</td>';
 	        // Type payment
@@ -287,7 +287,7 @@ if ($conf->tax->enabled)
 		print_fiche_titre($langs->trans("VATPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
 		$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm";
-		$sql.= " FROM ".MAIN_DB_PREFIX."tva as pv";
+		$sql.= " FROM ".MAIN_DB_PREFIX."vat as pv";
 		$sql.= " WHERE pv.entity = ".$conf->entity;
 		if ($year > 0)
 		{
@@ -330,7 +330,7 @@ if ($conf->tax->enabled)
 		        // Ref payment
 				$tva_static->id=$obj->rowid;
 				$tva_static->ref=$obj->rowid;
-		        print '<td align="left">'.$tva_static->getNomUrl(1)."</td>\n";
+		        print '<td align="left">'.$tva_static->getObjectUrl(1)."</td>\n";
 
 		        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
 		        print '<td align="right">'.price($obj->amount)."</td>";
@@ -431,7 +431,7 @@ while($j<$numlt)
 				// Ref payment
 				$tva_static->id=$obj->rowid;
 				$tva_static->ref=$obj->rowid;
-				print '<td align="left">'.$tva_static->getNomUrl(1)."</td>\n";
+				print '<td align="left">'.$tva_static->getObjectUrl(1)."</td>\n";
 
 				print '<td align="center">'.dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
 				print '<td align="right">'.price($obj->amount)."</td>";

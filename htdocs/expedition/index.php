@@ -96,7 +96,7 @@ if ($resql)
 			print "<tr ".$bc[$var]."><td nowrap=\"nowrap\">";
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
-			print $shipment->getNomUrl(1);
+			print $shipment->getObjectUrl(1);
 			print "</td>";
 			print '<td>';
 			print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name.'</a>';
@@ -146,12 +146,12 @@ if ($resql)
 			print '<td class="nowrap">';
 			$orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
-			print $orderstatic->getNomUrl(1);
+			print $orderstatic->getObjectUrl(1);
 			print '</td>';
 			print '<td>';
 			$companystatic->name=$obj->name;
 			$companystatic->id=$obj->socid;
-			print $companystatic->getNomUrl(1,'customer',32);
+			print $companystatic->getObjectUrl(1,'customer',32);
 			print '</td></tr>';
 			$i++;
 		}
@@ -197,12 +197,12 @@ if ( $resql )
 			print "<tr ".$bc[$var]."><td width=\"30%\">";
 			$orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
-			print $orderstatic->getNomUrl(1);
+			print $orderstatic->getObjectUrl(1);
 			print '</td>';
 			print '<td>';
 			$companystatic->name=$obj->name;
 			$companystatic->id=$obj->socid;
-			print $companystatic->getNomUrl(1,'customer');
+			print $companystatic->getObjectUrl(1,'customer');
 			print '</td>';
             print '<td align="right">';
             $orderstatic->statut=$obj->status;
@@ -259,7 +259,7 @@ if ($resql)
 			{
 				$orderstatic->id=$obj->commande_id;
 				$orderstatic->ref=$obj->commande_ref;
-				print $orderstatic->getNomUrl(1);
+				print $orderstatic->getObjectUrl(1);
 			}
 			else print '&nbsp;';
 			print '</td></tr>';

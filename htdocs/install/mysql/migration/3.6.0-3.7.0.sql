@@ -1088,6 +1088,12 @@ ALTER TABLE llx_usergroup_extrafields ADD INDEX idx_usergroup_extrafields (fk_ob
 
 ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER note_public;
 
+-- Change on table tva, c_tva
+ALTER TABLE llx_tva RENAME TO llx_vat;
+ALTER TABLE llx_c_tva DROP INDEX uk_c_tva_id;
+ALTER TABLE llx_c_tva RENAME TO llx_c_vat;
+ALTER TABLE llx_c_vat ADD UNIQUE INDEX uk_c_vat_id (fk_pays, taux, recuperableonly);
+
 ALTER TABLE llx_c_email_templates ADD UNIQUE INDEX uk_c_email_templates(label, lang);
 ALTER TABLE llx_c_email_templates ADD INDEX idx_type(type_template);
 
@@ -1095,4 +1101,3 @@ ALTER TABLE llx_c_email_templates ADD INDEX idx_type(type_template);
 DELETE FROM llx_const WHERE name = 'MAIN_MODULE_BOUTIQUE';
 DELETE FROM llx_const WHERE name = 'OSC_DB_HOST';
 DELETE FROM llx_menu WHERE module = 'boutique';
-

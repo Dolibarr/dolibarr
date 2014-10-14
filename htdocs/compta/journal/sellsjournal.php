@@ -109,7 +109,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 $sql.= " JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql.= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_vat ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.fk_statut > 0";
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
@@ -211,7 +211,7 @@ foreach ($tabfac as $key => $val)
 	$lines = array(
 		array(
 			'var' => $tabttc[$key],
-			'label' => $langs->trans('ThirdParty').' ('.$companystatic->getNomUrl(0, 'customer', 16).')',
+			'label' => $langs->trans('ThirdParty').' ('.$companystatic->getObjectUrl(0, 'customer', 16).')',
 			'nomtcheck' => true,
 			'inv' => true
 		),
@@ -241,7 +241,7 @@ foreach ($tabfac as $key => $val)
 			{
 				print "<tr ".$bc[$var]." >";
 				print "<td>".dol_print_date($val["date"])."</td>";
-				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+				print "<td>".$invoicestatic->getObjectUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
 				if (isset($line['inv']))

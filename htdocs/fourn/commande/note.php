@@ -102,7 +102,7 @@ if ($id > 0 || ! empty($ref))
 
         // Fournisseur
         print '<tr><td>'.$langs->trans("Supplier")."</td>";
-        print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
+        print '<td colspan="2">'.$soc->getObjectUrl(1,'supplier').'</td>';
         print '</tr>';
 
         // Statut
@@ -130,7 +130,7 @@ if ($id > 0 || ! empty($ref))
 
         // Author
         print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
-        print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
+        print '<td colspan="2">'.$author->getObjectUrl(1).'</td>';
         print '</tr>';
 
         print "</table>";

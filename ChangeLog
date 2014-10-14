@@ -127,6 +127,9 @@ For developers:
 - Qual: Renamed all files & links "fiche.php" into "card.php".
 - Qual: Replace all constants COMPTA_* by ACCOUNTING_*.
 - Qual: Replace all constants ACCOUNTINGEX_* by ACCOUNTING_* to simplify migration of the module
+- Qual: Replace all variables "getNomUrl" into "getObjectUrl".
+- Qual: Renamed table llx_tva into llx_vat.
+- Qual: Renamed table llx_c_tva into llx_c_vat.
 
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:

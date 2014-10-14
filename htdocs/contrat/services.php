@@ -201,7 +201,7 @@ if ($resql)
 		print '<td>';
 		$contractstatic->id=$obj->cid;
 		$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
-		print $contractstatic->getNomUrl(1,16);
+		print $contractstatic->getObjectUrl(1,16);
 		print '</td>';
 
 		// Service
@@ -211,7 +211,7 @@ if ($resql)
 			$productstatic->id=$obj->pid;
 			$productstatic->type=$obj->ptype;
 			$productstatic->ref=$obj->pref;
-			print $productstatic->getNomUrl(1,'',20);
+			print $productstatic->getObjectUrl(1,'',20);
             print $obj->label?' - '.dol_trunc($obj->label,16):'';
             if (! empty($obj->description) && ! empty($conf->global->PRODUCT_DESC_IN_LIST)) print '<br>'.dol_nl2br($obj->description);
 		}
@@ -227,7 +227,7 @@ if ($resql)
 		$companystatic->id=$obj->socid;
 		$companystatic->name=$obj->name;
 		$companystatic->client=1;
-		print $companystatic->getNomUrl(1,'customer',28);
+		print $companystatic->getObjectUrl(1,'customer',28);
 		print '</td>';
 
 		// Start date

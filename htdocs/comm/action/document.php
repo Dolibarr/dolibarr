@@ -197,7 +197,7 @@ if ($object->id > 0)
 	if ($object->userownerid > 0)
 	{
 		$tmpuser=new User($object->userownerid);
-		print $tmpuser->getNomUrl(1);
+		print $tmpuser->getObjectUrl(1);
 	}
 	print '</td></tr>';
 
@@ -205,7 +205,7 @@ if ($object->id > 0)
 
 
 	// Third party - Contact
-	print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id?$object->thirdparty->getNomUrl(1):$langs->trans("None"));
+	print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id?$object->thirdparty->getObjectUrl(1):$langs->trans("None"));
 	if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL')
 	{
 		if ($object->thirdparty->fetch($object->thirdparty->id))
@@ -218,7 +218,7 @@ if ($object->id > 0)
 	print '<td>';
 	if ($object->contact->id > 0)
 	{
-		print $object->contact->getNomUrl(1);
+		print $object->contact->getObjectUrl(1);
 		if ($object->contact->id && $object->type_code == 'AC_TEL')
 		{
 			if ($object->contact->fetch($object->contact->id))
@@ -242,7 +242,7 @@ if ($object->id > 0)
 		{
 			$project=new Project($db);
 			$project->fetch($object->fk_project);
-			print $project->getNomUrl(1);
+			print $project->getObjectUrl(1);
 		}
 		print '</td></tr>';
 	}

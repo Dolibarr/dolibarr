@@ -157,7 +157,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Fournisseur
 		print '<tr><td>'.$langs->trans("Supplier")."</td>";
-		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
+		print '<td colspan="2">'.$soc->getObjectUrl(1,'supplier').'</td>';
 		print '</tr>';
 
 		print "</table>";

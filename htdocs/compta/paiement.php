@@ -401,7 +401,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<table class="border" width="100%">';
 
         // Third party
-        print '<tr><td><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td colspan="2">'.$facture->client->getNomUrl(4)."</td></tr>\n";
+        print '<tr><td><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td colspan="2">'.$facture->client->getObjectUrl(4)."</td></tr>\n";
 
         // Date payment
         print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
@@ -531,7 +531,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     print '<tr '.$bc[$var].'>';
 
                     print '<td>';
-                    print $invoice->getNomUrl(1,'');
+                    print $invoice->getObjectUrl(1,'');
                     print "</td>\n";
 
                     // Date

@@ -232,7 +232,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Thirdparty
 			print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-			if (! empty($projectstatic->thirdparty->id)) print $projectstatic->thirdparty->getNomUrl(1);
+			if (! empty($projectstatic->thirdparty->id)) print $projectstatic->thirdparty->getObjectUrl(1);
 			else print '&nbsp;';
 			print '</td>';
 			print '</tr>';
@@ -327,12 +327,12 @@ if ($id > 0 || ! empty($ref))
 		if (empty($withproject))
 		{
 			print '<tr><td>'.$langs->trans("Project").'</td><td>';
-			print $projectstatic->getNomUrl(1);
+			print $projectstatic->getObjectUrl(1);
 			print '</td></tr>';
 
 			// Third party
 			print '<td>'.$langs->trans("ThirdParty").'</td><td>';
-			if ($projectstatic->thirdparty->id) print $projectstatic->thirdparty->getNomUrl(1);
+			if ($projectstatic->thirdparty->id) print $projectstatic->thirdparty->getObjectUrl(1);
 			else print '&nbsp;';
 			print '</td></tr>';
 		}
@@ -516,7 +516,7 @@ if ($id > 0 || ! empty($ref))
 				$userstatic->id         = $task_time->fk_user;
 				$userstatic->lastname	= $task_time->lastname;
 				$userstatic->firstname 	= $task_time->firstname;
-				print $userstatic->getNomUrl(1);
+				print $userstatic->getObjectUrl(1);
 			}
 			print '</td>';
 

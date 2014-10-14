@@ -134,7 +134,7 @@ if ($action == 'create')
 		$object->fetch_thirdparty();
 
 		// Third party
-		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$object->client->getNomUrl(1,'customer').'</td>';
+		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$object->client->getObjectUrl(1,'customer').'</td>';
 		print '<td>';
 		//print $langs->trans("NotePrivate");
 		print '</td></tr>';
@@ -253,7 +253,7 @@ if ($action == 'create')
 
 					// Show product and description
 					$product_static->fetch($objp->fk_product);	// We need all information later
-					$text=$product_static->getNomUrl(1);
+					$text=$product_static->getObjectUrl(1);
 					$text.= ' - '.(! empty($objp->custom_label)?$objp->custom_label:$objp->product_label);
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
 					print $form->textwithtooltip($text,$description,3,'','',$i);
@@ -397,7 +397,7 @@ else
 			print '<td colspan="4">'.$object->titre.'</td>';
 
 			print '<tr><td>'.$langs->trans("Customer").'</td>';
-			print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'customer').'</td></tr>';
+			print '<td colspan="3">'.$object->thirdparty->getObjectUrl(1,'customer').'</td></tr>';
 
 			print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
@@ -472,7 +472,7 @@ else
 					$product_static->type=$object->lines[$i]->fk_product_type;
 					$product_static->id=$object->lines[$i]->fk_product;
 					$product_static->ref=$object->lines[$i]->product_ref;
-					$text=$product_static->getNomUrl(1);
+					$text=$product_static->getObjectUrl(1);
 					$text.= ' - '.(! empty($object->lines[$i]->label)?$object->lines[$i]->label:$object->lines[$i]->product_label);
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($object->lines[$i]->desc));
 					print $form->textwithtooltip($text,$description,3,'','',$i);
@@ -585,7 +585,7 @@ else
 
 					$companystatic->id=$objp->socid;
 					$companystatic->name=$objp->name;
-					print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
+					print '<td>'.$companystatic->getObjectUrl(1,'customer').'</td>';
 
 					print '<td align="right">'.price($objp->total).'</td>'."\n";
 

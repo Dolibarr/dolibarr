@@ -251,7 +251,7 @@ if ($result)
 		        print '<td>';
 				$invoicestatic->id=$objp->facid;
 				$invoicestatic->ref=$objp->facnumber;
-				print $invoicestatic->getNomUrl(1);
+				print $invoicestatic->getObjectUrl(1);
 				print "</td>\n";
 				print "<td align=\"center\">";
 				print dol_print_date($db->jdate($objp->datef),'day')."</td>";
@@ -260,7 +260,7 @@ if ($result)
 				$companystatic->id=$objp->socid;
 				$companystatic->name=$objp->name;
 				$companystatic->client=$objp->client;
-		   		print "<td>".$companystatic->getNomUrl(1,'customer')."</td>\n";
+		   		print "<td>".$companystatic->getObjectUrl(1,'customer')."</td>\n";
 		  	}
 
 			print "<td align=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";

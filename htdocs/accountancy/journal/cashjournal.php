@@ -163,23 +163,23 @@ if ($result) {
 
 			if ($links[$key]['type'] == 'payment') {
 				$paymentstatic->id = $links[$key]['url_id'];
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentstatic->getNomUrl(2);
+				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentstatic->getObjectUrl(2);
 			} else if ($links[$key]['type'] == 'payment_supplier') {
 				$paymentsupplierstatic->id = $links[$key]['url_id'];
 				$paymentsupplierstatic->ref = $links[$key]['url_id'];
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsupplierstatic->getNomUrl(2);
+				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsupplierstatic->getObjectUrl(2);
 			} else if ($links[$key]['type'] == 'company') {
 
 				$societestatic->id = $links[$key]['url_id'];
 				$societestatic->name = $links[$key]['label'];
-				$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
+				$tabpay[$obj->rowid]["soclib"] = $societestatic->getObjectUrl(1, '', 30);
 				$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
 			} else if ($links[$key]['type'] == 'sc') {
 
 				$chargestatic->id = $links[$key]['url_id'];
 				$chargestatic->ref = $links[$key]['url_id'];
 
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $chargestatic->getNomUrl(2);
+				$tabpay[$obj->rowid]["lib"] .= ' ' . $chargestatic->getObjectUrl(2);
 				if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg)) {
 					if ($reg[1] == 'socialcontribution')
 						$reg[1] = 'SocialContribution';
@@ -188,7 +188,7 @@ if ($result) {
 					$chargestatic->lib = $links[$key]['label'];
 				}
 				$chargestatic->ref = $chargestatic->lib;
-				$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
+				$tabpay[$obj->rowid]["soclib"] = $chargestatic->getObjectUrl(1, 30);
 
 				$sqlmid = 'SELECT cchgsoc.accountancy_code';
 				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "c_chargesociales cchgsoc ";
@@ -206,10 +206,10 @@ if ($result) {
 
 				$paymentvatstatic->id = $links[$key]['url_id'];
 				$paymentvatstatic->ref = $links[$key]['url_id'];
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
+				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getObjectUrl(2);
 				$tabtp[$obj->rowid][$cpttva] += $obj->amount;
 			} else if ($links[$key]['type'] == 'banktransfert') {
-				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
+				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getObjectUrl(2);
 				$tabtp[$obj->rowid][$cpttva] += $obj->amount;
 			}
 			/*else {

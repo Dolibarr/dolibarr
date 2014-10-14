@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2014      Florian Henry		  	<florian.henry@open-concept.pro>
+/* Copyright (C) 2002      Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014      Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 /**
  *   	\file       htdocs/compta/dons/class/don.class.php
  *		\ingroup    don
- *		\brief      Fichier de la classe des dons
+ *		\brief      Class for donation module
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
@@ -83,10 +83,10 @@ class Don extends CommonObject
 
 
     /**
-     * 	Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
+     * 	Return the label of the status of a donation (draft, validated, abandoned, paid)
      *
-     *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-     *  @return string        		Libelle
+     *  @param	int		$mode       0=Long label, 1=Short label, 2=Picto + short label, 3=Picto, 4=Picto + long label
+     *  @return string        		Label
      */
     function getLibStatut($mode=0)
     {
@@ -94,11 +94,11 @@ class Don extends CommonObject
     }
 
     /**
-     *  Renvoi le libelle d'un statut donne
+     *  Return the label of given status
      *
      *  @param	int		$statut        	Id statut
-     *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *  @return string 			       	Libelle du statut
+     *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *  @return string 			       	Status label
      */
     function LibStatut($statut,$mode=0)
     {
@@ -547,10 +547,10 @@ class Don extends CommonObject
     }
 
     /**
-     *    Valide une promesse de don
+     *    Validate promise of donation
      *
-     *    @param	int		$rowid   	id du don a modifier
-     *    @param  	int		$userid  	utilisateur qui valide la promesse
+     *    @param	int		$rowid   	id donation to be modified
+     *    @param  	int		$userid  	user who validated the promise of donation
      *    @return   int     			<0 if KO, >0 if OK
      */
     function valid_promesse($rowid, $userid)
@@ -578,10 +578,10 @@ class Don extends CommonObject
     }
 
     /**
-     *    Classe le don comme paye, le don a ete recu
+     *    Classify donation as paid, the donation was received
      *
-     *    @param	int		$rowid           	id du don a modifier
-     *    @param    int		$modepaiement   	mode de paiement
+     *    @param	int		$rowid           	id donation to be modified
+     *    @param    int		$modepaiement   	type of payment
      *    @return   int      					<0 if KO, >0 if OK
      */
     function set_paye($rowid, $modepaiement='')
@@ -614,9 +614,9 @@ class Don extends CommonObject
 
 
     /**
-     *    Classe le don comme encaisse
+     *    Classify donation as paid
      *
-     *    @param	int		$rowid   	id du don a modifier
+     *    @param	int		$rowid   	id donation to be modified
      *    @return   int     			<0 if KO, >0 if OK
      */
     function set_encaisse($rowid)
@@ -644,9 +644,9 @@ class Don extends CommonObject
     }
 
     /**
-     *    Set donation sto status canceled
+     *    Set donation to status canceled
      *
-     *    @param	int		$rowid   	id du don a modifier
+     *    @param	int		$rowid   	id donation to be modified
      *    @return   int     			<0 if KO, >0 if OK
      */
     function set_cancel($rowid)
@@ -673,10 +673,10 @@ class Don extends CommonObject
     }
 
     /**
-     *  Somme des dons
+     *  Sum of donations
      *
-     *	@param	string	$param	1=promesses de dons validees , 2=xxx, 3=encaisses
-     *	@return	int				Summ of donations
+     *	@param	string	$param	1=Validated promises of donations, 2=xxx, 3=collected
+     *	@return	int				Sum of donations
      */
     function sum_donations($param)
     {
@@ -699,29 +699,39 @@ class Don extends CommonObject
         return $result;
     }
 
-
-    /**
-     *	Return clicable name (with picto eventually)
+	/**
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
      *
-     *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *	@return	string					Chaine avec URL
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@return	string					String with URL
      */
     function getNomUrl($withpicto=0)
+    {
+        return $this->getObjectUrl($this->withpicto);
+    }
+
+	/**
+	 *	Return clicable object (with eventually the picto)
+	 *
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@return	string					String with URL
+	 */
+    function getObjectUrl($withpicto=0)
     {
         global $langs;
 
         $result='';
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/dons/card.php?rowid='.$this->id.'">';
-        $lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/dons/card.php?rowid='.$this->id.'">';
+        $linkend='</a>';
 
         $picto='generic';
 
         $label=$langs->trans("ShowDonation").': '.$this->id;
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($link.img_object($label,$picto).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$lien.$this->id.$lienfin;
+        if ($withpicto != 2) $result.=$link.$this->id.$linkend;
         return $result;
     }
 

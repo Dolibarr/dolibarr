@@ -2688,17 +2688,30 @@ class Commande extends CommonOrder
         }
     }
 
+	/**
+     *	Return clicable link of object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+	 *  @param  string	$option         Where point the link
+	 *  @param  int		$max            Maxlength of ref
+	 *  @param  int		$short          1=Return just URL
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option,$this->max,$this->short);
+    }
 
     /**
      *	Return clicable link of object (with eventually picto)
      *
-     *	@param      int			$withpicto      Add picto into link
-     *	@param      int			$option         Where point the link (0=> main card, 1,2 => shipment)
-     *	@param      int			$max          	Max length to show
-     *	@param      int			$short			Use short labels
-     *	@return     string          			String with URL
+     *	@param	int		$withpicto      Add picto into link
+     *	@param	int		$option         Where point the link (0=> main card, 1,2 => shipment)
+     *	@param	int		$max          	Max length to show
+     *	@param	int		$short			Use short labels
+     *	@return	string         			String with URL
      */
-    function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
+    function getObjectUrl($withpicto=0,$option=0,$max=0,$short=0)
     {
         global $conf, $langs;
 
@@ -2835,19 +2848,19 @@ class Commande extends CommonOrder
             $line->qty=1;
             $line->subprice=100;
             $line->price=100;
-            $line->tva_tx=19.6;
+            $line->tva_tx=20.0;
             if ($xnbp == 2)
             {
                 $line->total_ht=50;
-                $line->total_ttc=59.8;
-                $line->total_tva=9.8;
+                $line->total_ttc=60.0;
+                $line->total_tva=10.0;
                 $line->remise_percent=50;
             }
             else
             {
                 $line->total_ht=100;
-                $line->total_ttc=119.6;
-                $line->total_tva=19.6;
+                $line->total_ttc=120.0;
+                $line->total_tva=20.0;
                 $line->remise_percent=0;
             }
             $prodid = rand(1, $num_prods);

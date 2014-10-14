@@ -291,7 +291,7 @@ if ($result)
         // Bank account
         print "<tr><td>".$langs->trans("Account")."</td>";
         print '<td colspan="4">';
-        print $acct->getNomUrl(1,'transactions');
+        print $acct->getObjectUrl(1,'transactions');
         print '</td>';
         print '</tr>';
 
@@ -391,7 +391,7 @@ if ($result)
                 include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
                 $receipt=new RemiseCheque($db);
                 $receipt->fetch($objp->receiptid);
-                print ' &nbsp; &nbsp; '.$langs->trans("CheckReceipt").': '.$receipt->getNomUrl(2);
+                print ' &nbsp; &nbsp; '.$langs->trans("CheckReceipt").': '.$receipt->getObjectUrl(2);
 
             }
             print '</td>';

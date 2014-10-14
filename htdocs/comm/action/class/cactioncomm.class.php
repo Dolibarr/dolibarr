@@ -170,6 +170,16 @@ class CActionComm
         }
     }
 
+	/**
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0)
+    {
+        return $this->getObjectUrl($this->withpicto);
+    }
 
     /**
      *  Return name of action type as a label translated
@@ -177,7 +187,7 @@ class CActionComm
      *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
      *  @return string			      	Label of action type
      */
-    function getNomUrl($withpicto=0)
+    function getObjectUrl($withpicto=0)
     {
         global $langs;
 

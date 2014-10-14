@@ -115,7 +115,7 @@ if ($catname || $id > 0)
 		$categstatic->ref=$cat->label;
 		$categstatic->label=$cat->label;
 		$categstatic->type=$cat->type;
-		print $categstatic->getNomUrl(1,'');
+		print $categstatic->getObjectUrl(1,'');
 		print "</td>\n";
 		print "\t\t<td>".$cat->description."</td>\n";
 		print "\t</tr>\n";
@@ -145,7 +145,7 @@ foreach($fulltree as $key => $val)
 	$categstatic->id=$val['id'];
 	$categstatic->ref=$val['label'];
 	$categstatic->type=$type;
-	$li=$categstatic->getNomUrl(1,'',60);
+	$li=$categstatic->getObjectUrl(1,'',60);
 
 	$data[] = array(
 	'rowid'=>$val['rowid'],

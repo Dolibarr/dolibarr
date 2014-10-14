@@ -474,7 +474,18 @@ class PaymentSalary extends CommonObject
 		}
 	}
 
-
+	/**
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Page link
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='')
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option);
+    }
+	
 	/**
 	 *	Send name clicable (with possibly the picto)
 	 *
@@ -482,7 +493,7 @@ class PaymentSalary extends CommonObject
 	 *	@param	string	$option			link option
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getObjectUrl($withpicto=0,$option='')
 	{
 		global $langs;
 

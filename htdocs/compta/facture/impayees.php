@@ -628,7 +628,7 @@ if ($resql)
 
 			// Ref
 			print '<td class="nobordernopadding nowrap">';
-			print $facturestatic->getNomUrl(1);
+			print $facturestatic->getObjectUrl(1);
 			print '</td>';
 
 			// Warning picto
@@ -661,7 +661,7 @@ if ($resql)
             $thirdparty->name=$objp->name;
             $thirdparty->client=$objp->client;
             $thirdparty->code_client=$objp->code_client;
-            print $thirdparty->getNomUrl(1,'customer');
+            print $thirdparty->getObjectUrl(1,'customer');
             print '</td>';
 
             // Payment mode

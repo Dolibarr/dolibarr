@@ -245,7 +245,7 @@ function show_array_actions_to_do($max=5)
             $staticaction->type_code=$obj->code;
             $staticaction->libelle=$obj->label;
             $staticaction->id=$obj->id;
-            print '<td>'.$staticaction->getNomUrl(1,34).'</td>';
+            print '<td>'.$staticaction->getObjectUrl(1,34).'</td>';
 
            // print '<td>'.dol_trunc($obj->label,22).'</td>';
 
@@ -255,7 +255,7 @@ function show_array_actions_to_do($max=5)
             	$customerstatic->id=$obj->rowid;
             	$customerstatic->name=$obj->sname;
             	$customerstatic->client=$obj->client;
-            	print $customerstatic->getNomUrl(1,'',16);
+            	print $customerstatic->getObjectUrl(1,'',16);
             }
             print '</td>';
 
@@ -341,7 +341,7 @@ function show_array_last_actions_done($max=5)
 			$staticaction->type_code=$obj->code;
 			$staticaction->libelle=$obj->label;
 			$staticaction->id=$obj->id;
-			print '<td>'.$staticaction->getNomUrl(1,34).'</td>';
+			print '<td>'.$staticaction->getObjectUrl(1,34).'</td>';
 
             //print '<td>'.dol_trunc($obj->label,24).'</td>';
 
@@ -351,7 +351,7 @@ function show_array_last_actions_done($max=5)
                 $customerstatic->id=$obj->rowid;
                 $customerstatic->name=$obj->sname;
                 $customerstatic->client=$obj->client;
-			    print $customerstatic->getNomUrl(1,'',24);
+			    print $customerstatic->getObjectUrl(1,'',24);
 			}
 			print '</td>';
 

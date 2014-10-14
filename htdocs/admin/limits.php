@@ -205,7 +205,7 @@ else
 	$vat_rates=array();
 
 	$sql="SELECT taux as vat_rate";
-	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+	$sql.=" FROM ".MAIN_DB_PREFIX."c_vat as t, ".MAIN_DB_PREFIX."c_country as c";
 	$sql.=" WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$mysoc->country_code."' AND t.taux <> 0";
 	$sql.=" ORDER BY t.taux ASC";
 	$resql=$db->query($sql);

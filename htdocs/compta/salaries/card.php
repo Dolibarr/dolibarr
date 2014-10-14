@@ -35,13 +35,14 @@ $langs->load("salaries");
 
 $id=GETPOST("id",'int');
 $action=GETPOST('action');
+$cancel=GETPOST('cancel');
 
 // Security check
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
-$sal = new PaymentSalary($db);
+$object = new PaymentSalary($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('salarycard','globalcard'));
@@ -52,50 +53,50 @@ $hookmanager->initHooks(array('salarycard','globalcard'));
  * Actions
  */
 
-if ($_POST["cancel"] == $langs->trans("Cancel"))
+if ($cancel == $langs->trans("Cancel"))
 {
 	header("Location: index.php");
 	exit;
 }
 
-if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($action == 'add' && $cancel <> $langs->trans("Cancel"))
 {
 	$error=0;
 
-	$datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-	$datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
-	$datesp=dol_mktime(12,0,0, $_POST["datespmonth"], $_POST["datespday"], $_POST["datespyear"]);
-	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
+	$datev=dol_mktime(12,0,0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+	$datep=dol_mktime(12,0,0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
+	$datesp=dol_mktime(12,0,0, GETPOST("datespmonth"), GETPOST("datespday"), GETPOST("datespyear"));
+	$dateep=dol_mktime(12,0,0, GETPOST("dateepmonth"), GETPOST("dateepday"), GETPOST("dateepyear"));
 
-	$sal->accountid=GETPOST("accountid");
-	$sal->fk_user=GETPOST("fk_user");
-	$sal->datev=$datev;
-	$sal->datep=$datep;
-	$sal->amount=price2num(GETPOST("amount"));
-	$sal->label=GETPOST("label");
-	$sal->datesp=$datesp;
-	$sal->dateep=$dateep;
-	$sal->note=GETPOST("note");
-	$sal->type_payment=GETPOST("paymenttype");
-	$sal->num_payment=GETPOST("num_payment");
-	$sal->fk_user_creat=$user->id;
+	$object->accountid		= GETPOST("accountid");
+	$object->fk_user		= GETPOST("fk_user");
+	$object->datev			= $datev;
+	$object->datep			= $datep;
+	$object->amount			= price2num(GETPOST("amount"));
+	$object->label			= GETPOST("label");
+	$object->datesp			= $datesp;
+	$object->dateep			= $dateep;
+	$object->note			= GETPOST("note");
+	$object->type_payment	= GETPOST("paymenttype");
+	$object->num_payment	= GETPOST("num_payment");
+	$object->fk_user_creat	= $user->id;
 
 	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 		$error++;
 	}
-	if (empty($sal->fk_user) || $sal->fk_user < 0)
+	if (empty($object->fk_user) || $object->fk_user < 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Employee")),'errors');
 		$error++;
 	}
-	if (empty($sal->type_payment) || $sal->type_payment < 0)
+	if (empty($object->type_payment) || $object->type_payment < 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentMode")),'errors');
 		$error++;
 	}
-	if (empty($sal->amount))
+	if (empty($object->amount))
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount")),'errors');
 		$error++;
@@ -105,7 +106,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	{
 		$db->begin();
 
-		$ret=$sal->create($user);
+		$ret=$object->create($user);
 		if ($ret > 0)
 		{
 			$db->commit();
@@ -115,7 +116,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		else
 		{
 			$db->rollback();
-			setEventMessage($sal->error, 'errors');
+			setEventMessage($object->error, 'errors');
 			$action="create";
 		}
 	}
@@ -125,19 +126,19 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 if ($action == 'delete')
 {
-	$result=$sal->fetch($id);
+	$result=$object->fetch($id);
 
-	if ($sal->rappro == 0)
+	if ($object->rappro == 0)
 	{
 		$db->begin();
 
-		$ret=$sal->delete($user);
+		$ret=$object->delete($user);
 		if ($ret > 0)
 		{
-			if ($sal->fk_bank)
+			if ($object->fk_bank)
 			{
 				$accountline=new AccountLine($db);
-				$result=$accountline->fetch($sal->fk_bank);
+				$result=$accountline->fetch($object->fk_bank);
 				if ($result > 0) $result=$accountline->delete($user);	// $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
 			}
 
@@ -149,15 +150,15 @@ if ($action == 'delete')
 			}
 			else
 			{
-				$sal->error=$accountline->error;
+				$object->error=$accountline->error;
 				$db->rollback();
-				setEventMessage($sal->error,'errors');
+				setEventMessage($object->error,'errors');
 			}
 		}
 		else
 		{
 			$db->rollback();
-			setEventMessage($sal->error,'errors');
+			setEventMessage($object->error,'errors');
 		}
 	}
 	else
@@ -309,7 +310,7 @@ if ($id)
 	print '<tr><td>'.$langs->trans("Person").'</td><td>';
 	$usersal=new User($db);
 	$usersal->fetch($salpayment->fk_user);
-	print $usersal->getNomUrl(1);
+	print $usersal->getObjectUrl(1);
 	print '</td></tr>';
 
 	// Label
@@ -345,7 +346,7 @@ if ($id)
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td colspan="3">';
-			print $bankline->getNomUrl(1,0,'showall');
+			print $bankline->getObjectUrl(1,0,'showall');
 			print '</td>';
 			print '</tr>';
 		}

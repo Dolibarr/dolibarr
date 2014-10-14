@@ -655,7 +655,7 @@ $showheader = true;
 foreach ($usernames as $username)
 {
 	echo "<tr>";
-	echo '<td class="cal_current_month">' . $username->getNomUrl(1). '</td>';
+	echo '<td class="cal_current_month">' . $username->getObjectUrl(1). '</td>';
 	$tmpday = $sav;
 
 	// Lopp on each day of week

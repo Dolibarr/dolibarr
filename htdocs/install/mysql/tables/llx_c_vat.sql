@@ -18,7 +18,7 @@
 --
 -- ========================================================================
 
-create table llx_c_tva
+create table llx_c_vat
 (
   rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   fk_pays           integer NOT NULL,

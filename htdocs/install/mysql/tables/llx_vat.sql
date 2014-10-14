@@ -17,12 +17,12 @@
 --
 -- ===================================================================
 
-create table llx_tva
+create table llx_vat
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
-  datep           date,                       -- date de paiement
-  datev           date,                       -- date de valeur
+  datep           date,                       -- payment date
+  datev           date,                       -- value date
   amount          real NOT NULL DEFAULT 0,
   fk_typepayment  integer NULL,
   num_payment     varchar(50),
@@ -30,8 +30,8 @@ create table llx_tva
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   note            text,
   fk_bank         integer,  
-  fk_user_creat   integer,                    -- utilisateur qui a cree l'info
-  fk_user_modif   integer                     -- utilisateur qui a modifi� l'info
+  fk_user_creat   integer,                    -- user who has created the information
+  fk_user_modif   integer                     -- user who has modified the information
 )ENGINE=innodb;
 
 -- 

@@ -128,9 +128,9 @@ if ($resql)
 		$var=!$var;
 		print "<tr ".$bc[$var].">\n";
 
-		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
+		print '<td>'.$checkdepositstatic->getObjectUrl(1).'</td>';
 		print '<td>'.dol_print_date($db->jdate($objp->db),'day').'</td>';
-		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+		print '<td>'.$accountstatic->getObjectUrl(1).'</td>';
 		print '<td align="right">'.$objp->nbcheque.'</td>';
 		print '<td align="right">'.price($objp->amount).'</td>';
 		print '<td align="right">'.$checkdepositstatic->LibStatut($objp->statut,3).'</td>';

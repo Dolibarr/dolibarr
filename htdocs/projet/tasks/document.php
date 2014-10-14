@@ -152,7 +152,7 @@ if ($object->id > 0)
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
+		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getObjectUrl(1);
 		else print '&nbsp;';
 		print '</td>';
 		print '</tr>';
@@ -220,12 +220,12 @@ if ($object->id > 0)
 	if (empty($withproject))
 	{
 		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-		print $projectstatic->getNomUrl(1);
+		print $projectstatic->getObjectUrl(1);
 		print '</td></tr>';
 
 		// Third party
 		print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
-		if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
+		if ($projectstatic->societe->id) print $projectstatic->societe->getObjectUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
 	}

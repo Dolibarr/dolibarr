@@ -278,7 +278,7 @@ if ($resql)
         $userstatic->id=$obj->rowid;
         $userstatic->lastname=$obj->lastname;
         $userstatic->firstname=$obj->firstname;
-        print $userstatic->getNomUrl(1);
+        print $userstatic->getObjectUrl(1);
         print '</td>';
         print "</tr>\n";
         $i++;
@@ -337,7 +337,7 @@ if ($resql)
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
             print '<td width="96" class="nobordernopadding nowrap">';
-            print $commandestatic->getNomUrl(1);
+            print $commandestatic->getObjectUrl(1);
             print '</td>';
 
             print '<td width="16" class="nobordernopadding nowrap">';
@@ -405,7 +405,7 @@ $commandestatic->ref=$obj->ref;
 
 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 print '<td width="96" class="nobordernopadding nowrap">';
-print $commandestatic->getNomUrl(1);
+print $commandestatic->getObjectUrl(1);
 print '</td>';
 
 print '<td width="16" class="nobordernopadding nowrap">';

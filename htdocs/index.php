@@ -104,7 +104,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th class="liste_titre" colspan="2">'.$langs->trans("Informations").'</th></tr>';
 print '<tr '.$bc[false].'>';
-print '<td class="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
+print '<td class="nowrap">'.$langs->trans("User").'</td><td>'.$user->getObjectUrl(0).'</td></tr>';
 print '<tr '.$bc[true].'>';
 print '<td class="nowrap">'.$langs->trans("PreviousConnexion").'</td><td>';
 if ($user->datepreviouslogin) print dol_print_date($user->datepreviouslogin,"dayhour",'tzuser');

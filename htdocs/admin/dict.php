@@ -83,7 +83,7 @@ $tabname[6] = MAIN_DB_PREFIX."c_actioncomm";
 $tabname[7] = MAIN_DB_PREFIX."c_chargesociales";
 $tabname[8] = MAIN_DB_PREFIX."c_typent";
 $tabname[9] = MAIN_DB_PREFIX."c_currencies";
-$tabname[10]= MAIN_DB_PREFIX."c_tva";
+$tabname[10]= MAIN_DB_PREFIX."c_vat";
 $tabname[11]= MAIN_DB_PREFIX."c_type_contact";
 $tabname[12]= MAIN_DB_PREFIX."c_payment_term";
 $tabname[13]= MAIN_DB_PREFIX."c_paiement";
@@ -137,7 +137,7 @@ $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.t
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays=c.rowid and c.active=1";
 $tabsql[8] = "SELECT t.id    as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
 $tabsql[9] = "SELECT code_iso as code, label, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
-$tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
+$tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_vat as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active, accountancy_code FROM ".MAIN_DB_PREFIX."c_paiement AS c";
@@ -412,7 +412,7 @@ if ($id == 11)
 	);
 }
 
-// Define localtax_typeList (used for dictionary "llx_c_tva")
+// Define localtax_typeList (used for dictionary "llx_c_vat")
 $localtax_typeList = array();
 if ($id == 10)
 {

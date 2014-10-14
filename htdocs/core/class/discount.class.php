@@ -420,14 +420,26 @@ class DiscountAbsolute
         }
     }
 
-    /**
-     *	Return clickable ref of object (with picto or not)
+	/**
+     *	Return clicable link for object (with eventually the picto) // Deprecated - For compatibility with external module
      *
-     *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
-     *	@param		string	$option			Where to link to ('invoice' or 'discount')
-     *	@return		string					String with URL
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Where to link to ('invoice' or 'discount')
+     *	@return	string					String with URL
      */
-    function getNomUrl($withpicto,$option='invoice')
+    function getNomUrl($withpicto=0,$option='invoice')
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option);
+    }
+
+    /**
+     *	Return clicable ref of object (with picto or not)
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
+     *	@param	string	$option			Where to link to ('invoice' or 'discount')
+     *	@return	string					String with URL
+     */
+    function getObjectUrl($withpicto,$option='invoice')
     {
         global $langs;
 

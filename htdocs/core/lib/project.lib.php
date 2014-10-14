@@ -306,8 +306,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$projectstatic->id=$lines[$i]->fk_project;
 					$projectstatic->ref=$lines[$i]->projectref;
 					$projectstatic->public=$lines[$i]->public;
-					if ($lines[$i]->public || in_array($lines[$i]->fk_project,$projectsArrayId)) print $projectstatic->getNomUrl(1);
-					else print $projectstatic->getNomUrl(1,'nolink');
+					if ($lines[$i]->public || in_array($lines[$i]->fk_project,$projectsArrayId)) print $projectstatic->getObjectUrl(1);
+					else print $projectstatic->getObjectUrl(1,'nolink');
 					if ($showlineingray) print '</i>';
 					print "</td>";
 
@@ -329,7 +329,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$taskstatic->id=$lines[$i]->id;
 					$taskstatic->ref=$lines[$i]->ref;
 					$taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
-					print $taskstatic->getNomUrl(1,($showproject?'':'withproject'));
+					print $taskstatic->getObjectUrl(1,($showproject?'':'withproject'));
 				}
 				print '</td>';
 
@@ -493,14 +493,14 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 				$projectstatic->ref=$lines[$i]->projectref;
 				$projectstatic->public=$lines[$i]->public;
 				$projectstatic->label=$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project];
-				print $projectstatic->getNomUrl(1);
+				print $projectstatic->getObjectUrl(1);
 				print "</td>";
 
 				// Ref
 				print '<td>';
 				$taskstatic->id=$lines[$i]->id;
 				$taskstatic->ref=$lines[$i]->id;
-				print $taskstatic->getNomUrl(1);
+				print $taskstatic->getObjectUrl(1);
 				print '</td>';
 
 				// Label task
@@ -511,7 +511,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 				}
 				$taskstatic->id=$lines[$i]->id;
 				$taskstatic->ref=$lines[$i]->label;
-				print $taskstatic->getNomUrl(0);
+				print $taskstatic->getObjectUrl(0);
 				print "</td>\n";
 
 				// Date start
@@ -725,7 +725,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 				$projectstatic->ref=$objp->ref;
-				print $projectstatic->getNomUrl(1);
+				print $projectstatic->getObjectUrl(1);
 				print ' - '.dol_trunc($objp->title,24).'</td>';
 				print '<td align="right">'.$objp->nb.'</td>';
 				$projectstatic->statut = $objp->fk_statut;

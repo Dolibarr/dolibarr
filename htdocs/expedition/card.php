@@ -657,7 +657,7 @@ if ($action == 'create')
 
             // Tiers
             print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td>';
-            print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
+            print '<td colspan="3">'.$soc->getObjectUrl(1).'</td>';
             print '</tr>';
 
             // Date delivery planned
@@ -811,7 +811,7 @@ if ($action == 'create')
                     $product_static->type=$line->fk_product_type;
                     $product_static->id=$line->fk_product;
                     $product_static->ref=$line->ref;
-                    $text=$product_static->getNomUrl(1);
+                    $text=$product_static->getObjectUrl(1);
                     $text.= ' - '.(! empty($line->label)?$line->label:$line->product_label);
                     $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->desc));
                     print $form->textwithtooltip($text,$description,3,'','',$i);
@@ -1099,7 +1099,7 @@ else if ($id || $ref)
 
 		// Customer
 		print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
+		print '<td colspan="3">'.$soc->getObjectUrl(1).'</td>';
 		print "</tr>";
 
 		// Linked documents
@@ -1110,7 +1110,7 @@ else if ($id || $ref)
 			$objectsrc->fetch($object->$typeobject->id);
 			print $langs->trans("RefOrder").'</td>';
 			print '<td colspan="3">';
-			print $objectsrc->getNomUrl(1,'commande');
+			print $objectsrc->getObjectUrl(1,'commande');
 			print "</td>\n";
 			print '</tr>';
 		}
@@ -1121,7 +1121,7 @@ else if ($id || $ref)
 			$objectsrc->fetch($object->$typeobject->id);
 			print $langs->trans("RefProposal").'</td>';
 			print '<td colspan="3">';
-			print $objectsrc->getNomUrl(1,'expedition');
+			print $objectsrc->getObjectUrl(1,'expedition');
 			print "</td>\n";
 			print '</tr>';
 		}
@@ -1377,7 +1377,7 @@ else if ($id || $ref)
 				$product_static->type=$lines[$i]->fk_product_type;
 				$product_static->id=$lines[$i]->fk_product;
 				$product_static->ref=$lines[$i]->ref;
-				$text=$product_static->getNomUrl(1);
+				$text=$product_static->getObjectUrl(1);
 				$text.= ' - '.$label;
 				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->description));
 				print $form->textwithtooltip($text,$description,3,'','',$i);
@@ -1433,7 +1433,7 @@ else if ($id || $ref)
 				{
 					$entrepot = new Entrepot($db);
 					$entrepot->fetch($lines[$i]->entrepot_id);
-					print $entrepot->getNomUrl(1);
+					print $entrepot->getObjectUrl(1);
 				} 
 				else if (count($lines[$i]->details_entrepot) > 1)
 				{

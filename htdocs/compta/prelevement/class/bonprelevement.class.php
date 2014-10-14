@@ -1105,6 +1105,17 @@ class BonPrelevement extends CommonObject
 		}
     }
 
+	/**
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
+     *
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	string	$option			Page link
+     *	@return	string					String with URL
+     */
+    function getNomUrl($withpicto=0,$option='')
+    {
+        return $this->getObjectUrl($this->withpicto,$this->option);
+    }
 
     /**
      *	Returns clickable name (with picto)
@@ -1113,7 +1124,7 @@ class BonPrelevement extends CommonObject
      *	@param	string	$option		link target
      *	@return	string				URL of target
      */
-    function getNomUrl($withpicto=0,$option='')
+    function getObjectUrl($withpicto=0,$option='')
     {
         global $langs;
 

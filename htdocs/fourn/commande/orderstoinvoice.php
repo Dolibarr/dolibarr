@@ -310,7 +310,7 @@ if ($action == 'create' && empty($mesgs)) {
 	
 	// Third party
 	print '<tr><td class="fieldrequired">' . $langs->trans('Customer') . '</td><td colspan="2">';
-	print $soc->getNomUrl(1);
+	print $soc->getObjectUrl(1);
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 	print '</td>';
 	print '</tr>' . "\n";
@@ -467,8 +467,8 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs)) {
 		if (! empty($socid)) {
 			// Company
 			$companystatic->id = $socid;
-			$companystatic->nom = $soc->nom;
-			print '<h3>' . $companystatic->getNomUrl(1, 'customer') . '</h3>';
+			$companystatic->name = $soc->name;
+			print '<h3>' . $companystatic->getObjectUrl(1, 'customer') . '</h3>';
 		}
 		
 		print '<table class="noborder" width="100%">';
@@ -531,7 +531,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs)) {
 			
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td class="nobordernopadding nowrap">';
-			print $generic_commande->getNomUrl(1, $objp->fk_statut);
+			print $generic_commande->getObjectUrl(1, $objp->fk_statut);
 			print '</td>';
 			
 			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';

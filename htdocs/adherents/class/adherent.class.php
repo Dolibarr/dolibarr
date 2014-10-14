@@ -1542,15 +1542,28 @@ class Adherent extends CommonObject
     	return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
     }
 
-    /**
-     *    	Renvoie nom clicable (avec eventuellement le picto)
+	/**
+     *    	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
      *
-     *		@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param	int		$maxlen			length max libelle
-     *		@param	string	$option			Page lien
-     *		@return	string					Chaine avec URL
+     *		@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *		@param	int		$maxlen			length max label
+     *		@param	string	$option			Page link
+     *		@return	string					String with URL
      */
     function getNomUrl($withpicto=0,$maxlen=0,$option='card')
+    {
+        return $this->getObjectUrl($this->withpicto,$this->maxlen,$this->option);
+    }
+	
+    /**
+     *    	Return clicable object (with eventually the picto)
+     *
+     *		@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only Picto
+     *		@param	int		$maxlen			length max label
+     *		@param	string	$option			Page link
+     *		@return	string					String with URL
+     */
+    function getObjectUrl($withpicto=0,$maxlen=0,$option='card')
     {
         global $langs;
 

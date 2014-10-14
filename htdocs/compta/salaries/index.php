@@ -143,8 +143,8 @@ if ($result)
         $userstatic->firstname=$obj->firstname;
         $salstatic->id=$obj->rowid;
 		$salstatic->ref=$obj->rowid;
-        print "<td>".$salstatic->getNomUrl(1)."</td>\n";
-		print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+        print "<td>".$salstatic->getObjectUrl(1)."</td>\n";
+		print "<td>".$userstatic->getObjectUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
         print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
         // Type

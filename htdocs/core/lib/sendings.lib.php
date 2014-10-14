@@ -246,7 +246,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 					$product_static->type=$objp->fk_product_type;
 					$product_static->id=$objp->fk_product;
 					$product_static->ref=$objp->ref;
-					$text=$product_static->getNomUrl(1);
+					$text=$product_static->getObjectUrl(1);
 					$text.= ' - '.$label;
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
 					print $form->textwithtooltip($text,$description,3,'','',$i);
@@ -309,7 +309,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 
 						// Ref
 						print '<td>';
-						print $receiving->getNomUrl($db);
+						print $receiving->getObjectUrl($db);
 						//print '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
 						print '</td>';
 						// Qty received

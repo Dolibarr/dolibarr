@@ -1263,7 +1263,7 @@ else
             else {
             	$huser=new User($db);
             	$huser->fetch($object->fk_user);
-            	print $huser->getNomUrl(1);
+            	print $huser->getObjectUrl(1);
             }
             print '</td>';
             print "</tr>\n";
@@ -1340,7 +1340,7 @@ else
                 {
                     $societe = new Societe($db);
                     $societe->fetch($object->societe_id);
-                    print $societe->getNomUrl(1,'');
+                    print $societe->getObjectUrl(1,'');
                 }
                 else
                 {
@@ -1369,7 +1369,7 @@ else
                     $adh=new Adherent($db);
                     $adh->fetch($object->fk_member);
                     $adh->ref=$adh->getFullname($langs);	// Force to show login instead of id
-                    print $adh->getNomUrl(1);
+                    print $adh->getObjectUrl(1);
                 }
                 else
                 {
@@ -1952,7 +1952,7 @@ else
           		print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
             	$huser=new User($db);
             	$huser->fetch($object->fk_user);
-            	print $huser->getNomUrl(1);
+            	print $huser->getObjectUrl(1);
             }
             print '</td>';
             print "</tr>\n";
@@ -2024,7 +2024,7 @@ else
                 {
                     $societe = new Societe($db);
                     $societe->fetch($object->societe_id);
-                    print $societe->getNomUrl(1,'');
+                    print $societe->getObjectUrl(1,'');
                     if ($object->contact_id)
                     {
                         $contact = new Contact($db);
@@ -2052,7 +2052,7 @@ else
                     $adh=new Adherent($db);
                     $adh->fetch($object->fk_member);
                     $adh->ref=$adh->login;	// Force to show login instead of id
-                    print $adh->getNomUrl(1);
+                    print $adh->getObjectUrl(1);
                 }
                 else
                 {

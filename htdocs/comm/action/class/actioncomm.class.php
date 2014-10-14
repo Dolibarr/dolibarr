@@ -851,19 +851,34 @@ class ActionComm extends CommonObject
         }
         return '';
     }
-
-    /**
-     *    	Renvoie nom clicable (avec eventuellement le picto)
-     *      Utilise $this->id, $this->code et $this->label
+	
+	/**
+     *	Return clicable object (with eventually the picto) // Deprecated - For compatibility with external module
      *
-     * 		@param	int		$withpicto			0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param	int		$maxlength			Nombre de caracteres max dans libelle
-     *		@param	string	$classname			Force style class on a link
-     * 		@param	string	$option				''=Link to action,'birthday'=Link to contact
-     * 		@param	int		$overwritepicto		1=Overwrite picto
-     *		@return	string						Chaine avec URL
+     * 	@param	int		$withpicto			0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$maxlength			Length max label
+     *	@param	string	$classname			Force style class on a link
+     * 	@param	string	$option				''=Link to action,'birthday'=Link to contact
+     * 	@param	int		$overwritepicto		1=Overwrite picto
+     *	@return	string						String with URL
      */
     function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto='')
+    {
+        return $this->getObjectUrl($this->withpicto,$this->maxlength,$this->classname,$this->option,$this->overwritepicto);
+    }
+
+    /**
+     *  Return clicable object (with eventually the picto)
+     *  Use $this->id, $this->code and $this->label
+     *
+     * 	@param	int		$withpicto			0=No picto, 1=Include picto into link, 2=Only Picto
+     *	@param	int		$maxlength			Length max label
+     *	@param	string	$classname			Force style class on a link
+     * 	@param	string	$option				''=Link to action,'birthday'=Link to contact
+     * 	@param	int		$overwritepicto		1=Overwrite picto
+     *	@return	string						String with URL
+     */
+    function getObjectUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto='')
     {
         global $langs;
 

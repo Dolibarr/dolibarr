@@ -426,7 +426,7 @@ else if ($id || $ref)
         print '</tr>';
 
         // Type
-        print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$membert->getNomUrl(1)."</td></tr>\n";
+        print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$membert->getObjectUrl(1)."</td></tr>\n";
 
         // Company
         print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$member->societe.'</td></tr>';
@@ -496,7 +496,7 @@ else if ($id || $ref)
             print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
             if (!empty($object->thirdparty->id))
             {
-                print $object->thirdparty->getNomUrl(1);
+                print $object->thirdparty->getObjectUrl(1);
             }
             else
             {
@@ -681,7 +681,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 				// Categorie
 				print "<td>";
 				//$c->id=;
-				//print $c->getNomUrl(1);
+				//print $c->getObjectUrl(1);
 				print img_object('','category').' '.$way."</td>";
 
 				// Link to delete from category

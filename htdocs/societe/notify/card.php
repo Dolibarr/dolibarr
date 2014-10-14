@@ -299,7 +299,7 @@ if ($result > 0)
             $contactstatic->id=$obj->contactid;
             $contactstatic->lastname=$obj->lastname;
             $contactstatic->firstname=$obj->firstname;
-            print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
+            print '<tr '.$bc[$var].'><td>'.$contactstatic->getObjectUrl(1);
             if ($obj->type == 'email')
             {
                 if (isValidEmail($obj->email))
@@ -376,7 +376,7 @@ if ($result > 0)
             $contactstatic->id=$obj->id;
             $contactstatic->lastname=$obj->lastname;
             $contactstatic->firstname=$obj->firstname;
-            print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
+            print '<tr '.$bc[$var].'><td>'.$contactstatic->getObjectUrl(1);
             print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
             print '</td>';
             print '<td>';

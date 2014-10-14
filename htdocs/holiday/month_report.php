@@ -123,8 +123,8 @@ if($num == '0') {
 		$end_date_gmt=$db->jdate($holiday['date_fin'],1);
 
 		print '<tr '.$bc[$var].'>';
-		print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
-		print '<td>'.$user->getNomUrl(1).'</td>';
+		print '<td>'.$holidaystatic->getObjectUrl(1).'</td>';
+		print '<td>'.$user->getObjectUrl(1).'</td>';
 		print '<td>'.dol_print_date($start_date,'day');
 		print '</td>';
 		print '<td>'.dol_print_date($end_date,'day');

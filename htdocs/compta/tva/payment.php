@@ -19,7 +19,7 @@
  */
 
 /**
- *	    \file       htdocs/compta/tva/reglement.php
+ *	    \file       htdocs/compta/tva/payment.php
  *      \ingroup    tax
  *		\brief      List of VAT payments
  */
@@ -73,7 +73,7 @@ $form = new Form($db);
 $tva_static = new Tva($db);
 
 $sql = "SELECT t.rowid, t.amount, t.label, t.datev as dm, t.fk_typepayment as type, t.num_payment, pst.code as payment_code";
-$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+$sql.= " FROM ".MAIN_DB_PREFIX."vat as t";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id";
 $sql.= " WHERE t.entity = ".$conf->entity;
 if (GETPOST("search_label")) $sql.=" AND t.label LIKE '%".$db->escape(GETPOST("search_label"))."%'";
@@ -146,7 +146,7 @@ if ($result)
 
 		$tva_static->id=$obj->rowid;
 		$tva_static->ref=$obj->rowid;
-		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
+		print "<td>".$tva_static->getObjectUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
         print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
 		// Type

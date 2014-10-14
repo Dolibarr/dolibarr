@@ -290,7 +290,7 @@ if ($resql)
 		$actionstatic->id=$obj->id;
 		$actionstatic->type_code=$obj->acode;
 		$actionstatic->libelle=$obj->label;
-		print $actionstatic->getNomUrl(1,28);
+		print $actionstatic->getObjectUrl(1,28);
 		print '</td>';
 
 		// Start date
@@ -316,7 +316,7 @@ if ($resql)
 			$societestatic->id=$obj->socid;
 			$societestatic->client=$obj->client;
 			$societestatic->name=$obj->societe;
-			print $societestatic->getNomUrl(1,'',10);
+			print $societestatic->getObjectUrl(1,'',10);
 		}
 		else print '&nbsp;';
 		print '</td>';
@@ -328,7 +328,7 @@ if ($resql)
 			$contactstatic->lastname=$obj->lastname;
 			$contactstatic->firstname=$obj->firstname;
 			$contactstatic->id=$obj->fk_contact;
-			print $contactstatic->getNomUrl(1,'',10);
+			print $contactstatic->getObjectUrl(1,'',10);
 		}
 		else
 		{

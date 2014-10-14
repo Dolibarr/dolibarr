@@ -282,7 +282,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
             $supplierstatic->id=$obj->socid;
             $supplierstatic->name=$obj->name;
-            print $supplierstatic->getNomUrl(1,'supplier');
+            print $supplierstatic->getObjectUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
             $form->select_date($dateinvoice,'','','','',"addpaiement",1,1);
@@ -367,7 +367,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        print '<td>';
 	                        $invoicesupplierstatic->ref=$objp->ref;
 	                        $invoicesupplierstatic->id=$objp->facid;
-	                        print $invoicesupplierstatic->getNomUrl(1);
+	                        print $invoicesupplierstatic->getObjectUrl(1);
 	                        print '</td>';
 	                        print '<td>'.$objp->ref_supplier.'</td>';
 	                        if ($objp->df > 0 )
@@ -582,7 +582,7 @@ if (empty($action))
             /*$invoicesupplierstatic->ref=$objp->ref_supplier;
             $invoicesupplierstatic->id=$objp->facid;
             print '<td class="nowrap">';
-            print $invoicesupplierstatic->getNomUrl(1);
+            print $invoicesupplierstatic->getObjectUrl(1);
             print '</td>';*/
 
             print '</tr>';

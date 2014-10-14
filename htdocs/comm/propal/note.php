@@ -101,7 +101,7 @@ if ($id > 0 || ! empty($ref))
 			if ( is_null($object->client) )
 				$object->fetch_thirdparty();
 			print "<tr><td>".$langs->trans("Company")."</td>";
-			print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+			print '<td colspan="3">'.$object->client->getObjectUrl(1).'</td></tr>';
 
 			// Ligne info remises tiers
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';

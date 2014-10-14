@@ -417,7 +417,7 @@ else
 					$productstatic->id=$objp->rowid;
 					$productstatic->ref=$objp->ref;
 					$productstatic->type=$objp->type;
-					print $productstatic->getNomUrl(1,'stock',16);
+					print $productstatic->getObjectUrl(1,'stock',16);
 					print '</td>';
 					print '<td>'.$objp->produit.'</td>';
 

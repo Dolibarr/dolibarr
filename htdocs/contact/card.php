@@ -458,7 +458,7 @@ else
                 {
                     print '<tr><td><label for="socid">'.$langs->trans("Company").'</label></td>';
                     print '<td colspan="3" class="maxwidthonsmartphone">';
-                    print $objsoc->getNomUrl(1);
+                    print $objsoc->getObjectUrl(1);
                     print '</td>';
                     print '<input type="hidden" name="socid" id="socid" value="'.$objsoc->id.'">';
                     print '</td></tr>';
@@ -928,7 +928,7 @@ else
             if ($object->socid > 0)
             {
                 $objsoc->fetch($object->socid);
-                print $objsoc->getNomUrl(1);
+                print $objsoc->getObjectUrl(1);
             }
             else
             {

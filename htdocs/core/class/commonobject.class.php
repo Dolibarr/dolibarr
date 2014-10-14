@@ -2608,7 +2608,7 @@ abstract class CommonObject
 				$product_static->type=$line->fk_product_type;
 				$product_static->id=$line->fk_product;
 				$product_static->ref=$line->ref;
-				$text=$product_static->getNomUrl(1);
+				$text=$product_static->getObjectUrl(1);
 
 				// Define output language and label
 				if (! empty($conf->global->MAIN_MULTILANGS))
@@ -2774,7 +2774,7 @@ abstract class CommonObject
         {
             $discount=new DiscountAbsolute($this->db);
             $discount->fk_soc = $this->socid;
-            $this->tpl['label'].= $discount->getNomUrl(0,'discount');
+            $this->tpl['label'].= $discount->getObjectUrl(0,'discount');
         }
         else if (! empty($line->fk_product))
         {
@@ -2782,7 +2782,7 @@ abstract class CommonObject
             $productstatic->id = $line->fk_product;
             $productstatic->ref = $line->ref;
             $productstatic->type = $line->fk_product_type;
-            $this->tpl['label'].= $productstatic->getNomUrl(1);
+            $this->tpl['label'].= $productstatic->getObjectUrl(1);
             $this->tpl['label'].= ' - '.(! empty($line->label)?$line->label:$line->product_label);
             // Dates
             if ($line->product_type == 1 && ($date_start || $date_end))
@@ -2811,13 +2811,13 @@ abstract class CommonObject
             {
                 $discount=new DiscountAbsolute($this->db);
                 $discount->fetch($line->fk_remise_except);
-                $this->tpl['description'] = $langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+                $this->tpl['description'] = $langs->transnoentities("DiscountFromCreditNote",$discount->getObjectUrl(0));
             }
             elseif ($line->desc == '(DEPOSIT)')  // TODO Not sure this is used for source object
             {
                 $discount=new DiscountAbsolute($this->db);
                 $discount->fetch($line->fk_remise_except);
-                $this->tpl['description'] = $langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+                $this->tpl['description'] = $langs->transnoentities("DiscountFromDeposit",$discount->getObjectUrl(0));
             }
             else
             {
