@@ -392,7 +392,7 @@ $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 $mainmenuusedarray=array();	// Disable
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','cashdesk');
+$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','agenda','ecm','cashdesk');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
@@ -2448,6 +2448,14 @@ ul.ulmenu {
 	background-image: -ms-linear-gradient( #eee,#e1e1e1 ) !important;
 	background-image: -o-linear-gradient( #eee,#e1e1e1 ) !important;
 	background-image: linear-gradient( #eee,#e1e1e1 ) !important;
+}
+.lilevel2
+{
+	padding-left: 22px;
+}
+.lilevel3
+{
+	padding-left: 54px;
 }
 
 <?php

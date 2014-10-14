@@ -177,7 +177,6 @@ class MenuManager
         				print '<a href="'.$relurl.'"';
         				//print ' data-ajax="false"';
         				print '>';
-        				print str_pad('',12,'&nbsp;');
         				if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") print $langs->trans("Access");	// No translation
         				else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
         				print '</a>';
@@ -199,7 +198,6 @@ class MenuManager
         					//print ' data-ajax="false"';
         					print '>';
         				}
-						print str_pad('',($val2['level']+1)*12,'&nbsp;');
         				print $val2['titre'];
         				if ($relurl2) print '</a>';
         				print '</li>'."\n";

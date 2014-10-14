@@ -156,7 +156,7 @@ abstract class CommonObject
      *  Add a link between element $this->element and a contact
      *
      *  @param	int		$fk_socpeople       Id of contact to link
-     *  @param 	int		$type_contact 		Type of contact (code or id)
+     *  @param 	int		$type_contact 		Type of contact (code or id). For example: SALESREPFOLL
      *  @param  int		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
      *  @param  int		$notrigger			Disable all triggers
      *  @return int                 		<0 if KO, >0 if OK
@@ -192,9 +192,10 @@ abstract class CommonObject
             // On recherche id type_contact
             $sql = "SELECT tc.rowid";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
-            $sql.= " WHERE element='".$this->element."'";
-            $sql.= " AND source='".$source."'";
-            $sql.= " AND code='".$type_contact."' AND active=1";
+            $sql.= " WHERE tc.element='".$this->element."'";
+            $sql.= " AND tc.source='".$source."'";
+            $sql.= " AND tc.code='".$type_contact."' AND tc.active=1";
+			//print $sql;
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -337,12 +338,14 @@ abstract class CommonObject
     /**
      *    Delete all links between an object $this and all its contacts
      *
-     *    @return     int	>0 if OK, <0 if KO
+     *	  @param	string	$source		'' or 'internal' or 'external'
+     *	  @param	string	$code		Type of contact (code or id)
+     *    @return   int					>0 if OK, <0 if KO
      */
-    function delete_linked_contact()
+    function delete_linked_contact($source='',$code='')
     {
         $temp = array();
-        $typeContact = $this->liste_type_contact('');
+        $typeContact = $this->liste_type_contact($source,'',0,0,$code);
 
         foreach($typeContact as $key => $value)
         {
@@ -351,7 +354,7 @@ abstract class CommonObject
         $listId = implode(",", $temp);
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
-        $sql.= " WHERE element_id =".$this->id;
+        $sql.= " WHERE element_id = ".$this->id;
         $sql.= " AND fk_c_type_contact IN (".$listId.")";
 
         dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
@@ -360,7 +363,7 @@ abstract class CommonObject
             return 1;
         }
         else
-        {
+		{
             $this->error=$this->db->lasterror();
             return -1;
         }
@@ -478,21 +481,23 @@ abstract class CommonObject
      *      @param	string	$source     'internal', 'external' or 'all'
      *      @param	string	$order		Sort order by : 'code' or 'rowid'
      *      @param  string	$option     0=Return array id->label, 1=Return array code->label
-     *      @param  string	$activeonly    0=all type of contact, 1=only the active
+     *      @param  string	$activeonly 0=all status of contact, 1=only the active
+     *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
      *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
      */
-    function liste_type_contact($source='internal', $order='code', $option=0, $activeonly=0)
+    function liste_type_contact($source='internal', $order='', $option=0, $activeonly=0, $code='')
     {
         global $langs;
+
+        if (empty($order)) $order='code';
 
         $tab = array();
         $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE tc.element='".$this->element."'";
-        if ($activeonly == 1)
-        	$sql.= " AND tc.active=1"; // only the active type
-
-        if (! empty($source)) $sql.= " AND tc.source='".$source."'";
+        if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active type
+        if (! empty($source) && $source != 'all') $sql.= " AND tc.source='".$source."'";
+        if (! empty($code)) $sql.= " AND tc.code='".$code."'";
         $sql.= " ORDER by tc.".$order;
 
         //print "sql=".$sql;
