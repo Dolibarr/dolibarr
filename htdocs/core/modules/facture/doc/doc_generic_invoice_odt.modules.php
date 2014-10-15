@@ -343,7 +343,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_propal=is_object($propal_object)?$this->get_substitutionarray_object($propal_object,$outputlangs,'propal'):array();
-				$array_other=$this->get_substitutionarray_other($user,$outputlangs);
+				$array_other=$this->get_substitutionarray_other($outputlangs);
 
 				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal,$array_other);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
