@@ -427,18 +427,6 @@ function dol_string_nospecial($str,$newstr='_',$badchars='')
 	return str_replace($forbidden_chars_to_replace,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
 }
 
-
-/**
- * Encode string for xml usage
- *
- * @param 	string	$string		String to encode
- * @return	string				String encoded
- */
-function dolEscapeXML($string)
-{
-	return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
-}
-
 /**
  *  Returns text escaped for inclusion into javascript code
  *
@@ -3479,7 +3467,6 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 		return $ret;
 	}
 }
-
 
 /**
  *	This function is called to encode a string into a HTML string but differs from htmlentities because
