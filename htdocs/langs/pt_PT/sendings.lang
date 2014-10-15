@@ -50,27 +50,29 @@ Enlevement=Pick-up por o Cliente
 DocumentModelSimple=Modelo Simples
 DocumentModelMerou=Mérou modelo A5
 WarningNoQtyLeftToSend=Atenção, não existe qualquer produto à espera de ser enviado.
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Data de entrega planeada
 DateReceived=Data da entrega recebida
 SendShippingByEMail=Efectuar envio por e-mail
-SendShippingRef=Enviar %s embarque
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Eventos em embarque
 LinkToTrackYourPackage=Link para acompanhar o seu pacote
 ShipmentCreationIsDoneFromOrder=A criação de uma nova remessa é efectuada a partir da encomenda.
 RelatedShippings=Envios relacionados
-# ShipmentLine=Shipment line
+ShipmentLine=Shipment line
 CarrierList=Lista de transportadores
 
 # Sending methods
 SendingMethodCATCH=Capturas por cliente
 SendingMethodTRANS=Transportador
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Modelo de documento simples de recibos de entrega
 DocumentModelTyphon=Modelo de documento mais completo para a entrega recibos (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constante não definida
 SumOfProductVolumes=Soma dos volumes dos produtos
 SumOfProductWeights=Soma dos pesos dos produtos
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

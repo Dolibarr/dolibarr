@@ -30,3 +30,4 @@ SearchADonation=Αναζήτηση μια δωρεά
 DonationRecipient=Δικαιούχος δωρεάς
 ThankYou=Σας ευχαριστούμε
 IConfirmDonationReception=Ο δικαιούχος δηλώνει αποδοχή, ως δωρεά, το ακόλουθο ποσό
+MinimumAmount=Το ελάχιστο ποσό είναι %s

@@ -70,7 +70,7 @@ function versioncompare($versionarray1,$versionarray2)
         if ($operande1 < $operande2) { $ret = -$level; break; }
         if ($operande1 > $operande2) { $ret = $level; break; }
     }
-    //print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret;
+    //print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret.'<br>'."\n";
     return $ret;
 }
 
@@ -508,7 +508,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function security_prepare_head()
 {
@@ -712,7 +712,7 @@ function activateModule($value,$withdeps=1)
     // Test if Dolibarr version ok
     $verdol=versiondolibarrarray();
     $vermin=isset($objMod->need_dolibarr_version)?$objMod->need_dolibarr_version:0;
-    //print 'eee'.versioncompare($verdol,$vermin).join(',',$verdol).' - '.join(',',$vermin);exit;
+    //print 'eee '.versioncompare($verdol,$vermin).' - '.join(',',$verdol).' - '.join(',',$vermin);exit;
     if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
     {
         return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));
@@ -851,18 +851,18 @@ function unActivateModule($value, $requiredby=1)
 /**
  *  Add external modules to list of dictionaries
  *
- * 	@param		array		&$taborder			Taborder
- * 	@param		array		&$tabname			Tabname
- * 	@param		array		&$tablib			Tablib
- * 	@param		array		&$tabsql			Tabsql
- * 	@param		array		&$tabsqlsort		Tabsqlsort
- * 	@param		array		&$tabfield			Tabfield
- * 	@param		array		&$tabfieldvalue		Tabfieldvalue
- * 	@param		array		&$tabfieldinsert	Tabfieldinsert
- * 	@param		array		&$tabrowid			Tabrowid
- * 	@param		array		&$tabcond			Tabcond
- * 	@param		array		&$tabhelp			Tabhelp
- * 	@param		array		&$tabfieldcheck		Tabfieldcheck
+ * 	@param		array		$taborder			Taborder
+ * 	@param		array		$tabname			Tabname
+ * 	@param		array		$tablib				Tablib
+ * 	@param		array		$tabsql				Tabsql
+ * 	@param		array		$tabsqlsort			Tabsqlsort
+ * 	@param		array		$tabfield			Tabfield
+ * 	@param		array		$tabfieldvalue		Tabfieldvalue
+ * 	@param		array		$tabfieldinsert		Tabfieldinsert
+ * 	@param		array		$tabrowid			Tabrowid
+ * 	@param		array		$tabcond			Tabcond
+ * 	@param		array		$tabhelp			Tabhelp
+ *  @param		array		$tabfieldcheck		Tabfieldcheck
  * 	@return		int			1
  */
 function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond,&$tabhelp,&$tabfieldcheck)

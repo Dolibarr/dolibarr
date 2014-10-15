@@ -40,3 +40,5 @@ AddSupplierInvoice=Luo toimittajan laskun
 ListOfSupplierProductForSupplier=Luettelo tuotteista ja hinnoista <b>toimittaja %s</b>
 NoneOrBatchFileNeverRan=Ei mitään tai <b>erän %s</b> ei juoksi hiljattain
 SentToSuppliers=Sent to suppliers
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

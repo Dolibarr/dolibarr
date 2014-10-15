@@ -338,9 +338,10 @@ class Account extends CommonObject
     /**
      *  Create bank account into database
      *
+     *  @param	User	$user		Object user making creation
      *  @return int        			< 0 if KO, > 0 if OK
      */
-    function create()
+    function create($user='')
     {
         global $langs,$conf;
 
@@ -607,10 +608,10 @@ class Account extends CommonObject
         $sql.= " ba.domiciliation, ba.proprio, ba.owner_address, ba.state_id, ba.fk_pays as country_id,";
         $sql.= " ba.account_number, ba.accountancy_journal, ba.currency_code,";
         $sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
-        $sql.= ' p.code as country_code, p.libelle as country,';
+        $sql.= ' c.code as country_code, c.label as country,';
         $sql.= ' d.code_departement as state_code, d.nom as state';
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON ba.fk_pays = p.rowid';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON ba.fk_pays = c.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON ba.state_id = d.rowid';
         $sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
         if ($id)  $sql.= " AND ba.rowid  = ".$id;
@@ -665,10 +666,9 @@ class Account extends CommonObject
                 return 1;
             }
             else
-            {
+			{
                 return 0;
             }
-            $this->db->free($result);
         }
         else
         {
@@ -882,7 +882,7 @@ class Account extends CommonObject
 
         if (empty($mode))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/fiche.php?id='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id.'">';
             $lienfin='</a>';
         }
         else if ($mode == 'transactions')

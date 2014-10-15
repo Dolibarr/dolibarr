@@ -111,3 +111,4 @@ ExtraFieldsCategories=Extra attibut
 CategoriesSetup=Kategorier, inställningar
 CategorieRecursiv=Länka automatiskt med förälderkategori
 CategorieRecursivHelp=Om aktiverad kommer produkten även länkas till förälderkategori när den läggs i en underkategori
+AddProductServiceIntoCategory=Add the following product/service

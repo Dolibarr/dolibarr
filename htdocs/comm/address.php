@@ -95,7 +95,7 @@ if ($action == 'add' || $action == 'update')
             }
             elseif ($origin == 'shipment')
             {
-            	header("Location: ../expedition/fiche.php?id=".$originid);
+            	header("Location: ../expedition/card.php?id=".$originid);
             	exit;
             }
             else
@@ -135,7 +135,7 @@ if ($action == 'add' || $action == 'update')
             }
             elseif ($origin == 'shipment')
             {
-                header("Location: ../expedition/fiche.php?id=".$originid);
+                header("Location: ../expedition/card.php?id=".$originid);
                 exit;
             }
             else
@@ -148,7 +148,7 @@ if ($action == 'add' || $action == 'update')
         {
             $reload = 0;
 	        setEventMessage($object->error, 'errors');
-            $actino= "edit";
+            $action= "edit";
         }
     }
 

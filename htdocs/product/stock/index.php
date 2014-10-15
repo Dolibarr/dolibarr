@@ -51,7 +51,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 /*
  * Zone recherche entrepot
  */
-print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/liste.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print "<tr class=\"liste_titre\">";
@@ -89,7 +89,7 @@ if ($result)
             $objp = $db->fetch_object($result);
             $var=!$var;
             print "<tr ".$bc[$var].">";
-            print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"),"stock")." ".$objp->label."</a></td>\n";
+            print "<td><a href=\"card.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"),"stock")." ".$objp->label."</a></td>\n";
             print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
             print "</tr>\n";
             $i++;
@@ -146,10 +146,10 @@ if ($resql)
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
 		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
-		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
+		print "<td><a href=\"../card.php?id=$objp->rowid\">";
 		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
 		print "</a></td>\n";
-		print '<td><a href="fiche.php?id='.$objp->entrepot_id.'">';
+		print '<td><a href="card.php?id='.$objp->entrepot_id.'">';
 		print img_object($langs->trans("ShowWarehouse"),"stock").' '.$objp->stock;
 		print "</a></td>\n";
 		print '<td align="right">';

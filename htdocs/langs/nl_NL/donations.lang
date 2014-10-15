@@ -30,3 +30,4 @@ SearchADonation=Zoek een donatie
 DonationRecipient=Gift ontvanger
 ThankYou=Dank u
 IConfirmDonationReception=De ontvanger verklaart ontvangst als gift van het volgende bedrag
+MinimumAmount=Minimum amount is  %s

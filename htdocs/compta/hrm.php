@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2013-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 $langs->load('users');
 $langs->load('holidays');
 $langs->load('trips');
+
+$socid=GETPOST("socid");
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
@@ -117,7 +119,7 @@ if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAI
 $sql.= " WHERE u.rowid = d.fk_user";
 $sql.= " AND d.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid) $sql.= " AND d.fk_soc = ".$socid;
+if (!empty($socid)) $sql.= " AND d.fk_soc = ".$socid;
 $sql.= $db->order("d.tms","DESC");
 $sql.= $db->plimit($max, 0);
 

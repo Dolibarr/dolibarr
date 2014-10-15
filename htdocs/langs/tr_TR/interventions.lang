@@ -24,10 +24,12 @@ NameAndSignatureOfInternalContact=Müdahilin adı ve imzası :
 NameAndSignatureOfExternalContact=Müşterinin adı ve imzası :
 DocumentModelStandard=Müdahaleler için standart belge modeli
 InterventionCardsAndInterventionLines=Müdahalelere ait müdahaleler ve satırları
-ClassifyBilled="Faturalandırıldı"
-StatusInterInvoiced=Faturalandırılmış
+InterventionClassifyBilled=Classify "Billed"
+InterventionClassifyUnBilled=Classify "Unbilled"
+StatusInterInvoiced=Faturalanmış
 RelatedInterventions=İlgili müdahaleler
 ShowIntervention=Müdahale göster
+SendInterventionRef=%s müdahalesinin sunulması
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Müdahale izleme temsilcisi
 TypeContact_fichinter_internal_INTERVENING=Müdahalede

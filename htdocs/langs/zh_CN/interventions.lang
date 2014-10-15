@@ -24,10 +24,12 @@ NameAndSignatureOfInternalContact=名称及干预签名：
 NameAndSignatureOfExternalContact=客户的姓名和签字：
 DocumentModelStandard=标准文档模型的干预
 InterventionCardsAndInterventionLines=干预和干预行
-ClassifyBilled=分类“帐单”
+InterventionClassifyBilled=Classify "Billed"
+InterventionClassifyUnBilled=Classify "Unbilled"
 StatusInterInvoiced=帐单
 RelatedInterventions=相关的干预措施
 ShowIntervention=展干预
+SendInterventionRef=Submission of intervention %s
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=代表随访干预
 TypeContact_fichinter_internal_INTERVENING=干预

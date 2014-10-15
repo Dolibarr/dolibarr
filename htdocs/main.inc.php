@@ -110,7 +110,7 @@ function test_sql_and_script_inject($val, $type)
 /**
  * Security: Return true if OK, false otherwise.
  *
- * @param		string		&$var		Variable name
+ * @param		string		$var		Variable name
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
  * @return		boolean					true if there is an injection
  */
@@ -411,7 +411,7 @@ if (! defined('NOLOGIN'))
                 // Call of triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
-                $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST('entity','int'));
+                $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
                 if ($result < 0) {
                     $error++;
                 }
@@ -514,10 +514,11 @@ if (! defined('NOLOGIN'))
                 $_SESSION["dol_loginmesg"]=$user->error;
             }
 
+            // TODO We should use a hook here, not a trigger.
             // Call triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
-            $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
+            $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
             if ($result < 0) {
                 $error++;
             }
@@ -556,10 +557,11 @@ if (! defined('NOLOGIN'))
                 $_SESSION["dol_loginmesg"]=$user->error;
             }
 
+            // TODO We should use a hook here, not a trigger.
             // Call triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
-            $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,(isset($_POST["entity"])?$_POST["entity"]:0));
+            $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
             if ($result < 0) {
                 $error++;
             }
@@ -572,10 +574,11 @@ if (! defined('NOLOGIN'))
        {
             if (! empty($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default (triggers are time consuming)
             {
+                // TODO We should use a hook here, not a trigger.
                 // Call triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
-                $result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf,$conf->entity);
+                $result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf);
                 if ($result < 0) {
                     $error++;
                 }
@@ -588,7 +591,7 @@ if (! defined('NOLOGIN'))
     // If we are here, this means authentication was successfull.
     if (! isset($_SESSION["dol_login"]))
     {
-        // New session for this login.
+        // New session for this login has started.
     	$error=0;
 
     	// Store value into session (values always stored)
@@ -617,10 +620,11 @@ if (! defined('NOLOGIN'))
 
         $user->update_last_login_date();
 
+        // TODO We should use a hook here, not a trigger
         // Call triggers
         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         $interface=new Interfaces($db);
-        $result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf,GETPOST('entity','int'));
+        $result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
         if ($result < 0) {
             $error++;
         }
@@ -725,7 +729,8 @@ if (! empty($conf->browser->phone)
 {
 	$conf->dol_optimize_smallscreen=1;
 }
-
+// If we force to use jmobile, then we reenable javascript
+if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 // Disabled bugged themes
 if (! empty($conf->dol_use_jmobile) && in_array($conf->theme,array('bureau2crea','cameleo')))
 {
@@ -1397,7 +1402,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $companylink=' ('.$thirdpartystatic->getNomUrl('','').')';
 	        $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 	    }
-	    $logintext='<div class="login"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
+	    $logintext='<div class="login"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'"';
 	    $logintext.=$target?(' target="'.$target.'"'):'';
 	    $logintext.='>'.$user->login.'</a>';
 	    if ($user->societe_id) $logintext.=$companylink;
@@ -1548,20 +1553,20 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
 	    {
 	        $langs->load("products");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/liste.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P');
 	    }
 
 	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire)) && ! empty($conf->fournisseur->enabled)
 	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER))
 	    {
 	        $langs->load("products");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/liste.php', DOL_URL_ROOT.'/fourn/product/liste.php', img_object('','product').' '.$langs->trans("SupplierRef"), 'products', 'srefsupplier');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/list.php', DOL_URL_ROOT.'/fourn/product/list.php', img_object('','product').' '.$langs->trans("SupplierRef"), 'products', 'srefsupplier');
 	    }
 
 	    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
 	    {
 	        $langs->load("members");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall', 'M');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall', 'M');
 	    }
 
 	    // Execute hook printSearchForm
@@ -1816,7 +1821,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
     if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
     else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
     $ret.=' name="'.$htmlinputname.'" id="'.$htmlinputname.'" size="10" />';
-    $ret.='<input type="submit" class="button" value="'.$langs->trans("Go").'">';
+    $ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
     $ret.="</form>\n";
     return $ret;
 }

@@ -55,7 +55,7 @@ DraftOrWaitingShipped=Entwurf oder bestätigt, noch nicht versandt
 MenuOrdersToBill=Bestellverrechnung
 MenuOrdersToBill2=Zu verrechnende Bestellungen
 SearchOrder=Suche Bestellung
-# SearchACustomerOrder=Search a customer order
+SearchACustomerOrder=Kundenauftrag suchen
 ShipProduct=Produkt versenden
 Discount=Rabatt
 CreateOrder=Erzeuge Bestellung
@@ -101,7 +101,6 @@ RelatedOrders=Verknüpfte Bestellungen
 OnProcessOrders=Bestellungen in Bearbeitung
 RefOrder=Bestell-Nr.
 RefCustomerOrder=Kunden-Bestellung-Nr.
-CustomerOrder=Kundenbestellung
 RefCustomerOrderShort=Kunden-BestellNr.
 SendOrderByMail=Bestellung per Post versenden
 ActionsOnOrder=Maßnahmen zu dieser Bestellung
@@ -132,8 +131,6 @@ Error_COMMANDE_ADDON_NotDefined=Konstante COMMANDE_ADDON nicht definiert
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Fehler beim Laden der Moduldatei '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Fehler beim Laden der Moduldatei '%s'
 Error_OrderNotChecked=Keine zu verrechnende Bestellungen ausgewählt
-
-
 # Sources
 OrderSource0=Angebot
 OrderSource1=Internet
@@ -144,7 +141,6 @@ OrderSource5=Vertrieb
 OrderSource6=Andere
 QtyOrdered=Bestellmenge
 AddDeliveryCostLine=Fügen Sie eine Versandkostenzeile zur Erfassung des Bestellgewichts ein
-
 # Documents models
 PDFEinsteinDescription=Eine vollständige Bestellvorlage (Logo, uwm.)
 PDFEdisonDescription=Eine einfache Bestellungsvorlage
@@ -155,14 +151,13 @@ OrderByFax=Fax
 OrderByEMail=E-Mail
 OrderByWWW=Online
 OrderByPhone=Telefon
-
-# CreateInvoiceForThisCustomer=Bill orders
-# NoOrdersToInvoice=No orders billable
+CreateInvoiceForThisCustomer=Bill orders
+NoOrdersToInvoice=Keine Bestellungen Rechnungsfähig
 CloseProcessedOrdersAutomatically=Markiere alle ausgewählten Bestellungen als "verarbeitet".
 MenuOrdersToBill2=Zu verrechnende Bestellungen
-# OrderCreation=Order creation
+OrderCreation=Erstellen einer Bestellung
 Ordered=Bestellt
 OrderCreated=Ihre Bestellungen wurden erstellt
 OrderFail=Ein Fehler trat beim Erstellen der Bestellungen auf
 CreateOrders=Erzeuge Bestellungen
-# ToBillSeveralOrderSelectCustomer=To create an invoice for several orders, click first onto customer, then choose "%s".
+ToBillSeveralOrderSelectCustomer=Um eine Rechnung für verschiedene Bestellungen zu erstellen, klicken Sie erst auf Kunde und dann wählen Sie "%s".

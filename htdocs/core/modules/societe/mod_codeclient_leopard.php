@@ -39,6 +39,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 */
 
 	var $nom='Leopard';					// Nom du modele
+	var $name='Leopard';				// Nom du modele
 	var $code_modifiable;				// Code modifiable
 	var $code_modifiable_invalide;		// Code modifiable si il est invalide
 	var $code_modifiable_null;			// Code modifiables si il est null
@@ -90,7 +91,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 * 	Check validity of code according to its rules
 	 *
 	 *	@param	DoliDB		$db		Database handler
-	 *	@param	string		&$code	Code to check/correct
+	 *	@param	string		$code	Code to check/correct
 	 *	@param	Societe		$soc	Object third party
 	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
 	 *  @return int					0 if OK

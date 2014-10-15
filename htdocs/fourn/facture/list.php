@@ -106,7 +106,7 @@ $formfile = new FormFile($db);
 
 llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
-$sql = "SELECT s.rowid as socid, s.nom, ";
+$sql = "SELECT s.rowid as socid, s.nom as name, ";
 $sql.= " fac.rowid as facid, fac.ref, fac.ref_supplier, fac.datef, fac.date_lim_reglement as date_echeance,";
 $sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -202,7 +202,7 @@ if ($resql)
 	if (GETPOST("search_montant_ttc"))  $param.='&search_montant_ttc='.urlencode(GETPOST("search_montant_ttc"));
 	if (GETPOST("filtre") && GETPOST('filtre') != -1) $param.='&filtre='.urlencode(GETPOST("filtre"));
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
@@ -279,7 +279,7 @@ if ($resql)
 		print '<td>'.dol_trunc($obj->libelle,36).'</td>';
 		print '<td>';
 		$supplierstatic->id=$obj->socid;
-		$supplierstatic->nom=$obj->nom;
+		$supplierstatic->name=$obj->name;
 		print $supplierstatic->getNomUrl(1,'',12);
 		print '<td align="right">'.price($obj->total_ht).'</td>';
 		print '<td align="right">'.price($obj->total_ttc).'</td>';

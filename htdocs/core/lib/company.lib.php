@@ -4,7 +4,7 @@
  * Copyright (C) 2007		    Patrick Raguin			  <patrick.raguin@gmail.com>
  * Copyright (C) 2010-2012	Regis Houssin			    <regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2014  Florian Henry		  	  <florian.henry@open-concept.pro>
- * Copyright (C) 2013       Juanjo Menent		  	  <jmenent@2byte.es>
+ * Copyright (C) 2013-2014  Juanjo Menent		  	  <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel		<contact@altairis.fr>
  * Copyright (C) 2013       Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  *
@@ -37,7 +37,7 @@
  */
 function societe_prepare_head($object)
 {
-    global $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
     $h = 0;
     $head = array();
 
@@ -48,7 +48,7 @@ function societe_prepare_head($object)
 
     if ($object->client==1 || $object->client==2 || $object->client==3)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$object->id;
+        $head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
         $head[$h][1] = '';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client==2 || $object->client==3)) $head[$h][1] .= $langs->trans("Prospect");
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && $object->client==3) $head[$h][1] .= '/';
@@ -58,19 +58,19 @@ function societe_prepare_head($object)
     }
     if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
     {
-        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$object->id;
+        $head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
         $head[$h][2] = 'supplier';
         $h++;
     }
 
-	if (($object->localtax1_assuj || $object->localtax2_assuj) && (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0) )
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/societe/localtaxes.php?socid='.$object->id;
-		$head[$h][1] = $langs->trans("LocalTaxes");
-		$head[$h][2] = 'localtaxes';
-		$h++;
-	}
+    if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+        $head[$h][1] = $langs->trans("Contact");
+        $head[$h][2] = 'contact';
+        $h++;
+    }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
      {
@@ -98,7 +98,7 @@ function societe_prepare_head($object)
 
     if ($user->societe_id == 0)
     {
-        if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled))
+        if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fichinter->enabled) || ! empty($conf->fournisseur->enabled))
         {
 	        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 	        $head[$h][1] = $langs->trans("Referers");
@@ -109,8 +109,29 @@ function societe_prepare_head($object)
         // Notifications
         if (! empty($conf->notification->enabled))
         {
-        	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$object->id;
+        	$nbNote = 0;
+        	$sql = "SELECT COUNT(n.rowid) as nb";
+        	$sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n";
+        	$sql.= " WHERE fk_soc = ".$object->id;
+        	$resql=$db->query($sql);
+        	if ($resql)
+        	{
+        		$num = $db->num_rows($resql);
+        		$i = 0;
+        		while ($i < $num)
+        		{
+        			$obj = $db->fetch_object($resql);
+        			$nbNote=$obj->nb;
+        			$i++;
+        		}
+        	}
+        	else {
+        		dol_print_error($db);
+        	}
+        	 
+        	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
         	$head[$h][1] = $langs->trans("Notifications");
+			if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
         	$head[$h][2] = 'notify';
         	$h++;
         }
@@ -262,10 +283,10 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
     if (! is_object($dbtouse)) $dbtouse=$db;
     if (! is_object($outputlangs)) $outputlangs=$langs;
 
-    $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
+    $sql = "SELECT rowid, code, label FROM ".MAIN_DB_PREFIX."c_country";
     if (is_numeric($searchkey)) $sql.= " WHERE rowid=".$searchkey;
     elseif (! empty($searchkey)) $sql.= " WHERE code='".$db->escape($searchkey)."'";
-    else $sql.= " WHERE libelle='".$db->escape($searchlabel)."'";
+    else $sql.= " WHERE label='".$db->escape($searchlabel)."'";
 
     dol_syslog("Company.lib::getCountry", LOG_DEBUG);
     $resql=$dbtouse->query($sql);
@@ -274,7 +295,7 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
         $obj = $dbtouse->fetch_object($resql);
         if ($obj)
         {
-            $label=((! empty($obj->libelle) && $obj->libelle!='-')?$obj->libelle:'');
+            $label=((! empty($obj->label) && $obj->label!='-')?$obj->label:'');
             if (is_object($outputlangs))
             {
                 $outputlangs->load("dict");
@@ -440,8 +461,8 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
         $buttoncreate='';
         if (! empty($conf->projet->enabled) && $user->rights->projet->creer)
         {
-            //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
+            //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
 			if (empty($conf->dol_optimize_smallscreen)) $buttoncreate.=' '.img_picto($langs->trans("AddProject"),'filenew');
 			$buttoncreate.='</a>'."\n";
         }
@@ -486,7 +507,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                         print "<tr ".$bc[$var].">";
 
                         // Ref
-                        print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
+                        print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
                         // Label
                         print '<td>'.$obj->title.'</td>';
                         // Date start
@@ -557,7 +578,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($user->rights->societe->contact->creer)
     {
     	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
+		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
 		if (empty($conf->dol_optimize_smallscreen)) $buttoncreate.=' '.img_picto($addcontact,'filenew');
 		$buttoncreate.='</a>'."\n";
     }
@@ -626,7 +647,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     // Status
     print '<td class="liste_titre maxwidthonsmartphone">';
-    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+    print $form->selectarray('search_status', array('-1'=>'','0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
     print '</td>';
 
     // Copy to clipboard
@@ -648,10 +669,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
 
     $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.skype, p.statut ";
-    $sql .= ", p.civilite as civility_id, p.address, p.zip, p.town";
+    $sql .= ", p.civility as civility_id, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
-    if ($search_status!='') $sql .= " AND p.statut = ".$db->escape($search_status);
+    if ($search_status!='' && $search_status != '-1') $sql .= " AND p.statut = ".$db->escape($search_status);
     if ($search_name)       $sql .= " AND (p.lastname LIKE '%".$db->escape($search_name)."%' OR p.firstname LIKE '%".$db->escape($search_name)."%')";
     $sql.= " ORDER BY $sortfield $sortorder";
 
@@ -676,7 +697,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             $contactstatic->civility_id = $obj->civility_id;
-            print $contactstatic->getNomUrl(1);
+            print $contactstatic->getNomUrl(1,'',0,'&backtopage='.urlencode($backtopage));
             print '</td>';
 
             print '<td>'.$obj->poste.'</td>';
@@ -741,11 +762,11 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print '<td align="center">';
                 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
                 {
-                	print '<a class="hideonsmartphone" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+                	print '<a class="hideonsmartphone" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
                 	print img_object($langs->trans("Rendez-Vous"),"action_rdv");
                 	print '</a> ';
                 }
-                print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+                print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
                 print img_object($langs->trans("Event"),"action");
                 print '</a></td>';
             }
@@ -754,7 +775,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             if ($user->rights->societe->contact->creer)
             {
                 print '<td align="right">';
-                print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?action=edit&amp;id='.$obj->rowid.'&amp;backtopage='.urlencode($backtopage).'">';
+                print '<a href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&amp;id='.$obj->rowid.'&amp;backtopage='.urlencode($backtopage).'">';
                 print img_edit();
                 print '</a></td>';
             }
@@ -914,22 +935,12 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         if (get_class($object) == 'Societe') $out.='</a>';
         $out.='</td>';
         $out.='<td colspan="5" align="right">';
-		$permok=$user->rights->agenda->myactions->create;
-        if (($object->id || $objcon->id) && $permok)
-		{
-            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create';
-            if (get_class($object) == 'Societe') $out.='&amp;socid='.$object->id;
-            $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
-    		$out.=$langs->trans("AddAnAction").' ';
-    		$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-    		$out.="</a>";
-		}
         $out.='</td>';
         $out.='</tr>';
 
         $sql = "SELECT a.id, a.label,";
         $sql.= " a.datep as dp,";
-        $sql.= " a.datea as da,";
+        $sql.= " a.datep2 as dp2,";
         $sql.= " a.percent,";
         $sql.= " a.fk_user_author, a.fk_contact,";
         $sql.= " a.fk_element, a.elementtype,";
@@ -970,10 +981,20 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     $obj = $db->fetch_object($result);
 
                     $datep=$db->jdate($obj->dp);
+                    $datep2=$db->jdate($obj->dp2);
 
                     $out.="<tr ".$bc[$var].">";
 
-                    $out.='<td width="120" align="left" class="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
+                    $out.='<td width="120" align="left" class="nowrap">';
+                    $out.=dol_print_date($datep,'dayhour');
+                    if ($datep2 && $datep2 != $datep)
+	        		{
+		        		$tmpa=dol_getdate($datep,true);
+		        		$tmpb=dol_getdate($datep2,true);
+		        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out.='-'.dol_print_date($datep2,'hour');
+		        		else $out.='-'.dol_print_date($datep2,'dayhour');
+	        		}
+                    $out.="</td>\n";
 
                     // Picto warning
                     $out.='<td width="16">';
@@ -1103,7 +1124,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
                 		'type'=>'action',
                 		'id'=>$obj->id,
                 		'datestart'=>$db->jdate($obj->dp),
-                		'date'=>$db->jdate($obj->dp2),
+                		'dateend'=>$db->jdate($obj->dp2),
                 		'note'=>$obj->label,
                 		'percent'=>$obj->percent,
                 		'acode'=>$obj->acode,
@@ -1154,7 +1175,8 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
                 $histo[$numaction]=array(
                 		'type'=>'mailing',
                 		'id'=>$obj->id,
-                		'date'=>$db->jdate($obj->da),
+                		'datestart'=>$db->jdate($obj->da),
+                		'dateend'=>$db->jdate($obj->da),
                 		'note'=>$obj->note,
                 		'percent'=>$obj->percentage,
                 		'acode'=>$obj->acode,
@@ -1197,16 +1219,6 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         if (get_class($object) == 'Societe') $out.='</a>';
         $out.='</td>';
         $out.='<td colspan="5" align="right">';
-		$permok=$user->rights->agenda->myactions->create;
-        if ((! empty($object->id) || ! empty($objcon->id)) && $permok)
-		{
-            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create';
-            if (get_class($object) == 'Societe') $out.='&amp;socid='.$object->id;
-            $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
-    		$out.=$langs->trans("AddAnAction").' ';
-    		$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-    		$out.="</a>";
-		}
         $out.='</td>';
         $out.='</tr>';
 
@@ -1217,8 +1229,14 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
             // Champ date
             $out.='<td width="120" class="nowrap">';
-            if ($histo[$key]['date']) $out.=dol_print_date($histo[$key]['date'],'dayhour');
-            else if ($histo[$key]['datestart']) $out.=dol_print_date($histo[$key]['datestart'],'dayhour');
+            $out.=dol_print_date($histo[$key]['datestart'],'dayhour');
+            if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart'])
+            {
+        		$tmpa=dol_getdate($histo[$key]['datestart'],true);
+        		$tmpb=dol_getdate($histo[$key]['dateend'],true);
+        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out.='-'.dol_print_date($histo[$key]['dateend'],'hour');
+        		else $out.='-'.dol_print_date($histo[$key]['dateend'],'dayhour');
+            }
             $out.="</td>\n";
 
             // Picto
@@ -1238,7 +1256,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             }
             if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing')
             {
-                $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
+                $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
                 $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
                 $out.=dol_trunc($libelle,40);
@@ -1251,6 +1269,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             // Objet lie
             // TODO uniformize
             $out.='<td>';
+            //var_dump($histo[$key]['elementtype']);
             if (isset($histo[$key]['elementtype']))
             {
             	if ($histo[$key]['elementtype'] == 'propal' && ! empty($conf->propal->enabled))
@@ -1259,13 +1278,13 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             		$propalstatic->id=$histo[$key]['fk_element'];
             		$out.=$propalstatic->getNomUrl(1);
             	}
-            	elseif ($histo[$key]['elementtype'] == 'commande' && ! empty($conf->commande->enabled))
+            	elseif (($histo[$key]['elementtype'] == 'order' || $histo[$key]['elementtype'] == 'commande') && ! empty($conf->commande->enabled))
             	{
             		$orderstatic->ref=$langs->trans("Order");
             		$orderstatic->id=$histo[$key]['fk_element'];
             		$out.=$orderstatic->getNomUrl(1);
             	}
-            	elseif ($histo[$key]['elementtype'] == 'facture' && ! empty($conf->facture->enabled))
+            	elseif (($histo[$key]['elementtype'] == 'invoice' || $histo[$key]['elementtype'] == 'facture') && ! empty($conf->facture->enabled))
             	{
             		$facturestatic->ref=$langs->trans("Invoice");
             		$facturestatic->id=$histo[$key]['fk_element'];

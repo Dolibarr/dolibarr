@@ -277,7 +277,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 				// Make substitution
 				$substitutionarray=array(
-				'__FROM_NAME__' => $this->emetteur->nom,
+				'__FROM_NAME__' => $this->emetteur->name,
 				'__FROM_EMAIL__' => $this->emetteur->email,
 				'__TOTAL_TTC__' => $object->total_ttc,
 				'__TOTAL_HT__' => $object->total_ht,
@@ -481,6 +481,8 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						return -1;
 					}
 				}
+
+				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

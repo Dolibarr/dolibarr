@@ -281,7 +281,7 @@ function html_print_paybox_footer($fromcompany,$langs)
 
 	print '<br><br><hr>'."\n";
 	print '<center><font style="font-size: 10px;">'."\n";
-	print $fromcompany->nom.'<br>';
+	print $fromcompany->name.'<br>';
 	print $line1.'<br>';
 	print $line2;
 	print '</font></center>'."\n";

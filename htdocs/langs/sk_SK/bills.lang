@@ -85,6 +85,7 @@ ClassifyPaid=Klasifikáciu &quot;Zaplatené&quot;
 ClassifyPaidPartially=Klasifikovať &quot;Platené čiastočne&quot;
 ClassifyCanceled=Klasifikovať &quot;Opustené&quot;
 ClassifyClosed=Klasifikáciu &quot;uzavretým&quot;
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Vytvoriť faktúru
 AddBill=Pridať faktúru alebo dobropis
 AddToDraftInvoices=Pridať k návrhu faktúru
@@ -197,8 +198,8 @@ Rest=Až do
 AmountExpected=Nárokovanej čiastky
 ExcessReceived=Nadbytok obdržal
 EscompteOffered=Zľava ponúkol (platba pred semestra)
-SendBillRef=Poslať faktúry %s
-SendReminderBillRef=Poslať faktúry %s (pripomienka)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Trvalé príkazy
 StandingOrder=Trvalý príkaz
 NoDraftBills=Žiadne návrhy faktúry
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Celkom dva nové zľavy musí byť rovný p
 ConfirmRemoveDiscount=Ste si istí, že chcete odstrániť túto zľavu?
 RelatedBill=Súvisiace faktúra
 RelatedBills=Súvisiace faktúry
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Bezprostredný

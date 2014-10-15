@@ -149,7 +149,7 @@ class Opensurveysondage extends CommonObject
 
                 // Call trigger
                 $result=$this->call_trigger('OPENSURVEY_CREATE',$user);
-                if ($result < 0) $error++;          
+                if ($result < 0) $error++;
                 // End call triggers
 			}
         }
@@ -343,7 +343,7 @@ class Opensurveysondage extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('OPENSURVEY_DELETE',$user);
-                if ($result < 0) $error++;          
+                if ($result < 0) $error++;
                 // End call triggers
 			}
 		}
@@ -387,12 +387,12 @@ class Opensurveysondage extends CommonObject
 	/**
 	 * Return array of lines
 	 *
-	 * @return 	array	Array of lines
+	 * @return 	int		<0 if KO, >0 if OK
 	 */
 	function fetch_lines()
 	{
 		$ret=array();
-		$sql = "SELECT id_users, nom, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql = "SELECT id_users, nom as name, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql.= " WHERE id_sondage = '".$this->db->escape($this->id_sondage)."'";
 		$resql=$this->db->query($sql);
 
@@ -403,7 +403,7 @@ class Opensurveysondage extends CommonObject
 			while ($i < $num)
 			{
 				$obj=$this->db->fetch_object($resql);
-				$tmp=array('id_users'=>$obj->id_users, 'nom'=>$obj->nom, 'reponses'=>$obj->reponses);
+				$tmp=array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
 
 				$ret[]=$tmp;
 				$i++;
@@ -413,7 +413,7 @@ class Opensurveysondage extends CommonObject
 
 		$this->lines=$ret;
 
-		return $this->lines;
+		return count($this->lines);
 	}
 
 	/**

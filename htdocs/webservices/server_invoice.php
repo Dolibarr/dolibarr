@@ -136,7 +136,9 @@ $server->wsdl->addComplexType(
             'minOccurs' => '0',
             'maxOccurs' => 'unbounded'
         )
-    )
+    ),
+    null,
+    'tns:line'
 );
 
 
@@ -197,7 +199,9 @@ $server->wsdl->addComplexType(
             'minOccurs' => '0',
             'maxOccurs' => 'unbounded'
         )
-    )
+    ),
+    null,
+    'tns:invoice'
 );
 
 
@@ -532,7 +536,7 @@ function createInvoice($authentication,$invoice)
         {
             // $key can be 'line' or '0','1',...
             $newline=new FactureLigne($db);
-            $newline->type=$line['type'];
+            $newline->product_type=$line['type'];
             $newline->desc=$line['desc'];
             $newline->fk_product=$line['fk_product'];
             $newline->tva_tx=$line['vat_rate'];
@@ -541,6 +545,8 @@ function createInvoice($authentication,$invoice)
             $newline->total_ht=$line['total_net'];
             $newline->total_tva=$line['total_vat'];
             $newline->total_ttc=$line['total'];
+            $newline->date_start=dol_stringtotime($line['date_start']);
+            $newline->date_end=dol_stringtotime($line['date_end']);
             $newline->fk_product=$line['product_id'];
             $newobject->lines[]=$newline;
         }
@@ -587,7 +593,5 @@ function createInvoice($authentication,$invoice)
     return $objectresp;
 }
 
-
 // Return the results.
-$server->service((isset($HTTP_RAW_POST_DATA)?$HTTP_RAW_POST_DATA:''));
-
+$server->service(file_get_contents("php://input"));

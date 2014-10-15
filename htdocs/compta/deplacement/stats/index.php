@@ -219,7 +219,7 @@ $filter='';
 print $form->select_company($socid,'socid',$filter,1,1);
 print '</td></tr>';
 // User
-print '<tr><td>'.$langs->trans("User").'/'.$langs->trans("SalesRepresentative").'</td><td>';
+print '<tr><td>'.$langs->trans("User").'</td><td>';
 print $form->select_dolusers($userid,'userid',1);
 print '</td></tr>';
 // Year

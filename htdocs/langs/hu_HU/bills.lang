@@ -85,6 +85,7 @@ ClassifyPaid=Classify &quot;fizetni&quot;
 ClassifyPaidPartially=Osztályozása &quot;részben fizetett&quot;
 ClassifyCanceled=Classify &quot;elhagyott&quot;
 ClassifyClosed=Classify &quot;zárt&quot;
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Számla létrehozása
 AddBill=Add számla vagy jóváírás
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=Követelt összeget
 ExcessReceived=A felesleges kapott
 EscompteOffered=Árengedmény (kifizetés előtt tartó)
-SendBillRef=Küldjön számlát %s
-SendReminderBillRef=Küldje számla %s (emlékeztető)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Állandó megbízás
 StandingOrder=Állandó érvényű parancs
 NoDraftBills=Nincs tervezet számlák
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Összesen két új kedvezményt meg kell eg
 ConfirmRemoveDiscount=Biztosan el akarja távolítani ezt a kedvezményt?
 RelatedBill=Kapcsolódó számla
 RelatedBills=Kapcsolódó számlák
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Azonnali
@@ -315,7 +318,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% in advance, 50%% on delivery
 FixAmount=Fix amount
 VarAmount=Variable amount (%% tot.)
-
 # PaymentType
 PaymentTypeVIR=Bankbetét
 PaymentTypeShortVIR=Bankbetét

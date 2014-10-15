@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - install
-InstallEasy=Me yritimme tehdä Dolibarr setup mahdollisimman helppoa. Seuraa ohjeita vaihe vaiheelta.
-MiscellaneousChecks=Esitiedot tarkistaa
-DolibarrWelcome=Tervetuloa Dolibarr
-ConfFileExists=Configuration <b>file %s</b> on olemassa.
-ConfFileDoesNotExists=Configuration <b>file %s</b> ei ole olemassa!
-ConfFileDoesNotExistsAndCouldNotBeCreated=Configuration <b>file %s</b> ei ole olemassa, ja ei voi luoda!
-ConfFileCouldBeCreated=Configuration <b>file %s</b> voitaisiin luoda.
-ConfFileIsNotWritable=Kokoonpano <b>tiedostoa %s</b> ei ole kirjoitettavissa. Tarkista käyttöoikeudet. Ensimmäistä kertaa asentaa, verkkopalvelimesi on myönnettävä voi kirjoittaa tämä tiedosto aikana asennusprosessi ( "chmod 666" esimerkiksi Unix kuten OS).
+InstallEasy=Seuraa ohjeita askel askeleelta.
+MiscellaneousChecks=Ehtojen tarkistus
+DolibarrWelcome=Tervetuloa Dolibarriin
+ConfFileExists=Asetustiedosto <b>%s</b> on olemassa.
+ConfFileDoesNotExists=Asetustiedosto <b>%s</b> ei ole olemassa!
+ConfFileDoesNotExistsAndCouldNotBeCreated=Asetustiedostoa <b>%s</b> ei ole olemassa, ja sitä ei voi luoda!
+ConfFileCouldBeCreated=Asetustiedosto <b>%s</b> voitaisiin luoda.
+ConfFileIsNotWritable=Asetustiedosto <b>%s</b> ei ole kirjoitettavissa. Tarkista käyttöoikeudet. Ensimmäistä kertaa asennettaessa, verkkopalvelimesi on annettava kirjoituslupa tämän asetusprosessin aikana asennus ( esimerkiksi "chmod 666"  Unix tyylisisä OSsiessa).
 ConfFileIsWritable=Configuration <b>file %s</b> on kirjoitettavissa.
-ConfFileReload=Päivitä kaikki tiedot asetustiedosto.
+ConfFileReload=Uudelleen lataa kaikki tiedot asetustiedostosta.
 PHPSupportSessions=Tämä PHP tukee istuntoja.
 PHPSupportPOSTGETOk=Tämä PHP tukee muuttujat POST ja GET.
 PHPSupportPOSTGETKo=On mahdollista, sinun PHP asennusohjelma ei tue muuttujat POST tai GET. Tarkista parametri <b>variables_order</b> vuonna php.ini.
@@ -207,5 +207,5 @@ MigrationActioncommElement=Päivitä tiedot toimista
 MigrationPaymentMode=Tiedot muuttoliike maksua tilassa
 MigrationCategorieAssociation=Kategorioiden siirto 
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Näytä ei saatavilla olevat valinnat
+HideNotAvailableOptions=Piilota ei saatavilla olevat valinnat

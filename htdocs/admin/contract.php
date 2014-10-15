@@ -35,8 +35,9 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
+$label = GETPOST('label','alpha');
 $scandir = GETPOST('scandir','alpha');
-$type='contrat';
+$type='contract';
 
 if (empty($conf->global->CONTRACT_ADDON))
 {
@@ -108,6 +109,35 @@ else if ($action == 'specimen') // For contract
 	{
 		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
+}
+
+// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
+if ($action == 'setModuleOptions')
+{
+	$post_size=count($_POST);
+
+	$db->begin();
+
+	for($i=0;$i < $post_size;$i++)
+	{
+		if (array_key_exists('param'.$i,$_POST))
+		{
+			$param=GETPOST("param".$i,'alpha');
+			$value=GETPOST("value".$i,'alpha');
+			if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+		}
+	}
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		$db->rollback();
+        setEventMessage($langs->trans("Error"),'errors');
 	}
 }
 
@@ -192,7 +222,7 @@ else if ($action == 'set_CONTRACT_DRAFT_WATERMARK')
  */
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
- 
+
 llxHeader();
 
 $form=new Form($db);
@@ -318,7 +348,6 @@ print '</table><br>';
 print_titre($langs->trans("TemplatePDFContracts"));
 
 // Defini tableau def des modeles
-$type='contrat';
 $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -114,8 +114,8 @@ class HookManager
      *
      * 		@param		string	$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
      * 	    @param		array	$parameters		Array of parameters
-     * 		@param		Object	&$object		Object to use hooks on
-     * 	    @param		string	&$action		Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
+     * 		@param		Object	$object			Object to use hooks on
+     * 	    @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
      * 		@return		mixed					For doActions,formObjectOptions,pdf_xxx:    								Return 0 if we want to keep standard actions, >0 if if want to stop standard actions, <0 means KO.
      * 											For printSearchForm,printLeftBlock,printTopRightMenu,formAddObjectLine,...: Return HTML string. TODO Deprecated. Must always return an int and things to print into ->resprints.
      *                                          Can also return some values into an array ->results.
@@ -144,7 +144,8 @@ class HookManager
 		        'moveUploadedFile',
 		        'pdf_writelinedesc',
 		        'paymentsupplierinvoices',
-		        'printSearchForm'
+		        'printSearchForm',
+        		'formatEvent'
         		)
         	)) $hooktype='addreplace';
 
@@ -152,7 +153,7 @@ class HookManager
         $modulealreadyexecuted=array();
         $resaction=0; $error=0; $result='';
 		$this->resPrint=''; $this->resArray=array();
-        foreach($this->hooks as $modules)    // this->hooks is an array with context as key and value is an array of modules that handle this context
+        foreach($this->hooks as $context => $modules)    // this->hooks is an array with context as key and value is an array of modules that handle this context
         {
             if (! empty($modules))
             {
@@ -165,7 +166,9 @@ class HookManager
                     if (! method_exists($actionclassinstance,$method)) continue;
                 	// test to avoid to run twice a hook, when a module implements several active contexts
                     if (in_array($module,$modulealreadyexecuted)) continue;
-                    $modulealreadyexecuted[$module]=$module;
+                    $modulealreadyexecuted[$module]=$module; // Use the $currentcontext in method for avoid to run twice
+                    // Add current context for avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
+                    $parameters['currentcontext'] = $context;
                     // Hooks that must return int (hooks with type 'addreplace')
                     if ($hooktype == 'addreplace')
                     {

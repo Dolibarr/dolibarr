@@ -1,15 +1,16 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU  *General Public License as published by
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
@@ -139,7 +140,7 @@ class Commande extends CommonOrder
 		{
 	            $file = $conf->global->COMMANDE_ADDON.".php";
 	            $classname = $conf->global->COMMANDE_ADDON;
-	
+
 	            // Include file with class
 	            foreach ($conf->file->dol_document_root as $dirroot)
 	            {
@@ -262,7 +263,7 @@ class Commande extends CommonOrder
                         // We decrement stock of product (and sub-products)
                         $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr",$num));
                         if ($result < 0)
-                        { 
+                        {
                         	$error++;
                         	$this->error=$mouvP->error;
                         }
@@ -305,7 +306,7 @@ class Commande extends CommonOrder
         {
             // Call trigger
             $result=$this->call_trigger('ORDER_VALIDATE',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
         }
 
@@ -436,7 +437,7 @@ class Commande extends CommonOrder
         {
             // Call trigger
             $result=$this->call_trigger('ORDER_REOPEN',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
         }
         else
@@ -495,9 +496,9 @@ class Commande extends CommonOrder
             {
 	            // Call trigger
 	            $result=$this->call_trigger('ORDER_CLOSE',$user);
-	            if ($result < 0) $error++;            
+	            if ($result < 0) $error++;
 	            // End call triggers
- 
+
                 if (! $error)
                 {
                 	$this->statut=3;
@@ -558,7 +559,7 @@ class Commande extends CommonOrder
 						$mouvP = new MouvementStock($this->db);
 						// We increment stock of product (and sub-products)
 						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderCanceledInDolibarr",$this->ref));
-						if ($result < 0) 
+						if ($result < 0)
 						{
 							$error++;
 							$this->error=$mouvP->error;
@@ -572,7 +573,7 @@ class Commande extends CommonOrder
 			{
 	            // Call trigger
 	            $result=$this->call_trigger('ORDER_CANCEL',$user);
-	            if ($result < 0) $error++;            
+	            if ($result < 0) $error++;
 	            // End call triggers
 			}
 
@@ -725,7 +726,8 @@ class Commande extends CommonOrder
                         $fk_parent_line,
                         $this->lines[$i]->fk_fournprice,
                         $this->lines[$i]->pa_ht,
-                    	$this->lines[$i]->label
+                    	$this->lines[$i]->label,
+						$this->lines[$i]->array_options
                     );
                     if ($result < 0)
                     {
@@ -764,9 +766,10 @@ class Commande extends CommonOrder
                         		if ($origin == 'propal' && $origin_id)
                         		{
                         			// On recupere les differents contact interne et externe
-                        			$prop = new Propal($this->db, $this->socid, $origin_id);
+                        			$prop = new Propal($this->db);
+									$prop->fetch($origin_id);
 
-                        			// On recupere le commercial suivi propale
+                        			// We get ids of sales representatives of proposal
                         			$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
 
                         			if ($this->userid)
@@ -775,7 +778,7 @@ class Commande extends CommonOrder
                         				$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
                         			}
 
-                        			// On recupere le contact client suivi propale
+                        			// We get ids of customer follower of proposal
                         			$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
 
                         			if ($this->contactid)
@@ -813,7 +816,7 @@ class Commande extends CommonOrder
                     {
 			            // Call trigger
 			            $result=$this->call_trigger('ORDER_CREATE',$user);
-			            if ($result < 0) $error++;            
+			            if ($result < 0) $error++;
 			            // End call triggers
                     }
 
@@ -860,6 +863,10 @@ class Commande extends CommonOrder
         $error=0;
 
         $this->db->begin();
+
+		// get extrafields so they will be clone
+		foreach($this->lines as $line)
+			$line->fetch_optionals($line->rowid);
 
         // Load source object
         $objFrom = dol_clone($this);
@@ -908,7 +915,7 @@ class Commande extends CommonOrder
 
             // Call trigger
             $result=$this->call_trigger('ORDER_CLONE',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
         }
 
@@ -2228,7 +2235,7 @@ class Commande extends CommonOrder
 		{
             // Call trigger
             $result=$this->call_trigger('ORDER_CLASSIFY_BILLED',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
 
 			if (! $error)
@@ -2447,7 +2454,7 @@ class Commande extends CommonOrder
         {
             // Call trigger
             $result=$this->call_trigger('ORDER_DELETE',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
         }
 
@@ -2698,7 +2705,7 @@ class Commande extends CommonOrder
         $result='';
 
         if (! empty($conf->expedition->enabled) && ($option == 1 || $option == 2)) $url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
-        else $url = DOL_URL_ROOT.'/commande/fiche.php?id='.$this->id;
+        else $url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;
 
         if ($short) return $url;
 
@@ -3010,6 +3017,40 @@ class Commande extends CommonOrder
         }
     }
 
+	/**
+	 *  Create a document onto disk accordign to template module.
+	 *
+	 *  @param	    string		$modele			Force le mnodele a utiliser ('' to not force)
+	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs,$hookmanager;
+
+		$langs->load("orders");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->COMMANDE_ADDON_PDF))
+			{
+				$modele = $conf->global->COMMANDE_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'einstein';
+			}
+		}
+
+		$modelpath = "core/modules/commande/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
 }
 
 
@@ -3189,7 +3230,7 @@ class OrderLine extends CommonOrderLine
 
             // Call trigger
             $result=$this->call_trigger('LINEORDER_DELETE',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
 
 	        if (!$error) {
@@ -3312,7 +3353,7 @@ class OrderLine extends CommonOrderLine
             {
 	            // Call trigger
 	            $result=$this->call_trigger('LINEORDER_INSERT',$user);
-	            if ($result < 0) $error++;            
+	            if ($result < 0) $error++;
 	            // End call triggers
             }
 
@@ -3427,7 +3468,7 @@ class OrderLine extends CommonOrderLine
 			{
 	            // Call trigger
 	            $result=$this->call_trigger('LINEORDER_UPDATE',$user);
-	            if ($result < 0) $error++;            
+	            if ($result < 0) $error++;
 	            // End call triggers
 			}
 

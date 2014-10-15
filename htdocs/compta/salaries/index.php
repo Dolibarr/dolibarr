@@ -71,8 +71,8 @@ $form = new Form($db);
 $salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev as dm, s.fk_typepayment as type,";
-$sql.= " s.num_payment, pst.code as payment_code";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev as dm, s.fk_typepayment as type, s.num_payment,";
+$sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
@@ -87,7 +87,7 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND s.fk_typepayment=".$typeid;
 }
-$sql.= " GROUP BY s.rowid, s.fk_typepayment, s.amount, s.datev, s.label";
+//$sql.= " GROUP BY u.rowid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev, s.fk_typepayment, s.num_payment, pst.code";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
@@ -174,6 +174,7 @@ else
 }
 
 
-$db->close();
 
 llxFooter();
+
+$db->close();

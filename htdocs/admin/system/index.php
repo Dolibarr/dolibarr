@@ -117,4 +117,3 @@ print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 llxFooter();
 
 $db->close();
-

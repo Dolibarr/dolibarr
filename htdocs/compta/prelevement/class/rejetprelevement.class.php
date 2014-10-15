@@ -244,7 +244,7 @@ class RejetPrelevement
 			$arr_mime = array();
 			$arr_name = array();
 			$facref = $fac->ref;
-			$socname = $soc->nom;
+			$socname = $soc->name;
 			$amount = price($fac->total_ttc);
 			$userinfo = $this->user->getFullName($langs);
 

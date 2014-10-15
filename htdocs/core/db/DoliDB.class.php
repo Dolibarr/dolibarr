@@ -17,8 +17,8 @@
  */
 
 /**
- * \file htdocs/core/db/dolidb.class.php
- * \brief Class file to manage Dolibarr database access
+ * \file 		htdocs/core/db/DoliDB.class.php
+ * \brief 		Class file to manage Dolibarr database access
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/db/Database.interface.php';
@@ -137,8 +137,12 @@ abstract class DoliDB implements Database
 			{
 				$this->transaction_opened=0;
 				dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
+				return 1;
 			}
-			return $ret;
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{
@@ -248,7 +252,7 @@ abstract class DoliDB implements Database
 	/**
 	 *	Return last error label
 	 *
-	 *	@return	    string	lasterror
+	 *	@return	    string		Last error
 	 */
 	function lasterror()
 	{
@@ -260,9 +264,9 @@ abstract class DoliDB implements Database
 	 * 	19700101020000 -> 3600 with TZ+1 and gmt=0
 	 * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
 	 *
-	 * 	@param	string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	int		$gm			1=Input informations are GMT values, otherwise local to server TZ
-	 *	@return	date				Date TMS
+	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	@param	int					$gm			1=Input informations are GMT values, otherwise local to server TZ
+	 *	@return	timestamp|string				Date TMS
 	 */
 	function jdate($string, $gm=false)
 	{

@@ -51,7 +51,7 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 
 $search_ref      = GETPOST('search_ref');
 $month_create    = GETPOST('month_create');
@@ -386,7 +386,7 @@ if ($user_id == $user->id)
 {
 	print '<br>';
 	print '<div style="float: right; margin-top: 8px;">';
-	print '<a href="./fiche.php?action=request" class="butAction">'.$langs->trans('AddCP').'</a>';
+	print '<a href="./card.php?action=request" class="butAction">'.$langs->trans('AddCP').'</a>';
 	print '</div>';
 }
 

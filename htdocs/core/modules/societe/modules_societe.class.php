@@ -184,7 +184,7 @@ abstract class ModeleThirdPartyCode
         $langs->load("admin");
 
         $s='';
-        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->nom.'</b><br>';
+        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
         if ($type == -1) $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
         if ($type == 0)  $s.=$langs->trans("CustomerCodeDesc").'<br>';
         if ($type == 1)  $s.=$langs->trans("SupplierCodeDesc").'<br>';
@@ -421,15 +421,6 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
         if ($obj->write_file($object, $outputlangs, $srctemplatepath) > 0)
         {
             $outputlangs->charset_output=$sav_charset_output;
-
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($db);
-            $result=$interface->run_triggers('COMPANY_BUILDDOC',$object,$user,$langs,$conf);
-            if ($result < 0) {
-            	$error++; $obj->errors=$interface->errors;
-            }
-            // Fin appel triggers
 
             return 1;
         }

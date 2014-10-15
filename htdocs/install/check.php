@@ -57,7 +57,7 @@ pHeader('','');     // No next step for navigation buttons. Next step is defined
 //print "<br>\n";
 //print $langs->trans("InstallEasy")."<br><br>\n";
 
-print '<b>'.$langs->trans("MiscellaneousChecks")."</b>:<br>\n";
+print '<h3>'.$langs->trans("MiscellaneousChecks").":</h3>\n";
 
 // Check browser
 $useragent=$_SERVER['HTTP_USER_AGENT'];
@@ -440,7 +440,7 @@ else
                 }
             }
 
-            $choice .= '<tr class="listofchoices" '.($recommended_choice ? 'style="background-color:lightyellow"' : '').'>';
+            $choice .= '<tr class="listofchoices '.($recommended_choice ? 'choiceselected' : '').'">';
             $choice .= '<td class="listofchoices nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
             $choice .= '<td class="listofchoices">';
             $choice .= $langs->trans("UpgradeDesc");

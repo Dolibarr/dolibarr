@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Destailleur Laurent		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +29,9 @@
  *	\brief      File of class to manage contracts
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-require_once(DOL_DOCUMENT_ROOT ."/margin/lib/margins.lib.php");
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/margin/lib/margins.lib.php';
 
 /**
  *	Class to manage contracts
@@ -41,10 +42,12 @@ class Contrat extends CommonObject
 	public $table_element='contrat';
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
 	var $ref;
 	var $ref_ext;
+	var $ref_supplier;
 	var $socid;
 	var $societe;		// Objet societe
 	var $statut=0;		// 0=Draft,
@@ -63,6 +66,7 @@ class Contrat extends CommonObject
 	var $note;			// deprecated
 	var $note_private;
 	var $note_public;
+	var $modelpdf;
 
 	var $fk_projet;
 
@@ -399,12 +403,13 @@ class Contrat extends CommonObject
 		$sql.= " fk_user_author,";
 		$sql.= " fk_projet,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
-		$sql.= " note_private, note_public, extraparams";
+		$sql.= " note_private, note_public, model_pdf, extraparams";
+		$sql.= " ,ref_supplier";
 		$sql.= " ,ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
 		if ($ref)
 		{
-			$sql.= " WHERE ref='".$ref."'";
+			$sql.= " WHERE ref='".$this->db->escape($ref)."'";
 			$sql.= " AND entity IN (".getEntity('contract').")";
 		}
 		else $sql.= " WHERE rowid=".$id;
@@ -419,6 +424,7 @@ class Contrat extends CommonObject
 			{
 				$this->id						= $result["rowid"];
 				$this->ref						= (!isset($result["ref"]) || !$result["ref"]) ? $result["rowid"] : $result["ref"];
+				$this->ref_supplier				= $result["ref_supplier"];
 				$this->ref_ext					= $result["ref_ext"];
 				$this->statut					= $result["statut"];
 				$this->mise_en_service			= $this->db->jdate($result["datemise"]);
@@ -432,6 +438,7 @@ class Contrat extends CommonObject
 				$this->note						= $result["note_private"];	// deprecated
 				$this->note_private				= $result["note_private"];
 				$this->note_public				= $result["note_public"];
+				$this->modelpdf					= $result["model_pdf"];
 
 				$this->fk_projet				= $result["fk_projet"]; // deprecated
 				$this->fk_project				= $result["fk_projet"];
@@ -720,7 +727,7 @@ class Contrat extends CommonObject
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
-		$sql.= " ref, entity, note_private, note_public, ref_ext)";
+		$sql.= " ref, entity, note_private, note_public, ref_supplier, ref_ext)";
 		$sql.= " VALUES ('".$this->db->idate($now)."',".$this->socid.",".$user->id;
 		$sql.= ", '".$this->db->idate($this->date_contrat)."'";
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
@@ -730,6 +737,7 @@ class Contrat extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
+		$sql.= ", ".(!empty($this->ref_supplier)?("'".$this->db->escape($this->ref_supplier)."'"):"NULL");
 		$sql.= ", ".(!empty($this->ref_ext)?("'".$this->db->escape($this->ref_ext)."'"):"NULL");
 		$sql.= ")";
 		$resql=$this->db->query($sql);
@@ -739,13 +747,28 @@ class Contrat extends CommonObject
 
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
 
-			// Mise a jour ref
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
-			if ($this->db->query($sql))
+
+			// Load object modContract
+			$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_olive');
+			if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
 			{
-				if ($this->id)
+				$module = substr($module, 0, dol_strlen($module)-4);
+			}
+			$result=dol_include_once('/core/modules/contract/'.$module.'.php');
+			if ($result > 0)
+			{
+				$modCodeContract = new $module();
+			}
+
+			if (!empty($modCodeContract->code_auto)) {
+				// Mise a jour ref
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+				if ($this->db->query($sql))
 				{
-					$this->ref="(PROV".$this->id.")";
+					if ($this->id)
+					{
+						$this->ref="(PROV".$this->id.")";
+					}
 				}
 			}
 
@@ -824,6 +847,7 @@ class Contrat extends CommonObject
 	function delete($user)
 	{
 		global $conf, $langs;
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -965,6 +989,7 @@ class Contrat extends CommonObject
 		// Clean parameters
 
 		if (isset($this->ref)) $this->ref=trim($this->ref);
+		if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
 		if (isset($this->ref_ext)) $this->ref_ext=trim($this->ref_ext);
 		if (isset($this->entity)) $this->entity=trim($this->entity);
 		if (isset($this->statut)) $this->statut=trim($this->statut);
@@ -988,6 +1013,7 @@ class Contrat extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
 
 		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
+		$sql.= " ref_supplier=".(isset($this->ref_supplier)?"'".$this->db->escape($this->ref_supplier)."'":"null").",";
 		$sql.= " ref_ext=".(isset($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null").",";
 		$sql.= " entity=".$conf->entity.",";
 		$sql.= " date_contrat=".(dol_strlen($this->date_contrat)!=0 ? "'".$this->db->idate($this->date_contrat)."'" : 'null').",";
@@ -1509,7 +1535,7 @@ class Contrat extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='contract';
@@ -1843,6 +1869,40 @@ class Contrat extends CommonObject
 		$this->total_tva      = $xnbp*19.6;
 		$this->total_ttc      = $xnbp*119.6;
 	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 * 	@param	    string		$modele			Force model to use ('' to not force)
+	 * 	@param		Translate	$outputlangs	Object langs to use for output
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 * 	@return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("contracts");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->CONTRACT_ADDON_PDF))
+			{
+				$modele = $conf->global->CONTRACT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'strato';
+			}
+		}
+
+		$modelpath = "core/modules/contract/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 }
 
 
@@ -1991,7 +2051,7 @@ class ContratLigne extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$this->fk_contrat.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'">';
 		$lienfin='</a>';
 
 		$picto='contract';
@@ -2055,7 +2115,7 @@ class ContratLigne extends CommonObject
 		$sql.= " t.commentaire";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as t";
 		if ($id)  $sql.= " WHERE t.rowid = ".$id;
-		if ($ref) $sql.= " WHERE t.rowid = '".$ref."'";
+		if ($ref) $sql.= " WHERE t.rowid = '".$this->db->escape($ref)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -2317,6 +2377,39 @@ class ContratLigne extends CommonObject
 		}
 	}
 
+	/**
+	 *  Create a contract document on disk using template defined into CONTRACT_ADDON_PDF
+	 *
+	 *  @param	string		$modele			force le modele a utiliser ('' par defaut)
+	 *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param  int			$hidedetails    Hide details of lines
+	 *  @param  int			$hidedesc       Hide description
+	 *  @param  int			$hideref        Hide ref
+	 *  @return int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$langs,$user,$hookmanager;
+
+		$langs->load("contracts");
+
+		// Positionne modele sur le nom du modele de contrat a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->CONTRACT_ADDON_PDF))
+			{
+				$modele = $conf->global->CONTRACT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'strato';
+			}
+		}
+
+		$modelpath = "core/modules/contract/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 }
 
 

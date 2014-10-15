@@ -85,6 +85,7 @@ ClassifyPaid=Классифицировать как 'Оплачен'
 ClassifyPaidPartially=Классифицировать как 'Оплачен частично'
 ClassifyCanceled=Классифицировать как 'Аннулирован'
 ClassifyClosed=Классифицировать как 'Закрыт'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Создать счет-фактуру
 AddBill=Добавить счет-фактуру или кредитовое авизо
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=Заявленная сумма
 ExcessReceived=Полученный излишек
 EscompteOffered=Предоставлена скидка (за досрочный платеж)
-SendBillRef=Отправить счет-фактуру %s
-SendReminderBillRef=Отправить счет-фактуру %s (напоминание)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Регламенты
 StandingOrder=Регламент
 NoDraftBills=Нет проектов счетов-фактур
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Сумма двух новых скидок
 ConfirmRemoveDiscount=Вы уверены, что хотите удалить эту скидку?
 RelatedBill=Связанный счет-фактура
 RelatedBills=Связанные счета-фактуры
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Немедленно

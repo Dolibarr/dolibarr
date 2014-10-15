@@ -118,7 +118,7 @@ foreach ($listofstatus as $status)
 {
     $var=!$var;
     print "<tr ".$bc[$var].">";
-    print '<td><a href="liste.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
+    print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
     print '<td align="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';
     print '<td align="right">'.(! empty($nb[$status])?price($somme[$status],'MT'):'&nbsp;').'</td>';
     print '<td align="right">'.(! empty($nb[$status])?price(price2num($somme[$status]/$nb[$status],'MT')):'&nbsp;').'</td>';

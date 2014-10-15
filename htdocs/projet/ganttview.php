@@ -38,9 +38,10 @@ $mine = ($mode == 'mine' ? 1 : 0);
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
-if ($ref)
+if ($id > 0 || ! empty($ref))
 {
-    $object->fetch(0,$ref);
+    $object->fetch($id,$ref);
+    $object->fetch_thirdparty();
     $id=$object->id;
 }
 
@@ -69,7 +70,6 @@ $formother=new FormOther($db);
 $userstatic=new User($db);
 $companystatic=new Societe($db);
 $task = new Task($db);
-$object = new Project($db);
 
 $arrayofcss=array('/includes/jsgantt/jsgantt.css');
 
@@ -86,9 +86,6 @@ llxHeader("",$langs->trans("Tasks"),$help_url,'',0,0,$arrayofjs,$arrayofcss);
 
 if ($id > 0 || ! empty($ref))
 {
-	$object->fetch($id,$ref);
-	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
-
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
 	$userWrite  = $object->restrictedProjectArea($user,'write');
@@ -105,7 +102,7 @@ if ($id > 0 || ! empty($ref))
 
     print '<table class="border" width="100%">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
     // Ref
     print '<tr><td width="30%">';
@@ -123,7 +120,7 @@ if ($id > 0 || ! empty($ref))
     print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+    if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
     else print '&nbsp;';
     print '</td>';
     print '</tr>';

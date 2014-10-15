@@ -4,7 +4,7 @@ AccountancyCard=کارت حسابداری
 Treasury=خزانه داری
 MenuFinancial=مالی
 TaxModuleSetupToModifyRules=برو به <a href="%s">نصب ماژول مالیات</a> برای تغییر قوانین برای محاسبه
-TaxModuleSetupToModifyRulesLT=Go to <a href="%s">Company setup</a> to modify rules for calculation
+TaxModuleSetupToModifyRulesLT=برو به <a href="%s">راه اندازی شرکت</a> برای تغییر قوانین برای محاسبه
 OptionMode=انتخاب برای حسابداری
 OptionModeTrue=انتخاب درآمدها، هزینه های
 OptionModeVirtual=گزینه ادعا، بدهی
@@ -12,7 +12,7 @@ OptionModeTrueDesc=در این زمینه، گردش مالی بیش از پرد
 OptionModeVirtualDesc=در این زمینه، گردش مالی بیش از فاکتورها (تاریخ اعتبار) محاسبه می شود. هنگامی که این فاکتورها به علت، آیا آنها پرداخت شده اند یا نه، آنها در خروجی گردش مالی ذکر شده است.
 FeatureIsSupportedInInOutModeOnly=ویژگی تنها در اعتبارات-بدهی حالت حسابداری موجود را ببینید (حسابداری پیکربندی ماژول)
 VATReportBuildWithOptionDefinedInModule=مقدار در اینجا نشان داده شده است با استفاده از قواعد تعریف شده توسط راه اندازی ماژول مالیات محاسبه می شود.
-LTReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Company setup.
+LTReportBuildWithOptionDefinedInModule=مقدار در اینجا نشان داده شده است با استفاده از قواعد تعریف شده توسط راه اندازی شرکت محاسبه می شود.
 Param=برپایی
 RemainingAmountPayment=پرداخت مقدار باقی مانده:
 AmountToBeCharged=کل مبلغ پرداخت:
@@ -42,15 +42,15 @@ VATReceived=مالیات بر ارزش افزوده دریافت
 VATToCollect=خرید مالیات بر ارزش افزوده
 VATSummary=موجودی مالیات بر ارزش افزوده
 LT2SummaryES=IRPF موجودی
-LT1SummaryES=RE Balance
+LT1SummaryES=RE موجودی
 VATPaid=مالیات بر ارزش افزوده پرداخت می شود
 SalaryPaid=حقوق و دستمزد پرداخت می شود
 LT2PaidES=IRPF پرداخت
-LT1PaidES=RE Paid
+LT1PaidES=RE پرداخت
 LT2CustomerES=فروش IRPF
 LT2SupplierES=خرید IRPF
-LT1CustomerES=RE sales
-LT1SupplierES=RE purchases
+LT1CustomerES=RE فروش
+LT1SupplierES=RE خرید
 VATCollected=مالیات بر ارزش افزوده جمع آوری
 ToPay=به پرداخت
 ToGet=به عقب بر گردیم
@@ -83,11 +83,11 @@ DateStartPeriod=دوره تاریخ شروع
 DateEndPeriod=دوره تاریخ پایان
 NewVATPayment=پرداخت مالیات بر ارزش افزوده جدید
 newLT2PaymentES=پرداخت IRPF جدید
-newLT1PaymentES=New RE payment
+newLT1PaymentES=پرداخت RE جدید
 LT2PaymentES=پرداخت IRPF
 LT2PaymentsES=IRPF پرداخت
-LT1PaymentES=RE Payment
-LT1PaymentsES=RE Payments
+LT1PaymentES=پرداخت RE
+LT1PaymentsES=RE پرداخت
 VATPayment=مالیات بر ارزش افزوده پرداخت
 VATPayments=پرداخت مالیات بر ارزش افزوده
 SocialContributionsPayments=کمک های اجتماعی پرداخت
@@ -123,12 +123,12 @@ CalcModeVATDebt=<b>حالت٪ SVAT در تعهد حسابداری٪ است.</b>
 CalcModeVATEngagement=<b>حالت٪ SVAT در درآمد، هزینه٪ است.</b>
 CalcModeDebt=<b>حالت٪ sClaims-بدهی٪ گفت حسابداری تعهد.</b>
 CalcModeEngagement=<b>حالت٪ sIncomes، هزینه٪ گفت حسابداری نقدی</b>
-CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>
-CalcModeLT1Debt=Mode <b>%sRE on customer invoices%s</b>
-CalcModeLT1Rec= Mode <b>%sRE on suppliers invoices%s</b>
-CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
-CalcModeLT2Debt=Mode <b>%sIRPF on customer invoices%s</b>
-CalcModeLT2Rec= Mode <b>%sIRPF on suppliers invoices%s</b>
+CalcModeLT1= <b>حالت٪ SRE در صورت حساب مشتری - تامین کنندگان فاکتورها از٪ s</b>
+CalcModeLT1Debt=<b>حالت٪ SRE در صورت حساب مشتری از٪ s</b>
+CalcModeLT1Rec= <b>حالت٪ SRE در تامین کنندگان فاکتورها از٪ s</b>
+CalcModeLT2= <b>حالت٪ sIRPF در صورت حساب مشتری - تامین کنندگان فاکتورها از٪ s</b>
+CalcModeLT2Debt=<b>حالت٪ sIRPF در صورت حساب مشتری از٪ s</b>
+CalcModeLT2Rec= <b>حالت٪ sIRPF در تامین کنندگان فاکتورها از٪ s</b>
 AnnualSummaryDueDebtMode=تعادل درآمد و هزینه، خلاصه سالانه
 AnnualSummaryInputOutputMode=تعادل درآمد و هزینه، خلاصه سالانه
 AnnualByCompaniesDueDebtMode=تعادل درآمد و هزینه، با جزئیات توسط اشخاص ثالث، <b>حالت٪ sClaims-بدهی٪ گفت حسابداری تعهد.</b>
@@ -143,15 +143,15 @@ RulesCAIn=- این شامل تمام پرداخت های موثر از فاکت�
 DepositsAreNotIncluded=- صورت حساب های سپرده ها و نه شامل
 DepositsAreIncluded=- صورت حساب های سپرده را شامل می شوند
 LT2ReportByCustomersInInputOutputModeES=گزارش شده توسط شخص ثالث IRPF
-LT1ReportByCustomersInInputOutputModeES=Report by third party RE
+LT1ReportByCustomersInInputOutputModeES=گزارش شده توسط شخص ثالث RE
 VATReportByCustomersInInputOutputMode=گزارش های مالیات بر ارزش افزوده مشتری جمع آوری و پرداخت
 VATReportByCustomersInDueDebtMode=گزارش های مالیات بر ارزش افزوده مشتری جمع آوری و پرداخت
 VATReportByQuartersInInputOutputMode=گزارش های نرخ مالیات بر ارزش افزوده جمع آوری و پرداخت
-LT1ReportByQuartersInInputOutputMode=Report by RE rate
-LT2ReportByQuartersInInputOutputMode=Report by IRPF rate
+LT1ReportByQuartersInInputOutputMode=گزارش های نرخ RE
+LT2ReportByQuartersInInputOutputMode=گزارش های نرخ IRPF
 VATReportByQuartersInDueDebtMode=گزارش های نرخ مالیات بر ارزش افزوده جمع آوری و پرداخت
-LT1ReportByQuartersInDueDebtMode=Report by RE rate
-LT2ReportByQuartersInDueDebtMode=Report by IRPF rate
+LT1ReportByQuartersInDueDebtMode=گزارش های نرخ RE
+LT2ReportByQuartersInDueDebtMode=گزارش های نرخ IRPF
 SeeVATReportInInputOutputMode=<b>گزارش٪ SVAT قفسه٪ برای</b> محاسبه های استاندارد مشاهده
 SeeVATReportInDueDebtMode=<b>گزارش٪ SVAT در جریان٪ برای</b> محاسبه با گزینه ای در جریان مشاهده
 RulesVATInServices=- برای خدمات، این گزارش شامل مقررات مالیات بر ارزش افزوده در واقع دریافت و یا صادر شده بر اساس تاریخ پرداخت.
@@ -187,7 +187,7 @@ AccountancyDashboard=خلاصه حسابداری
 ByProductsAndServices=با محصولات و خدمات
 RefExt=کد عکس خارجی
 ToCreateAPredefinedInvoice=برای ایجاد یک فاکتور از پیش تعریف شده، ایجاد یک فاکتور استاندارد پس از آن، بدون تأیید آن، با کلیک بر روی دکمه "تبدیل به فاکتور از پیش تعریف شده".
-LinkedOrder=وابسته به سفارش
+LinkedOrder=Link to order
 ReCalculate=دوباره حساب کردن
 Mode1=روش 1
 Mode2=روش 2
@@ -195,12 +195,15 @@ CalculationRuleDesc=برای محاسبه مالیات بر ارزش افزود�
 CalculationRuleDescSupplier=با توجه به منبع، انتخاب روش مناسب برای اعمال قانون محاسبه همان و گرفتن همان نتیجه انتظار می رود با عرضه کننده کالا خود را.
 TurnoverPerProductInCommitmentAccountingNotRelevant=گزارش گردش مالی در هر محصول، در هنگام استفاده از حالت <b>حسابداری نقدی</b> مربوط نیست. این گزارش که با استفاده از <b>تعامل</b> حالت <b>حسابداری</b> (راه اندازی ماژول حسابداری را مشاهده کنید) فقط در دسترس است.
 CalculationMode=حالت محاسبه
-AccountancyJournal=Accountancy code journal
-COMPTA_PRODUCT_BUY_ACCOUNT=کد پیش فرض حسابداری برای خرید محصولات
-COMPTA_PRODUCT_SOLD_ACCOUNT=کد پیش فرض حسابداری برای فروش محصولات
-COMPTA_SERVICE_BUY_ACCOUNT=کد پیش فرض حسابداری برای خرید خدمات
-COMPTA_SERVICE_SOLD_ACCOUNT=کد پیش فرض حسابداری به فروش خدمات
-COMPTA_VAT_ACCOUNT=پیش فرض کد حسابداری برای جمع آوری مالیات بر ارزش افزوده
-COMPTA_VAT_BUY_ACCOUNT=پیش فرض کد حسابداری برای پرداخت مالیات بر ارزش افزوده
-COMPTA_ACCOUNT_CUSTOMER=کد حسابداری به طور پیش فرض برای thirdparties مشتری
-COMPTA_ACCOUNT_SUPPLIER=کد حسابداری به طور پیش فرض برای thirdparties منبع
+AccountancyJournal=کد حسابداری مجله
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Default accountancy code to buy products
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Default accountancy code to sell products
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Default accountancy code to buy services
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Default accountancy code to sell services
+ACCOUNTING_VAT_ACCOUNT=Default accountancy code for collecting VAT
+ACCOUNTING_VAT_BUY_ACCOUNT=Default accountancy code for paying VAT
+ACCOUNTING_ACCOUNT_CUSTOMER=Accountancy code by default for customer thirdparties
+ACCOUNTING_ACCOUNT_SUPPLIER=Accountancy code by default for supplier thirdparties
+CloneTax=Clone a social contribution
+ConfirmCloneTax=Confirm the clone of a social contribution
+CloneTaxForNextMonth=Clone it for next month

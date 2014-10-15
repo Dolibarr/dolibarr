@@ -43,7 +43,7 @@ Carrier=حامل
 CarriersArea=منطقه حامل
 NewCarrier=حامل جدید
 ConfirmDeleteSending=آیا مطمئن هستید که می خواهید این حمل و نقل را حذف کنید؟
-ConfirmValidateSending=آیا مطمئن هستید که می خواهید به اعتبار این حمل و نقل با <b>اشاره%s را؟</b>
+ConfirmValidateSending=آیا مطمئن هستید که می خواهید به اعتبار این حمل و نقل با <b>اشاره٪ s را؟</b>
 ConfirmCancelSending=آیا مطمئن هستید که می خواهید به لغو این حمل و نقل؟
 GenericTransport=عمومی حمل و نقل
 Enlevement=بدست شده توسط مشتری
@@ -54,7 +54,7 @@ StatsOnShipmentsOnlyValidated=آمار انجام شده بر روی محمول�
 DateDeliveryPlanned=تاریخ ورقه زایمان
 DateReceived=تاریخ تحویل
 SendShippingByEMail=ارسال محموله از طریق ایمیل
-SendShippingRef=ارسال محموله از%s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=رویدادهای در حمل و نقل
 LinkToTrackYourPackage=لینک به پیگیری بسته بندی خود را
 ShipmentCreationIsDoneFromOrder=برای لحظه ای، ایجاد یک محموله های جدید از کارت منظور انجام می شود.
@@ -72,3 +72,7 @@ DocumentModelTyphon=مدل سند کامل بیشتر برای رسید تحوی
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER ثابت تعریف نشده
 SumOfProductVolumes=مجموع حجم محصول
 SumOfProductWeights=مجموع وزن محصول
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

@@ -37,7 +37,7 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
-$hookmanager->initHooks(array('salesrepresentativescard'));
+$hookmanager->initHooks(array('salesrepresentativescard','globalcard'));
 
 /*
  *	Actions
@@ -57,8 +57,7 @@ if($_GET["socid"] && $_GET["commid"])
 
 		$parameters=array('id'=>$_GET["commid"]);
 		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
-		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
-
+		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 		if (empty($reshook)) $soc->add_commercial($user, $_GET["commid"]);
 
@@ -84,8 +83,7 @@ if($_GET["socid"] && $_GET["delcommid"])
 
 		$parameters=array('id'=>$_GET["delcommid"]);
 		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
-		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
-
+		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 		if (empty($reshook)) $soc->del_commercial($user, $_GET["delcommid"]);
 
@@ -186,7 +184,7 @@ if ($_GET["socid"])
 				null; // actions in normal case
       		}
 
-			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
 			print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
 			print '</a>&nbsp;';
@@ -253,7 +251,7 @@ if ($_GET["socid"])
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var]."><td>";
-				print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+				print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
 				print img_object($langs->trans("ShowUser"),"user").' ';
 				print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
 				print '</a>';

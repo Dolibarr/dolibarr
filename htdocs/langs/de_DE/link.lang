@@ -1,0 +1,8 @@
+LinkANewFile=Verknüpfen Sie ein neues Dokument/Datei
+LinkedFiles=Verknüpfte Dateien und Dokumente
+NoLinkFound=Keine eingetragenen Verknüpfungen
+LinkComplete=Die Datei wurde erfolgreich verknüpft
+ErrorFileNotLinked=Die Datei konnte nicht Verknüpft werden
+LinkRemoved=Die Verknüpfung %s wurde entfernt
+ErrorFailedToDeleteLink= Fehler beim Löschen des Links  '<b>%s</b>'
+ErrorFailedToUpdateLink= Fehler beim Aktualisieren der Verknüpfung  '<b>%s</b>'

@@ -21,8 +21,10 @@
  *  \ingroup    core
  *  \brief      Fichier de gestion des triggers LDAP
  */
-require_once (DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
-require_once (DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
+
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 
 /**
@@ -165,7 +167,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-	    	    $result=$ldap->delete($dn,$info,$user);
+	    	    $result=$ldap->delete($dn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP ".$ldap->error;
@@ -322,7 +324,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-	    	    $result=$ldap->delete($dn,$info,$user);
+	    	    $result=$ldap->delete($dn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP ".$ldap->error;
@@ -399,7 +401,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-	    	    $result=$ldap->delete($dn,$info,$user);
+	    	    $result=$ldap->delete($dn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP ".$ldap->error;
@@ -576,7 +578,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-				$result=$ldap->delete($dn,$info,$user);
+				$result=$ldap->delete($dn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP ".$ldap->error;

@@ -279,6 +279,7 @@ if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivat
 if (empty($user->societe_id)) print showModulesExludedForExternal($modules).'<br><br>'."\n";
 
 // For multicompany transversal mode
+// TODO Place a hook here
 if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
 {
 	$aEntities=array_keys($permsgroupbyentity);
@@ -422,6 +423,12 @@ if ($result)
 else dol_print_error($db);
 print '</table>';
 
+// For multicompany transversal mode
+// TODO Place a hook here
+if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+{
+	dol_fiche_end();
+}
 
 dol_fiche_end();
 

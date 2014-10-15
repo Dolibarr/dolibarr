@@ -645,6 +645,7 @@ OptionalFieldsSetup=Configuración de los atributos opcionales
 URLPhoto=Url de la foto/logo
 SetLinkToThirdParty=Vincular a otro tercero
 CreateDraft=Crear borrador
+SetToDraft=Volver a borrador
 ClickToEdit=Clic para editar
 ObjectDeleted=Objeto %s eliminado
 ByCountry=Par país
@@ -672,12 +673,12 @@ HelpCopyToClipboard=Use Ctrl+C para copiar al portapapeles
 SaveUploadedFileWithMask=Guardar el archivo con el nombre "<strong>%s</strong>" (sino "%s")
 OriginFileName=Nombre del archivo origen
 SetDemandReason=Definir origen
-SetBankAccount=Define Bank Account
-AccountCurrency=Account Currency
+SetBankAccount=Definir cuenta bancaria
+AccountCurrency=Divisa de la cuenta
 ViewPrivateNote=Ver notas
 XMoreLines=%s línea(s) ocultas
 PublicUrl=URL pública
-AddBox=Add box
+AddBox=Añadir caja
 
 # Week day
 Monday=Lunes

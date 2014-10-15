@@ -32,6 +32,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	var $prefix='CT';
 	var $error='';
 	var $nom='Serpis';
+	var $code_auto=1;
 
 
 	/**

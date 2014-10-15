@@ -98,5 +98,5 @@ TypeContact_propal_external_CUSTOMER=Partnerkontakt für Angebot
 DocModelAzurDescription=Eine vollständige Angebotsvorlage (Logo, uwm.)
 DocModelJauneDescription=Angebotsvorlage <Jaune>
 DefaultModelPropalCreate=Erstellung Standardvorlage
-# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
-# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)
+DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+DefaultModelPropalClosed=Standard Schablone wenn sie ein Geschäftsangebot schließen wollen. (ohne Rechnung)

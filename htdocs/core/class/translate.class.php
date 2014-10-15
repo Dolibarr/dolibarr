@@ -154,7 +154,7 @@ class Translate
  	 *										If $domain is "file@module" instead of "file" then we look for module lang file
 	 *										in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
 	 *										then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
-	 *  @param	string	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
+	 *  @param	string	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
 	 * 	@param	int		$stopafterdirection	Stop when the DIRECTION tag is found (optimize speed)
 	 * 	@param	int		$forcelangdir		To force a different lang directory
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
@@ -196,7 +196,7 @@ class Translate
 		// Redefine alt
 		$langarray=explode('_',$langofdir);
 		if ($alt < 1 && isset($langarray[1]) && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
-		if ($alt < 2 && (strtolower($langofdir) == 'en_us' || strtolower($langofdir) == 'fr_fr' || strtolower($langofdir) == 'es_es')) $alt=2;
+		if ($alt < 2 && strtolower($langofdir) == 'en_us') $alt=2;
 
 		foreach($this->dir as $keydir => $searchdir)
 		{
@@ -312,8 +312,8 @@ class Translate
 			// This function MUST NOT contains call to syslog
 			//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$newdomain.".lang file)", LOG_DEBUG);
 			$langofdir='en_US';
-			if (preg_match('/^fr/i',$langarray[0])) $langofdir='fr_FR';
-			if (preg_match('/^es/i',$langarray[0])) $langofdir='es_ES';
+			//if (preg_match('/^fr/i',$langarray[0])) $langofdir='fr_FR';
+			//if (preg_match('/^es/i',$langarray[0])) $langofdir='es_ES';
 			$this->load($domain,$alt+1,$stopafterdirection,$langofdir);
 		}
 
@@ -335,11 +335,12 @@ class Translate
 	 * Return translated value of key. Search in lang file, then into database.
 	 * Key must be any complete entry into lang file: CurrencyEUR, ...
 	 * If not found, return key.
-	 * WARNING: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey), getLabelFromKey must
-	 * not be called with same value than input.
+	 * The string return is not formated (translated with transnoentitiesnoconv)
+	 * NOTE: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey), if you modify this function,
+	 * check that getLabelFromKey is not called with same value than input.
 	 *
 	 * @param	string		$key		Key to translate
-	 * @return 	string					Translated string
+	 * @return 	string					Translated string (translated with transnoentitiesnoconv)
 	 */
 	private function getTradFromKey($key)
 	{
@@ -347,7 +348,6 @@ class Translate
 
 		if (! is_string($key)) return 'ErrorBadValueForParamNotAString';	// Avoid multiple errors with code not using function correctly.
 
-		//print 'xx'.$key;
 		$newstr=$key;
 		if (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
 		{
@@ -363,7 +363,7 @@ class Translate
         }
         else if (preg_match('/^Civility([0-9A-Z]+)$/i',$key,$reg))
         {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_civilite','code','civilite');
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_civility','code','label');
         }
         else if (preg_match('/^OrderSource([0-9A-Z]+)$/i',$key,$reg))
         {
@@ -592,7 +592,7 @@ class Translate
 			{
 				// Test si fichier dans repertoire de la langue alternative
 				if ($this->defaultlang != "en_US") $filenamealt = $searchdir."/langs/en_US/".$filename;
-				else $filenamealt = $searchdir."/langs/fr_FR/".$filename;
+				//else $filenamealt = $searchdir."/langs/fr_FR/".$filename;
 				if (is_readable(dol_osencode($filenamealt))) return true;
 			}
 		}

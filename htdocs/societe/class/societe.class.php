@@ -135,17 +135,17 @@ class Societe extends CommonObject
     var $barcode_type;
     /**
      * code (loaded by fetch_barcode)
-     * @var
+     * @var string
      */
     var $barcode_type_code;
     /**
      * label (loaded by fetch_barcode)
-     * @var
+     * @var string
      */
     var $barcode_type_label;
     /**
      * coder (loaded by fetch_barcode)
-     * @var
+     * @var string
      */
     var $barcode_type_coder;
 
@@ -624,7 +624,7 @@ class Societe extends CommonObject
         // Clean parameters
         $this->id			= $id;
         $this->name			= $this->name?trim($this->name):trim($this->nom);
-        $this->nom			= trim($this->nom);		// TODO obsolete
+        $this->nom			= $this->name;	// For backward compatibility
         $this->ref_ext		= trim($this->ref_ext);
         $this->address		= $this->address?trim($this->address):trim($this->address);
         $this->zip			= $this->zip?trim($this->zip):trim($this->zip);
@@ -957,13 +957,13 @@ class Societe extends CommonObject
         $sql .= ', s.outstanding_limit, s.import_key, s.canvas';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
-        $sql .= ', p.code as country_code, p.libelle as country';
+        $sql .= ', c.code as country_code, c.label as country';
         $sql .= ', d.code_departement as state_code, d.nom as state';
         $sql .= ', st.libelle as stcomm';
         $sql .= ', te.code as typent_code';
         $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
-        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON s.fk_pays = p.rowid';
+        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as fj ON s.fk_forme_juridique = fj.code';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
@@ -1685,15 +1685,15 @@ class Societe extends CommonObject
 
         if ($option == 'customer' || $option == 'compta')
         {
-           $lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id;
+           $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id;
+            $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'supplier')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$this->id;
+            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
         }
         else if ($option == 'category')
         {
@@ -1840,12 +1840,18 @@ class Societe extends CommonObject
             $nump = $this->db->num_rows($resql);
             if ($nump)
             {
+            	$sepa="("; $sepb=")";
+            	if ($mode == 'email')
+            	{
+            		$sepa="&lt;"; $sepb="&gt;";
+            	}
                 $i = 0;
                 while ($i < $nump)
                 {
                     $obj = $this->db->fetch_object($resql);
                     if ($mode == 'email') $property=$obj->email;
                     else if ($mode == 'mobile') $property=$obj->phone_mobile;
+                    else $property=$obj->$mode;
 
 					// Show all contact. If hidedisabled is 1, showonly contacts with status = 1
                     if ($obj->statut == 1 || empty($hidedisabled))
@@ -1858,11 +1864,11 @@ class Societe extends CommonObject
 
 	                    if (!empty($obj->poste))
     	                {
-							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))."(".$obj->poste.")"." &lt;".$property."&gt;";
+							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname)).($obj->poste?" - ".$obj->poste:"").(($mode != 'poste' && $property)?" ".$sepa.$property.$sepb:'');
 						}
 						else
 						{
-							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))." &lt;".$property."&gt;";
+							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname)).(($mode != 'poste' && $property)?" ".$sepa.$property.$sepb:'');
 						}
                     }
                     $i++;
@@ -2867,8 +2873,8 @@ class Societe extends CommonObject
     function useLocalTax($localTaxNum=0)
     {
     	$sql  = "SELECT t.localtax1, t.localtax2";
-    	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-    	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$this->country_code."'";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
     	$sql .= " AND t.active = 1";
     	if (empty($localTaxNum))   $sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
     	elseif ($localTaxNum == 1) $sql .= " AND t.localtax1_type <> '0'";
@@ -2890,8 +2896,9 @@ class Societe extends CommonObject
      */
     function useRevenueStamp()
     {
-		$sql  = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."c_revenuestamp as r, ".MAIN_DB_PREFIX."c_pays as p";
-		$sql .= " WHERE r.fk_pays = p.rowid AND p.code = '".$this->country_code."'";
+		$sql  = "SELECT COUNT(*) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r, ".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " WHERE r.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
 		$sql .= " AND r.active = 1";
 
 		dol_syslog("useRevenueStamp", LOG_DEBUG);

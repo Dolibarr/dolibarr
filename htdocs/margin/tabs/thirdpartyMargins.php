@@ -62,7 +62,7 @@ llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Margins"),$help_ur
 
 if ($socid > 0)
 {
-    $societe = new Societe($db, $socid);
+    $societe = new Societe($db);
     $societe->fetch($socid);
 
     /*

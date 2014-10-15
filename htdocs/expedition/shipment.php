@@ -563,7 +563,7 @@ if ($id > 0 || ! empty($ref))
 							{
 								$img=img_warning($langs->trans("StockTooLow"));
 							}
-							print '<tr><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/fiche.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
+							print '<tr><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
 							print '<td align="center"> '.$value['nb_total'].'</td>';
 							print '<td>&nbsp</td>';
 							print '<td>&nbsp</td>';
@@ -606,7 +606,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				if ($user->rights->expedition->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("NewSending").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("NewSending").'</a>';
 					if ($toBeShippedTotal <= 0)
 					{
 						print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
@@ -628,7 +628,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				print_titre($langs->trans("NewSending"));
 
-				print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/fiche.php">';
+				print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/card.php">';
 				print '<input type="hidden" name="action" value="create">';
 				print '<input type="hidden" name="id" value="'.$commande->id.'">';
                 print '<input type="hidden" name="shipping_method_id" value="'.$commande->shipping_method_id.'">';
@@ -647,7 +647,7 @@ if ($id > 0 || ! empty($ref))
 					print $formproduct->selectWarehouses(-1,'entrepot_id','',1);
 					if (count($formproduct->cache_warehouses) <= 0)
 					{
-						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">'.$langs->trans("AddOne").'</a>';
+						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("AddOne").'</a>';
 					}
 					print '</td>';
 				}

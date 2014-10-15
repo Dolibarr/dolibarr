@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2014	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
@@ -434,7 +434,7 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
     {
         $ValidUrl = 1;
     }
-    print $urlregex.' - '.$url.' - '.$ValidUrl;
+    //print $urlregex.' - '.$url.' - '.$ValidUrl;
 
     return $ValidUrl;
 }
@@ -478,6 +478,50 @@ function clean_url($url,$http=1)
     }
     else return $url;
 }
+
+
+
+/**
+ * 	Returns an email value with obfuscated parts.
+ *
+ * 	@param 		string		$mail				Email
+ * 	@param 		string		$replace			Replacement character (defaul : *)
+ * 	@param 		int			$nbreplace			Number of replacement character (default : 8)
+ * 	@param 		int			$nbdisplaymail		Number of character unchanged (default: 4)
+ * 	@param 		int			$nbdisplaydomain	Number of character unchanged of domain (default: 3)
+ * 	@param 		bool		$displaytld			Display tld (default: true)
+ * 	@return		string							Return email with hidden parts or '';
+ */
+function dolObfuscateEmail($mail, $replace="*", $nbreplace=8, $nbdisplaymail=4, $nbdisplaydomain=3, $displaytld=true)
+{
+	if(!isValidEmail($mail))return '';
+	$tab = explode('@', $mail);
+	$tab2 = explode('.',$tab[1]);
+	$string_replace = '';
+	$mail_name = $tab[0];
+	$mail_domaine = $tab2[0];
+	$mail_tld = '';
+
+	for($i=1; $i < count($tab2) && $displaytld ;$i++)
+	{
+		$mail_tld .= '.'.$tab2[$i];
+	}
+
+	for($i=0; $i < $nbreplace; $i++){
+		$string_replace .= $replace;
+	}
+
+	if(strlen($mail_name) > $nbdisplaymail){
+		$mail_name = substr($mail_name, 0, $nbdisplaymail);
+	}
+
+	if(strlen($mail_domaine) > $nbdisplaydomain){
+		$mail_domaine = substr($mail_domaine, strlen($mail_domaine)-$nbdisplaydomain);
+	}
+
+	return $mail_name . $string_replace . $mail_domaine . $mail_tld;
+}
+
 
 /**
  * 	Return lines of an html table from an array
@@ -1108,7 +1152,7 @@ function numero_semaine($time)
  *	Convertit une masse d'une unite vers une autre unite
  *
  *	@param	float	$weight    		Masse a convertir
- *	@param  int		&$from_unit 		Unite originale en puissance de 10
+ *	@param  int		$from_unit 		Unite originale en puissance de 10
  *	@param  int		$to_unit   		Nouvelle unite  en puissance de 10
  *	@return float	        		Masse convertie
  */
@@ -1143,8 +1187,8 @@ function weight_convert($weight,&$from_unit,$to_unit)
  *
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
- *	@param	User	&$user      Object user
- *	@param	array	$tab        Tableau (cle=>valeur) des parametres a sauvegarder
+ *	@param	User	$user      	Object user
+ *	@param	array	$tab        Array (key=>value) with all parameters to save
  *	@return int         		<0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const, dolibarr_set_const, dolibarr_del_const
@@ -1221,7 +1265,7 @@ function dol_print_reduction($reduction,$langs)
     $string = '';
     if ($reduction == 100)
     {
-        $string = $langs->trans("Offered");
+        $string = $langs->transnoentities("Offered");
     }
     else
     {
@@ -1326,7 +1370,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
-                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0,true); // Disable hook for the moment
+                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0);
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
                     }
                 }

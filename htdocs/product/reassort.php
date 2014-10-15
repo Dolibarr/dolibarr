@@ -173,7 +173,7 @@ if ($resql)
 	if ($num == 1 && ($sall or $snom or $sref))
 	{
 		$objp = $db->fetch_object($resql);
-		header("Location: fiche.php?id=$objp->rowid");
+		header("Location: card.php?id=$objp->rowid");
 		exit;
 	}
 
@@ -194,11 +194,11 @@ if ($resql)
 
 	if ($sref || $snom || $sall || GETPOST('search'))
 	{
-		print_barre_liste($texte, $page, "reassort.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num);
 	}
 	else
 	{
-		print_barre_liste($texte, $page, "reassort.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
 	}
 
 	if (! empty($catid))
@@ -211,7 +211,7 @@ if ($resql)
 		print "</div><br>";
 	}
 
-	print '<form action="reassort.php" method="post" name="formulaire">';
+	print '<form action="'. $_SERVER["PHP_SELF"] .'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -240,12 +240,12 @@ if ($resql)
 
 	// Lignes des titres
 	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"reassort.php", "p.ref",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label",$param,"","",$sortfield,$sortorder);
-	if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("MininumStock"),"reassort.php", "p.seuil_stock_alerte",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DesiredStock"),"reassort.php", "p.desiredstock",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);
+	if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("StockLimit"), $_SERVER["PHP_SELF"], "p.seuil_stock_alerte",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DesiredStock"), $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
 	// TODO Add info of running suppliers/customers orders
 	//print_liste_field_titre($langs->trans("TheoreticalStock"),"reassort.php", "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';

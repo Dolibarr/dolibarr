@@ -74,7 +74,7 @@ class Categorie extends CommonObject
 	function fetch($id,$label='')
 	{
 		global $conf;
-		
+
 		// Check parameters
 		if (empty($id) && empty($label)) return -1;
 
@@ -87,7 +87,7 @@ class Categorie extends CommonObject
 
 		else
 		{
-			if ($label) $sql.= " WHERE label = '".$this->db->escape($label)."' AND entity=".$conf->entity;;
+			if ($label) $sql.= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category',1).")";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -1151,11 +1151,11 @@ class Categorie extends CommonObject
 		$cats = array();
 
 		$typeid=-1; $table='';;
-		if ($type == '0' || $type == 'product')	     { $typeid=0; $table='product';   $type='product'; }
+		if ($type == '0' || $type == 'product')	       { $typeid=0; $table='product';   $type='product'; }
 		else if ($type == '1' || $type == 'supplier') { $typeid=1; $table='societe';   $type='fournisseur'; }
 		else if ($type == '2' || $type == 'customer') { $typeid=2; $table='societe';   $type='societe'; }
 		else if ($type == '3' || $type == 'member')   { $typeid=3; $table='member';    $type='member'; }
-        else if ($type == '4' || $type == 'contact')	 { $typeid=4; $table='socpeople'; $type='contact'; }
+        else if ($type == '4' || $type == 'contact')  { $typeid=4; $table='socpeople'; $type='contact'; }
 
 		$sql = "SELECT ct.fk_categorie, c.label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct, ".MAIN_DB_PREFIX."categorie as c";

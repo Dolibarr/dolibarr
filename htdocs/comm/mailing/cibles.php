@@ -98,11 +98,10 @@ if ($action == 'add')
 			$result=$obj->add_to_target($id,$filtersarray);
 		}
 	}
-
 	if ($result > 0)
 	{
 		setEventMessage($langs->trans("XTargetsAdded",$result),'mesgs');
-		
+
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
@@ -145,7 +144,7 @@ if ($action == 'delete')
 		}
 		else
 		{
-			header("Location: liste.php");
+			header("Location: list.php");
 			exit;
 		}
 	}
@@ -167,7 +166,6 @@ if ($_POST["button_removefilter"])
 /*
  * View
  */
-
 llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
 $form = new Form($db);
@@ -182,7 +180,7 @@ if ($object->fetch($id) >= 0)
 
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
@@ -306,12 +304,14 @@ if ($object->fetch($id) >= 0)
 					print img_object($langs->trans("Module").': '.get_class($obj),$obj->picto).' '.$obj->getDesc();
 					print '</td>';
 
-					/*
-					 print '<td width=\"100\">';
-					 print $modulename;
-					 print "</td>";
-					 */
-					$nbofrecipient=$obj->getNbOfRecipients('');
+					try {
+						$nbofrecipient=$obj->getNbOfRecipients('');
+					}
+					catch(Exception $e)
+					{
+						dol_syslog($e->getMessage(), LOG_ERR);
+					}
+
 					print '<td align="center">';
 					if ($nbofrecipient >= 0)
 					{
@@ -324,7 +324,13 @@ if ($object->fetch($id) >= 0)
 					print '</td>';
 
 					print '<td align="left">';
-					$filter=$obj->formFilter();
+					try {
+						$filter=$obj->formFilter();
+					}
+					catch(Exception $e)
+					{
+						dol_syslog($e->getMessage(), LOG_ERR);
+					}
 					if ($filter) print $filter;
 					else print $langs->trans("None");
 					print '</td>';
@@ -421,7 +427,7 @@ if ($object->fetch($id) >= 0)
 		print '<td class="liste_titre">';
 		print '&nbsp';
 		print '</td>';
-		
+
 		print '</tr>';
 
 		// Ligne des champs de filtres
@@ -446,7 +452,7 @@ if ($object->fetch($id) >= 0)
 		print '<td class="liste_titre">';
 		print '&nbsp';
 		print '</td>';
-		
+
 		// Date sending
 		print '<td class="liste_titre">';
 		print '&nbsp';
@@ -530,7 +536,7 @@ if ($object->fetch($id) >= 0)
 					print $object::libStatutDest($obj->statut,2);
 					print '</td>';
 				}
-				
+
 				//Sreach Icon
 				print '<td></td>';
 				print '</tr>';

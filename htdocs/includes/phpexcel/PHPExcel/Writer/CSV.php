@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package	PHPExcel_Writer
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license	http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version	1.7.6, 2011-02-27
+ * @version	1.7.8, 2012-10-12
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category   PHPExcel
  * @package	PHPExcel_Writer
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Writer_CSV implements PHPExcel_Writer_IWriter {
 	/**
@@ -84,6 +84,13 @@ class PHPExcel_Writer_CSV implements PHPExcel_Writer_IWriter {
 	private $_useBOM = false;
 
 	/**
+	 * Whether to write a fully Excel compatible CSV file.
+	 *
+	 * @var boolean
+	 */
+	private $_excelCompatibility = false;
+
+	/**
 	 * Create a new PHPExcel_Writer_CSV
 	 *
 	 * @param	PHPExcel	$phpExcel	PHPExcel object
@@ -95,7 +102,7 @@ class PHPExcel_Writer_CSV implements PHPExcel_Writer_IWriter {
 	/**
 	 * Save PHPExcel to file
 	 *
-	 * @param	string		$pFileName
+	 * @param	string		$pFilename
 	 * @throws	Exception
 	 */
 	public function save($pFilename = null) {
@@ -113,17 +120,26 @@ class PHPExcel_Writer_CSV implements PHPExcel_Writer_IWriter {
 			throw new Exception("Could not open file $pFilename for writing.");
 		}
 
-		if ($this->_useBOM) {
+		if ($this->_excelCompatibility) {
+			// Write the UTF-16LE BOM code
+			fwrite($fileHandle, "\xFF\xFE");	//	Excel uses UTF-16LE encoding
+			$this->setEnclosure();				//	Default enclosure is "
+			$this->setDelimiter("\t");			//	Excel delimiter is a TAB
+		} elseif ($this->_useBOM) {
 			// Write the UTF-8 BOM code
 			fwrite($fileHandle, "\xEF\xBB\xBF");
 		}
 
-		// Convert sheet to array
-		$cellsArray = $sheet->toArray('', $this->_preCalculateFormulas);
+		//	Identify the range that we need to extract from the worksheet
+		$maxCol = $sheet->getHighestColumn();
+		$maxRow = $sheet->getHighestRow();
 
 		// Write rows to file
-		foreach ($cellsArray as $row) {
-			$this->_writeLine($fileHandle, $row);
+		for($row = 1; $row <= $maxRow; ++$row) {
+			// Convert the row to an array...
+			$cellsArray = $sheet->rangeToArray('A'.$row.':'.$maxCol.$row,'', $this->_preCalculateFormulas);
+			// ... and write to the file
+			$this->_writeLine($fileHandle, $cellsArray[0]);
 		}
 
 		// Close file
@@ -217,6 +233,27 @@ class PHPExcel_Writer_CSV implements PHPExcel_Writer_IWriter {
 	}
 
 	/**
+	 * Get whether the file should be saved with full Excel Compatibility
+	 *
+	 * @return boolean
+	 */
+	public function getExcelCompatibility() {
+		return $this->_excelCompatibility;
+	}
+
+	/**
+	 * Set whether the file should be saved with full Excel Compatibility
+	 *
+	 * @param	boolean	$pValue		Set the file to be written as a fully Excel compatible csv file
+	 *								Note that this overrides other settings such as useBOM, enclosure and delimiter
+	 * @return PHPExcel_Writer_CSV
+	 */
+	public function setExcelCompatibility($pValue = false) {
+		$this->_excelCompatibility = $pValue;
+		return $this;
+	}
+
+	/**
 	 * Get sheet index
 	 *
 	 * @return int
@@ -270,9 +307,13 @@ class PHPExcel_Writer_CSV implements PHPExcel_Writer_IWriter {
 			$line .= $this->_lineEnding;
 
 			// Write to file
-			fwrite($pFileHandle, $line);
+			if ($this->_excelCompatibility) {
+				fwrite($pFileHandle, mb_convert_encoding($line,"UTF-16LE","UTF-8"));
+			} else {
+				fwrite($pFileHandle, $line);
+			}
 		} else {
-			throw new Exception("Invalid parameters passed.");
+			throw new Exception("Invalid data row passed to CSV writer.");
 		}
 	}
 

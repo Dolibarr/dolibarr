@@ -1073,39 +1073,37 @@ class MobileDetect
 
     /**
      * Check the version of the given property in the User-Agent.
-     * Will return a float number. (eg. 2_0 will return 2.0, 4.3.1 will return 4.31)
+     * Will return a string or float number. (eg. 2_0 will return 2.0, 4.3.1 will return 4.31)
      *
-     * @param string $propertyName The name of the property. See self::getProperties() array
-     *                              keys for all possible properties.
-     * @param string $type Either self::VERSION_TYPE_STRING to get a string value or
-     *                      self::VERSION_TYPE_FLOAT indicating a float value. This parameter
-     *                      is optional and defaults to self::VERSION_TYPE_STRING. Passing an
-     *                      invalid parameter will default to the this type as well.
+     * @param string $propertyName 	The name of the property. See self::getProperties() array keys for all possible properties (Ex: 'iPad', 'Android', ...).
+     * @param string $type 			Either self::VERSION_TYPE_STRING to get a string value or
+     *                      		self::VERSION_TYPE_FLOAT indicating a float value. This parameter
+     *                      		is optional and defaults to self::VERSION_TYPE_STRING. Passing an
+     *                      		invalid parameter will default to this type as well.
      *
-     * @return string|float The version of the property we are trying to extract.
+     * @return string|float|boolean The version of the property we are trying to extract.
      */
     public function version($propertyName, $type = self::VERSION_TYPE_STRING)
     {
-        if (empty($propertyName)) {
-            return false;
-        }
+        if (empty($propertyName)) return false;
 
         //set the $type to the default if we don't recognize the type
-        if ($type != self::VERSION_TYPE_STRING && $type != self::VERSION_TYPE_FLOAT) {
+        if ($type != self::VERSION_TYPE_STRING && $type != self::VERSION_TYPE_FLOAT)
+        {
             $type = self::VERSION_TYPE_STRING;
         }
 
         $properties = self::getProperties();
 
         // Check if the property exists in the properties array.
-        if (array_key_exists($propertyName, $properties)) {
-
+        if (array_key_exists($propertyName, $properties))
+        {
             // Prepare the pattern to be matched.
             // Make sure we always deal with an array (string is converted).
             $properties[$propertyName] = (array) $properties[$propertyName];
 
-            foreach ($properties[$propertyName] as $propertyMatchString) {
-
+            foreach ($properties[$propertyName] as $propertyMatchString)
+            {
                 $propertyPattern = str_replace('[VER]', self::VER, $propertyMatchString);
 
                 // Escape the special character which is the delimiter.
@@ -1114,14 +1112,13 @@ class MobileDetect
                 // Identify and extract the version.
                 preg_match('/'.$propertyPattern.'/is', $this->userAgent, $match);
 
-                if (!empty($match[1])) {
+                if (!empty($match[1]))
+                {
                     $version = ( $type == self::VERSION_TYPE_FLOAT ? $this->prepareVersionNo($match[1]) : $match[1] );
 
                     return $version;
                 }
-
             }
-
         }
 
         return false;
@@ -1130,7 +1127,7 @@ class MobileDetect
     /**
      * Retrieve the mobile grading, using self::MOBILE_GRADE_* constants.
      *
-     * @return string One of the self::MOBILE_GRADE_* constants.
+     * @return string 		One of the self::MOBILE_GRADE_* constants.
      */
     public function mobileGrade()
     {
@@ -1210,7 +1207,8 @@ class MobileDetect
             // @reference: http://my.opera.com/community/openweb/idopera/
             $this->version('Opera', self::VERSION_TYPE_FLOAT)>=10 && !$isMobile
 
-        ){
+        )
+        {
             return self::MOBILE_GRADE_A;
         }
 
@@ -1231,7 +1229,8 @@ class MobileDetect
 
             // @todo: report this (tested on Nokia N71)
             $this->version('Opera Mobi', self::VERSION_TYPE_FLOAT)>=11 && $this->is('SymbianOS')
-        ){
+        )
+        {
             return self::MOBILE_GRADE_B;
         }
 
@@ -1241,7 +1240,8 @@ class MobileDetect
             // Windows Mobile - Tested on the HTC Leo (WinMo 5.2)
             $this->match('MSIEMobile|Windows CE.*Mobile') || $this->version('Windows Mobile', self::VERSION_TYPE_FLOAT)<=5.2
 
-        ){
+        )
+        {
             return self::MOBILE_GRADE_C;
         }
 

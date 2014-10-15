@@ -148,7 +148,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// Customer invoices
 	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.facnumber as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
-	$sql.= " s.rowid as socid, s.nom, s.fournisseur";
+	$sql.= " s.rowid as socid, s.nom as name, s.fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 	$sql.= " WHERE f.entity = ".$conf->entity;
@@ -158,7 +158,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// Supplier invoices
 	$sql2= " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.ref_supplier as ref, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
-	$sql2.= " s.rowid as socid, s.nom, s.fournisseur";
+	$sql2.= " s.rowid as socid, s.nom as name, s.fournisseur";
 	$sql2.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
 	$sql2.= " WHERE ff.entity = ".$conf->entity;
@@ -265,7 +265,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					$ref = $facturefournstatic->getNomUrl(1,'');
 
 					$societestatic->id = $obj->socid;
-					$societestatic->nom = $obj->nom;
+					$societestatic->name = $obj->name;
 					$refcomp=$societestatic->getNomUrl(1,'',24);
 
 					$paiement = -1*$facturefournstatic->getSommePaiement();	// Payment already done
@@ -279,7 +279,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$ref = $facturestatic->getNomUrl(1,'');
 
 				$societestatic->id = $obj->socid;
-				$societestatic->nom = $obj->nom;
+				$societestatic->name = $obj->name;
 				$refcomp=$societestatic->getNomUrl(1,'',24);
 
 				$paiement = $facturestatic->getSommePaiement();	// Payment already done

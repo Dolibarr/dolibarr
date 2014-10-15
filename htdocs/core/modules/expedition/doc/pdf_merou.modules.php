@@ -73,7 +73,7 @@ class pdf_merou extends ModelePdfExpedition
 	/**
 	 *	Function to build pdf onto disk
 	 *
-	 *	@param		Object		&$object			Object expedition to generate (or id if old method)
+	 *	@param		Object		$object			Object expedition to generate (or id if old method)
 	 *	@param		Translate	$outputlangs		Lang output object
      *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
      *  @param		int			$hidedetails		Do not show line details
@@ -143,6 +143,17 @@ class pdf_merou extends ModelePdfExpedition
 
 			if (file_exists($dir))
 			{
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 				$nblignes = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format,'mm','l');
@@ -329,6 +340,18 @@ class pdf_merou extends ModelePdfExpedition
 				$pdf->Close();
 
 				$pdf->Output($file,'F');
+
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
                 if (! empty($conf->global->MAIN_UMASK))
                     @chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -353,7 +376,7 @@ class pdf_merou extends ModelePdfExpedition
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		PDF			$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
@@ -394,7 +417,7 @@ class pdf_merou extends ModelePdfExpedition
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			&$pdf     			PDF
+	 *   	@param	PDF			$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
@@ -423,7 +446,7 @@ class pdf_merou extends ModelePdfExpedition
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param	PDF			$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -594,12 +617,12 @@ class pdf_merou extends ModelePdfExpedition
 		{
 			// On peut utiliser le nom de la societe du contact
 			if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
-			else $socname = $object->client->nom;
+			else $socname = $object->client->name;
 			$carac_client_name=$outputlangs->convToOutputCharset($socname);
 		}
 		else
 		{
-			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+			$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 		}
 
 		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,((!empty($object->contact))?$object->contact:null),$usecontact,'targetwithdetails');

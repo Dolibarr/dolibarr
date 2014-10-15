@@ -48,7 +48,7 @@ $select_pricing_rules=array(
 'PRODUIT_MULTIPRICES'=>$langs->trans('MultiPricesAbility'),		// Several prices according to a customer level
 'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer')		// Different price for each customer
 );
-if ($conf->global->MAIN_FEATURES_LEVEL==2) 
+if ($conf->global->MAIN_FEATURES_LEVEL==2)
 {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity');
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity');
@@ -125,7 +125,7 @@ if ($action == 'pricingrule')
 			else
 			{
 				$multirule=explode('&',$princingrules);
-				foreach($multirule as $rulesselected) 
+				foreach($multirule as $rulesselected)
 				{
 					$res = dolibarr_set_const($db, $rulesselected, 1, 'chaine', 0, '', $conf->entity);
 				}
@@ -137,8 +137,8 @@ if ($action == 'pricingrule')
 				$res = dolibarr_set_const($db, $rule, 0, 'chaine', 0, '', $conf->entity);
 			}
 		}
-		
-	}	
+
+	}
 }
 else if ($action == 'sousproduits')
 {
@@ -262,7 +262,7 @@ foreach ($dirproduct as $dirroot)
 
     			$var = !$var;
     			print '<tr '.$bc[$var].'>'."\n";
-    			print '<td width="140">'.$modCodeProduct->nom.'</td>'."\n";
+    			print '<td width="140">'.$modCodeProduct->name.'</td>'."\n";
     			print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
     			print '<td class="nowrap">'.$modCodeProduct->getExample($langs).'</td>'."\n";
 

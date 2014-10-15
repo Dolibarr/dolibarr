@@ -29,7 +29,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function tax_prepare_head($object)
 {
@@ -124,7 +124,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         }
         if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
         {
-            $sql = "SELECT s.rowid as socid, s.nom as nom, s.siren as tva_intra, s.tva_assuj as assuj,";
+            $sql = "SELECT s.rowid as socid, s.nom as name, s.siren as tva_intra, s.tva_assuj as assuj,";
             $sql.= " sum(fd.total_ht) as amount, sum(fd.".$total_tva.") as tva,";
             $sql.= " sum(fd.".$total_localtax1.") as localtax1,";
             $sql.= " sum(fd.".$total_localtax2.") as localtax2";

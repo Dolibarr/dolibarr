@@ -1,8 +1,12 @@
 # Dolibarr language file - Source file is en_US - users
-Salary=Salary
-Salaries=Salaries
-Employee=Employee
-NewSalaryPayment=New salary payment
-SalaryPayment=Salary payment
-SalariesPayments=Salaries payments
-ShowSalaryPayment=Show salary payment
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Kế toán mã cho các khoản thanh toán tiền lương
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Kế toán mã cho phụ trách tài chính
+Salary=Mức lương
+Salaries=Tiền lương
+Employee=Nhân viên
+NewSalaryPayment=Thanh toán tiền lương mới
+SalaryPayment=Thanh toán tiền lương
+SalariesPayments=Lương thanh toán
+ShowSalaryPayment=Hiện thanh toán tiền lương
+THM=Giá trung bình theo giờ
+TJM=Giá trung bình hàng ngày

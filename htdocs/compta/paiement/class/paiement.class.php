@@ -221,7 +221,7 @@ class Paiement extends CommonObject
                             if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice. We do nothing more.");
                             else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
-                            else 
+                            else
                             {
                                 $result=$invoice->set_paid($user,'','');
                                 if ($result<0)
@@ -360,8 +360,8 @@ class Paiement extends CommonObject
 			{
 				// Appel des triggers
 				$result=$this->call_trigger('PAYMENT_DELETE', $user);
-				if ($result < 0) 
-				{ 
+				if ($result < 0)
+				{
 				    $this->db->rollback();
 				    return -1;
 				 }
@@ -453,8 +453,8 @@ class Paiement extends CommonObject
                 if ( ! $error)
                 {
                     $url='';
-                    if ($mode == 'payment') $url=DOL_URL_ROOT.'/compta/paiement/fiche.php?id=';
-                    if ($mode == 'payment_supplier') $url=DOL_URL_ROOT.'/fourn/paiement/fiche.php?id=';
+                    if ($mode == 'payment') $url=DOL_URL_ROOT.'/compta/paiement/card.php?id=';
+                    if ($mode == 'payment_supplier') $url=DOL_URL_ROOT.'/fourn/paiement/card.php?id=';
                     if ($url)
                     {
                         $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
@@ -482,8 +482,8 @@ class Paiement extends CommonObject
                                 $result=$acc->add_url_line(
                                     $bank_line_id,
                                     $fac->thirdparty->id,
-                                    DOL_URL_ROOT.'/comm/fiche.php?socid=',
-                                    $fac->thirdparty->nom,
+                                    DOL_URL_ROOT.'/comm/card.php?socid=',
+                                    $fac->thirdparty->name,
                                     'company'
                                 );
                                 if ($result <= 0) dol_print_error($this->db);
@@ -500,8 +500,8 @@ class Paiement extends CommonObject
                                 $result=$acc->add_url_line(
                                     $bank_line_id,
                                     $fac->thirdparty->id,
-                                    DOL_URL_ROOT.'/fourn/fiche.php?socid=',
-                                    $fac->thirdparty->nom,
+                                    DOL_URL_ROOT.'/fourn/card.php?socid=',
+                                    $fac->thirdparty->name,
                                     'company'
                                 );
                                 if ($result <= 0) dol_print_error($this->db);
@@ -747,7 +747,7 @@ class Paiement extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"),'payment').$lienfin);

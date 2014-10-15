@@ -136,19 +136,20 @@ if ($result >= 0)
 		{
 			$group = new UserGroup($db);
 			$group->fetch('', $ldapgroup[$conf->global->LDAP_KEY_GROUPS]);
-			$group->nom = $ldapgroup[$conf->global->LDAP_GROUP_FIELD_FULLNAME];
+			$group->name = $ldapgroup[$conf->global->LDAP_GROUP_FIELD_FULLNAME];
+			$group->nom = $group->name;		// For backward compatibility
 			$group->note = $ldapgroup[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION];
 			$group->entity = $conf->entity;
 
 			//print_r($ldapgroup);
 
 			if($group->id > 0) { // Group update
-				print $langs->transnoentities("GroupUpdate").' # '.$key.': name='.$group->nom;
+				print $langs->transnoentities("GroupUpdate").' # '.$key.': name='.$group->name;
 				$res=$group->update();
 
 				if ($res > 0)
 				{
-					print ' --> Updated group id='.$group->id.' name='.$group->nom;
+					print ' --> Updated group id='.$group->id.' name='.$group->name;
 				}
 				else
 				{
@@ -157,12 +158,12 @@ if ($result >= 0)
 				}
 				print "\n";
 			} else { // Group creation
-				print $langs->transnoentities("GroupCreate").' # '.$key.': name='.$group->nom;
+				print $langs->transnoentities("GroupCreate").' # '.$key.': name='.$group->name;
 				$res=$group->create();
 
 				if ($res > 0)
 				{
-					print ' --> Created group id='.$group->id.' name='.$group->nom;
+					print ' --> Created group id='.$group->id.' name='.$group->name;
 				}
 				else
 				{

@@ -215,11 +215,6 @@ p.titre {
 	border: 1px solid #6d3f6d;
 }
 
-.bouton_login input {
-	background: #fff;
-	border: 1px solid #6d3f6d;
-}
-
 .principal {
 	float: left;
 	margin: 0 15px;
@@ -331,29 +326,6 @@ p.titre {
 }
 
 /* -------------- Boutons --------------------- */
-.bouton_ajout_article,.bouton_mode_reglement,.bouton_validation {
-	border: 1px solid #999;
-	background: #f7f7f7;
-	
-background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(80,80,80,.3) 100%);
-background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(80,80,80,.3) 100%);
-background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(80,80,80,.3) 100%);
-background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(80,80,80,.3) 100%);
-background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(80,80,80,.3) 100%);
-background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(80,80,80,.3)) );	
-}
-
-.bouton_ajout_article:hover,.bouton_mode_reglement:hover,.bouton_validation:hover
-{
-	background: #cccccc;
-background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(80,80,80,.3) 100%);
-background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(80,80,80,.3) 100%);
-background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(80,80,80,.3) 100%);
-background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(80,80,80,.3) 100%);
-background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(80,80,80,.3) 100%);
-background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(80,80,80,.3)) );
-}
-
 .bouton_ajout_article {
 	margin-top: 10px;
 	width: 100%;

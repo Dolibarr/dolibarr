@@ -45,7 +45,7 @@ $langs->load('companies');
 if (! $user->rights->facture->creer)
 	accessforbidden();
 
-$id				= (GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility
+$id				= (GETPOST('id')?GETPOST('id','int'):GETPOST("facid"));  // For backward compatibility
 $ref			= GETPOST('ref','alpha');
 $action			= GETPOST('action','alpha');
 $confirm		= GETPOST('confirm','alpha');
@@ -100,7 +100,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 	if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	
+
 	$langs->load('bills');
 	$langs->load('products');
 	$langs->load('main');
@@ -216,13 +216,17 @@ if (($action == 'create' || $action == 'add') && !$error)
 							$result=$objectsrc->fetch($orders_id[$ii]);
 							if ($result > 0)
 							{
-								if ($closeOrders) 
+								if ($closeOrders)
 								{
 									$objectsrc->classifyBilled();
 									$objectsrc->setStatut(3);
 								}
 								$lines = $objectsrc->lines;
-								if (empty($lines) && method_exists($objectsrc,'fetch_lines'))  $lines = $objectsrc->fetch_lines();
+								if (empty($lines) && method_exists($objectsrc, 'fetch_lines'))
+								{
+									$objectsrc->fetch_lines();
+									$lines = $objectsrc->lines;
+								}
 								$fk_parent_line=0;
 								$num=count($lines);
 								for ($i=0;$i<$num;$i++)
@@ -569,16 +573,16 @@ if (($action != 'create' && $action != 'add') || !$error)
 		{
 			// Company
 			$companystatic->id=$socid;
-			$companystatic->nom=$soc->nom;
+			$companystatic->name=$soc->name;
 			print '<h3>'.$companystatic->getNomUrl(1,'customer').'</h3>';
 		}
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans('Ref'),'orderstoinvoice.php','c.ref','','&amp;socid='.$socid,'',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('RefCustomerOrder'),'orderstoinvoice.php','c.ref_client','','&amp;socid='.$socid,'',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('OrderDate'),'orderstoinvoice.php','c.date_commande','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('DeliveryDate'),'orderstoinvoice.php','c.date_livraison','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'c.ref','','&amp;socid='.$socid,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('RefCustomerOrder'),$_SERVER["PHP_SELF"],'c.ref_client','','&amp;socid='.$socid,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Status'),'','','','','align="right"');
 		print_liste_field_titre($langs->trans('GenerateBill'),'','','','','align="center"');
 		print '</tr>';
@@ -618,7 +622,7 @@ if (($action != 'create' && $action != 'add') || !$error)
 		print '</form>';
 
 		print '<form name="orders2invoice" action="orderstoinvoice.php" method="GET">';
-		$var=True;
+		$var=true;
 		$generic_commande = new Commande($db);
 
 		while ($i < $num)

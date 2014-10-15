@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  *
 * This program is free software; you can redistribute it and/or modify
@@ -289,7 +289,9 @@ if ($what == 'postgresql')
     if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
 
     //$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
-    $param=" --no-tablespaces --inserts -h ".$dolibarr_main_db_host;
+    //$param="-F c";
+    $param="-F p";
+    $param.=" --no-tablespaces --inserts -h ".$dolibarr_main_db_host;
     $param.=" -U ".$dolibarr_main_db_user;
     if (! empty($dolibarr_main_db_port)) $param.=" -p ".$dolibarr_main_db_port;
     if (GETPOST("sql_compat") && GETPOST("sql_compat") == 'ANSI') $param.="  --disable-dollar-quoting";

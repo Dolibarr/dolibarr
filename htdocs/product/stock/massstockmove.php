@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2013   Laurent Destaileur	<ely@users.sourceforge.net>
+/* Copyright (C) 2013	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2014	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +44,9 @@ $result=restrictedArea($user,'produit|service');
 //checks if a product has been ordered
 
 $action = GETPOST('action','alpha');
-$id_product = GETPOST('productid', 'productid');
-$id_sw = GETPOST('id_sw', 'id_sw');
-$id_tw = GETPOST('id_tw', 'id_tw');
+$id_product = GETPOST('productid', 'int');
+$id_sw = GETPOST('id_sw', 'int');
+$id_tw = GETPOST('id_tw', 'int');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 
@@ -228,7 +229,7 @@ $warehousestatict = new Entrepot($db);
 
 $title = $langs->trans('MassMovement');
 
-llxHeader('', $title, $helpurl, '');
+llxHeader('', $title);
 
 print_fiche_titre($langs->trans("MassStockMovement")).'<br><br>';
 
@@ -248,6 +249,8 @@ print '<input type="hidden" name="action" value="addline">';
 
 print '<table class="liste" width="100%">';
 //print '<div class="tagtable centpercent">';
+
+$param='';
 
 print '<tr class="liste_titre">';
 print getTitleFieldOfList($langs->trans('ProductRef'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
@@ -339,7 +342,7 @@ print '<table class="border" width="100%">';
 	print '<input type="text" name="label" size="80" value="'.dol_escape_htmltag($labelmovement).'">';
 	print '</td>';
 	print '</tr>';
-print '</table>';
+print '</table><br>';
 
 print '<div class="center"><input class="button" type="submit" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
 

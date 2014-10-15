@@ -77,7 +77,7 @@ if (! empty($canvas))
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('thirdpartycard'));
+$hookmanager->initHooks(array('thirdpartycard','globalcard'));
 
 
 /*
@@ -86,7 +86,7 @@ $hookmanager->initHooks(array('thirdpartycard'));
 
 $parameters=array('id'=>$socid, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
@@ -136,64 +136,57 @@ if (empty($reshook))
         {
             $object->particulier       = GETPOST("private");
 
-            $object->name              = dolGetFirstLastname(GETPOST('firstname'),GETPOST('nom')?GETPOST('nom'):GETPOST('name'));
-            $object->civility_id       = GETPOST('civility_id');
+            $object->name              = dolGetFirstLastname(GETPOST('firstname','san_alpha'),GETPOST('nom','san_alpha')?GETPOST('nom','san_alpha'):GETPOST('name','san_alpha'));
+            $object->civility_id       = GETPOST('civility_id', 'int');
             // Add non official properties
-            $object->name_bis          = GETPOST('name')?GETPOST('name'):GETPOST('nom');
-            $object->firstname         = GETPOST('firstname');
+            $object->name_bis          = GETPOST('name','san_alpha')?GETPOST('name','san_alpha'):GETPOST('nom','san_alpha');
+            $object->firstname         = GETPOST('firstname','san_alpha');
         }
         else
         {
-            $object->name              = GETPOST('name')?GETPOST('name'):GETPOST('nom');
+            $object->name              = GETPOST('name', 'san_alpha')?GETPOST('name', 'san_alpha'):GETPOST('nom', 'san_alpha');
         }
-        $object->address               = GETPOST('address');
-        $object->zip                   = GETPOST('zipcode');
-        $object->town                  = GETPOST('town');
-        $object->country_id            = GETPOST('country_id');
-        $object->state_id              = GETPOST('state_id');
-        $object->skype                 = GETPOST('skype');
-        $object->phone                 = GETPOST('phone');
-        $object->fax                   = GETPOST('fax');
-        $object->email                 = GETPOST('email');
-        $object->url                   = GETPOST('url');
-        $object->idprof1               = GETPOST('idprof1');
-        $object->idprof2               = GETPOST('idprof2');
-        $object->idprof3               = GETPOST('idprof3');
-        $object->idprof4               = GETPOST('idprof4');
-        $object->idprof5               = GETPOST('idprof5');
-        $object->idprof6               = GETPOST('idprof6');
-        $object->prefix_comm           = GETPOST('prefix_comm');
-        $object->code_client           = GETPOST('code_client');
-        $object->code_fournisseur      = GETPOST('code_fournisseur');
-        $object->capital               = GETPOST('capital');
-        $object->barcode               = GETPOST('barcode');
+        $object->address               = GETPOST('address', 'san_alpha');
+        $object->zip                   = GETPOST('zipcode', 'san_alpha');
+        $object->town                  = GETPOST('town', 'san_alpha');
+        $object->country_id            = GETPOST('country_id', 'int');
+        $object->state_id              = GETPOST('state_id', 'int');
+        $object->skype                 = GETPOST('skype', 'san_alpha');
+        $object->phone                 = GETPOST('phone', 'san_alpha');
+        $object->fax                   = GETPOST('fax','san_alpha');
+        $object->email                 = GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
+        $object->url                   = GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
+        $object->idprof1               = GETPOST('idprof1', 'san_alpha');
+        $object->idprof2               = GETPOST('idprof2', 'san_alpha');
+        $object->idprof3               = GETPOST('idprof3', 'san_alpha');
+        $object->idprof4               = GETPOST('idprof4', 'san_alpha');
+        $object->idprof5               = GETPOST('idprof5', 'san_alpha');
+        $object->idprof6               = GETPOST('idprof6', 'san_alpha');
+        $object->prefix_comm           = GETPOST('prefix_comm', 'san_alpha');
+        $object->code_client           = GETPOST('code_client', 'san_alpha');
+        $object->code_fournisseur      = GETPOST('code_fournisseur', 'san_alpha');
+        $object->capital               = GETPOST('capital', 'san_alpha');
+        $object->barcode               = GETPOST('barcode', 'san_alpha');
 
-        $object->tva_intra             = GETPOST('tva_intra');
-        $object->tva_assuj             = GETPOST('assujtva_value');
-        $object->status                = GETPOST('status');
+        $object->tva_intra             = GETPOST('tva_intra', 'san_alpha');
+        $object->tva_assuj             = GETPOST('assujtva_value', 'san_alpha');
+        $object->status                = GETPOST('status', 'san_alpha');
 
         // Local Taxes
-        $object->localtax1_assuj       = GETPOST('localtax1assuj_value');
-        $object->localtax2_assuj       = GETPOST('localtax2assuj_value');
+        $object->localtax1_assuj       = GETPOST('localtax1assuj_value', 'san_alpha');
+        $object->localtax2_assuj       = GETPOST('localtax2assuj_value', 'san_alpha');
 
-        $object->localtax1_value	   = GETPOST('lt1');
-        $object->localtax2_value	   = GETPOST('lt2');
+        $object->localtax1_value	   = GETPOST('lt1', 'san_alpha');
+        $object->localtax2_value	   = GETPOST('lt2', 'san_alpha');
 
-        $object->forme_juridique_code  = GETPOST('forme_juridique_code');
-        $object->effectif_id           = GETPOST('effectif_id');
-        if (GETPOST("private") == 1)
-        {
-            $object->typent_id         = dol_getIdFromCode($db,'TE_PRIVATE','c_typent');
-        }
-        else
-        {
-            $object->typent_id         = GETPOST('typent_id');
-        }
+        $object->forme_juridique_code  = GETPOST('forme_juridique_code', 'int');
+        $object->effectif_id           = GETPOST('effectif_id', 'int');
+        $object->typent_id             = GETPOST('typent_id');
 
-        $object->client                = GETPOST('client');
-        $object->fournisseur           = GETPOST('fournisseur');
+        $object->client                = GETPOST('client', 'int');
+        $object->fournisseur           = GETPOST('fournisseur', 'int');
 
-        $object->commercial_id         = GETPOST('commercial_id');
+        $object->commercial_id         = GETPOST('commercial_id', 'int');
         $object->default_lang          = GETPOST('default_lang');
 
         // Fill array 'array_options' with data from add form
@@ -347,8 +340,8 @@ if (empty($reshook))
                 	else
                 	{
                     	$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;
-                    	if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/fiche.php?socid=".$object->id;
-                    	else if ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/fiche.php?socid=".$object->id;
+                    	if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/card.php?socid=".$object->id;
+                    	else if ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
 
                 		header("Location: ".$url);
                     	exit;
@@ -513,6 +506,7 @@ if (empty($reshook))
     $id=$socid;
     $actiontypecode='AC_OTH_AUTO';
     $paramname='socid';
+    $mode='emailfromthirdparty';
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -644,48 +638,48 @@ else
         if (GETPOST("type")=='p')  { $object->client=2; }
         if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
 
-        $object->name				= GETPOST('nom');
-        $object->firstname			= GETPOST('firstname');
+        $object->name				= GETPOST('nom', 'san_alpha');
+        $object->firstname			= GETPOST('firstname', 'san_alpha');
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
-        $object->code_client		= GETPOST('code_client');
+        $object->code_client		= GETPOST('code_client', 'san_alpha');
         $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
-        $object->code_fournisseur	= GETPOST('code_fournisseur');
-        $object->address			= GETPOST('address');
-        $object->zip				= GETPOST('zipcode');
-        $object->town				= GETPOST('town');
-        $object->state_id			= GETPOST('state_id');
-        $object->skype				= GETPOST('skype');
-        $object->phone				= GETPOST('phone');
-        $object->fax				= GETPOST('fax');
-        $object->email				= GETPOST('email');
-        $object->url				= GETPOST('url');
-        $object->capital			= GETPOST('capital');
-        $object->barcode			= GETPOST('barcode');
-        $object->idprof1			= GETPOST('idprof1');
-        $object->idprof2			= GETPOST('idprof2');
-        $object->idprof3			= GETPOST('idprof3');
-        $object->idprof4			= GETPOST('idprof4');
-        $object->idprof5			= GETPOST('idprof5');
-        $object->idprof6			= GETPOST('idprof6');
-        $object->typent_id			= GETPOST('typent_id');
-        $object->effectif_id		= GETPOST('effectif_id');
-        $object->civility_id		= GETPOST('civility_id');
+        $object->code_fournisseur	= GETPOST('code_fournisseur', 'san_alpha');
+        $object->address			= GETPOST('address', 'san_alpha');
+        $object->zip				= GETPOST('zipcode', 'san_alpha');
+        $object->town				= GETPOST('town', 'san_alpha');
+        $object->state_id			= GETPOST('state_id', 'int');
+        $object->skype				= GETPOST('skype', 'san_alpha');
+        $object->phone				= GETPOST('phone', 'san_alpha');
+        $object->fax				= GETPOST('fax', 'san_alpha');
+        $object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
+        $object->url				= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
+        $object->capital			= GETPOST('capital', 'int');
+        $object->barcode			= GETPOST('barcode', 'san_alpha');
+        $object->idprof1			= GETPOST('idprof1', 'san_alpha');
+        $object->idprof2			= GETPOST('idprof2', 'san_alpha');
+        $object->idprof3			= GETPOST('idprof3', 'san_alpha');
+        $object->idprof4			= GETPOST('idprof4', 'san_alpha');
+        $object->idprof5			= GETPOST('idprof5', 'san_alpha');
+        $object->idprof6			= GETPOST('idprof6', 'san_alpha');
+        $object->typent_id			= GETPOST('typent_id', 'int');
+        $object->effectif_id		= GETPOST('effectif_id', 'int');
+        $object->civility_id		= GETPOST('civility_id', 'int');
 
-        $object->tva_assuj			= GETPOST('assujtva_value');
-        $object->status				= GETPOST('status');
+        $object->tva_assuj			= GETPOST('assujtva_value', 'int');
+        $object->status				= GETPOST('status', 'int');
 
         //Local Taxes
-        $object->localtax1_assuj	= GETPOST('localtax1assuj_value');
-        $object->localtax2_assuj	= GETPOST('localtax2assuj_value');
+        $object->localtax1_assuj	= GETPOST('localtax1assuj_value', 'int');
+        $object->localtax2_assuj	= GETPOST('localtax2assuj_value', 'int');
 
-        $object->localtax1_value	=GETPOST('lt1');
-        $object->localtax2_value	=GETPOST('lt2');
+        $object->localtax1_value	=GETPOST('lt1', 'int');
+        $object->localtax2_value	=GETPOST('lt2', 'int');
 
-        $object->tva_intra			= GETPOST('tva_intra');
+        $object->tva_intra			= GETPOST('tva_intra', 'san_alpha');
 
-        $object->commercial_id		= GETPOST('commercial_id');
+        $object->commercial_id		= GETPOST('commercial_id', 'int');
         $object->default_lang		= GETPOST('default_lang');
 
         $object->logo = (isset($_FILES['photo'])?dol_sanitizeFileName($_FILES['photo']['name']):'');
@@ -1107,7 +1101,6 @@ else
             $res=$object->fetch_optionals($object->id,$extralabels);
             //if ($res < 0) { dol_print_error($db); exit; }
 
-
 	        $head = societe_prepare_head($object);
 
 	        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
@@ -1149,41 +1142,43 @@ else
                 $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
             }
 
+            $object->oldcopy=dol_clone($object);
+
             if (GETPOST('nom'))
             {
                 // We overwrite with values if posted
-                $object->name					= GETPOST('nom');
-                $object->prefix_comm			= GETPOST('prefix_comm');
-                $object->client					= GETPOST('client');
-                $object->code_client			= GETPOST('code_client');
-                $object->fournisseur			= GETPOST('fournisseur');
-                $object->code_fournisseur		= GETPOST('code_fournisseur');
-                $object->address				= GETPOST('address');
-                $object->zip					= GETPOST('zipcode');
-                $object->town					= GETPOST('town');
-                $object->country_id				= GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
-                $object->state_id				= GETPOST('state_id');
-                $object->skype					= GETPOST('skype');
-                $object->phone					= GETPOST('phone');
-                $object->fax					= GETPOST('fax');
-                $object->email					= GETPOST('email');
-                $object->url					= GETPOST('url');
-                $object->capital				= GETPOST('capital');
-                $object->idprof1				= GETPOST('idprof1');
-                $object->idprof2				= GETPOST('idprof2');
-                $object->idprof3				= GETPOST('idprof3');
-                $object->idprof4				= GETPOST('idprof4');
-        		    $object->idprof5				= GETPOST('idprof5');
-        		    $object->idprof6				= GETPOST('idprof6');
-                $object->typent_id				= GETPOST('typent_id');
-                $object->effectif_id			= GETPOST('effectif_id');
-                $object->barcode				= GETPOST('barcode');
-                $object->forme_juridique_code	= GETPOST('forme_juridique_code');
-                $object->default_lang			= GETPOST('default_lang');
+                $object->name					= GETPOST('nom', 'san_alpha');
+                $object->prefix_comm			= GETPOST('prefix_comm', 'san_alpha');
+                $object->client					= GETPOST('client', 'int');
+                $object->code_client			= GETPOST('code_client', 'san_alpha');
+                $object->fournisseur			= GETPOST('fournisseur', 'int');
+                $object->code_fournisseur		= GETPOST('code_fournisseur', 'san_alpha');
+                $object->address				= GETPOST('address', 'san_alpha');
+                $object->zip					= GETPOST('zipcode', 'san_alpha');
+                $object->town					= GETPOST('town', 'san_alpha');
+                $object->country_id				= GETPOST('country_id')?GETPOST('country_id', 'int'):$mysoc->country_id;
+                $object->state_id				= GETPOST('state_id', 'int');
+                $object->skype					= GETPOST('skype', 'san_alpha');
+                $object->phone					= GETPOST('phone', 'san_alpha');
+                $object->fax					= GETPOST('fax', 'san_alpha');
+                $object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
+                $object->url					= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
+                $object->capital				= GETPOST('capital', 'int');
+                $object->idprof1				= GETPOST('idprof1', 'san_alpha');
+                $object->idprof2				= GETPOST('idprof2', 'san_alpha');
+                $object->idprof3				= GETPOST('idprof3', 'san_alpha');
+                $object->idprof4				= GETPOST('idprof4', 'san_alpha');
+        		    $object->idprof5				= GETPOST('idprof5', 'san_alpha');
+        		    $object->idprof6				= GETPOST('idprof6', 'san_alpha');
+                $object->typent_id				= GETPOST('typent_id', 'int');
+                $object->effectif_id			= GETPOST('effectif_id', 'int');
+                $object->barcode				= GETPOST('barcode', 'san_alpha');
+                $object->forme_juridique_code	= GETPOST('forme_juridique_code', 'int');
+                $object->default_lang			= GETPOST('default_lang', 'san_alpha');
 
-                $object->tva_assuj				= GETPOST('assujtva_value');
-                $object->tva_intra				= GETPOST('tva_intra');
-                $object->status					= GETPOST('status');
+                $object->tva_assuj				= GETPOST('assujtva_value', 'int');
+                $object->tva_intra				= GETPOST('tva_intra', 'san_alpha');
+                $object->status					= GETPOST('status', 'int');
 
                 //Local Taxes
                 $object->localtax1_assuj		= GETPOST('localtax1assuj_value');
@@ -1305,6 +1300,7 @@ else
             if ((!$object->code_client || $object->code_client == -1) && $modCodeClient->code_auto)
             {
                 $tmpcode=$object->code_client;
+                if (empty($tmpcode) && ! empty($object->oldcopy->code_client)) $tmpcode=$object->oldcopy->code_client; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
                 if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
                 print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
             }
@@ -1337,6 +1333,7 @@ else
                 if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
                 {
                     $tmpcode=$object->code_fournisseur;
+                    if (empty($tmpcode) && ! empty($object->oldcopy->code_fournisseur)) $tmpcode=$object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
                     if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
                     print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
                 }
@@ -1566,7 +1563,7 @@ else
             print '<tr class="hideonsmartphone">';
             print '<td><label for="photoinput">'.$langs->trans("Logo").'</label></td>';
             print '<td colspan="3">';
-            if ($object->logo) print $form->showphoto('societe',$object,50);
+            if ($object->logo) print $form->showphoto('societe',$object);
             $caneditfield=1;
             if ($caneditfield)
             {
@@ -1641,7 +1638,7 @@ else
         print '</tr>';
 
         // Logo+barcode
-        $rowspan=4;
+        $rowspan=6;
         if (! empty($conf->global->SOCIETE_USEPREFIX)) $rowspan++;
         if (! empty($object->client)) $rowspan++;
         if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire)) $rowspan++;
@@ -1651,9 +1648,9 @@ else
         if ($showlogo || $showbarcode)
         {
             $htmllogobar.='<td rowspan="'.$rowspan.'" style="text-align: center;" width="25%">';
-            if ($showlogo)   $htmllogobar.=$form->showphoto('societe',$object,50);
+            if ($showlogo)   $htmllogobar.=$form->showphoto('societe',$object);
             if ($showlogo && $showbarcode) $htmllogobar.='<br><br>';
-            if ($showbarcode) $htmllogobar.=$form->showbarcode($object,50);
+            if ($showbarcode) $htmllogobar.=$form->showbarcode($object);
             $htmllogobar.='</td>';
         }
 
@@ -1732,12 +1729,12 @@ else
         if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
 
         // EMail
-        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print dol_print_email($object->email,0,$object->id,'AC_EMAIL');
         print '</td></tr>';
 
         // Web
-        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print dol_print_url($object->url);
         print '</td></tr>';
 
@@ -2160,8 +2157,7 @@ else
 
 	        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
 	        {
-				print '<div class="fichecenter"><div class="fichethirdleft">';
-	        	//print '<table width="100%"><tr><td valign="top" width="50%">';
+				print '<div class="fichecenter"><div class="fichehalfleft">';
 	            print '<a name="builddoc"></a>'; // ancre
 
 	            /*
@@ -2176,7 +2172,7 @@ else
 
 	            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
 
-				print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 				print '</div></div></div>';

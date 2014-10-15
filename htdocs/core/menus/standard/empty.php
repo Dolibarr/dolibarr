@@ -124,6 +124,7 @@ class MenuManager
 			$this->menu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
 			$this->menu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
 			$this->menu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionarySetup"),1);
+			if (! empty($conf->accounting->enabled)) $this->menu->add("/accountancy/admin/account.php", $langs->trans("Chartofaccounts"),1);
 			$this->menu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
 
 			// ***** END *****

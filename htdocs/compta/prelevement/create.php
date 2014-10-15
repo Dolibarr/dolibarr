@@ -156,7 +156,7 @@ print '<br>';
  * Invoices waiting for withdraw
  */
 
-$sql = "SELECT f.facnumber, f.rowid, f.total_ttc, s.nom, s.rowid as socid,";
+$sql = "SELECT f.facnumber, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
 $sql.= " pfd.date_demande";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s,";
@@ -197,7 +197,7 @@ if ($resql)
             print '</td>';
             print '<td>';
             $thirdpartystatic->id=$obj->socid;
-            $thirdpartystatic->nom=$obj->nom;
+            $thirdpartystatic->name=$obj->name;
             print $thirdpartystatic->getNomUrl(1,'customer');
             print '</td>';
             print '<td align="right">';

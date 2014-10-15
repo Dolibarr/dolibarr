@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry    	 <florian.henry@open-cooncept.pro>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -158,7 +158,7 @@ if ($resql)
 	if (GETPOST("bid"))
 	{
 		$result=$bankcateg->fetch(GETPOST("bid"));
-		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->nom:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 	else
 	{
@@ -166,18 +166,18 @@ if ($resql)
 	}
 
 	print '<form method="post" action="search.php" name="search_form">';
-	
+
 	$moreforfilter .= $langs->trans('Period') . ' ' . $langs->trans('StartDate') . ': ';
 	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 1, 1);
 	$moreforfilter .= $langs->trans('EndDate') . ':' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 1, 1);
-	
-	
+
+
 	if ($moreforfilter) {
 		print '<div class="liste_titre">';
 		print $moreforfilter;
 		print '</div>';
 	}
-	
+
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
@@ -278,7 +278,7 @@ if ($resql)
 			if ($objp->url_id)
 			{
 				$companystatic->id=$objp->url_id;
-				$companystatic->nom=$objp->labelurl;
+				$companystatic->name=$objp->labelurl;
 				print $companystatic->getNomUrl(1);
 			}
 			else

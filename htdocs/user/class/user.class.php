@@ -72,8 +72,10 @@ class User extends CommonObject
 	var $datem;
 
 	//! If this is defined, it is an external user
-	var $societe_id;
-	var $contact_id;
+	var $societe_id;	// deprecated
+	var $contact_id;	// deprecated
+	var $socid;
+	var $contactid;
 
 	var $fk_member;
 	var $fk_user;
@@ -101,6 +103,10 @@ class User extends CommonObject
 
 	var $accountancy_code;				// Accountancy code in prevision of the complete accountancy module
 	var $thm;							// Average cost of employee
+	var $tjm;							// Average cost of employee
+	var $salary;						// Monthly salary
+	var $salaryextra;					// Monthly salary extra
+	var $weeklyhours;					// Weekly hours
 
 
 	/**
@@ -156,6 +162,10 @@ class User extends CommonObject
 		$sql.= " u.openid as openid,";
 		$sql.= " u.accountancy_code,";
 		$sql.= " u.thm,";
+		$sql.= " u.tjm,";
+		$sql.= " u.salary,";
+		$sql.= " u.salaryextra,";
+		$sql.= " u.weeklyhours,";
 		$sql.= " u.ref_int, u.ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
@@ -219,14 +229,20 @@ class User extends CommonObject
 				$this->entity		= $obj->entity;
 				$this->accountancy_code		= $obj->accountancy_code;
 				$this->thm			= $obj->thm;
+				$this->tjm			= $obj->tjm;
+				$this->salary		= $obj->salary;
+				$this->salaryextra	= $obj->salaryextra;
+				$this->weeklyhours	= $obj->weeklyhours;
 
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->datelastlogin		= $this->db->jdate($obj->datel);
 				$this->datepreviouslogin	= $this->db->jdate($obj->datep);
 
-				$this->societe_id           = $obj->fk_societe;
-				$this->contact_id           = $obj->fk_socpeople;
+				$this->societe_id           = $obj->fk_societe;		// deprecated
+				$this->contact_id           = $obj->fk_socpeople;	// deprecated
+				$this->socid                = $obj->fk_societe;
+				$this->contactid            = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
 
@@ -1156,11 +1172,15 @@ class User extends CommonObject
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
-		$sql.= ", thm = ".(isset($this->thm)?$this->thm:"null");	// If not set, we use null
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
 		$sql.= ", fk_user = ".($this->fk_user > 0?"'".$this->db->escape($this->fk_user)."'":"null");
+		if (isset($this->thm) || $this->thm != '')                 $sql.= ", thm= ".($this->thm != ''?"'".$this->db->escape($this->thm)."'":"null");
+		if (isset($this->tjm) || $this->tjm != '')                 $sql.= ", tjm= ".($this->tjm != ''?"'".$this->db->escape($this->tjm)."'":"null");
+		if (isset($this->salary) || $this->salary != '')           $sql.= ", salary= ".($this->salary != ''?"'".$this->db->escape($this->salary)."'":"null");
+		if (isset($this->salaryextra) || $this->salaryextra != '') $sql.= ", salaryextra= ".($this->salaryextra != ''?"'".$this->db->escape($this->salaryextra)."'":"null");
+		$sql.= ", weeklyhours= ".($this->weeklyhours != ''?"'".$this->db->escape($this->weeklyhours)."'":"null");
 		$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -1759,7 +1779,7 @@ class User extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($withpicto)
@@ -1784,12 +1804,12 @@ class User extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($option == 'xxx')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 			$lienfin='</a>';
 		}
 
@@ -2098,7 +2118,7 @@ class User extends CommonObject
 	/**
 	 *  Update user using data from the LDAP
 	 *
-	 *  @param	ldapuser	&$ldapuser	Ladp User
+	 *  @param	ldapuser	$ldapuser	Ladp User
 	 *
 	 *  @return int  				<0 if KO, >0 if OK
 	 */
@@ -2176,8 +2196,8 @@ class User extends CommonObject
 		// Load array[child]=parent
 		$sql = "SELECT fk_user as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user";
-		$sql.= " WHERE fk_user != 0";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " WHERE fk_user <> 0";
+		$sql.= " AND entity IN (".getEntity('user',1).")";
 
 		dol_syslog(get_class($this)."::load_parentof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2206,10 +2226,10 @@ class User extends CommonObject
 	 *				fullname = nom avec chemin complet du user
 	 *				fullpath = chemin complet compose des id
 	 *
-	 *  @param      int		$markafterid      Removed all users including the leaf $markafterid in user tree.
-	 *	@return		array		      		  Array of users. this->users and this->parentof are set.
+	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
+	 *	@return		array		      		  	Array of users. this->users and this->parentof are set.
 	 */
-	function get_full_tree($markafterid=0)
+	function get_full_tree($deleteafterid=0)
 	{
 		global $conf,$user;
 
@@ -2260,14 +2280,14 @@ class User extends CommonObject
 			$this->build_path_from_id_user($key,0);	// Process a branch from the root user key (this user has no parent)
 		}
 
-		// Exclude leaf including $markafterid from tree
-		if ($markafterid)
+		// Exclude leaf including $deleteafterid from tree
+		if ($deleteafterid)
 		{
-			//print "Look to discard user ".$markafterid."\n";
-			$keyfilter1='^'.$markafterid.'$';
-			$keyfilter2='_'.$markafterid.'$';
-			$keyfilter3='^'.$markafterid.'_';
-			$keyfilter4='_'.$markafterid.'_';
+			//print "Look to discard user ".$deleteafterid."\n";
+			$keyfilter1='^'.$deleteafterid.'$';
+			$keyfilter2='_'.$deleteafterid.'$';
+			$keyfilter3='^'.$deleteafterid.'_';
+			$keyfilter4='_'.$deleteafterid.'_';
 			foreach($this->users as $key => $val)
 			{
 				if (preg_match('/'.$keyfilter1.'/',$val['fullpath']) || preg_match('/'.$keyfilter2.'/',$val['fullpath'])
@@ -2306,13 +2326,13 @@ class User extends CommonObject
 
 		// Define fullpath and fullname
 		$this->users[$id_user]['fullpath'] = '_'.$id_user;
-		$this->users[$id_user]['fullname'] = $this->users[$id_user]['label'];
+		$this->users[$id_user]['fullname'] = $this->users[$id_user]['lastname'];
 		$i=0; $cursor_user=$id_user;
 
 		while ((empty($protection) || $i < $protection) && ! empty($this->parentof[$cursor_user]))
 		{
 			$this->users[$id_user]['fullpath'] = '_'.$this->parentof[$cursor_user].$this->users[$id_user]['fullpath'];
-			$this->users[$id_user]['fullname'] = $this->users[$this->parentof[$cursor_user]]['label'].' >> '.$this->users[$id_user]['fullname'];
+			$this->users[$id_user]['fullname'] = $this->users[$this->parentof[$cursor_user]]['lastname'].' >> '.$this->users[$id_user]['fullname'];
 			$i++; $cursor_user=$this->parentof[$cursor_user];
 		}
 

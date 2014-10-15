@@ -23,6 +23,8 @@
  *  \brief      Trigger file for
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
  *  Class of triggers for security events
@@ -140,24 +142,24 @@ class InterfaceLogevents extends DolibarrTriggers
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $text=$langs->transnoentities("NewGroupCreated",$object->nom);
-            $desc=$langs->transnoentities("NewGroupCreated",$object->nom);
+            $text=$langs->transnoentities("NewGroupCreated",$object->name);
+            $desc=$langs->transnoentities("NewGroupCreated",$object->name);
 		}
         elseif ($action == 'GROUP_MODIFY')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $text=$langs->transnoentities("GroupModified",$object->nom);
-            $desc=$langs->transnoentities("GroupModified",$object->nom);
+            $text=$langs->transnoentities("GroupModified",$object->name);
+            $desc=$langs->transnoentities("GroupModified",$object->name);
 		}
         elseif ($action == 'GROUP_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $text=$langs->transnoentities("GroupDeleted",$object->nom);
-            $desc=$langs->transnoentities("GroupDeleted",$object->nom);
+            $text=$langs->transnoentities("GroupDeleted",$object->name);
+            $desc=$langs->transnoentities("GroupDeleted",$object->name);
 		}
 
 		// If not found

@@ -156,10 +156,10 @@ $i=0;
 
 $sql = "SELECT t.rowid, t.taux";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
-$sql.= ", ".MAIN_DB_PREFIX."c_pays as p";
-$sql.= " WHERE t.fk_pays = p.rowid";
-$sql.= " AND t.active = 1";
-$sql.= " AND p.code = '".$mysoc->country_code."'";
+$sql.= ", ".MAIN_DB_PREFIX."c_country as c";
+$sql.= " WHERE t.fk_pays = c.rowid";
+$sql.= " AND c.active = 1";
+$sql.= " AND c.code = '".$mysoc->country_code."'";
 //print $request;
 
 $resql = $db->query($sql);

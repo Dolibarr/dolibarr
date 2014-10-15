@@ -158,7 +158,7 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	function url($id)
 	{
-		return '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$id.'">'.img_object('',"contact").'</a>';
+		return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('',"contact").'</a>';
 	}
 
 
@@ -197,7 +197,7 @@ class mailing_contacts1 extends MailingTargets
 
 		// La requete doit retourner: id, email, fk_contact, name, firstname, other
 		$sql = "SELECT c.rowid as id, c.email as email, c.rowid as fk_contact,";
-		$sql.= " c.lastname, c.firstname, c.civilite as civility_id,";
+		$sql.= " c.lastname, c.firstname, c.civility as civility_id,";
 		$sql.= " s.nom as companyname";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
@@ -239,7 +239,7 @@ class mailing_contacts1 extends MailingTargets
                     		'firstname' => $obj->firstname,
                     		'other' =>
                                 ($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.
-                                ($langs->transnoentities("UserTitle").'='.($obj->civilite_id?$langs->transnoentities("Civility".$obj->civilite_id):'')),
+                                ($langs->transnoentities("UserTitle").'='.($obj->civility_id?$langs->transnoentities("Civility".$obj->civility_id):'')),
                             'source_url' => $this->url($obj->id),
                             'source_id' => $obj->id,
                             'source_type' => 'contact'

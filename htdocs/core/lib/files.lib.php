@@ -43,7 +43,7 @@ function dol_basename($pathfile)
  *  @param	string		$types        	Can be "directories", "files", or "all"
  *  @param	int			$recursive		Determines whether subdirectories are searched
  *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- *  @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
+ *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
  *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
@@ -597,7 +597,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	global $conf, $db, $user, $langs;
 	global $object, $hookmanager;
 
-	$error=0;
+	$reshook=0;
 	$file_name = $dest_file;
 
 	if (empty($nohook))
@@ -663,8 +663,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		}
 
 		// Security:
-		// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans
-		// les noms de fichiers.
+		// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 		if (preg_match('/^\./',$dest_file) || preg_match('/\.\./',$dest_file) || preg_match('/[<>|]/',$dest_file))
 		{
 			dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
@@ -677,7 +676,13 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		$reshook=$hookmanager->executeHooks('moveUploadedFile', $parameters, $object);
 	}
 
-	if (empty($reshook))
+	if ($reshook < 0)	// At least one blocking error returned by one hook
+	{
+		$errmsg = join(',', $hookmanager->errors);
+		if (empty($errmsg)) $errmsg = 'ErrorReturnedBySomeHooks';	// Should not occurs. Added if hook is bugged and does not set ->errors when there is error.
+		return $errmsg;
+	}
+	elseif (empty($reshook))
 	{
 		// The file functions must be in OS filesystem encoding.
 		$src_file_osencoded=dol_osencode($src_file);
@@ -710,8 +715,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			return -3;	// Unknown error
 		}
 	}
-	else
-		return $reshook;
+
+	return 1;	// Success
 }
 
 /**
@@ -802,14 +807,15 @@ function dol_delete_dir($dir,$nophperrors=0)
 }
 
 /**
- *  Remove a directory $dir and its subdirectories
+ *  Remove a directory $dir and its subdirectories (or only files and subdirectories)
  *
  *  @param	string	$dir            Dir to delete
  *  @param  int		$count          Counter to count nb of deleted elements
  *  @param  int		$nophperrors    Disable all PHP output errors
+ *  @param	int		$onlysub		Delete only files and subdir, not main directory
  *  @return int             		Number of files and directory removed
  */
-function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
+function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0,$onlysub=0)
 {
     dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
     if (dol_is_dir($dir))
@@ -836,9 +842,13 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
                 }
             }
             closedir($handle);
-            dol_delete_dir($dir,$nophperrors);
-            $count++;
-            //echo "removing $dir<br>\n";
+
+            if (empty($onlysub))
+            {
+	            dol_delete_dir($dir,$nophperrors);
+    	        $count++;
+        	    //echo "removing $dir<br>\n";
+            }
         }
     }
 
@@ -944,7 +954,7 @@ function dol_meta_create($object)
 		if (is_dir($dir))
 		{
 			$nblignes = count($object->lines);
-			$client = $object->client->nom . " " . $object->client->address . " " . $object->client->zip . " " . $object->client->town;
+			$client = $object->client->name . " " . $object->client->address . " " . $object->client->zip . " " . $object->client->town;
 			$meta = "REFERENCE=\"" . $object->ref . "\"
 			DATE=\"" . dol_print_date($object->date,'') . "\"
 			NB_ITEMS=\"" . $nblignes . "\"
@@ -1284,7 +1294,7 @@ function dol_uncompress($inputfile,$outputdir)
  *
  * @param 	string		$dir			Directory to scan
  * @param	string		$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- * @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	int			$nohook			Disable all hooks
  * @return	string						Full path to most recent file
  */
@@ -1582,6 +1592,16 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
+	// Wrapping for interventions
+	else if ($modulepart == 'fichinter')
+	{
+		if ($fuser->rights->ficheinter->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->ficheinter->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+	}
 
 	// Wrapping pour les commandes fournisseurs
 	else if ($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier')
@@ -1616,14 +1636,14 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		else $original_file=$conf->facture->dir_output.'/payments/'.$original_file;
 	}
 
-	// Wrapping pour les exports de compta
+	// Wrapping for accounting exports
 	else if ($modulepart == 'export_compta')
 	{
-		if ($fuser->rights->compta->ventilation->creer || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->accounting->ventilation->dispatch || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->compta->dir_output.'/'.$original_file;
+		$original_file=$conf->accounting->dir_output.'/'.$original_file;
 	}
 
 	// Wrapping pour les expedition

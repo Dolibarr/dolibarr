@@ -30,3 +30,4 @@ SearchADonation=Otsi annetust
 DonationRecipient=Annetuse saaja
 ThankYou=Täname Teid
 IConfirmDonationReception=Saaja kinnitab saadava summa vastu võtmist annetusena summas
+MinimumAmount=Minimum amount is  %s

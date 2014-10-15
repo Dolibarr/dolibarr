@@ -154,7 +154,7 @@ class ExtraFields
 	{
 		$table=$elementtype.'_extrafields';
 
-		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
+		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
 		{
 			if ($type=='boolean') {
 				$typedb='int';
@@ -226,8 +226,7 @@ class ExtraFields
 		// Clean parameters
 		if (empty($pos)) $pos=0;
 
-
-		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
+		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
 		{
 			if(is_array($param) and count($param) > 0)
 			{
@@ -514,7 +513,7 @@ class ExtraFields
 
 
 	/**
-	 * 	Load array this->attribute_label
+	 * 	Load array this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
 	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', societe', 'facture', 'propal', 'product', ...)
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
@@ -680,6 +679,7 @@ class ExtraFields
 			}
 
 			$out.='<select class="flat" name="options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
+			$out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key=>$val )
 			{
 				list($val, $parent) = explode('|', $val);
@@ -942,7 +942,7 @@ class ExtraFields
 			$selectkey="rowid";
 			$keyList='rowid';
 
-			if (count($InfoFieldList)==3)
+			if (count($InfoFieldList)>=3)
 			{
 				$selectkey = $InfoFieldList[2];
 				$keyList=$InfoFieldList[2].' as rowid';
@@ -974,11 +974,11 @@ class ExtraFields
 				// Several field into label (eq table:code|libelle:rowid)
 				$fields_label = explode('|',$InfoFieldList[1]);
 
-				if(is_array($fields_label))
+				if(is_array($fields_label) && count($fields_label)>1)
 				{
 					foreach ($fields_label as $field_toshow)
 					{
-						$translabel=$langs->trans($obj->field_toshow);
+						$translabel=$langs->trans($obj->$field_toshow);
 						if ($translabel!=$field_toshow) {
 							$value.=dol_trunc($translabel,18).' ';
 						}else {
@@ -1039,7 +1039,7 @@ class ExtraFields
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
 	 * @param   array	$extralabels    $array of extrafields
-	 * @param   object	&$object        Object
+	 * @param   object	$object        Object
 	 * @param	string	$onlykey		Only following key is filled
 	 * @return	int						1 if array_options set / 0 if no value
 	 */

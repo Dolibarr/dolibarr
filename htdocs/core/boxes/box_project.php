@@ -77,10 +77,8 @@ class box_project extends ModeleBoxes
 		{
 
 			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut ";
-			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."projet as p";
-			$sql.= ")";
-			$sql.= " WHERE p.fk_soc = s.rowid";
-			$sql.= " AND s.entity = ".$conf->entity;
+			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+			$sql.= " WHERE p.entity = ".$conf->entity;
 			$sql.= " AND p.fk_statut = 1"; // Seulement les projets ouverts
 			$sql.= " ORDER BY p.datec DESC";
 			$sql.= $db->plimit($max, 0);
@@ -107,16 +105,16 @@ class box_project extends ModeleBoxes
 					);
 
 					$sql ="SELECT count(*) as nb, sum(progress) as totprogress";
-					$sql.=" FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
-					$sql.=" WHERE pt.fk_projet = p.rowid";
-					$sql.=" AND p.entity = ".$conf->entity;
+					$sql.=" FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."projet_task as pt on pt.fk_projet = p.rowid";
+					$sql.=" WHERE p.entity = ".$conf->entity;
+
 					$resultTask = $db->query($sql);
 					if ($resultTask)
 					{
 						$objTask = $db->fetch_object($resultTask);
 						$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => number_format($objTask->nb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
 						if ($objTask->nb  > 0 )
-							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => number_format(($objTask->totprogress/$objTask->nb), 0, ',', ' ')." %&nbsp;".$langs->trans("Progress"));
+							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => number_format(($objTask->totprogress/$objTask->nb), 0, ',', ' ')."%");
 						else
 							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => "N/A&nbsp;");
 						$totalnbTask += $objTask->nb;
@@ -134,10 +132,11 @@ class box_project extends ModeleBoxes
 
 
 		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'colspan=2 align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][1] = array('td' => 'align="right" ', 'text' => number_format($num, 0, ',', ' ')."&nbsp;".$langs->trans("Projects"));
-		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => number_format($totalnbTask, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-		$this->info_box_contents[$i][4] = array('td' => 'colspan=2', 'text' => "");
+		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
+		$this->info_box_contents[$i][1] = array('td' => '', 'text' => "");
+		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => number_format($num, 0, ',', ' ')."&nbsp;".$langs->trans("Projects"));
+		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => number_format($totalnbTask, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
+		$this->info_box_contents[$i][4] = array('td' => '', 'text' => "");
 
 	}
 

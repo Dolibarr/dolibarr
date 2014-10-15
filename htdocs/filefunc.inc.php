@@ -92,7 +92,7 @@ if (! empty($dolibarr_main_prod)) ini_set('display_errors','Off');
 
 // Clean parameters
 $dolibarr_main_data_root=trim($dolibarr_main_data_root);
-$dolibarr_main_url_root=trim($dolibarr_main_url_root);
+$dolibarr_main_url_root=trim(preg_replace('/\/+$/','',$dolibarr_main_url_root));
 $dolibarr_main_url_root_alt=(empty($dolibarr_main_url_root_alt)?'':trim($dolibarr_main_url_root_alt));
 $dolibarr_main_document_root=trim($dolibarr_main_document_root);
 $dolibarr_main_document_root_alt=(empty($dolibarr_main_document_root_alt)?'':trim($dolibarr_main_document_root_alt));

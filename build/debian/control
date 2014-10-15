@@ -39,7 +39,7 @@ Description: Web based software to manage a company or foundation
  It's a web software you can install as a standalone program or on any web
  hosting provider to use it from anywhere with any web browser.
  .
- Dolibarr was designed to be easy to use. Only the features that you need 
+ Dolibarr was designed to be easy to use. Only the features that you need
  are visible, depending on which modules were activated.
  .
  This is an example of most common used modules:
@@ -68,4 +68,4 @@ Description: Web based software to manage a company or foundation
  PDF exports,
  And a lot more modules...
  .
- You can also add third parties external modules or develop yours.
+ You can also add external modules from third parties or develop yours.

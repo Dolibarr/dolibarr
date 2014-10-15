@@ -202,7 +202,8 @@ class InfoBox
 
         $db->begin();
 
-        // Sauve parametre indiquant que le user a une config dediee
+        // Save parameters to say user has a dedicated setup
+        $tab=array();
         $confuserzone='MAIN_BOXES_'.$zone;
         $tab[$confuserzone]=1;
         if (dol_set_user_param($db, $conf, $user, $tab) < 0)
