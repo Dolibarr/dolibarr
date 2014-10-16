@@ -105,6 +105,7 @@ class ExtraFields
 	 *  @param	int		$required			Is field required or not
 	 *  @param	string	$default_value		Defaulted value
 	 *  @param  array	$param				Params for field
+	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @return int      					<=0 if KO, >0 if OK
 	 */
 	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param=0, $alwayseditable=0)
@@ -219,6 +220,7 @@ class ExtraFields
 	 *  @param	int				$unique			Is field unique or not
 	 *  @param	int				$required		Is field required or not
 	 *  @param  array||string	$param			Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
 	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0)
@@ -350,6 +352,7 @@ class ExtraFields
 	 *  @param	int		$required			Is field required or not
 	 *  @param	int		$pos				Position of attribute
 	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
 	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0)
@@ -435,6 +438,7 @@ class ExtraFields
 	 *  @param	int		$required			Is field required or not
 	 *  @param	int		$pos				Position of attribute
 	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
 	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0)
