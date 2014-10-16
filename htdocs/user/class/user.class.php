@@ -1155,13 +1155,6 @@ class User extends CommonObject
 			return -1;
 		}
 		
-		if (empty($this->color))
-        {
-	        $langs->load("errors");
-            $this->error = $langs->trans("ErrorColor",$this->color);
-			return -1;
-        }
-
 		$this->db->begin();
 
 		// Mise a jour autres infos
