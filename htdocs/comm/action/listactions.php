@@ -44,6 +44,8 @@ $status=GETPOST("status",'alpha');
 $type=GETPOST('type');
 $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
 $dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth'), GETPOST('dateselectday'), GETPOST('dateselectyear'));
+$datestart=dol_mktime(0, 0, 0, GETPOST('datestartmonth'), GETPOST('datestartday'), GETPOST('datestartyear'));
+$dateend=dol_mktime(0, 0, 0, GETPOST('dateendmonth'), GETPOST('dateendday'), GETPOST('dateendyear'));
 
 if ($actioncode == '') $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
@@ -123,12 +125,18 @@ if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday"))
  *  View
  */
 
+$form=new Form($db);
+
+$nav='';
+$nav.=' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
+$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav.='</form>';
+
 $now=dol_now();
 
 $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('',$langs->trans("Agenda"),$help_url);
-
-$form=new Form($db);
 
 // Define list of all external calendars
 $listofextcals=array();
@@ -188,8 +196,9 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0 || $usergroup > 0)
 	if ($usergroup > 0) $sql.= ($filtera>0||$filtert>0||$filterd>0?" OR ":"")." ugu.fk_usergroup = ".$usergroup;
     $sql.= ")";
 }
-//if ($dateselect > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($dateselect)."' AND '".$db->idate($dateselect+3600*24-1).'"';
-if ($dateselect > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($dateselect)."' AND '".$db->idate($dateselect+3600*24-1)."'";
+if ($dateselect > 0) $sql.= " AND a.datep2 >= '".$db->idate($dateselect)."' AND a.datep <= '".$db->idate($dateselect+3600*24-1)."'";
+if ($datestart > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($datestart)."' AND '".$db->idate($datestart+3600*24-1)."'";
+if ($dateend > 0) $sql.= " AND a.datep2 BETWEEN '".$db->idate($dateend)."' AND '".$db->idate($dateend+3600*24-1)."'";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 //print $sql;
@@ -236,7 +245,7 @@ if ($resql)
     }
     */
 
-    print_barre_liste($newtitle, $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,$link,$num,0,'');
+    print_barre_liste($newtitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, 0, '', 0, $nav);
     //print '<br>';
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?'.$param.'">'."\n";
@@ -259,9 +268,11 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre" align="center">';
-	print $form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+	print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 	print '</td>';
-	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre" align="center">';
+	print $form->select_date($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
+	print '</td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
