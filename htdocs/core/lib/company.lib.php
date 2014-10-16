@@ -128,7 +128,7 @@ function societe_prepare_head($object)
         	else {
         		dol_print_error($db);
         	}
-        	 
+
         	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
         	$head[$h][1] = $langs->trans("Notifications");
 			if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
@@ -492,7 +492,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                 $projectstatic = new Project($db);
 
                 $i=0;
-                $var=true;
+                $var=false;
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($result);
@@ -521,8 +521,9 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                 }
             }
             else
-            {
-                print '<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
+			{
+                $var = false;
+            	print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }
@@ -680,7 +681,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $result = $db->query($sql);
     $num = $db->num_rows($result);
 
-	$var=true;
+	$var=false;
 	if ($num)
     {
         $i=0;

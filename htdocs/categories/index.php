@@ -171,7 +171,7 @@ $nbofentries=(count($data) - 1);
 
 if ($nbofentries > 0)
 {
-	print '<tr><td colspan="3">';
+	print '<tr '.$bc[0].'><td colspan="3">';
 	tree_recur($data,$data[0],0);
 	print '</td></tr>';
 }
