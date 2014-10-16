@@ -1146,11 +1146,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
        				if (in_array($user->id, $keysofuserassigned))
 					{
 						$nummytasks++; $cssclass='family_mytasks';
-                    	// TODO Set a color using user color
+                    	
                     	// Must defined rule to choose color of who to use.
                     	// event->ownerid will still contains user id of owner
                     	// event->userassigned will be an array in future.
-                    	// $color=$user->color;
+                    	$color=$user->color;
                     }
                     else if ($event->type_code == 'ICALEVENT')
                     {
