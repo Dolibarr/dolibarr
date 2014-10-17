@@ -446,7 +446,6 @@ if (empty($reshook))
 
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                	dol_syslog(get_class($object)."::delete", LOG_DEBUG);
                 	if (! $object->db->query($sql))
                 	{
                 		$error++;
@@ -528,7 +527,7 @@ if (empty($reshook))
             // Define output language
             $outputlangs = $langs;
             $newlang='';
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
             if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
             if (! empty($newlang))
             {
