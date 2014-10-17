@@ -67,7 +67,7 @@ function societe_prepare_head($object)
     if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
     {
         $head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
-        $head[$h][1] = $langs->trans("Contact");
+        $head[$h][1] = $langs->trans("ContactsAddresses");
         $head[$h][2] = 'contact';
         $h++;
     }

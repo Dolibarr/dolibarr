@@ -387,13 +387,14 @@ if ($id == 11)
 	$langs->load("bills");
 	$langs->load("interventions");
 	$elementList = array(
-			'proposal'          => $langs->trans('Proposal'),
-			'order'             => $langs->trans('Order'),
-			'invoice'           => $langs->trans('Bill'),
+			''				    => '',
+//			'proposal'          => $langs->trans('Proposal'),
+//			'order'             => $langs->trans('Order'),
+//			'invoice'           => $langs->trans('Bill'),
 			'invoice_supplier'  => $langs->trans('SupplierBill'),
 			'order_supplier'    => $langs->trans('SupplierOrder'),
-			'intervention'      => $langs->trans('InterventionCard'),
-			'contract'          => $langs->trans('Contract'),
+//			'intervention'      => $langs->trans('InterventionCard'),
+//			'contract'          => $langs->trans('Contract'),
 			'project'           => $langs->trans('Project'),
 			'project_task'      => $langs->trans('Task'),
 			'agenda'			=> $langs->trans('Agenda'),
@@ -402,10 +403,11 @@ if ($id == 11)
 			'propal'            => $langs->trans('Proposal'),
 			'commande'          => $langs->trans('Order'),
 			'facture'           => $langs->trans('Bill'),
-			'facture_fourn'     => $langs->trans('SupplierBill'),
+//			'facture_fourn'     => $langs->trans('SupplierBill'),
 			'fichinter'         => $langs->trans('InterventionCard')
 	);
 	if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
+	asort($elementList);
 	$sourceList = array(
 			'internal' => $langs->trans('Internal'),
 			'external' => $langs->trans('External')
@@ -709,6 +711,7 @@ if ($action == 'delete')
 {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$_GET["code"].'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 }
+//var_dump($elementList);
 
 /*
  * Show a dictionary

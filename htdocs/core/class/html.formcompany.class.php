@@ -682,22 +682,21 @@ class FormCompany
      *  @param  string		$selected       Default selected value
      *  @param  string		$htmlname		HTML select name
      *  @param  string		$source			Source ('internal' or 'external')
-     *  @param  string		$order			Sort criteria
+     *  @param  string		$sortorder		Sort criteria
      *  @param  int			$showempty      1=Add en empty line
      *  @return	void
      */
-	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $order='code', $showempty=0)
+	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='code', $showempty=0)
 	{
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
-			$lesTypes = $object->liste_type_contact($source, $order, 0, 1);
+			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
 			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';
 			foreach($lesTypes as $key=>$value)
 			{
 				print '<option value="'.$key.'"';
-				if ($key == $selected)
-					print ' selected';
+				if ($key == $selected) print ' selected';
 				print '>'.$value.'</option>';
 			}
 			print "</select>\n";
