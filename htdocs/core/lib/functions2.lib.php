@@ -580,11 +580,11 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  * @param   string		$where			To add a filter on selection (for exemple to filter on invoice types)
  * @param   Societe		$objsoc			The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
- * @param   string		$mod			'next' for next value or 'last' for last value
- * @param   integer		$bentityon		enable or disable the entity filter (for modules not compatible with multicompany)
+ * @param   string		$mode			'next' for next value or 'last' for last value
+ * @param   bool		$bentityon		activate the entity filterdefault is true (for modules not compatible with multicompany)
  * @return 	string					New value (numeric) or error message
  */
-function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=1)
+function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true)
 {
     global $conf;
 
