@@ -1028,7 +1028,7 @@ else    // View by day
     $today=0;
     $todayarray=dol_getdate($now,'fast');
     if ($todayarray['mday']==$day && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
-    if ($today) $style='cal_today';
+    //if ($today) $style='cal_today';
 
     $timestamp=dol_mktime(12,0,0,$month,$day,$year);
     $arraytimestamp=dol_getdate($timestamp);
