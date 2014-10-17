@@ -1325,7 +1325,8 @@ div.tabs {
 /*    margin: 0px 0px 2px 6px;
     padding: 0px 6px 3px 0px; */
     text-align: <?php print $left; ?>;
-    margin-left: 4px !important;
+    margin-left: 6px !important;
+    margin-right: 6px !important;
 	clear:both;
 	height:100%;
 }
@@ -1655,7 +1656,7 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 }
 
 table.border td, div.border div div.tagtd {
-	padding: 1px 2px 1px 2px;
+	padding: 2px 2px 2px 2px;
 	border: 1px solid #D0D0D0;
 	border-collapse: collapse;
 }
