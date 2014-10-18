@@ -464,10 +464,12 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
  *
  *  @param  int     $object     Object to set
  *  @param  string  $code       Name of constant : status or status_buy for product by example
+ *  @param  string  $text_on    Text if on
+ *  @param  string  $text_off   Text if off
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  *  @return void
  */
-function ajax_object_onoff($object, $code, $input=array())
+function ajax_object_onoff($object, $code, $text_on, $text_off, $input=array())
 {
     global $langs;
 
@@ -532,14 +534,9 @@ function ajax_object_onoff($object, $code, $input=array())
             });
         });
     </script>';
-    if ($code=='status') {
-        $out.= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'hideobject':'').'">'.img_picto($langs->trans("ProductStatusNotOnSell"),'switch_off').'</span>';
-        $out.= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'':'hideobject').'">'.img_picto($langs->trans("ProductStatusOnSell"),'switch_on').'</span>';
-    }
-    if ($code=='status_buy') {
-    $out.= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'hideobject':'').'">'.img_picto($langs->trans("ProductStatusNotOnBuy"),'switch_off').'</span>';
-    $out.= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'':'hideobject').'">'.img_picto($langs->trans("ProductStatusOnBuy"),'switch_on').'</span>';
-    }
+    $out.= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'hideobject':'').'">'.img_picto($langs->trans($text_off),'switch_off').'</span>';
+    $out.= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'':'hideobject').'">'.img_picto($langs->trans($text_on),'switch_on').'</span>';
+
     return $out;
 }
 
