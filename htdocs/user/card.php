@@ -206,7 +206,7 @@ if ($action == 'add' && $canadduser)
         $object->salary         = GETPOST("salary")!=''?GETPOST("salary"):'';
         $object->salaryextra    = GETPOST("salaryextra")!=''?GETPOST("salaryextra"):'';
         $object->weeklyhours    = GETPOST("weeklyhours")!=''?GETPOST("weeklyhours"):'';
-		
+
 		$object->color			= GETPOST("color")!=''?GETPOST("color"):'';
 
         // Fill array 'array_options' with data from add form
@@ -353,7 +353,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 	        $object->salary         = GETPOST("salary")!=''?GETPOST("salary"):'';
 	        $object->salaryextra    = GETPOST("salaryextra")!=''?GETPOST("salaryextra"):'';
 	        $object->weeklyhours    = GETPOST("weeklyhours")!=''?GETPOST("weeklyhours"):'';
-			
+
 			$object->color    	= GETPOST("color")!=''?GETPOST("color"):'';
 
             // Fill array 'array_options' with data from add form
@@ -980,7 +980,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
     print '</td>';
     print "</tr>\n";
-	
+
 	// User color
 	if (! empty($conf->agenda->enabled))
 	{
@@ -1124,7 +1124,7 @@ else
         if ($action != 'edit')
         {
             $rowspan=17;
-						
+
             print '<table class="border" width="100%">';
 
             // Ref
@@ -1325,15 +1325,14 @@ else
             	print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
             	print '<td colspan="2">'.$object->accountancy_code.'</td>';
 			}
-			
+
 			// Color user
 			if (! empty($conf->agenda->enabled))
             {
 				print '<tr><td valign="top">'.$langs->trans("ColorUser").'</td>';
-				print '<td width="50px" bgcolor="'.$object->color.'">';
-				print $object->color;
+				print '<td colspan="2">';
+				if ($object->color) print '<input type="text" disabled="disabled" style="padding: 0; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$object->color.'" value="'.$object->color.'">';
 				print '</td>';
-				print '<td>&nbsp;</td>';
 				print "</tr>\n";
 			}
 
@@ -1662,7 +1661,7 @@ else
 			if (! empty($conf->skype->enabled)) $rowspan++;
 			if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read)) $rowspan = $rowspan+3;
 			if (! empty($conf->agenda->enabled)) $rowspan++;
-			
+
         	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
@@ -2039,7 +2038,7 @@ else
 	            print '</td>';
 	            print "</tr>";
             }
-			
+
 			// User color
 			if (! empty($conf->agenda->enabled))
             {

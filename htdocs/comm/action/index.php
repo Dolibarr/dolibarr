@@ -876,6 +876,7 @@ if (count($listofextcals))
 $maxnbofchar=18;
 $cachethirdparties=array();
 $cachecontacts=array();
+$cacheusers=array();
 
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
@@ -1074,7 +1075,7 @@ $db->close();
  * @param   int		$year            Year
  * @param   int		$monthshown      Current month shown in calendar view
  * @param   string	$style           Style to use for this day
- * @param   array	$eventarray     Array of events
+ * @param   array	$eventarray      Array of events
  * @param   int		$maxprint        Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar     Nb of characters to show for event line
  * @param   string	$newparam        Parameters on current URL
@@ -1087,7 +1088,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     global $user, $conf, $langs;
     global $action, $filter, $filtera, $filtert, $filterd, $status, $actioncode;	// Filters used into search form
     global $theme_datacolor;
-    global $cachethirdparties, $cachecontacts, $colorindexused;
+    global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
 
     print '<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">'."\n";
 
@@ -1146,11 +1147,17 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
        				if (in_array($user->id, $keysofuserassigned))
 					{
 						$nummytasks++; $cssclass='family_mytasks';
-                    	
-                    	// Must defined rule to choose color of who to use.
-                    	// event->ownerid will still contains user id of owner
-                    	// event->userassigned will be an array in future.
-                    	$color=$user->color;
+
+						if (empty($cacheusers[$event->userownerid]))
+						{
+							$newuser=new User($db);
+							$newuser->fetch($event->userownerid);
+							$cacheusers[$event->userownerid]=$newuser;
+						}
+						//var_dump($cacheusers[$event->userownerid]->color);
+
+                    	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
+                    	if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
                     }
                     else if ($event->type_code == 'ICALEVENT')
                     {
@@ -1171,6 +1178,17 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     else
                  	{
                  		$numother++; $cssclass='family_other';
+
+						if (empty($cacheusers[$event->userownerid]))
+						{
+							$newuser=new User($db);
+							$newuser->fetch($event->userownerid);
+							$cacheusers[$event->userownerid]=$newuser;
+						}
+						//var_dump($cacheusers[$event->userownerid]->color);
+
+                    	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
+                    	if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
                  	}
                     if ($color == -1)	// Color was not forced. Set color according to color index.
                     {
