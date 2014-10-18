@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2014	   Teddy Andreotti		<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,17 +73,33 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				$passok=false;
 
 				// Check crypted password
-				$cryptType='';
-				if (! empty($conf->global->DATABASE_PWD_ENCRYPTED)) $cryptType=$conf->global->DATABASE_PWD_ENCRYPTED;
-				// By default, we used MD5
-				if (! in_array($cryptType,array('md5'))) $cryptType='md5';
-				// Check crypted password according to crypt algorithm
-				if ($cryptType == 'md5')
-				{
-					if (dol_hash($passtyped) == $passcrypted)
-					{
-						$passok=true;
-						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - ".$cryptType." of pass is ok");
+				//can update password security and use md5
+				if (version_compare(PHP_VERSION, '5.5.0') >= 0 && strlen($passcrypted) == 32) {
+					if ($passcrypted == dol_hash($passtyped)) {
+						$newpasscrypted = password_hash($passtyped, PASSWORD_DEFAULT);
+
+						$edituser = new User($db);
+						$result   = $edituser->fetch('', GETPOST('username'));
+						if ($result < 0) {
+							dol_syslog("functions_dolibarr::check_user_password_dolibarr Update password on missing user");
+						} else {
+							$edituser->setPassword($edituser, $newpasscrypted);
+
+							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - Old md5 is update");
+							$passok = true;
+						}
+					}
+				// use password_hash better security
+				} else if (version_compare(PHP_VERSION, '5.5.0') >= 0 && strlen($passcrypted) > 32) {
+					if (password_verify($passtyped,$passcrypted)) {
+						$passok = true;
+						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - " . password_get_info($passcrypted));
+					}
+				//php version didn't support password_hash()
+				} else if (version_compare(PHP_VERSION, '5.5.0') < 0 && strlen($passcrypted) == 32) {
+					if ($passcrypted == dol_hash($passtyped)) {
+						$passok = true;
+						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - md5");
 					}
 				}
 
