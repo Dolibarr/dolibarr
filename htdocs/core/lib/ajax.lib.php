@@ -469,7 +469,6 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
  */
 function ajax_object_onoff($object, $code, $input=array())
 {
-    require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
     global $conf, $langs, $db;
 
     $out= '<script type="text/javascript">
@@ -478,7 +477,7 @@ function ajax_object_onoff($object, $code, $input=array())
 
             // Set constant
             $("#set_'.$code.'_'.$object->id.'").click(function() {
-                $.get( "'.DOL_URL_ROOT.'/core/ajax/productonoff.php", {
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
                     action: \'set'.$code.'\',
                     value: \'1\',
                     id: \''.$object->id.'\'
@@ -506,7 +505,7 @@ function ajax_object_onoff($object, $code, $input=array())
 
             // Del constant
             $("#del_'.$code.'_'.$object->id.'").click(function() {
-                $.get( "'.DOL_URL_ROOT.'/core/ajax/productonoff.php", {
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
                     action: \'set'.$code.'\',
                     value: \'0\',
                     id: \''.$object->id.'\'
