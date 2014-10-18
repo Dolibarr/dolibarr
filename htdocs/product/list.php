@@ -507,11 +507,25 @@ else
     				}
     			}
 
-    			// Status (to buy)
-    			print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tosell,5,0).'</td>';
-
+                $product_static->status_buy = $objp->tobuy;
+                $product_static->status     = $objp->tosell;
                 // Status (to sell)
-                print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
+                print '<td align="right" nowrap="nowrap">';
+                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+                    print ajax_object_onoff($product_static, 'status');
+                } else {
+                    print $product_static->LibStatut($objp->tosell,5,0);
+                }
+                print '</td>';
+
+                // Status (to buy)
+                print '<td align="right" nowrap="nowrap">';
+                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+                    print ajax_object_onoff($product_static, 'status_buy');
+                } else {
+                    print $product_static->LibStatut($objp->tobuy,5,1);
+                }
+                print '</td>';
 
                 print '<td>&nbsp;</td>';
 
