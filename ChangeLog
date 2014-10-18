@@ -63,7 +63,11 @@ For users:
 - New: Add option MAIN_GENERATE_INVOICES_WITH_PICTURE to show picture 
        onto PDF like MAIN_GENERATE_PROPOSALS_WITH_PICTURE dir for proposals.
 - New: Add more search field in list of cheque deposits.
-- New: Add feature to order to invoice on supplier part
+- New: Add feature to order to invoice on supplier part.
+- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export.
+- New: Direct invoice creation from predefined invoice.
+- New: Add dunning into accountancy report.
+- New: Add favorite button into country dictionary to put value on top select list
 - Upgrade phpexcel lib to 1.7.8
 - New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export
 - New : Option on extrafields to have them always editable regardless of the document status
@@ -84,8 +88,7 @@ For users:
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
-- New: Direct invoice creation from predefined invoice
-- New: Add dunning into accountancy report
+
 For users, new experimental module (need to set feature level of instance to experimental to see them):
 - New: Module Accounting Expert to manage accountancy
 		Special Thanks to developpers :
