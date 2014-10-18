@@ -480,6 +480,7 @@ class Form
         $countryArray=array();
 		$favorite=array();
         $label=array();
+		$atleastonefavorite=0;
 
         $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_country";
@@ -504,6 +505,7 @@ class Form
                     $countryArray[$i]['code_iso'] 	= $obj->code_iso;
                     $countryArray[$i]['code_iso3'] 	= $obj->code_iso3;
                     $countryArray[$i]['label']		= ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
+                    $countryArray[$i]['favorite']   = $obj->favorite;
                     $favorite[$i]					= $obj->favorite;
 					$label[$i] = dol_string_unaccent($countryArray[$i]['label']);
                     $i++;
@@ -513,7 +515,12 @@ class Form
 
                 foreach ($countryArray as $row)
                 {
-                    //print 'rr'.$selected.'-'.$row['label'].'-'.$row['code_iso'].'<br>';
+                	if ($row['favorite'] && $row['code_iso']) $atleastonefavorite++;
+					if (empty($row['favorite']) && $atleastonefavorite)
+					{
+						$atleastonefavorite=0;
+						$out.= '<option value="" disabled="disabled">----------------------</option>';
+					}
                     if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
                     {
                         $foundselected=true;
