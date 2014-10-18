@@ -1551,6 +1551,7 @@ class Expedition extends CommonObject
 		if ($this->db->query($sql) )
 		{
 			//TODO: Option to set order billed if 100% of order is shipped
+			$this->billed = 1;
 			return 1;
 		}
 		else
