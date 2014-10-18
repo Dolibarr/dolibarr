@@ -1330,49 +1330,9 @@ else if ($id > 0 || ! empty($ref))
 	// Statut
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
-    // Other attributes (TODO Move this into an include)
-    $parameters=array('colspan' => ' colspan="3"');
-    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			if ($action == 'edit_extras') {
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-			} else {
-				$value=$object->array_options["options_".$key];
-			}
-			if ($extrafields->attribute_type[$key] == 'separate')
-			{
-				print $extrafields->showSeparator($key);
-			}
-			else
-			{
-				print '<tr><td';
-				if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-				print '>'.$label.'</td><td colspan="3">';
-				// Convert date into timestamp format
-				if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
-				{
-					$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$db->jdate($object->array_options['options_'.$key]);
-				}
-				if ($action == 'edit_extras' && $user->rights->ficheinter->creer && GETPOST('attribute') == $key)
-				{
-					print '<input type="hidden" name="attribute" value="'.$key.'">';
-
-					print $extrafields->showInputField($key,$value);
-
-					print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-				}
-				else
-				{
-					print $extrafields->showOutputField($key,$value);
-					if (($object->statut == 0 || $object->statut == 1) && $user->rights->ficheinter->creer) print ' &nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
-				}
-				print '</td></tr>'."\n";
-			}
-		}
-	}
+    // Other attributes
+    $cols = 3;
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print "</table>";
 

@@ -1097,3 +1097,5 @@ DELETE FROM llx_const WHERE name = 'MAIN_MODULE_BOUTIQUE';
 DELETE FROM llx_const WHERE name = 'OSC_DB_HOST';
 DELETE FROM llx_menu WHERE module = 'boutique';
 
+-- Add option always editable on extrafield
+ALTER TABLE llx_extrafields ADD alwayseditable INT(11) NOT NULL AFTER pos;

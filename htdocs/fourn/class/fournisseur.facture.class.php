@@ -413,6 +413,15 @@ class FactureFournisseur extends CommonInvoice
 
                 $this->socid  = $obj->socid;
                 $this->socnom = $obj->socnom;
+				
+                // Retreive all extrafield
+                // fetch optionals attributes and labels
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+                $this->fetch_optionals($this->id,$extralabels);
+
+                if ($this->statut == 0) $this->brouillon = 1;
 
                 $result=$this->fetch_lines();
                 if ($result < 0)
