@@ -279,7 +279,7 @@ if ($id > 0 || $ref)
         // Status (to sell)
         print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
         if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
-            print ajax_object_onoff($product, 'status');
+            print ajax_object_onoff($product, 'status', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
         } else {
             print $product->getLibStatut(2,0);
         }
@@ -288,7 +288,7 @@ if ($id > 0 || $ref)
         // Status (to buy)
         print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
         if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
-            print ajax_object_onoff($product, 'status_buy');
+            print ajax_object_onoff($product, 'status_buy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
         } else {
             print $product->getLibStatut(2,1);
         }
