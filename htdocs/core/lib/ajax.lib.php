@@ -462,14 +462,15 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
 /**
  *  On/off button for object
  *
- *  @param  int     $object     Object to set
+ *  @param  int     $object     Id product to set
  *  @param  string  $code       Name of constant : status or status_buy for product by example
+ *  @param  string  $field      Name of database field : tosell or tobuy for product by example
  *  @param  string  $text_on    Text if on
  *  @param  string  $text_off   Text if off
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  *  @return void
  */
-function ajax_object_onoff($object, $code, $text_on, $text_off, $input=array())
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=array())
 {
     global $langs;
 
@@ -480,8 +481,10 @@ function ajax_object_onoff($object, $code, $text_on, $text_off, $input=array())
             // Set constant
             $("#set_'.$code.'_'.$object->id.'").click(function() {
                 $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
-                    action: \'set'.$code.'\',
+                    action: \'set\',
+                    field: \''.$field.'\',
                     value: \'1\',
+                    element: \''.$object->element.'\',
                     id: \''.$object->id.'\'
                 },
                 function() {
@@ -508,8 +511,10 @@ function ajax_object_onoff($object, $code, $text_on, $text_off, $input=array())
             // Del constant
             $("#del_'.$code.'_'.$object->id.'").click(function() {
                 $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
-                    action: \'set'.$code.'\',
+                    action: \'set\',
+                    field: \''.$field.'\',
                     value: \'0\',
+                    element: \''.$object->element.'\',
                     id: \''.$object->id.'\'
                 },
                 function() {
