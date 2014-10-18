@@ -460,20 +460,17 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
 }
 
 /**
- *  On/off button for product tosell or tobuy
+ *  On/off button for object
  *
- *  @param  int     $id         Id product to set
- *  @param  string  $code       Name of constant : status or status_buy
+ *  @param  int     $object     Object to set
+ *  @param  string  $code       Name of constant : status or status_buy for product by example
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  *  @return void
  */
-function ajax_productonoff($id, $code, $input=array())
+function ajax_object_onoff($object, $code, $input=array())
 {
     require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
     global $conf, $langs, $db;
-
-    $object = new Product($db);
-    $object->fetch($id);
 
     $out= '<script type="text/javascript">
         $(function() {
@@ -484,7 +481,7 @@ function ajax_productonoff($id, $code, $input=array())
                 $.get( "'.DOL_URL_ROOT.'/core/ajax/productonoff.php", {
                     action: \'set'.$code.'\',
                     value: \'1\',
-                    id: \''.$id.'\'
+                    id: \''.$object->id.'\'
                 },
                 function() {
                     $("#set_'.$code.'").hide();
@@ -512,7 +509,7 @@ function ajax_productonoff($id, $code, $input=array())
                 $.get( "'.DOL_URL_ROOT.'/core/ajax/productonoff.php", {
                     action: \'set'.$code.'\',
                     value: \'0\',
-                    id: \''.$id.'\'
+                    id: \''.$object->id.'\'
                 },
                 function() {
                     $("#del_'.$code.'").hide();
