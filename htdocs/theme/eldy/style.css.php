@@ -2120,9 +2120,11 @@ div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(25
 div.dolgraph div.legend table tbody tr { height: auto; }
 
 .photo {
-border: 0px;
-/* filter:alpha(opacity=55); */
-/* opacity:.55; */
+	border: 0px;
+}
+.photowithmargin {
+	margin-bottom: 2px;
+	margin-top: 2px;
 }
 
 .logo_setup

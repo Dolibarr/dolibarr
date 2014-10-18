@@ -117,7 +117,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
                         }
                         else dol_syslog($imgThumbMini);
                     }
-                    else dol_syslog($langs->trans("ErrorImageFormatNotSupported"),LOG_WARNING);
+                    else dol_syslog("ErrorImageFormatNotSupported",LOG_WARNING);
                 }
                 else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
                 {
@@ -133,9 +133,10 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
                 }
             }
             else
-            {
+			{
             	$error++;
-                setEventMessage($langs->trans("ErrorOnlyPngJpgSupported"),'errors');
+				$langs->load("errors");
+            	setEventMessage($langs->trans("ErrorBadImageFormat"),'errors');
             }
         }
     }
@@ -158,7 +159,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
     // Local taxes
     dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION",$_POST["optionlocaltax1"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION",$_POST["optionlocaltax2"],'chaine',0,'',$conf->entity);
-    
+
     if($_POST["optionlocaltax1"]=="localtax1on")
     {
     	if(!isset($_REQUEST['lt1']))
@@ -226,13 +227,15 @@ if ($action == 'addthumb')
         else
         {
         	$error++;
-            setEventMessage($langs->trans("ErrorImageFormatNotSupported"),'errors');
-            dol_syslog($langs->transnoentities("ErrorImageFormatNotSupported"),LOG_WARNING);
+        	$langs->load("errors");
+            setEventMessage($langs->trans("ErrorBadImageFormat"),'errors');
+            dol_syslog($langs->transnoentities("ErrorBadImageFormat"),LOG_WARNING);
         }
     }
     else
     {
     	$error++;
+    	$langs->load("errors");
         setEventMessage($langs->trans("ErrorFileDoesNotExists",$_GET["file"]),'errors');
         dol_syslog($langs->transnoentities("ErrorFileDoesNotExists",$_GET["file"]),LOG_WARNING);
     }
@@ -601,7 +604,7 @@ if ($action == 'edit' || $action == 'updateedit')
     	    $formcompany->select_localtax(1,$conf->global->MAIN_INFO_VALUE_LOCALTAX1, "lt1");
         }
         print '</td></tr>';
-        
+
         print '<tr><td align="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
         $opcions=array($langs->transcountry("CalcLocaltax1",$mysoc->country_code),$langs->transcountry("CalcLocaltax2",$mysoc->country_code),$langs->transcountry("CalcLocaltax3",$mysoc->country_code));
         print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
@@ -1003,7 +1006,7 @@ else
         if($conf->global->MAIN_INFO_VALUE_LOCALTAX1!=0)
         {
 	        print '<tr><td>'.$langs->trans("LTRate").': '. $conf->global->MAIN_INFO_VALUE_LOCALTAX1 .'</td></tr>';
-	    }    
+	    }
         print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
         if($conf->global->MAIN_INFO_LOCALTAX_CALC1==0)
         {
@@ -1016,7 +1019,7 @@ else
         else if($conf->global->MAIN_INFO_LOCALTAX_CALC1==2){
         	print $langs->transcountry("CalcLocaltax3",$mysoc->country_code);
         }
-        
+
         print '</td></tr>';
         print "</table>";
         print "</td></tr>\n";
@@ -1054,7 +1057,7 @@ else
         if($conf->global->MAIN_INFO_VALUE_LOCALTAX2!=0)
         {
 	        print '<tr><td>'.$langs->trans("LTRate").': '. $conf->global->MAIN_INFO_VALUE_LOCALTAX2 .'</td></tr>';
-	    }    
+	    }
         print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
         if($conf->global->MAIN_INFO_LOCALTAX_CALC2==0)
         {
@@ -1068,7 +1071,7 @@ else
         {
         	print $langs->transcountry("CalcLocaltax3",$mysoc->country_code);
         }
-        
+
         print '</td></tr>';
         print "</table>";
         print "</td></tr>\n";
