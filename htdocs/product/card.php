@@ -422,11 +422,10 @@ if (empty($reshook))
                             $_error++;
                             $action = "";
 
-                            $mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$object->ref);
+                            $mesg=$langs->trans("ErrorProductAlreadyExists",$object->ref);
                             $mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$object->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
-                            $mesg.='</div>';
                             setEventMessage($mesg, 'errors');
-                            //dol_print_error($object->db);
+                            $object->fetch($id);
                         }
                         else
                         {

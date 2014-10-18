@@ -898,6 +898,13 @@ class Commande extends CommonOrder
         $this->date_validation    = '';
         $this->ref_client         = '';
 
+        // Set ref
+        require_once DOL_DOCUMENT_ROOT ."/core/modules/commande/".$conf->global->COMMANDE_ADDON.'.php';
+        $obj = $conf->global->COMMANDE_ADDON;
+        $modCommande = new $obj;
+        $this->ref = $modCommande->getNextValue($objsoc,$this);
+
+        
         // Create clone
         $result=$this->create($user);
         if ($result < 0) $error++;
