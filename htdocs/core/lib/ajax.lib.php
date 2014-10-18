@@ -469,7 +469,7 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
  */
 function ajax_object_onoff($object, $code, $input=array())
 {
-    global $conf, $langs, $db;
+    global $langs;
 
     $out= '<script type="text/javascript">
         $(function() {
