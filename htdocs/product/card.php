@@ -1421,7 +1421,7 @@ else
             // Status (to sell)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
             if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
-                print ajax_productonoff($object->id, 'status');
+                print ajax_productonoff($object, 'status');
             } else {
                 print $object->getLibStatut(2,0);
             }
@@ -1430,7 +1430,7 @@ else
             // Status (to buy)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
             if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
-                print ajax_productonoff($object->id, 'status_buy');
+                print ajax_productonoff($object, 'status_buy');
             } else {
                 print $object->getLibStatut(2,1);
             }
