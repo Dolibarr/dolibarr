@@ -1747,6 +1747,7 @@ abstract class CommonObject
      *	@param		string	$origin		Linked element type
      *	@param		int		$origin_id	Linked element id
      *	@return		int					<=0 if KO, >0 if OK
+     *	@see		fetchObjectLinked, updateObjectLinked, deleteObjectLinked
      */
     function add_object_linked($origin=null, $origin_id=null)
     {
@@ -1790,6 +1791,7 @@ abstract class CommonObject
      *	@param  string	$targettype		Object target type
      *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
      *	@return	void
+     *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
      */
 	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
     {
@@ -1818,6 +1820,12 @@ abstract class CommonObject
         $targetid = (! empty($targetid) ? $targetid : $this->id);
         $sourcetype = (! empty($sourcetype) ? $sourcetype : $this->element);
         $targettype = (! empty($targettype) ? $targettype : $this->element);
+
+        if (empty($sourceid) && empty($targetid))
+        {
+        	dol_print_error('','Bad usage of function. No parameter defined and no id defined');
+        	return -1;
+        }
 
         // Links beetween objects are stored in this table
         $sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
@@ -1944,6 +1952,7 @@ abstract class CommonObject
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
      *	@return							int	>0 if OK, <0 if KO
+     *	@see	add_object_linked, fetObjectLinked, deleteObjectLinked
      */
     function updateObjectLinked($sourceid='', $sourcetype='', $targetid='', $targettype='')
     {
@@ -1989,6 +1998,7 @@ abstract class CommonObject
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
 	 *	@return     int	>0 if OK, <0 if KO
+	 *	@see	add_object_linked, updateObjectLinked, fetchObjectLinked
 	 */
 	function deleteObjectLinked($sourceid='', $sourcetype='', $targetid='', $targettype='')
 	{

@@ -194,7 +194,7 @@ class Form
                 {
                 	$ret.='<td align="left">';
                 	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
-                	$ret.='<br>'."\n";
+                	//$ret.='<br>'."\n";
                 	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 	$ret.='</td>';
                 }
@@ -2706,6 +2706,7 @@ class Form
      *    @param    int		$maxlength      	Maximum length for labels
      *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
      *    @return	void
+     *    @see select_categories
      */
     function select_all_categories($type, $selected='', $htmlname="parent", $maxlength=64, $excludeafterid=0)
     {

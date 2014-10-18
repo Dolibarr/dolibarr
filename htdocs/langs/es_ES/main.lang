@@ -266,6 +266,7 @@ Afternoon=Tarde
 Quadri=Trimestre
 MonthOfDay=Mes del día
 HourShort=H
+MinuteShort=min
 Rate=Tipo
 UseLocalTax=Incluir tasas
 Bytes=Bytes
@@ -679,7 +680,7 @@ ViewPrivateNote=Ver notas
 XMoreLines=%s línea(s) ocultas
 PublicUrl=URL pública
 AddBox=Añadir caja
-
+SelectElementAndClickRefresh=Seleccione un elemento y haga clic en Refrescar
 # Week day
 Monday=Lunes
 Tuesday=Martes

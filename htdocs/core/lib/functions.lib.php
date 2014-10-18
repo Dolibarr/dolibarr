@@ -170,7 +170,7 @@ function dol_shutdown()
  *  Return value of a param into GET or POST supervariable
  *
  *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'aZ'=check it's a-z only, 'array'=check it's array, 'san_alpha'= Use filter_var with FILTER_SANITIZE_STRING, 'custom'= custom filter specify $filter and $options)
+ *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'aZ'=check it's a-z only, 'array'=check it's array, 'san_alpha'= Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string), 'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @param  int     $filter      Filter to apply when $check is set to custom. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to custom
@@ -453,6 +453,18 @@ function dol_string_nospecial($str,$newstr='_',$badchars='')
 	return str_replace($forbidden_chars_to_replace,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
 }
 
+
+/**
+ * Encode string for xml usage
+ *
+ * @param 	string	$string		String to encode
+ * @return	string				String encoded
+ */
+function dolEscapeXML($string)
+{
+	return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
+}
+
 /**
  *  Returns text escaped for inclusion into javascript code
  *
@@ -658,7 +670,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	{
 		$isactive=(is_numeric($active) && $i == $active) || (! is_numeric($active) && $active == $links[$i][2]);
 
-		$out.='<div class="inline-block tabsElem'.((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'">';
+		$out.='<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'">';
 		if (isset($links[$i][2]) && $links[$i][2] == 'image')
 		{
 			if (!empty($links[$i][0]))
@@ -2627,10 +2639,11 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
  *	@param	int		$num				number of records found by select with limit+1
  *	@param	int		$totalnboflines		Total number of records/lines for all pages (if known)
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	int		$pictoisfullpath		1=Icon name is a full absolute url of image
+ *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
+ *  @param	string	$morehtml			More html to show
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.png', $pictoisfullpath=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.png', $pictoisfullpath=0, $morehtml='')
 {
 	global $conf,$langs;
 
@@ -2706,6 +2719,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		}
 	}
 	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist);
+	if ($morehtml) print $morehtml;
 	print '</td>';
 
 	print '</tr></table>'."\n";
@@ -3714,6 +3728,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 		return $ret;
 	}
 }
+
 
 /**
  *	This function is called to encode a string into a HTML string but differs from htmlentities because

@@ -1091,7 +1091,8 @@ ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER not
 ALTER TABLE llx_c_country ADD COLUMN favorite tinyint DEFAULT 0 AFTER active;
 UPDATE llx_c_country SET favorite = '1' WHERE rowid = '0';
 
-ALTER TABLE llx_c_email_templates ADD UNIQUE INDEX uk_c_email_templates(label, lang);
+ALTER TABLE llx_c_email_templates DROP INDEX uk_c_email_templates;
+ALTER TABLE llx_c_email_templates ADD UNIQUE INDEX uk_c_email_templates(entity, label, lang);
 ALTER TABLE llx_c_email_templates ADD INDEX idx_type(type_template);
 
 -- Remove OSC module
