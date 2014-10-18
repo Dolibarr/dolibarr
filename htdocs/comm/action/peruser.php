@@ -710,6 +710,11 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	print '<div style="float: left; padding: 2px; margin-right: 6px;"><div class="peruser_busy" style="width:16px; float: left; margin-right: 4px;">&nbsp;</div>';
 	print $langs->trans("Other");
 	print '</div>';
+	/* TODO Show this if at least one cumulated event
+	print '<div style="float: left; padding: 2px; margin-right: 6px;"><div style="background: #222222; width:16px; float: left; margin-right: 4px;">&nbsp;</div>';
+	print $langs->trans("SeveralEvents");
+	print '</div>';
+	*/
 }
 
 // Add js code to manage click on a box
@@ -734,7 +739,7 @@ jQuery(document).ready(function() {
 		else if (ids.indexOf(",") > -1)	/* There is several events */
 		{
 			/* alert(\'several events\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?usertodo="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+dateselectday;
+			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?usertodo="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
 			window.location.href = url;
 		}
 		else	/* One event */
