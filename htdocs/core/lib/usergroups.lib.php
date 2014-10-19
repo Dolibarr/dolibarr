@@ -101,7 +101,7 @@ function user_prepare_head($object)
         if(!empty($object->note)) $nbNote++;
         $head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
         $head[$h][1] = $langs->trans("Note");
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
         $head[$h][2] = 'note';
         $h++;
 
@@ -111,7 +111,7 @@ function user_prepare_head($object)
         $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
         $head[$h][0] = DOL_URL_ROOT.'/user/document.php?userid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
-        if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+        if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
         $head[$h][2] = 'document';
         $h++;
 

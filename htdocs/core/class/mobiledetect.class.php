@@ -155,7 +155,7 @@ class MobileDetect
         'Asus'          => 'Asus.*Galaxy|PadFone.*Mobile',
         // @ref: http://www.micromaxinfo.com/mobiles/smartphones
         // Added because the codes might conflict with Acer Tablets.
-        'Micromax'      => 'Micromax.*\b(A\d+)\b',
+        'Micromax'      => 'Micromax.*\bA\d+\b',
         'Palm'          => 'PalmSource|Palm', // avantgo|blazer|elaine|hiptop|plucker|xiino ; @todo - complete the regex.
         'Vertu'         => 'Vertu|Vertu.*Ltd|Vertu.*Ascent|Vertu.*Ayxta|Vertu.*Constellation(F|Quest)?|Vertu.*Monika|Vertu.*Signature', // Just for fun ;)
         // @ref: http://www.pantech.co.kr/en/prod/prodList.do?gbrand=VEGA (PANTECH)
@@ -179,7 +179,7 @@ class MobileDetect
     protected static $tabletDevices = array(
         'iPad'              => 'iPad|iPad.*Mobile', // @todo: check for mobile friendly emails topic.
         'NexusTablet'       => 'Android.*Nexus[\s]+(7|10)|^.*Android.*Nexus(?:(?!Mobile).)*$',
-        'SamsungTablet'     => 'SAMSUNG.*Tablet|Galaxy.*Tab|SC-01C|GT-P\d+|SCH-I800|SCH-I815|SCH-I905|SGH-I957|SGH-I987|SGH-T849|SGH-T859|SGH-T869|SPH-P100|GT-N8000|SGH-I497|SPH-P500|SGH-T779|SCH-I705|SCH-I915|GT-N8013|GT-N8010|GT-N8005|GT-N8020|GT-N5100|GT-N5105|GT-N5110|SHV-E140K|SHV-E140L|SHV-E140S|SHV-E150S|SHV-E230K|SHV-E230L|SHV-E230S|SHW-M180K|SHW-M180L|SHW-M180S|SHW-M180W|SHW-M300W|SHW-M305W|SHW-M380K|SHW-M380S|SHW-M380W|SHW-M430W|SHW-M480K|SHW-M480S|SHW-M480W|SHW-M485W|SHW-M486W|SHW-M500W|GT-I9228|SCH-P739|SCH-I925|GT-I9200|GT-I9205|SM-T\d+|SM-P600|SM-P601|SM-P605|SM-P900|SM-P901|SM-P6000|SM-T3100|SGH-I467|XE500|GT-I9200X|GT-N5110X|GT-N5120|SM-P905|XE500T1C|SM-P605V|SM-P905V|SM-P600X|SM-P900X|', // SCH-P709|SCH-P729|SM-T2558 - Samsung Mega - treat them like a regular phone.
+        'SamsungTablet'     => 'SAMSUNG.*Tablet|Galaxy.*Tab|SC-01C|GT-P\d+|SCH-I800|SCH-I815|SCH-I905|SGH-I957|SGH-I987|SGH-T849|SGH-T859|SGH-T869|SPH-P100|GT-N8000|SGH-I497|SPH-P500|SGH-T779|SCH-I705|SCH-I915|GT-N8013|GT-N8010|GT-N8005|GT-N8020|GT-N5100|GT-N5105|GT-N5110|SHV-E140K|SHV-E140L|SHV-E140S|SHV-E150S|SHV-E230K|SHV-E230L|SHV-E230S|SHW-M180K|SHW-M180L|SHW-M180S|SHW-M180W|SHW-M300W|SHW-M305W|SHW-M380K|SHW-M380S|SHW-M380W|SHW-M430W|SHW-M480K|SHW-M480S|SHW-M480W|SHW-M485W|SHW-M486W|SHW-M500W|GT-I9228|SCH-P739|SCH-I925|GT-I9200|GT-I9205|SM-T\d+|SM-P600|SM-P601|SM-P605|SM-P900|SM-P901|SM-P6000|SM-T3100|SGH-I467|XE500|GT-I9200X|GT-N5110X|GT-N5120|SM-P905|XE500T1C|SM-P605V|SM-P905V|SM-P600X|SM-P900X', // SCH-P709|SCH-P729|SM-T2558 - Samsung Mega - treat them like a regular phone.
         // @reference: http://www.labnol.org/software/kindle-user-agent-string/20378/
         'Kindle'            => 'Kindle|Silk.*Accelerated|Android.*\b(KFOT|KFTT|KFJWI|KFJWA|KFOTE|KFSOWI|KFTHWI|KFTHWA|KFAPWI|KFAPWA|WFJWAE)\b',
         // Only the Surface tablets with Windows RT are considered mobile.

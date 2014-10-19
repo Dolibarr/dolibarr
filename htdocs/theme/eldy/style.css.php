@@ -223,6 +223,7 @@ body {
 	background-color: #FFFFFF;
 <?php } else { ?>
 	background: <?php print $colorbackbody; ?>;
+	/* background-image: url("<?php print DOL_URL_ROOT.'/theme/eldy/img/background.png'; ?>"); */
 <?php } ?>
 	color: #101010;
 	font-size: <?php print $fontsize ?>px;
@@ -409,6 +410,21 @@ th .button {
 .cursorpointer {
 	cursor: pointer;
 }
+.badge {
+	display: inline-block;
+	min-width: 10px;
+	padding: 2px 5px;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 0.9em;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	background-color: #777;
+	border-radius: 10px;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -816,6 +832,9 @@ foreach($mainmenuusedarray as $val)
 .bodylogin
 {
 	background: #f0f0f0;
+	-moz-box-shadow:    inset 0 0 10px #000000;
+   	-webkit-box-shadow: inset 0 0 10px #000000;
+   	box-shadow:         inset 0 0 10px #000000;
 }
 .login_vertical_align {
 	padding: 10px;
@@ -2962,9 +2981,9 @@ a.ui-link {
 }
 
 /* Warning: setting this may make screen not beeing refreshed after a combo selection */
-.ui-body-c {
+/*.ui-body-c {
 	background: #fff;
-}
+}*/
 
 div.ui-radio, div.ui-checkbox
 {
