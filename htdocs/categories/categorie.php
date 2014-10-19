@@ -634,7 +634,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td width="40%">';
-		print $langs->trans("ClassifyInCategory").' &nbsp;';
+		print '<span class="hideonsmartphone">'.$langs->trans("ClassifyInCategory").' &nbsp;</span>';
 		print $form->select_all_categories($typeid,'auto');
 		print '</td><td>';
 		print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';

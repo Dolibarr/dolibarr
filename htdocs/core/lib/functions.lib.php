@@ -148,6 +148,7 @@ function getBrowserInfo()
 	$detectmobile=new MobileDetect();
 	$phone=$detectmobile->isMobile();
 	$tablet=$detectmobile->isTablet();
+	unset($detectmobile);	// free memory
 
 	return array('browsername'=>$name, 'browserversion'=>$version, 'browseros'=>$os, 'browserfirefox'=>$firefox, 'layout'=> ($tablet?'tablet':($phone?'phone':'classic')), 'phone'=>$phone, 'tablet'=>$tablet);
 }

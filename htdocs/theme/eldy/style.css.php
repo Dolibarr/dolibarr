@@ -131,12 +131,12 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='50,50,130';
-	if ($dol_use_jmobile)
+	/*if ($dol_use_jmobile)
 	{
     	$conf->global->THEME_ELDY_BACKTABCARD1='245,245,245';    // topmenu
 		$conf->global->THEME_ELDY_BACKTABCARD2='245,245,245';
 		$conf->global->THEME_ELDY_BACKTABACTIVE='245,245,245';
-	}
+	}*/
 }
 
 $colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
