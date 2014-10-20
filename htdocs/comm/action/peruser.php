@@ -395,6 +395,13 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
 
+        // Discard auto action if option is on
+        if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->code == 'AC_OTH_AUTO')
+        {
+        	$i++;
+        	continue;
+        }
+
         // Create a new object action
         $event=new ActionComm($db);
         $event->id=$obj->id;
