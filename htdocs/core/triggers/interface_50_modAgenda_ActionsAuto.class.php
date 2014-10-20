@@ -251,6 +251,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             $object->sendtoid=0;
 		}
+		elseif ($action == 'FICHINTER_CREATE')
+        {
+            $langs->load("other");
+            $langs->load("interventions");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionCreatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InterventionCreatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
+		}
 		elseif ($action == 'FICHINTER_VALIDATE')
         {
             $langs->load("other");
@@ -259,6 +273,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
+		}
+		elseif ($action == 'FICHINTER_MODIFY')
+        {
+            $langs->load("other");
+            $langs->load("interventions");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionModifiedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InterventionModifiedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
             $object->sendtoid=0;
@@ -290,6 +318,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             $object->sendtoid=0;
         }
+		elseif ($action == 'FICHINTER_DELETE')
+        {
+            $langs->load("other");
+            $langs->load("interventions");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionDeletedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InterventionDeletedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
+		}
         elseif ($action == 'SHIPPING_VALIDATE')
         {
         	$langs->load("other");

@@ -240,6 +240,7 @@ class Fichinter extends CommonObject
 		$sql.= ", fk_projet = ".$this->fk_project;
 		$sql.= ", note_private = ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= ", fk_user_modif = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -619,9 +620,11 @@ class Fichinter extends CommonObject
 		global $conf;
 
 		$sql = "SELECT f.rowid,";
-		$sql.= " datec,";
+		$sql.= " f.datec,";
+		$sql.= " f.tms as date_modification,";
 		$sql.= " f.date_valid as datev,";
 		$sql.= " f.fk_user_author,";
+		$sql.= " f.fk_user_modif as fk_user_modification,";
 		$sql.= " f.fk_user_valid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		$sql.= " WHERE f.rowid = ".$id;
@@ -637,6 +640,7 @@ class Fichinter extends CommonObject
 				$this->id                = $obj->rowid;
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->date_validation   = $this->db->jdate($obj->datev);
 
 				$cuser = new User($this->db);
@@ -649,6 +653,13 @@ class Fichinter extends CommonObject
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation     = $vuser;
 				}
+				if ($obj->fk_user_modification)
+				{
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modification);
+					$this->user_modification   = $muser;
+				}
+
 			}
 			$this->db->free($resql);
 		}
@@ -805,7 +816,8 @@ class Fichinter extends CommonObject
 		if ($user->rights->ficheinter->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
-			$sql.= " SET description = '".$this->db->escape($description)."'";
+			$sql.= " SET description = '".$this->db->escape($description)."',";
+			$sql.= " fk_user_modif = ".$user->id;
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
 

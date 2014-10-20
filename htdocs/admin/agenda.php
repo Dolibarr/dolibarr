@@ -154,7 +154,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("ActionsEvents").'</td>';
 print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=selectall">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone">'.$langs->trans("None").'</a>';
 print '</tr>'."\n";
-// Show each trigger
+// Show each trigger (list is in c_action_trigger)
 if (! empty($triggers))
 {
 	foreach ($triggers as $trigger)
