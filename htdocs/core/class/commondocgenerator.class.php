@@ -118,8 +118,9 @@ abstract class CommonDocGenerator
             'mycompany_idprof5'=>$mysoc->idprof5,
             'mycompany_idprof6'=>$mysoc->idprof6,
         	'mycompany_vatnumber'=>$mysoc->tva_intra,
+        	'outstanding_limit'=>$mysoc->outstanding_limit,
             // Only private not exists for "mysoc"
-        	'mycompany_note'=>$mysoc->note_private
+        	'mycompany_note'=>$mysoc->note_public
             //'mycompany_note_private'=>$mysoc->note_private,
         	//'mycompany_note_public'=>$mysoc->note_public,
         );
