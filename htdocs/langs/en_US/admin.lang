@@ -1535,6 +1535,7 @@ DeleteFiscalYear=Delete fiscal year
 ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
 Opened=Opened
 Closed=Closed
+AlwaysEditable=Can always be edited
 
 Format=Format
 TypePaymentDesc=0:Customer payment type, 1:Supplier payment type, 2:Both customers and suppliers payment type 
