@@ -853,8 +853,8 @@ class ActionComm extends CommonObject
     }
 
     /**
-     *    	Renvoie nom clicable (avec eventuellement le picto)
-     *      Utilise $this->id, $this->code et $this->label
+     *    	Return URL of event
+     *      Use $this->id, $this->type_code and $this->label
      *
      * 		@param	int		$withpicto			0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
      *		@param	int		$maxlength			Nombre de caracteres max dans libelle
@@ -865,32 +865,27 @@ class ActionComm extends CommonObject
      */
     function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto='')
     {
-        global $langs;
+        global $conf,$langs;
 
         $result='';
         if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
         else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.'">';
         $lienfin='</a>';
         $label=$this->label;
-        if (empty($label)) $label=$this->libelle;	// Fro backward compatibility
-        //print 'rrr'.$this->libelle;
+        if (empty($label)) $label=$this->libelle;	// For backward compatibility
+        //print 'rrr'.$this->libelle.'-'.$withpicto;
 
         if ($withpicto == 2)
         {
             $libelle=$label;
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->trans("Action".$this->type_code);
+        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->transnoentities("Action".$this->type_code);
             $libelleshort='';
-        }
-        else if (empty($this->libelle))
-        {
-            $libelle=$label;
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->trans("Action".$this->type_code);
-        	$libelleshort=dol_trunc($label, $maxlength);
         }
         else
        {
-            $libelle=$label;
-            $libelleshort=dol_trunc($label,$maxlength);
+       		$libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
+       		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=$langs->transnoentities("Action".$this->type_code);
+       		$libelleshort=dol_trunc($libelle,$maxlength);
         }
 
         if ($withpicto)

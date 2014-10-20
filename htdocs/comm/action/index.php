@@ -1316,7 +1316,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             print "<br>\n";
                         }
                         else
-                        {
+						{
                             if ($showinfo)
                             {
                                 print $langs->trans("EventOnFullDay")."<br>\n";
