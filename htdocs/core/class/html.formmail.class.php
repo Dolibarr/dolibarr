@@ -699,7 +699,7 @@ class FormMail
 		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		$sql.= $db->order("lang,label","ASC");
-		print $sql;
+		//print $sql;
 
 		$resql = $db->query($sql);
 		if ($resql)

@@ -295,18 +295,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'FICHINTER_SENTBYMAIL')
         {
-            $langs->load("other");
+        	$langs->load("other");
             $langs->load("interventions");
 
             $object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
             $object->actionmsg=$langs->transnoentities("InterventionSentByEMail",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
-
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
         }
-        elseif ($action == 'FICHINTER_CLASSIFY_BILLED')
+        elseif ($action == 'FICHINTER_CLASSIFYBILLED')
         {
             $langs->load("other");
             $langs->load("interventions");

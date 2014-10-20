@@ -752,7 +752,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 				$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 				$actionmsg.=$message;
 			}
-			$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
+			$actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
 		}
 
 		// Create form object
