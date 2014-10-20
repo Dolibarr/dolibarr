@@ -680,7 +680,7 @@ if ($action == $acts[1])
 }
 
 // favorite
-if ($action == $acts[0])
+if ($action == 'activate_favorite')
 {
     if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
     else { $rowidcol="rowid"; }
@@ -700,7 +700,7 @@ if ($action == $acts[0])
 }
 
 // disable favorite
-if ($action == $acts[1])
+if ($action == 'disable_favorite')
 {
     if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
     else { $rowidcol="rowid"; }
@@ -973,7 +973,7 @@ if ($id)
             }
 			// Favorite - Only activated on country dictionary
             if ($id == 4) print getTitleFieldOfList($langs->trans("Favorite"),0,$_SERVER["PHP_SELF"],"favorite",($page?'page='.$page.'&':'').'&id='.$id,"",'align="center"',$sortfield,$sortorder);
-			
+
 			print getTitleFieldOfList($langs->trans("Status"),0,$_SERVER["PHP_SELF"],"active",($page?'page='.$page.'&':'').'&id='.$id,"",'align="center"',$sortfield,$sortorder);
             print '<td colspan="3"  class="liste_titre">&nbsp;</td>';
             print '</tr>';
@@ -1187,13 +1187,13 @@ if ($id)
                     if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $isdisable=0; $isdisable = 0; }
 
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?$obj->code:'').'&amp;id='.$id.'&amp;';
-					
+
 					// Favorite
 					// Only activated on country dictionary
                     if ($id == 4)
 					{
 						print '<td align="center" class="nowrap">';
-						if ($iserasable) print '<a href="'.$url.'action='.$acts[$obj->favorite].'">'.$actl[$obj->favorite].'</a>';
+						if ($iserasable) print '<a href="'.$url.'action='.$acts[$obj->favorite].'_favorite">'.$actl[$obj->favorite].'</a>';
 						else print $langs->trans("AlwaysActive");
 						print '</td>';
 					}
