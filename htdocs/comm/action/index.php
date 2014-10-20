@@ -414,7 +414,7 @@ $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
-$sql.= ' ca.code';
+$sql.= ' ca.code, ca.libelle as type_label';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 if ($usergroup > 0) $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ugu";
@@ -496,6 +496,7 @@ if ($resql)
         $event->datep=$db->jdate($obj->datep);      // datep and datef are GMT date
         $event->datef=$db->jdate($obj->datep2);
         $event->type_code=$obj->code;
+        $event->type_label=$obj->type_label;
         $event->libelle=$obj->label;
         $event->percentage=$obj->percent;
         $event->authorid=$obj->fk_user_author;		// user id of creator
