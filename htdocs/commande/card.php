@@ -1148,7 +1148,7 @@ else if ($action == 'update_extras') {
 
 /*
  * Add file in email form
-*/
+ */
 if (GETPOST('addfile')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -1162,7 +1162,7 @@ if (GETPOST('addfile')) {
 
 /*
  * Remove file in email form
-*/
+ */
 if (GETPOST('removedfile')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -1177,7 +1177,7 @@ if (GETPOST('removedfile')) {
 
 /*
  * Send mail
-*/
+ */
 if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! GETPOST('cancel')) {
 	$langs->load('mails');
 
