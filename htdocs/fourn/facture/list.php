@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 
@@ -109,8 +110,10 @@ llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:Factur
 $sql = "SELECT s.rowid as socid, s.nom, ";
 $sql.= " fac.rowid as facid, fac.ref, fac.ref_supplier, fac.datef, fac.date_lim_reglement as date_echeance,";
 $sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle";
+if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) $sql.=", p.rowid as project_id, p.ref as project_ref";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
+if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = fac.fk_projet";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE fac.entity = ".$conf->entity;
 $sql.= " AND fac.fk_soc = s.rowid";
@@ -212,6 +215,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"fac.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"fac.libelle","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+	if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"fac.total_ht","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"fac.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye","",$param,'align="center"',$sortfield,$sortorder);
@@ -239,7 +243,13 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="8" name="search_societe" value="'.GETPOST("search_societe").'">';
-	print '</td><td class="liste_titre" align="right">';
+	print '</td>';
+	if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS))
+	{
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
+	print '<td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.GETPOST("search_montant_ht").'">';
 	print '</td><td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.GETPOST("search_montant_ttc").'">';
@@ -252,6 +262,7 @@ if ($resql)
 
 	$facturestatic=new FactureFournisseur($db);
 	$supplierstatic=new Fournisseur($db);
+	$projectstatic=new Project($db);
 
 	$var=true;
 	$total=0;
@@ -281,6 +292,15 @@ if ($resql)
 		$supplierstatic->id=$obj->socid;
 		$supplierstatic->nom=$obj->nom;
 		print $supplierstatic->getNomUrl(1,'',12);
+		print '</td>';
+		if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS))
+		{
+			$projectstatic->id=$obj->project_id;
+			$projectstatic->ref=$obj->project_ref;
+			print '<td>';
+			if ($obj->project_id > 0) print $projectstatic->getNomUrl(1);
+			print '</td>';
+		}
 		print '<td align="right">'.price($obj->total_ht).'</td>';
 		print '<td align="right">'.price($obj->total_ttc).'</td>';
 		$total+=$obj->total_ht;
@@ -301,6 +321,7 @@ if ($resql)
 			// Print total
 			print '<tr class="liste_total">';
 			print '<td class="liste_total" colspan="6" align="left">'.$langs->trans("Total").'</td>';
+			if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) print '<td></td>';
 			print '<td class="liste_total" align="right">'.price($total).'</td>';
 			print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
 			print '<td class="liste_total" align="center">&nbsp;</td>';
