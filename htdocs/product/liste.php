@@ -467,7 +467,7 @@ else
     			}
 
     			// Better buy price
-    			if ($user->rights->produit->creer)
+    			if ($user->rights->fournisseur->lire)
     			{
         			print  '<td align="right">';
         			if ($objp->minsellprice != '')
