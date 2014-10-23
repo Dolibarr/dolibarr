@@ -1436,12 +1436,16 @@ else
             }
             print '</td></tr>';
 
-			// Batch number management (to batch)
-			if ($conf->productbatch->enabled) {
-				print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Lot").')</td><td colspan="2">';
-				print $object->getLibStatut(2,2);
-				print '</td></tr>';
-			}
+            // Batch number management (to batch)
+            if ($conf->productbatch->enabled) {
+                print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Lot").')</td><td colspan="2">';
+                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+                    print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
+                } else {
+                    print $object->getLibStatut(2,2);
+                }
+                print '</td></tr>';
+            }
 
             // Description
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description,1,true)).'</td></tr>';
