@@ -854,7 +854,7 @@ class ActionComm extends CommonObject
 
     /**
      *    	Return URL of event
-     *      Use $this->id, $this->type_code and $this->label
+     *      Use $this->id, $this->type_code, $this->label and $this->type_label
      *
      * 		@param	int		$withpicto			0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
      *		@param	int		$maxlength			Nombre de caracteres max dans libelle
@@ -884,15 +884,15 @@ class ActionComm extends CommonObject
         else
        {
        		$libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
-       		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=$langs->transnoentities("Action".$this->type_code);
+       		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
        		$libelleshort=dol_trunc($libelle,$maxlength);
         }
 
         if ($withpicto)
         {
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
         	{
-        		 $libelle.=(($this->type_code && $libelle!=$langs->trans("Action".$this->type_code) && $langs->trans("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->trans("Action".$this->type_code).')':'');
+        		 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
         	}
             $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle,($overwritepicto?$overwritepicto:'action')).$lienfin;
         }

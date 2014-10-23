@@ -156,7 +156,7 @@ if ($type) $param.="&type=".$type;
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
 $sql.= " a.fk_contact, a.note, a.label, a.percent as percent,";
-$sql.= " c.code as code, c.libelle,";
+$sql.= " c.code as type_code, c.libelle as type_label,";
 $sql.= " ua.login as loginauthor, ua.rowid as useridauthor,";
 $sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
 //$sql.= " ud.login as logindone, ud.rowid as useriddone,";
@@ -293,7 +293,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
         // Discard auto action if option is on
-        if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->code == 'AC_OTH_AUTO')
+        if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->type_code == 'AC_OTH_AUTO')
         {
         	$i++;
         	continue;
@@ -306,7 +306,8 @@ if ($resql)
 		// Action (type)
 		print '<td>';
 		$actionstatic->id=$obj->id;
-		$actionstatic->type_code=$obj->code;
+		$actionstatic->type_code=$obj->type_code;
+		$actionstatic->type_label=$obj->type_label;
 		$actionstatic->libelle=$obj->label;
 		print $actionstatic->getNomUrl(1,28);
 		print '</td>';
