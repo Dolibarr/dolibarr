@@ -356,9 +356,9 @@ if ($resql)
                     $generic_product->load_stock();
                     if ($generic_product->stock_reel<$generic_commande->lines[$lig]->qty) {
                         $shippable++;
-                        $text_info.='<span style="color:#FF0000">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$generic_product->stock_reel."</span><br>";
+                        $text_info.='<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$generic_product->stock_reel."</span><br>";
                     } else {
-                        $text_info.='<span style="color:#04B404">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$generic_product->stock_reel."</span><br>";
+                        $text_info.='<span class="ok>'.$langs->trans('Available').'&nbsp;:&nbsp;'.$generic_product->stock_reel."</span><br>";
                     }
                 }
             }
