@@ -358,7 +358,7 @@ if ($resql)
                         $shippable++;
                         $text_info.='<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$generic_product->stock_reel."</span><br>";
                     } else {
-                        $text_info.='<span class="ok>'.$langs->trans('Available').'&nbsp;:&nbsp;'.$generic_product->stock_reel."</span><br>";
+                        $text_info.='<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$generic_product->stock_reel."</span><br>";
                     }
                 }
             }
