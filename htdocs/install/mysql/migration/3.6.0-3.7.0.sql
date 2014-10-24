@@ -24,6 +24,7 @@
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLASSIFYBILLED','Intervention set billed','Executed when a intervention is set to billed (when option FICHINTER_DISABLE_DETAILS is set)','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',19);
 
+ALTER TABLE llx_notify ADD COLUMN fk_soc integer NULL after fk_action;
 
 ALTER TABLE llx_bank_account ADD COLUMN fk_user_author integer;
 

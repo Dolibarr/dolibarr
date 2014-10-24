@@ -292,8 +292,8 @@ class Notify
 
 	                    if ($mailfile->sendfile())
 	                    {
-	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
-	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$actiondefid.", ".$obj->cid.", '".$object_type."', ".$object->id.", '".$this->db->escape($obj->email)."')";
+	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, objet_type, objet_id, email)";
+	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$actiondefid.", ".$object->socid.", ".$obj->cid.", '".$object_type."', ".$object->id.", '".$this->db->escape($obj->email)."')";
 	                        if (! $this->db->query($sql))
 	                        {
 	                            dol_print_error($this->db);
@@ -330,6 +330,10 @@ class Notify
 	        $param='NOTIFICATION_FIXEDEMAIL_'.$action;
 	        if (! empty($conf->global->$param))
 	        {
+				$sendto = $conf->global->$param;
+				$actiondefid = dol_getIdFromCode($this->db, $action, 'c_action_trigger', 'code', 'rowid');
+				if ($actiondefid <= 0) dol_print_error($this->db, 'Failed to get id from code');
+
 				$object_type = '';
 		        $link = '';
         		$num++;
@@ -417,8 +421,8 @@ class Notify
 
 				if ($mailfile->sendfile())
 				{
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
-					$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$actiondefid.", ".$obj->cid.", '".$object_type."', ".$object->id.", '".$this->db->escape($obj->email)."')";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, objet_type, objet_id, email)";
+					$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$actiondefid.", ".$object->socid.", null, '".$object_type."', ".$object->id.", '".$this->db->escape($conf->global->$param)."')";
 					if (! $this->db->query($sql))
 					{
 						dol_print_error($this->db);

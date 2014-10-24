@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -191,12 +191,10 @@ if ($result > 0)
     print '</td></tr>';
     print '</table>';
 
-    // Help
-    print '<br>'.$langs->trans("NotificationsDesc").'<br>';
-
-
     dol_fiche_end();
 
+    // Help
+    print $langs->trans("NotificationsDesc").'<br><br>';
 
     print "\n";
 
@@ -372,19 +370,20 @@ if ($result > 0)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.titre",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder);
+    //print_liste_field_titre($langs->trans("Object"),$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.daten",'',$param,'align="right"',$sortfield,$sortorder);
     print '</tr>';
 
     // List
-    $sql = "SELECT n.rowid, n.daten, n.email, n.objet_type, n.objet_id,";
-    $sql.= " c.rowid as id, c.lastname, c.firstname, c.email,";
+    $sql = "SELECT n.rowid, n.daten, n.email, n.objet_type, n.objet_id as object_id, n.type,";
+    $sql.= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail,";
     $sql.= " a.code, a.label";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
-    $sql.= " ".MAIN_DB_PREFIX."notify as n, ";
-    $sql.= " ".MAIN_DB_PREFIX."socpeople as c";
+    $sql.= " ".MAIN_DB_PREFIX."notify as n ";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as c ON n.fk_contact = c.rowid";
     $sql.= " WHERE a.rowid = n.fk_action";
-    $sql.= " AND c.rowid = n.fk_contact";
-    $sql.= " AND c.fk_soc = ".$object->id;
+    $sql.= " AND n.fk_soc = ".$object->id;
 
     $resql=$db->query($sql);
     if ($resql)
@@ -400,17 +399,37 @@ if ($result > 0)
 
             $obj = $db->fetch_object($resql);
 
-            $contactstatic->id=$obj->id;
-            $contactstatic->lastname=$obj->lastname;
-            $contactstatic->firstname=$obj->firstname;
-            print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
-            print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
+            print '<tr '.$bc[$var].'><td>';
+            if ($obj->id > 0)
+            {
+	            $contactstatic->id=$obj->id;
+	            $contactstatic->lastname=$obj->lastname;
+	            $contactstatic->firstname=$obj->firstname;
+	            print $contactstatic->getNomUrl(1);
+	            print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
+            }
+            else
+			{
+				print $obj->email;
+            }
             print '</td>';
             print '<td>';
             $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
             print $label;
             print '</td>';
-            // TODO Add link to object here
+            print '<td>';
+            if ($obj->type == 'email') print $langs->trans("Email");
+            if ($obj->type == 'sms') print $langs->trans("Sms");
+            print '</td>';
+            // TODO Add link to object here for other types
+            /*print '<td>';
+            if ($obj->object_type == 'order')
+            {
+				$orderstatic->id=$obj->object_id;
+				$orderstatic->ref=...
+				print $orderstatic->getNomUrl(1);
+            }
+           	print '</td>';*/
             // print
             print'<td align="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
             print '</tr>';
@@ -427,7 +446,7 @@ if ($result > 0)
 }
 else dol_print_error('','RecordNotFound');
 
-$db->close();
 
 llxFooter();
 
+$db->close();
