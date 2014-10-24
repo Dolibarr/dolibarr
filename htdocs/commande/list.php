@@ -344,25 +344,44 @@ if ($resql)
         print $generic_commande->getNomUrl(1,($viewstatut != 2?0:$objp->fk_statut));
         print '</td>';
 
-        // Shippable Icon
+        // Shipping Icon
         if (($objp->fk_statut > 0) && ($objp->fk_statut < 3)) {
             print '<td>';
-            $shippable=0;
+            $notshippable=0;
             $text_info='';
             for ($lig=0; $lig<(count($generic_commande->lines)); $lig++) {
                 if ($generic_commande->lines[$lig]->product_type==0) {
-                    $text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.' : '.dol_trunc($generic_commande->lines[$lig]->product_label, 28);
                     $generic_product->id = $generic_commande->lines[$lig]->fk_product;
                     $generic_product->load_stock();
+                    // stock order and stock order_supplier
+                    $stock_order=0;
+                    $stock_order_supplier=0;
+                    if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+                        if (! empty($conf->commande->enabled)) {
+                            $generic_product->load_stats_commande(0,'1,2');
+                            $stock_order=$generic_product->stats_commande['qty'];
+                        }
+                        if (! empty($conf->fournisseur->enabled)) {
+                            $generic_product->load_stats_commande_fournisseur(0,'3');
+                            $stock_order_supplier=$generic_product->stats_commande_fournisseur['qty'];
+                        }
+                    }
+                    $text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
+                    $text_stock_reel = $generic_product->stock_reel.'/'.$stock_order;
                     if ($generic_product->stock_reel<$generic_commande->lines[$lig]->qty) {
-                        $shippable++;
-                        $text_info.='<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$generic_product->stock_reel."</span><br>";
+                        $notshippable++;
+                        $text_info.='<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
                     } else {
-                        $text_info.='<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$generic_product->stock_reel."</span><br>";
+                        $text_info.='<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
+                    }
+                    if ($stock_order_supplier>0) {
+                        $text_info.= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier.'<br>';
+                    } else {
+                        $text_info.= '<br>';
                     }
                 }
             }
-            if ($shippable==0) {
+            if ($notshippable==0) {
                 $text_icon = img_picto('', 'object_sending');
                 $text_info = $langs->trans('Shippable').'<br>'.$text_info;
             } else {
