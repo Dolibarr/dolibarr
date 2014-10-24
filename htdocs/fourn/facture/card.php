@@ -2288,21 +2288,24 @@ else
                  */
                 $somethingshown=$object->showLinkedObjectBlock();
 
+                $linktoelem='';
+
                 if (empty($somethingshown) && ! empty($conf->fournisseur->enabled))
                 {
-                	print '<br><a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+                	$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
 
                 	print '
 						<script type="text/javascript" language="javascript">
 						jQuery(document).ready(function() {
 							jQuery("#linktoorder").click(function() {
-								jQuery("#commande").toggle();
-							});
+								jQuery("#orderlist").toggle();
+								jQuery("#linktoorder").toggle();
+                			});
 						});
 						</script>
 						';
 
-                	print '<div id="commande" style="display:none">';
+                	print '<div id="orderlist" style="display:none">';
 
                 	$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_supplier, c.total_ht";
                 	$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
@@ -2314,7 +2317,7 @@ else
                 		$num = $db->num_rows($resqlorderlist);
                 		$i = 0;
 
-                		print '<form action="" method="POST" name="LinkedOrder">';
+                		print '<br><form action="" method="POST" name="LinkedOrder">';
                 		print '<table class="noborder">';
                 		print '<tr class="liste_titre">';
                 		print '<td class="nowrap"></td>';
@@ -2341,7 +2344,7 @@ else
                 			$i ++;
                 		}
                 		print '</table>';
-                		print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"></center>';
+                		print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></center>';
                 		print '</form>';
                 		$db->free($resqlorderlist);
                 	} else {
@@ -2350,6 +2353,9 @@ else
 
                 	print '</div>';
                 }
+
+				// Show link to elements
+				if ($linktoelem) print '<br>'.$linktoelem;
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
                 //print '</td><td valign="top" width="50%">';

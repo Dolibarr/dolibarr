@@ -5,6 +5,8 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Feature to link manually an order to an invoice does not disappear once
+       link has been done.
 - New: Can set a color on user card (visible into agenda view).
 - New: extrafields for projects and tasks are exported to ODT documents.
 - New: Add number of active notification into tab title (like we do for notes and documents)

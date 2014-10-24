@@ -3579,21 +3579,24 @@ if ($action == 'create')
 		// Linked object block
 		$somethingshown = $object->showLinkedObjectBlock();
 
-		if (empty($somethingshown) && ! empty($conf->commande->enabled))
+		$linktoelem='';
+
+		if (! empty($conf->commande->enabled))
 		{
-			print '<br><a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
 
 			print '
 				<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
 					jQuery("#linktoorder").click(function() {
-						jQuery("#commande").toggle();
+						jQuery("#orderlist").toggle();
+						jQuery("#linktoorder").toggle();
 					});
 				});
 				</script>
 				';
 
-			print '<div id="commande" style="display:none">';
+			print '<div id="orderlist" style="display:none">';
 
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_client, c.total_ht";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
@@ -3601,11 +3604,12 @@ if ($action == 'create')
 			$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $soc->id . '';
 
 			$resqlorderlist = $db->query($sql);
-			if ($resqlorderlist) {
+			if ($resqlorderlist)
+			{
 				$num = $db->num_rows($resqlorderlist);
 				$i = 0;
 
-				print '<form action="" method="POST" name="LinkedOrder">';
+				print '<br><form action="" method="POST" name="LinkedOrder">';
 				print '<table class="noborder">';
 				print '<tr class="liste_titre">';
 				print '<td class="nowrap"></td>';
@@ -3614,7 +3618,8 @@ if ($action == 'create')
 				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
 				print '<td align="left">' . $langs->trans("Company") . '</td>';
 				print '</tr>';
-				while ($i < $num) {
+				while ($i < $num)
+				{
 					$objp = $db->fetch_object($resqlorderlist);
 					if ($objp->socid == $soc->id) {
 						$var = ! $var;
@@ -3632,7 +3637,7 @@ if ($action == 'create')
 					$i ++;
 				}
 				print '</table>';
-				print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"></center>';
+				print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></center>';
 				print '</form>';
 				$db->free($resqlorderlist);
 			} else {
@@ -3641,6 +3646,9 @@ if ($action == 'create')
 
 			print '</div>';
 		}
+
+		// Show link to elements
+		if ($linktoelem) print '<br>'.$linktoelem;
 
 		// Link for paypal payment
 		if (! empty($conf->paypal->enabled) && $object->statut != 0) {
