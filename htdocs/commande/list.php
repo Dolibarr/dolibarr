@@ -344,13 +344,14 @@ if ($resql)
         print $generic_commande->getNomUrl(1,($viewstatut != 2?0:$objp->fk_statut));
         print '</td>';
 
-        // Shipping Icon
+        // Shippable Icon
         if (($objp->fk_statut > 0) && ($objp->fk_statut < 3)) {
-            print '<td>';
             $notshippable=0;
             $text_info='';
+            $nbprod=0;
             for ($lig=0; $lig<(count($generic_commande->lines)); $lig++) {
                 if ($generic_commande->lines[$lig]->product_type==0) {
+                    $nbprod++; // order contains real products
                     $generic_product->id = $generic_commande->lines[$lig]->fk_product;
                     $generic_product->load_stock();
                     // stock order and stock order_supplier
@@ -388,8 +389,11 @@ if ($resql)
                 $text_icon = img_picto('', 'error');
                 $text_info = $langs->trans('NonShippable').'<br>'.$text_info;
             }
-            print $form->textwithtooltip('',$text_info,2,1,$text_icon,'',2);
-            print '</td>';
+            if ($nbprod>0) {
+                print '<td>';
+                print $form->textwithtooltip('',$text_info,2,1,$text_icon,'',2);
+                print '</td>';
+            }
         }
 
         // warning late icon
