@@ -212,7 +212,7 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('');
@@ -265,13 +265,40 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('','','');
     print '</tr>';
 
-    // List of notifications for contacts
+    // List of notifications enabled for fixed email
+    foreach($conf->global as $key => $val)
+    {
+    	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
+    	//print $key.' - '.$val.' - '.$reg[1].'<br>';
+		print '<tr '.$bc[$var].'><td>'.$val;
+		if (isValidEmail($val))
+		{
+			print ' &lt;'.$val.'&gt;';
+		}
+		else
+		{
+			$langs->load("errors");
+			print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail",$val);
+		}
+		print '</td>';
+		print '<td>';
+		$label=($langs->trans("Notify_".$reg[1])!="Notify_".$reg[1]?$langs->trans("Notify_".$reg[1]):$reg[1]);
+		print $label;
+		print '</td>';
+		print '<td>';
+		print $langs->trans("Email");
+		print '</td>';
+		print '<td align="right">'.$langs->trans("SeeModuleSetup").'</td>';
+		print '</tr>';
+    }
+
+    // List of notifications enabled for contacts
     $sql = "SELECT n.rowid, n.type,";
     $sql.= " a.code, a.label,";
     $sql.= " c.rowid as contactid, c.lastname, c.firstname, c.email";
@@ -343,7 +370,7 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.titre",'',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.daten",'',$param,'align="right"',$sortfield,$sortorder);
     print '</tr>';

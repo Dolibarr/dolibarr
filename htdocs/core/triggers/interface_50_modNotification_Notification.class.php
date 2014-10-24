@@ -60,70 +60,12 @@ class InterfaceNotification extends DolibarrTriggers
 	{
 		if (empty($conf->notification->enabled)) return 0;     // Module not active, we do nothing
 
-		require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
-
-		$langs->load("other");
-
-		switch ($action) {
-			case 'BILL_VALIDATE':
-				$dir_output = $conf->facture->dir_output;
-				$object_type = 'facture';
-				$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$object->ref);
-				break;
-			case 'ORDER_VALIDATE':
-				$dir_output = $conf->commande->dir_output;
-				$object_type = 'order';
-				$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$object->ref);
-				break;
-			case 'PROPAL_VALIDATE':
-				$dir_output = $conf->propal->dir_output;
-				$object_type = 'propal';
-				$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$object->ref);
-				break;
-			case 'FICHINTER_VALIDATE':
-				$dir_output = $conf->facture->dir_output;
-				$object_type = 'ficheinter';
-				$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
-				break;
-			case 'ORDER_SUPPLIER_APPROVE':
-				$dir_output = $conf->fournisseur->dir_output.'/commande/';
-				$object_type = 'order_supplier';
-				$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-				$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->getFullName($langs));
-				$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
-				break;
-			case 'ORDER_SUPPLIER_REFUSE':
-				$dir_output = $conf->fournisseur->dir_output.'/commande/';
-				$object_type = 'order_supplier';
-				$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-				$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->getFullName($langs));
-				$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
-				break;
-			case 'SHIPPING_VALIDATE':
-				$dir_output = $conf->expedition->dir_output.'/sending/';
-				$object_type = 'order_supplier';
-				$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$object->ref);
-				break;
-
-			default:
-				return 0;
-
-		}
-
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-		$ref = dol_sanitizeFileName($object->ref);
-		$pdf_path = "$dir_output/$ref/$ref.pdf";
-
-		if (!file_exists($pdf_path)) {
-			// We can't add PDF as it is not generated yet.
-			$filepdf = '';
-		} else {
-			$filepdf = $pdf_path;
-		}
+		require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 
 		$notify = new Notify($this->db);
-		$notify->send($action, $object->socid, $mesg, $object_type, $object->id, $filepdf);
+		$notify->send($action, $object);
 
 		return 1;
     }

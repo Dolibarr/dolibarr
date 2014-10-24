@@ -5,6 +5,9 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Module notification has been enhanced:
+       EMail use now language of target contact.
+       Can also define a fixed email for notifications.
 - New: Feature to link manually an order to an invoice does not disappear once
        link has been done.
 - New: Can set a color on user card (visible into agenda view).
