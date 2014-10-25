@@ -345,7 +345,7 @@ if ($resql)
         print '</td>';
 
         // Shippable Icon
-        if (($objp->fk_statut > 0) && ($objp->fk_statut < 3)) {
+        if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && ! empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
             $notshippable=0;
             $text_info='';
             $nbprod=0;
