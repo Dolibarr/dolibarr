@@ -133,9 +133,10 @@ ErrorPHPNeedModule=Klaida, Jūsų PHP turi turėti modulį <b>%s</b> įdiegtą �
 ErrorOpenIDSetupNotComplete=Nustatyti Dolibarr config failą, kad būtų leidžiama OpenID patvirtinimas, bet OpenID paslaugos URL nėra apibrėžtas kaip konstanta %s.
 ErrorWarehouseMustDiffers=Šaltinio ir paskirties sandėliai privalo skirtis
 ErrorBadFormat=Blogas formatas !
-ErrorPaymentDateLowerThanInvoiceDate=Mokėjimo data (%s) negali būti ankstesnė už sąskaitos-faktūros %s datą (%s) .
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Klaida, šis narys nėra susijęs su jokia trečiąja šalimi. Prijungti narį prie esamos trečiosios šalies arba sukurti naują trečiąją šalį prieš kuriant pasirašymą su sąskaita-faktūra.
 ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
+ErrorCantDeletePaymentReconciliated=Can't delete a payment that had generated a bank transaction that was conciliated
+ErrorCantDeletePaymentSharedWithPayedInvoice=Can't delete a payment shared by at least one invoice with status Payed
 
 # Warnings
 WarningMandatorySetupNotComplete=Privalomi nustatymų parametrai dar nėra apibrėžti
@@ -154,3 +155,5 @@ WarningUsingThisBoxSlowDown=Įspėjimas. Naudojant šią dėžutę sulėtėja vi
 WarningClickToDialUserSetupNotComplete=Nustatymo ClickToDial informacija savo vartotojui nėra išsamūs (žr. skirtuką ClickToDial savo vartotojo kortelėje).
 WarningNotRelevant=Neaktuali operacija šiam duomenų rinkiniui
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
+WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters

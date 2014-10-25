@@ -337,15 +337,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				{
 				}
 
-				// Make substitutions into odt of user info
+				// Make substitutions into odt
 				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_propal=is_object($propal_object)?$this->get_substitutionarray_object($propal_object,$outputlangs,'propal'):array();
-				$array_other=$this->get_substitutionarray_other($user,$outputlangs);
+				$array_other=$this->get_substitutionarray_other($outputlangs);
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal);
+				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal,$array_other);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);

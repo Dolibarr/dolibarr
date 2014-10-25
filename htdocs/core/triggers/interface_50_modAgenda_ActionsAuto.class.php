@@ -25,6 +25,8 @@
  *  \brief      Trigger file for agenda module
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
  *  Class of triggered functions for agenda module
@@ -249,6 +251,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             $object->sendtoid=0;
 		}
+		elseif ($action == 'FICHINTER_CREATE')
+        {
+            $langs->load("other");
+            $langs->load("interventions");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionCreatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InterventionCreatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
+		}
 		elseif ($action == 'FICHINTER_VALIDATE')
         {
             $langs->load("other");
@@ -263,20 +279,33 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->fk_element=0;
 			$object->elementtype='';
 		}
-        elseif ($action == 'FICHINTER_SENTBYMAIL')
+		elseif ($action == 'FICHINTER_MODIFY')
         {
             $langs->load("other");
+            $langs->load("interventions");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionModifiedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InterventionModifiedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
+		}
+        elseif ($action == 'FICHINTER_SENTBYMAIL')
+        {
+        	$langs->load("other");
             $langs->load("interventions");
 
             $object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
             $object->actionmsg=$langs->transnoentities("InterventionSentByEMail",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
-
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
         }
-        elseif ($action == 'FICHINTER_CLASSIFY_BILLED')
+        elseif ($action == 'FICHINTER_CLASSIFYBILLED')
         {
             $langs->load("other");
             $langs->load("interventions");
@@ -288,6 +317,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             $object->sendtoid=0;
         }
+		elseif ($action == 'FICHINTER_DELETE')
+        {
+            $langs->load("other");
+            $langs->load("interventions");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionDeletedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InterventionDeletedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
+		}
         elseif ($action == 'SHIPPING_VALIDATE')
         {
         	$langs->load("other");
@@ -580,11 +623,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->durationp   = 0;
 		$actioncomm->punctual    = 1;
 		$actioncomm->percentage  = -1;   // Not applicable
-		$actioncomm->contact     = $contactforaction;
 		$actioncomm->societe     = $societeforaction;
-		$actioncomm->author      = $user;   // User saving action
-		$actioncomm->usertodo    = $user;	// User action is assigned to (owner of action)
-		//$actioncomm->userdone    = $user;	// User doing action (deprecated, not used anymore)
+		$actioncomm->contact     = $contactforaction;
+		$actioncomm->socid       = $societeforaction->id;
+		$actioncomm->contactid   = $contactforaction->id;
+		$actioncomm->authorid    = $user->id;   // User saving action
+		$actioncomm->userownerid = $user->id;	// Owner of action
+		//$actioncomm->userdone    = $user;	    // User doing action (not used anymore)
+		//$actioncomm->userdoneid  = $user->id;	// User doing action (not used anymore)
 
 		$actioncomm->fk_element  = $object->id;
 		$actioncomm->elementtype = $object->element;

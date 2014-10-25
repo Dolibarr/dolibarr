@@ -965,6 +965,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                             {
                                 //var_dump($objMod->dictionaries['tabname']);
                                 $taborder[] = 0;
+                                $tabfieldcheck[] = array(); $tabhelp[] = array();
                                 foreach($objMod->dictionaries['tabname'] as $val)
                                 {
                                     $taborder[] = count($tabname)+1;
@@ -978,7 +979,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                                 foreach($objMod->dictionaries['tabfieldinsert'] as $val) $tabfieldinsert[] = $val;
                                 foreach($objMod->dictionaries['tabrowid'] as $val) $tabrowid[] = $val;
                                 foreach($objMod->dictionaries['tabcond'] as $val) $tabcond[] = $val;
-                                foreach($objMod->dictionaries['tabfieldcheck'] as $val) $tabfieldcheck[] = $val;
+                                if (! empty($objMod->dictionaries['tabfieldcheck'])) foreach($objMod->dictionaries['tabfieldcheck'] as $val) $tabfieldcheck[] = $val;
                                 if (! empty($objMod->dictionaries['tabhelp'])) foreach($objMod->dictionaries['tabhelp'] as $val) $tabhelp[] = $val;
                                 //foreach($objMod->dictionaries['tabsqlsort'] as $val) $tablib[] = $val;
                                 //$tabname = array_merge ($tabname, $objMod->dictionaries['tabname']);

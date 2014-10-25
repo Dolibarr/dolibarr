@@ -1042,7 +1042,7 @@ else if ($id || $ref)
 		}
 		/*
 		 * Confirmation de l'annulation
-		*/
+		 */
 		if ($action == 'annuler')
 		{
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
@@ -1434,7 +1434,7 @@ else if ($id || $ref)
 					$entrepot = new Entrepot($db);
 					$entrepot->fetch($lines[$i]->entrepot_id);
 					print $entrepot->getNomUrl(1);
-				} 
+				}
 				else if (count($lines[$i]->details_entrepot) > 1)
 				{
 					$detail = '';
@@ -1453,7 +1453,6 @@ else if ($id || $ref)
 			// Batch number managment
 			if (! empty($conf->productbatch->enabled)) {
 				if (isset($lines[$i]->detail_batch) ) {
-					$flagBatch = true;
 					print '<td align="center">';
 					$detail = '';
 					foreach ($lines[$i]->detail_batch as $dbatch) {
@@ -1540,17 +1539,10 @@ else if ($id || $ref)
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans($label).'</a>';
 			}
 		}
-        
+
 		if ($user->rights->expedition->supprimer)
 		{
-			if (empty($conf->productbatch->enabled) || (!empty($conf->productbatch->enabled) && !$conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !isset($flagBatch))
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" href="#">'.$langs->trans('Delete').'</a>';
-			}
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 		}
 
 		print '</div>';

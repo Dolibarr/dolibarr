@@ -111,3 +111,4 @@ ExtraFieldsCategories=Atributos complementarios
 CategoriesSetup=Configuración de categorías
 CategorieRecursiv=Enlazar con la categoría padre automáticamente
 CategorieRecursivHelp=Si está activado, el producto se enlazará a la categoría padre si lo añadimos a una subcategoría
+AddProductServiceIntoCategory=Añadir el siguiente producto/servicio

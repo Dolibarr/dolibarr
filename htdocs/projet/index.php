@@ -166,7 +166,7 @@ $sql.= " WHERE p.entity = ".$conf->entity;
 if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 $sql.= " AND p.fk_statut=1";
-$sql.= " GROUP BY p.title, p.rowid, t.label, t.rowid, u.rowid, t.planned_workload, t.dateo, t.datee";
+$sql.= " GROUP BY p.ref, p.title, p.rowid, t.label, t.rowid, u.rowid, t.planned_workload, t.dateo, t.datee";
 $sql.= " ORDER BY u.rowid, t.dateo, t.datee";
 
 $userstatic=new User($db);

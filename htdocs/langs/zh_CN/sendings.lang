@@ -54,7 +54,7 @@ StatsOnShipmentsOnlyValidated=对货物进行统计验证。使用的数据的�
 DateDeliveryPlanned=刨交货日期
 DateReceived=交货日期收到
 SendShippingByEMail=通过电子邮件发送货物
-SendShippingRef=发送货物%s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=对装运的事件
 LinkToTrackYourPackage=链接到追踪您的包裹
 ShipmentCreationIsDoneFromOrder=就目前而言，建立一个新的装运完成从订单卡。
@@ -66,11 +66,13 @@ CarrierList=转运列表
 SendingMethodCATCH=按客户捕捉
 SendingMethodTRANS=运输车
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=简单的送货单文档模型
 DocumentModelTyphon=更多的送货单（logo. ..完整的文档模型）
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=没有定义的常数EXPEDITION_ADDON_NUMBER
 SumOfProductVolumes=产品总数
 SumOfProductWeights=产品总重
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

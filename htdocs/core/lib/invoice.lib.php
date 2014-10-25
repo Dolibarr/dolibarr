@@ -79,7 +79,7 @@ function facture_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
     	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$object->id;
     	$head[$h][1] = $langs->trans('Notes');
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
     	$head[$h][2] = 'note';
     	$h++;
     }

@@ -13,7 +13,7 @@ LastSendings=Ostatnia %s sendings
 SearchASending=Wyszukaj wysyłanie
 StatisticsOfSendings=Statystyka sendings
 NbOfSendings=Liczba sendings
-# NumberOfShipmentsByMonth=Number of shipments by month
+NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Wysyłanie kart
 NewSending=Nowe wysyłanie
 CreateASending=Utwórz wysyłanie
@@ -50,27 +50,29 @@ Enlevement=Zgarnięte przez klienta
 DocumentModelSimple=Prosty wzór dokumentu
 DocumentModelMerou=Mérou model A5
 WarningNoQtyLeftToSend=Ostrzeżenie nie produktów oczekujących na wysłanie.
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Strugane daty dostawy
 DateReceived=Data otrzymania dostawy
 SendShippingByEMail=Wyślij przesyłki przez e-mail
-SendShippingRef=Wyślij %s przesyłki
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Wydarzenia na dostawy
 LinkToTrackYourPackage=Link do strony śledzenia paczki
 ShipmentCreationIsDoneFromOrder=Na razie utworzenie nowego przesyłki odbywa się z karty zamówienia.
-# RelatedShippings=Related shippings
-# ShipmentLine=Shipment line
-# CarrierList=List of transporters
+RelatedShippings=Related shippings
+ShipmentLine=Shipment line
+CarrierList=List of transporters
 
 # Sending methods
 SendingMethodCATCH=Catch przez klientów
 SendingMethodTRANS=Transporter
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Prosty dokument model dostawy wpływy
 DocumentModelTyphon=Więcej kompletny dokument model dostawy wpływy (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Stała EXPEDITION_ADDON_NUMBER nie zdefiniowano
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

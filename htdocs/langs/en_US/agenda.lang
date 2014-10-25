@@ -89,5 +89,5 @@ ExtSiteUrlAgenda=URL to access .ical file
 ExtSiteNoLabel=No Description
 WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
-AddEvent=Add event
+AddEvent=Create event
 MyAvailability=My availability

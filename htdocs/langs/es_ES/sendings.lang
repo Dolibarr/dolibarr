@@ -72,3 +72,7 @@ DocumentModelTyphon=Modelo completo de nota de entrega / recepción (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER no definida
 SumOfProductVolumes=Suma del volumen de los productos
 SumOfProductWeights=Suma del peso de los productos
+
+# warehouse details
+DetailWarehouseNumber= Detalles del almacén
+DetailWarehouseFormat= Alm.:%s (Cant. : %d)

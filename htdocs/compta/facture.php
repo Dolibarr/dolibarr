@@ -1201,8 +1201,8 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-					//$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-					//$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+					if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+					if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 				}
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
@@ -1775,8 +1775,10 @@ else if ($action == 'print_file' and $user->rights->printipp->read) {
 	$action = '';
 }
 
-if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer) {
-	if ($action == 'addcontact') {
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer)
+{
+	if ($action == 'addcontact')
+	{
 		$result = $object->fetch($id);
 
 		if ($result > 0 && $id > 0) {
@@ -3322,51 +3324,9 @@ if ($action == 'create')
 		print '</tr>';
 	}
 
-	// Other attributes (TODO Move this into an include)
-	$res = $object->fetch_optionals($object->id, $extralabels);
-	$parameters = array('colspan' => ' colspan="2"');
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
-	                                                                                      // hook
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
-
-		foreach ($extrafields->attribute_label as $key => $label) {
-			if ($action == 'edit_extras') {
-				$value = (isset($_POST["options_" . $key]) ? $_POST["options_" . $key] : $object->array_options ["options_" . $key]);
-			} else {
-				$value = $object->array_options ["options_" . $key];
-			}
-			if ($extrafields->attribute_type [$key] == 'separate') {
-				print $extrafields->showSeparator($key);
-			} else {
-				print '<tr><td';
-				if (! empty($extrafields->attribute_required [$key]))
-					print ' class="fieldrequired"';
-				print '>' . $label . '</td><td colspan="5">';
-				// Convert date into timestamp format
-				if (in_array($extrafields->attribute_type [$key], array('date','datetime'))) {
-					$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
-				}
-
-				if ($action == 'edit_extras' && $user->rights->facture->creer && GETPOST('attribute') == $key) {
-					print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formsoc">';
-					print '<input type="hidden" name="action" value="update_extras">';
-					print '<input type="hidden" name="attribute" value="' . $key . '">';
-					print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-					print '<input type="hidden" name="id" value="' . $object->id . '">';
-
-					print $extrafields->showInputField($key, $value);
-
-					print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-					print '</form>';
-				} else {
-					print $extrafields->showOutputField($key, $value);
-					if ($object->statut == 0 && $user->rights->facture->creer)
-						print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_picto('', 'edit') . ' ' . $langs->trans('Modify') . '</a>';
-				}
-				print '</td></tr>' . "\n";
-			}
-		}
-	}
+	// Other attributes
+	$cols = 5;
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table><br>';
 
@@ -3619,21 +3579,24 @@ if ($action == 'create')
 		// Linked object block
 		$somethingshown = $object->showLinkedObjectBlock();
 
-		if (empty($somethingshown) && ! empty($conf->commande->enabled))
+		$linktoelem='';
+
+		if (! empty($conf->commande->enabled))
 		{
-			print '<br><a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
 
 			print '
 				<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
 					jQuery("#linktoorder").click(function() {
-						jQuery("#commande").toggle();
+						jQuery("#orderlist").toggle();
+						jQuery("#linktoorder").toggle();
 					});
 				});
 				</script>
 				';
 
-			print '<div id="commande" style="display:none">';
+			print '<div id="orderlist" style="display:none">';
 
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_client, c.total_ht";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
@@ -3641,11 +3604,12 @@ if ($action == 'create')
 			$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $soc->id . '';
 
 			$resqlorderlist = $db->query($sql);
-			if ($resqlorderlist) {
+			if ($resqlorderlist)
+			{
 				$num = $db->num_rows($resqlorderlist);
 				$i = 0;
 
-				print '<form action="" method="POST" name="LinkedOrder">';
+				print '<br><form action="" method="POST" name="LinkedOrder">';
 				print '<table class="noborder">';
 				print '<tr class="liste_titre">';
 				print '<td class="nowrap"></td>';
@@ -3654,7 +3618,8 @@ if ($action == 'create')
 				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
 				print '<td align="left">' . $langs->trans("Company") . '</td>';
 				print '</tr>';
-				while ($i < $num) {
+				while ($i < $num)
+				{
 					$objp = $db->fetch_object($resqlorderlist);
 					if ($objp->socid == $soc->id) {
 						$var = ! $var;
@@ -3672,7 +3637,7 @@ if ($action == 'create')
 					$i ++;
 				}
 				print '</table>';
-				print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"></center>';
+				print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></center>';
 				print '</form>';
 				$db->free($resqlorderlist);
 			} else {
@@ -3681,6 +3646,9 @@ if ($action == 'create')
 
 			print '</div>';
 		}
+
+		// Show link to elements
+		if ($linktoelem) print '<br>'.$linktoelem;
 
 		// Link for paypal payment
 		if (! empty($conf->paypal->enabled) && $object->statut != 0) {

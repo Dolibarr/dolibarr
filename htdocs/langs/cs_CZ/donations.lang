@@ -30,3 +30,4 @@ SearchADonation=Hledat daru
 DonationRecipient=Darování příjemce
 ThankYou=Děkuji
 IConfirmDonationReception=Příjemce deklarovat příjem, jako dar, následující částky
+MinimumAmount=Minimum amount is  %s

@@ -111,3 +111,4 @@ ExtraFieldsCategories=Ergänzende Attribute
 CategoriesSetup=Kategorien Setup
 CategorieRecursiv=Automatisch mit übergeordneter Kategorie verbinden
 CategorieRecursivHelp=Wenn aktiviert, wird das Produkt auch zur übergeordneten Kategorie zugewiesen, wenn es einer Unterkategorie zugewiesen wird
+AddProductServiceIntoCategory=Add the following product/service

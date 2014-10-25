@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Suppliers
 Supplier=Supplier
-AddSupplier=Add a supplier
+AddSupplier=Create a supplier
 SupplierRemoved=Supplier removed
 SuppliersInvoice=Suppliers invoice
 NewSupplier=New supplier

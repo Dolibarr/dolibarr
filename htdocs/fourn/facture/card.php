@@ -72,6 +72,10 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 $hookmanager->initHooks(array('invoicesuppliercard','globalcard'));
 
 $object=new FactureFournisseur($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -1054,6 +1058,45 @@ elseif ($action == 'remove_file')
     }
 }
 
+elseif ($action == 'update_extras')
+{
+	// Fill array 'array_options' with data from add form
+	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+
+	if($ret < 0) $error++;
+
+	if (!$error)
+	{
+		// Actions on extra fields (by external module or standard code)
+		// FIXME le hook fait double emploi avec le trigger !!
+		$hookmanager->initHooks(array('supplierorderdao'));
+		$parameters=array('id'=>$object->id);
+
+		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
+
+		if (empty($reshook))
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+
+				$result=$object->insertExtraFields();
+
+				if ($result < 0)
+				{
+					$error++;
+				}
+
+			}
+		}
+		else if ($reshook < 0) $error++;
+	}
+	else
+	{
+		$action = 'edit_extras';
+	}
+}
+
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fournisseur->facture->creer)
 {
 	if ($action == 'addcontact')
@@ -1884,9 +1927,9 @@ else
             print '</tr>';
         }
 
-        // Other options
-        $parameters=array('colspan' => ' colspan="4"');
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+        // Other attributes
+        $cols = 4;
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
         print '</table>';
 
@@ -2245,21 +2288,24 @@ else
                  */
                 $somethingshown=$object->showLinkedObjectBlock();
 
+                $linktoelem='';
+
                 if (empty($somethingshown) && ! empty($conf->fournisseur->enabled))
                 {
-                	print '<br><a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+                	$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
 
                 	print '
 						<script type="text/javascript" language="javascript">
 						jQuery(document).ready(function() {
 							jQuery("#linktoorder").click(function() {
-								jQuery("#commande").toggle();
-							});
+								jQuery("#orderlist").toggle();
+								jQuery("#linktoorder").toggle();
+                			});
 						});
 						</script>
 						';
 
-                	print '<div id="commande" style="display:none">';
+                	print '<div id="orderlist" style="display:none">';
 
                 	$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_supplier, c.total_ht";
                 	$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
@@ -2271,7 +2317,7 @@ else
                 		$num = $db->num_rows($resqlorderlist);
                 		$i = 0;
 
-                		print '<form action="" method="POST" name="LinkedOrder">';
+                		print '<br><form action="" method="POST" name="LinkedOrder">';
                 		print '<table class="noborder">';
                 		print '<tr class="liste_titre">';
                 		print '<td class="nowrap"></td>';
@@ -2298,7 +2344,7 @@ else
                 			$i ++;
                 		}
                 		print '</table>';
-                		print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"></center>';
+                		print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></center>';
                 		print '</form>';
                 		$db->free($resqlorderlist);
                 	} else {
@@ -2307,6 +2353,9 @@ else
 
                 	print '</div>';
                 }
+
+				// Show link to elements
+				if ($linktoelem) print '<br>'.$linktoelem;
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
                 //print '</td><td valign="top" width="50%">';

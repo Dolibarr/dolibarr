@@ -422,11 +422,10 @@ if (empty($reshook))
                             $_error++;
                             $action = "";
 
-                            $mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$object->ref);
+                            $mesg=$langs->trans("ErrorProductAlreadyExists",$object->ref);
                             $mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$object->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
-                            $mesg.='</div>';
                             setEventMessage($mesg, 'errors');
-                            //dol_print_error($object->db);
+                            $object->fetch($id);
                         }
                         else
                         {
@@ -1420,12 +1419,20 @@ else
 
             // Status (to sell)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
-            print $object->getLibStatut(2,0);
+            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+                print ajax_productonoff($object->id, 'status');
+            } else {
+                print $object->getLibStatut(2,0);
+            }
             print '</td></tr>';
 
             // Status (to buy)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
-            print $object->getLibStatut(2,1);
+            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+                print ajax_productonoff($object->id, 'status_buy');
+            } else {
+                print $object->getLibStatut(2,1);
+            }
             print '</td></tr>';
 
 			// Batch number management (to batch)

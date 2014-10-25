@@ -218,13 +218,7 @@ if ($action == 'add')
 		{
 			if ($i == 0)	// First entry
 			{
-				$usertodo=new User($db);
-				if ($value['id'] > 0)
-				{
-					$usertodo->fetch($value['id']);
-					$object->userownerid = $usertodo->id;
-				}
-				$object->usertodo = $usertodo;
+				if ($value['id'] > 0) $object->userownerid=$value['id'];
 				$object->transparency = (GETPOST("transparency")=='on'?1:0);
 			}
 
@@ -236,13 +230,7 @@ if ($action == 'add')
 
 	if (! $error && ! empty($conf->global->AGENDA_ENABLE_DONEBY))
 	{
-		$userdone=new User($db);
-		if ($_POST["doneby"] > 0)
-		{
-			$userdone->fetch($_POST["doneby"]);
-			$object->userdoneid = $userdone->id;
-		}
-		$object->userdone = $userdone;
+		if (GETPOST("doneby") > 0) $object->userdoneid = GETPOST("doneby","int");
 	}
 
 	$object->note = trim($_POST["note"]);
@@ -263,7 +251,7 @@ if ($action == 'add')
 	if (! empty($conf->phenix->enabled) && GETPOST('add_phenix') == 'on') $object->use_phenix=1;
 
 	// Check parameters
-	if (empty($object->usertodo))
+	if (empty($object->userownerid))
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
@@ -299,19 +287,22 @@ if ($action == 'add')
 			{
 				unset($_SESSION['assignedtouser']);
 
+				$moreparam='';
+				if ($user->id != $object->ownerid) $moreparam="usertodo=-1";	// We force to remove filter so created record is visible when going back to per user view.
+
 				$db->commit();
 				if (! empty($backtopage))
 				{
-					dol_syslog("Back to ".$backtopage);
-					header("Location: ".$backtopage);
+					dol_syslog("Back to ".$backtopage.($moreparam?(preg_match('/\?/',$backtopage)?'&'.$moreparam:'?'.$moreparam):''));
+					header("Location: ".$backtopage.($moreparam?(preg_match('/\?/',$backtopage)?'&'.$moreparam:'?'.$moreparam):''));
 				}
 				elseif($idaction)
 				{
-					header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction);
+					header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction.($moreparam?'&'.$moreparam:''));
 				}
 				else
 				{
-					header("Location: ".DOL_URL_ROOT.'/comm/action/index.php');
+					header("Location: ".DOL_URL_ROOT.'/comm/action/index.php'.($moreparam?'?'.$moreparam:''));
 				}
 				exit;
 			}
@@ -389,8 +380,6 @@ if ($action == 'update')
 
 		// Users
 		$listofuserid=array();
-		$assignedtouser=(! empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : 0);
-		if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>($user->id == $assignedtouser ? $transparency : ''));	// Owner first
 		if (! empty($_SESSION['assignedtouser']))	// Now concat assigned users
 		{
 			// Restore array with key with same value than param 'id'
@@ -400,21 +389,23 @@ if ($action == 'update')
 				if ($val['id'] > 0 && $val['id'] != $assignedtouser) $listofuserid[$val['id']]=$val;
 			}
 		}
+		else {
+			$assignedtouser=(! empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : 0);
+			if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>($user->id == $assignedtouser ? $transparency : ''));	// Owner first
+		}
 
-		$object->userassigned=array();	// Clear old content
+		$object->userassigned=array();	$object->userownerid=0; // Clear old content
+		$i=0;
 		foreach($listofuserid as $key => $val)
 		{
+			if ($i == 0) $object->userownerid = $val['id'];
 			$object->userassigned[$val['id']]=array('id'=>$val['id'], 'mandatory'=>0, 'transparency'=>($user->id == $val['id'] ? $transparency : ''));
+			$i++;
 		}
 
 		if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
 		{
-			$userdone=new User($db);
-			if ($_POST["doneby"])
-			{
-				$userdone->fetch($_POST["doneby"]);
-			}
-			$object->userdone = $userdone;
+			if (GETPOST("doneby")) $object->userdoneid=GETPOST("doneby","int");
 		}
 
 		// Check parameters
@@ -428,7 +419,7 @@ if ($action == 'update')
 		{
 			$result=$cactioncomm->fetch(GETPOST('actioncode'));
 		}
-		if (empty($object->usertodo))
+		if (empty($object->userownerid))
 		{
 			$error++; $donotclearsession=1;
 			$action = 'edit';
@@ -812,9 +803,6 @@ if ($id > 0)
 	if ($object->authorid > 0)		{ $tmpuser=new User($db); $res=$tmpuser->fetch($object->authorid); $object->author=$tmpuser; }
 	if ($object->usermodid > 0)		{ $tmpuser=new User($db); $res=$tmpuser->fetch($object->usermodid); $object->usermod=$tmpuser; }
 
-	if ($object->userownerid > 0)	{ $tmpuser=new User($db); $res=$tmpuser->fetch($object->userownerid); $object->usertodo=$tmpuser; }
-	if ($object->userdoneid > 0)	{ $tmpuser=new User($db); $res=$tmpuser->fetch($object->userdoneid); $object->userdone=$tmpuser; }
-
 
 	/*
 	 * Show tabs
@@ -1088,7 +1076,7 @@ if ($id > 0)
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
-			if (is_object($object->usertodo)) $listofuserid[$object->userownerid]=array('id'=>$object->userownerid,'transparency'=>$object->transparency);	// Owner first
+			if ($object->userownerid > 0) $listofuserid[$object->userownerid]=array('id'=>$object->userownerid,'transparency'=>$object->transparency);	// Owner first
 			if (! empty($object->userassigned))	// Now concat assigned users
 			{
 				// Restore array with key with same value than param 'id'
@@ -1115,7 +1103,12 @@ if ($id > 0)
 		if ($conf->global->AGENDA_ENABLE_DONEBY)
 		{
 			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-			if ($object->userdoneid > 0) print $object->userdone->getNomUrl(1);
+			if ($object->userdoneid > 0)
+			{
+				$tmpuser=new User($db);
+				$tmpuser->fetch($object->userdoneid);
+				print $tmpuser->getNomUrl(1);
+			}
 			print '</td></tr>';
 		}
 

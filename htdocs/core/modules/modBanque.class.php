@@ -182,7 +182,7 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON f.rowid = pf.fk_facture';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' WHERE ba.rowid = b.fk_account AND bch.rowid = b.fk_bordereau and bch.fk_bank_account=ba.rowid';
-		$this->export_sql_end[$r] .=' AND b.fk_type = "CHQ"';
+		$this->export_sql_end[$r] .=" AND b.fk_type = 'CHQ'";
 		$this->export_sql_end[$r] .=' AND p.fk_paiement = 7';
 		$this->export_sql_end[$r] .=' AND ba.entity = '.$conf->entity;
 		$this->export_sql_order[$r] =' ORDER BY b.datev, b.num_releve';

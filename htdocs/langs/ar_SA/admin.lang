@@ -45,6 +45,8 @@ ErrorModuleRequireDolibarrVersion=خطأ ، هذا النموذج يتطلب ن�
 ErrorDecimalLargerThanAreForbidden=خطأ, برنامج دوليبار <b>%s</b> الحالي لا يدعم دقة أعلى من الحالية
 DictionarySetup=Dictionary setup
 Dictionary=Dictionaries
+Chartofaccounts=Chart of accounts
+Fiscalyear=Fiscal years
 ErrorReservedTypeSystemSystemAuto=القيمة 'system' و 'systemauto' لهذا النوع محفوظ. يمكنك إستخدام 'user' كقيمة لإضافة السجل الخاص بك
 ErrorCodeCantContainZero=لا يمكن إستخدام القيمة 0 لهذا الكود
 DisableJavascript=Disable JavaScript and Ajax functions (Recommended for blind person or text browsers)
@@ -217,6 +219,7 @@ AutomaticIfJavascriptDisabled=تلقائيا إذا تم تعطيل جافاسك
 AvailableOnlyIfJavascriptNotDisabled=متاحا إلا إذا كان جافا سكريبت غير المعوقين
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=متاحا إلا إذا كان جافا سكريبت غير المعوقين
 Required=مطلوب
+UsedOnlyWithTypeOption=Used by some agenda option only
 Security=الأمن
 Passwords=كلمة السر
 DoNotStoreClearPassword=لا تخزن كلمات السر في قاعدة بيانات واضحة في
@@ -484,10 +487,6 @@ Module600Name=الإخطارات
 Module600Desc=إرسال الإشعارات عن طريق البريد الإلكتروني على بعض الفعاليات التجارية Dolibarr لطرف ثالث اتصالات
 Module700Name=التبرعات
 Module700Desc=التبرعات إدارة
-Module800Name=OSCommerce المباشر
-Module800Desc=وتظهر على واجهة OSCommerce أو متجر OSCSS مباشرة عن طريق الوصول إلى قواعد البيانات
-Module900Name=وكان من قبل OSCommerce
-Module900Desc=وتظهر على واجهة المحل OSCommerce الخدمات عبر الإنترنت. \\ nThis حدة requiere لك لتثبيت عناصر من / oscommerce_ws / ws_server الى OSCommerce الخادم الخاص بك. انظر في الملف التمهيدي / oscommerce_ws / ws_server.
 Module1200Name=فرس النبي
 Module1200Desc=فرس النبي التكامل
 Module1400Name=المحاسبة

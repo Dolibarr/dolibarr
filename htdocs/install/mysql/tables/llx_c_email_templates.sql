@@ -17,7 +17,7 @@
 -- Table with templates of emails
 -- ===================================================================
 
-create table llx_c_email_template
+create table llx_c_email_templates
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id

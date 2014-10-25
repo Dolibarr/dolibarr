@@ -155,5 +155,5 @@ WarningUsingThisBoxSlowDown=Attention, l'utilisation de cette boite provoque de 
 WarningClickToDialUserSetupNotComplete=La configuration ClickToDial pour votre compte utilisateur n'est pas complète (voir l'onglet ClickToDial sur votre fiche utilisateur)
 WarningNotRelevant=Opération non pertinente pour cet ensemble de données
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Fonction désactivé quand l'affichage est en mode optimisé pour les personnes aveugles ou les navigateurs textes.
-WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
-WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters
+WarningPaymentDateLowerThanInvoiceDate=La date de paiement (%s) est inférieure à la date de facturation (%s) de la facture %s.
+WarningTooManyDataPleaseUseMoreFilters=Trop de données. Utilisez des filtres plus précis.
