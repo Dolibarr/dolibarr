@@ -133,7 +133,6 @@ ErrorPHPNeedModule=Erreur, votre PHP doit avoir le module <b>%s</b> installé po
 ErrorOpenIDSetupNotComplete=Vous avez configuré Dolibarr pour accepter l'authentication OpenID, mais l'URL du service OpenID n'est pas défini dans la constante %s
 ErrorWarehouseMustDiffers=Les entrepôts source et destination doivent être différents
 ErrorBadFormat=Mauvais format
-ErrorPaymentDateLowerThanInvoiceDate=La date de paiement (%s) ne peut être inférieure à la date de facturaction (%s) de la facture %s.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Erreur, cet adhérent n'est lié à aucun tiers. Lier l'adhérent à un tiers existant ou créer un nouveau tiers pour le lier avant de créer l'adhésion avec facture.
 ErrorThereIsSomeDeliveries=Erreur, il y a des bordereaux de réception liées à ces expéditions. La suppression est refusée.
 
@@ -154,3 +153,4 @@ WarningUsingThisBoxSlowDown=Attention, l'utilisation de cette boite provoque de 
 WarningClickToDialUserSetupNotComplete=La configuration ClickToDial pour votre compte utilisateur n'est pas complète (voir l'onglet ClickToDial sur votre fiche utilisateur)
 WarningNotRelevant=Opération non pertinente pour cet ensemble de données
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Fonction désactivé quand l'affichage est en mode optimisé pour les personnes aveugles ou les navigateurs textes.
+WarningPaymentDateLowerThanInvoiceDate=La date de paiement (%s) est inférieure à la date de facturaction (%s) de la facture %s.

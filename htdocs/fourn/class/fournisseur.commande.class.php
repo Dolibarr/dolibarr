@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2013	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2014	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
@@ -135,7 +135,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (c.fk_mode_reglement = p.id)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
         $sql.= " WHERE c.entity = ".$conf->entity;
-        if ($ref) $sql.= " AND c.ref='".$ref."'";
+        if ($ref) $sql.= " AND c.ref='".$this->db->escape($ref)."'";
         else $sql.= " AND c.rowid=".$id;
 
         dol_syslog(get_class($this)."::fetch sql=".$sql,LOG_DEBUG);
@@ -191,6 +191,13 @@ class CommandeFournisseur extends CommonOrder
             $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
             $this->db->free($resql);
+            
+            // Retreive all extrafield
+            // fetch optionals attributes and labels
+            require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+            $extrafields=new ExtraFields($this->db);
+            $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+            $this->fetch_optionals($this->id,$extralabels);
 
             if ($this->statut == 0) $this->brouillon = 1;
 
@@ -1379,6 +1386,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function deleteline($idline, $notrigger=0)
     {
+        global $user,$langs,$conf;
         if ($this->statut == 0)
         {
         	$this->db->begin();
@@ -2008,7 +2016,8 @@ class CommandeFournisseur extends CommonOrder
     }
 
     /**
-     * Returns the translated input method
+     * Returns the translated input method of object (defined if $this->methode_commande_id > 0).
+     * This function make a sql request to get translation. No cache yet, try to not use it inside a loop.
      *
      * @return string
      */
@@ -2018,21 +2027,19 @@ class CommandeFournisseur extends CommonOrder
 
         if ($this->methode_commande_id > 0)
         {
-            $sql = "SELECT rowid, code, libelle";
+            $sql = "SELECT rowid, code, libelle as label";
             $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_method';
             $sql.= " WHERE active=1 AND rowid = ".$db->escape($this->methode_commande_id);
 
             $query = $db->query($sql);
-
             if ($query && $db->num_rows($query))
             {
-                $result = $db->fetch_object($query);
+                $obj = $db->fetch_object($query);
 
-                $string = $langs->trans($result->code);
-
-                if ($string == $result->code)
+                $string = $langs->trans($obj->code);
+                if ($string == $obj->code)
                 {
-                    $string = $obj->libelle != '-' ? $obj->libelle : '';
+                    $string = $obj->label != '-' ? $obj->label : '';
                 }
 
                 return $string;

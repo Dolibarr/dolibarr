@@ -1,12 +1,12 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Destailleur Laurent		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ class Contrat extends CommonObject
 	public $table_element='contrat';
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
 	var $ref;
@@ -411,7 +412,7 @@ class Contrat extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
 		if ($ref)
 		{
-			$sql.= " WHERE ref='".$ref."'";
+			$sql.= " WHERE ref='".$this->db->escape($ref)."'";
 			$sql.= " AND entity IN (".getEntity('contract').")";
 		}
 		else $sql.= " WHERE rowid=".$id;
@@ -1964,7 +1965,7 @@ class ContratLigne
 		$sql.= " t.commentaire";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as t";
 		if ($id)  $sql.= " WHERE t.rowid = ".$id;
-		if ($ref) $sql.= " WHERE t.rowid = '".$ref."'";
+		if ($ref) $sql.= " WHERE t.rowid = '".$this->db->escape($ref)."'";
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);

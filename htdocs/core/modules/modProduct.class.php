@@ -219,6 +219,7 @@ class modProduct extends DolibarrModules
 				'pr.price_min'=>"MinPriceHT",'pr.price_min_ttc'=>"MinPriceTTC",
 				'pr.tva_tx'=>'VATRate',
 				'pr.date_price'=>'DateCreation');
+			//$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.length'=>"Number",'p.surface'=>"Number",'p.volume'=>"Number",'p.weight'=>"Number",'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Number",'p.price_ttc'=>"Number",'p.tva_tx'=>'Number','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date');
 			$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",
 				'pr.price_base_type'=>"product",'pr.price_level'=>"product",'pr.price'=>"product",
 				'pr.price_ttc'=>"product",

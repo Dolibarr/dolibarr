@@ -43,7 +43,7 @@ function dol_basename($pathfile)
  *  @param	string		$types        	Can be "directories", "files", or "all"
  *  @param	int			$recursive		Determines whether subdirectories are searched
  *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- *  @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
+ *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
  *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
@@ -597,7 +597,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	global $conf, $db, $user, $langs;
 	global $object, $hookmanager;
 
-	$error=0;
+	$reshook=0;
 	$file_name = $dest_file;
 
 	if (empty($nohook))
@@ -663,8 +663,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		}
 
 		// Security:
-		// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans
-		// les noms de fichiers.
+		// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 		if (preg_match('/^\./',$dest_file) || preg_match('/\.\./',$dest_file) || preg_match('/[<>|]/',$dest_file))
 		{
 			dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
@@ -677,7 +676,13 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		$reshook=$hookmanager->executeHooks('moveUploadedFile', $parameters, $object);
 	}
 
-	if (empty($reshook))
+	if ($reshook < 0)	// At least one blocking error returned by one hook
+	{
+		$errmsg = join(',', $hookmanager->errors);
+		if (empty($errmsg)) $errmsg = 'ErrorReturnedBySomeHooks';	// Should not occurs. Added if hook is bugged and does not set ->errors when there is error.
+		return $errmsg;
+	}
+	elseif (empty($reshook))
 	{
 		// The file functions must be in OS filesystem encoding.
 		$src_file_osencoded=dol_osencode($src_file);
@@ -710,8 +715,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			return -3;	// Unknown error
 		}
 	}
-	else
-		return $reshook;
+
+	return 1;	// Success
 }
 
 /**
@@ -1284,7 +1289,7 @@ function dol_uncompress($inputfile,$outputdir)
  *
  * @param 	string		$dir			Directory to scan
  * @param	string		$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- * @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	int			$nohook			Disable all hooks
  * @return	string						Full path to most recent file
  */

@@ -2,6 +2,41 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 3.6.2 compared to 3.6.1 *****
+- Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice
+- Fix: bug 1588 : relative discount
+- Fix: label of input method not tranlated.
+- Fix: box of customer and propsects were not correctly disabled.
+- Fix: right and error management #1961
+- Fix: Fix Error when trying to clone an Order #1943
+
+***** ChangeLog for 3.6.1 compared to 3.6.* *****
+For users:
+- Fix: Can upload files on services.
+- Fix: sql errors on updat fichinter.
+- Fix: debian script syntax error.
+- Fix: error "menu param is not inside list" into pos module.
+- Fix: Salary payments are not reflected on the reporting sheets.
+- Fix: Unsubscribe emailing not working.
+- Fix: Trigger on create category call failed because user is not passed on card.
+- Fix: list event view lost type event filter.
+- Fix: Save also code event.
+- Fix: VAT payment - Add control on field date value.
+- Fix: Salaries payment - Field date value is now required and add control on it.
+- Fix: Iban was used instead of Bic into SEPA file.
+- Fix: Must unaccent strings into SEPA file.
+- Fix: Extrafield feature select from table should try to translate multiple column when not needed 
+- Fix: cents for indian ruppes are calle paisa and paise.
+- Fix: Invoices payments may be older than invoices.
+- Fix: Withdrawal total amount is double
+- Fix: [ bug #1593 ] Spanish Localtax IRPF not being calculated since 3.6.0 in supplier invoices when adding a line
+- Fix: Web service categorie WDSL declaration is correct
+- Fix: ErrorBadValueForParamNotAString was displayed in virtual product if no base price defined
+- Fix: Category creation failed and no message output
+- Fix: Lanf for Payment Type
+- Fix: PHPCheckstyle 1.5.5
+
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
 - New: Update ckeditor to version 4.
@@ -127,9 +162,18 @@ Fix: Link product, In list view and label product.
 Fix: visible task into area "time" for "My task" must limit task to tasks i am assigned to.
 Fix: When disabled, all fields to add time into task line must be disabled.
 Fix: Missing include files.lib.php in some pages that use dol_delete_recursive
-Fix: Missing include files.lib.php in some pages ti use dol_delete_recursive.
 Fix: [ bug #1558 ] Product/service edit page title shows new Ref instead of old ref.
 Fix: [ bug #1553 ] Saving User displays setup removes menu.
+Fix: [ bug #1544 ] Can remove date from invoice.
+Fix: list event view lost type event filter.
+Fix: Add code save on create event.
+Fix: SQL injection.
+Fix: [ bug #1589 ] Menu type in "Edit menu" page is not translated
+Fix: [ bug #1591 ] Linked object block shows Total HT/TTC even if not having permission to read them
+Fix: [ bug #1577 ] When creating new Private individual third, selected third type is ignored
+Fix: [ bug #1555 ] Update accountancy code of products does not throw PRODUCT_MODIFY trigger
+Fix: [ bug #1548 ] Supplier payment card shows type in French
+Fix: [ bug #1546 ] Incorrect page number when searching in the list of bank transactions
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.

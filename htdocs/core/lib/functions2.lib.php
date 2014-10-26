@@ -1107,7 +1107,7 @@ function numero_semaine($time)
  *	Convertit une masse d'une unite vers une autre unite
  *
  *	@param	float	$weight    		Masse a convertir
- *	@param  int		&$from_unit 		Unite originale en puissance de 10
+ *	@param  int		$from_unit 		Unite originale en puissance de 10
  *	@param  int		$to_unit   		Nouvelle unite  en puissance de 10
  *	@return float	        		Masse convertie
  */
@@ -1142,7 +1142,7 @@ function weight_convert($weight,&$from_unit,$to_unit)
  *
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
- *	@param	User	&$user      Object user
+ *	@param	User	$user      Object user
  *	@param	array	$tab        Tableau (cle=>valeur) des parametres a sauvegarder
  *	@return int         		<0 if KO, >0 if OK
  *
@@ -1220,7 +1220,7 @@ function dol_print_reduction($reduction,$langs)
     $string = '';
     if ($reduction == 100)
     {
-        $string = $langs->trans("Offered");
+        $string = $langs->transnoentities("Offered");
     }
     else
     {
@@ -1325,7 +1325,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
-                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0,true); // Disable hook for the moment
+                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0);
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
                     }
                 }
