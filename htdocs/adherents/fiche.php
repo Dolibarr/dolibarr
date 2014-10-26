@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2013 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -707,7 +708,7 @@ else
 	{
 		/* ************************************************************************** */
 		/*                                                                            */
-		/* Fiche creation                                                             */
+		/* Creation card                                                              */
 		/*                                                                            */
 		/* ************************************************************************** */
 		$object->canvas=$canvas;
@@ -870,7 +871,7 @@ else
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-		$form->select_date(($object->naiss ? $object->naiss : -1),'naiss','','',1,'formsoc');
+		$form->select_date(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
 
 		// Profil public
