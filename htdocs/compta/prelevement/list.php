@@ -122,11 +122,11 @@ if ($result)
 
     print '<form action="list.php" method="GET">';
     print '<tr class="liste_titre">';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $search_line.'" size="6"></td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. $search_bon.'" size="8"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. dol_escape_htmltag($search_line).'" size="6"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. dol_escape_htmltag($search_bon).'" size="8"></td>';
     print '<td>&nbsp;</td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" value="'. $search_societe.'" size="12"></td>';
-    print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. $search_code.'" size="8"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" value="'. dol_escape_htmltag($search_societe).'" size="12"></td>';
+    print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. dol_escape_htmltag($search_code).'" size="8"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
