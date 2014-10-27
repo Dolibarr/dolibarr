@@ -56,7 +56,7 @@ class box_factures extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$facturestatic=new Facture($db);
 
-		$text = $langs->trans("BoxTitleLastCustomerBills",$max);
+		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerBills",$max);
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text)
@@ -64,7 +64,7 @@ class box_factures extends ModeleBoxes
 
 		if ($user->rights->facture->lire)
 		{
-			$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.datef as df";
+			$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.total as total_ht, f.datef as df";
 			$sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
 			$sql.= ", s.nom as name, s.rowid as socid";
 			$sql.= ", f.date_lim_reglement as datelimite";
@@ -75,7 +75,8 @@ class box_factures extends ModeleBoxes
 			$sql.= " AND f.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " ORDER BY f.tms DESC";
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
+            else $sql.= " ORDER BY f.tms DESC, f.facnumber DESC ";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -91,7 +92,8 @@ class box_factures extends ModeleBoxes
 				{
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
-					$datec=$db->jdate($objp->datec);
+					$date=$db->jdate($objp->df);
+					$datem=$db->jdate($objp->tms);
 
 					$picto='bill';
 					if ($objp->type == 1) $picto.='r';
@@ -118,10 +120,14 @@ class box_factures extends ModeleBoxes
                     'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-                    'text' => dol_print_date($datec,'day'),
+                    'text' => price($objp->total_ht),
 					);
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
+					$this->info_box_contents[$i][5] = array('td' => 'align="right"',
+                    'text' => dol_print_date($date,'day'),
+					);
+
+					$this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
 
 					$i++;
