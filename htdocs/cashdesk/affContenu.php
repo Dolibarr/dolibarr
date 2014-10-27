@@ -45,16 +45,7 @@ else
 
 
 
-// Right area with selected articles (shopping cart)
-print '<div class="liste_articles">';
-
-require ('tpl/liste_articles.tpl.php');
-
-$obj_facturation->prixTotalHt($lst_total_ht);
-$obj_facturation->prixTotalTtc($lst_total_ttc);
-
-print '</div>';
-
+// Left area with selected articles (shopping cart)
 print '<div class="principal">';
 
 $page=GETPOST('menu','alpha');
@@ -77,5 +68,19 @@ else
 }
 
 print '</div>';
+
+
+
+
+
+// Right area with selected articles (shopping cart)
+print '<div class="liste_articles">';
+
+require ('tpl/liste_articles.tpl.php');
+$obj_facturation->prixTotalHt($lst_total_ht);
+$obj_facturation->prixTotalTtc($lst_total_ttc);
+
+print '</div>';
+
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
