@@ -124,7 +124,7 @@ if (empty($reshook))
     // Barcode value
     if ($action ==	'setbarcode' && $createbarcode)
     {
-    	$result=$object->check_barcode(GETPOST('barcode'),GETPOT('barcode_type_code'));
+    	$result=$object->check_barcode(GETPOST('barcode'),GETPOST('barcode_type_code'));
 
 		if ($result >= 0)
 		{
