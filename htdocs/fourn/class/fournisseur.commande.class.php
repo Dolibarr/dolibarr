@@ -317,9 +317,10 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param	User	$user			Validator User
      *	@param	int		$idwarehouse	Id of warehouse to use for stock decrease
+     *  @param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
      *	@return	int						<0 if KO, >0 if OK
      */
-    function valid($user,$idwarehouse=0)
+    function valid($user,$idwarehouse=0,$notrigger=0)
     {
         global $langs,$conf;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -342,12 +343,13 @@ class CommandeFournisseur extends CommonOrder
                 $num = $this->getNextNumRef($soc);
             }
             else
-            {
+			{
                 $num = $this->ref;
             }
+            $this->newref = $num;
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
-            $sql.= " SET ref='".$num."',";
+            $sql.= " SET ref='".$this->db->escape($num)."',";
             $sql.= " fk_statut = 1,";
             $sql.= " date_valid='".$this->db->idate(dol_now())."',";
             $sql.= " fk_user_valid = ".$user->id;
@@ -361,9 +363,17 @@ class CommandeFournisseur extends CommonOrder
                 $error++;
             }
 
+            if (! $error && ! $notrigger)
+            {
+				// Call trigger
+				$result=$this->call_trigger('ORDER_SUPPLIER_VALIDATE',$user);
+				if ($result < 0) $error++;
+				// End call triggers
+            }
+
             if (! $error)
             {
-            	$this->oldref='';
+	            $this->oldref = $this->ref;
 
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
@@ -380,11 +390,17 @@ class CommandeFournisseur extends CommonOrder
 
                         if (@rename($dirsource, $dirdest))
                         {
-                        	$this->oldref = $oldref;
-
                             dol_syslog("Rename ok");
-                            // Suppression ancien fichier PDF dans nouveau rep
-                            dol_delete_file($dirdest.'/'.$oldref.'*.*');
+                            // Rename docs starting with $oldref with $newref
+	                        $listoffiles=dol_dir_list($conf->fournisseur->dir_output.'/commande/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        foreach($listoffiles as $fileentry)
+	                        {
+	                        	$dirsource=$fileentry['name'];
+	                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+	                        	$dirsource=$fileentry['path'].'/'.$dirsource;
+	                        	$dirdest=$fileentry['path'].'/'.$dirdest;
+	                        	@rename($dirsource, $dirdest);
+	                        }
                         }
                     }
                 }
@@ -395,18 +411,6 @@ class CommandeFournisseur extends CommonOrder
                 $result = 1;
                 $this->log($user, 1, time());	// Statut 1
                 $this->ref = $num;
-            }
-
-            if (! $error)
-            {
-				// Call trigger
-				$result=$this->call_trigger('ORDER_SUPPLIER_VALIDATE',$user);
-				if ($result < 0)
-                {
-                    $this->db->rollback();
-                    return -1;
-                }
-				// End call triggers
             }
 
             if (! $error)
@@ -619,9 +623,10 @@ class CommandeFournisseur extends CommonOrder
                 $num = $this->getNextNumRef($soc);
             }
             else
-            {
+			{
                 $num = $this->ref;
             }
+            $this->newref = $num;
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql.= " SET ref='".$this->db->escape($num)."',";

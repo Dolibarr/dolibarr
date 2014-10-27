@@ -374,9 +374,10 @@ class Fichinter extends CommonObject
 	 *	Validate a intervention
 	 *
 	 *	@param		User		$user		User that validate
-	 *	@return		int			<0 if KO, >0 if OK
+     *  @param		int			$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function setValid($user)
+	function setValid($user, $notrigger=0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -398,6 +399,7 @@ class Fichinter extends CommonObject
 			{
 				$num = $this->ref;
 			}
+            $this->newref = $num;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET fk_statut = 1";
@@ -416,9 +418,17 @@ class Fichinter extends CommonObject
 				$error++;
 			}
 
+			if (! $error && ! $notrigger)
+			{
+                // Call trigger
+                $result=$this->call_trigger('FICHINTER_VALIDATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+			}
+
 			if (! $error)
 			{
-				$this->oldref = '';
+				$this->oldref = $this->ref;
 
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref))
@@ -426,20 +436,26 @@ class Fichinter extends CommonObject
 					// Rename of object directory ($this->ref = old ref, $num = new ref)
 					// to  not lose the linked files
 					$oldref = dol_sanitizeFileName($this->ref);
-					$snum = dol_sanitizeFileName($num);
+					$newref = dol_sanitizeFileName($num);
 					$dirsource = $conf->ficheinter->dir_output.'/'.$oldref;
-					$dirdest = $conf->ficheinter->dir_output.'/'.$snum;
+					$dirdest = $conf->ficheinter->dir_output.'/'.$newref;
 					if (file_exists($dirsource))
 					{
-						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+						dol_syslog(get_class($this)."::setValid rename dir ".$dirsource." into ".$dirdest);
 
 						if (@rename($dirsource, $dirdest))
 						{
-							$this->oldref = $oldref;
-
-							dol_syslog("Rename ok");
-							// Suppression ancien fichier PDF dans nouveau rep
-							dol_delete_file($conf->ficheinter->dir_output.'/'.$snum.'/'.$oldref.'*.*');
+	                        dol_syslog("Rename ok");
+	                        // Rename docs starting with $oldref with $newref
+	                        $listoffiles=dol_dir_list($conf->ficheinter->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        foreach($listoffiles as $fileentry)
+	                        {
+	                        	$dirsource=$fileentry['name'];
+	                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+	                        	$dirsource=$fileentry['path'].'/'.$dirsource;
+	                        	$dirdest=$fileentry['path'].'/'.$dirdest;
+	                        	@rename($dirsource, $dirdest);
+	                        }
 						}
 					}
 				}
@@ -452,14 +468,6 @@ class Fichinter extends CommonObject
 				$this->statut=1;
 				$this->brouillon=0;
 				$this->date_validation=$now;
-			}
-
-			if (! $error)
-			{
-                // Call trigger
-                $result=$this->call_trigger('FICHINTER_VALIDATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
 			}
 
 			if (! $error)

@@ -111,10 +111,14 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes') {
-	if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers')) {
+if ($action == 'confirm_clone' && $confirm == 'yes')
+{
+	if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+	{
 		setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
-	} else {
+	}
+	else
+	{
 		if ($object->id > 0) {
 			$result = $object->createFromClone($socid);
 			if ($result > 0) {
@@ -129,7 +133,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes') {
 }
 
 // Delete proposal
-else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->propal->supprimer) {
+else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->propal->supprimer)
+{
 	$result = $object->delete($user);
 	if ($result > 0) {
 		header('Location: ' . DOL_URL_ROOT . '/comm/propal/list.php');
@@ -141,7 +146,8 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->prop
 }
 
 // Remove line
-else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->propal->creer) {
+else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->propal->creer)
+{
 	$result = $object->deleteline($lineid);
 	// reorder lines
 	if ($result)
@@ -164,13 +170,17 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 }
 
 // Validation
-else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->propal->valider) {
+else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->propal->valider)
+{
 	$result = $object->valid($user);
-	if ($result >= 0) {
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	if ($result >= 0)
+	{
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
 			// Define output language
 			$outputlangs = $langs;
-			if (! empty($conf->global->MAIN_MULTILANGS)) {
+			if (! empty($conf->global->MAIN_MULTILANGS))
+			{
 				$outputlangs = new Translate("", $conf);
 				$newlang = (GETPOST('lang_id') ? GETPOST('lang_id') : $object->thirdparty->default_lang);
 				$outputlangs->setDefaultLang($newlang);
@@ -185,7 +195,8 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 	}
 }
 
-else if ($action == 'setdate' && $user->rights->propal->creer) {
+else if ($action == 'setdate' && $user->rights->propal->creer)
+{
 	$datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
 	if (empty($datep)) {
@@ -198,23 +209,29 @@ else if ($action == 'setdate' && $user->rights->propal->creer) {
 		if ($result < 0)
 			dol_print_error($db, $object->error);
 	}
-} else if ($action == 'setecheance' && $user->rights->propal->creer) {
+}
+else if ($action == 'setecheance' && $user->rights->propal->creer)
+{
 	$result = $object->set_echeance($user, dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 	if ($result < 0)
 		dol_print_error($db, $object->error);
-} else if ($action == 'setdate_livraison' && $user->rights->propal->creer) {
+}
+else if ($action == 'setdate_livraison' && $user->rights->propal->creer)
+{
 	$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 	if ($result < 0)
 		dol_print_error($db, $object->error);
 }
 
 // Positionne ref client
-else if ($action == 'set_ref_client' && $user->rights->propal->creer) {
+else if ($action == 'set_ref_client' && $user->rights->propal->creer)
+{
 	$object->set_ref_client($user, $_POST['ref_client']);
 }
 
 // Create proposal
-else if ($action == 'add' && $user->rights->propal->creer) {
+else if ($action == 'add' && $user->rights->propal->creer)
+{
 	$object->socid = $socid;
 	$object->fetch_thirdparty();
 

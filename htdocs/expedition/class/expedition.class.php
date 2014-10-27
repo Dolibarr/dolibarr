@@ -503,9 +503,10 @@ class Expedition extends CommonObject
 	 *  Validate object and update stock if option enabled
 	 *
 	 *  @param      User		$user       Object user that validate
+     *  @param		int			$notrigger	1=Does not execute triggers, 0= execuete triggers
 	 *  @return     int						<0 if OK, >0 if KO
 	 */
-	function valid($user)
+	function valid($user, $notrigger=0)
 	{
 		global $conf, $langs;
 
@@ -547,6 +548,7 @@ class Expedition extends CommonObject
 		{
 			$numref = "EXP".$this->id;
 		}
+        $this->newref = $numref;
 
 		$now=dol_now();
 
@@ -617,9 +619,17 @@ class Expedition extends CommonObject
 			}
 		}
 
+		if (! $error && ! $notrigger)
+		{
+            // Call trigger
+            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
+		}
+
 		if (! $error)
 		{
-			$this->oldref='';
+            $this->oldref = $this->ref;
 
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
@@ -636,11 +646,17 @@ class Expedition extends CommonObject
 
 					if (@rename($dirsource, $dirdest))
 					{
-						$this->oldref = $oldref;
-
-						dol_syslog("Rename ok");
-						// Suppression ancien fichier PDF dans nouveau rep
-						dol_delete_file($dirdest.'/'.$oldref.'*.*');
+					    dol_syslog("Rename ok");
+                        // Rename docs starting with $oldref with $newref
+                        $listoffiles=dol_dir_list($conf->expedition->dir_output.'/sending/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+                        foreach($listoffiles as $fileentry)
+                        {
+                        	$dirsource=$fileentry['name'];
+                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+                        	$dirsource=$fileentry['path'].'/'.$dirsource;
+                        	$dirdest=$fileentry['path'].'/'.$dirdest;
+                        	@rename($dirsource, $dirdest);
+                        }
 					}
 				}
 			}
@@ -651,14 +667,6 @@ class Expedition extends CommonObject
 		{
 			$this->ref = $numref;
 			$this->statut = 1;
-		}
-
-		if (! $error)
-		{
-            // Call trigger
-            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);
-            if ($result < 0) { $error++; }
-            // End call triggers
 		}
 
 		if (! $error)

@@ -1326,67 +1326,77 @@ class Propal extends CommonObject
           {
             	$num = $this->ref;
             }
+            $this->newref = $num;
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
             $sql.= " SET ref = '".$num."',";
             $sql.= " fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-            dol_syslog(get_class($this).'::valid', LOG_DEBUG);
-            if ($this->db->query($sql))
+            dol_syslog(get_class($this)."::valid", LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				dol_print_error($this->db);
+				$error++;
+			}
+
+   			// Trigger calls
+			if (! $error && ! $notrigger)
+			{
+                // Call trigger
+                $result=$this->call_trigger('PROPAL_VALIDATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+
+            if (! $error)
             {
-                if (! $notrigger)
-                {
-                    // Call trigger
-                    $result=$this->call_trigger('PROPAL_VALIDATE',$user);
-                    if ($result < 0) { $error++; }
-                    // End call triggers
-                }
+            	$this->oldref = $this->ref;
 
-            	if (! $error)
-				{
-					// Rename directory if dir was a temporary ref
-					if (preg_match('/^[\(]?PROV/i', $this->ref))
-					{
-						// Rename of propal directory ($this->ref = old ref, $num = new ref)
-						// to  not lose the linked files
-						$oldref = dol_sanitizeFileName($this->ref);
-						$newref = dol_sanitizeFileName($num);
-						$dirsource = $conf->propal->dir_output.'/'.$oldref;
-						$dirdest = $conf->propal->dir_output.'/'.$newref;
-						if (file_exists($dirsource))
-						{
-							dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+            	// Rename directory if dir was a temporary ref
+            	if (preg_match('/^[\(]?PROV/i', $this->ref))
+            	{
+            		// Rename of propal directory ($this->ref = old ref, $num = new ref)
+            		// to  not lose the linked files
+            		$oldref = dol_sanitizeFileName($this->ref);
+            		$newref = dol_sanitizeFileName($num);
+            		$dirsource = $conf->propal->dir_output.'/'.$oldref;
+            		$dirdest = $conf->propal->dir_output.'/'.$newref;
 
-							if (@rename($dirsource, $dirdest))
-							{
+            		if (file_exists($dirsource))
+            		{
+            			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+            			if (@rename($dirsource, $dirdest))
+            			{
+            				dol_syslog("Rename ok");
+            				// Rename docs starting with $oldref with $newref
+            				$listoffiles=dol_dir_list($conf->propal->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+            				foreach($listoffiles as $fileentry)
+            				{
+            					$dirsource=$fileentry['name'];
+            					$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+            					$dirsource=$fileentry['path'].'/'.$dirsource;
+            					$dirdest=$fileentry['path'].'/'.$dirdest;
+            					@rename($dirsource, $dirdest);
+            				}
+            			}
+            		}
+            	}
 
-								dol_syslog("Rename ok");
-								// Deleting old PDF in new rep
-								dol_delete_file($conf->propal->dir_output.'/'.$newref.'/'.$oldref.'*.*');
-							}
-						}
-					}
+            	$this->ref=$num;
+            	$this->brouillon=0;
+            	$this->statut = 1;
+            	$this->user_valid_id=$user->id;
+            	$this->datev=$now;
 
-					$this->ref=$num;
-                    $this->brouillon=0;
-                    $this->statut = 1;
-                    $this->user_valid_id=$user->id;
-                    $this->datev=$now;
-
-                    $this->db->commit();
-                    return 1;
-                }
-                else
-				{
-                    $this->db->rollback();
-                    return -2;
-                }
+            	$this->db->commit();
+            	return 1;
             }
             else
 			{
-                $this->db->rollback();
-                return -1;
+            	$this->db->rollback();
+            	return -1;
             }
         }
     }
