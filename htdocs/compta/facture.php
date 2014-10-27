@@ -1158,7 +1158,11 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
 		$error ++;
 	}
-
+	if ($qty < 0) {
+		$langs->load("errors");
+		setEventMessage($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), 'errors');
+		$error ++;
+	}
 	if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod))) {
 		$ret = $object->fetch($id);
 		if ($ret < 0) {
@@ -1320,7 +1324,7 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
-				unset($_POST ['prod_entry_mode']);
+				unset($_POST['prod_entry_mode']);
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
@@ -1359,9 +1363,9 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 	}
 }
 
-elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('cancel')) {
-	if (! $object->fetch($id) > 0)
-		dol_print_error($db);
+elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('cancel'))
+{
+	if (! $object->fetch($id) > 0)	dol_print_error($db);
 	$object->fetch_thirdparty();
 
 	// Clean parameters
@@ -1372,6 +1376,7 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 	$description = dol_htmlcleanlastbr(GETPOST('product_desc'));
 	$pu_ht = GETPOST('price_ht');
 	$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+	$qty = GETPOST('qty');
 
 	// Define info_bits
 	$info_bits = 0;
@@ -1428,10 +1433,15 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 			$error ++;
 		}
 	}
+	if ($qty < 0) {
+		$langs->load("errors");
+		setEventMessage($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), 'errors');
+		$error ++;
+	}
 
 	// Update line
 	if (! $error) {
-		$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, 0, $array_option);
+		$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'), $date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, 0, $array_option);
 
 		if ($result >= 0) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1463,6 +1473,8 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 			unset($_POST['product_desc']);
 			unset($_POST['fournprice']);
 			unset($_POST['buying_price']);
+			unset($_POST['np_marginRate']);
+			unset($_POST['np_markRate']);
 		} else {
 			setEventMessage($object->error, 'errors');
 		}
