@@ -131,12 +131,12 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='50,50,130';
-	if ($dol_use_jmobile)
+	/*if ($dol_use_jmobile)
 	{
     	$conf->global->THEME_ELDY_BACKTABCARD1='245,245,245';    // topmenu
 		$conf->global->THEME_ELDY_BACKTABCARD2='245,245,245';
 		$conf->global->THEME_ELDY_BACKTABACTIVE='245,245,245';
-	}
+	}*/
 }
 
 $colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
@@ -223,6 +223,7 @@ body {
 	background-color: #FFFFFF;
 <?php } else { ?>
 	background: <?php print $colorbackbody; ?>;
+	/* background-image: url("<?php print DOL_URL_ROOT.'/theme/eldy/img/background.png'; ?>"); */
 <?php } ?>
 	color: #101010;
 	font-size: <?php print $fontsize ?>px;
@@ -409,6 +410,21 @@ th .button {
 .cursorpointer {
 	cursor: pointer;
 }
+.badge {
+	display: inline-block;
+	min-width: 10px;
+	padding: 2px 5px;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 0.9em;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	background-color: #777;
+	border-radius: 10px;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -816,6 +832,9 @@ foreach($mainmenuusedarray as $val)
 .bodylogin
 {
 	background: #f0f0f0;
+	/*-moz-box-shadow:    inset 0 0 10px #000000;
+   	-webkit-box-shadow: inset 0 0 10px #000000;
+   	box-shadow:         inset 0 0 10px #000000;*/
 }
 .login_vertical_align {
 	padding: 10px;
@@ -985,9 +1004,9 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     background-repeat:repeat-x;
 <?php } ?>
     border-left: 1px solid #AAA;
-    border-right: 1px solid #CCC;
-    border-bottom: 1px solid #CCC;
-    border-top: 1px solid #CCC;
+    border-right: 1px solid #BBB;
+    border-bottom: 1px solid #BBB;
+    border-top: 1px solid #BBB;
     border-radius: 5px;
 	-moz-border-radius: 5px;
     -moz-box-shadow: 3px 3px 4px #DDD;
@@ -1325,7 +1344,8 @@ div.tabs {
 /*    margin: 0px 0px 2px 6px;
     padding: 0px 6px 3px 0px; */
     text-align: <?php print $left; ?>;
-    margin-left: 4px !important;
+    margin-left: 6px !important;
+    margin-right: 6px !important;
 	clear:both;
 	height:100%;
 }
@@ -1341,10 +1361,10 @@ div.tabBar {
     -moz-border-radius:6px;
     -webkit-border-radius: 6px;
 	border-radius: 6px;
-    border-right: 1px solid #CCCCCC;
-    border-bottom: 1px solid #CCCCCC;
-    border-left: 1px solid #D0D0D0;
-    border-top: 1px solid #D8D8D8;
+    border-right: 1px solid #BBB;
+    border-bottom: 1px solid #BBB;
+    border-left: 1px solid #BBB;
+    border-top: 1px solid #CCC;
 	width: auto;
 <?php if ($usecss3) { ?>
 	background-image: -o-linear-gradient(bottom, rgba(<?php echo $colorbacktabcard1; ?>, 0.5) 25%, rgba(<?php echo $colorbacktabcard2; ?>, 0.5) 100%);
@@ -1400,9 +1420,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 
 	border-bottom: none;
-	border-right: 1px solid #CCCCCC;
-	border-left: 1px solid #D0D0D0;
-	border-top: 1px solid #D8D8D8;
+	border-right: 1px solid #BBB;
+	border-left: 1px solid #BBB;
+	border-top: 1px solid #CCC;
 
 <?php if ($usecss3) { ?>
     background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
@@ -1655,7 +1675,7 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 }
 
 table.border td, div.border div div.tagtd {
-	padding: 1px 2px 1px 2px;
+	padding: 2px 2px 2px 2px;
 	border: 1px solid #D0D0D0;
 	border-collapse: collapse;
 }
@@ -2119,9 +2139,11 @@ div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(25
 div.dolgraph div.legend table tbody tr { height: auto; }
 
 .photo {
-border: 0px;
-/* filter:alpha(opacity=55); */
-/* opacity:.55; */
+	border: 0px;
+}
+.photowithmargin {
+	margin-bottom: 2px;
+	margin-top: 2px;
 }
 
 .logo_setup
@@ -2959,9 +2981,9 @@ a.ui-link {
 }
 
 /* Warning: setting this may make screen not beeing refreshed after a combo selection */
-.ui-body-c {
+/*.ui-body-c {
 	background: #fff;
-}
+}*/
 
 div.ui-radio, div.ui-checkbox
 {

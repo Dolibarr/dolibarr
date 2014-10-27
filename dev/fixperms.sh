@@ -25,4 +25,6 @@ then
 	find ./htdocs -type f -iname "*.php" -exec chmod a-x {} \; 
 	chmod a+x ./scripts/*/*.php
 	chmod a+x ./scripts/*/*.sh
+	chmod g-w ./scripts/*/*.php
+	chmod g-w ./scripts/*/*.sh
 fi

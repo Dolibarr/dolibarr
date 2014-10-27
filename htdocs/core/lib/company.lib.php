@@ -67,7 +67,7 @@ function societe_prepare_head($object)
     if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
     {
         $head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
-        $head[$h][1] = $langs->trans("Contact");
+        $head[$h][1] = $langs->trans("ContactsAddresses");
         $head[$h][2] = 'contact';
         $h++;
     }
@@ -128,10 +128,10 @@ function societe_prepare_head($object)
         	else {
         		dol_print_error($db);
         	}
-        	 
+
         	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
         	$head[$h][1] = $langs->trans("Notifications");
-			if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+			if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
         	$head[$h][2] = 'notify';
         	$h++;
         }
@@ -142,7 +142,7 @@ function societe_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
         $head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.$object->id;
         $head[$h][1] = $langs->trans("Note");
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
         $head[$h][2] = 'note';
         $h++;
 
@@ -152,7 +152,7 @@ function societe_prepare_head($object)
         $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
-		if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+		if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
         $head[$h][2] = 'document';
         $h++;
     }
@@ -492,7 +492,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                 $projectstatic = new Project($db);
 
                 $i=0;
-                $var=true;
+                $var=false;
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($result);
@@ -521,8 +521,9 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                 }
             }
             else
-            {
-                print '<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
+			{
+                $var = false;
+            	print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }
@@ -680,7 +681,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $result = $db->query($sql);
     $num = $db->num_rows($result);
 
-	$var=true;
+	$var=false;
 	if ($num)
     {
         $i=0;

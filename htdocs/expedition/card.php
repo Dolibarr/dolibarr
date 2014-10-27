@@ -1042,7 +1042,7 @@ else if ($id || $ref)
 		}
 		/*
 		 * Confirmation de l'annulation
-		*/
+		 */
 		if ($action == 'annuler')
 		{
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
@@ -1434,7 +1434,7 @@ else if ($id || $ref)
 					$entrepot = new Entrepot($db);
 					$entrepot->fetch($lines[$i]->entrepot_id);
 					print $entrepot->getNomUrl(1);
-				} 
+				}
 				else if (count($lines[$i]->details_entrepot) > 1)
 				{
 					$detail = '';
@@ -1539,7 +1539,7 @@ else if ($id || $ref)
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans($label).'</a>';
 			}
 		}
-        
+
 		if ($user->rights->expedition->supprimer)
 		{
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';

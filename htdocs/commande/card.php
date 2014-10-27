@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
@@ -1148,7 +1148,7 @@ else if ($action == 'update_extras') {
 
 /*
  * Add file in email form
-*/
+ */
 if (GETPOST('addfile')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -1162,7 +1162,7 @@ if (GETPOST('addfile')) {
 
 /*
  * Remove file in email form
-*/
+ */
 if (GETPOST('removedfile')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -1177,7 +1177,7 @@ if (GETPOST('removedfile')) {
 
 /*
  * Send mail
-*/
+ */
 if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! GETPOST('cancel')) {
 	$langs->load('mails');
 

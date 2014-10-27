@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $langs->load("orders");
 $langs->load("companies");
 
-$id=GETPOST('id','int');
+$id=GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 
@@ -44,8 +44,9 @@ $result = restrictedArea($user, 'societe', $id,'');
 
 $object = new Societe($db);
 
+
 /*
- * Ajout d'un nouveau contact
+ * Actions
  */
 
 if ($action == 'addcontact' && $user->rights->societe->creer)
@@ -133,12 +134,9 @@ $userstatic=new User($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-dol_htmloutput_mesg($mesg);
 
 if ($id > 0 || ! empty($ref))
 {
-	$langs->trans("OrderCard");
-
 	if ($object->fetch($id, $ref) > 0)
 	{
 		$soc = new Societe($db);
@@ -154,12 +152,12 @@ if ($id > 0 || ! empty($ref))
 		print '<td colspan="3">';
 		print $form->showrefnav($object,'id','',($user->societe_id?0:1),'rowid','nom');
 		print '</td></tr>';
-		
+
 		if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 		{
 		    print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 		}
-		
+
 		if ($object->client)
 		{
 		    print '<tr><td>';
@@ -168,7 +166,7 @@ if ($id > 0 || ! empty($ref))
 		    if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 		    print '</td></tr>';
 		}
-		
+
 		if ($object->fournisseur)
 		{
 		    print '<tr><td>';
@@ -216,7 +214,7 @@ if ($id > 0 || ! empty($ref))
 				{
 					$titre=$langs->trans("MembersListOfTiers");
 					print '<br>';
-	
+
 					print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
 
 					print "<table class=\"noborder\" width=\"100%\">";
@@ -230,13 +228,13 @@ if ($id > 0 || ! empty($ref))
 					print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
 					print_liste_field_titre($langs->trans("EndSubscription"),$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
 					print "</tr>\n";
-					
+
 					$var=True;
 					$i=0;
 					while ($i < $num && $i < $conf->liste_limit)
 					{
 						$objp = $db->fetch_object($resql);
-				
+
 						$datefin=$db->jdate($objp->datefin);
 						$memberstatic->id=$objp->rowid;
 						$memberstatic->ref=$objp->rowid;
@@ -244,43 +242,43 @@ if ($id > 0 || ! empty($ref))
 						$memberstatic->firstname=$objp->firstname;
 
 						$companyname=$objp->company;
-				
+
 						$var=!$var;
 						print "<tr ".$bc[$var].">";
-				
+
 						// Ref
 						print "<td>";
 						print $memberstatic->getNomUrl(1);
 						print "</td>\n";
-				
+
 						// Lastname
 						print "<td><a href=\"card.php?rowid=$objp->rowid\">";
 						print ((! empty($objp->lastname) || ! empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
 						print (((! empty($objp->lastname) || ! empty($objp->firstname)) && ! empty($companyname)) ? ' / ' : '');
 						print (! empty($companyname) ? dol_trunc($companyname, 32) : '');
 						print "</a></td>\n";
-				
+
 						// Login
 						print "<td>".$objp->login."</td>\n";
-				
+
 						// Type
 						$membertypestatic->id=$objp->type_id;
 						$membertypestatic->libelle=$objp->type;
 						print '<td class="nowrap">';
 						print $membertypestatic->getNomUrl(1,32);
 						print '</td>';
-				
+
 						// Moral/Physique
 						print "<td>".$memberstatic->getmorphylib($objp->morphy)."</td>\n";
-				
+
 						// EMail
 						print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
-				
+
 						// Statut
 						print '<td class="nowrap">';
 						print $memberstatic->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
 						print "</td>";
-				
+
 						// End of subscription date
 						if ($datefin)
 						{
@@ -303,7 +301,7 @@ if ($id > 0 || ! empty($ref))
 							}
 							print '</td>';
 						}
-				
+
 						print "</tr>\n";
 						$i++;
 					}

@@ -359,18 +359,21 @@ class Livraison extends CommonObject
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
 
-					// on verifie si le bon de livraison est en numerotation provisoire
-					$livref = substr($this->ref, 1, 4);
-					if ($livref == 'PROV')
+					if (preg_match('/^[\(]?PROV/i', $this->ref))
+		            {
+		                $numref = $objMod->livraison_get_num($soc,$this);
+		            }
+		            else
 					{
-						$numref = $objMod->livraison_get_num($soc,$this);
-					}
+		                $numref = $this->ref;
+		            }
+            		$this->newref = $numref;
 
 					// Tester si non deja au statut valide. Si oui, on arrete afin d'eviter
 					// de decrementer 2 fois le stock.
 					$sql = "SELECT ref";
 					$sql.= " FROM ".MAIN_DB_PREFIX."livraison";
-					$sql.= " WHERE ref = '".$numref."'";
+					$sql.= " WHERE ref = '".$this->db->escape($numref)."'";
 					$sql.= " AND fk_statut <> 0";
 					$sql.= " AND entity = ".$conf->entity;
 
@@ -393,10 +396,24 @@ class Livraison extends CommonObject
 					$sql.= " AND fk_statut = 0";
 
 					$resql=$this->db->query($sql);
-					if ($resql)
-					{
+			        if (! $resql)
+			        {
+			            dol_print_error($this->db);
+			            $this->error=$this->db->lasterror();
+			            $error++;
+			        }
 
-						$this->oldref='';
+			        if (! $error && ! $notrigger)
+			        {
+			            // Call trigger
+			            $result=$this->call_trigger('DELIVERY_VALIDATE',$user);
+			            if ($result < 0) $error++;
+			            // End call triggers
+			        }
+
+					if (! $error)
+					{
+			            $this->oldref = $this->ref;
 
 						// Rename directory if dir was a temporary ref
 						if (preg_match('/^[\(]?PROV/i', $this->ref))
@@ -413,11 +430,17 @@ class Livraison extends CommonObject
 
 								if (@rename($dirsource, $dirdest))
 								{
-									$this->oldref = $oldref;
-
-									dol_syslog("Rename ok");
-									// Suppression ancien fichier PDF dans nouveau rep
-									dol_delete_file($dirdest.'/'.$oldref.'*.*');
+			                        dol_syslog("Rename ok");
+			                        // Rename docs starting with $oldref with $newref
+			                        $listoffiles=dol_dir_list($conf->expedition->dir_output.'/receipt/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+			                        foreach($listoffiles as $fileentry)
+			                        {
+			                        	$dirsource=$fileentry['name'];
+			                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+			                        	$dirsource=$fileentry['path'].'/'.$dirsource;
+			                        	$dirdest=$fileentry['path'].'/'.$dirdest;
+			                        	@rename($dirsource, $dirdest);
+			                        }
 								}
 							}
 						}
@@ -431,12 +454,17 @@ class Livraison extends CommonObject
 
 						dol_syslog(get_class($this)."::valid ok");
 					}
-					else
+
+			        if (! $error)
+			        {
+			            $this->db->commit();
+			            return 1;
+			        }
+			        else
 					{
-						$this->db->rollback();
-						$this->error=$this->db->error()." - sql=$sql";
-						return -1;
-					}
+			            $this->db->rollback();
+			            return -1;
+			        }
 				}
 			}
 		}
@@ -445,21 +473,6 @@ class Livraison extends CommonObject
 			$this->error="Non autorise";
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
-		}
-
-        // Call trigger
-        $result=$this->call_trigger('DELIVERY_VALIDATE',$user);
-        // End call triggers
-		if ($result < 0)
-		{
-			$this->db->rollback();
-			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-			return -1;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
 		}
 	}
 

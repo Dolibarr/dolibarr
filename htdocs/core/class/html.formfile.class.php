@@ -73,12 +73,12 @@ class FormFile
         global $conf,$langs, $hookmanager;
         $hookmanager->initHooks(array('formfile'));
 
-        if (! empty($conf->browser->phone)) return 0;
+        if (! empty($conf->browser->layout) && $conf->browser->layout != 'classic') return 0;
 
 		if ((! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax) || ($useajax==2))
         {
-        	// TODO: Cheeck this works with 2 forms on same page
-        	// TODO: Cheeck this works with GED module, otherwise, force useajax to 0
+        	// TODO: Check this works with 2 forms on same page
+        	// TODO: Check this works with GED module, otherwise, force useajax to 0
         	// TODO: This does not support option savingdocmask
         	// TODO: This break feature to upload links too
         	return $this->_formAjaxFileUpload($object);

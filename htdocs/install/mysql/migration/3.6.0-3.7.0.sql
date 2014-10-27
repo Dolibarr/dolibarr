@@ -19,6 +19,13 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_MODIFY','Intervention modified','Executed when a intervention is modified','ficheinter',19);
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention delete','Executed when a intervention is delete','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLASSIFYBILLED','Intervention set billed','Executed when a intervention is set to billed (when option FICHINTER_DISABLE_DETAILS is set)','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',19);
+
+ALTER TABLE llx_notify ADD COLUMN fk_soc integer NULL after fk_action;
+
 ALTER TABLE llx_bank_account ADD COLUMN fk_user_author integer;
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN color varchar(9);
@@ -1088,6 +1095,9 @@ ALTER TABLE llx_usergroup_extrafields ADD INDEX idx_usergroup_extrafields (fk_ob
 
 ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER note_public;
 
+ALTER TABLE llx_c_country ADD COLUMN favorite tinyint DEFAULT 0 AFTER active;
+UPDATE llx_c_country SET favorite = '1' WHERE rowid = '0';
+
 ALTER TABLE llx_c_email_templates DROP INDEX uk_c_email_templates;
 ALTER TABLE llx_c_email_templates ADD UNIQUE INDEX uk_c_email_templates(entity, label, lang);
 ALTER TABLE llx_c_email_templates ADD INDEX idx_type(type_template);
@@ -1098,4 +1108,5 @@ DELETE FROM llx_const WHERE name = 'OSC_DB_HOST';
 DELETE FROM llx_menu WHERE module = 'boutique';
 
 -- Add option always editable on extrafield
-ALTER TABLE llx_extrafields ADD alwayseditable INT(11) NOT NULL AFTER pos;
+ALTER TABLE llx_extrafields ADD alwayseditable INTEGER DEFAULT 0 AFTER pos;
+

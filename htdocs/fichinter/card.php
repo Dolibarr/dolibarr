@@ -752,7 +752,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 				$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 				$actionmsg.=$message;
 			}
-			$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
+			$actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
 		}
 
 		// Create form object
@@ -1165,13 +1165,13 @@ else if ($id > 0 || ! empty($ref))
 
 	$formconfirm='';
 
-	// Confirmation de la suppression de la fiche d'intervention
+	// Confirm deletion of intervention
 	if ($action == 'delete')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
 	}
 
-	// Confirmation validation
+	// Confirm validation
 	if ($action == 'validate')
 	{
 		// on verifie si l'objet est en numerotation provisoire
@@ -1191,16 +1191,16 @@ else if ($id > 0 || ! empty($ref))
 		}
 		$text=$langs->trans('ConfirmValidateIntervention',$numref);
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',1,1);
 	}
 
-	// Confirmation de la validation de la fiche d'intervention
+	// Confirm back to draft
 	if ($action == 'modify')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
 	}
 
-	// Confirmation de la suppression d'une ligne d'intervention
+	// Confirm deletion of line
 	if ($action == 'ask_deleteline')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
@@ -1599,7 +1599,7 @@ else if ($id > 0 || ! empty($ref))
 				if ($object->statut == 0 && $user->rights->ficheinter->creer && (count($object->lines) > 0 || ! empty($conf->global->FICHINTER_DISABLE_DETAILS)))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate"';
-					print '>'.$langs->trans("Valid").'</a></div>';
+					print '>'.$langs->trans("Validate").'</a></div>';
 				}
 
 				// Modify

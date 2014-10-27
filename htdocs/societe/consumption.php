@@ -494,10 +494,10 @@ if ($sql_select)
 }
 else if (empty($type_element) || $type_element == -1)
 {
-	print '<tr><td colspan="4">'.$langs->trans("SelectElementAndClickRefresh").'</td></tr>';
+	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("SelectElementAndClickRefresh").'</td></tr>';
 }
 else {
-	print '<tr><td colspan="4">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 }
 
 print "</table>";

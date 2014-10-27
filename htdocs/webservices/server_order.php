@@ -664,6 +664,8 @@ function createOrder($authentication,$order)
 			$newline->total_ht=$line['total_net'];
 			$newline->total_tva=$line['total_vat'];
 			$newline->total_ttc=$line['total'];
+			$newline->date_start=$line['date_start'];
+			$newline->date_end=$line['date_end'];
 			$newobject->lines[]=$newline;
 		}
 

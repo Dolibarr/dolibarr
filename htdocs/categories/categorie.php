@@ -621,8 +621,17 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 	if ($typeid == 3) $title = $langs->trans("MembersCategoriesShort");
 	if ($typeid == 4) $title = $langs->trans("ContactCategoriesShort");
 
+	$linktocreate='';
+	if ($showclassifyform && $user->rights->categorie->creer)
+	{
+		$linktocreate='<a href="'.DOL_URL_ROOT.'/categories/card.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
+		$linktocreate.=$langs->trans("CreateCat").' ';
+		$linktocreate.=img_picto($langs->trans("Create"),'filenew');
+		$linktocreate.="</a>";
+	}
+
 	print '<br>';
-	print_fiche_titre($title,'','');
+	print_fiche_titre($title,$linktocreate,'');
 
 	// Form to add record into a category
 	if ($showclassifyform)
@@ -634,19 +643,10 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td width="40%">';
-		print $langs->trans("ClassifyInCategory").' &nbsp;';
+		print '<span class="hideonsmartphone">'.$langs->trans("ClassifyInCategory").' &nbsp;</span>';
 		print $form->select_all_categories($typeid,'auto');
-		print '</td><td>';
-		print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
-		if ($user->rights->categorie->creer)
-		{
-			print '<td align="right">';
-			print '<a href="'.DOL_URL_ROOT.'/categories/card.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
-			print $langs->trans("CreateCat").' ';
-			print img_picto($langs->trans("Create"),'filenew');
-			print "</a>";
-			print '</td>';
-		}
+		print '</td>';
+		print '<td><input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
 		print '</tr>';
 		print '</table>';
 		print '</form>';
@@ -679,10 +679,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 				print "<tr ".$bc[$var].">";
 
 				// Categorie
-				print "<td>";
-				//$c->id=;
-				//print $c->getNomUrl(1);
-				print img_object('','category').' '.$way."</td>";
+				print "<td>".img_object('','category').' '.$way."</td>";
 
 				// Link to delete from category
 				print '<td align="right">';
