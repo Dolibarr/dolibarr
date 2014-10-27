@@ -43,6 +43,9 @@ else
 	$obj_facturation = new Facturation();
 }
 
+
+
+// Right area with selected articles (shopping cart)
 print '<div class="liste_articles">';
 
 require ('tpl/liste_articles.tpl.php');
