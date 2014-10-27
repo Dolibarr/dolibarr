@@ -177,16 +177,22 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 	{
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{
-			// Define output language
-			$outputlangs = $langs;
-			if (! empty($conf->global->MAIN_MULTILANGS))
+					// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
-				$outputlangs = new Translate("", $conf);
-				$newlang = (GETPOST('lang_id') ? GETPOST('lang_id') : $object->thirdparty->default_lang);
-				$outputlangs->setDefaultLang($newlang);
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				if (empty($model)) { $tmp=getListOfModels($db, 'propal'); $keys=array_keys($tmp); $model=$keys[0]; }
+				$ret = $object->fetch($id); // Reload to get new records
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
-			$ret = $object->fetch($id); // Reload to get new records
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	} else {
 		$langs->load("errors");
@@ -481,19 +487,26 @@ else if ($action == 'add' && $user->rights->propal->creer)
 				{
 					$db->commit();
 
-					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-					{
-						// Define output language
-						$outputlangs = $langs;
-						if (! empty($conf->global->MAIN_MULTILANGS))
-						{
-							$outputlangs = new Translate("", $conf);
-							$newlang = (GETPOST('lang_id') ? GETPOST('lang_id') : $object->thirdparty->default_lang);
-							$outputlangs->setDefaultLang($newlang);
-						}
-						$ret = $object->fetch($id); // Reload to get new records
-						$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-					}
+			        // Define output language
+			    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			    	{
+			    		$outputlangs = $langs;
+			    		$newlang = '';
+			    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			    		if (! empty($newlang)) {
+			    			$outputlangs = new Translate("", $conf);
+			    			$outputlangs->setDefaultLang($newlang);
+			    		}
+			    		$model=$object->modelpdf;
+			    		if (empty($model)) {
+			    			$tmp=getListOfModels($db, 'propal'); $keys=array_keys($tmp); $model=$keys[0];
+			    		}
+
+			    		$ret = $object->fetch($id); // Reload to get new records
+			    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			    		if ($result < 0) dol_print_error($db,$result);
+			    	}
 
 					header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
 					exit();

@@ -341,19 +341,24 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     {
     	$ret=$object->fetch($object->id);    // Reload to get new records
 
+        // Define output language
     	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
     	{
-    		// Define output language
     		$outputlangs = $langs;
-    		$newlang=GETPOST('lang_id','alpha');
-    		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-    		if (! empty($newlang))
-    		{
-    			$outputlangs = new Translate("",$conf);
+    		$newlang = '';
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    		if (! empty($newlang)) {
+    			$outputlangs = new Translate("", $conf);
     			$outputlangs->setDefaultLang($newlang);
     		}
-
-		    $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    		$model=$object->modelpdf;
+    		if (empty($model)) {
+    			$tmp=getListOfModels($db, 'order_supplier'); $keys=array_keys($tmp); $model=$keys[0];
+    		}
+    		$ret = $object->fetch($id); // Reload to get new records
+    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    		if ($result < 0) dol_print_error($db,$result);
     	}
 
 		unset($_POST ['prod_entry_mode']);
@@ -438,19 +443,28 @@ else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer
     unset($_POST['date_end']);
     unset($localtax1_tx);
     unset($localtax2_tx);
+
     if ($result	>= 0)
     {
-        $outputlangs = $langs;
-        if (GETPOST('lang_id'))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang(GETPOST('lang_id'));
-        }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-        {
-            $ret=$object->fetch($object->id);    // Reload to get new records
-	        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-        }
+        // Define output language
+    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+    	{
+    		$outputlangs = $langs;
+    		$newlang = '';
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    		if (! empty($newlang)) {
+    			$outputlangs = new Translate("", $conf);
+    			$outputlangs->setDefaultLang($newlang);
+    		}
+    		$model=$object->modelpdf;
+    		if (empty($model)) {
+    			$tmp=getListOfModels($db, 'order_supplier'); $keys=array_keys($tmp); $model=$keys[0];
+    		}
+    		$ret = $object->fetch($id); // Reload to get new records
+    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    		if ($result < 0) dol_print_error($db,$result);
+    	}
     }
     else
     {
@@ -496,17 +510,25 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
     $result = $object->valid($user);
     if ($result	>= 0)
     {
-        $outputlangs = $langs;
-        if (GETPOST('lang_id'))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang(GETPOST('lang_id'));
-        }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-        {
-            $ret=$object->fetch($object->id);    // Reload to get new records
-	        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-        }
+        // Define output language
+    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+    	{
+    		$outputlangs = $langs;
+    		$newlang = '';
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    		if (! empty($newlang)) {
+    			$outputlangs = new Translate("", $conf);
+    			$outputlangs->setDefaultLang($newlang);
+    		}
+    		$model=$object->modelpdf;
+    		if (empty($model)) {
+    			$tmp=getListOfModels($db, 'order_supplier'); $keys=array_keys($tmp); $model=$keys[0];
+    		}
+    		$ret = $object->fetch($id); // Reload to get new records
+    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    		if ($result < 0) dol_print_error($db,$result);
+    	}
     }
     else
     {
@@ -1760,7 +1782,7 @@ elseif (! empty($object->id))
 			if ($user->societe_id == 0 && $action != 'edit_line' && $action != 'delete')
 			{
 				print '<div	 class="tabsAction">';
-	
+
 				// Validate
 				if ($object->statut == 0 && $num > 0)
 				{
@@ -1770,7 +1792,7 @@ elseif (! empty($object->id))
 						print '>'.$langs->trans('Validate').'</a>';
 					}
 				}
-	
+
 				// Modify
 				if ($object->statut == 1)
 				{
@@ -1779,7 +1801,7 @@ elseif (! empty($object->id))
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a>';
 					}
 				}
-	
+
 				// Approve
 				if ($object->statut == 1)
 				{
@@ -1794,7 +1816,7 @@ elseif (! empty($object->id))
 						print '<a class="butActionRefused" href="#">'.$langs->trans("RefuseOrder").'</a>';
 					}
 				}
-	
+
 				// Send
 				if (in_array($object->statut, array(2, 3, 4, 5)))
 				{
@@ -1803,7 +1825,7 @@ elseif (! empty($object->id))
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
 					}
 				}
-	
+
 				// Reopen
 				if (in_array($object->statut, array(2, 5, 6, 7, 9)))
 				{
@@ -1812,7 +1834,7 @@ elseif (! empty($object->id))
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 					}
 				}
-	
+
 				// Create bill
 				if (! empty($conf->fournisseur->enabled) && $object->statut >= 2)  // 2 means accepted
 				{
@@ -1820,13 +1842,13 @@ elseif (! empty($object->id))
 					{
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 					}
-	
+
 					//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
 					//{
 					//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 					//}
 				}
-	
+
 				// Cancel
 				if ($object->statut == 2)
 				{
@@ -1835,19 +1857,19 @@ elseif (! empty($object->id))
 						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
 					}
 				}
-	
+
 				// Clone
 				if ($user->rights->fournisseur->commande->creer)
 				{
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
 				}
-	
+
 				// Delete
 				if ($user->rights->fournisseur->commande->supprimer)
 				{
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}
-	
+
 				print "</div>";
 			}
 		}

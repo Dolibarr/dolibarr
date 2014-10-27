@@ -406,21 +406,25 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 		if ($result >= 0)
 		{
 			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->thirdparty->default_lang;
-			if (! empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				if (empty($model)) { $tmp=getListOfModels($db, 'invoice'); $keys=array_keys($tmp); $model=$keys[0]; }
 				$ret = $object->fetch($id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    			if ($result < 0) dol_print_error($db,$result);
 			}
-		} else {
+		}
+		else
+		{
 			if (count($object->errors)) setEventMessage($object->errors, 'errors');
 			else setEventMessage($object->error, 'errors');
 		}
@@ -483,20 +487,22 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 			$result=$object->set_draft($user, $idwarehouse);
 			if ($result<0) setEventMessage($object->error,'errors');
 
+
 			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->thirdparty->default_lang;
-			if (! empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				if (empty($model)) { $tmp=getListOfModels($db, 'invoice'); $keys=array_keys($tmp); $model=$keys[0]; }
 				$ret = $object->fetch($id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 	}
@@ -1308,20 +1314,23 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 			// Insert line
 			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, '', $price_base_type, $pu_ttc, $type, - 1, $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_option);
 
-			if ($result > 0) {
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-					// Define output language
+			if ($result > 0)
+			{
+				// Define output language
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				{
 					$outputlangs = $langs;
-					$newlang = GETPOST('lang_id', 'alpha');
-					if (! empty($conf->global->MAIN_MULTILANGS) && empty($newlang))
-						$newlang = $object->thirdparty->default_lang;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-
+					$model=$object->modelpdf;
+					if (empty($model)) { $tmp=getListOfModels($db, 'invoice'); $keys=array_keys($tmp); $model=$keys[0]; }
 					$ret = $object->fetch($id); // Reload to get new records
-					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST['prod_entry_mode']);
