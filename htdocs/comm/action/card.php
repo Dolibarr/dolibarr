@@ -28,19 +28,20 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+dol_include_once('/core/lib/agenda.lib.php');
+dol_include_once('/core/lib/date.lib.php');
+dol_include_once('/contact/class/contact.class.php');
+dol_include_once('/user/class/user.class.php');
+dol_include_once('/comm/action/class/cactioncomm.class.php');
+dol_include_once('/comm/action/class/actioncomm.class.php');
+dol_include_once('/core/class/html.formactions.class.php');
+dol_include_once('/core/class/html.formfile.class.php');
 if (! empty($conf->projet->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	dol_include_once('/projet/class/project.class.php');
+	dol_include_once('/core/class/html.formprojet.class.php');
 }
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+dol_include_once('/core/class/extrafields.class.php');
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -74,6 +75,7 @@ $cactioncomm = new CActionComm($db);
 $object = new ActionComm($db);
 $contact = new Contact($db);
 $extrafields = new ExtraFields($db);
+$formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
@@ -1243,6 +1245,34 @@ if ($id > 0)
 
 	if ($action != 'edit')
 	{
+		
+		if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC)) {
+				print '<div class="fichecenter"><div class="fichehalfleft">';
+	            print '<a name="builddoc"></a>'; // ancre
+
+	            /*
+	             * Documents generes
+	             */
+	             
+	            $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
+	            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+				
+	            $genallowed=$user->rights->agenda->myactions->create;
+	            $delallowed=$user->rights->agenda->myactions->delete;
+
+	            $var=true;
+
+	            $somethingshown=$formfile->show_documents('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
+
+				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+
+				print '</div></div></div>';
+
+	            print '<div style="clear:both;">&nbsp;</div>';
+	    }
+		
+		
 		// Link to agenda views
 		print '<div id="agendaviewbutton">';
 		print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
