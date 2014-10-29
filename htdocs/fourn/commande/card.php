@@ -1122,11 +1122,11 @@ if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('
 
         if ($result_order["result"]["result_code"] != "OK")
         {
-            setEventMessage($langs->trans("SOAPError").$result_order["result"]["result_code"]."' - '".$result_order["result"]["result_label"]."'", 'errors');
+            setEventMessage($langs->trans("SOAPError")." '".$result_order["result"]["result_code"]."' - '".$result_order["result"]["result_label"]."'", 'errors');
         }
         else
         {
-            setEventMessage($langs->trans("RemoteOrderRef").$result_order["ref"], 'mesgs');
+            setEventMessage($langs->trans("RemoteOrderRef")." ".$result_order["ref"], 'mesgs');
         }
     }
 }
