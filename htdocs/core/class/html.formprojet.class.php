@@ -167,15 +167,15 @@ class FormProjets
 	}
 
 	/**
-	 *    Build Select List of element associable to a project
+	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
-	 *    @param	string	$table_element		Table of the element to update
-	 *    @param	int		$socid				socid to filter
-	 *    @return	string						The HTML select list of element
+	 *    @param	string		$table_element		Table of the element to update
+	 *    @param	int			$socid				socid to filter
+	 *    @return	string							The HTML select list of element
 	 */
 	function select_element($table_element,$socid=0)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$projectkey="fk_projet";
 		switch ($table_element)
@@ -184,7 +184,10 @@ class FormProjets
 				$sql = "SELECT rowid, facnumber as ref";
 				break;
 			case "facture_fourn":
-				$sql = "SELECT rowid, ref";
+				$sql = "SELECT rowid, ref, ref_supplier";
+				break;
+			case "commande_fourn":
+				$sql = "SELECT rowid, ref, ref_supplier";
 				break;
 			case "facture_rec":
 				$sql = "SELECT rowid, titre as ref";
@@ -219,14 +222,22 @@ class FormProjets
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$sellist .='<option value="'.$obj->rowid.'">'.$obj->ref.'</option>';
+					$ref=$obj->ref?$obj->ref:$obj->rowid;
+					if (! empty($obj->ref_supplier)) $ref.=' ('.$obj->ref_supplier.')';
+					$sellist .='<option value="'.$obj->rowid.'">'.$ref.'</option>';
 					$i++;
 				}
 				$sellist .='</select>';
 			}
-			return $sellist ;
-
+			/*else
+			{
+				$sellist = '<select class="flat" name="elementselect">';
+				$sellist.= '<option value="0" disabled="disabled">'.$langs->trans("None").'</option>';
+				$sellist.= '</select>';
+			}*/
 			$this->db->free($resql);
+
+			return $sellist ;
 		}else {
 			$this->error=$this->db->lasterror();
 			dol_syslog(get_class($this) . "::select_element " . $this->error, LOG_ERR);
