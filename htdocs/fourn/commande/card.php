@@ -43,7 +43,9 @@ if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (!empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once NUSOAP_PATH.'/nusoap.php';     // Include SOAP
 
+$langs->load('admin');
 $langs->load('orders');
 $langs->load('sendings');
 $langs->load('companies');
@@ -1044,6 +1046,91 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
     }
 }
 
+if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('cancel'))
+{
+    $ws_host        = GETPOST('ws_host','alpha');
+    $ws_key         = GETPOST('ws_key','alpha');
+    $ws_user        = GETPOST('ws_user','alpha');
+    $ws_password    = GETPOST('ws_password','alpha');
+    $ws_entity      = GETPOST('ws_entity','int');
+    $ws_thirdparty  = GETPOST('ws_thirdparty','int');
+
+    // NS and Authentication parameters
+    $ws_ns='http://www.dolibarr.org/ns/';
+    $ws_authentication=array(
+        'dolibarrkey'=>$ws_key,
+        'sourceapplication'=>'DolibarrWebServiceClient',
+        'login'=>$ws_user,
+        'password'=>$ws_password,
+        'entity'=>$ws_entity
+    );
+
+    //Is everything filled?
+    if ($mode != "init" && (empty($ws_host) || empty($ws_key) || empty($ws_user) || empty($ws_password) || empty($ws_thirdparty))) {
+        setEventMessage($langs->trans("ErrorFieldsRequired"), 'errors');
+    }
+    else
+    {
+        //Create SOAP client and connect it to order
+        $soapclient_order = new nusoap_client($ws_host."/webservices/server_order.php");
+        $soapclient_order->soap_defencoding='UTF-8';
+        $soapclient_order->decodeUTF8(false);
+
+        //Create SOAP client and connect it to product/service
+        $soapclient_product = new nusoap_client($ws_host."/webservices/server_productorservice.php");
+        $soapclient_product->soap_defencoding='UTF-8';
+        $soapclient_product->decodeUTF8(false);
+
+        //Prepare the order lines from order
+        $order_lines = array();
+        foreach ($object->lines as $line)
+        {
+            $ws_parameters = array('authentication' => $ws_authentication, 'id' => '', 'ref' => $line->ref_supplier);
+            $result_product = $soapclient_product->call("getProductOrService", $ws_parameters, $ws_ns, '');
+
+            if ($result_product["result"]["result_code"] == "OK")
+            {
+                $order_lines[] = array(
+                    'desc'          => $line->product_desc,
+                    'type'          => $line->product_type,
+                    'product_id'    => $result_product["product"]["id"],
+                    'vat_rate'      => $line->tva_tx,
+                    'qty'           => $line->qty,
+                    'price'         => $line->price,
+                    'unitprice'     => $line->subprice,
+                    'total_net'     => $line->total_ht,
+                    'total_vat'     => $line->total_tva,
+                    'total'         => $line->total_ttc,
+                    'date_start'    => $line->date_start,
+                    'date_end'      => $line->date_end,
+                );
+            }
+        }
+
+        //Prepare the order header
+        $order = array(
+            'thirdparty_id' => $ws_thirdparty,
+            'date'          => dol_print_date(dol_now(),'dayrfc'),
+            'total_net'     => $object->total_ht,
+            'total_var'     => $object->total_tva,
+            'total'         => $object->total_ttc,
+            'lines'         => $order_lines
+        );
+
+        $ws_parameters = array('authentication'=>$ws_authentication, 'order' => $order);
+        $result_order = $soapclient_order->call("createOrder", $ws_parameters, $ws_ns, '');
+
+        if ($result_order["result"]["result_code"] != "OK")
+        {
+            setEventMessage($langs->trans("SOAPError").$result_order["result"]["result_code"]."' - '".$result_order["result"]["result_label"]."'", 'errors');
+        }
+        else
+        {
+            setEventMessage($langs->trans("RemoteOrderRef").$result_order["ref"], 'mesgs');
+        }
+    }
+}
+
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fournisseur->commande->creer)
 {
 	if ($action == 'addcontact')
@@ -1769,7 +1856,313 @@ elseif (! empty($object->id))
 	dol_fiche_end();
 
 
-	if ($action != 'presend')
+	/*
+	 * Action presend
+	 */
+	if ($action == 'presend')
+	{
+		$ref = dol_sanitizeFileName($object->ref);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref,'/'));
+		$file=$fileparams['fullname'];
+
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+			$newlang = $_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+			$newlang = $object->client->default_lang;
+
+		if (!empty($newlang))
+		{
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang($newlang);
+			$outputlangs->load('commercial');
+		}
+
+		// Build document if it not exists
+		if (! $file || ! is_readable($file))
+		{
+			$result= $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result <= 0)
+			{
+				dol_print_error($db,$result);
+				exit;
+			}
+			$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref,'/'));
+			$file=$fileparams['fullname'];
+		}
+
+		print '<br>';
+
+		print_titre($langs->trans('SendOrderByMail'));
+
+		// Cree l'objet formulaire mail
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($db);
+		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
+		$formmail->fromtype = 'user';
+		$formmail->fromid   = $user->id;
+		$formmail->fromname = $user->getFullName($langs);
+		$formmail->frommail = $user->email;
+		$formmail->withfrom=1;
+		$liste=array();
+		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
+		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
+		$formmail->withtocc=$liste;
+		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
+		$formmail->withtopic=$outputlangs->trans('SendOrderRef','__ORDERREF__');
+		$formmail->withfile=2;
+		$formmail->withbody=1;
+		$formmail->withdeliveryreceipt=1;
+		$formmail->withcancel=1;
+		// Tableau des substitutions
+		$formmail->substit['__ORDERREF__']=$object->ref;
+		$formmail->substit['__SIGNATURE__']=$user->signature;
+		$formmail->substit['__PERSONALIZED__']='';
+		$formmail->substit['__CONTACTCIVNAME__']='';
+
+		//Find the good contact adress
+		$custcontact='';
+		$contactarr=array();
+		$contactarr=$object->liste_contact(-1,'external');
+
+		if (is_array($contactarr) && count($contactarr)>0) {
+			foreach($contactarr as $contact) {
+				if ($contact['libelle']==$langs->trans('TypeContact_order_supplier_external_BILLING')) {
+					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+					$contactstatic=new Contact($db);
+					$contactstatic->fetch($contact['id']);
+					$custcontact=$contactstatic->getFullName($langs,1);
+				}
+			}
+
+			if (!empty($custcontact)) {
+				$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+			}
+		}
+
+		// Tableau des parametres complementaires
+		$formmail->param['action']='send';
+		$formmail->param['models']='order_supplier_send';
+		$formmail->param['orderid']=$object->id;
+		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
+
+		// Init list of files
+		if (GETPOST("mode")=='init')
+		{
+			$formmail->clear_attached_files();
+			$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
+		}
+
+		// Show form
+		print $formmail->get_form();
+
+		print '<br>';
+	}
+	/*
+	 * Action webservice
+	 */
+	elseif ($action == 'webservice' && GETPOST('mode', 'alpha') != "send" && ! GETPOST('cancel'))
+	{
+		$mode        = GETPOST('mode', 'alpha');
+		$ws_host     = GETPOST('ws_host','alpha');
+		$ws_key      = GETPOST('ws_key','alpha');
+		$ws_user     = GETPOST('ws_user','alpha');
+		$ws_password = GETPOST('ws_password','alpha');
+        
+        // NS and Authentication parameters
+        $ws_ns = 'http://www.dolibarr.org/ns/';
+        $ws_authentication = array(
+            'dolibarrkey'=>$ws_key,
+            'sourceapplication'=>'DolibarrWebServiceClient',
+            'login'=>$ws_user,
+            'password'=>$ws_password,
+            'entity'=>''
+        );
+
+        print_titre($langs->trans('CreateRemoteOrder'));
+
+        //Is everything filled?
+        if ($mode != "init" && (empty($ws_host) || empty($ws_key) || empty($ws_user) || empty($ws_password))) {
+            setEventMessage($langs->trans("ErrorFieldsRequired"), 'errors'); 
+            $mode = "init";
+        }
+
+        if ($mode == "init") 
+        {
+            //Table/form header
+            print '<table class="border" width="100%">';
+            print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="action" value="webservice">';
+            print '<input type="hidden" name="mode" value="check">';
+            $textinput_size = "50";
+
+            //Remote Host URL
+            print '<tr><td>'.$langs->trans("Host").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_host"></td></tr>';
+
+            //Remote Webservices key
+            print '<tr><td>'.$langs->trans("KeyForWebServicesAccess").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_key"></td></tr>';
+
+            //Remote User
+            print '<tr><td>'.$langs->trans("User").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_user"></td></tr>';
+
+            //Remote Password
+            print '<tr><td>'.$langs->trans("Password").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_password"></td></tr>';
+
+            //Submit and cancel buttons
+            print '<tr><td align="center" colspan="2">';
+            print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';
+            print ' &nbsp; &nbsp; ';
+            print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+            print '</td></tr>';
+
+            //End table/form
+            print '</form>';
+            print '</table>';
+        }
+        elseif ($mode == "check")
+        {
+            $ws_entity = '';
+            $ws_thirdparty = '';
+            $error_occurred = false;
+
+            //Check if has transport, without any the soap client will give error
+            if (strpos($ws_host, "http") === false)
+            {
+                $ws_host = "http://".$ws_host;
+            }
+
+            //Create SOAP client and connect it to user
+            $soapclient_user = new nusoap_client($ws_host."/webservices/server_user.php");
+            $soapclient_user->soap_defencoding='UTF-8';
+            $soapclient_user->decodeUTF8(false);
+
+            //Get the thirdparty associated to user
+            $ws_parameters = array('authentication'=>$ws_authentication, 'id' => '', 'ref'=>$ws_user);
+            $result_user = $soapclient_user->call("getUser", $ws_parameters, $ws_ns, '');
+            $user_status_code = $result_user["result"]["result_code"];
+
+            if ($user_status_code == "OK")
+            {
+                //Fill the variables
+                $ws_entity = $result_user["user"]["entity"];
+                $ws_authentication['entity'] = $ws_entity;
+                $ws_thirdparty = $result_user["user"]["fk_thirdparty"];
+                if (empty($ws_thirdparty))
+                {
+                    setEventMessage($langs->trans("RemoteUserMissingAssociatedSoc"), 'errors');
+                }
+                else
+                {
+                    //Create SOAP client and connect it to product/service
+                    $soapclient_product = new nusoap_client($ws_host."/webservices/server_productorservice.php");
+                    $soapclient_product->soap_defencoding='UTF-8';
+                    $soapclient_product->decodeUTF8(false);
+
+                    // Iterate each line and get the reference that uses the supplier of that product/service
+                    $i = 0;
+                    foreach ($object->lines as $line) {
+                        $i = $i + 1;
+                        $ref_supplier = $line->ref_supplier;
+                        $line_id = $i."º) ".$line->product_ref.": ";
+                        if (empty($ref_supplier)) {
+                            continue;
+                        }
+                        $ws_parameters = array('authentication' => $ws_authentication, 'id' => '', 'ref' => $ref_supplier);
+                        $result_product = $soapclient_product->call("getProductOrService", $ws_parameters, $ws_ns, '');
+                        if (!$result_product)
+                        {
+                            setEventMessage($line_id.$langs->trans("SOAPError")." ".$soapclient_product->error_str." - ".$soapclient_product->response, 'errors');
+                            $error_occurred = true;
+                            break;
+                        }
+
+                        // Check the result code
+                        $status_code = $result_product["result"]["result_code"];
+                        if ($status_code != "OK")
+                        {
+                            if ($status_code == "NOT_FOUND")
+                            {
+                                setEventMessage($line_id.$langs->trans("SupplierMissingRef")." '".$ref_supplier."'", 'warnings');
+                            }
+                            else
+                            {
+                                setEventMessage($line_id.$langs->trans("ResponseNonOK")." '".$status_code."' - '".$result_product["result"]["result_label"]."'", 'errors');
+                                $error_occurred = true;
+                                break;
+                            }
+                        }
+
+                        
+                        // Ensure that price is equal and warn user if it's not
+                        $supplier_price = price($result_product["product"]["price_net"]); //Price of client tab in supplier dolibarr
+                        $local_price = NULL; //Price of supplier as stated in product suppliers tab on this dolibarr, NULL if not found
+
+                        $product_fourn = new ProductFournisseur($db);
+                        $product_fourn_list = $product_fourn->list_product_fournisseur_price($line->fk_product);
+                        if (count($product_fourn_list)>0)
+                        {
+                            foreach($product_fourn_list as $product_fourn_line)
+                            {
+                                //Only accept the line where the supplier is the same at this order and has the same ref
+                                if ($product_fourn_line->fourn_id == $object->socid && $product_fourn_line->fourn_ref == $ref_supplier) {
+                                    $local_price = price($product_fourn_line->fourn_price);
+                                }
+                            }
+                        }
+
+                        if ($local_price != NULL && $local_price != $supplier_price) {
+                            setEventMessage($line_id.$langs->trans("RemotePriceMismatch")." ".$supplier_price." - ".$local_price, 'warnings');
+                        }
+
+                        // Check if is in sale
+                        if (empty($result_product["product"]["status_tosell"])) {
+                            setEventMessage($line_id.$langs->trans("ProductStatusNotOnSellShort")." '".$ref_supplier."'", 'warnings');
+                        }
+                    }
+                }
+
+            }
+            elseif ($user_status_code == "PERMISSION_DENIED")
+            {
+                setEventMessage($langs->trans("RemoteUserNotPermission"), 'errors');
+            }
+            else
+            {
+                setEventMessage($langs->trans("ResponseNonOK")." '".$user_status_code."'", 'errors');
+            }
+
+            //Form
+            print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="action" value="webservice">';
+            print '<input type="hidden" name="mode" value="send">';
+            print '<input type="hidden" name="ws_host" value="'.$ws_host.'">';
+            print '<input type="hidden" name="ws_key" value="'.$ws_key.'">';
+            print '<input type="hidden" name="ws_user" value="'.$ws_user.'">';
+            print '<input type="hidden" name="ws_password" value="'.$ws_password.'">';
+            print '<input type="hidden" name="ws_entity" value="'.$ws_entity.'">';
+            print '<input type="hidden" name="ws_thirdparty" value="'.$ws_thirdparty.'">';
+            if ($error_occurred)
+            {
+                print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>"; //TODO: Translate
+            }
+            else
+            {
+                print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("Confirm").'">';
+                print ' &nbsp; &nbsp; ';
+            }
+            print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+            print '</form>';
+        }
+	}
+	/*
+	 * Show buttons
+	 */
+	else
 	{
 		/**
 		 * Boutons actions
@@ -1847,6 +2240,12 @@ elseif (! empty($object->id))
 					//{
 					//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 					//}
+				}
+
+				// Create a remote order using WebService
+				if ($object->statut >= 2) // 2 means accepted
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=webservice&amp;mode=init">'.$langs->trans('CreateRemoteOrder').'</a>';
 				}
 
 				// Cancel
@@ -1973,112 +2372,6 @@ elseif (! empty($object->id))
 		*/
 
 		print '</div></div></div>';
-	}
-
-	/*
-	 * Action presend
-	 */
-	if ($action == 'presend')
-	{
-		$ref = dol_sanitizeFileName($object->ref);
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref,'/'));
-		$file=$fileparams['fullname'];
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-			$newlang = $_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->client->default_lang;
-
-		if (!empty($newlang))
-		{
-			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang($newlang);
-			$outputlangs->load('commercial');
-		}
-
-		// Build document if it not exists
-		if (! $file || ! is_readable($file))
-		{
-			$result= $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0)
-			{
-				dol_print_error($db,$result);
-				exit;
-			}
-			$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref,'/'));
-			$file=$fileparams['fullname'];
-		}
-
-		print '<br>';
-
-		print_titre($langs->trans('SendOrderByMail'));
-
-		// Cree l'objet formulaire mail
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);
-		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-		$formmail->fromtype = 'user';
-		$formmail->fromid   = $user->id;
-		$formmail->fromname = $user->getFullName($langs);
-		$formmail->frommail = $user->email;
-		$formmail->withfrom=1;
-		$liste=array();
-		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
-		$formmail->withtocc=$liste;
-		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		$formmail->withtopic=$outputlangs->trans('SendOrderRef','__ORDERREF__');
-		$formmail->withfile=2;
-		$formmail->withbody=1;
-		$formmail->withdeliveryreceipt=1;
-		$formmail->withcancel=1;
-		// Tableau des substitutions
-		$formmail->substit['__ORDERREF__']=$object->ref;
-		$formmail->substit['__SIGNATURE__']=$user->signature;
-		$formmail->substit['__PERSONALIZED__']='';
-		$formmail->substit['__CONTACTCIVNAME__']='';
-
-		//Find the good contact adress
-		$custcontact='';
-		$contactarr=array();
-		$contactarr=$object->liste_contact(-1,'external');
-
-		if (is_array($contactarr) && count($contactarr)>0) {
-			foreach($contactarr as $contact) {
-				if ($contact['libelle']==$langs->trans('TypeContact_order_supplier_external_BILLING')) {
-					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-					$contactstatic=new Contact($db);
-					$contactstatic->fetch($contact['id']);
-					$custcontact=$contactstatic->getFullName($langs,1);
-				}
-			}
-
-			if (!empty($custcontact)) {
-				$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-			}
-		}
-
-		// Tableau des parametres complementaires
-		$formmail->param['action']='send';
-		$formmail->param['models']='order_supplier_send';
-		$formmail->param['orderid']=$object->id;
-		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-		// Init list of files
-		if (GETPOST("mode")=='init')
-		{
-			$formmail->clear_attached_files();
-			$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-		}
-
-		// Show form
-		print $formmail->get_form();
-
-		print '<br>';
 	}
 
 	print '</td></tr></table>';
