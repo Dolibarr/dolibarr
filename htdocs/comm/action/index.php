@@ -185,18 +185,19 @@ if ($action=='show_week')
     $prev_month = $prev['prev_month'];
     $prev_day   = $prev['prev_day'];
     $first_day  = $prev['first_day'];
-
+    $first_month= $prev['first_month'];
+    $first_year = $prev['first_year'];
     $week = $prev['week'];
 
     $day = (int) $day;
-    $next = dol_get_next_week($day, $week, $month, $year);
+    $next = dol_get_next_week($first_day, $week, $first_month, $first_year);
     $next_year  = $next['year'];
     $next_month = $next['month'];
     $next_day   = $next['day'];
 
     // Define firstdaytoshow and lastdaytoshow
-    $firstdaytoshow=dol_mktime(0,0,0,$prev_month,$first_day,$prev_year);
-    $lastdaytoshow=dol_mktime(0,0,0,$next_month,$next_day,$next_year);
+    $firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
+	$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
 
     $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
 
@@ -874,39 +875,27 @@ elseif ($action == 'show_week') // View by week
     }
     echo " </tr>\n";
 
-    // In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
-    //var_dump($eventarray);
-    //print $tmpday;
-
     echo " <tr>\n";
 
     for($iter_day = 0; $iter_day < 7; $iter_day++)
     {
-        if(($tmpday <= $max_day_in_month))
-        {
-            // Show days of the current week
-            $curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
+        // Show days of the current week
+		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
+		$tmparray = dol_getdate($curtime,'fast');
+		$tmpday = $tmparray['mday'];
+		$tmpmonth = $tmparray['mon'];
+		$tmpyear = $tmparray['year'];
 
-            $style='cal_current_month';
-        	if ($iter_day == 6) $style.=' cal_other_month_right';
-            $today=0;
-            $todayarray=dol_getdate($now,'fast');
-            if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
-            if ($today) $style='cal_today';
+        $style='cal_current_month';
+        if ($iter_day == 6) $style.=' cal_other_month_right';
+        $today=0;
+        $todayarray=dol_getdate($now,'fast');
+        if ($todayarray['mday']==$tmpday && $todayarray['mon']==$tmpmonth && $todayarray['year']==$tmpyear) $today=1;
+        if ($today) $style='cal_today';
 
-            echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
-            show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
-            echo "  </td>\n";
-        }
-        else
-        {
-            $style='cal_current_month';
-        	if ($iter_day == 6) $style.=' cal_other_month_right';
-            echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
-            show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
-            echo "</td>\n";
-        }
-        $tmpday++;
+        echo '  <td class="'.$style.'" width="14%" valign="top">';
+        show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
+        echo "  </td>\n";
     }
     echo " </tr>\n";
 
