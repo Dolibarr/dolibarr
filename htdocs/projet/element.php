@@ -393,7 +393,9 @@ foreach ($listofreferent as $key => $value)
 
 			print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Number").': '.$i.'</td>';
 			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
+			else print '<td></td>';
 			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
+			else print '<td></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
