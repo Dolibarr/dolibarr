@@ -1832,11 +1832,12 @@ class Form
      *	@param  string	$filterkey      Filtre des produits
      *  @param  int		$statut         -1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param  int		$outputmode     0=HTML select string, 1=Array
+     *  @param  int     $limit          Limit of line number
      *  @return array           		Array of keys for json
      */
-    function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0)
+    function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0,$limit=100)
     {
-        global $langs,$conf;
+        global $langs,$conf,$db;
 
         $out='';
         $outarray=array();
@@ -1874,6 +1875,7 @@ class Form
         	$sql.=')';
         }
         $sql.= " ORDER BY pfp.ref_fourn DESC, pfp.quantity ASC";
+        $sql.= $db->plimit($limit);
 
         // Build output string
 
