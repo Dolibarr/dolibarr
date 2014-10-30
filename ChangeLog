@@ -145,6 +145,8 @@ For developers:
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
+- If you can't see trips and expenses records, check that you have the new permission "read all
+  trips and expenses".
 - Deprecated module "oscommerce" were removed.
 - Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
 - Some field into database were renamed from "libelle" to "label".
