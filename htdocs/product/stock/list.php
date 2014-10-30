@@ -31,9 +31,9 @@ $langs->load("stocks");
 // Security check
 $result=restrictedArea($user,'stock');
 
-$sref=GETPOST("sref");;
-$snom=GETPOST("snom");
-$sall=GETPOST("sall");
+$sref=GETPOST("sref","alpha");
+$snom=GETPOST("snom","alpha");
+$sall=GETPOST("sall","alpha");
 
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");

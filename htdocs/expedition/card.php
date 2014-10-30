@@ -250,26 +250,25 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
     }
     else
     {
-        // Define output language
-        $outputlangs = $langs;
-        $newlang='';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-        if (! empty($newlang))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($newlang);
-        }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-        {
-            $ret=$object->fetch($id);    // Reload to get new records
-            $result = $object->generateDocument($object->modelpdf, $outputlangs);
-        }
-        if ($result < 0)
-        {
-            dol_print_error($db,$result);
-            exit;
-        }
+    	// Define output language
+    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+    	{
+    		$outputlangs = $langs;
+    		$newlang = '';
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    		if (! empty($newlang)) {
+    			$outputlangs = new Translate("", $conf);
+    			$outputlangs->setDefaultLang($newlang);
+    		}
+    		$model=$object->modelpdf;
+    		if (empty($model)) {
+    			$tmp=getListOfModels($db, 'shipping'); $keys=array_keys($tmp); $model=$keys[0];
+    		}
+    		$ret = $object->fetch($id); // Reload to get new records
+    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    		if ($result < 0) dol_print_error($db,$result);
+    	}
     }
 }
 

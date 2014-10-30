@@ -46,6 +46,10 @@ abstract class DoliDB implements Database
     public $database_name;
     //! Database username
     public $database_user;
+    //! Database host
+    public $database_host;
+    //! Database port
+    public $database_port;
     //! >=1 if a transaction is opened, 0 otherwise
     public $transaction_opened;
     //! Last successful query

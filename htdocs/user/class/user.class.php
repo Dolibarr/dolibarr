@@ -1792,7 +1792,7 @@ class User extends CommonObject
 			$result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin);
 			if ($withpicto != 2) $result.=' ';
 		}
-		$result.=$lien.$this->getFullName($langs).$lienfin;
+		$result.=$lien.$this->getFullName($langs,'','',16).$lienfin;
 		return $result;
 	}
 
@@ -1941,7 +1941,7 @@ class User extends CommonObject
 		if ($this->office_fax && ! empty($conf->global->LDAP_FIELD_FAX))	     $info[$conf->global->LDAP_FIELD_FAX] = $this->office_fax;
 		if ($this->note && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))    $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
 		if ($this->email && ! empty($conf->global->LDAP_FIELD_MAIL))          $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
-    if ($this->skype && ! empty($conf->global->LDAP_FIELD_SKYPE))          $info[$conf->global->LDAP_FIELD_SKYPE] = $this->skype;
+    	if ($this->skype && ! empty($conf->global->LDAP_FIELD_SKYPE))          $info[$conf->global->LDAP_FIELD_SKYPE] = $this->skype;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
 		{
@@ -1994,7 +1994,7 @@ class User extends CommonObject
 		$this->firstname='SPECIMEN';
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
-    $this->skype='tom.hanson';
+    	$this->skype='tom.hanson';
 		$this->office_phone='0999999999';
 		$this->office_fax='0999999998';
 		$this->user_mobile='0999999997';
@@ -2223,16 +2223,15 @@ class User extends CommonObject
 
 	/**
 	 * 	Reconstruit l'arborescence hierarchique des users sous la forme d'un tableau
-	 *	Renvoi un tableau de tableau('id','id_parent',...) trie selon arbre et avec:
-	 *				id = id du user
-	 *				id_parent = id du user parent
-	 *				id_children = tableau des id enfant
-	 *				name = nom du user
+	 *	Set and return this->users that is an array sorted according to tree with arrays of:
+	 *				id = id user
+	 *				lastname
+	 *				firstname
 	 *				fullname = nom avec chemin complet du user
-	 *				fullpath = chemin complet compose des id
+	 *				fullpath = chemin complet compose des id: "_grandparentid_parentid_id"
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
-	 *	@return		array		      		  	Array of users. this->users and this->parentof are set.
+	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
 	function get_full_tree($deleteafterid=0)
 	{
@@ -2309,6 +2308,29 @@ class User extends CommonObject
 		//var_dump($this->users);
 
 		return $this->users;
+	}
+
+	/**
+	 * 	Return list of all childs users in herarchy.
+	 *
+	 *	@return		array		      		  	Array of user id lower than user. This overwrite this->users.
+	 */
+	function getAllChildIds()
+	{
+		// Init this->users
+		$this->get_full_tree();
+
+		$idtoscan=$this->id;
+		$childids=array();
+
+		dol_syslog("Build childid for id = ".$idtoscan);
+		foreach($this->users as $id => $val)
+		{
+			//var_dump($val['fullpath']);
+			if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) $childids[$val['id']]=$val['id'];
+		}
+
+		return $childids;
 	}
 
 	/**

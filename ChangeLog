@@ -5,6 +5,13 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Add permissions to read all trips and expenses.
+- New: Can filter on date into tab "Referring object" of a project.
+- New: Module notification has been enhanced:
+       EMail use now language of target contact.
+       Can also define a fixed email for notifications.
+- New: Feature to link manually an order to an invoice does not disappear once
+       link has been done.
 - New: Can set a color on user card (visible into agenda view).
 - New: extrafields for projects and tasks are exported to ODT documents.
 - New: Add number of active notification into tab title (like we do for notes and documents)
@@ -138,6 +145,8 @@ For developers:
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
+- If you can't see trips and expenses records, check that you have the new permission "read all
+  trips and expenses".
 - Deprecated module "oscommerce" were removed.
 - Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
 - Some field into database were renamed from "libelle" to "label".
@@ -156,6 +165,7 @@ Dolibarr better:
 - Fix: box of customer and propsects were not correctly disabled.
 - Fix: right and error management #1961
 - Fix: Fix Error when trying to clone an Order #1943
+- Fix: [ bug #1618 ] PHP Error thrown when saving a barcode
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:

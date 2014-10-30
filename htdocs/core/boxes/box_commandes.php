@@ -58,22 +58,25 @@ class box_commandes extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
         $commandestatic=new Commande($db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerOrders",$max));
+        $userstatic = new User($db);
+
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders",$max));
 
         if ($user->rights->commande->lire)
         {
-
             $sql = "SELECT s.nom as name, s.rowid as socid,";
-            $sql.= " c.ref, c.tms, c.rowid,";
-            $sql.= " c.fk_statut, c.facture";
+            $sql.= " c.ref, c.tms, c.rowid, c.date_commande,";
+            $sql.= " c.fk_statut, c.fk_user_valid, c.facture, c.total_ht";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."commande as c";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE c.fk_soc = s.rowid";
             $sql.= " AND c.entity = ".$conf->entity;
+            if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) $sql.=" AND c.fk_statut = 1";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-            $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
             $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);
@@ -86,29 +89,43 @@ class box_commandes extends ModeleBoxes
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
+                    $date=$db->jdate($objp->date_commande);
 					$datem=$db->jdate($objp->tms);
 
-                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
+                    $this->info_box_contents[$i][] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/commande/card.php?id=".$objp->rowid);
 
-                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
+                    $this->info_box_contents[$i][] = array('td' => 'align="left"',
                     'text' => $objp->ref,
                     'url' => DOL_URL_ROOT."/commande/card.php?id=".$objp->rowid);
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+					$this->info_box_contents[$i][] = array('td' => 'align="left" width="16"',
                     'logo' => 'company',
                     'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
+					$this->info_box_contents[$i][] = array('td' => 'align="left"',
                     'text' => $objp->name,
                     'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
-                    $this->info_box_contents[$i][4] = array('td' => 'align="right"',
-                    'text' => dol_print_date($datem,'day'),
+					$this->info_box_contents[$i][] = array('td' => 'align="right"',
+                    'text' => price($objp->total_ht),
+					);
+
+					if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_SHOW_VALIDATE_USER))
+					{
+						if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
+						$this->info_box_contents[$i][] = array('td' => 'align="right"',
+    	                'text' => (($objp->fk_user_valid > 0)?$userstatic->getNomUrl(1):''),
+						'url' => (($objp->fk_user_valid > 0)?DOL_URL_ROOT.'/user/card.php?id='.$objp->fk_user_valid:'')
+						);
+					}
+
+					$this->info_box_contents[$i][] = array('td' => 'align="right"',
+                    'text' => dol_print_date($date,'day'),
                     );
 
-                    $this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
+                    $this->info_box_contents[$i][] = array('td' => 'align="right" width="18"',
                     'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3));
 
                     $i++;

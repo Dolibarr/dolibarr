@@ -30,23 +30,24 @@ p {
 .conteneur {
 	background: #fff;
 	text-align: left;
-	width: 770px;
+	max-width: 770px;
 	margin: 10px auto;
+	border: 2px solid #000;
 }
 
 .conteneur_img_gauche {
-	background: url("../img/bg_conteneur_gauche.png") top left repeat-y;
+	/* background: url("../img/bg_conteneur_gauche.png") top left repeat-y; */
 }
 
 .conteneur_img_droite {
-	background: url("../img/bg_conteneur_droite.png") top right repeat-y;
+	/* background: url("../img/bg_conteneur_droite.png") top right repeat-y; */
 }
 
 /* ------------------- Header ------------------- */
 .entete {
 	height: 15px;
 	margin: 0;
-	background: url('../img/bg_entete.png') no-repeat left top;
+	/* background: url('../img/bg_entete.png') no-repeat left top; */
 }
 
 .entete span {
@@ -57,7 +58,6 @@ p {
 .menu_principal {
     margin: 0 20px 20px 15px;
     font-size: 14px;
-	width: 735px;
 	height: 84px;
 	background: #CCCCCC;
 	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(40,40,40,.3) 100%);
@@ -80,20 +80,21 @@ p {
 
 .menu li {
 	float: left;
+	padding-right: 10px;
 }
 
 .menu_choix1,.menu_choix2 {
 	font-size: 1.4em;
 	text-align: left;
-	width: 180px;
 }
 
 .menu_choix1 a,.menu_choix2 a {
 	display: block;
 	color: #fff;
 	text-decoration: none;
-	width: 100px;
+	padding-top: 18px;
 	padding-left: 54px;
+	font-size: 14px;
 	height: 48px;
 	background: url('../img/new.png') top left no-repeat;
 }
@@ -115,7 +116,6 @@ p {
 	text-align: right;
 	font-style: italic;
 	font-weight: normal;
-	width: 340px;
 	display: block;
 	color: #333;
 	text-decoration: none;
@@ -126,11 +126,13 @@ p {
 	font-weight: normal;
 	text-decoration: none;
 }
-
+li.menu_choix0 {
+		float: right;
+}
 
 /* ------------------- R�capitulatif des articles ------------------- */
 .liste_articles {
-	width: 215px;
+	min-width: 215px;
 	float: right;
 	margin-top: 8px;
 	margin-right: 20px;
@@ -219,7 +221,7 @@ p.titre {
 	float: left;
 	margin: 0 15px;
 	padding: 0;
-	width: 495px;
+	max-width: 500px;
 }
 
 .titre1 {
@@ -237,7 +239,6 @@ p.titre {
 .cadre_facturation {
 	border: 2px solid #ddd;
 	margin-bottom: 15px;
-	padding: 10px 10px;
 }
 
 .principal p {
@@ -374,7 +375,7 @@ p.titre {
 .pied {
 	clear: both;
 	height: 15px;
-	background: url('../img/bg_pied.png') no-repeat bottom left;
+	/* background: url('../img/bg_pied.png') no-repeat bottom left; */
 }
 
 /* ------------------- Param�tres communs (messages d'erreur, informations, etc...) ------------------- */

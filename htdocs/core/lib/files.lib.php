@@ -139,6 +139,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 								$level1name=(isset($reg[1])?$reg[1]:'');
 								$file_list[] = array(
 										"name" => $file,
+										"path" => $path,
 										"level1name" => $level1name,
 										"fullname" => $path.'/'.$file,
 										"date" => $filedate,
@@ -166,6 +167,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 							$level1name=(isset($reg[1])?$reg[1]:'');
 							$file_list[] = array(
 									"name" => $file,
+									"path" => $path,
 									"level1name" => $level1name,
 									"fullname" => $path.'/'.$file,
 									"date" => $filedate,

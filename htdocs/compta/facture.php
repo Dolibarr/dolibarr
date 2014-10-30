@@ -406,21 +406,25 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 		if ($result >= 0)
 		{
 			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->thirdparty->default_lang;
-			if (! empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				if (empty($model)) { $tmp=getListOfModels($db, 'invoice'); $keys=array_keys($tmp); $model=$keys[0]; }
 				$ret = $object->fetch($id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    			if ($result < 0) dol_print_error($db,$result);
 			}
-		} else {
+		}
+		else
+		{
 			if (count($object->errors)) setEventMessage($object->errors, 'errors');
 			else setEventMessage($object->error, 'errors');
 		}
@@ -483,20 +487,22 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 			$result=$object->set_draft($user, $idwarehouse);
 			if ($result<0) setEventMessage($object->error,'errors');
 
+
 			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->thirdparty->default_lang;
-			if (! empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				if (empty($model)) { $tmp=getListOfModels($db, 'invoice'); $keys=array_keys($tmp); $model=$keys[0]; }
 				$ret = $object->fetch($id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 	}
@@ -1158,7 +1164,11 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
 		$error ++;
 	}
-
+	if ($qty < 0) {
+		$langs->load("errors");
+		setEventMessage($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), 'errors');
+		$error ++;
+	}
 	if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod))) {
 		$ret = $object->fetch($id);
 		if ($ret < 0) {
@@ -1304,23 +1314,26 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 			// Insert line
 			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, '', $price_base_type, $pu_ttc, $type, - 1, $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_option);
 
-			if ($result > 0) {
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-					// Define output language
+			if ($result > 0)
+			{
+				// Define output language
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				{
 					$outputlangs = $langs;
-					$newlang = GETPOST('lang_id', 'alpha');
-					if (! empty($conf->global->MAIN_MULTILANGS) && empty($newlang))
-						$newlang = $object->thirdparty->default_lang;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-
+					$model=$object->modelpdf;
+					if (empty($model)) { $tmp=getListOfModels($db, 'invoice'); $keys=array_keys($tmp); $model=$keys[0]; }
 					$ret = $object->fetch($id); // Reload to get new records
-					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
-				unset($_POST ['prod_entry_mode']);
+				unset($_POST['prod_entry_mode']);
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
@@ -1359,9 +1372,9 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 	}
 }
 
-elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('cancel')) {
-	if (! $object->fetch($id) > 0)
-		dol_print_error($db);
+elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('cancel'))
+{
+	if (! $object->fetch($id) > 0)	dol_print_error($db);
 	$object->fetch_thirdparty();
 
 	// Clean parameters
@@ -1372,6 +1385,7 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 	$description = dol_htmlcleanlastbr(GETPOST('product_desc'));
 	$pu_ht = GETPOST('price_ht');
 	$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+	$qty = GETPOST('qty');
 
 	// Define info_bits
 	$info_bits = 0;
@@ -1428,10 +1442,15 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 			$error ++;
 		}
 	}
+	if ($qty < 0) {
+		$langs->load("errors");
+		setEventMessage($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), 'errors');
+		$error ++;
+	}
 
 	// Update line
 	if (! $error) {
-		$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, 0, $array_option);
+		$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'), $date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, 0, $array_option);
 
 		if ($result >= 0) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1463,6 +1482,8 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 			unset($_POST['product_desc']);
 			unset($_POST['fournprice']);
 			unset($_POST['buying_price']);
+			unset($_POST['np_marginRate']);
+			unset($_POST['np_markRate']);
 		} else {
 			setEventMessage($object->error, 'errors');
 		}
@@ -3579,21 +3600,24 @@ if ($action == 'create')
 		// Linked object block
 		$somethingshown = $object->showLinkedObjectBlock();
 
-		if (empty($somethingshown) && ! empty($conf->commande->enabled))
+		$linktoelem='';
+
+		if (! empty($conf->commande->enabled))
 		{
-			print '<br><a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
 
 			print '
 				<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
 					jQuery("#linktoorder").click(function() {
-						jQuery("#commande").toggle();
+						jQuery("#orderlist").toggle();
+						jQuery("#linktoorder").toggle();
 					});
 				});
 				</script>
 				';
 
-			print '<div id="commande" style="display:none">';
+			print '<div id="orderlist" style="display:none">';
 
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_client, c.total_ht";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
@@ -3601,11 +3625,12 @@ if ($action == 'create')
 			$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $soc->id . '';
 
 			$resqlorderlist = $db->query($sql);
-			if ($resqlorderlist) {
+			if ($resqlorderlist)
+			{
 				$num = $db->num_rows($resqlorderlist);
 				$i = 0;
 
-				print '<form action="" method="POST" name="LinkedOrder">';
+				print '<br><form action="" method="POST" name="LinkedOrder">';
 				print '<table class="noborder">';
 				print '<tr class="liste_titre">';
 				print '<td class="nowrap"></td>';
@@ -3614,7 +3639,8 @@ if ($action == 'create')
 				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
 				print '<td align="left">' . $langs->trans("Company") . '</td>';
 				print '</tr>';
-				while ($i < $num) {
+				while ($i < $num)
+				{
 					$objp = $db->fetch_object($resqlorderlist);
 					if ($objp->socid == $soc->id) {
 						$var = ! $var;
@@ -3632,7 +3658,7 @@ if ($action == 'create')
 					$i ++;
 				}
 				print '</table>';
-				print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"></center>';
+				print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></center>';
 				print '</form>';
 				$db->free($resqlorderlist);
 			} else {
@@ -3641,6 +3667,9 @@ if ($action == 'create')
 
 			print '</div>';
 		}
+
+		// Show link to elements
+		if ($linktoelem) print '<br>'.$linktoelem;
 
 		// Link for paypal payment
 		if (! empty($conf->paypal->enabled) && $object->statut != 0) {

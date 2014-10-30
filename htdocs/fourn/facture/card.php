@@ -693,24 +693,25 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
     {
     	$db->commit();
 
-    	// Define output language
-    	$outputlangs = $langs;
-        $newlang=GETPOST('lang_id','alpha');
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-    	if (! empty($newlang))
+        // Define output language
+    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
     	{
-    		$outputlangs = new Translate("",$conf);
-    		$outputlangs->setDefaultLang($newlang);
+    		$outputlangs = $langs;
+    		$newlang = '';
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    		if (! empty($newlang)) {
+    			$outputlangs = new Translate("", $conf);
+    			$outputlangs->setDefaultLang($newlang);
+    		}
+    		$model=$object->modelpdf;
+    		if (empty($model)) {
+    			$tmp=getListOfModels($db, 'invoice_supplier'); $keys=array_keys($tmp); $model=$keys[0];
+    		}
+    		$ret = $object->fetch($id); // Reload to get new records
+    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    		if ($result < 0) dol_print_error($db,$result);
     	}
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-        {
-	        $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-        	if ($result	<= 0)
-        	{
-        		dol_print_error($db,$result);
-        		exit;
-        	}
-        }
 
 		unset($_POST ['prod_entry_mode']);
 
@@ -774,20 +775,25 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
     {
         $object->set_draft($user);
 
-        $outputlangs = $langs;
-        if (! empty($_REQUEST['lang_id']))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-        }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-	        $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-        	if ($result	<= 0)
-        	{
-        		dol_print_error($db,$result);
-        		exit;
-        	}
-        }
+        // Define output language
+    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+    	{
+    		$outputlangs = $langs;
+    		$newlang = '';
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    		if (! empty($newlang)) {
+    			$outputlangs = new Translate("", $conf);
+    			$outputlangs->setDefaultLang($newlang);
+    		}
+    		$model=$object->modelpdf;
+    		if (empty($model)) {
+    			$tmp=getListOfModels($db, 'invoice_supplier'); $keys=array_keys($tmp); $model=$keys[0];
+    		}
+    		$ret = $object->fetch($id); // Reload to get new records
+    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    		if ($result < 0) dol_print_error($db,$result);
+    	}
 
         $action='';
     }
@@ -2288,21 +2294,24 @@ else
                  */
                 $somethingshown=$object->showLinkedObjectBlock();
 
+                $linktoelem='';
+
                 if (empty($somethingshown) && ! empty($conf->fournisseur->enabled))
                 {
-                	print '<br><a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+                	$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
 
                 	print '
 						<script type="text/javascript" language="javascript">
 						jQuery(document).ready(function() {
 							jQuery("#linktoorder").click(function() {
-								jQuery("#commande").toggle();
-							});
+								jQuery("#orderlist").toggle();
+								jQuery("#linktoorder").toggle();
+                			});
 						});
 						</script>
 						';
 
-                	print '<div id="commande" style="display:none">';
+                	print '<div id="orderlist" style="display:none">';
 
                 	$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_supplier, c.total_ht";
                 	$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
@@ -2314,7 +2323,7 @@ else
                 		$num = $db->num_rows($resqlorderlist);
                 		$i = 0;
 
-                		print '<form action="" method="POST" name="LinkedOrder">';
+                		print '<br><form action="" method="POST" name="LinkedOrder">';
                 		print '<table class="noborder">';
                 		print '<tr class="liste_titre">';
                 		print '<td class="nowrap"></td>';
@@ -2341,7 +2350,7 @@ else
                 			$i ++;
                 		}
                 		print '</table>';
-                		print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"></center>';
+                		print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></center>';
                 		print '</form>';
                 		$db->free($resqlorderlist);
                 	} else {
@@ -2350,6 +2359,9 @@ else
 
                 	print '</div>';
                 }
+
+				// Show link to elements
+				if ($linktoelem) print '<br>'.$linktoelem;
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
                 //print '</td><td valign="top" width="50%">';

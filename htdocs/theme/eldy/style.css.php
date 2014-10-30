@@ -1004,9 +1004,9 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     background-repeat:repeat-x;
 <?php } ?>
     border-left: 1px solid #AAA;
-    border-right: 1px solid #CCC;
-    border-bottom: 1px solid #CCC;
-    border-top: 1px solid #CCC;
+    border-right: 1px solid #BBB;
+    border-bottom: 1px solid #BBB;
+    border-top: 1px solid #BBB;
     border-radius: 5px;
 	-moz-border-radius: 5px;
     -moz-box-shadow: 3px 3px 4px #DDD;
@@ -1361,10 +1361,10 @@ div.tabBar {
     -moz-border-radius:6px;
     -webkit-border-radius: 6px;
 	border-radius: 6px;
-    border-right: 1px solid #CCCCCC;
-    border-bottom: 1px solid #CCCCCC;
-    border-left: 1px solid #D0D0D0;
-    border-top: 1px solid #D8D8D8;
+    border-right: 1px solid #BBB;
+    border-bottom: 1px solid #BBB;
+    border-left: 1px solid #BBB;
+    border-top: 1px solid #CCC;
 	width: auto;
 <?php if ($usecss3) { ?>
 	background-image: -o-linear-gradient(bottom, rgba(<?php echo $colorbacktabcard1; ?>, 0.5) 25%, rgba(<?php echo $colorbacktabcard2; ?>, 0.5) 100%);
@@ -1420,9 +1420,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 
 	border-bottom: none;
-	border-right: 1px solid #CCCCCC;
-	border-left: 1px solid #D0D0D0;
-	border-top: 1px solid #D8D8D8;
+	border-right: 1px solid #BBB;
+	border-left: 1px solid #BBB;
+	border-top: 1px solid #CCC;
 
 <?php if ($usecss3) { ?>
     background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
