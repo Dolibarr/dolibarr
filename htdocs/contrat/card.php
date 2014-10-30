@@ -937,7 +937,7 @@ if ($action == 'create')
 
 	// Ref Int
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-	print '<td colspan="2"><input type="text" siez="5" name="ref_supplier" id="ref_supplier" value="'.GETPOST('ref_supplier','alpha').'"></td></tr>';
+	print '<td colspan="2"><input type="text" size="5" name="ref_supplier" id="ref_supplier" value="'.GETPOST('ref_supplier','alpha').'"></td></tr>';
 
     // Customer
 	print '<tr>';

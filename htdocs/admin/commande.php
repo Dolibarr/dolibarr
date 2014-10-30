@@ -222,6 +222,18 @@ else if ($action == 'set_COMMANDE_FREE_TEXT')
     }
 }
 
+//Activate Set Shippable Icon In List
+else if ($action=="setshippableiconinlist") {
+    $setshippableiconinlist = GETPOST('value','int');
+    $res = dolibarr_set_const($db, "SHIPPABLE_ORDER_ICON_IN_LIST", $setshippableiconinlist,'yesno',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+    if (! $error) {
+        setEventMessage($langs->trans("SetupSaved"));
+    } else {
+        setEventMessage($langs->trans("Error"), 'errors');
+    }
+}
+
 
 /*
  * View
@@ -547,6 +559,22 @@ print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
+
+// Shippable Icon in List
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td>'.$langs->trans("ShippableOrderIconInList").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
+if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&value=0">';
+    print img_picto($langs->trans("Activated"),'switch_on');
+} else {
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&value=1">';
+    print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a></td>';
+print '</tr>';
 
 print '</table>';
 

@@ -3012,13 +3012,13 @@ abstract class CommonObject
 
 		print '<table class="nobordernopadding margintable" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td width="30%">'.$langs->trans('Margins').'</td>';
-		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
+		print '<td width="15%">'.$langs->trans('Margins').'</td>';
+		print '<td width="15%" align="right">'.$langs->trans('SellingPrice').'</td>';
 		if ($conf->global->MARGIN_TYPE == "1")
-			print '<td width="20%" align="right">'.$langs->trans('BuyingPrice').'</td>';
+			print '<td width="15%" align="right">'.$langs->trans('BuyingPrice').'</td>';
 		else
-			print '<td width="20%" align="right">'.$langs->trans('CostPrice').'</td>';
-		print '<td width="20%" align="right">'.$langs->trans('Margin').'</td>';
+			print '<td width="15%" align="right">'.$langs->trans('CostPrice').'</td>';
+		print '<td width="15%" align="right">'.$langs->trans('Margin').'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			print '<td align="right">'.$langs->trans('MarginRate').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))

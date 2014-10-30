@@ -1316,6 +1316,19 @@ class Societe extends CommonObject
                 }
             }
 
+            // Remove associated users
+            if (! $error)
+            {
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_commerciaux";
+                $sql.= " WHERE fk_soc = " . $id;
+                dol_syslog(get_class($this)."::Delete", LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                    $this->error = $this->db->lasterror();
+                }
+            }
+
             // Removed extrafields
             if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
             {
