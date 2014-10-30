@@ -1145,6 +1145,9 @@ class Form
         // If no preselected user defined, we take current user
         if ((is_numeric($selected) && ($selected < -1 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
 
+        $excludeUsers=null;
+        $includeUsers=null;
+
         // Permettre l'exclusion d'utilisateurs
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
         // Permettre l'inclusion d'utilisateurs
