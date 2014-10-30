@@ -805,7 +805,7 @@ else
 			print '<span span id="TypeName" class="fieldrequired"><label for="name">'.$langs->trans('ThirdPartyName').'</label></span>';
         }
 	    print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
-	    print '<input type="text" size="30" maxlength="60" name="nom" id="name" value="'.$object->name.'" autofocus="autofocus"></td>';
+	    print '<input type="text" size="60" maxlength="128" name="nom" id="name" value="'.$object->name.'" autofocus="autofocus"></td>';
 	    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	    {
 		    print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
@@ -816,7 +816,7 @@ else
         if ($conf->use_javascript_ajax)
         {
             print '<tr class="individualline"><td><label for="firstname">'.$langs->trans('FirstName').'</label></td>';
-	        print '<td><input type="text" size="30" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
+	        print '<td><input type="text" size="60" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
             print '<td colspan=2>&nbsp;</td></tr>';
             print '<tr class="individualline"><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td>';
             print $formcompany->select_civility($object->civility_id).'</td>';
@@ -1266,7 +1266,7 @@ else
 
             // Name
             print '<tr><td><label for="name"><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></label></td>';
-	        print '<td colspan="3"><input type="text" size="40" maxlength="60" name="nom" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
+	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="nom" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
