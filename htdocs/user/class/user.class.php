@@ -2311,6 +2311,29 @@ class User extends CommonObject
 	}
 
 	/**
+	 * 	Return list of all childs users in herarchy.
+	 *
+	 *	@return		array		      		  	Array of user id lower than user. This overwrite this->users.
+	 */
+	function getAllChildIds()
+	{
+		// Init this->users
+		$this->get_full_tree();
+
+		$idtoscan=$this->id;
+		$childids=array();
+
+		dol_syslog("Build childid for id = ".$idtoscan);
+		foreach($this->users as $id => $val)
+		{
+			//var_dump($val['fullpath']);
+			if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) $childids[$val['id']]=$val['id'];
+		}
+
+		return $childids;
+	}
+
+	/**
 	 *	For user id_user and its childs available in this->users, define property fullpath and fullname
 	 *
 	 * 	@param		int		$id_user		id_user entry to update
