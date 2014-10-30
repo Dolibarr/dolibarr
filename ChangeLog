@@ -11,6 +11,7 @@ English Dolibarr ChangeLog
 - Fix: right and error management #1961
 - Fix: Fix Error when trying to clone an Order #1943
 - Fix: [ bug #1618 ] PHP Error thrown when saving a barcode
+- Fix: webservice Thirdparty parameter lastname for invidual creation is now lastname and not ref 
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
