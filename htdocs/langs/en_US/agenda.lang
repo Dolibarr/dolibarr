@@ -70,9 +70,9 @@ DateActionStart= Start date
 DateActionEnd= End date
 AgendaUrlOptions1=You can also add following parameters to filter output:
 AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by, assigned to or done by user <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions created by user <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b>.
-AgendaUrlOptions5=<b>logind=%s</b> to restrict output to actions done by user <b>%s</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Show birthday's contacts
 AgendaHideBirthdayEvents=Hide birthday's contacts
 Busy=Busy
