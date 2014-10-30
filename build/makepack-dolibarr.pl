@@ -436,13 +436,16 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/document`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/documents`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/ancotec*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/bootstrap*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/factory*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/multicompany*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/nltechno*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/pos*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/test`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/teclib*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/test`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
@@ -452,7 +455,7 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/template`;  # Package not valid for most linux distributions (errors reported into compile.js). Package should be embed by modules to avoid problems.
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpmailer`;                # Package not valid for most linux distributions (errors reported into file LICENSE). Package should be embed by modules to avoid problems.
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/adapters`;		# Keep this removal in case we embed libraries
-		#$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;		# _source must be kept into tarball
+		#$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;		# _source must be kept into tarball due to debian policies
 		
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/datatables/extras/TableTools/swf`;	# Source of this flash is not available
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
