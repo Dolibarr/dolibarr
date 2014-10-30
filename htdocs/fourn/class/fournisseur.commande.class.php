@@ -1929,6 +1929,47 @@ class CommandeFournisseur extends CommonOrder
     }
 
     /**
+     *	Charge indicateurs this->nb de tableau de bord
+     *
+     *	@return     int         <0 si ko, >0 si ok
+     */
+    function load_state_board()
+    {
+        global $conf, $user;
+
+        $this->nb=array();
+        $clause = "WHERE";
+
+        $sql = "SELECT count(co.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as co";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
+        if (!$user->rights->societe->client->voir && !$user->societe_id)
+        {
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+            $sql.= " WHERE sc.fk_user = " .$user->id;
+            $clause = "AND";
+        }
+        $sql.= " ".$clause." co.entity = ".$conf->entity;
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nb["supplier_orders"]=$obj->nb;
+            }
+            $this->db->free($resql);
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
+    /**
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param          User	$user   Objet user
