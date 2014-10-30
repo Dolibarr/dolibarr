@@ -118,10 +118,9 @@ abstract class CommonDocGenerator
             'mycompany_idprof5'=>$mysoc->idprof5,
             'mycompany_idprof6'=>$mysoc->idprof6,
         	'mycompany_vatnumber'=>$mysoc->tva_intra,
-            // Only private not exists for "mysoc"
-        	'mycompany_note'=>$mysoc->note_private
-            //'mycompany_note_private'=>$mysoc->note_private,
-        	//'mycompany_note_public'=>$mysoc->note_public,
+        	// Only private not exists for "mysoc"
+            'mycompany_note_private'=>$mysoc->note_private,
+
         );
     }
 
@@ -166,6 +165,7 @@ abstract class CommonDocGenerator
             'company_customeraccountancycode'=>$object->code_compta,
             'company_supplieraccountancycode'=>$object->code_compta_fournisseur,
             'company_juridicalstatus'=>$object->forme_juridique,
+            'company_outstanding_limit'=>$object->outstanding_limit,
             'company_capital'=>$object->capital,
             'company_idprof1'=>$object->idprof1,
             'company_idprof2'=>$object->idprof2,
