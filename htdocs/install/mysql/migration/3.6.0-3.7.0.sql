@@ -1064,6 +1064,9 @@ ALTER TABLE llx_adherent CHANGE COLUMN civilite civility VARCHAR(6);
 ALTER TABLE llx_socpeople CHANGE COLUMN civilite civility VARCHAR(6);
 ALTER TABLE llx_user CHANGE COLUMN civilite civility VARCHAR(6);
 
+ALTER TABLE llx_societe CHANGE COLUMN nom varchar(128);
+ALTER TABLE llx_adherent CHANGE COLUMN societe varchar(128);
+
 ALTER TABLE llx_c_type_fees CHANGE COLUMN libelle label VARCHAR(30);
 ALTER TABLE llx_c_type_fees ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER label;
 
