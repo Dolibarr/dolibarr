@@ -173,7 +173,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						}
     						$("#search_'.$htmlname.'").trigger("change");	// To tell that input text field was modified
     					}
-    					,delay: 1000
+    					,delay: 500
 					}).data( "autocomplete" )._renderItem = function( ul, item ) {
 						return $( "<li></li>" )
 						.data( "item.autocomplete", item )
