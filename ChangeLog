@@ -4,18 +4,17 @@ English Dolibarr ChangeLog
 
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
-- Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice
-- Fix: bug 1588 : relative discount
+- Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
+- Fix: bug 1588 : relative discount.
 - Fix: label of input method not tranlated.
 - Fix: box of customer and propsects were not correctly disabled.
-- Fix: right and error management #1961
-- Fix: Fix Error when trying to clone an Order #1943
 - Fix: [ bug #1618 ] PHP Error thrown when saving a barcode
+- Fix: Civility & birthdate wasn't save into adherent module.
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
 - Fix: Can upload files on services.
-- Fix: sql errors on updat fichinter.
+- Fix: sql errors on update fichinter.
 - Fix: debian script syntax error.
 - Fix: error "menu param is not inside list" into pos module.
 - Fix: Salary payments are not reflected on the reporting sheets.
