@@ -158,9 +158,9 @@ $sql = "SELECT t.rowid, t.taux";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 $sql.= ", ".MAIN_DB_PREFIX."c_country as c";
 $sql.= " WHERE t.fk_pays = c.rowid";
-$sql.= " AND c.active = 1";
+$sql.= " AND t.active = 1";
 $sql.= " AND c.code = '".$mysoc->country_code."'";
-//print $request;
+//print $sql;
 
 $resql = $db->query($sql);
 if ($resql)

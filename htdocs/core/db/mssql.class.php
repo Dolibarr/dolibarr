@@ -60,6 +60,8 @@ class DoliDBMssql extends DoliDB
 		global $conf,$langs;
 
 		$this->database_user=$user;
+        $this->database_host=$host;
+        $this->database_port=$port;
 		$this->transaction_opened=0;
 
 		if (! function_exists("mssql_connect"))

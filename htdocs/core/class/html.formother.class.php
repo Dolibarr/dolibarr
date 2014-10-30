@@ -307,6 +307,7 @@ class FormOther
      * @param  string	$htmlname      	Name of combo list
      * @param	int		$nocateg		Show also an entry "Not categorized"
      * @return string		        	Html combo list code
+     * @see	select_all_categories
      */
     function select_categories($type,$selected=0,$htmlname='search_categ',$nocateg=0)
     {
@@ -318,7 +319,7 @@ class FormOther
         $tab_categs = $static_categs->get_full_arbo($type);
 
         // Print a select with each of them
-        $moreforfilter ='<select class="flat" name="'.$htmlname.'">';
+        $moreforfilter ='<select class="flat" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
         $moreforfilter.='<option value="">&nbsp;</option>';	// Should use -1 to say nothing
 
         if (is_array($tab_categs))

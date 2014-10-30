@@ -61,6 +61,8 @@ class DoliDBMysql extends DoliDB
 		if (! empty($conf->db->dolibarr_main_db_collation))	$this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
 		$this->database_user=$user;
+        $this->database_host=$host;
+        $this->database_port=$port;
 
 		$this->transaction_opened=0;
 

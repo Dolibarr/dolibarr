@@ -71,7 +71,7 @@ function project_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'notes';
 		$h++;
     }
@@ -81,7 +81,7 @@ function project_prepare_head($object)
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'document';
 	$h++;
 
@@ -149,7 +149,7 @@ function task_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
 		$head[$h][1] = $langs->trans('Notes');
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'task_notes';
 		$h++;
     }
@@ -458,7 +458,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 	global $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic;
 
-	if (! is_object($formother)) 
+	if (! is_object($formother))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 		$formother = new FormOther($db);

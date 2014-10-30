@@ -58,12 +58,12 @@ class box_supplier_orders extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
         $supplierorderstatic=new CommandeFournisseur($db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLatestSupplierOrders", $max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierOrders", $max));
 
         if ($user->rights->fournisseur->commande->lire)
         {
             $sql = "SELECT s.nom as name, s.rowid as socid,";
-            $sql.= " c.ref, c.tms, c.rowid,";
+            $sql.= " c.ref, c.tms, c.rowid, c.date_commande,";
             $sql.= " c.fk_statut";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -72,7 +72,8 @@ class box_supplier_orders extends ModeleBoxes
             $sql.= " AND c.entity = ".$conf->entity;
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-            $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
             $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);
@@ -84,7 +85,8 @@ class box_supplier_orders extends ModeleBoxes
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
-                    $datem=$db->jdate($objp->tms);
+                    $date=$db->jdate($objp->date_commande);
+					$datem=$db->jdate($objp->tms);
 
                     $urlo = DOL_URL_ROOT."/fourn/commande/card.php?id=".$objp->rowid;
                     $urls = DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid;
@@ -106,7 +108,7 @@ class box_supplier_orders extends ModeleBoxes
                     'url' => $urls);
 
                     $this->info_box_contents[$i][4] = array('td' => 'align="right"',
-                    'text' => dol_print_date($datem,'day'),
+                    'text' => dol_print_date($date,'day'),
                     );
 
                     $this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',

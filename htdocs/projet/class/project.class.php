@@ -388,19 +388,38 @@ class Project extends CommonObject
     /**
      * 	Return list of elements for type linked to project
      *
-     * 	@param		string		$type		'propal','order','invoice','order_supplier','invoice_supplier'
-     * 	@param		string		$tablename	name of table associated of the type
-     * 	@return		array					List of orders linked to project, <0 if error
+     * 	@param		string		$type			'propal','order','invoice','order_supplier','invoice_supplier'
+     * 	@param		string		$tablename		name of table associated of the type
+     * 	@param		string		$datefieldname	name of table associated of the type
+     *  @param		string		$dates			Start date (at 00:00:00)
+     *  @param		string		$datee			End date (at 23:00:00)
+     * 	@return		mixed						List of orders linked to project, < 0 or string if error
      */
-    function get_element_list($type, $tablename)
+    function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
     {
         $elements = array();
 
         if ($type == 'agenda')
+        {
             $sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project=" . $this->id;
+        }
         else
+		{
             $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet=" . $this->id;
-        if (! $sql) return -1;
+		}
+		if ($dates > 0)
+		{
+			if (empty($datefieldname) && ! empty($this->table_element_date)) $datefieldname=$this->table_element_date;
+			if (empty($datefieldname)) return 'Error this object has no date field defined';
+			$sql.=" AND ".$datefieldname." >= '".$this->db->jdate($dates)."'";
+		}
+    	if ($datee > 0)
+		{
+			if (empty($datefieldname) && ! empty($this->table_element_date)) $datefieldname=$this->table_element_date;
+			if (empty($datefieldname)) return 'Error this object has no date field defined';
+			$sql.=" AND ".$datefieldname." <= '".$this->db->jdate($datee)."'";
+		}
+		if (! $sql) return -1;
 
         //print $sql;
         dol_syslog(get_class($this)."::get_element_list", LOG_DEBUG);

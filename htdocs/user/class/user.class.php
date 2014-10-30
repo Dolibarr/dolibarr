@@ -51,7 +51,7 @@ class User extends CommonObject
 	var $firstname;
 	var $note;
 	var $email;
-  var $skype;
+	var $skype;
 	var $job;
 	var $signature;
 	var $office_phone;
@@ -101,13 +101,14 @@ class User extends CommonObject
 	var $users;						// To store all tree of users hierarchy
 	var $parentof;					// To store an array of all parents for all ids.
 
-	var $accountancy_code;				// Accountancy code in prevision of the complete accountancy module
-	var $thm;							// Average cost of employee
-	var $tjm;							// Average cost of employee
-	var $salary;						// Monthly salary
-	var $salaryextra;					// Monthly salary extra
-	var $weeklyhours;					// Weekly hours
+	var $accountancy_code;			// Accountancy code in prevision of the complete accountancy module
+	var $thm;						// Average cost of employee
+	var $tjm;						// Average cost of employee
+	var $salary;					// Monthly salary
+	var $salaryextra;				// Monthly salary extra
+	var $weeklyhours;				// Weekly hours
 
+	var $color;						// Define background color for user in agenda
 
 	/**
 	 *    Constructor de la classe
@@ -166,6 +167,7 @@ class User extends CommonObject
 		$sql.= " u.salary,";
 		$sql.= " u.salaryextra,";
 		$sql.= " u.weeklyhours,";
+		$sql.= " u.color,";
 		$sql.= " u.ref_int, u.ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
@@ -233,6 +235,7 @@ class User extends CommonObject
 				$this->salary		= $obj->salary;
 				$this->salaryextra	= $obj->salaryextra;
 				$this->weeklyhours	= $obj->weeklyhours;
+				$this->color		= $obj->color;
 
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->datem				= $this->db->jdate($obj->datem);
@@ -270,7 +273,7 @@ class User extends CommonObject
 			return -1;
 		}
 
-		// Recupere parametrage global propre a l'utilisateur
+		// To get back the global configuration unique to the user
 		if ($loadpersonalconf)
 		{
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
@@ -302,7 +305,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Ajoute un droit a l'utilisateur
+	 *  Add a right to the user
 	 *
 	 * 	@param	int		$rid			id du droit a ajouter
 	 *  @param  string	$allmodule		Ajouter tous les droits du module allmodule
@@ -404,7 +407,7 @@ class User extends CommonObject
 
 
 	/**
-	 *  Retire un droit a l'utilisateur
+	 *  Remove a right to the user
 	 *
 	 *  @param	int		$rid        Id du droit a retirer
 	 *  @param  string	$allmodule  Retirer tous les droits du module allmodule
@@ -672,7 +675,7 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		// Desactive utilisateur
+		// Deactivate user
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 		$sql.= " SET statut = ".$this->statut;
 		$sql.= " WHERE rowid = ".$this->id;
@@ -717,7 +720,7 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
-		// Supprime droits
+		// Remove rights
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id;
 
 		if (! $error && ! $this->db->query($sql))
@@ -734,7 +737,7 @@ class User extends CommonObject
         	$this->error = $this->db->lasterror();
 		}
 
-		// Si contact, supprime lien
+		// If contact, remove link
 		if ($this->contact_id)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".$this->contact_id;
@@ -1063,7 +1066,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    Affectation des permissions par defaut
+	 *    Assign rights by default
 	 *
 	 *    @return     Si erreur <0, si ok renvoi le nbre de droits par defaut positionnes
 	 */
@@ -1142,6 +1145,7 @@ class User extends CommonObject
 		$this->zip			= empty($this->zip)?'':$this->zip;
 		$this->town			= empty($this->town)?'':$this->town;
 		$this->accountancy_code = trim($this->accountancy_code);
+		$this->color 		= empty($this->color)?'':$this->color;
 
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -1172,6 +1176,7 @@ class User extends CommonObject
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
+		$sql.= ", color = '".$this->db->escape($this->color)."'";
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
@@ -1534,7 +1539,7 @@ class User extends CommonObject
 			$mesg.= $outputlangs->transnoentitiesnoconv("Password")." = ".$password."\n\n";
 			$mesg.= "\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("YouMustClickToChange")." :\n";
-			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".dol_hash($password);
+			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordhash=".dol_hash($password);
 			$mesg.= $url."\n\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("ForgetIfNothing")."\n\n";
 			dol_syslog(get_class($this)."::send_password url=".$url);
@@ -1787,7 +1792,7 @@ class User extends CommonObject
 			$result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin);
 			if ($withpicto != 2) $result.=' ';
 		}
-		$result.=$lien.$this->getFullName($langs).$lienfin;
+		$result.=$lien.$this->getFullName($langs,'','',16).$lienfin;
 		return $result;
 	}
 
@@ -1936,7 +1941,7 @@ class User extends CommonObject
 		if ($this->office_fax && ! empty($conf->global->LDAP_FIELD_FAX))	     $info[$conf->global->LDAP_FIELD_FAX] = $this->office_fax;
 		if ($this->note && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))    $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
 		if ($this->email && ! empty($conf->global->LDAP_FIELD_MAIL))          $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
-    if ($this->skype && ! empty($conf->global->LDAP_FIELD_SKYPE))          $info[$conf->global->LDAP_FIELD_SKYPE] = $this->skype;
+    	if ($this->skype && ! empty($conf->global->LDAP_FIELD_SKYPE))          $info[$conf->global->LDAP_FIELD_SKYPE] = $this->skype;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
 		{
@@ -1989,7 +1994,7 @@ class User extends CommonObject
 		$this->firstname='SPECIMEN';
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
-    $this->skype='tom.hanson';
+    	$this->skype='tom.hanson';
 		$this->office_phone='0999999999';
 		$this->office_fax='0999999998';
 		$this->user_mobile='0999999997';
@@ -2218,16 +2223,15 @@ class User extends CommonObject
 
 	/**
 	 * 	Reconstruit l'arborescence hierarchique des users sous la forme d'un tableau
-	 *	Renvoi un tableau de tableau('id','id_parent',...) trie selon arbre et avec:
-	 *				id = id du user
-	 *				id_parent = id du user parent
-	 *				id_children = tableau des id enfant
-	 *				name = nom du user
+	 *	Set and return this->users that is an array sorted according to tree with arrays of:
+	 *				id = id user
+	 *				lastname
+	 *				firstname
 	 *				fullname = nom avec chemin complet du user
-	 *				fullpath = chemin complet compose des id
+	 *				fullpath = chemin complet compose des id: "_grandparentid_parentid_id"
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
-	 *	@return		array		      		  	Array of users. this->users and this->parentof are set.
+	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
 	function get_full_tree($deleteafterid=0)
 	{
@@ -2304,6 +2308,29 @@ class User extends CommonObject
 		//var_dump($this->users);
 
 		return $this->users;
+	}
+
+	/**
+	 * 	Return list of all childs users in herarchy.
+	 *
+	 *	@return		array		      		  	Array of user id lower than user. This overwrite this->users.
+	 */
+	function getAllChildIds()
+	{
+		// Init this->users
+		$this->get_full_tree();
+
+		$idtoscan=$this->id;
+		$childids=array();
+
+		dol_syslog("Build childid for id = ".$idtoscan);
+		foreach($this->users as $id => $val)
+		{
+			//var_dump($val['fullpath']);
+			if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) $childids[$val['id']]=$val['id'];
+		}
+
+		return $childids;
 	}
 
 	/**

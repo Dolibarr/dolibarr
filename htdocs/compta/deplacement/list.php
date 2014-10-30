@@ -58,6 +58,9 @@ $search_ref=GETPOST('search_ref','alpha');
 $tripandexpense_static=new Deplacement($db);
 $userstatic = new User($db);
 
+$childids = $user->getAllChildIds();
+$childids[]=$user->id;
+
 llxHeader();
 
 $sql = "SELECT s.nom, s.rowid as socid,";				// Ou
@@ -70,6 +73,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= " WHERE d.fk_user = u.rowid";
 $sql.= " AND d.entity = ".$conf->entity;
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if (trim($search_ref) != '')
@@ -167,6 +171,7 @@ else
 {
     dol_print_error($db);
 }
-$db->close();
 
 llxFooter();
+
+$db->close();

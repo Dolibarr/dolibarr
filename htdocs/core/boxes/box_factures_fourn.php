@@ -58,13 +58,13 @@ class box_factures_fourn extends ModeleBoxes
 		$facturestatic=new FactureFournisseur($db);
 
 		$this->info_box_head = array(
-				'text' => $langs->trans("BoxTitleLastSupplierBills",$max)
+				'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierBills",$max)
 		);
 
 		if ($user->rights->fournisseur->facture->lire)
 		{
 			$sql = "SELECT s.nom as name, s.rowid as socid,";
-			$sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.amount,";
+			$sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.total_ht,";
 			$sql.= " f.paye, f.fk_statut,";
 			$sql.= ' f.datef as df,';
 			$sql.= ' f.datec as datec,';
@@ -76,7 +76,8 @@ class box_factures_fourn extends ModeleBoxes
 			$sql.= " AND f.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " ORDER BY f.tms DESC";
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.ref DESC ";
+            else $sql.= " ORDER BY f.tms DESC, f.ref DESC ";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -92,7 +93,8 @@ class box_factures_fourn extends ModeleBoxes
 				{
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
-					$datec=$db->jdate($objp->datec);
+					$date=$db->jdate($objp->df);
+					$datem=$db->jdate($objp->tms);
 
 					$late = '';
 					if ($objp->paye == 0 && $datelimite && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
@@ -119,7 +121,7 @@ class box_factures_fourn extends ModeleBoxes
                     'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][5] = array('td' => 'align="right"',
-                    'text' => dol_print_date($datec,'day'));
+                    'text' => dol_print_date($date,'day'));
 
 					$fac = new FactureFournisseur($db);
 					$fac->fetch($objp->facid);

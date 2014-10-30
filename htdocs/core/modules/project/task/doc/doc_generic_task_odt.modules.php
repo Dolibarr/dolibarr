@@ -490,7 +490,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($project,$outputlangs);
-				$array_other=$this->get_substitutionarray_other($user,$outputlangs);
+				$array_other=$this->get_substitutionarray_other($outputlangs);
 
 				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other);
 				complete_substitutions_array($tmparray, $outputlangs, $object);

@@ -65,8 +65,9 @@ if ($action == 'add')
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_param";
 		$sql.= " WHERE param = 'MAIN_BOXES_".$db->escape(GETPOST("pos","alpha"))."' AND value = '1'";
 		$sql.= " AND entity = ".$conf->entity;
-		$resql = $db->query($sql);
+
 		dol_syslog("boxes.php search fk_user to activate box for", LOG_DEBUG);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 		    $num = $db->num_rows($resql);
@@ -227,8 +228,8 @@ $actives = array();
 $sql = "SELECT b.rowid, b.box_id, b.position, b.box_order,";
 $sql.= " bd.rowid as boxid";
 $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as bd";
-$sql.= " WHERE b.entity = ".$conf->entity;
-$sql.= " AND b.box_id = bd.rowid";
+$sql.= " WHERE b.box_id = bd.rowid";
+$sql.= " AND b.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
 $sql.= " AND b.fk_user=0";
 $sql.= " ORDER by b.position, b.box_order";
 
@@ -237,6 +238,8 @@ $resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
+
+	// Check record to know if we must recalculate sort order
 	$i = 0;
 	$decalage=0;
 	$var=false;
@@ -310,7 +313,6 @@ if ($resql)
 	$db->free($resql);
 }
 
-
 // Available boxes to activate
 $boxtoadd=InfoBox::listBoxes($db,'available',-1,null,$actives);
 
@@ -372,7 +374,7 @@ print '</table>';
 
 // Activated boxes
 $boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
-
+//var_dump($boxactivated);
 print "<br>\n\n";
 print_titre($langs->trans("BoxesActivated"));
 

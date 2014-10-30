@@ -573,17 +573,18 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
 /**
  * Return last or next value for a mask (according to area we should not reset)
  *
- * @param	DoliDB		$db				Database handler
+ * @param   DoliDB		$db			Database handler
  * @param   string		$mask			Mask to use
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
  * @param   string		$where			To add a filter on selection (for exemple to filter on invoice types)
  * @param   Societe		$objsoc			The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
- * @param   string		$mode           'next' for next value or 'last' for last value
- * @return 	string					    New value (numeric) or error message
+ * @param   string		$mode			'next' for next value or 'last' for last value
+ * @param   bool		$bentityon		activate the entity filterdefault is true (for modules not compatible with multicompany)
+ * @return 	string					New value (numeric) or error message
  */
-function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next')
+function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true)
 {
     global $conf;
 
@@ -784,7 +785,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $sql.= " FROM ".MAIN_DB_PREFIX.$table;
     $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
     $sql.= " AND ".$field." NOT LIKE '%PROV%'";
-    $sql.= " AND entity IN (".getEntity($table, 1).")";
+    if ($bentityon) // only if entity enable
+    	$sql.= " AND entity IN (".getEntity($table, 1).")";
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -824,7 +826,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $sql.= " FROM ".MAIN_DB_PREFIX.$table;
         $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
     	$sql.= " AND ".$field." NOT LIKE '%PROV%'";
-        $sql.= " AND entity IN (".getEntity($table, 1).")";
+    	if ($bentityon) // only if entity enable
+        	$sql.= " AND entity IN (".getEntity($table, 1).")";
         if ($where) $sql.=$where;
         if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -877,7 +880,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             $maskrefclient_sql.= " FROM ".MAIN_DB_PREFIX.$table;
             //$sql.= " WHERE ".$field." not like '(%'";
             $maskrefclient_sql.= " WHERE ".$field." LIKE '".$maskrefclient_maskLike."'";
-            $maskrefclient_sql.= " AND entity IN (".getEntity($table, 1).")";
+            if ($bentityon) // only if entity enable
+            	$maskrefclient_sql.= " AND entity IN (".getEntity($table, 1).")";
             if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
             if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
             $maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
@@ -1337,6 +1341,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
     $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
     $sql.= " WHERE type = '".$type."'";
     $sql.= " AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+    $sql.= " ORDER BY description DESC";
 
     dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
     $resql = $db->query($sql);
