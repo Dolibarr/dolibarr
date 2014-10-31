@@ -214,6 +214,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
     $conf->browser->layout=$tmp['layout'];
     $conf->browser->phone=$tmp['phone'];	// deprecated, use layout
     $conf->browser->tablet=$tmp['tablet'];	// deprecated, use layout
+    //var_dump($conf->browser);
 }
 
 
@@ -459,7 +460,7 @@ if (! defined('NOLOGIN'))
                     $datesecond=dol_stringtotime($_POST["dst_second"]);
                     if ($datenow >= $datefirst && $datenow < $datesecond) $dol_dst=1;
                 }
-                //print $datefirst.'-'.$datesecond.'-'.$datenow; exit;
+                //print $datefirst.'-'.$datesecond.'-'.$datenow.'-'.$dol_tz.'-'.$dol_tzstring.'-'.$dol_dst; exit;
             }
 
             if (! $login)
@@ -620,6 +621,8 @@ if (! defined('NOLOGIN'))
 
         $user->update_last_login_date();
 
+        $user->trigger_mesg = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
+
         // TODO We should use a hook here, not a trigger
         // Call triggers
         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -715,14 +718,14 @@ if (! GETPOST('nojs'))   // If javascript was not disabled on URL
 }
 else $conf->use_javascript_ajax=0;
 
-// Set terminal output option
+// Set terminal output option according to conf->browser.
 if (GETPOST('dol_hide_leftmenu') || ! empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu=1;
 if (GETPOST('dol_hide_topmenu') || ! empty($_SESSION['dol_hide_topmenu']))                 $conf->dol_hide_topmenu=1;
 if (GETPOST('dol_optimize_smallscreen') || ! empty($_SESSION['dol_optimize_smallscreen'])) $conf->dol_optimize_smallscreen=1;
 if (GETPOST('dol_no_mouse_hover') || ! empty($_SESSION['dol_no_mouse_hover']))             $conf->dol_no_mouse_hover=1;
 if (GETPOST('dol_use_jmobile') || ! empty($_SESSION['dol_use_jmobile']))                   $conf->dol_use_jmobile=1;
-if (! empty($conf->browser->phone)) $conf->dol_no_mouse_hover=1;
-if (! empty($conf->browser->phone)
+if (! empty($conf->browser->layout) && $conf->browser->layout != 'classic') $conf->dol_no_mouse_hover=1;
+if ((! empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 	|| (! empty($_SESSION['dol_screenwidth']) && $_SESSION['dol_screenwidth'] < 400)
 	|| (! empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 400)
 )
@@ -731,12 +734,13 @@ if (! empty($conf->browser->phone)
 }
 // If we force to use jmobile, then we reenable javascript
 if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
-// Disabled bugged themes
+// Replace themes bugged with jmobile with eldy
 if (! empty($conf->dol_use_jmobile) && in_array($conf->theme,array('bureau2crea','cameleo')))
 {
 	$conf->theme='eldy';
 	$conf->css  =  "/theme/".$conf->theme."/style.css.php";
 }
+//var_dump($conf->browser->phone);
 
 if (! defined('NOREQUIRETRAN'))
 {

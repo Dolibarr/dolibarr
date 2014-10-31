@@ -54,6 +54,7 @@ $size=$extrafields->attribute_size[$attrname];
 $unique=$extrafields->attribute_unique[$attrname];
 $required=$extrafields->attribute_required[$attrname];
 $pos=$extrafields->attribute_pos[$attrname];
+$alwayseditable=$extrafields->attribute_alwayseditable[$attrname];
 $param=$extrafields->attribute_param[$attrname];
 
 if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_array($param))
@@ -110,6 +111,8 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($typ
 <tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique" <?php echo ($unique?' checked="true"':''); ?>></td></tr>
 <!-- Required -->
 <tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo ($required?' checked="true"':''); ?>></td></tr>
+<!-- Always editable -->
+<tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo ($alwayseditable?' checked="true"':''); ?>></td></tr>
 
 </table>
 

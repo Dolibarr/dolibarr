@@ -5,6 +5,20 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Agenda export by project #1967.
+- New: Increase length of thirdparty to 128 chars.
+- New: "Is Order shippable" icon #1975.
+- New: statistics on supplier orders and invoices on home page.
+- New: Add permissions to read all trips and expenses.
+- New: Can filter on date into tab "Referring object" of a project.
+- New: Module notification has been enhanced:
+       EMail use now language of target contact.
+       Can also define a fixed email for notifications.
+- New: Feature to link manually an order to an invoice does not disappear once
+       link has been done.
+- New: Can set a color on user card (visible into agenda view).
+- New: extrafields for projects and tasks are exported to ODT documents.
+- New: Add number of active notification into tab title (like we do for notes and documents)
 - New: Can add product into category from category card.
 - New: PDF event report show project and status of event.
 - New: Can filter on status on interventions.
@@ -60,9 +74,14 @@ For users:
 - New: Add option MAIN_GENERATE_INVOICES_WITH_PICTURE to show picture 
        onto PDF like MAIN_GENERATE_PROPOSALS_WITH_PICTURE dir for proposals.
 - New: Add more search field in list of cheque deposits.
-- New: Add feature to order to invoice on supplier part
+- New: Add feature to order to invoice on supplier part.
+- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export.
+- New: Direct invoice creation from predefined invoice.
+- New: Add dunning into accountancy report.
+- New: Add favorite button into country dictionary to put value on top select list
 - Upgrade phpexcel lib to 1.7.8
 - New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export
+- New : Option on extrafields to have them always editable regardless of the document status
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -80,9 +99,8 @@ For users:
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
-- New: Direct invoice creation from predefined invoice
-- New: Add dunning into accountancy report
-For users, new experimental module:
+
+For users, new experimental module (need to set feature level of instance to experimental to see them):
 - New: Module Accounting Expert to manage accountancy
 		Special Thanks to developpers :
 			Olivier Geffroy
@@ -96,6 +114,7 @@ For users, new experimental module:
 			Hydroflex		 		 120 euros
 			Asysteo			 		 120 euros
 			Fournisseur médical		 120 euros
+- Removed: unmaintained OScommerce module
 
 For translators:
 - Update language files.
@@ -117,6 +136,8 @@ For developers:
 - New: renamed table llx_c_pays to llx_c_country & libelle field to label.
 - New: Added hook "formConfirm" and "doActions" for fichinter card
 - New: Can search list of thirdparties from web service on part of name.
+- New: Function getCurrencyAmount is marked as deprecated. Use function price to output a price
+       including currency symbol.
 - Qual: Renamed table llx_c_civilite into llx_c_civility,
 		field civilite into label in the same table,
 		and field civilite into civility in other table.
@@ -128,6 +149,9 @@ For developers:
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
+- If you can't see trips and expenses records, check that you have the new permission "read all
+  trips and expenses".
+- Deprecated module "oscommerce" were removed.
 - Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
 - Some field into database were renamed from "libelle" to "label".
 - Table llx_c_pays were renamed into llx_c_country.  
@@ -142,6 +166,10 @@ Dolibarr better:
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice
 - Fix: bug 1588 : relative discount
 - Fix: label of input method not tranlated.
+- Fix: box of customer and propsects were not correctly disabled.
+- Fix: right and error management #1961
+- Fix: Fix Error when trying to clone an Order #1943
+- Fix: [ bug #1618 ] PHP Error thrown when saving a barcode
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:

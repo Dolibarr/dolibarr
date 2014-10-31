@@ -1589,9 +1589,10 @@ class Facture extends CommonInvoice
 	 * @param	User	$user           Object user that validate
 	 * @param   string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease
-	 * @return	int						<0 if KO, >0 if OK
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     * @return	int						<0 if KO, >0 if OK
 	 */
-	function validate($user, $force_number='', $idwarehouse=0)
+	function validate($user, $force_number='', $idwarehouse=0, $notrigger=0)
 	{
 		global $conf,$langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1679,6 +1680,7 @@ class Facture extends CommonInvoice
 		{
 			$num = $this->ref;
 		}
+		$this->newref = $num;
 
 		if ($num)
 		{
@@ -1738,43 +1740,48 @@ class Facture extends CommonInvoice
 				}
 			}
 
+			// Trigger calls
+			if (! $error && ! $notrigger)
+			{
+	            // Call trigger
+	            $result=$this->call_trigger('BILL_VALIDATE',$user);
+	            if ($result < 0) $error++;
+	            // End call triggers
+			}
+
 			if (! $error)
 			{
-				$this->oldref = '';
+				$this->oldref = $this->ref;
 
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref))
 				{
 					// Rename of object directory ($this->ref = old ref, $num = new ref)
 					// to  not lose the linked files
-					$facref = dol_sanitizeFileName($this->ref);
-					$snumfa = dol_sanitizeFileName($num);
-					$dirsource = $conf->facture->dir_output.'/'.$facref;
-					$dirdest = $conf->facture->dir_output.'/'.$snumfa;
+					$oldref = dol_sanitizeFileName($this->ref);
+					$newref = dol_sanitizeFileName($num);
+					$dirsource = $conf->facture->dir_output.'/'.$oldref;
+					$dirdest = $conf->facture->dir_output.'/'.$newref;
 					if (file_exists($dirsource))
 					{
 						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
 
 						if (@rename($dirsource, $dirdest))
 						{
-							$this->oldref = $facref;
-
 							dol_syslog("Rename ok");
-							// Suppression ancien fichier PDF dans nouveau rep
-							dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'*.*');
+	                        // Rename docs starting with $oldref with $newref
+	                        $listoffiles=dol_dir_list($conf->facture->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        foreach($listoffiles as $fileentry)
+	                        {
+	                        	$dirsource=$fileentry['name'];
+	                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+	                        	$dirsource=$fileentry['path'].'/'.$dirsource;
+	                        	$dirdest=$fileentry['path'].'/'.$dirdest;
+	                        	@rename($dirsource, $dirdest);
+	                        }
 						}
 					}
 				}
-			}
-
-			// Trigger calls
-			if (! $error)
-			{
-	            // Call trigger
-	            $result=$this->call_trigger('BILL_VALIDATE',$user);
-	            if ($result < 0) $error++;
-	            //TODO: Restoring ref, facnumber, statut, brouillon to previous value if trigger fail
-	            // End call triggers
 			}
 
 			// Set new ref and define current statut

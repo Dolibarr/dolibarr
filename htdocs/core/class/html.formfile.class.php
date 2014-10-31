@@ -73,12 +73,12 @@ class FormFile
         global $conf,$langs, $hookmanager;
         $hookmanager->initHooks(array('formfile'));
 
-        if (! empty($conf->browser->phone)) return 0;
+        if (! empty($conf->browser->layout) && $conf->browser->layout != 'classic') return 0;
 
 		if ((! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax) || ($useajax==2))
         {
-        	// TODO: Cheeck this works with 2 forms on same page
-        	// TODO: Cheeck this works with GED module, otherwise, force useajax to 0
+        	// TODO: Check this works with 2 forms on same page
+        	// TODO: Check this works with GED module, otherwise, force useajax to 0
         	// TODO: This does not support option savingdocmask
         	// TODO: This break feature to upload links too
         	return $this->_formAjaxFileUpload($object);
@@ -474,14 +474,14 @@ class FormFile
             // Model
             if (! empty($modellist))
             {
-                $out.= '<th align="center" class="formdoc liste_titre">';
+                $out.= '<th align="center" class="formdoc liste_titre maxwidthonsmartphone">';
                 $out.= '<span class="hideonsmartphone">'.$langs->trans('Model').' </span>';
                 if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
                 {
                     $arraykeys=array_keys($modellist);
                     $modelselected=$arraykeys[0];
                 }
-                $out.= $form->selectarray('model',$modellist,$modelselected,$showempty,0,0);
+                $out.= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', '');
                 $out.= '</th>';
             }
             else
@@ -492,7 +492,7 @@ class FormFile
             }
 
             // Language code (if multilang)
-            $out.= '<th align="center" class="formdoc liste_titre">';
+            $out.= '<th align="center" class="formdoc liste_titre maxwidthonsmartphone">';
             if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && ! $forcenomultilang && (! empty($modellist) || $showempty))
             {
                 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -508,7 +508,7 @@ class FormFile
 
             // Button
             $addcolumforpicto=($delallowed || $printer || $morepicto);
-            $out.= '<th align="center" colspan="'.($addcolumforpicto?'2':'1').'" class="formdocbutton liste_titre">';
+            $out.= '<th align="center" colspan="'.($addcolumforpicto?'2':'1').'" class="formdocbutton liste_titre maxwidthonsmartphone">';
             $genbutton = '<input class="button" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
             $genbutton.= ' type="submit" value="'.$buttonlabel.'"';
             if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $genbutton.= ' disabled="disabled"';

@@ -28,6 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (! empty($conf->propal->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
@@ -50,7 +51,20 @@ if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
 $projectid=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
-
+$datesrfc=GETPOST('datesrfc');
+$dateerfc=GETPOST('dateerfc');
+$dates=dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('datesyear'));
+$datee=dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
+if (empty($dates) && ! empty($datesrfc)) $dates=dol_stringtotime($datesrfc);
+if (empty($datee) && ! empty($dateerfc)) $datee=dol_stringtotime($dateerfc);
+if (! isset($_POST['datesrfc']) && ! isset($_POST['datesday']))
+{
+	$new=dol_now();
+	$tmp=dol_getdate($new);
+	//$datee=$now
+	//$dates=dol_time_plus_duree($datee, -1, 'y');
+	$dates=dol_get_first_day($tmp['year'],1);
+}
 if ($projectid == '' && $ref == '')
 {
 	dol_print_error('','Bad parameter');
@@ -153,49 +167,58 @@ $listofreferent=array(
 	'title'=>"ListProposalsAssociatedProject",
 	'class'=>'Propal',
 	'table'=>'propal',
+    'datefieldname'=>'datep',
 	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
 'order'=>array(
 	'title'=>"ListOrdersAssociatedProject",
 	'class'=>'Commande',
 	'table'=>'commande',
+	'datefieldname'=>'date_commande',
 	'test'=>$conf->commande->enabled && $user->rights->commande->lire),
 'invoice'=>array(
 	'title'=>"ListInvoicesAssociatedProject",
 	'class'=>'Facture',
 	'margin'=>'add',
 	'table'=>'facture',
+	'datefieldname'=>'datef',
 	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'invoice_predefined'=>array(
 	'title'=>"ListPredefinedInvoicesAssociatedProject",
 	'class'=>'FactureRec',
 	'table'=>'facture_rec',
+	'datefieldname'=>'datec',
 	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'order_supplier'=>array(
 	'title'=>"ListSupplierOrdersAssociatedProject",
 	'class'=>'CommandeFournisseur',
 	'table'=>'commande_fournisseur',
+	'datefieldname'=>'date_commande',
 	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire),
 'invoice_supplier'=>array(
 	'title'=>"ListSupplierInvoicesAssociatedProject",
 	'class'=>'FactureFournisseur',
 	'margin'=>'minus',
 	'table'=>'facture_fourn',
+	'datefieldname'=>'datef',
 	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire),
 'contract'=>array(
 	'title'=>"ListContractAssociatedProject",
 	'class'=>'Contrat',
 	'table'=>'contrat',
+	'datefieldname'=>'date_contrat',
 	'test'=>$conf->contrat->enabled && $user->rights->contrat->lire),
 'intervention'=>array(
 	'title'=>"ListFichinterAssociatedProject",
 	'class'=>'Fichinter',
 	'table'=>'fichinter',
+	'datefieldname'=>'date_valid',
 	'disableamount'=>1,
 	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
 'trip'=>array(
 	'title'=>"ListTripAssociatedProject",
 	'class'=>'Deplacement',
 	'table'=>'deplacement',
+	'datefieldname'=>'dated',
 	'margin'=>'minus',
 	'disableamount'=>1,
 	'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
@@ -203,6 +226,7 @@ $listofreferent=array(
 	'title'=>"ListActionsAssociatedProject",
 	'class'=>'ActionComm',
 	'table'=>'actioncomm',
+	'datefieldname'=>'datep',
 	'disableamount'=>1,
 	'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->lire)
 );
@@ -216,25 +240,49 @@ if ($action=="addelement")
 		setEventMessage($mailchimp->error,'errors');
 	}
 }elseif ($action == "unlink") {
-	
+
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
-	
+
 	$result = $project->remove_element($tablename, $elementselectid);
 	if ($result < 0) {
 		setEventMessage($project->error, 'errors');
 	}
 }
 
+$showdatefilter=0;
 foreach ($listofreferent as $key => $value)
 {
 	$title=$value['title'];
 	$classname=$value['class'];
 	$tablename=$value['table'];
+	$datefieldname=$value['datefieldname'];
 	$qualified=$value['test'];
 
 	if ($qualified)
 	{
+		if (! $showdatefilter)
+		{
+			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
+			print '<input type="hidden" name="tablename" value="'.$tablename.'">';
+			print '<input type="hidden" name="action" value="addelement">';
+			print '<table><tr>';
+			//print '<td>'.$langs->trans("Filter").':</td>';
+			print '<td>'.$langs->trans("From").' ';
+			print $form->select_date($dates,'dates',0,0,1);
+			print '</td>';
+			print '<td>'.$langs->trans("to").' ';
+			print $form->select_date($datee,'datee',0,0,1);
+			print '</td>';
+			print '<td>';
+			print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button">';
+			print '</td>';
+			print '</tr></table>';
+			print '</form><br>';
+
+			$showdatefilter++;
+		}
+
 		print '<br>';
 
 		print_titre($langs->trans($title));
@@ -247,6 +295,8 @@ foreach ($listofreferent as $key => $value)
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
 			print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 			print '<input type="hidden" name="action" value="addelement">';
+			print '<input type="hidden" name="datesrfc" value="'.dol_print_date($dates,'dayhourrfc').'">';
+			print '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee,'dayhourrfc').'">';
 			print '<table><tr><td>'.$langs->trans("SelectElement").'</td>';
 			print '<td>'.$selectList.'</td>';
 			print '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
@@ -260,11 +310,13 @@ foreach ($listofreferent as $key => $value)
 		print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
 		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountHT").'</td>';
+		else print '<td width="120"></td>';
 		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountTTC").'</td>';
+		else print '<td width="120"></td>';
 		print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
-		$elementarray = $project->get_element_list($key, $tablename);
-		if (count($elementarray)>0 && is_array($elementarray))
+		$elementarray = $project->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+		if (is_array($elementarray) && count($elementarray)>0)
 		{
 			$var=true;
 			$total_ht = 0;
@@ -314,6 +366,7 @@ foreach ($listofreferent as $key => $value)
 					if (! $qualifiedfortotal) print '</strike>';
 					print '</td>';
 				}
+				else print '<td></td>';
 
                 // Amount
 				if (empty($value['disableamount']))
@@ -324,6 +377,7 @@ foreach ($listofreferent as $key => $value)
 					if (! $qualifiedfortotal) print '</strike>';
 					print '</td>';
 				}
+				else print '<td></td>';
 
 				// Status
 				print '<td align="right">'.$element->getLibStatut(5).'</td>';
@@ -339,9 +393,15 @@ foreach ($listofreferent as $key => $value)
 
 			print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Number").': '.$i.'</td>';
 			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
+			else print '<td></td>';
 			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
+			else print '<td></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
+		}
+		else // error
+		{
+			print $elementarray;
 		}
 		print "</table>";
 

@@ -14,6 +14,7 @@
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2013      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014      Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,7 +194,7 @@ class Form
                 {
                 	$ret.='<td align="left">';
                 	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
-                	$ret.='<br>'."\n";
+                	if (preg_match('/ckeditor|textarea/',$typeofdata)) $ret.='<br>'."\n";
                 	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 	$ret.='</td>';
                 }
@@ -477,9 +478,11 @@ class Form
 
         $out='';
         $countryArray=array();
+		$favorite=array();
         $label=array();
+		$atleastonefavorite=0;
 
-        $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label";
+        $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_country";
         $sql.= " WHERE active = 1";
         //$sql.= " ORDER BY code ASC";
@@ -502,15 +505,22 @@ class Form
                     $countryArray[$i]['code_iso'] 	= $obj->code_iso;
                     $countryArray[$i]['code_iso3'] 	= $obj->code_iso3;
                     $countryArray[$i]['label']		= ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                    $label[$i] = dol_string_unaccent($countryArray[$i]['label']);
+                    $countryArray[$i]['favorite']   = $obj->favorite;
+                    $favorite[$i]					= $obj->favorite;
+					$label[$i] = dol_string_unaccent($countryArray[$i]['label']);
                     $i++;
                 }
 
-                array_multisort($label, SORT_ASC, $countryArray);
+                array_multisort($favorite, SORT_DESC, $label, SORT_ASC, $countryArray);
 
                 foreach ($countryArray as $row)
                 {
-                    //print 'rr'.$selected.'-'.$row['label'].'-'.$row['code_iso'].'<br>';
+                	if ($row['favorite'] && $row['code_iso']) $atleastonefavorite++;
+					if (empty($row['favorite']) && $atleastonefavorite)
+					{
+						$atleastonefavorite=0;
+						$out.= '<option value="" disabled="disabled">----------------------</option>';
+					}
                     if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
                     {
                         $foundselected=true;
@@ -1134,6 +1144,9 @@ class Form
 
         // If no preselected user defined, we take current user
         if ((is_numeric($selected) && ($selected < -1 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
+
+        $excludeUsers=null;
+        $includeUsers=null;
 
         // Permettre l'exclusion d'utilisateurs
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
@@ -2703,6 +2716,7 @@ class Form
      *    @param    int		$maxlength      	Maximum length for labels
      *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
      *    @return	void
+     *    @see select_categories
      */
     function select_all_categories($type, $selected='', $htmlname="parent", $maxlength=64, $excludeafterid=0)
     {
@@ -4390,7 +4404,7 @@ class Form
                 {
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="http://www.gravatar.com/avatar/'.dol_hash($email).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';
+                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="http://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';	// gravatar need md5 hash
                 }
                 else
                 {

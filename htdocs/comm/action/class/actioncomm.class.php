@@ -66,7 +66,7 @@ class ActionComm extends CommonObject
     var $note;          // Description
 
 	var $userassigned = array();	// Array of user ids
-    var $userownerid;	// Id of user owner
+    var $userownerid;		// Id of user owner
     var $userdoneid;	// Id of user done
     var $usertodo;		// Object user of owner				// deprecated
     var $userdone;	 	// Object user that did action		// deprecated
@@ -543,9 +543,9 @@ class ActionComm extends CommonObject
         $sql.= ", datep2 = ".(strval($this->datef)!='' ? "'".$this->db->idate($this->datef)."'" : 'null');
         $sql.= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null");	// deprecated
         $sql.= ", note = ".($this->note ? "'".$this->db->escape($this->note)."'":"null");
-        $sql.= ", fk_soc =". ($this->socid > 0 ? "'".$this->socid."'":"null");
         $sql.= ", fk_project =". ($this->fk_project > 0 ? "'".$this->fk_project."'":"null");
-        $sql.= ", fk_contact =". ($contactid > 0 ? "'".$this->contactid."'":"null");
+        $sql.= ", fk_soc =". ($socid > 0 ? "'".$socid."'":"null");
+        $sql.= ", fk_contact =". ($contactid > 0 ? "'".$contactid."'":"null");
         $sql.= ", priority = '".$this->priority."'";
         $sql.= ", fulldayevent = '".$this->fulldayevent."'";
         $sql.= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'":"null");
@@ -853,8 +853,8 @@ class ActionComm extends CommonObject
     }
 
     /**
-     *    	Renvoie nom clicable (avec eventuellement le picto)
-     *      Utilise $this->id, $this->code et $this->label
+     *    	Return URL of event
+     *      Use $this->id, $this->type_code, $this->label and $this->type_label
      *
      * 		@param	int		$withpicto			0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
      *		@param	int		$maxlength			Nombre de caracteres max dans libelle
@@ -865,39 +865,34 @@ class ActionComm extends CommonObject
      */
     function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto='')
     {
-        global $langs;
+        global $conf,$langs;
 
         $result='';
         if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
         else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.'">';
         $lienfin='</a>';
         $label=$this->label;
-        if (empty($label)) $label=$this->libelle;	// Fro backward compatibility
-        //print 'rrr'.$this->libelle;
+        if (empty($label)) $label=$this->libelle;	// For backward compatibility
+        //print 'rrr'.$this->libelle.'-'.$withpicto;
 
         if ($withpicto == 2)
         {
             $libelle=$label;
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->trans("Action".$this->type_code);
+        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->transnoentities("Action".$this->type_code);
             $libelleshort='';
-        }
-        else if (empty($this->libelle))
-        {
-            $libelle=$label;
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->trans("Action".$this->type_code);
-        	$libelleshort=dol_trunc($label, $maxlength);
         }
         else
        {
-            $libelle=$label;
-            $libelleshort=dol_trunc($label,$maxlength);
+       		$libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
+       		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+       		$libelleshort=dol_trunc($libelle,$maxlength);
         }
 
         if ($withpicto)
         {
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
         	{
-        		 $libelle.=(($this->type_code && $libelle!=$langs->trans("Action".$this->type_code) && $langs->trans("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->trans("Action".$this->type_code).')':'');
+        		 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
         	}
             $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle,($overwritepicto?$overwritepicto:'action')).$lienfin;
         }
@@ -992,6 +987,7 @@ class ActionComm extends CommonObject
                 if ($key == 'id')           $sql.=" AND a.id=".(is_numeric($value)?$value:0);
                 if ($key == 'idfrom')       $sql.=" AND a.id >= ".(is_numeric($value)?$value:0);
                 if ($key == 'idto')         $sql.=" AND a.id <= ".(is_numeric($value)?$value:0);
+                if ($key == 'project')      $sql.=" AND a.fk_project=".(is_numeric($value)?$value:0);
                 if ($key == 'login')
                 {
                     $login=$value;

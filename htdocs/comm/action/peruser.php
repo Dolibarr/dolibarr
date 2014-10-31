@@ -395,6 +395,13 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
 
+        // Discard auto action if option is on
+        if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->code == 'AC_OTH_AUTO')
+        {
+        	$i++;
+        	continue;
+        }
+
         // Create a new object action
         $event=new ActionComm($db);
         $event->id=$obj->id;
@@ -566,19 +573,50 @@ echo "</tr>\n";
 $usernames = array(); //init
 $usernamesid = array();
 /* Use this to have list of users only if users have events */
-foreach ($eventarray as $daykey => $notused)
+if (! empty($conf->global->AGENDA_SHOWOWNERONLY_ONPERUSERVIEW))
 {
-   // Get all assigned users for each event
-   foreach ($eventarray[$daykey] as $index => $event)
-   {
-	   	$event->fetch_userassigned();
-		$listofuserid=$event->userassigned;
-		foreach($listofuserid as $userid => $tmp)
-		{
-		   	if (! in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
-		}
-   }
+	foreach ($eventarray as $daykey => $notused)
+	{
+	   // Get all assigned users for each event
+	   foreach ($eventarray[$daykey] as $index => $event)
+	   {
+		   	$event->fetch_userassigned();
+			$listofuserid=$event->userassigned;
+			foreach($listofuserid as $userid => $tmp)
+			{
+			   	if (! in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
+			}
+	   }
+	}
 }
+/* Use this list to have for all users */
+else
+{
+	$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
+	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+	if ($usergroup > 0)	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
+	$sql.= " WHERE u.entity IN (".getEntity('user').")";
+	if ($usergroup > 0)	$sql.= " AND ug.fk_usergroup = ".$usergroup;
+	if (GETPOST("usertodo","int",3) > 0) $sql.=" AND u.rowid = ".GETPOST("usertodo","int",3);
+	//print $sql;
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+	    $num = $db->num_rows($resql);
+	    $i = 0;
+	    if ($num)
+	    {
+	        while ($i < $num)
+	        {
+	            $obj = $db->fetch_object($resql);
+				$usernamesid[$obj->rowid]=$obj->rowid;
+				$i++;
+	        }
+	    }
+	}
+	else dol_print_error($db);
+}
+//var_dump($usernamesid);
 foreach($usernamesid as $id)
 {
 	$tmpuser=new User($db);
@@ -608,11 +646,13 @@ else
 
 // Load array of colors by type
 $colorsbytype=array();
-$sql="SELECT code, color FROM ".MAIN_DB_PREFIX."c_actioncomm";
+$labelbytype=array();
+$sql="SELECT code, color, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm";
 $resql=$db->query($sql);
 while ($obj = $db->fetch_object($resql))
 {
 	$colorsbytype[$obj->code]=$obj->color;
+	$labelbytype[$obj->code]=$obj->libelle;
 }
 
 // Loop on each user to show calendar
@@ -658,6 +698,32 @@ foreach ($usernames as $username)
 
 echo "</table>\n";
 
+
+if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+{
+	$langs->load("commercial");
+	print '<br>'.$langs->trans("Legend").': <br>';
+	foreach($colorsbytype as $code => $color)
+	{
+		if ($color)
+		{
+			print '<div style="float: left; padding: 2px; margin-right: 6px;"><div style="'.($color?'background: #'.$color.';':'').'width:16px; float: left; margin-right: 4px;">&nbsp;</div>';
+			print $langs->trans("Action".$code)!="Action".$code?$langs->trans("Action".$code):$labelbytype[$code];
+			//print $code;
+			print '</div>';
+		}
+	}
+	//$color=sprintf("%02x%02x%02x",$theme_datacolor[0][0],$theme_datacolor[0][1],$theme_datacolor[0][2]);
+	print '<div style="float: left; padding: 2px; margin-right: 6px;"><div class="peruser_busy" style="width:16px; float: left; margin-right: 4px;">&nbsp;</div>';
+	print $langs->trans("Other");
+	print '</div>';
+	/* TODO Show this if at least one cumulated event
+	print '<div style="float: left; padding: 2px; margin-right: 6px;"><div style="background: #222222; width:16px; float: left; margin-right: 4px;">&nbsp;</div>';
+	print $langs->trans("SeveralEvents");
+	print '</div>';
+	*/
+}
+
 // Add js code to manage click on a box
 print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
@@ -680,7 +746,7 @@ jQuery(document).ready(function() {
 		else if (ids.indexOf(",") > -1)	/* There is several events */
 		{
 			/* alert(\'several events\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?usertodo="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+dateselectday;
+			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?usertodo="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
 			window.location.href = url;
 		}
 		else	/* One event */
@@ -902,7 +968,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases1[$h]) > 1) $title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			$string1='&nbsp;';
-			$style1='peruser_notbusy';
+			if (empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) $style1='peruser_notbusy';
+			else $style1='peruser_busy';
 			foreach($cases1[$h] as $id => $ev)
 			{
 				if ($ev['busy']) $style1='peruser_busy';
@@ -913,7 +980,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			//$title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases2[$h]) > 1) $title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			$string2='&nbsp;';
-			$style2='peruser_notbusy';
+			if (empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) $style2='peruser_notbusy';
+			else $style2='peruser_busy';
 			foreach($cases2[$h] as $id => $ev)
 			{
 				if ($ev['busy']) $style2='peruser_busy';

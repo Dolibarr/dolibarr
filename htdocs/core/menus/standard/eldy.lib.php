@@ -236,26 +236,6 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 		$menu->add('/core/tools.php?mainmenu=tools&amp;leftmenu=', $langs->trans("Tools"), 0, $showmode, $atarget, "tools", '');
 	}
 
-	// OSCommerce 1
-	$tmpentry=array('enabled'=>(! empty($conf->boutique->enabled)),
-	'perms'=>1,
-	'module'=>'boutique');
-	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-		$langs->load("shop");
-
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "shop") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='shop';
-
-		if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
-		if (empty($noout)) print_text_menu_entry($langs->trans("OSCommerce"), $showmode, DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&amp;leftmenu=', $id, $idsel, $classname, $atarget);
-		if (empty($noout)) print_end_menu_entry($showmode);
-		$menu->add('/boutique/index.php?mainmenu=shop&amp;leftmenu=', $langs->trans("OSCommerce"), 0, $showmode, $atarget, "shop", '');
-	}
-
 	// Members
 	$tmpentry=array('enabled'=>(! empty($conf->adherent->enabled)),
 	'perms'=>(! empty($user->rights->adherent->lire)),

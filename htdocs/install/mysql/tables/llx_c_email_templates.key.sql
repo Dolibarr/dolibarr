@@ -1,6 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2014 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,18 +14,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
+-- Table with templates of emails
 -- ===================================================================
 
-create table llx_notify
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
-  daten           datetime,           -- date de la notification
-  fk_action       integer NOT NULL,
-  fk_soc          integer NULL,
-  fk_contact      integer NULL,
-  fk_user         integer NULL,
-  objet_type      varchar(24) NOT NULL,
-  objet_id        integer NOT NULL,
-  email           varchar(255)
-)ENGINE=innodb;
+ALTER TABLE llx_c_email_templates ADD UNIQUE INDEX uk_c_email_templates(entity, label, lang);
+ALTER TABLE llx_c_email_templates ADD INDEX idx_type(type_template);
+

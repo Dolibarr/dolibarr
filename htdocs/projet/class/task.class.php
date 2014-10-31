@@ -143,7 +143,7 @@ class Task extends CommonObject
         }
 
         // Update extrafield
-        if (! $error) 
+        if (! $error)
         {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
@@ -480,15 +480,16 @@ class Task extends CommonObject
      *
      *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
      *	@param	int		$option			Sur quoi pointe le lien
+     *  @param	int		$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$option='')
+    function getNomUrl($withpicto=0,$option='',$mode='task')
     {
         global $langs;
 
         $result='';
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').'">';
         $lienfin='</a>';
 
         $picto='projecttask';
@@ -746,7 +747,7 @@ class Task extends CommonObject
         // Clean parameters
         if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
 		if (empty($this->timespent_datehour)) $this->timespent_datehour = $this->timespent_date;
-		
+
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (";
@@ -832,9 +833,9 @@ class Task extends CommonObject
         global $langs;
 
         if (empty($id)) $id=$this->id;
-        
+
         $result=array();
-        
+
         $sql = "SELECT";
         $sql.= " MIN(t.task_datehour) as min_date,";
         $sql.= " MAX(t.task_datehour) as max_date,";
@@ -925,7 +926,7 @@ class Task extends CommonObject
         // Clean parameters
         if (empty($this->timespent_datehour)) $this->timespent_datehour = $this->timespent_date;
         if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
-        
+
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";

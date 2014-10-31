@@ -50,6 +50,8 @@ class ExtraFields
 	var $attribute_param;
 	// Int to store position of attribute
 	var $attribute_pos;
+	// Int to store if attribute is editable regardless of the document status
+	var $attribute_alwayseditable;
 
 	var $error;
 	var $errno;
@@ -103,9 +105,10 @@ class ExtraFields
 	 *  @param	int		$required			Is field required or not
 	 *  @param	string	$default_value		Defaulted value
 	 *  @param  array	$param				Params for field
+	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @return int      					<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0,$default_value='', $param=0)
+	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param=0, $alwayseditable=0)
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -119,7 +122,7 @@ class ExtraFields
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required, $param);
+			$result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required, $param, $alwayseditable);
 			$err2=$this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
@@ -217,9 +220,10 @@ class ExtraFields
 	 *  @param	int				$unique			Is field unique or not
 	 *  @param	int				$required		Is field required or not
 	 *  @param  array||string	$param			Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='')
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0)
 	{
 		global $conf;
 
@@ -241,7 +245,7 @@ class ExtraFields
 				$params='';
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired, param)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired, param, alwayseditable)";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
@@ -251,7 +255,8 @@ class ExtraFields
 			$sql.= " '".$elementtype."',";
 			$sql.= " '".$unique."',";
 			$sql.= " '".$required."',";
-			$sql.= " '".$params."'";
+			$sql.= " '".$params."',";
+			$sql.= " '".$alwayseditable."'";
 			$sql.=')';
 
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
@@ -347,9 +352,10 @@ class ExtraFields
 	 *  @param	int		$required			Is field required or not
 	 *  @param	int		$pos				Position of attribute
 	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='')
+	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0)
 	{
 		$table=$elementtype.'_extrafields';
 
@@ -384,7 +390,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable);
 				}
 				if ($result > 0)
 				{
@@ -432,9 +438,10 @@ class ExtraFields
 	 *  @param	int		$required			Is field required or not
 	 *  @param	int		$pos				Position of attribute
 	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='')
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0)
 	{
 		global $conf;
 		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required);
@@ -465,6 +472,7 @@ class ExtraFields
 			$sql.= " fieldunique,";
 			$sql.= " fieldrequired,";
 			$sql.= " pos,";
+			$sql.= " alwayseditable,";
 			$sql.= " param";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
@@ -476,6 +484,7 @@ class ExtraFields
 			$sql.= " '".$unique."',";
 			$sql.= " '".$required."',";
 			$sql.= " '".$pos."',";
+			$sql.= " '".$alwayseditable."',";
 			$sql.= " '".$param."'";
 			$sql.= ")";
 			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
@@ -529,7 +538,7 @@ class ExtraFields
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			return $array_name_label;
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
@@ -557,6 +566,7 @@ class ExtraFields
 					$this->attribute_required[$tab->name]=$tab->fieldrequired;
 					$this->attribute_param[$tab->name]=unserialize($tab->param);
 					$this->attribute_pos[$tab->name]=$tab->pos;
+					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
 				}
 			}
 

@@ -17,7 +17,7 @@
 -- Table with templates of emails
 -- ===================================================================
 
-create table llx_c_email_template
+create table llx_c_email_templates
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
@@ -30,6 +30,7 @@ create table llx_c_email_template
   tms             timestamp,
   label           varchar(255),					  -- Label of predefined email
   position        smallint,					      -- Position
+  active          tinyint DEFAULT 1  NOT NULL,
   topic			  text,                           -- Predefined topic
   content         text                            -- Predefined text
 )ENGINE=innodb;

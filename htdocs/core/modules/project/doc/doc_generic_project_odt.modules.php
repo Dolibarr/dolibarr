@@ -113,7 +113,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		global $conf;
 
-		return array(
+		$resarray=array(
 		'object_id'=>$object->id,
 		'object_ref'=>$object->ref,
 		'object_title'=>$object->title,
@@ -127,6 +127,21 @@ class doc_generic_project_odt extends ModelePDFProjects
 		'object_public'=>$object->public,
 		'object_statut'=>$object->getLibStatut()
 		);
+
+		// Retrieve extrafields
+		if (is_array($object->array_options) && count($object->array_options))
+		{
+			$extrafieldkey=$object->element;
+
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
+			$object->fetch_optionals($object->id,$extralabels);
+
+			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+		}
+
+		return $resarray;
 	}
 
 	/**
@@ -485,69 +500,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 
 				// Make substitutions into odt of user info
-				$tmparray=$this->get_substitutionarray_user($user,$outputlangs);
-				foreach($tmparray as $key=>$value)
-				{
-					try {
-						if (preg_match('/logo$/',$key)) // Image
-						{
-							//var_dump($value);exit;
-							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else    // Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					}
-					catch(OdfException $e)
-					{
-					}
-				}
-				// Make substitutions into odt of mysoc
-				$tmparray=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
-				//var_dump($tmparray); exit;
-				foreach($tmparray as $key=>$value)
-				{
-					try {
-						if (preg_match('/logo$/',$key))	// Image
-						{
-							//var_dump($value);exit;
-							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else	// Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					}
-					catch(OdfException $e)
-					{
-					}
-				}
+				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
+				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
+				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
+				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
+				$array_other=$this->get_substitutionarray_other($outputlangs);
 
-				// Make substitutions into odt of thirdparty
-				$tmparray=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
-				foreach($tmparray as $key=>$value)
-				{
-					try {
-						if (preg_match('/logo$/',$key))	// Image
-						{
-							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else	// Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					}
-					catch(OdfException $e)
-					{
-					}
-				}
-
-				// Replace tags of object + external modules
-				$tmparray=$this->get_substitutionarray_object($object,$outputlangs);
+				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);

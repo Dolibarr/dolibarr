@@ -317,9 +317,10 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param	User	$user			Validator User
      *	@param	int		$idwarehouse	Id of warehouse to use for stock decrease
+     *  @param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
      *	@return	int						<0 if KO, >0 if OK
      */
-    function valid($user,$idwarehouse=0)
+    function valid($user,$idwarehouse=0,$notrigger=0)
     {
         global $langs,$conf;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -342,12 +343,13 @@ class CommandeFournisseur extends CommonOrder
                 $num = $this->getNextNumRef($soc);
             }
             else
-            {
+			{
                 $num = $this->ref;
             }
+            $this->newref = $num;
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
-            $sql.= " SET ref='".$num."',";
+            $sql.= " SET ref='".$this->db->escape($num)."',";
             $sql.= " fk_statut = 1,";
             $sql.= " date_valid='".$this->db->idate(dol_now())."',";
             $sql.= " fk_user_valid = ".$user->id;
@@ -361,9 +363,17 @@ class CommandeFournisseur extends CommonOrder
                 $error++;
             }
 
+            if (! $error && ! $notrigger)
+            {
+				// Call trigger
+				$result=$this->call_trigger('ORDER_SUPPLIER_VALIDATE',$user);
+				if ($result < 0) $error++;
+				// End call triggers
+            }
+
             if (! $error)
             {
-            	$this->oldref='';
+	            $this->oldref = $this->ref;
 
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
@@ -380,11 +390,17 @@ class CommandeFournisseur extends CommonOrder
 
                         if (@rename($dirsource, $dirdest))
                         {
-                        	$this->oldref = $oldref;
-
                             dol_syslog("Rename ok");
-                            // Suppression ancien fichier PDF dans nouveau rep
-                            dol_delete_file($dirdest.'/'.$oldref.'*.*');
+                            // Rename docs starting with $oldref with $newref
+	                        $listoffiles=dol_dir_list($conf->fournisseur->dir_output.'/commande/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        foreach($listoffiles as $fileentry)
+	                        {
+	                        	$dirsource=$fileentry['name'];
+	                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+	                        	$dirsource=$fileentry['path'].'/'.$dirsource;
+	                        	$dirdest=$fileentry['path'].'/'.$dirdest;
+	                        	@rename($dirsource, $dirdest);
+	                        }
                         }
                     }
                 }
@@ -395,18 +411,6 @@ class CommandeFournisseur extends CommonOrder
                 $result = 1;
                 $this->log($user, 1, time());	// Statut 1
                 $this->ref = $num;
-            }
-
-            if (! $error)
-            {
-				// Call trigger
-				$result=$this->call_trigger('ORDER_SUPPLIER_VALIDATE',$user);
-				if ($result < 0)
-                {
-                    $this->db->rollback();
-                    return -1;
-                }
-				// End call triggers
             }
 
             if (! $error)
@@ -619,9 +623,10 @@ class CommandeFournisseur extends CommonOrder
                 $num = $this->getNextNumRef($soc);
             }
             else
-            {
+			{
                 $num = $this->ref;
             }
+            $this->newref = $num;
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql.= " SET ref='".$this->db->escape($num)."',";
@@ -1920,6 +1925,47 @@ class CommandeFournisseur extends CommonOrder
             $this->total_ttc      += $line->total_ttc;
 
             $xnbp++;
+        }
+    }
+
+    /**
+     *	Charge indicateurs this->nb de tableau de bord
+     *
+     *	@return     int         <0 si ko, >0 si ok
+     */
+    function load_state_board()
+    {
+        global $conf, $user;
+
+        $this->nb=array();
+        $clause = "WHERE";
+
+        $sql = "SELECT count(co.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as co";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
+        if (!$user->rights->societe->client->voir && !$user->societe_id)
+        {
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+            $sql.= " WHERE sc.fk_user = " .$user->id;
+            $clause = "AND";
+        }
+        $sql.= " ".$clause." co.entity = ".$conf->entity;
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nb["supplier_orders"]=$obj->nb;
+            }
+            $this->db->free($resql);
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
         }
     }
 

@@ -141,7 +141,7 @@ if ($action == 'add')
     				}
     			}
 
-                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$default_value,$params);
+                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$default_value,$params,(GETPOST('alwayseditable')?1:0));
     			if ($result > 0)
     			{
     				setEventMessage($langs->trans('SetupSaved'));
@@ -278,7 +278,7 @@ if ($action == 'update')
     					$params['options'][$key] = $value;
     				}
     			}
-    			$result=$extrafields->update($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$pos,$params);
+    			$result=$extrafields->update($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$pos,$params,(GETPOST('alwayseditable')?1:0));
     			if ($result > 0)
     			{
     				setEventMessage($langs->trans('SetupSaved'));
