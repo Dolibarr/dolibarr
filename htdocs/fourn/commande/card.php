@@ -7,6 +7,7 @@
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -1065,8 +1066,10 @@ if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('
         'entity'=>$ws_entity
     );
 
-    //Is everything filled?
-    if ($mode != "init" && (empty($ws_host) || empty($ws_key) || empty($ws_user) || empty($ws_password) || empty($ws_thirdparty))) {
+    //Is sync supplier web services module activated? and everything filled?
+    if (empty($conf->syncsupplierwebservices->enabled)) {
+        setEventMessage($langs->trans("WarningModuleNotActive",$langs->transnoentities("Module2650Name")));
+    } else if ($mode != "init" && (empty($ws_host) || empty($ws_key) || empty($ws_user) || empty($ws_password) || empty($ws_thirdparty))) {
         setEventMessage($langs->trans("ErrorFieldsRequired"), 'errors');
     }
     else
@@ -2054,6 +2057,7 @@ elseif (! empty($object->id))
                 if (empty($ws_thirdparty))
                 {
                     setEventMessage($langs->trans("RemoteUserMissingAssociatedSoc"), 'errors');
+                    $error_occurred = true;
                 }
                 else
                 {
@@ -2129,10 +2133,12 @@ elseif (! empty($object->id))
             elseif ($user_status_code == "PERMISSION_DENIED")
             {
                 setEventMessage($langs->trans("RemoteUserNotPermission"), 'errors');
+                $error_occurred = true;
             }
             else
             {
                 setEventMessage($langs->trans("ResponseNonOK")." '".$user_status_code."'", 'errors');
+                $error_occurred = true;
             }
 
             //Form
@@ -2242,8 +2248,9 @@ elseif (! empty($object->id))
 					//}
 				}
 
-				// Create a remote order using WebService
-				if ($object->statut >= 2) // 2 means accepted
+
+				// Create a remote order using WebService only if module is activated
+				if (! empty($conf->syncsupplierwebservices->enabled) && $object->statut >= 2) // 2 means accepted
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=webservice&amp;mode=init">'.$langs->trans('CreateRemoteOrder').'</a>';
 				}
