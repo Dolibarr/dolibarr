@@ -119,7 +119,7 @@ if (empty($reshook))
     	$res=$object->setValueFrom('localtax2_value', $value);
     }
 
-    // Add new third party
+    // Add new or update third party
     if ((! GETPOST('getcustomercode') && ! GETPOST('getsuppliercode'))
     && ($action == 'add' || $action == 'update') && $user->rights->societe->creer)
     {
@@ -189,6 +189,10 @@ if (empty($reshook))
         $object->commercial_id         = GETPOST('commercial_id', 'int');
         $object->default_lang          = GETPOST('default_lang');
 
+        // Webservices url/key
+        $object->webservices_url       = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
+        $object->webservices_key       = GETPOST('webservices_key', 'san_alpha');
+
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
@@ -216,6 +220,18 @@ if (empty($reshook))
                 $langs->load("errors");
                 $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
                 $action = ($action=='add'?'create':'edit');
+            }
+            if (! empty($object->webservices_url)) {
+                //Check if has transport, without any the soap client will give error
+                if (strpos($object->webservices_url, "http") === false)
+                {
+                    $object->webservices_url = "http://".$object->webservices_url;
+                }
+                if (! isValidUrl($object->webservices_url)) {
+                    $langs->load("errors");
+                    $error++; $errors[] = $langs->trans("ErrorBadUrl",$object->webservices_url);
+                    $action = ($action=='add'?'create':'edit');
+                }
             }
 
             // We set country_id, country_code and country for the selected country
@@ -1179,6 +1195,10 @@ else
                 $object->tva_intra				= GETPOST('tva_intra', 'alpha');
                 $object->status					= GETPOST('status', 'int');
 
+                // Webservices url/key
+                $object->webservices_url        = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
+                $object->webservices_key        = GETPOST('webservices_key', 'san_alpha');
+
                 //Local Taxes
                 $object->localtax1_assuj		= GETPOST('localtax1assuj_value');
                 $object->localtax2_assuj		= GETPOST('localtax2assuj_value');
@@ -1556,6 +1576,14 @@ else
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
             	print $object->showOptionals($extrafields,'edit');
+            }
+
+            // Webservices url/key
+            if (!empty($conf->syncsupplierwebservices->enabled)) {
+                print '<tr><td><label for="webservices_url">'.$langs->trans('WebServiceURL').'</label></td>';
+                print '<td><input type="text" name="webservices_url" id="webservices_url" size="32" value="'.$object->webservices_url.'"></td>';
+                print '<td><label for="webservices_key">'.$langs->trans('WebServiceKey').'</label></td>';
+                print '<td><input type="text" name="webservices_key" id="webservices_key" size="32" value="'.$object->webservices_key.'"></td></tr>';
             }
 
             // Logo
@@ -2012,6 +2040,12 @@ else
             }
             print '</td>';
             print "</tr>\n";
+        }
+
+        // Webservices url/key
+        if (!empty($conf->syncsupplierwebservices->enabled)) {
+            print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td>'.dol_print_url($object->webservices_url).'</td>';
+            print '<td class="nowrap">'.$langs->trans('WebServiceKey').'</td><td>'.$object->webservices_key.'</td></tr>';
         }
 
         print '</table>';

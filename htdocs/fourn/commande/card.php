@@ -1049,8 +1049,8 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('cancel'))
 {
-    $ws_host        = GETPOST('ws_host','alpha');
-    $ws_key         = GETPOST('ws_key','alpha');
+    $ws_url         = $object->thirdparty->webservices_url;
+    $ws_key         = $object->thirdparty->webservices_key;
     $ws_user        = GETPOST('ws_user','alpha');
     $ws_password    = GETPOST('ws_password','alpha');
     $ws_entity      = GETPOST('ws_entity','int');
@@ -1069,18 +1069,20 @@ if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('
     //Is sync supplier web services module activated? and everything filled?
     if (empty($conf->syncsupplierwebservices->enabled)) {
         setEventMessage($langs->trans("WarningModuleNotActive",$langs->transnoentities("Module2650Name")));
-    } else if ($mode != "init" && (empty($ws_host) || empty($ws_key) || empty($ws_user) || empty($ws_password) || empty($ws_thirdparty))) {
+    } else if (empty($ws_url) || empty($ws_key)) {
+        setEventMessage($langs->trans("ErrorWebServicesFieldsRequired"), 'errors');
+    } else if (empty($ws_user) || empty($ws_password) || empty($ws_thirdparty)) {
         setEventMessage($langs->trans("ErrorFieldsRequired"), 'errors');
     }
     else
     {
         //Create SOAP client and connect it to order
-        $soapclient_order = new nusoap_client($ws_host."/webservices/server_order.php");
+        $soapclient_order = new nusoap_client($ws_url."/webservices/server_order.php");
         $soapclient_order->soap_defencoding='UTF-8';
         $soapclient_order->decodeUTF8(false);
 
         //Create SOAP client and connect it to product/service
-        $soapclient_product = new nusoap_client($ws_host."/webservices/server_productorservice.php");
+        $soapclient_product = new nusoap_client($ws_url."/webservices/server_productorservice.php");
         $soapclient_product->soap_defencoding='UTF-8';
         $soapclient_product->decodeUTF8(false);
 
@@ -1123,7 +1125,11 @@ if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('
         $ws_parameters = array('authentication'=>$ws_authentication, 'order' => $order);
         $result_order = $soapclient_order->call("createOrder", $ws_parameters, $ws_ns, '');
 
-        if ($result_order["result"]["result_code"] != "OK")
+        if (empty($result_order["result"]["result_code"])) //No result, check error str
+        {
+            setEventMessage($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", 'errors');
+        }
+        else if ($result_order["result"]["result_code"] != "OK") //Something went wrong
         {
             setEventMessage($langs->trans("SOAPError")." '".$result_order["result"]["result_code"]."' - '".$result_order["result"]["result_label"]."'", 'errors');
         }
@@ -1970,8 +1976,8 @@ elseif (! empty($object->id))
 	elseif ($action == 'webservice' && GETPOST('mode', 'alpha') != "send" && ! GETPOST('cancel'))
 	{
 		$mode        = GETPOST('mode', 'alpha');
-		$ws_host     = GETPOST('ws_host','alpha');
-		$ws_key      = GETPOST('ws_key','alpha');
+		$ws_url      = $object->thirdparty->webservices_url;
+		$ws_key      = $object->thirdparty->webservices_key;
 		$ws_user     = GETPOST('ws_user','alpha');
 		$ws_password = GETPOST('ws_password','alpha');
         
@@ -1988,7 +1994,11 @@ elseif (! empty($object->id))
         print_titre($langs->trans('CreateRemoteOrder'));
 
         //Is everything filled?
-        if ($mode != "init" && (empty($ws_host) || empty($ws_key) || empty($ws_user) || empty($ws_password))) {
+        if (empty($ws_url) || empty($ws_key)) {
+            setEventMessage($langs->trans("ErrorWebServicesFieldsRequired"), 'errors');
+            $mode = "init";
+            $error_occurred = true; //Don't allow to set the user/pass if thirdparty fields are not filled
+        } else if ($mode != "init" && (empty($ws_user) || empty($ws_password))) {
             setEventMessage($langs->trans("ErrorFieldsRequired"), 'errors'); 
             $mode = "init";
         }
@@ -2001,26 +2011,29 @@ elseif (! empty($object->id))
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="webservice">';
             print '<input type="hidden" name="mode" value="check">';
-            $textinput_size = "50";
 
-            //Remote Host URL
-            print '<tr><td>'.$langs->trans("Host").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_host"></td></tr>';
-
-            //Remote Webservices key
-            print '<tr><td>'.$langs->trans("KeyForWebServicesAccess").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_key"></td></tr>';
-
-            //Remote User
-            print '<tr><td>'.$langs->trans("User").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_user"></td></tr>';
-
-            //Remote Password
-            print '<tr><td>'.$langs->trans("Password").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_password"></td></tr>';
-
-            //Submit and cancel buttons
-            print '<tr><td align="center" colspan="2">';
-            print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';
-            print ' &nbsp; &nbsp; ';
-            print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-            print '</td></tr>';
+            if ($error_occurred)
+            {
+                print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
+                print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+            }
+            else
+            {
+                $textinput_size = "50";
+                // Webservice url
+                print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td colspan="3">'.dol_print_url($ws_url).'</td></tr>';
+                //Remote User
+                print '<tr><td>'.$langs->trans("User").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_user"></td></tr>';
+                //Remote Password
+                print '<tr><td>'.$langs->trans("Password").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_password"></td></tr>';
+                //Submit button
+                print '<tr><td align="center" colspan="2">';
+                print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';
+                print ' &nbsp; &nbsp; ';
+                //Cancel button
+                print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+                print '</td></tr>';
+            }
 
             //End table/form
             print '</form>';
@@ -2032,14 +2045,8 @@ elseif (! empty($object->id))
             $ws_thirdparty = '';
             $error_occurred = false;
 
-            //Check if has transport, without any the soap client will give error
-            if (strpos($ws_host, "http") === false)
-            {
-                $ws_host = "http://".$ws_host;
-            }
-
             //Create SOAP client and connect it to user
-            $soapclient_user = new nusoap_client($ws_host."/webservices/server_user.php");
+            $soapclient_user = new nusoap_client($ws_url."/webservices/server_user.php");
             $soapclient_user->soap_defencoding='UTF-8';
             $soapclient_user->decodeUTF8(false);
 
@@ -2062,7 +2069,7 @@ elseif (! empty($object->id))
                 else
                 {
                     //Create SOAP client and connect it to product/service
-                    $soapclient_product = new nusoap_client($ws_host."/webservices/server_productorservice.php");
+                    $soapclient_product = new nusoap_client($ws_url."/webservices/server_productorservice.php");
                     $soapclient_product->soap_defencoding='UTF-8';
                     $soapclient_product->decodeUTF8(false);
 
@@ -2086,7 +2093,11 @@ elseif (! empty($object->id))
 
                         // Check the result code
                         $status_code = $result_product["result"]["result_code"];
-                        if ($status_code != "OK")
+                        if (empty($status_code)) //No result, check error str
+                        {
+                            setEventMessage($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", 'errors');
+                        }
+                        else if ($status_code != "OK") //Something went wrong
                         {
                             if ($status_code == "NOT_FOUND")
                             {
@@ -2135,6 +2146,11 @@ elseif (! empty($object->id))
                 setEventMessage($langs->trans("RemoteUserNotPermission"), 'errors');
                 $error_occurred = true;
             }
+            elseif ($user_status_code == "BAD_CREDENTIALS")
+            {
+                setEventMessage($langs->trans("RemoteUserBadCredentials"), 'errors');
+                $error_occurred = true;
+            }
             else
             {
                 setEventMessage($langs->trans("ResponseNonOK")." '".$user_status_code."'", 'errors');
@@ -2146,15 +2162,13 @@ elseif (! empty($object->id))
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="webservice">';
             print '<input type="hidden" name="mode" value="send">';
-            print '<input type="hidden" name="ws_host" value="'.$ws_host.'">';
-            print '<input type="hidden" name="ws_key" value="'.$ws_key.'">';
             print '<input type="hidden" name="ws_user" value="'.$ws_user.'">';
             print '<input type="hidden" name="ws_password" value="'.$ws_password.'">';
             print '<input type="hidden" name="ws_entity" value="'.$ws_entity.'">';
             print '<input type="hidden" name="ws_thirdparty" value="'.$ws_thirdparty.'">';
             if ($error_occurred)
             {
-                print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>"; //TODO: Translate
+                print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
             }
             else
             {

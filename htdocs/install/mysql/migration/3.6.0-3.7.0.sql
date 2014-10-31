@@ -1110,3 +1110,6 @@ DELETE FROM llx_menu WHERE module = 'boutique';
 -- Add option always editable on extrafield
 ALTER TABLE llx_extrafields ADD alwayseditable INTEGER DEFAULT 0 AFTER pos;
 
+-- add supplier webservice fields
+ALTER TABLE llx_societe ADD webservices_url varchar(255) DEFAULT NULL;
+ALTER TABLE llx_societe ADD webservices_key varchar(128) DEFAULT NULL;
