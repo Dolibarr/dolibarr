@@ -460,7 +460,7 @@ if (! defined('NOLOGIN'))
                     $datesecond=dol_stringtotime($_POST["dst_second"]);
                     if ($datenow >= $datefirst && $datenow < $datesecond) $dol_dst=1;
                 }
-                //print $datefirst.'-'.$datesecond.'-'.$datenow; exit;
+                //print $datefirst.'-'.$datesecond.'-'.$datenow.'-'.$dol_tz.'-'.$dol_tzstring.'-'.$dol_dst; exit;
             }
 
             if (! $login)
@@ -620,6 +620,8 @@ if (! defined('NOLOGIN'))
         $db->begin();
 
         $user->update_last_login_date();
+
+        $user->trigger_mesg = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
 
         // TODO We should use a hook here, not a trigger
         // Call triggers
