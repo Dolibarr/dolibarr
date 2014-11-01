@@ -43,12 +43,20 @@ if (! $sortfield) $sortfield="d.datedon";
 $limit = $conf->liste_limit;
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
-$search_ref=GETPOST('search_ref');
-$search_company=GETPOST('search_company');
-$search_name=GETPOST('search_name');
+$search_ref=GETPOST('search_ref','alpha');
+$search_company=GETPOST('search_company','alpha');
+$search_name=GETPOST('search_name','alpha');
+$search_amount = GETPOST('search_amount','alpha');
 
 if (!$user->rights->don->lire) accessforbidden();
 
+if (GETPOST("button_removefilter"))
+{
+	$search_ref="";
+	$search_company="";
+	$search_name="";
+	$search_amount="";
+}
 
 /*
  * View
@@ -82,6 +90,8 @@ if (trim($search_name) != '')
 {
     $sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
 }
+if ($search_amount) $sql.=" AND d.amount='".$db->escape(price2num(trim($search_amount)))."'";
+
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
@@ -141,11 +151,10 @@ if ($resql)
         print '&nbsp;';
         print '</td>';
     }
-    print '<td class="liste_titre" align="right">';
-    print '&nbsp;';
-    print '</td>';
+    print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print "</td></tr>\n";
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print "</td></tr>\n";
 
 	$var=True;
 	while ($i < min($num,$limit))
