@@ -62,7 +62,7 @@ RelatedShippings=Expédition(s) associée(s)
 ShipmentLine=Ligne d'expédition
 CarrierList=Liste des transporteurs
 SendingRunning=Produits de commandes clients déjà expédiés
-SuppliersReceiptRunning=Produit de commandes fournisseurs déjà réceptionnés
+SuppliersReceiptRunning=Produits de commandes fournisseurs déjà réceptionnés
 
 # Sending methods
 SendingMethodCATCH=Enlèvement par le client

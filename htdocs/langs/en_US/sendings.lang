@@ -62,7 +62,7 @@ RelatedShippings=Related shippings
 ShipmentLine=Shipment line
 CarrierList=List of transporters
 SendingRunning=Product from customer order already sent
-SuppliersReceiptRunning=Product from supplier order alrady received
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Catch by customer
