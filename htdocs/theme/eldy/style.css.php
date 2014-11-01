@@ -223,7 +223,6 @@ body {
 	background-color: #FFFFFF;
 <?php } else { ?>
 	background: <?php print $colorbackbody; ?>;
-	/* background-image: url("<?php print DOL_URL_ROOT.'/theme/eldy/img/background.png'; ?>"); */
 <?php } ?>
 	color: #101010;
 	font-size: <?php print $fontsize ?>px;
@@ -831,10 +830,10 @@ foreach($mainmenuusedarray as $val)
 
 .bodylogin
 {
-	background: #f0f0f0;
-	/*-moz-box-shadow:    inset 0 0 10px #000000;
+	background: #fbfbfb;
+	/* -moz-box-shadow:    inset 0 0 10px #000000;
    	-webkit-box-shadow: inset 0 0 10px #000000;
-   	box-shadow:         inset 0 0 10px #000000;*/
+   	box-shadow:         inset 0 0 10px #000000; */
 }
 .login_vertical_align {
 	padding: 10px;
@@ -861,17 +860,23 @@ form#login {
 	padding-top:12px;
 	padding-bottom:12px;
 	max-width: 540px;
-	border: 1px solid #A0A0A0;
+
+	border: 1px solid #C0C0C0;
+	background-color: #E0E0E0;
+
+    -moz-box-shadow: 3px 2px 20px #CCC;
+    -webkit-box-shadow: 3px 2px 20px #CCC;
+    box-shadow: 3px 2px 20px #CCC;
 
 	border-radius: 8px;
-	border:solid 1px rgba(90,90,90,.4);
-	-moz-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-	-webkit-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-	box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-
-	background-color: #FFFFFF;
-	background: -webkit-gradient(linear, center top, center bottom, color-stop(0%, #fff), color-stop(100%, #f8f8f8));
-    background: -moz-linear-gradient(top, #fff, #f8f8f8);
+	border:solid 1px rgba(128,128,128,.4);
+	border-top:solid 1px f8f8f8;
+	background-color: #f8f8f8;
+	background-image: -o-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
+	background-image: -moz-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
+	background-image: -ms-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
+	background-image: linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
 }
 div#login_left, div#login_right {
 	display: inline-block;
