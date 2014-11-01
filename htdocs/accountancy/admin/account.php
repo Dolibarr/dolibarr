@@ -37,7 +37,6 @@ $mesg = '';
 $action = GETPOST('action');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$search= GETPOST("search");
 $search_account = GETPOST("search_account");
 $search_label = GETPOST("search_label");
 $search_accountparent = GETPOST("search_accountparent");
@@ -91,7 +90,6 @@ if ($action == 'disable') {
 
 if (GETPOST("button_removefilter"))
 {
-    $search="";
 	$search_account="";
     $search_label="";
 	$search_accountparent="";
@@ -169,7 +167,7 @@ if ($result) {
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '&nbsp; ';
+	print '&nbsp;';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 	print '</tr>';

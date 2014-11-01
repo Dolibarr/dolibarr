@@ -55,8 +55,6 @@ $date_endyear = GETPOST('date_endyear');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->access)
-	accessforbidden();
 
 $action = GETPOST('action');
 

@@ -35,8 +35,6 @@ $langs->load("accounting");
 $id = GETPOST('id', 'int');
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->access)
-	accessforbidden();
 
 $action = GETPOST('action');
 $piece_num = GETPOST("piece_num");
@@ -238,7 +236,9 @@ if ($action == 'create') {
 	print '<input type="submit" class="butAction" value="' . $langs->trans("Save") . '">';
 	
 	print '</form>';
-} else {
+} 
+else
+{
 	$book = new BookKeeping($db);
 	$result = $book->fetch_per_mvt($piece_num);
 	if ($result < 0) {
@@ -309,14 +309,12 @@ if ($action == 'create') {
 						print '<td><input type="text" size="6" name="credit" value="' . price($line->credit) . '"/></td>';
 						print '<td>' . $line->montant . '</td>';
 						print '<td>' . $line->sens . '</td>';
-						
 						print '<td>';
-						if ($user->rights->accounting->access) {
-							print '<input type="submit" class="button" value="' . $langs->trans("Update") . '">';
-						}
+						print '<input type="submit" class="button" value="' . $langs->trans("Update") . '">';
 						print '</form>';
 						print '</td>';
-					} else {
+					}
+					else {
 						print '<td>' . $line->numero_compte . '</td>';
 						print '<td>' . $line->code_tiers . '</td>';
 						print '<td>' . $line->label_compte . '</td>';
@@ -324,16 +322,15 @@ if ($action == 'create') {
 						print '<td>' . $line->credit . '</td>';
 						print '<td>' . $line->montant . '</td>';
 						print '<td>' . $line->sens . '</td>';
-						
+							
 						print '<td>';
-						if ($user->rights->accouting->access) {
-							print '<a href="./card.php?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '">';
-							print img_edit();
-							print '</a>&nbsp;';
-							print '<a href="./card.php?action=delete&id=' . $line->id . '&piece_num=' . $line->piece_num . '">';
-							print img_delete();
-							print '</a>';
-						}
+						print '<a href="./card.php?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '">';
+						print img_edit();
+						print '</a>&nbsp;';
+						print '<a href="./card.php?action=delete&id=' . $line->id . '&piece_num=' . $line->piece_num . '">';
+						print img_delete();
+						print '</a>';
+						
 						print '</td>';
 					}
 					print "</tr>\n";
@@ -342,7 +339,7 @@ if ($action == 'create') {
 				if ($action == "" || $action == 'add') {
 					$var = ! $var;
 					print "<tr $bc[$var]>";
-					
+						
 					print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '" method="post">';
 					print '<input type="hidden" name="action" value="add">' . "\n";
 					print '<input type="hidden" name="doc_date" value="' . $book->doc_date . '">' . "\n";
@@ -359,14 +356,13 @@ if ($action == 'create') {
 					print '<td></td>';
 					print '<td></td>';
 					print '<td><input type="submit" class="button" value="' . $langs->trans("Save") . '"></td>';
-					
 					print '</tr>';
 				}
-				
 				print "</table>";
 			}
 		}
-	} else {
+	}
+	else {
 		print_fiche_titre($langs->trans("NoRecords"));
 	}
 }
