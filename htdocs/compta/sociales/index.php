@@ -76,7 +76,6 @@ if (GETPOST("button_removefilter"))
     $typeid="";
 	$year="";
 	$month="";
-	$filtre="";
 }
 
 /*

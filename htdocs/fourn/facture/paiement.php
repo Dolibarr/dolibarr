@@ -503,7 +503,7 @@ if (empty($action))
     }
     if (! empty($search_amount))
     {
-        $sql .= " AND p.amount=".price2num($search_amount);
+        $sql .= " AND p.amount='".price2num($search_amount)."'";
     }
     if (! empty($search_company))
     {
@@ -524,7 +524,7 @@ if (empty($action))
         $paramlist='';
         $paramlist.=(! empty($search_ref)?"&search_ref=".$search_ref:"");
         $paramlist.=(! empty($search_company)?"&search_company=".$search_company:"");
-        $paramlist.=(! empty($search_amount)?"&search_amount=".$search_amount:"");
+        $paramlist.=(! empty($search_amount)?"&search_amount='".$search_amount:"");
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num);
 
@@ -538,7 +538,8 @@ if (empty($action))
         print_liste_field_titre($langs->trans('Account'),$_SERVER["PHP_SELF"],'ba.label','',$paramlist,'',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'f.amount','',$paramlist,'align="right"',$sortfield,$sortorder);
         //print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'ref_supplier','',$paramlist,'',$sortfield,$sortorder);
-        print "</tr>\n";
+        print '<td class="liste_titre">&nbsp;</td>';
+		print "</tr>\n";
 
         // Lines for filters fields
         print '<tr class="liste_titre">';
@@ -557,7 +558,8 @@ if (empty($action))
         print '</td>';
         print '<td align="right">';
         print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
-        print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+        print '</td><td align="right">';
+		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 		print '</td>';
         print "</tr>\n";
@@ -594,7 +596,8 @@ if (empty($action))
             print '<td class="nowrap">';
             print $invoicesupplierstatic->getNomUrl(1);
             print '</td>';*/
-
+			
+			print '<td>&nbsp;</td>';
             print '</tr>';
             $i++;
         }
