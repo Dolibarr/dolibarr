@@ -12,6 +12,7 @@ English Dolibarr ChangeLog
 - Fix: Civility & birthdate wasn't save into adherent module.
 - Fix: webservice Thirdparty parameter lastname for invidual creation is now lastname and not ref
 - Fix: Chars - is no more allowed into value for code for extra fields.
+( Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
