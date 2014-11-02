@@ -134,7 +134,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 	// Ref
 	print '<td class="liste_titre" align="left">';
-	print '<input class="fat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
+	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Label

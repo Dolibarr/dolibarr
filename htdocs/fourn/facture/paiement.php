@@ -543,11 +543,11 @@ if (empty($action))
         // Lines for filters fields
         print '<tr class="liste_titre">';
         print '<td align="left">';
-        print '<input class="fat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
+        print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
         print '</td>';
         print '<td>&nbsp;</td>';
         print '<td align="left">';
-        print '<input class="fat" type="text" size="6" name="search_company" value="'.$search_company.'">';
+        print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
         print '</td>';
         print '<td>';
         $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
@@ -556,7 +556,7 @@ if (empty($action))
         $form->select_comptes($search_account,'search_account',0,'',1);
         print '</td>';
         print '<td align="right">';
-        print '<input class="fat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
+        print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
         print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 		print '</td>';

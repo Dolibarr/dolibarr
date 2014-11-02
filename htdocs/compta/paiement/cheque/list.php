@@ -130,7 +130,7 @@ if ($resql)
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="fat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
+	print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
 	print '<td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
@@ -142,7 +142,7 @@ if ($resql)
     print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input class="fat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
+	print '<input class="flat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

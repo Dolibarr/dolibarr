@@ -170,7 +170,7 @@ if ($resql)
 		print '<tr class="liste_titre">';
 		// Ref
 		print '<td class="liste_titre" align="left">';
-		print '<input class="fat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
+		print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
 		print '</td>';
 		// Label
 		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.$search_label.'"></td>';
@@ -182,7 +182,7 @@ if ($resql)
 		print '<td class="liste_titre">&nbsp;</td>';
 	    // Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input class="fat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
+		print '<input class="flat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
 		print '</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
