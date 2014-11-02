@@ -222,7 +222,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
                 $object->actionmsg=$langs->transnoentities("InvoiceSentByEMail",$object->ref);
                 $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
             }
-
+            
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
 		}

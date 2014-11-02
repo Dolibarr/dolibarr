@@ -1225,11 +1225,12 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				else
 					$subject = $langs->transnoentities('Order') . ' ' . $object->ref;
 				$actiontypecode = 'AC_COM';
-				$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto . ".\n";
+				$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
 				if ($message) {
-					$actionmsg .= $langs->transnoentities('MailTopic') . ": " . $subject . "\n";
-					$actionmsg .= $langs->transnoentities('TextUsedInTheMessageBody') . ":\n";
-					$actionmsg .= $message;
+					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+					$actionmsg = dol_concatdesc($actionmsg, $message);
 				}
 				$actionmsg2 = $langs->transnoentities('Action' . $actiontypecode);
 			}

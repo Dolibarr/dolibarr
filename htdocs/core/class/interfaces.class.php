@@ -31,7 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class Interfaces
 {
-    var $dir;				// Directory with all core and external triggers files
+    var $db;
+	var $dir;				// Directory with all core and external triggers files
     var $errors	= array();	// Array for errors
 
     /**
