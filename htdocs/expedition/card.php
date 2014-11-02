@@ -462,12 +462,13 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                     if (dol_strlen(GETPOST('subject','alpha'))) $subject=GETPOST('subject','alpha');
                     else $subject = $langs->transnoentities('Shipping').' '.$object->ref;
                     $actiontypecode='AC_SHIP';
-                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
                     if ($message)
                     {
-                        $actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
-                        $actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
-                        $actionmsg.=$message;
+						if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+						$actionmsg = dol_concatdesc($actionmsg, $message);
                     }
                     $actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
                 }

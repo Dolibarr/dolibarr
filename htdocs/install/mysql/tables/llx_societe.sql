@@ -92,4 +92,6 @@ create table llx_societe
   logo                     varchar(255),
   canvas				   varchar(32),			                        -- type of canvas if used (null by default)
   import_key               varchar(14)                          		-- import key
+  webservices_url          varchar(255),                            -- supplier webservice url
+  webservices_key          varchar(128),                            -- supplier webservice key
 )ENGINE=innodb;
