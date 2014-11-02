@@ -2862,7 +2862,11 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 
 		$listofcurrenciesbefore=array('USD');
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
-		else $cursymbolafter.=$outlangs->getCurrencySymbol($currency_code);
+		else 
+		{
+			$tmpcur=$outlangs->getCurrencySymbol($currency_code);
+			$cursymbolafter.=($tmpcur == $currency_code ? ' '.$tmpcur : $tmpcur);
+		}
 	}
 	$output=$cursymbolbefore.$output.$end.$cursymbolafter;
 

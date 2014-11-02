@@ -1615,8 +1615,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				$sendtoid = $_POST['receiver'];
 			}
 		}
-
-		if (dol_strlen($sendto)) {
+		
+		if (dol_strlen($sendto)) 
+		{
 			$langs->load("commercial");
 
 			$from = $_POST['fromname'] . ' <' . $_POST['frommail'] . '>';
@@ -1715,17 +1716,10 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					setEventMessage($mesg, 'errors');
 				}
 			}
-			/*            }
-			 else
-			{
-			$langs->load("other");
-			$mesgs[]='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
-			dol_syslog('Recipient email is empty');
-			}*/
 		} else {
-			$langs->load("errors");
-			setEventMessage($langs->trans('ErrorCantReadFile', $file), 'errors');
-			dol_syslog('Failed to read file: ' . $file);
+			$langs->load("other");
+			setEventMessage($langs->trans('ErrorMailRecipientIsEmpty') . '!', 'errors');
+			dol_syslog($langs->trans('ErrorMailRecipientIsEmpty'));
 		}
 	} else {
 		$langs->load("other");

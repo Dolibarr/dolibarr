@@ -1295,18 +1295,10 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 					setEventMessage($mesg, 'errors');
 				}
 			}
-			/*            }
-			 else
-			{
-			$langs->load("other");
-			$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-			$action='presend';
-			dol_syslog('Recipient email is empty');
-			}*/
 		} else {
-			$langs->load("errors");
-			setEventMessage($langs->trans('ErrorCantReadFile', $file), 'errors');
-			dol_syslog('Failed to read file: ' . $file);
+			$langs->load("other");
+			setEventMessage($langs->trans('ErrorMailRecipientIsEmpty') . '!', 'errors');
+			dol_syslog($langs->trans('ErrorMailRecipientIsEmpty'));
 		}
 	} else {
 		$langs->load("other");
