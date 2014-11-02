@@ -73,6 +73,17 @@ $search_amount_all_tax = GETPOST("search_amount_all_tax","alpha");
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
 
+if (GETPOST("button_removefilter"))
+{
+	$search_ref="";
+	$search_ref_supplier="";
+	$search_label="";
+	$search_company="";
+	$search_amount_no_tax="";
+	$search_amount_all_tax="";
+	$year="";
+	$month="";
+}
 
 /*
  * Actions
@@ -97,18 +108,6 @@ if ($mode == 'search')
 		}
 		$db->free($resql);
 	}
-}
-
-if (GETPOST("button_removefilter"))
-{
-	$search_ref="";
-	$search_ref_supplier="";
-	$search_label="";
-	$search_company="";
-	$search_amount_no_tax="";
-	$search_amount_all_tax="";
-	$year="";
-	$month="";
 }
 
 /*
