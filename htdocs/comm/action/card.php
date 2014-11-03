@@ -790,11 +790,11 @@ if ($id > 0)
 {
 	$result1=$object->fetch($id);
 	$result2=$object->fetch_thirdparty();
-	$result2=$object->fetch_contact();
-	$result3=$object->fetch_userassigned();
-	$result4=$object->fetch_optionals($id,$extralabels);
+	$result3=$object->fetch_contact();
+	$result4=$object->fetch_userassigned();
+	$result5=$object->fetch_optionals($id,$extralabels);
 
-	if ($result1 < 0 || $result2 < 0 || $result3 < 0 || $result4 < 0)
+	if ($result1 < 0 || $result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
 	{
 		dol_print_error($db,$object->error);
 		exit;

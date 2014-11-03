@@ -440,14 +440,6 @@ function actions_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (! empty($conf->global->AGENDA_USE_SEVERAL_CONTACTS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/action/contact.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Contacts");
-		$head[$h][2] = 'contact';
-		$h++;
-	}
-
     // Attached files
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     $upload_dir = $conf->agenda->dir_output . "/" . $object->id;
