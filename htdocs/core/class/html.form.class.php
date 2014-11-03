@@ -4032,9 +4032,10 @@ class Form
      *	@param  int		$translate		Translate and encode value
      * 	@param	int		$maxlen			Length maximum for labels
      * 	@param	int		$disabled		Html select box is disabled
-     *  @param	int		$sort			'ASC' or 'DESC' =Sort on label, '' or 'NONE'=Do not sort
+     *  @param	int		$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' = Do not sort
      *  @param	string	$morecss		Add more class to css styles
      * 	@return	string					HTML select string.
+     *  @see multiselectarray
      */
     static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='')
     {
@@ -4092,54 +4093,65 @@ class Form
      *
      *	@param	string	$htmlname		Name of select
      *	@param	array	$array			Array with key+value
-     *	@param	array	$selected		Preselected keys
+     *	@param	array	$selected		Array with key+value preselected
      *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int		$value_as_key   1 to use value as key
      *	@param  string	$option         Valeur de l'option en fonction du type choisi
      *	@param  int		$translate		Translate and encode value
+     *  @param	int		$width			Force width of select box. May be used only when using jquery couch.
      *	@return	string					HTML multiselect string
+     *  @see selectarray
      */
-    function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $option='', $translate=0)
+    static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $option='', $translate=0, $width=0)
     {
     	global $conf, $langs;
 
-    	$out = '<select id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.'>'."\n";
+    	// Add code for jquery to use multiselect
+    	// Note: Plugin "multiselect" is no more provided by Dolibarr. You must include it and load it into your module to use it.
+    	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiselect'))
+    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT')))
+    	{
+	    	print '<!-- JS CODE FOR multiselect -->
+				<script type="text/javascript">
+				$(document).ready(function () {
+					$.extend($.ui.multiselect.locale, {
+						addAll:\''.$langs->transnoentities("AddAll").'\',
+						removeAll:\''.$langs->transnoentities("RemoveAll").'\',
+						itemsCount:\''.$langs->transnoentities("ItemsCount").'\'
+					});
+					$(function(){
+						$("#'.$htmlname.'").multiselect({
+							searchable: false,
+							width: '.($width?$width:300).',
+							height: 120
+						});
+					});
+				});
+				</script>';
+    	}
+
+        // Add code for jquery to use multiple-select
+    	// Note: Plugin "multiselect" is no more provided by Dolibarr. You must include it and load it into your module to use it.
+    	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiple-select'))
+    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT')))
+    	{
+	    	print '<!-- JS CODE FOR multiple-select -->
+			<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiple-select/jquery.multiple.select.js"></script>
+	    	<script type="text/javascript">
+				$(document).ready(function () {
+        			$(\'#'.$htmlname.'\').multipleSelect();
+        		});
+			</script>';
+    	}
+
+    	// Try also magic suggest
+
+    	$out = '<select id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.($width?' style="width: '.$width.'px"':'').'>'."\n";
     	if (is_array($array) && ! empty($array))
     	{
     		if ($value_as_key) $array=array_combine($array, $array);
 
-    		if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && is_array($selected) && ! empty($selected))
-    		{
-    			foreach ($selected as $selected_value)
-    			{
-    				foreach($array as $key => $value)
-    				{
-    					if ($selected_value == $key)
-    					{
-    						$value=$array[$selected_value];
-    						$out.= '<option value="'.$key.'" selected="selected">';
-    						$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
-    						$newval = ($key_in_label ? $key.' - '.$newval : $newval);
-    						$out.= dol_htmlentitiesbr($newval);
-    						$out.= '</option>'."\n";
-    						unset($array[$key]);
-    					}
-    				}
-    			}
-
-    			if (! empty($array))
-    			{
-    				foreach ($array as $key => $value)
-    				{
-    					$out.= '<option value="'.$key.'">';
-    					$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
-    					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
-    					$out.= dol_htmlentitiesbr($newval);
-    					$out.= '</option>'."\n";
-    				}
-    			}
-    		}
-    		else
+    		if (! empty($array))
     		{
     			foreach ($array as $key => $value)
     			{
@@ -4150,7 +4162,7 @@ class Form
     				}
     				$out.= '>';
 
-    				$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
+    				$newval = ($translate ? $langs->trans($value) : $value);
     				$newval = ($key_in_label ? $key.' - '.$newval : $newval);
     				$out.= dol_htmlentitiesbr($newval);
     				$out.= '</option>'."\n";
