@@ -149,7 +149,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
 		}
-		elseif ($action == 'PROPAL_CLASSIFYBILLED')
+		elseif ($action == 'PROPAL_CLASSIFY_BILLED')
         {
             $langs->load("propal");
 
@@ -264,7 +264,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'FICHINTER_CREATE')
         {
-            $langs->load("other");
+        	$langs->load("other");
             $langs->load("interventions");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -292,7 +292,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'FICHINTER_MODIFY')
         {
-            $langs->load("other");
+        	$langs->load("other");
             $langs->load("interventions");
 
 			$object->actiontypecode='AC_OTH_AUTO';
@@ -304,7 +304,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->fk_element=0;
 			$object->elementtype='';
 		}
-        elseif ($action == 'FICHINTER_SENTBYMAIL')
+		elseif ($action == 'FICHINTER_SENTBYMAIL')
         {
         	$langs->load("other");
             $langs->load("interventions");
@@ -316,19 +316,31 @@ class InterfaceActionsAuto extends DolibarrTriggers
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
         }
-        elseif ($action == 'FICHINTER_CLASSIFYBILLED')
+        elseif ($action == 'FICHINTER_CLASSIFY_BILLED')
         {
             $langs->load("other");
             $langs->load("interventions");
 
             $object->actiontypecode='AC_OTH_AUTO';
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionClassifiedBilled",$object->ref);
-            $object->actionmsg=$langs->transnoentities("InterventionClassifiedBilled",$object->ref);
+           	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionClassifiedBilledInDolibarr",$object->ref);
+           	$object->actionmsg=$langs->transnoentities("InterventionClassifiedBilledInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
             $object->sendtoid=0;
         }
-		elseif ($action == 'FICHINTER_DELETE')
+	    elseif ($action == 'FICHINTER_CLASSIFY_UNBILLED')
+        {
+            $langs->load("other");
+            $langs->load("interventions");
+
+            $object->actiontypecode='AC_OTH_AUTO';
+           	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionClassifiedUnbilledInDolibarr",$object->ref);
+           	$object->actionmsg=$langs->transnoentities("InterventionClassifiedUnbilledInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+        }
+        elseif ($action == 'FICHINTER_DELETE')
         {
             $langs->load("other");
             $langs->load("interventions");

@@ -1761,7 +1761,7 @@ class Propal extends CommonObject
             }
             if ($statut == 4)
             {
-            	$trigger_name='PROPAL_CLASSIFYBILLED';
+            	$trigger_name='PROPAL_CLASSIFY_BILLED';
             }
 
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
