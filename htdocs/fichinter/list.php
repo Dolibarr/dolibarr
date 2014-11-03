@@ -56,10 +56,11 @@ if (! $sortfield)
 }
 $limit = $conf->liste_limit;
 
-$search_ref=GETPOST('search_ref','alpha');
+$search_ref=GETPOST('search_ref')?GETPOST('search_ref','alpha'):GETPOST('search_inter','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_desc=GETPOST('search_desc','alpha');
 $search_status=GETPOST('search_status');
+$sall=GETPOST('sall');
 
 if (GETPOST("button_removefilter"))
 {
@@ -106,6 +107,11 @@ if (! $user->rights->societe->client->voir && empty($socid))
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 	$sql.= " AND s.rowid = " . $socid;
+if ($sall) {
+	$arraytosearch=array('f.ref', 'f.description', 's.nom');
+	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) $arraytosearch=array('f.ref', 'f.description', 's.nom', 'fd.description');
+	$sql .= natural_search($arraytosearch, $sall);
+}
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 //print $sql;
