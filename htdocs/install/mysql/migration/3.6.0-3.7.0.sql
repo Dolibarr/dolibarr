@@ -23,6 +23,7 @@
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention delete','Executed when a intervention is delete','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLASSIFYBILLED','Intervention set billed','Executed when a intervention is set to billed (when option FICHINTER_DISABLE_DETAILS is set)','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFYBILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
 
 ALTER TABLE llx_notify ADD COLUMN fk_soc integer NULL after fk_action;
 

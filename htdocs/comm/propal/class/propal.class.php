@@ -1739,8 +1739,14 @@ class Propal extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+        	$modelpdf=$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED?$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED:$this->modelpdf;
+        	$trigger_name='PROPAL_CLOSE_REFUSED';
+
             if ($statut == 2)
             {
+            	$trigger_name='PROPAL_CLOSE_SIGNED';
+				$modelpdf=$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL?$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->modelpdf;
+
                 // The connected company is classified as a client
                 $soc=new Societe($this->db);
                 $soc->id = $this->socid;
@@ -1752,48 +1758,31 @@ class Propal extends CommonObject
                     $this->db->rollback();
                     return -2;
                 }
-
-                if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-                {
-                	// Define output language
-                	$outputlangs = $langs;
-                	if (! empty($conf->global->MAIN_MULTILANGS))
-                	{
-                		$outputlangs = new Translate("",$conf);
-                		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->client->default_lang);
-                		$outputlangs->setDefaultLang($newlang);
-                	}
-                	//$ret=$object->fetch($id);    // Reload to get new records
-	                $this->generateDocument($conf->global->PROPALE_ADDON_PDF_ODT_TOBILL?$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-                }
-
-                // Call trigger
-                $result=$this->call_trigger('PROPAL_CLOSE_SIGNED',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
             }
-            else
+            if ($statut == 4)
             {
-
-            	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-            	{
-            		// Define output language
-            		$outputlangs = $langs;
-            		if (! empty($conf->global->MAIN_MULTILANGS))
-            		{
-            			$outputlangs = new Translate("",$conf);
-            			$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->client->default_lang);
-            			$outputlangs->setDefaultLang($newlang);
-            		}
-            		//$ret=$object->fetch($id);    // Reload to get new records
-		            $this->generateDocument($conf->global->PROPALE_ADDON_PDF_ODT_CLOSED?$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-            	}
-
-                // Call trigger
-                $result=$this->call_trigger('PROPAL_CLOSE_REFUSED',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+            	$trigger_name='PROPAL_CLASSIFYBILLED';
             }
+
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+            {
+             	// Define output language
+              	$outputlangs = $langs;
+               	if (! empty($conf->global->MAIN_MULTILANGS))
+               	{
+               		$outputlangs = new Translate("",$conf);
+               		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->client->default_lang);
+               		$outputlangs->setDefaultLang($newlang);
+               	}
+               	//$ret=$object->fetch($id);    // Reload to get new records
+	               $this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+            }
+
+            // Call trigger
+            $result=$this->call_trigger($trigger_name,$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
+
             if ( ! $error )
             {
                 $this->db->commit();

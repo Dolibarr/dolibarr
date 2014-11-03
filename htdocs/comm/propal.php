@@ -535,7 +535,7 @@ else if ($action == 'classifybilled' && $user->rights->propal->cloturer) {
 // Reopen proposal
 else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
 	// prevent browser refresh from reopening proposal several times
-	if ($object->statut == 2 || $object->statut == 3) {
+	if ($object->statut == 2 || $object->statut == 3 || $object->statut == 4) {
 		$object->reopen($user, 1);
 	}
 }
@@ -2201,7 +2201,7 @@ if ($action == 'create')
 				}
 
 				// ReOpen
-				if (($object->statut == 2 || $object->statut == 3) && $user->rights->propal->cloturer) {
+				if (($object->statut == 2 || $object->statut == 3 || $object->statut == 4) && $user->rights->propal->cloturer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=reopen' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen') . '"';
 					print '>' . $langs->trans('ReOpen') . '</a></div>';
 				}
@@ -2368,13 +2368,13 @@ if ($action == 'create')
 		$formmail->withcancel = 1;
 
 		// Tableau des substitutions
-		$formmail->substit ['__PROPREF__'] = $object->ref;
-		$formmail->substit ['__SIGNATURE__'] = $user->signature;
-		$formmail->substit ['__REFCLIENT__'] = $object->ref_client;
-		$formmail->substit ['__THIRPARTY_NAME__'] = $object->thirdparty->name;
-		$formmail->substit ['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-		$formmail->substit ['__PERSONALIZED__'] = '';
-		$formmail->substit ['__CONTACTCIVNAME__'] = '';
+		$formmail->substit['__PROPREF__'] = $object->ref;
+		$formmail->substit['__SIGNATURE__'] = $user->signature;
+		$formmail->substit['__REFCLIENT__'] = $object->ref_client;
+		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+		$formmail->substit['__PERSONALIZED__'] = '';
+		$formmail->substit['__CONTACTCIVNAME__'] = '';
 
 		// Find the good contact adress
 		$custcontact = '';
@@ -2391,15 +2391,15 @@ if ($action == 'create')
 			}
 
 			if (! empty($custcontact)) {
-				$formmail->substit ['__CONTACTCIVNAME__'] = $custcontact;
+				$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
 			}
 		}
 
 		// Tableau des parametres complementaires
-		$formmail->param ['action'] = 'send';
-		$formmail->param ['models'] = 'propal_send';
-		$formmail->param ['id'] = $object->id;
-		$formmail->param ['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+		$formmail->param['action'] = 'send';
+		$formmail->param['models'] = 'propal_send';
+		$formmail->param['id'] = $object->id;
+		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 		// Init list of files
 		if (GETPOST("mode") == 'init') {
 			$formmail->clear_attached_files();

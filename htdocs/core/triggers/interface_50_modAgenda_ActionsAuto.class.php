@@ -149,6 +149,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
 		}
+		elseif ($action == 'PROPAL_CLASSIFYBILLED')
+        {
+            $langs->load("propal");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClassifiedBilledInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("PropalClassifiedBilledInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+		}
 		elseif ($action == 'PROPAL_CLOSE_REFUSED')
         {
             $langs->load("propal");
@@ -222,7 +233,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
                 $object->actionmsg=$langs->transnoentities("InvoiceSentByEMail",$object->ref);
                 $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
             }
-            
+
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
 		}
