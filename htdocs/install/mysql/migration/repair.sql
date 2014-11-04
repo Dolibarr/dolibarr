@@ -187,3 +187,10 @@ UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS
 -- update llx_facturedet set total_tva = total_ttc - total_ht where total_vat = 0;
 -- update llx_facture set total = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
 -- update llx_facture set tva = total_ttc - total where tva = 0;
+
+-- To insert elements into a category
+-- Search idcategory: select rowid from llx_categorie where type=0 and label like '%xxx%'
+-- Select all products to include: select * from llx_product where label like '%xxx%'
+-- If ok, insert: insert into llx_categorie_product(fk_categorie, fk_product) select idcategory, rowid from llx_product where label like '%xxx%'
+
+
