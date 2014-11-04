@@ -33,6 +33,9 @@ $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
+$search_ref = GETPOST('search_ref','int');
+$search_label = GETPOST('search_label','alpha');
+$search_amount = GETPOST('search_amount','alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -61,6 +64,14 @@ else
 	$typeid=$_REQUEST['typeid'];
 }
 
+if (GETPOST("button_removefilter"))
+{
+	$search_ref="";
+	$search_label="";
+	$search_amount="";
+    $typeid="";
+}
+
 /*
  * View
  */
@@ -78,8 +89,11 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst
 $sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE u.rowid = s.fk_user";
 $sql.= " AND s.entity = ".$conf->entity;
-if (GETPOST("search_label")) $sql.=" AND s.label LIKE '%".$db->escape(GETPOST("search_label"))."%'";
-if (GETPOST("search_amount")) $sql.=" AND s.amount = ".price2num(GETPOST("search_amount"));
+
+// Search criteria
+if ($search_ref)	$sql.=" AND s.rowid=".$search_ref;
+if ($search_label) 	$sql.=" AND s.label LIKE '%".$db->escape($search_label)."%'";
+if ($search_amount) $sql.=" AND s.amount='".$db->escape(price2num(trim($search_amount)))."'";
 if ($filtre) {
     $filtre=str_replace(":","=",$filtre);
     $sql .= " AND ".$filtre;
@@ -118,19 +132,23 @@ if ($result)
     print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+	// Ref
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
+	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="14" name="search_label" value="'.GETPOST("search_label").'"></td>';
+	// Label
+	print '<td class="liste_titre"><input type="text" class="flat" size="14" name="search_label" value="'.$search_label.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Type
 	print '<td class="liste_titre" align="left">';
 	$form->select_types_paiements($typeid,'typeid','',0,0,1,16);
 	print '</td>';
-	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.GETPOST("search_amount").'"></td>';
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
-	print "</tr>\n";
+	// Amount
+	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
+	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print "</td></tr>\n";
 
     while ($i < min($num,$limit))
     {
