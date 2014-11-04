@@ -28,20 +28,21 @@
  */
 
 require '../../main.inc.php';
-dol_include_once('/core/lib/agenda.lib.php');
-dol_include_once('/core/lib/date.lib.php');
-dol_include_once('/contact/class/contact.class.php');
-dol_include_once('/user/class/user.class.php');
-dol_include_once('/comm/action/class/cactioncomm.class.php');
-dol_include_once('/comm/action/class/actioncomm.class.php');
-dol_include_once('/core/class/html.formactions.class.php');
-dol_include_once('/core/class/html.formfile.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+
 if (! empty($conf->projet->enabled))
 {
-	dol_include_once('/projet/class/project.class.php');
-	dol_include_once('/core/class/html.formprojet.class.php');
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-dol_include_once('/core/class/extrafields.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("companies");
 $langs->load("commercial");
