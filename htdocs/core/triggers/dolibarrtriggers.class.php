@@ -83,7 +83,8 @@ abstract class DolibarrTriggers
 
 		$this->db = $db;
 
-		if (!isset($this->name)) {
+		if (empty($this->name)) 
+		{
 			$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		}
 	}

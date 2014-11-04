@@ -48,7 +48,7 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 			print '<table width="100%" class="nobordernopadding"><tr><td';
 			if (! empty($extrafields->attribute_required [$key])) print ' class="fieldrequired"';
 			print '>' . $label . '</td>';
-			if (($object->statut == 0 || $extrafields->attribute_alwayseditable[$key]) && $user->rights->propal->creer && ($action != 'edit_extras' || GETPOST('attribute') != $key))
+			if (($object->statut == 0 || $extrafields->attribute_alwayseditable[$key]) && $user->rights->{$object->element}->creer && ($action != 'edit_extras' || GETPOST('attribute') != $key))
 				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
 			
 			print '</tr></table>';
@@ -59,9 +59,9 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 				$value = isset($_POST ["options_" . $key]) ? dol_mktime($_POST ["options_" . $key . "hour"], $_POST ["options_" . $key . "min"], 0, $_POST ["options_" . $key . "month"], $_POST ["options_" . $key . "day"], $_POST ["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
 			}
 
-			if ($action == 'edit_extras' && $user->rights->propal->creer && GETPOST('attribute') == $key)
+			if ($action == 'edit_extras' && $user->rights->{$object->element}->creer && GETPOST('attribute') == $key)
 			{
-				print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formsoc">';
+				print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';
 				print '<input type="hidden" name="attribute" value="' . $key . '">';
 				print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';

@@ -5,6 +5,10 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Agenda export by project #1967.
+- New: Increase length of thirdparty to 128 chars.
+- New: "Is Order shippable" icon #1975.
+- New: statistics on supplier orders and invoices on home page.
 - New: Add permissions to read all trips and expenses.
 - New: Can filter on date into tab "Referring object" of a project.
 - New: Module notification has been enhanced:

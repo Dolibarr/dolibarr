@@ -525,7 +525,15 @@ function createInvoice($authentication,$invoice)
         $newobject->statut=0;	// We start with status draft
         $newobject->fk_project=$invoice['project_id'];
         $newobject->date_creation=$now;
-	$newobject->mode_reglement_id = $invoice['payment_mode_id'];
+        
+	//take mode_reglement and cond_reglement from thirdparty
+        $soc = new Societe($db);
+        $res=$soc->fetch($newobject->socid);
+        if ($res > 0) {
+    	    $newobject->mode_reglement_id = ! empty($invoice['payment_mode_id'])?$invoice['payment_mode_id']:$soc->mode_reglement_id;
+            $newobject->cond_reglement_id  = $soc->cond_reglement_id; 
+        }
+        else $newobject->mode_reglement_id = $invoice['payment_mode_id'];
 
         // Trick because nusoap does not store data with same structure if there is one or several lines
         $arrayoflines=array();

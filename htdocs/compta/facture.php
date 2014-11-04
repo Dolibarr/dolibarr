@@ -1615,8 +1615,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				$sendtoid = $_POST['receiver'];
 			}
 		}
-
-		if (dol_strlen($sendto)) {
+		
+		if (dol_strlen($sendto)) 
+		{
 			$langs->load("commercial");
 
 			$from = $_POST['fromname'] . ' <' . $_POST['frommail'] . '>';
@@ -1626,31 +1627,19 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
 			$deliveryreceipt = $_POST['deliveryreceipt'];
 
-			if ($action == 'send') {
+			if ($action == 'send' || $action == 'relance') 
+			{
 				if (dol_strlen($_POST['subject']))
 					$subject = $_POST['subject'];
 				else
 					$subject = $langs->transnoentities('Bill') . ' ' . $object->ref;
 				$actiontypecode = 'AC_FAC';
-				$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto . ".\n";
+				$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
 				if ($message) {
-					$actionmsg .= $langs->transnoentities('MailTopic') . ": " . $subject . "\n";
-					$actionmsg .= $langs->transnoentities('TextUsedInTheMessageBody') . ":\n";
-					$actionmsg .= $message;
-				}
-				// $actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
-			}
-			if ($action == 'relance') {
-				if (dol_strlen($_POST['subject']))
-					$subject = $_POST['subject'];
-				else
-					$subject = $langs->transnoentities('Relance facture ' . $object->ref);
-				$actiontypecode = 'AC_FAC';
-				$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto . ".\n";
-				if ($message) {
-					$actionmsg .= $langs->transnoentities('MailTopic') . ": " . $subject . "\n";
-					$actionmsg .= $langs->transnoentities('TextUsedInTheMessageBody') . ":\n";
-					$actionmsg .= $message;
+					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+					$actionmsg = dol_concatdesc($actionmsg, $message);
 				}
 				// $actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 			}
@@ -1660,9 +1649,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$formmail = new FormMail($db);
 
 			$attachedfiles = $formmail->get_attached_files();
-			$filepath = $attachedfiles ['paths'];
-			$filename = $attachedfiles ['names'];
-			$mimetype = $attachedfiles ['mimes'];
+			$filepath = $attachedfiles['paths'];
+			$filename = $attachedfiles['names'];
+			$mimetype = $attachedfiles['mimes'];
 
 			// Send mail
 			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
@@ -1715,17 +1704,10 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					setEventMessage($mesg, 'errors');
 				}
 			}
-			/*            }
-			 else
-			{
-			$langs->load("other");
-			$mesgs[]='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
-			dol_syslog('Recipient email is empty');
-			}*/
 		} else {
-			$langs->load("errors");
-			setEventMessage($langs->trans('ErrorCantReadFile', $file), 'errors');
-			dol_syslog('Failed to read file: ' . $file);
+			$langs->load("other");
+			setEventMessage($langs->trans('ErrorMailRecipientIsEmpty') . '!', 'errors');
+			dol_syslog($langs->trans('ErrorMailRecipientIsEmpty'));
 		}
 	} else {
 		$langs->load("other");

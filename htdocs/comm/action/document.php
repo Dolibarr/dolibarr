@@ -41,7 +41,7 @@ $langs->load("commercial");
 $langs->load("other");
 $langs->load("bills");
 
-$objectid = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $action=GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
@@ -53,13 +53,13 @@ if ($user->societe_id > 0)
 	unset($_GET["action"]);
 	$action='';
 }
-$result = restrictedArea($user, 'agenda', $objectid, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
+$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
 $object = new ActionComm($db);
 
-if ($objectid > 0)
+if ($id > 0)
 {
-	$ret = $object->fetch($objectid);
+	$ret = $object->fetch($id);
 	$object->fetch_thirdparty();
 }
 
@@ -96,11 +96,25 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 
 if ($object->id > 0)
 {
+	$result1=$object->fetch($id);
+	$result2=$object->fetch_thirdparty();
+	$result3=$object->fetch_contact();
+	$result4=$object->fetch_userassigned();
+	$result5=$object->fetch_optionals($id,$extralabels);
+
+	if ($result1 < 0 || $result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
+	{
+		dol_print_error($db,$object->error);
+		exit;
+	}
+
+	if ($object->authorid > 0)		{ $tmpuser=new User($db); $res=$tmpuser->fetch($object->authorid); $object->author=$tmpuser; }
+	if ($object->usermodid > 0)		{ $tmpuser=new User($db); $res=$tmpuser->fetch($object->usermodid); $object->usermod=$tmpuser; }
+
 	$author=new User($db);
 	$author->fetch($object->author->id);
 	$object->author=$author;
 
-	$object->fetch_contact();
 
 	$head=actions_prepare_head($object);
 
@@ -132,53 +146,15 @@ if ($object->id > 0)
 	print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent).'</td></tr>';
 
 	// Date start
-	print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="2">';
+	print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
 	if (! $object->fulldayevent) print dol_print_date($object->datep,'dayhour');
 	else print dol_print_date($object->datep,'day');
 	if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 	print '</td>';
-	print '<td rowspan="5" align="center" valign="middle" width="180">'."\n";
-	print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="show_month">';
-	print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
-	print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
-	print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-	//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-	print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
-	print '</form>'."\n";
-	print '<form name="listactionsfilterweek" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="show_week">';
-	print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
-	print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
-	print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-	//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-	print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
-	print '</form>'."\n";
-	print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="show_day">';
-	print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
-	print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
-	print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-	//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-	print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
-	print '</form>'."\n";
-    print '<form name="listactionsfilterperuser" action="'.DOL_URL_ROOT.'/comm/action/peruser.php" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="show_peruser">';
-    print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
-    print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
-    print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-    //print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-    print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
-    print '</form>'."\n";
-    print '</td>';
 	print '</tr>';
 
 	// Date end
-	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
 	if (! $object->fulldayevent) print dol_print_date($object->datef,'dayhour');
 	else print dol_print_date($object->datef,'day');
 	if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
@@ -190,16 +166,38 @@ if ($object->id > 0)
 	print '</td></tr>';
 
 	// Location
-	print '<tr><td>'.$langs->trans("Location").'</td><td colspan="2">'.$object->location.'</td></tr>';
+	if (empty($conf->global->AGENDA_DISABLE_LOCATION))
+	{
+		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$object->location.'</td></tr>';
+	}
 
 	// Assigned to
-	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-	if ($object->userownerid > 0)
+	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+	$listofuserid=array();
+	if (empty($donotclearsession))
 	{
-		$tmpuser=new User($object->userownerid);
-		print $tmpuser->getNomUrl(1);
+		if ($object->userownerid > 0) $listofuserid[$object->userownerid]=array('id'=>$object->userownerid,'transparency'=>$object->transparency);	// Owner first
+		if (! empty($object->userassigned))	// Now concat assigned users
+		{
+			// Restore array with key with same value than param 'id'
+			$tmplist1=$object->userassigned; $tmplist2=array();
+			foreach($tmplist1 as $key => $val)
+			{
+				if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']]=$val;
+			}
+		}
+		$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
 	}
-	print '</td></tr>';
+	else
+	{
+		if (!empty($_SESSION['assignedtouser']))
+		{
+			$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+		}
+	}
+	print $form->select_dolusers_forevent('view','assignedtouser',1);
+	if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
+	print '	</td></tr>';
 
 	print '</table><br><br><table class="border" width="100%">';
 
@@ -252,8 +250,20 @@ if ($object->id > 0)
 	print ($object->priority?$object->priority:'');
 	print '</td></tr>';
 
+	// Other attributes
+	$parameters=array('colspan'=>' colspan="3"', 'colspanvalue'=>'3', 'id'=>$object->id);
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields,'edit');
+	}
 
-	print '</table><br><br><table class="border" width="100%">';
+
+	print '</table>';
+
+	print '<br><br>';
+
+	print '<table class="border" width="100%">';
 
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
@@ -266,7 +276,8 @@ if ($object->id > 0)
 
 	print '<tr><td width="30%" nowrap>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-	print '</table>';
+
+		print '</table>';
 
 	print '</div>';
 
@@ -274,6 +285,52 @@ if ($object->id > 0)
 	$permission = $user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+
+
+	if ($action != 'edit')
+	{
+		print "<br>";
+
+		// Link to agenda views
+		print '<div id="agendaviewbutton">';
+		print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="show_month">';
+		print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
+		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
+		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+		print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+		print '</form>'."\n";
+		print '<form name="listactionsfilterweek" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="show_week">';
+		print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
+		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
+		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+		print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
+		print '</form>'."\n";
+		print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="show_day">';
+		print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
+		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
+		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+		print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
+		print '</form>'."\n";
+		print '<form name="listactionsfilterperuser" action="'.DOL_URL_ROOT.'/comm/action/peruser.php" method="POST" style="float: left; padding-right: 10px;">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="show_peruser">';
+		print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
+		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
+		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+		print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
+		print '</form>'."\n";
+		print '</div>';
+	}
 }
 else
 {

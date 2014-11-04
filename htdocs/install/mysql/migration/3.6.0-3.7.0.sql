@@ -21,8 +21,11 @@
 
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_MODIFY','Intervention modified','Executed when a intervention is modified','ficheinter',19);
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention delete','Executed when a intervention is delete','ficheinter',19);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLASSIFYBILLED','Intervention set billed','Executed when a intervention is set to billed (when option FICHINTER_DISABLE_DETAILS is set)','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLASSIFY_BILLED','Intervention set billed','Executed when a intervention is set to billed (when option FICHINTER_CLASSIFY_BILLED is set)','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLASSIFY_UNBILLED','Intervention set unbilled','Executed when a intervention is set to unbilled (when option FICHINTER_CLASSIFY_BILLED is set)','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_REOPEN','Intervention opened','Executed when a intervention is re-opened','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFY_BILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
 
 ALTER TABLE llx_notify ADD COLUMN fk_soc integer NULL after fk_action;
 
@@ -45,8 +48,6 @@ ALTER TABLE llx_fichinter ADD COLUMN ref_ext 	varchar(255);
 
 -- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
 ALTER TABLE llx_c_typent ADD COLUMN fk_country integer NULL AFTER libelle;
-
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (29,'FICHINTER_CLASSIFY_BILLED','Classify intervention as billed','Executed when a intervention is classified as billed (when option FICHINTER_DISABLE_DETAILS is set)','ficheinter',19);
 
 INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
 
@@ -1026,6 +1027,7 @@ create table llx_c_email_templates
   tms             timestamp,
   label           varchar(255),					  -- Label of predefined email
   position        smallint,					      -- Position
+  active          tinyint DEFAULT 1  NOT NULL,
   topic			  text,                           -- Predefined topic
   content         text                            -- Predefined text
 ) ENGINE=innodb;
@@ -1062,6 +1064,9 @@ ALTER TABLE llx_c_civility ADD UNIQUE INDEX uk_c_civility(code);
 ALTER TABLE llx_adherent CHANGE COLUMN civilite civility VARCHAR(6);
 ALTER TABLE llx_socpeople CHANGE COLUMN civilite civility VARCHAR(6);
 ALTER TABLE llx_user CHANGE COLUMN civilite civility VARCHAR(6);
+
+ALTER TABLE llx_societe MODIFY COLUMN nom varchar(128);
+ALTER TABLE llx_adherent MODIFY COLUMN societe varchar(128);
 
 ALTER TABLE llx_c_type_fees CHANGE COLUMN libelle label VARCHAR(30);
 ALTER TABLE llx_c_type_fees ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER label;
@@ -1110,3 +1115,6 @@ DELETE FROM llx_menu WHERE module = 'boutique';
 -- Add option always editable on extrafield
 ALTER TABLE llx_extrafields ADD alwayseditable INTEGER DEFAULT 0 AFTER pos;
 
+-- add supplier webservice fields
+ALTER TABLE llx_societe ADD webservices_url varchar(255) DEFAULT NULL;
+ALTER TABLE llx_societe ADD webservices_key varchar(128) DEFAULT NULL;
