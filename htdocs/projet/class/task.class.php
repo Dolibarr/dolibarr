@@ -769,7 +769,7 @@ class Task extends CommonObject
         if ($this->db->query($sql) )
         {
             $tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
-            $ret = $tasktme_id;
+            $ret = $tasktime_id;
 
             if (! $notrigger)
             {
@@ -801,10 +801,7 @@ class Task extends CommonObject
                 dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error, LOG_ERR);
                 $ret = -2;
             }
-        }
-
-		if ($ret >= 0)
-        {
+        
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
             $sql.= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->timespent_fk_user.")";
             $sql.= " WHERE rowid = ".$tasktime_id;
