@@ -38,6 +38,9 @@ $langs->load("bills");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'banque', '','');
 
+$search_ref = GETPOST('search_ref','int');
+$search_account = GETPOST('search_account','int');
+$search_amount = GETPOST('search_amount','alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -57,6 +60,16 @@ $formother = new FormOther($db);
 $checkdepositstatic=new RemiseCheque($db);
 $accountstatic=new Account($db);
 
+// If click on purge search criteria ?
+if (GETPOST("button_removefilter_x"))
+{
+    $search_ref='';
+    $search_amount='';
+    $search_account='';
+    $year='';
+    $month='';
+}
+
 /*
  * View
  */
@@ -72,9 +85,9 @@ $sql.= " WHERE bc.fk_bank_account = ba.rowid";
 $sql.= " AND bc.entity = ".$conf->entity;
 
 // Search criteria
-if (GETPOST("search_ref"))			$sql.=" AND bc.number=".GETPOST("search_ref",'int');
-if (GETPOST("search_account") > 0)	$sql.=" AND bc.fk_bank_account=".GETPOST("search_account",'int');
-if (GETPOST("search_amount"))		$sql.=" AND bc.amount=".price2num(GETPOST("search_amount"));
+if ($search_ref)			$sql.=" AND bc.number=".$search_ref;
+if ($search_account > 0)	$sql.=" AND bc.fk_bank_account=".$search_account;
+if ($search_amount)			$sql.=" AND bc.amount='".$db->escape(price2num(trim($search_amount)))."'";
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -103,7 +116,7 @@ if ($resql)
 
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num);
 
-	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.number","",$params,"",$sortfield,$sortorder);
@@ -117,7 +130,7 @@ if ($resql)
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="fat" type="text" size="4" name="search_ref" value="'.GETPOST('search_ref').'">';
+	print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
 	print '<td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
@@ -125,16 +138,15 @@ if ($resql)
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
     print '<td>';
-    $form->select_comptes($_REQUEST["search_account"],'search_account',0,'',1);
+    $form->select_comptes($search_account,'search_account',0,'',1);
     print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input class="fat" type="text" size="6" name="search_amount" value="'.GETPOST('search_amount').'">';
+	print '<input class="flat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
-	print "</tr>\n";
+	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print "</td></tr>\n";
 
 	$var=true;
 	while ($i < min($num,$limit))

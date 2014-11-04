@@ -520,6 +520,7 @@ if (empty($reshook))
     // Actions to send emails
     $id=$socid;
     $actiontypecode='AC_OTH_AUTO';
+    $trigger_name='COMPANY_SENTBYMAIL';
     $paramname='socid';
     $mode='emailfromthirdparty';
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
