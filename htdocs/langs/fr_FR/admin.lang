@@ -327,6 +327,12 @@ ModuleDisabled=Module désactivé
 ModuleDisabledSoNoEvent=Module désactivé donc événement jamais créé
 ConfirmPurge=Êtes-vous sûr de vouloir réaliser cette purge ?<br>Ceci effacera définitivement tous vos fichiers (espace GED, pièces jointes, etc...).
 MinLength=Longueur minimale
+NbMajMin=Nombre de majuscule minimum
+NbNumMin=Nombre de chiffre minimum
+NbSpeMin=Nombre de caractère speciaux minimum
+NbIteConsecutive=Nombre maximum d'iterations consecutive du même caractère
+NoAmbiCaracAutoGeneration=Ne pas utiliser les caractère ambigus pour la generation automatique ("1","I","l","|","0","O")
+SetupPerso=Configuration personalisable
 LanguageFilesCachedIntoShmopSharedMemory=Fichiers .lang en mémoire partagée
 ExamplesWithCurrentSetup=Exemples avec le paramétrage actif courant
 ListOfDirectories=Liste des répertoires des modèles OpenDocument
@@ -1057,6 +1063,8 @@ EmptyNumRefModelDesc=Code libre sans vérification. Peut être modifié à tout 
 ##### Module password generation
 PasswordGenerationStandard=Renvoie un mot de passe généré selon l'algorithme interne de Dolibarr : 8 caractères, chiffres et caractères en minuscules mélangés.
 PasswordGenerationNone=Ne propose pas de mots de passe générés. Le mot de passe est à saisir manuellement.
+PasswordGenerationPerso=Renvoie un mot de passe généré selon votre configuration.
+PasswordPatternDesc=Pattern utilisé pour la génération de password personalisé
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Proposer un mot de passe généré
