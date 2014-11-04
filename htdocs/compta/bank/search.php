@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 $langs->load("banks");
 $langs->load("categories");
 $langs->load("companies");
+$langs->load("margins");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -72,6 +73,15 @@ $limit = $conf->liste_limit;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='b.dateo';
 
+if (GETPOST("button_removefilter"))
+{
+	$description="";
+	$type="";
+	$debit="";
+	$credit="";
+	$account="";
+	$bid="";
+}
 
 /*
  * View
@@ -198,7 +208,7 @@ if ($resql)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="center">';
-    $form->select_types_paiements(empty($_REQUEST["type"])?'':$_REQUEST["type"], 'type', '', 2, 0, 1, 8);
+    $form->select_types_paiements(empty($type)?'':$type, 'type', '', 2, 0, 1, 8);
     print '</td>';
     print '<td class="liste_titre"><input type="text" class="flat" name="req_nb" value="'.GETPOST("req_nb").'" size="2"></td>';
     print '<td class="liste_titre">';
@@ -214,9 +224,9 @@ if ($resql)
 	print '<td class="liste_titre" align="right">';
 	print '<input type="hidden" name="action" value="search">';
 	if (! empty($_REQUEST['bid'])) print '<input type="hidden" name="bid" value="'.$_REQUEST["bid"].'">';
-	print '<input type="image" class="liste_titre" name="submit" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
-	print '</tr>';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print "</td></tr>\n";
 
 	// Loop on each record
 	$total_debit=0;

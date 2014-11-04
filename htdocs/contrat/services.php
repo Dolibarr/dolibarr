@@ -44,7 +44,7 @@ if (! $sortfield) $sortfield="c.rowid";
 if (! $sortorder) $sortorder="ASC";
 
 $filter=GETPOST("filter");
-$search_nom=GETPOST("search_nom");
+$search_name=GETPOST("search_name");
 $search_contract=GETPOST("search_contract");
 $search_service=GETPOST("search_service");
 $statut=GETPOST('statut')?GETPOST('statut'):1;
@@ -68,6 +68,21 @@ $result = restrictedArea($user, 'contrat',$contratid);
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
 $companystatic=new Societe($db);
+
+if (GETPOST("button_removefilter"))
+{
+	$search_name="";
+	$search_contract="";
+	$search_service="";
+	$op1month="";
+	$op1day="";
+	$op1year="";
+	$filter_op1="";
+	$op2month="";
+	$op2day="";
+	$op2year="";
+	$filter_op2="";
+}
 
 /*
  * View
@@ -101,7 +116,7 @@ if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";
 if ($filter == "expired") $sql.= " AND cd.date_fin_validite < '".$db->idate($now)."'";
-if ($search_nom)      $sql.= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
+if ($search_name)     $sql.= " AND s.nom LIKE '%".$db->escape($search_name)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".$db->escape($search_contract)."'";
 if ($search_service)  $sql.= " AND (p.ref LIKE '%".$db->escape($search_service)."%' OR p.description LIKE '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
 if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
@@ -122,7 +137,7 @@ if ($resql)
 
 	$param='';
 	if ($search_contract) $param.='&amp;search_contract='.urlencode($search_contract);
-	if ($search_nom)      $param.='&amp;search_nom='.urlencode($search_nom);
+	if ($search_name)      $param.='&amp;search_name='.urlencode($search_name);
 	if ($search_service)  $param.='&amp;search_service='.urlencode($search_service);
 	if ($mode)            $param.='&amp;mode='.$mode;
 	if ($filter)          $param.='&amp;filter='.$filter;
@@ -168,7 +183,7 @@ if ($resql)
 	print '</td>';
 	// Third party
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="24" name="search_nom" value="'.dol_escape_htmltag($search_nom).'">';
+	print '<input type="text" class="flat" size="24" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
@@ -184,9 +199,9 @@ if ($resql)
 	$filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
 	print $form->select_date($filter_date2,'op2',0,0,1);
 	print '</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print "</td>";
-	print "</tr>\n";
+    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print "</td></tr>\n";
 	print '</form>';
 
 	$contractstatic=new Contrat($db);
