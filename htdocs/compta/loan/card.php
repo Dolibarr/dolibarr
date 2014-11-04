@@ -69,12 +69,12 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	}
 }
 
-
 // Add loan
 if ($action == 'add' && $user->rights->loan->write)
 {
-	$datestart=dol_mktime(12,0,0, $GETPOST("startmonth"), $GETPOST("startday"), $GETPOST("startyear"));
-	$dateend=dol_mktime(12,0,0, $GETPOST("endmonth"), $GETPOST("endday"), $GETPOST("endyear"));
+	$datestart=@dol_mktime(12,0,0, $_POST["startmonth"], $_POST["startday"], $_POST["startyear"]);
+	$dateend=@dol_mktime(12,0,0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+	
 	if (! $datestart)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
@@ -94,17 +94,17 @@ if ($action == 'add' && $user->rights->loan->write)
 	{
 		$object = new Loan($db);
 
-		$object->label	 = GETPOST("label");
-		$object->fk_bank	 = GETPOST("accountid");
-		$object->capital	 = GETPOST("capital");
-		$object->datestart = $datestart;
-		$object->dateend	 = $dateend;
-		$object->nbterm	 = GETPOST("nbterm");
-		$object->rate		 = GETPOST("rate");
+		$object->label		= $_POST["label"];
+		$object->fk_bank	= $_POST["accountid"];
+		$object->capital	= $_POST["capital"];
+		$object->datestart	= $datestart;
+		$object->dateend	= $dateend;
+		$object->nbterm		= $_POST["nbterm"];
+		$object->rate		= $_POST["rate"];
 		
-		$object->account_capital	 = GETPOST("accountancy_account_capital");
-		$object->account_insurance = GETPOST("accountancy_account_insurance");
-		$object->account_interest	 = GETPOST("accountancy_account_interest");		
+		$object->account_capital	= $_POST["accountancy_account_capital"];
+		$object->account_insurance	= $_POST["accountancy_account_insurance"];
+		$object->account_interest	= $_POST["accountancy_account_interest"];		
 
 		$id=$object->create($user);
 		if ($id <= 0)
@@ -173,7 +173,7 @@ if ($action == 'create')
 
     $datec = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 
-    print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
+    print '<form name="loan" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
