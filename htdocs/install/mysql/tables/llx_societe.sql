@@ -3,6 +3,7 @@
 -- Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
+-- Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -91,7 +92,7 @@ create table llx_societe
   default_lang             varchar(6),									-- default language
   logo                     varchar(255),
   canvas				   varchar(32),			                        -- type of canvas if used (null by default)
-  import_key               varchar(14)                          		-- import key
+  import_key               varchar(14),                          		-- import key
   webservices_url          varchar(255),                            -- supplier webservice url
   webservices_key          varchar(128),                            -- supplier webservice key
 )ENGINE=innodb;
