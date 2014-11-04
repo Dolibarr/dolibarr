@@ -193,4 +193,11 @@ UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS
 -- Select all products to include: select * from llx_product where label like '%xxx%'
 -- If ok, insert: insert into llx_categorie_product(fk_categorie, fk_product) select idcategory, rowid from llx_product where label like '%xxx%'
 
+-- Replace xxx with your IP Address 
+-- bind-address        = xxx.xxx.xxx.xxx
+-- CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypass';
+-- CREATE USER 'myuser'@'%' IDENTIFIED BY 'mypass';
+-- GRANT ALL ON *.* TO 'myuser'@'localhost';
+-- GRANT ALL ON *.* TO 'myuser'@'%';
+-- flush privileges;
 
