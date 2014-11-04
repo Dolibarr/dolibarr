@@ -326,7 +326,7 @@ $var=!$var;
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
 	print '<td>' . $langs->trans("NoAmbiCaracAutoGeneration")."</td>";
-	print '<td colspan="2" align="center"><input type="checkbox" id="NoAmbiCaracAutoGeneration" '.($tabConf[5] ? "checked" : "").' min="0"></td>';
+	print '<td colspan="2"><input type="checkbox" id="NoAmbiCaracAutoGeneration" '.($tabConf[5] ? "checked" : "").' min="0"> <span id="textcheckbox">'.($tabConf[5] ? $langs->trans("Activated") : $langs->trans("Disabled")).'</span></td>';
 	print '</tr>';
 
 	$var=!$var;
@@ -360,6 +360,9 @@ $var=!$var;
 	print '	function valuePatternChange(){';
 	print '		var lang_save = "'.$langs->trans("Save").'";';
 	print '		var lang_error = "'.$langs->trans("Error").'";';
+	print '		var lang_Disabled = "'.$langs->trans("Disabled").'";';
+	print '		var lang_Activated = "'.$langs->trans("Activated").'";';
+	print '		$("#textcheckbox").html($("#NoAmbiCaracAutoGeneration")[0].checked ? unescape(lang_Activated) : unescape(lang_Disabled));';
 	print '		if(valuePossible()){';
 	print '			$("#linkChangePattern").attr("href",generatelink()).text(lang_save);';
 	print '		}';

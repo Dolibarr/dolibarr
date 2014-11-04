@@ -72,16 +72,14 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->user=$user;
 
 		if(empty($conf->global->USER_PASSWORD_PATTERN)){
-			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '8;1;1;1;8;0','chaine',0,'',$conf->entity);
+			// default value (8carac, 1maj, 1digit, 1spe,  3 repeat, no ambi at auto generation.
+			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '8;1;1;1;3;1','chaine',0,'',$conf->entity);
 		}
 
 		$this->Maj = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		//$this->Maj = "Y";
 		$this->Min = strtolower($this->Maj);
 		$this->Nb = "0123456789";
-		//$this->Nb = "X";
 		$this->Spe = "!@#$%&*()_-+={}[]\\|:;'/";
-		//$this->Spe = "<>;}?";
 		$this->Ambi = array("1","I","l","|","O","0");
 
 		$tabConf = explode(";",$conf->global->USER_PASSWORD_PATTERN);
@@ -149,7 +147,13 @@ class modGeneratePassPerso extends ModeleGenPassword
 		for($i=strlen($pass);$i<$this->length2; $i++){ // y
 			$pass .= $this->All[rand(0,strlen($this->All) -1)];
 		}
-		return str_shuffle($pass) ;
+
+		$pass = str_shuffle($pass) ;
+
+		if($this->validatePassword($pass)) {
+			return $pass;
+		}
+		return $this->getNewGeneratedPassword();
 	}
 
 	/**
@@ -160,6 +164,27 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 */
 	function validatePassword($password)
 	{
+		$password_a = str_split($password);
+		$maj = str_split($this->Maj);
+		$num = str_split($this->Nb);
+		$spe = str_split($this->Spe);
+
+		if(count(array_intersect($password_a, $maj)) < $this->NbMaj){
+			return 0;
+		}
+
+		if(count(array_intersect($password_a, $num)) < $this->NbNum){
+			return 0;
+		}
+
+		if(count(array_intersect($password_a, $spe)) < $this->NbSpe){
+			return 0;
+		}
+
+		if(!$this->consecutiveInterationSameCharacter($password)){
+			return 0;
+		}
+
 		return 1;
 	}
 
@@ -172,8 +197,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 	function consecutiveInterationSameCharacter($password){
 		$last = "";
 		$count = 0;
-		$char = explode("", $password);
-
+		$char = str_split($password);
 		foreach($char as $c){
 			if($c != $last){
 				$last = $c;
@@ -182,11 +206,11 @@ class modGeneratePassPerso extends ModeleGenPassword
 				$count++;
 			}
 
-			if($count > $this->NbRepeat) {
-				return true;
+			if($count >= $this->NbRepeat) {
+				return 0;
 			}
 		}
-		return false;
+		return 1;
 	}
 }
 
