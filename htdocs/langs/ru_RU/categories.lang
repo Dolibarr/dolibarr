@@ -111,3 +111,4 @@ ExtraFieldsCategories=Дополнительные атрибуты
 CategoriesSetup=Настройка категорий
 CategorieRecursiv=Автоматически связать с родительской категорией
 CategorieRecursivHelp=Если активировать, то продукт будет связан с родительской категорией при добавлении в подкатегорию
+AddProductServiceIntoCategory=Add the following product/service

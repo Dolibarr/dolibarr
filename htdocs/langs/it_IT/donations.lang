@@ -30,3 +30,4 @@ SearchADonation=Cerca una donazione
 DonationRecipient=Ricevente della donazione
 ThankYou=Grazie
 IConfirmDonationReception=Si dichiara di aver ricevuto la seguente cifra a titolo di donazione
+MinimumAmount=Minimum amount is  %s

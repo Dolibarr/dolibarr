@@ -21,8 +21,10 @@
  *  \ingroup    core
  *  \brief      Fichier de gestion des triggers LDAP
  */
-require_once (DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
-require_once (DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
+
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 
 /**

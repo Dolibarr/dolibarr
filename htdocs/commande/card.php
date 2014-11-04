@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
@@ -90,7 +90,7 @@ if ($id > 0 || ! empty($ref)) {
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('ordercard'));
+$hookmanager->initHooks(array('ordercard','globalcard'));
 
 $permissionnote = $user->rights->commande->creer; // Used by the include of actions_setnotes.inc.php
 
@@ -600,10 +600,12 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 				// multiprix
 				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
 				{
-					$pu_ht = $prod->multiprices [$object->thirdparty->price_level];
-					$pu_ttc = $prod->multiprices_ttc [$object->thirdparty->price_level];
-					$price_min = $prod->multiprices_min [$object->thirdparty->price_level];
-					$price_base_type = $prod->multiprices_base_type [$object->thirdparty->price_level];
+					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
+					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
+					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+					if (isset($prod->multiprices_tva_tx[$object->client->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					if (isset($prod->multiprices_recuperableonly[$object->client->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
 					$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
 					$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 				}
@@ -616,13 +618,19 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 					$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
 
 					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-					if ($result) {
-						if (count($prodcustprice->lines) > 0) {
+					if ($result >= 0)
+					{
+						if (count($prodcustprice->lines) > 0)
+						{
 							$pu_ht = price($prodcustprice->lines [0]->price);
 							$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 							$price_base_type = $prodcustprice->lines [0]->price_base_type;
 							$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
 						}
+					}
+					else
+					{
+						setEventMessage($prodcustprice->error,'errors');
 					}
 				}
 
@@ -900,20 +908,23 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
 
 	if (! $error) {
 		$result = $object->valid($user, $idwarehouse);
-		if ($result >= 0) {
+		if ($result >= 0)
+		{
 			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->thirdparty->default_lang;
-			if (! empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				if (empty($model)) { $tmp=getListOfModels($db, 'order'); $keys=array_keys($tmp); $model=$keys[0]; }
+				$ret = $object->fetch($id); // Reload to get new records
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 	}
@@ -946,21 +957,23 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
 
 	if (! $error) {
 		$result = $object->set_draft($user, $idwarehouse);
-		if ($result >= 0) {
+		if ($result >= 0)
+		{
 			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->thirdparty->default_lang;
-			if (! empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$ret = $object->fetch($object->id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				if (empty($model)) { $tmp=getListOfModels($db, 'order'); $keys=array_keys($tmp); $model=$keys[0]; }
+				$ret = $object->fetch($id); // Reload to get new records
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 	}
@@ -1140,7 +1153,7 @@ else if ($action == 'update_extras') {
 
 /*
  * Add file in email form
-*/
+ */
 if (GETPOST('addfile')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -1154,7 +1167,7 @@ if (GETPOST('addfile')) {
 
 /*
  * Remove file in email form
-*/
+ */
 if (GETPOST('removedfile')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -1169,7 +1182,7 @@ if (GETPOST('removedfile')) {
 
 /*
  * Send mail
-*/
+ */
 if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! GETPOST('cancel')) {
 	$langs->load('mails');
 
@@ -1212,11 +1225,12 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				else
 					$subject = $langs->transnoentities('Order') . ' ' . $object->ref;
 				$actiontypecode = 'AC_COM';
-				$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto . ".\n";
+				$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
 				if ($message) {
-					$actionmsg .= $langs->transnoentities('MailTopic') . ": " . $subject . "\n";
-					$actionmsg .= $langs->transnoentities('TextUsedInTheMessageBody') . ":\n";
-					$actionmsg .= $message;
+					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+					$actionmsg = dol_concatdesc($actionmsg, $message);
 				}
 				$actionmsg2 = $langs->transnoentities('Action' . $actiontypecode);
 			}
@@ -1282,18 +1296,10 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 					setEventMessage($mesg, 'errors');
 				}
 			}
-			/*            }
-			 else
-			{
-			$langs->load("other");
-			$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-			$action='presend';
-			dol_syslog('Recipient email is empty');
-			}*/
 		} else {
-			$langs->load("errors");
-			setEventMessage($langs->trans('ErrorCantReadFile', $file), 'errors');
-			dol_syslog('Failed to read file: ' . $file);
+			$langs->load("other");
+			setEventMessage($langs->trans('ErrorMailRecipientIsEmpty') . '!', 'errors');
+			dol_syslog($langs->trans('ErrorMailRecipientIsEmpty'));
 		}
 	} else {
 		$langs->load("other");
@@ -1875,9 +1881,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 			// Local taxes
 		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
-			$nbrow ++;
+			$nbrow++;
 		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0 )
-			$nbrow ++;
+			$nbrow++;
 
 		print '<table class="border" width="100%">';
 
@@ -2122,60 +2128,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			print '</tr>';
 		}
 
-		// Other attributes (TODO Move this into an include)
-		$parameters = array('colspan' => ' colspan="3"');
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
-		{
-			foreach ($extrafields->attribute_label as $key => $label)
-			{
-				if ($action == 'edit_extras')
-				{
-					$value = (isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-				}
-				else
-				{
-					$value = $object->array_options["options_" . $key];
-				}
-
-				if ($extrafields->attribute_type[$key] == 'separate')
-				{
-					print $extrafields->showSeparator($key);
-				}
-				else
-				{
-					print '<tr><td';
-					if (! empty($extrafields->attribute_required [$key])) print ' class="fieldrequired"';
-					print '>' . $label . '</td><td colspan="5">';
-					// Convert date into timestamp format
-					if (in_array($extrafields->attribute_type [$key], array('date','datetime')))
-					{
-						$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
-					}
-
-					if ($action == 'edit_extras' && $user->rights->commande->creer && GETPOST('attribute') == $key)
-					{
-						print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formsoc">';
-						print '<input type="hidden" name="action" value="update_extras">';
-						print '<input type="hidden" name="attribute" value="' . $key . '">';
-						print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-						print '<input type="hidden" name="id" value="' . $object->id . '">';
-
-						print $extrafields->showInputField($key, $value);
-
-						print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-						print '</form>';
-					}
-					else
-					{
-						print $extrafields->showOutputField($key, $value);
-						if ($object->statut == 0 && $user->rights->commande->creer)
-							print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_picto('', 'edit') . ' ' . $langs->trans('Modify') . '</a>';
-					}
-					print '</td></tr>' . "\n";
-				}
-			}
-		}
+		// Other attributes
+		$cols = 3;
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		$rowspan = 4;
 		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
@@ -2529,7 +2484,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 			if (is_array($contactarr) && count($contactarr) > 0) {
 				foreach ($contactarr as $contact) {
-					if ($contact ['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
+					if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
 						$contactstatic = new Contact($db);
 						$contactstatic->fetch($contact ['id']);
 						$custcontact = $contactstatic->getFullName($langs, 1);
@@ -2537,15 +2492,15 @@ if ($action == 'create' && $user->rights->commande->creer) {
 				}
 
 				if (! empty($custcontact)) {
-					$formmail->substit ['__CONTACTCIVNAME__'] = $custcontact;
+					$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
 				}
 			}
 
 			// Tableau des parametres complementaires
-			$formmail->param ['action'] = 'send';
-			$formmail->param ['models'] = 'order_send';
-			$formmail->param ['orderid'] = $object->id;
-			$formmail->param ['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+			$formmail->param['action'] = 'send';
+			$formmail->param['models'] = 'order_send';
+			$formmail->param['orderid'] = $object->id;
+			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 
 			// Init list of files
 			if (GETPOST("mode") == 'init') {

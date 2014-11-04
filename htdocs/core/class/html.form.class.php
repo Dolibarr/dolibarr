@@ -14,6 +14,7 @@
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2013      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014      Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,7 +194,7 @@ class Form
                 {
                 	$ret.='<td align="left">';
                 	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
-                	$ret.='<br>'."\n";
+                	if (preg_match('/ckeditor|textarea/',$typeofdata)) $ret.='<br>'."\n";
                 	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 	$ret.='</td>';
                 }
@@ -477,9 +478,11 @@ class Form
 
         $out='';
         $countryArray=array();
+		$favorite=array();
         $label=array();
+		$atleastonefavorite=0;
 
-        $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label";
+        $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_country";
         $sql.= " WHERE active = 1";
         //$sql.= " ORDER BY code ASC";
@@ -502,15 +505,22 @@ class Form
                     $countryArray[$i]['code_iso'] 	= $obj->code_iso;
                     $countryArray[$i]['code_iso3'] 	= $obj->code_iso3;
                     $countryArray[$i]['label']		= ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                    $label[$i] = dol_string_unaccent($countryArray[$i]['label']);
+                    $countryArray[$i]['favorite']   = $obj->favorite;
+                    $favorite[$i]					= $obj->favorite;
+					$label[$i] = dol_string_unaccent($countryArray[$i]['label']);
                     $i++;
                 }
 
-                array_multisort($label, SORT_ASC, $countryArray);
+                array_multisort($favorite, SORT_DESC, $label, SORT_ASC, $countryArray);
 
                 foreach ($countryArray as $row)
                 {
-                    //print 'rr'.$selected.'-'.$row['label'].'-'.$row['code_iso'].'<br>';
+                	if ($row['favorite'] && $row['code_iso']) $atleastonefavorite++;
+					if (empty($row['favorite']) && $atleastonefavorite)
+					{
+						$atleastonefavorite=0;
+						$out.= '<option value="" disabled="disabled">----------------------</option>';
+					}
                     if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
                     {
                         $foundselected=true;
@@ -1134,6 +1144,9 @@ class Form
 
         // If no preselected user defined, we take current user
         if ((is_numeric($selected) && ($selected < -1 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
+
+        $excludeUsers=null;
+        $includeUsers=null;
 
         // Permettre l'exclusion d'utilisateurs
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
@@ -2703,6 +2716,7 @@ class Form
      *    @param    int		$maxlength      	Maximum length for labels
      *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
      *    @return	void
+     *    @see select_categories
      */
     function select_all_categories($type, $selected='', $htmlname="parent", $maxlength=64, $excludeafterid=0)
     {
@@ -3987,7 +4001,7 @@ class Form
         {
         	print '<input type="text" size="3" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').' class="flat" value="'.((int) $hourSelected).'">';
         }
-        print $langs->trans('Hours');
+        print ' '.$langs->trans('HourShort');
 
         if ($minunderhours) print '<br>';
         else print "&nbsp;";
@@ -4000,7 +4014,7 @@ class Form
             print '>'.$min.'</option>';
         }
         print "</select>";
-        print $langs->trans('Minutes'). "&nbsp;";
+        print ' '.$langs->trans('MinuteShort'). "&nbsp;";
     }
 
 
@@ -4018,9 +4032,10 @@ class Form
      *	@param  int		$translate		Translate and encode value
      * 	@param	int		$maxlen			Length maximum for labels
      * 	@param	int		$disabled		Html select box is disabled
-     *  @param	int		$sort			'ASC' or 'DESC' =Sort on label, '' or 'NONE'=Do not sort
+     *  @param	int		$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' = Do not sort
      *  @param	string	$morecss		Add more class to css styles
      * 	@return	string					HTML select string.
+     *  @see multiselectarray
      */
     static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='')
     {
@@ -4078,54 +4093,65 @@ class Form
      *
      *	@param	string	$htmlname		Name of select
      *	@param	array	$array			Array with key+value
-     *	@param	array	$selected		Preselected keys
+     *	@param	array	$selected		Array with key+value preselected
      *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int		$value_as_key   1 to use value as key
      *	@param  string	$option         Valeur de l'option en fonction du type choisi
      *	@param  int		$translate		Translate and encode value
+     *  @param	int		$width			Force width of select box. May be used only when using jquery couch.
      *	@return	string					HTML multiselect string
+     *  @see selectarray
      */
-    function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $option='', $translate=0)
+    static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $option='', $translate=0, $width=0)
     {
     	global $conf, $langs;
 
-    	$out = '<select id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.'>'."\n";
+    	// Add code for jquery to use multiselect
+    	// Note: Plugin "multiselect" is no more provided by Dolibarr. You must include it and load it into your module to use it.
+    	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiselect'))
+    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT')))
+    	{
+	    	print '<!-- JS CODE FOR multiselect -->
+				<script type="text/javascript">
+				$(document).ready(function () {
+					$.extend($.ui.multiselect.locale, {
+						addAll:\''.$langs->transnoentities("AddAll").'\',
+						removeAll:\''.$langs->transnoentities("RemoveAll").'\',
+						itemsCount:\''.$langs->transnoentities("ItemsCount").'\'
+					});
+					$(function(){
+						$("#'.$htmlname.'").multiselect({
+							searchable: false,
+							width: '.($width?$width:300).',
+							height: 120
+						});
+					});
+				});
+				</script>';
+    	}
+
+        // Add code for jquery to use multiple-select
+    	// Note: Plugin "multiselect" is no more provided by Dolibarr. You must include it and load it into your module to use it.
+    	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiple-select'))
+    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT')))
+    	{
+	    	print '<!-- JS CODE FOR multiple-select -->
+			<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiple-select/jquery.multiple.select.js"></script>
+	    	<script type="text/javascript">
+				$(document).ready(function () {
+        			$(\'#'.$htmlname.'\').multipleSelect();
+        		});
+			</script>';
+    	}
+
+    	// Try also magic suggest
+
+    	$out = '<select id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.($width?' style="width: '.$width.'px"':'').'>'."\n";
     	if (is_array($array) && ! empty($array))
     	{
     		if ($value_as_key) $array=array_combine($array, $array);
 
-    		if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && is_array($selected) && ! empty($selected))
-    		{
-    			foreach ($selected as $selected_value)
-    			{
-    				foreach($array as $key => $value)
-    				{
-    					if ($selected_value == $key)
-    					{
-    						$value=$array[$selected_value];
-    						$out.= '<option value="'.$key.'" selected="selected">';
-    						$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
-    						$newval = ($key_in_label ? $key.' - '.$newval : $newval);
-    						$out.= dol_htmlentitiesbr($newval);
-    						$out.= '</option>'."\n";
-    						unset($array[$key]);
-    					}
-    				}
-    			}
-
-    			if (! empty($array))
-    			{
-    				foreach ($array as $key => $value)
-    				{
-    					$out.= '<option value="'.$key.'">';
-    					$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
-    					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
-    					$out.= dol_htmlentitiesbr($newval);
-    					$out.= '</option>'."\n";
-    				}
-    			}
-    		}
-    		else
+    		if (! empty($array))
     		{
     			foreach ($array as $key => $value)
     			{
@@ -4136,7 +4162,7 @@ class Form
     				}
     				$out.= '>';
 
-    				$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
+    				$newval = ($translate ? $langs->trans($value) : $value);
     				$newval = ($key_in_label ? $key.' - '.$newval : $newval);
     				$out.= dol_htmlentitiesbr($newval);
     				$out.= '</option>'."\n";
@@ -4152,18 +4178,18 @@ class Form
     /**
      *	Return an html string with a select combo box to choose yes or no
      *
-     *	@param	string	$htmlname		Name of html select field
-     *	@param	string	$value			Pre-selected value
-     *	@param	int		$option			0 return yes/no, 1 return 1/0
-     *	@param	bool	$disabled		true or false
-     *	@return	mixed					See option
+     *	@param	string		$htmlname		Name of html select field
+     *	@param	string		$value			Pre-selected value
+     *	@param	int			$option			0 return yes/no, 1 return 1/0
+     *	@param	bool		$disabled		true or false
+     *  @param	useempty	$useempty		1=Add empty line
+     *	@return	mixed						See option
      */
-    function selectyesno($htmlname,$value='',$option=0,$disabled=false)
+    function selectyesno($htmlname,$value='',$option=0,$disabled=false,$useempty='')
     {
         global $langs;
 
         $yes="yes"; $no="no";
-
         if ($option)
         {
             $yes="1";
@@ -4173,15 +4199,17 @@ class Form
         $disabled = ($disabled ? ' disabled="disabled"' : '');
 
         $resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+        if ($useempty) $resultyesno .= '<option value="-1"'.(($value < 0)?' selected="selected"':'').'></option>'."\n";
         if (("$value" == 'yes') || ($value == 1))
         {
             $resultyesno .= '<option value="'.$yes.'" selected="selected">'.$langs->trans("Yes").'</option>'."\n";
             $resultyesno .= '<option value="'.$no.'">'.$langs->trans("No").'</option>'."\n";
         }
         else
-        {
+       {
+       		$selected=($useempty?'':' selected="selected"');
             $resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
-            $resultyesno .= '<option value="'.$no.'" selected="selected">'.$langs->trans("No").'</option>'."\n";
+            $resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";
         }
         $resultyesno .= '</select>'."\n";
         return $resultyesno;
@@ -4390,7 +4418,7 @@ class Form
                 {
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="http://www.gravatar.com/avatar/'.dol_hash($email).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';
+                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="http://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';	// gravatar need md5 hash
                 }
                 else
                 {

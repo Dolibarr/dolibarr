@@ -8,7 +8,7 @@
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-214  Christophe Battarel  	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
  *
@@ -802,7 +802,10 @@ class Propal extends CommonObject
 							$fk_parent_line,
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
-							$this->lines[$i]->label
+							$this->lines[$i]->label,
+                            $this->lines[$i]->date_start,
+							$this->lines[$i]->date_end,
+							$this->lines[$i]->array_options
 						);
 
                         if ($result < 0)
@@ -931,6 +934,10 @@ class Propal extends CommonObject
         $now=dol_now();
 
         $this->db->begin();
+
+		// get extrafields so they will be clone
+		foreach($this->lines as $line)
+			$line->fetch_optionals($line->rowid);
 
         // Load source object
         $objFrom = dol_clone($this);
@@ -1070,7 +1077,7 @@ class Propal extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.entity = ".$conf->entity;
-        if ($ref) $sql.= " AND p.ref='".$this->db->escape($ref)."'";
+        if ($ref) $sql.= " AND p.ref='".$ref."'";
         else $sql.= " AND p.rowid=".$rowid;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -1319,67 +1326,77 @@ class Propal extends CommonObject
           {
             	$num = $this->ref;
             }
+            $this->newref = $num;
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
             $sql.= " SET ref = '".$num."',";
             $sql.= " fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-            dol_syslog(get_class($this).'::valid', LOG_DEBUG);
-            if ($this->db->query($sql))
+            dol_syslog(get_class($this)."::valid", LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				dol_print_error($this->db);
+				$error++;
+			}
+
+   			// Trigger calls
+			if (! $error && ! $notrigger)
+			{
+                // Call trigger
+                $result=$this->call_trigger('PROPAL_VALIDATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+
+            if (! $error)
             {
-                if (! $notrigger)
-                {
-                    // Call trigger
-                    $result=$this->call_trigger('PROPAL_VALIDATE',$user);
-                    if ($result < 0) { $error++; }
-                    // End call triggers
-                }
+            	$this->oldref = $this->ref;
 
-            	if (! $error)
-				{
-					// Rename directory if dir was a temporary ref
-					if (preg_match('/^[\(]?PROV/i', $this->ref))
-					{
-						// Rename of propal directory ($this->ref = old ref, $num = new ref)
-						// to  not lose the linked files
-						$oldref = dol_sanitizeFileName($this->ref);
-						$newref = dol_sanitizeFileName($num);
-						$dirsource = $conf->propal->dir_output.'/'.$oldref;
-						$dirdest = $conf->propal->dir_output.'/'.$newref;
-						if (file_exists($dirsource))
-						{
-							dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+            	// Rename directory if dir was a temporary ref
+            	if (preg_match('/^[\(]?PROV/i', $this->ref))
+            	{
+            		// Rename of propal directory ($this->ref = old ref, $num = new ref)
+            		// to  not lose the linked files
+            		$oldref = dol_sanitizeFileName($this->ref);
+            		$newref = dol_sanitizeFileName($num);
+            		$dirsource = $conf->propal->dir_output.'/'.$oldref;
+            		$dirdest = $conf->propal->dir_output.'/'.$newref;
 
-							if (@rename($dirsource, $dirdest))
-							{
+            		if (file_exists($dirsource))
+            		{
+            			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+            			if (@rename($dirsource, $dirdest))
+            			{
+            				dol_syslog("Rename ok");
+            				// Rename docs starting with $oldref with $newref
+            				$listoffiles=dol_dir_list($conf->propal->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+            				foreach($listoffiles as $fileentry)
+            				{
+            					$dirsource=$fileentry['name'];
+            					$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+            					$dirsource=$fileentry['path'].'/'.$dirsource;
+            					$dirdest=$fileentry['path'].'/'.$dirdest;
+            					@rename($dirsource, $dirdest);
+            				}
+            			}
+            		}
+            	}
 
-								dol_syslog("Rename ok");
-								// Deleting old PDF in new rep
-								dol_delete_file($conf->propal->dir_output.'/'.$newref.'/'.$oldref.'*.*');
-							}
-						}
-					}
+            	$this->ref=$num;
+            	$this->brouillon=0;
+            	$this->statut = 1;
+            	$this->user_valid_id=$user->id;
+            	$this->datev=$now;
 
-					$this->ref=$num;
-                    $this->brouillon=0;
-                    $this->statut = 1;
-                    $this->user_valid_id=$user->id;
-                    $this->datev=$now;
-
-                    $this->db->commit();
-                    return 1;
-                }
-                else
-				{
-                    $this->db->rollback();
-                    return -2;
-                }
+            	$this->db->commit();
+            	return 1;
             }
             else
 			{
-                $this->db->rollback();
-                return -1;
+            	$this->db->rollback();
+            	return -1;
             }
         }
     }
@@ -1722,8 +1739,14 @@ class Propal extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+        	$modelpdf=$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED?$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED:$this->modelpdf;
+        	$trigger_name='PROPAL_CLOSE_REFUSED';
+
             if ($statut == 2)
             {
+            	$trigger_name='PROPAL_CLOSE_SIGNED';
+				$modelpdf=$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL?$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->modelpdf;
+
                 // The connected company is classified as a client
                 $soc=new Societe($this->db);
                 $soc->id = $this->socid;
@@ -1735,48 +1758,31 @@ class Propal extends CommonObject
                     $this->db->rollback();
                     return -2;
                 }
-
-                if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-                {
-                	// Define output language
-                	$outputlangs = $langs;
-                	if (! empty($conf->global->MAIN_MULTILANGS))
-                	{
-                		$outputlangs = new Translate("",$conf);
-                		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->client->default_lang);
-                		$outputlangs->setDefaultLang($newlang);
-                	}
-                	//$ret=$object->fetch($id);    // Reload to get new records
-	                $this->generateDocument($conf->global->PROPALE_ADDON_PDF_ODT_TOBILL?$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-                }
-
-                // Call trigger
-                $result=$this->call_trigger('PROPAL_CLOSE_SIGNED',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
             }
-            else
+            if ($statut == 4)
             {
-
-            	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-            	{
-            		// Define output language
-            		$outputlangs = $langs;
-            		if (! empty($conf->global->MAIN_MULTILANGS))
-            		{
-            			$outputlangs = new Translate("",$conf);
-            			$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->client->default_lang);
-            			$outputlangs->setDefaultLang($newlang);
-            		}
-            		//$ret=$object->fetch($id);    // Reload to get new records
-		            $this->generateDocument($conf->global->PROPALE_ADDON_PDF_ODT_CLOSED?$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-            	}
-
-                // Call trigger
-                $result=$this->call_trigger('PROPAL_CLOSE_REFUSED',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+            	$trigger_name='PROPAL_CLASSIFY_BILLED';
             }
+
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+            {
+             	// Define output language
+              	$outputlangs = $langs;
+               	if (! empty($conf->global->MAIN_MULTILANGS))
+               	{
+               		$outputlangs = new Translate("",$conf);
+               		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->client->default_lang);
+               		$outputlangs->setDefaultLang($newlang);
+               	}
+               	//$ret=$object->fetch($id);    // Reload to get new records
+	               $this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+            }
+
+            // Call trigger
+            $result=$this->call_trigger($trigger_name,$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
+
             if ( ! $error )
             {
                 $this->db->commit();

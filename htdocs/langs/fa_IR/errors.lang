@@ -133,9 +133,10 @@ ErrorPHPNeedModule=خطا، PHP شما باید <b>بخش٪ s</b> نصب کرد�
 ErrorOpenIDSetupNotComplete=شما راه اندازی Dolibarr فایل پیکربندی اجازه می دهد تا احراز هویت ایجاد حساب کاربری، اما URL خدمات ایجاد حساب کاربری به٪ ثابت تعریف نشده
 ErrorWarehouseMustDiffers=منبع و هدف انبارها باید متفاوت
 ErrorBadFormat=فرمت بد!
-ErrorPaymentDateLowerThanInvoiceDate=تاریخ پرداخت (٪ بازدید کنندگان) نمی باشد قبل از تاریخ فاکتور (٪ s) برای فاکتور٪ است.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=خطا، این عضو هنوز رتبهدهی نشده است به هر thirdparty مرتبط است. عضو لینک به یک شخص ثالث موجود یا ایجاد یک thirdparty جدید قبل از ایجاد اشتراک با فاکتور.
 ErrorThereIsSomeDeliveries=خطا، برخی از زایمان مرتبط با این حمل و نقل وجود دارد. حذف خودداری کرد.
+ErrorCantDeletePaymentReconciliated=Can't delete a payment that had generated a bank transaction that was conciliated
+ErrorCantDeletePaymentSharedWithPayedInvoice=Can't delete a payment shared by at least one invoice with status Payed
 
 # Warnings
 WarningMandatorySetupNotComplete=پارامترهای راه اندازی اجباری هنوز تعریف نشده
@@ -154,3 +155,5 @@ WarningUsingThisBoxSlowDown=اخطار، با استفاده از این جعب�
 WarningClickToDialUserSetupNotComplete=راه اندازی از اطلاعات ClickToDial برای کاربر شما کامل نیست (ClickToDial زبانه دیدن بر روی کارت کاربر خود را).
 WarningNotRelevant=عملیات بی ربط برای این مجموعه داده
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=قابلیت غیر فعال زمانی که راه اندازی صفحه نمایش برای فرد نابینا یا از مرورگرهای متن بهینه شده است.
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
+WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters

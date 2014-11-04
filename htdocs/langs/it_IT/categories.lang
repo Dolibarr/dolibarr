@@ -111,3 +111,4 @@ ExtraFieldsCategories=Campi extra
 CategoriesSetup=Impostazioni categorie
 CategorieRecursiv=Collega automaticamente con la categoria padre
 CategorieRecursivHelp=Se attivata, il prodotto sarà inserito anche nella categoria padre quando  lo aggiungi ad una sottocategoria
+AddProductServiceIntoCategory=Add the following product/service

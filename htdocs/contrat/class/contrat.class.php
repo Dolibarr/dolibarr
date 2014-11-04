@@ -5,9 +5,9 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@
  *	\brief      File of class to manage contracts
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-require_once(DOL_DOCUMENT_ROOT ."/margin/lib/margins.lib.php");
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/margin/lib/margins.lib.php';
 
 /**
  *	Class to manage contracts
@@ -42,6 +42,7 @@ class Contrat extends CommonObject
 	public $table_element='contrat';
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
 	var $ref;
@@ -277,9 +278,10 @@ class Contrat extends CommonObject
 	 *
 	 * @param	User	$user      		Objet User
 	 * @param   string	$force_number	Reference to force on contract (not implemented yet)
+     * @param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
 	 * @return	int						<0 if KO, >0 if OK
 	 */
-	function validate($user, $force_number='')
+	function validate($user, $force_number='', $notrigger=0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		global $langs, $conf;
@@ -306,6 +308,7 @@ class Contrat extends CommonObject
 		{
 			$num = $this->ref;
 		}
+        $this->newref = $num;
 
 		if ($num)
 		{
@@ -322,30 +325,45 @@ class Contrat extends CommonObject
 				$this->error=$this->db->lasterror();
 			}
 
+			// Trigger calls
+			if (! $error && ! $notrigger)
+			{
+                // Call trigger
+                $result=$this->call_trigger('CONTRACT_VALIDATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+			}
+
 			if (! $error)
 			{
-				$this->oldref = '';
+            	$this->oldref = $this->ref;
 
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref))
 				{
 					// Rename of object directory ($this->ref = old ref, $num = new ref)
 					// to  not lose the linked files
-					$facref = dol_sanitizeFileName($this->ref);
-					$snumfa = dol_sanitizeFileName($num);
-					$dirsource = $conf->contract->dir_output.'/'.$facref;
-					$dirdest = $conf->contract->dir_output.'/'.$snumfa;
+					$oldref = dol_sanitizeFileName($this->ref);
+					$newref = dol_sanitizeFileName($num);
+					$dirsource = $conf->contract->dir_output.'/'.$oldref;
+					$dirdest = $conf->contract->dir_output.'/'.$newref;
 					if (file_exists($dirsource))
 					{
 						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
 
 						if (@rename($dirsource, $dirdest))
 						{
-							$this->oldref = $facref;
-
 							dol_syslog("Rename ok");
-							// Deleting old PDF in new rep
-							dol_delete_file($conf->contract->dir_output.'/'.$snumfa.'/'.$facref.'*.*');
+						    // Rename docs starting with $oldref with $newref
+            				$listoffiles=dol_dir_list($conf->contract->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+            				foreach($listoffiles as $fileentry)
+            				{
+            					$dirsource=$fileentry['name'];
+            					$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+            					$dirsource=$fileentry['path'].'/'.$dirsource;
+            					$dirdest=$fileentry['path'].'/'.$dirdest;
+            					@rename($dirsource, $dirdest);
+            				}
 						}
 					}
 				}
@@ -358,15 +376,6 @@ class Contrat extends CommonObject
 				$this->statut=1;
 				$this->brouillon=0;
 				$this->date_validation=$now;
-			}
-
-			// Trigger calls
-			if (! $error)
-			{
-                // Call trigger
-                $result=$this->call_trigger('CONTRACT_VALIDATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
 			}
 		}
 		else

@@ -24,10 +24,12 @@ NameAndSignatureOfInternalContact=Nume şi semnătură celui ce a intervenit:
 NameAndSignatureOfExternalContact=Nume şi semnătură client:
 DocumentModelStandard=Model standard document de intervenţii
 InterventionCardsAndInterventionLines=Intervenţii şi linii ale intervenţiilor
-ClassifyBilled=Clasează Facturat
+InterventionClassifyBilled=Classify "Billed"
+InterventionClassifyUnBilled=Classify "Unbilled"
 StatusInterInvoiced=Facturat
 RelatedInterventions=Intervenţii asociate
 ShowIntervention=Afişează  intervenţie
+SendInterventionRef=Submission of intervention %s
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Reprezentant urmărire  intervenţie
 TypeContact_fichinter_internal_INTERVENING=Realizator intervenţie

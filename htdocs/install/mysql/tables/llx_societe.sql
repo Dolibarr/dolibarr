@@ -22,7 +22,7 @@
 create table llx_societe
 (
   rowid                    integer AUTO_INCREMENT PRIMARY KEY,
-  nom                      varchar(60),                                -- company reference name (should be smae length than adherent.societe)
+  nom                      varchar(128),                                -- company reference name (should be same length than adherent.societe)
   entity                   integer DEFAULT 1 NOT NULL,               -- multi company id
 
   ref_ext                  varchar(128),                               -- reference into an external system (not used by dolibarr)
@@ -92,4 +92,6 @@ create table llx_societe
   logo                     varchar(255),
   canvas				   varchar(32),			                        -- type of canvas if used (null by default)
   import_key               varchar(14)                          		-- import key
+  webservices_url          varchar(255),                            -- supplier webservice url
+  webservices_key          varchar(128),                            -- supplier webservice key
 )ENGINE=innodb;

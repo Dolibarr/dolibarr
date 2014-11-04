@@ -24,10 +24,12 @@ NameAndSignatureOfInternalContact=Jméno a podpis intervence:
 NameAndSignatureOfExternalContact=Jméno a podpis objednavatele:
 DocumentModelStandard=Standardní dokument model pro zásahy
 InterventionCardsAndInterventionLines=Intervence a linky intervencí
-ClassifyBilled=Klasifikovat &quot;účtovaný&quot;
+InterventionClassifyBilled=Classify "Billed"
+InterventionClassifyUnBilled=Classify "Unbilled"
 StatusInterInvoiced=Účtováno
 RelatedInterventions=Související zákroky
 ShowIntervention=Zobrazit zásah
+SendInterventionRef=Submission of intervention %s
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Zástupce následující-up zásah
 TypeContact_fichinter_internal_INTERVENING=Zásah

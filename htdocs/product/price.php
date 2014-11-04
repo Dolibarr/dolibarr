@@ -341,21 +341,23 @@ if ($isphoto) {
 print '</tr>';
 
 // MultiPrix
-if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
-	if (! empty($socid)) {
+if (! empty($conf->global->PRODUIT_MULTIPRICES)) 
+{
+	if (! empty($socid)) 
+	{
 		$soc = new Societe($db);
 		$soc->id = $socid;
 		$soc->fetch($socid);
 
 		print '<tr><td>' . $langs->trans("SellingPrice") . '</td>';
 
-		if ($object->multiprices_base_type ["$soc->price_level"] == 'TTC') {
+		if ($object->multiprices_base_type["$soc->price_level"] == 'TTC') {
 			print '<td>' . price($object->multiprices_ttc ["$soc->price_level"]);
 		} else {
 			print '<td>' . price($object->multiprices ["$soc->price_level"]);
 		}
 
-		if ($object->multiprices_base_type ["$soc->price_level"]) {
+		if ($object->multiprices_base_type["$soc->price_level"]) {
 			print ' ' . $langs->trans($object->multiprices_base_type ["$soc->price_level"]);
 		} else {
 			print ' ' . $langs->trans($object->price_base_type);
@@ -364,15 +366,16 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 
 		// Prix mini
 		print '<tr><td>' . $langs->trans("MinPrice") . '</td><td>';
-		if ($object->multiprices_base_type ["$soc->price_level"] == 'TTC') {
-			print price($object->multiprices_min_ttc ["$soc->price_level"]) . ' ' . $langs->trans($object->multiprices_base_type ["$soc->price_level"]);
+		if ($object->multiprices_base_type["$soc->price_level"] == 'TTC') 
+		{
+			print price($object->multiprices_min_ttc["$soc->price_level"]) . ' ' . $langs->trans($object->multiprices_base_type["$soc->price_level"]);
 		} else {
-			print price($object->multiprices_min ["$soc->price_level"]) . ' ' . $langs->trans($object->multiprices_base_type ["$soc->price_level"]);
+			print price($object->multiprices_min["$soc->price_level"]) . ' ' . $langs->trans(empty($object->multiprices_base_type["$soc->price_level"])?'HT':$object->multiprices_base_type["$soc->price_level"]);
 		}
 		print '</td></tr>';
 
 		// TVA
-		print '<tr><td>' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->multiprices_tva_tx ["$soc->price_level"], true) . '</td></tr>';
+		print '<tr><td>' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->multiprices_tva_tx["$soc->price_level"], true) . '</td></tr>';
 	}
 	else
 	{
@@ -393,12 +396,12 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 			print '</td>';
 
 			if ($object->multiprices_base_type ["$i"] == 'TTC') {
-				print '<td>' . price($object->multiprices_ttc ["$i"]);
+				print '<td>' . price($object->multiprices_ttc["$i"]);
 			} else {
-				print '<td>' . price($object->multiprices ["$i"]);
+				print '<td>' . price($object->multiprices["$i"]);
 			}
 
-			if ($object->multiprices_base_type ["$i"]) {
+			if ($object->multiprices_base_type["$i"]) {
 				print ' ' . $langs->trans($object->multiprices_base_type ["$i"]);
 			} else {
 				print ' ' . $langs->trans($object->price_base_type);
@@ -407,10 +410,14 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 
 			// Prix mini
 			print '<tr><td>' . $langs->trans("MinPrice") . ' ' . $i . '</td><td>';
-			if ($object->multiprices_base_type ["$i"] == 'TTC') {
-				print price($object->multiprices_min_ttc ["$i"]) . ' ' . $langs->trans($object->multiprices_base_type ["$i"]);
-			} else {
-				print price($object->multiprices_min ["$i"]) . ' ' . $langs->trans($object->multiprices_base_type ["$i"]);
+			if (empty($object->multiprices_base_type["$i"])) $object->multiprices_base_type["$i"]="HT";
+			if ($object->multiprices_base_type["$i"] == 'TTC') 
+			{
+				print price($object->multiprices_min_ttc["$i"]) . ' ' . $langs->trans($object->multiprices_base_type["$i"]);
+			} 
+			else
+			{
+				print price($object->multiprices_min["$i"]) . ' ' . $langs->trans($object->multiprices_base_type["$i"]);
 			}
 			print '</td></tr>';
 

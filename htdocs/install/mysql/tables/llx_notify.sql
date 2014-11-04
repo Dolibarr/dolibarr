@@ -23,6 +23,7 @@ create table llx_notify
   tms             timestamp,
   daten           datetime,           -- date de la notification
   fk_action       integer NOT NULL,
+  fk_soc          integer NULL,
   fk_contact      integer NULL,
   fk_user         integer NULL,
   objet_type      varchar(24) NOT NULL,

@@ -164,7 +164,7 @@ if ($id > 0 || ! empty($ref))
 		}
 
 		// Onglet commande
-		$nbrow=7;
+		$nbrow=8;
 		if (! empty($conf->projet->enabled)) $nbrow++;
 
 		print '<table class="border" width="100%">';
@@ -264,6 +264,7 @@ if ($id > 0 || ! empty($ref))
 			print dol_print_date($commande->date_livraison,'daytext');
 		}
 		print '</td>';
+		// Note on several rows
 		print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
 		print nl2br($commande->note_public);
 		print '</td>';
@@ -277,7 +278,7 @@ if ($id > 0 || ! empty($ref))
         if ($action != 'editshippingmethod' && $user->rights->expedition->creer)
             print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
         print '</tr></table>';
-        print '</td><td colspan="3">';
+        print '</td><td colspan="2">';
         if ($action == 'editshippingmethod') {
             $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->shipping_method_id, 'shipping_method_id', 1);
         } else {
@@ -349,16 +350,16 @@ if ($id > 0 || ! empty($ref))
 
 		// Total HT
 		print '<tr><td>'.$langs->trans('AmountHT').'</td>';
-		print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-		print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+		print '<td>'.price($commande->total_ht, 0, '', 1, -1, -1, $conf->currency).'</td>';
+		print '</tr>';
 
 		// Total TVA
-		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
-		print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($commande->total_tva, 0, '', 1, -1, -1, $conf->currency).'</td>';
+		print '</tr>';
 
 		// Total TTC
-		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
-		print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($commande->total_ttc, 0, '', 1, -1, -1, $conf->currency).'</td>';
+		print '</tr>';
 
 		// Statut
 		print '<tr><td>'.$langs->trans('Status').'</td>';

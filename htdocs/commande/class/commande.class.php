@@ -5,7 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
@@ -183,9 +183,10 @@ class Commande extends CommonOrder
      *
      *	@param		User	$user     		User making status change
      *	@param		int		$idwarehouse	Id of warehouse to use for stock decrease
+     *  @param		int		$notrigger		1=Does not execute triggers, 0= execuete triggers
      *	@return  	int						<=0 if OK, >0 if KO
      */
-    function valid($user, $idwarehouse=0)
+    function valid($user, $idwarehouse=0, $notrigger=0)
     {
         global $conf,$langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -223,9 +224,10 @@ class Commande extends CommonOrder
             $num = $this->getNextNumRef($soc);
         }
         else
-        {
+		{
             $num = $this->ref;
         }
+        $this->newref = $num;
 
         // Validate
         $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
@@ -273,41 +275,47 @@ class Commande extends CommonOrder
             }
         }
 
+        if (! $error && ! $notrigger)
+        {
+            // Call trigger
+            $result=$this->call_trigger('ORDER_VALIDATE',$user);
+            if ($result < 0) $error++;
+            // End call triggers
+        }
+
         if (! $error)
         {
-            $this->oldref='';
+            $this->oldref = $this->ref;
 
             // Rename directory if dir was a temporary ref
             if (preg_match('/^[\(]?PROV/i', $this->ref))
             {
-                // On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
+            	// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
                 // in order not to lose the attachments
-                $comref = dol_sanitizeFileName($this->ref);
-                $snum = dol_sanitizeFileName($num);
-                $dirsource = $conf->commande->dir_output.'/'.$comref;
-                $dirdest = $conf->commande->dir_output.'/'.$snum;
+                $oldref = dol_sanitizeFileName($this->ref);
+                $newref = dol_sanitizeFileName($num);
+                $dirsource = $conf->commande->dir_output.'/'.$oldref;
+                $dirdest = $conf->commande->dir_output.'/'.$newref;
                 if (file_exists($dirsource))
                 {
                     dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
 
                     if (@rename($dirsource, $dirdest))
                     {
-                        $this->oldref = $comref;
-
                         dol_syslog("Rename ok");
-                        // Suppression ancien fichier PDF dans nouveau rep
-                        dol_delete_file($conf->commande->dir_output.'/'.$snum.'/'.$comref.'*.*');
+                        // Rename docs starting with $oldref with $newref
+                        $listoffiles=dol_dir_list($conf->commande->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+                        foreach($listoffiles as $fileentry)
+                        {
+                        	$dirsource=$fileentry['name'];
+                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+                        	$dirsource=$fileentry['path'].'/'.$dirsource;
+                        	$dirdest=$fileentry['path'].'/'.$dirdest;
+                        	@rename($dirsource, $dirdest);
+                        }
                     }
                 }
             }
-        }
-
-        if (! $error)
-        {
-            // Call trigger
-            $result=$this->call_trigger('ORDER_VALIDATE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
         }
 
         // Set new ref and current status
@@ -323,7 +331,7 @@ class Commande extends CommonOrder
             return 1;
         }
         else
-        {
+		{
             $this->db->rollback();
             return -1;
         }
@@ -726,7 +734,8 @@ class Commande extends CommonOrder
                         $fk_parent_line,
                         $this->lines[$i]->fk_fournprice,
                         $this->lines[$i]->pa_ht,
-                    	$this->lines[$i]->label
+                    	$this->lines[$i]->label,
+						$this->lines[$i]->array_options
                     );
                     if ($result < 0)
                     {
@@ -863,6 +872,10 @@ class Commande extends CommonOrder
 
         $this->db->begin();
 
+		// get extrafields so they will be clone
+		foreach($this->lines as $line)
+			$line->fetch_optionals($line->rowid);
+
         // Load source object
         $objFrom = dol_clone($this);
 
@@ -892,6 +905,13 @@ class Commande extends CommonOrder
         $this->date_creation      = '';
         $this->date_validation    = '';
         $this->ref_client         = '';
+
+        // Set ref
+        require_once DOL_DOCUMENT_ROOT ."/core/modules/commande/".$conf->global->COMMANDE_ADDON.'.php';
+        $obj = $conf->global->COMMANDE_ADDON;
+        $modCommande = new $obj;
+        $this->ref = $modCommande->getNextValue($objsoc,$this);
+
 
         // Create clone
         $result=$this->create($user);

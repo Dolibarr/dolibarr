@@ -63,7 +63,7 @@ class box_actions extends ModeleBoxes
 		if ($user->rights->agenda->myactions->read)
 		{
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage,";
-			$sql.= " ta.code,";
+			$sql.= " ta.code, ta.libelle as type_label,";
 			$sql.= " s.nom as name, s.rowid as socid";
 			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
 			$sql.= MAIN_DB_PREFIX."actioncomm AS a)";
@@ -96,7 +96,7 @@ class box_actions extends ModeleBoxes
 					if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite  < ($now - $delay_warning)) $late=img_warning($langs->trans("Late"));
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
-					$label=$objp->label;
+					$label=empty($objp->label)?$objp->type_label:$objp->label;
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 					'logo' => ("action"),

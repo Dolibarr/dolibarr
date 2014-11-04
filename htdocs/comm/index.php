@@ -118,6 +118,23 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	print "<br>";
 }
 
+// Search contract
+if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
+{
+	$var=false;
+	print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover" width="100%">';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAnIntervention").'</td></tr>';
+	print '<tr '.$bc[$var].'>';
+	print '<td class="nowrap"><label for="search_contract">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_inter" id="search_inter" size="18"></td>';
+	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="sall" id="sall" size="18"></td>';
+	print '</tr>';
+	print "</table></form>\n";
+	print "<br>";
+}
+
 /*
  * Draft proposals
  */

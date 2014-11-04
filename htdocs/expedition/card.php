@@ -82,7 +82,7 @@ if ($id > 0 || ! empty($ref))
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('expeditioncard'));
+$hookmanager->initHooks(array('expeditioncard','globalcard'));
 
 /*
  * Actions
@@ -250,26 +250,25 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
     }
     else
     {
-        // Define output language
-        $outputlangs = $langs;
-        $newlang='';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-        if (! empty($newlang))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($newlang);
-        }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-        {
-            $ret=$object->fetch($id);    // Reload to get new records
-            $result = $object->generateDocument($object->modelpdf, $outputlangs);
-        }
-        if ($result < 0)
-        {
-            dol_print_error($db,$result);
-            exit;
-        }
+    	// Define output language
+    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+    	{
+    		$outputlangs = $langs;
+    		$newlang = '';
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    		if (! empty($newlang)) {
+    			$outputlangs = new Translate("", $conf);
+    			$outputlangs->setDefaultLang($newlang);
+    		}
+    		$model=$object->modelpdf;
+    		if (empty($model)) {
+    			$tmp=getListOfModels($db, 'shipping'); $keys=array_keys($tmp); $model=$keys[0];
+    		}
+    		$ret = $object->fetch($id); // Reload to get new records
+    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    		if ($result < 0) dol_print_error($db,$result);
+    	}
     }
 }
 
@@ -463,12 +462,13 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                     if (dol_strlen(GETPOST('subject','alpha'))) $subject=GETPOST('subject','alpha');
                     else $subject = $langs->transnoentities('Shipping').' '.$object->ref;
                     $actiontypecode='AC_SHIP';
-                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
                     if ($message)
                     {
-                        $actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
-                        $actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
-                        $actionmsg.=$message;
+						if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+						$actionmsg = dol_concatdesc($actionmsg, $message);
                     }
                     $actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
                 }
@@ -1042,7 +1042,7 @@ else if ($id || $ref)
 		}
 		/*
 		 * Confirmation de l'annulation
-		*/
+		 */
 		if ($action == 'annuler')
 		{
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
@@ -1434,7 +1434,7 @@ else if ($id || $ref)
 					$entrepot = new Entrepot($db);
 					$entrepot->fetch($lines[$i]->entrepot_id);
 					print $entrepot->getNomUrl(1);
-				} 
+				}
 				else if (count($lines[$i]->details_entrepot) > 1)
 				{
 					$detail = '';
@@ -1453,7 +1453,6 @@ else if ($id || $ref)
 			// Batch number managment
 			if (! empty($conf->productbatch->enabled)) {
 				if (isset($lines[$i]->detail_batch) ) {
-					$flagBatch = true;
 					print '<td align="center">';
 					$detail = '';
 					foreach ($lines[$i]->detail_batch as $dbatch) {
@@ -1540,17 +1539,10 @@ else if ($id || $ref)
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans($label).'</a>';
 			}
 		}
-        
+
 		if ($user->rights->expedition->supprimer)
 		{
-			if (empty($conf->productbatch->enabled) || (!empty($conf->productbatch->enabled) && !$conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !isset($flagBatch))
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" href="#">'.$langs->trans('Delete').'</a>';
-			}
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 		}
 
 		print '</div>';

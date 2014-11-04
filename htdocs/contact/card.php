@@ -74,7 +74,7 @@ if (! empty($canvas))
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('contactcard'));
+$hookmanager->initHooks(array('contactcard','globalcard'));
 
 
 /*
@@ -241,13 +241,20 @@ if (empty($reshook))
         $result = $object->delete();
         if ($result > 0)
         {
-            header("Location: ".DOL_URL_ROOT.'/contact/list.php');
-            exit;
+        	if ($backtopage)
+        	{
+        		header("Location: ".$backtopage);
+        		exit;
+        	}
+        	else
+        	{
+        		header("Location: ".DOL_URL_ROOT.'/contact/list.php');
+        		exit;
+        	}
         }
         else
         {
-            setEventMessage($object->error,'errors');
-            setEventMessage($object->errors,'errors');
+            setEventMessage($object->error,$object->errors,'errors');
         }
     }
 
@@ -360,7 +367,7 @@ else
     {
         if ($action == 'delete')
         {
-            print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
+            print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage?'&backtopage='.$backtopage:''),$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
         }
     }
 
@@ -1082,27 +1089,27 @@ else
 		{
         	if ($user->rights->societe->contact->creer)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+                print '<a class="butAction" href="card.php?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
             }
 
             if (! $object->user_id && $user->rights->user->user->creer)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+                print '<a class="butAction" href="card.php?id='.$object->id.'&action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
             }
 
             if ($user->rights->societe->contact->supprimer)
             {
-                print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete'.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.$langs->trans('Delete').'</a>';
             }
             // Activer
             if ($object->statut == 0 && $user->rights->societe->contact->creer)
             {
-                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
+                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable">'.$langs->trans("Reactivate").'</a>';
             }
             // Desactiver
             if ($object->statut == 1 && $user->rights->societe->contact->creer)
             {
-                print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a>';
+                print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'">'.$langs->trans("DisableUser").'</a>';
             }
         }
 

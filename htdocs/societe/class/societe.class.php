@@ -334,6 +334,18 @@ class Societe extends CommonObject
      */
     var $import_key;
 
+    /**
+     * Supplier WebServices URL
+     * @var string
+     */
+    var $webservices_url;
+
+    /**
+     * Supplier WebServices Key
+     * @var string
+     */
+    var $webservices_key;
+
     var $logo;
     var $logo_small;
     var $logo_mini;
@@ -715,6 +727,10 @@ class Societe extends CommonObject
         	$supplier=true;
         }
 
+        //Web services
+        $this->webservices_url = $this->webservices_url?clean_url($this->webservices_url,0):'';
+        $this->webservices_key = trim($this->webservices_key);
+
         $this->db->begin();
 
         // Check name is required and codes are ok or unique.
@@ -794,6 +810,9 @@ class Societe extends CommonObject
             $sql .= ",barcode = ".(! empty($this->barcode)?"'".$this->barcode."'":"null");
             $sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->default_lang."'":"null");
             $sql .= ",logo = ".(! empty($this->logo)?"'".$this->logo."'":"null");
+
+            $sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
+            $sql .= ",webservices_key = ".(! empty($this->webservices_key)?"'".$this->db->escape($this->webservices_key)."'":"null");
 
             if ($customer)
             {
@@ -951,6 +970,7 @@ class Societe extends CommonObject
         $sql .= ', s.fk_typent as typent_id';
         $sql .= ', s.fk_effectif as effectif_id';
         $sql .= ', s.fk_forme_juridique as forme_juridique_code';
+        $sql .= ', s.webservices_url, s.webservices_key';
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
@@ -1085,6 +1105,9 @@ class Societe extends CommonObject
                 $this->note_public = $obj->note_public;
                 $this->default_lang = $obj->default_lang;
                 $this->logo = $obj->logo;
+
+                $this->webservices_url = $obj->webservices_url;
+                $this->webservices_key = $obj->webservices_key;
 
                 $this->outstanding_limit		= $obj->outstanding_limit;
 
@@ -1307,6 +1330,19 @@ class Societe extends CommonObject
             if (! $error)
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
+                $sql.= " WHERE fk_soc = " . $id;
+                dol_syslog(get_class($this)."::Delete", LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                    $this->error = $this->db->lasterror();
+                }
+            }
+
+            // Remove associated users
+            if (! $error)
+            {
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_commerciaux";
                 $sql.= " WHERE fk_soc = " . $id;
                 dol_syslog(get_class($this)."::Delete", LOG_DEBUG);
                 if (! $this->db->query($sql))

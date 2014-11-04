@@ -111,8 +111,9 @@ $langs->load("cashdesk");
 				<td>
 				<input class="texte1_off" type="text" name="txtStock" value="<?php echo $obj_facturation->stock() ?>" disabled="disabled" />
 				</td>
-				<!-- Affichage du prix unitaire -->
-				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" disabled="disabled" /></td>
+				<!-- Show unit price -->
+				<?php // TODO Remove the disabled and use this value when adding product into cart ?>
+				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" onchange="javascript: modif();" disabled="disabled" /></td>
 				<td><?php echo $conf->currency; ?></td>
     			<!-- Choix de la remise -->
     			<td><input class="texte1" type="text" id="txtRemise" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/>
@@ -122,9 +123,9 @@ $langs->load("cashdesk");
     			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled="disabled" /></td><td><?php echo $conf->currency; ?></td>
                 <!-- Choix du taux de TVA -->
                 <td class="select_tva">
+                <?php //var_dump($tab_tva); ?>
                 <select name="selTva" onchange="javascript: modif();" >
                     <?php
-
                         $tva_tx = $obj_facturation->tva();
                         $tab_tva_size=count($tab_tva);
                         for($i=0;$i < $tab_tva_size;$i++) {
@@ -132,12 +133,10 @@ $langs->load("cashdesk");
                             if ( $tva_tx == $tab_tva[$i]['taux'] )
                                 $selected = 'selected="selected"';
                             else
-                                $selected = '';
+                            $selected = '';
 
                             echo ('<option '.$selected.' value="'.$tab_tva[$i]['rowid'].'">'.$tab_tva[$i]['taux'].'</option>'."\n               ");
-
                         }
-
                     ?>
                 </select>
                 </td>

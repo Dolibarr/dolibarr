@@ -110,4 +110,5 @@ ConfirmDeletePicture=Etes-vous sur de vouloir supprimer cette image ?
 ExtraFieldsCategories=Attributs supplémentaires
 CategoriesSetup=Configuration du module catégories
 CategorieRecursiv=Lier avec les catégories parentes
-CategorieRecursivHelp=Si activer, quand un élément est ajouté dans une catégorie, ajouter aussi l'élément dans toutes les catégories parentes
+CategorieRecursivHelp=Si activé : quand un élément est ajouté dans une catégorie, l'ajouter aussi dans toutes les catégories parentes
+AddProductServiceIntoCategory=Ajouter le produit/service suivant

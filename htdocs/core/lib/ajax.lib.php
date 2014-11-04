@@ -459,3 +459,89 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
 	return $out;
 }
 
+/**
+ *  On/off button for object
+ *
+ *  @param  int     $object     Id product to set
+ *  @param  string  $code       Name of constant : status or status_buy for product by example
+ *  @param  string  $field      Name of database field : tosell or tobuy for product by example
+ *  @param  string  $text_on    Text if on
+ *  @param  string  $text_off   Text if off
+ *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
+ *  @return void
+ */
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=array())
+{
+    global $langs;
+
+    $out= '<script type="text/javascript">
+        $(function() {
+            var input = '.json_encode($input).';
+
+            // Set constant
+            $("#set_'.$code.'_'.$object->id.'").click(function() {
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
+                    action: \'set\',
+                    field: \''.$field.'\',
+                    value: \'1\',
+                    element: \''.$object->element.'\',
+                    id: \''.$object->id.'\'
+                },
+                function() {
+                    $("#set_'.$code.'_'.$object->id.'").hide();
+                    $("#del_'.$code.'_'.$object->id.'").show();
+                    // Enable another element
+                    if (input.disabled && input.disabled.length > 0) {
+                        $.each(input.disabled, function(key,value) {
+                            $("#" + value).removeAttr("disabled");
+                            if ($("#" + value).hasClass("butActionRefused") == true) {
+                                $("#" + value).removeClass("butActionRefused");
+                                $("#" + value).addClass("butAction");
+                            }
+                        });
+                    // Show another element
+                    } else if (input.showhide && input.showhide.length > 0) {
+                        $.each(input.showhide, function(key,value) {
+                            $("#" + value).show();
+                        });
+                    }
+                });
+            });
+
+            // Del constant
+            $("#del_'.$code.'_'.$object->id.'").click(function() {
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
+                    action: \'set\',
+                    field: \''.$field.'\',
+                    value: \'0\',
+                    element: \''.$object->element.'\',
+                    id: \''.$object->id.'\'
+                },
+                function() {
+                    $("#del_'.$code.'_'.$object->id.'").hide();
+                    $("#set_'.$code.'_'.$object->id.'").show();
+                    // Disable another element
+                    if (input.disabled && input.disabled.length > 0) {
+                        $.each(input.disabled, function(key,value) {
+                            $("#" + value).attr("disabled", true);
+                            if ($("#" + value).hasClass("butAction") == true) {
+                                $("#" + value).removeClass("butAction");
+                                $("#" + value).addClass("butActionRefused");
+                            }
+                        });
+                    // Hide another element
+                    } else if (input.showhide && input.showhide.length > 0) {
+                        $.each(input.showhide, function(key,value) {
+                            $("#" + value).hide();
+                        });
+                    }
+                });
+            });
+        });
+    </script>';
+    $out.= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'hideobject':'').'">'.img_picto($langs->trans($text_off),'switch_off').'</span>';
+    $out.= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'':'hideobject').'">'.img_picto($langs->trans($text_on),'switch_on').'</span>';
+
+    return $out;
+}
+

@@ -50,7 +50,7 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 if (! $user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('projecttaskcard'));
+$hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
 $object = new Task($db);
 $extrafields = new ExtraFields($db);
@@ -58,9 +58,11 @@ $projectstatic = new Project($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
+
 /*
  * Actions
-*/
+ */
 
 if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 {
@@ -91,11 +93,10 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 		$result=$object->update($user);
-		
+
 		if ($result < 0)
 		{
-		    setEventMessage($object->error,'errors');
-		    setEventMessage($object->errors,'errors');
+		    setEventMessages($object->error,$object->errors,'errors');
 		}
 	}
 	else
@@ -121,8 +122,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 		}
 		else
 		{
-			$langs->load("errors");
-			setEventMessage($langs->trans($object->error), 'errors');
+		    setEventMessages($object->error,$object->errors,'errors');
 			$action='';
 		}
 	}
@@ -351,8 +351,8 @@ if ($id > 0 || ! empty($ref))
 			print $form->select_duration('planned_workload',$object->planned_workload,0,'text');
 			print '</td></tr>';
 
-			// Progress
-			print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
+			// Progress declared
+			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 			print $formother->select_percent($object->progress,'progress');
 			print '</td></tr>';
 
@@ -383,7 +383,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			/*
 			 * Fiche tache en mode visu
-			*/
+			 */
 			$param=($withproject?'&withproject=1':'');
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
@@ -440,14 +440,20 @@ if ($id > 0 || ! empty($ref))
 			print convertSecondToTime($object->planned_workload,'allhourmin');
 			print '</td></tr>';
 
-			// Progress
+			// Progress declared
 			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 			print $object->progress.' %';
 			print '</td></tr>';
 
-			// Progress
+			// Progress calculated
 			print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
-			print $object->progress.' %';
+			if ($object->planned_workload)
+			{
+				$tmparray=$object->getSummaryOfTimeSpent();
+				if ($tmparray['total_duration'] > 0) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
+				else print '0 %';
+			}
+			else print '';
 			print '</td></tr>';
 
 			// Description
@@ -504,7 +510,7 @@ if ($id > 0 || ! empty($ref))
 
 			/*
 			 * Documents generes
-			*/
+			 */
 			$filename=dol_sanitizeFileName($projectstatic->ref). "/". dol_sanitizeFileName($object->ref);
 			$filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref). "/" .dol_sanitizeFileName($object->ref);
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;

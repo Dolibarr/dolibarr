@@ -276,15 +276,23 @@ if ($id > 0 || $ref)
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 		print '</tr>';
 
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-		print $product->getLibStatut(2,0);
-		print '</td></tr>';
+        // Status (to sell)
+        print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
+        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+            print ajax_object_onoff($product, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+        } else {
+            print $product->getLibStatut(2,0);
+        }
+        print '</td></tr>';
 
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-		print $product->getLibStatut(2,1);
-		print '</td></tr>';
+        // Status (to buy)
+        print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
+        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+            print ajax_object_onoff($product, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+        } else {
+            print $product->getLibStatut(2,1);
+        }
+        print '</td></tr>';
 
 		if ($conf->productbatch->enabled) {
 			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("l_sellby").')</td><td>';

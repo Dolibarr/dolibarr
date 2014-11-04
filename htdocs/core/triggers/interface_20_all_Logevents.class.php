@@ -23,6 +23,8 @@
  *  \brief      Trigger file for
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
  *  Class of triggers for security events
@@ -64,7 +66,9 @@ class InterfaceLogevents extends DolibarrTriggers
 
             // Initialisation donnees (date,duree,texte,desc)
             $text="(UserLogged,".$object->login.")";
+            $text.=(empty($object->trigger_mesg)?'':' - '.$object->trigger_mesg);
             $desc="(UserLogged,".$object->login.")";
+            $desc.=(empty($object->trigger_mesg)?'':' - '.$object->trigger_mesg);
         }
         if ($action == 'USER_LOGIN_FAILED')
         {

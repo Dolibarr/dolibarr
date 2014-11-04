@@ -41,12 +41,13 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
  * @param 	date		$paymentdatebefore		Payment before date (must includes hour)
  * @param	int			$usestdout				Add information onto standard output
  * @param	int			$regenerate				''=Use existing PDF files, 'nameofpdf'=Regenerate all PDF files using the template
- * @param	string		$option					Suffix to add into file name of generated PDF
+ * @param	string		$filesuffix				Suffix to add into file name of generated PDF
  * @param	string		$paymentbankid			Only if payment on this bank account id
  * @param	array		$thirdpartiesid			List of thirdparties id when using filter excludethirdpartiesid	or onlythirdpartiesid
+ * @param	string		$fileprefix				Prefix to add into filename of generated PDF
  * @return	int									Error code
  */
-function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate=0, $option='', $paymentbankid='', $thirdpartiesid='')
+function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate=0, $filesuffix='', $paymentbankid='', $thirdpartiesid='', $fileprefix='mergedpdf')
 {
 	$sql = "SELECT DISTINCT f.rowid, f.facnumber";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -220,13 +221,6 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	        if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 			//$pdf->SetCompression(false);
 
-
-			//$pdf->Open();
-			//$pdf->AddPage();
-			//$title=$langs->trans("BillsCustomersUnpaid");
-			//if ($option=='late') $title=$langs->trans("BillsCustomersUnpaid");
-			//$pdf->MultiCell(100, 3, $title, 0, 'J');
-
 			// Add all others
 			foreach($files as $file)
 			{
@@ -248,9 +242,9 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			dol_mkdir($diroutputpdf);
 
 			// Save merged file
-			$filename='mergedpdf';
-
-			if (! empty($option)) $filename.='_'.$option;
+			$filename=$fileprefix;
+			if (empty($filename)) $filename='mergedpdf';
+			if (! empty($filesuffix)) $filename.='_'.$filesuffix;
 			$file=$diroutputpdf.'/'.$filename.'.pdf';
 
 			if (! $error && $pagecount)

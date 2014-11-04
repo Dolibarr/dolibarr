@@ -133,9 +133,10 @@ ErrorPHPNeedModule=Erro, o php deve ter o módulo <b>%s</b> instalado para utili
 ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 ErrorWarehouseMustDiffers=Os armazéns de origem e de destino não devem ser iguais
 ErrorBadFormat=Formato incorrecto!
-ErrorPaymentDateLowerThanInvoiceDate=A data de pagamento (%s) não pode ser anterior à data de faturação (%s) para a fatura %s.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
+ErrorCantDeletePaymentReconciliated=Can't delete a payment that had generated a bank transaction that was conciliated
+ErrorCantDeletePaymentSharedWithPayedInvoice=Can't delete a payment shared by at least one invoice with status Payed
 
 # Warnings
 WarningMandatorySetupNotComplete=Os parâmetros de configuração obrigatórios ainda não estão definidos
@@ -154,3 +155,5 @@ WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all page
 WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
 WarningNotRelevant=Irrelevant operation for this dataset
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
+WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters

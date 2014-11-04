@@ -136,12 +136,13 @@ if ($action == 'presend' && GETPOST('sendmail'))
 						$message=make_substitutions($message, $substitutionarray);
 
 						$actiontypecode='AC_FAC';
-						$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+						$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
 						if ($message)
 						{
-							$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
-							$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
-							$actionmsg.=$message;
+							if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+							$actionmsg = dol_concatdesc($actionmsg, $message);
 						}
 
 						// Create form object
@@ -600,7 +601,7 @@ if ($resql)
 
 	if ($num > 0)
 	{
-		$var=True;
+		$var=true;
 		$total_ht=0;
 		$total_tva=0;
 		$total_ttc=0;

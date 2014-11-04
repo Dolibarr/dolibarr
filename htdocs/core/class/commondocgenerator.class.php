@@ -118,10 +118,9 @@ abstract class CommonDocGenerator
             'mycompany_idprof5'=>$mysoc->idprof5,
             'mycompany_idprof6'=>$mysoc->idprof6,
         	'mycompany_vatnumber'=>$mysoc->tva_intra,
-            // Only private not exists for "mysoc"
-        	'mycompany_note'=>$mysoc->note_private
-            //'mycompany_note_private'=>$mysoc->note_private,
-        	//'mycompany_note_public'=>$mysoc->note_public,
+        	// Only private not exists for "mysoc"
+            'mycompany_note_private'=>$mysoc->note_private,
+
         );
     }
 
@@ -166,6 +165,7 @@ abstract class CommonDocGenerator
             'company_customeraccountancycode'=>$object->code_compta,
             'company_supplieraccountancycode'=>$object->code_compta_fournisseur,
             'company_juridicalstatus'=>$object->forme_juridique,
+            'company_outstanding_limit'=>$object->outstanding_limit,
             'company_capital'=>$object->capital,
             'company_idprof1'=>$object->idprof1,
             'company_idprof2'=>$object->idprof2,
@@ -290,6 +290,10 @@ abstract class CommonDocGenerator
    			'current_datehour'=>dol_print_date($now,'dayhour','tzuser'),
    			'current_server_date'=>dol_print_date($now,'day','tzserver'),
    			'current_server_datehour'=>dol_print_date($now,'dayhour','tzserver'),
+   			'current_date_locale'=>dol_print_date($now,'day','tzuser',$outputlangs),
+   			'current_datehour_locale'=>dol_print_date($now,'dayhour','tzuser',$outputlangs),
+   			'current_server_date_locale'=>dol_print_date($now,'day','tzserver',$outputlangs),
+   			'current_server_datehour_locale'=>dol_print_date($now,'dayhour','tzserver',$outputlangs),
     	);
 
     	return $array_other;
@@ -357,7 +361,8 @@ abstract class CommonDocGenerator
 		$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
 
 		$array_key.'_note_private'=>$object->note,
-		$array_key.'_note'=>$object->note_public,
+		$array_key.'_note_public'=>$object->note_public,
+		$array_key.'_note'=>$object->note_public,			// For backward compatibility
 		// Payments
 		$array_key.'_already_payed_locale'=>price($alreadypayed, 0, $outputlangs),
 		$array_key.'_remain_to_pay_locale'=>price($object->total_ttc - $sumpayed, 0, $outputlangs),

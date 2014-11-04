@@ -680,7 +680,7 @@ class FormMail
 
 	/**
 	 *      Return template of email
-	 *      Search into table c_email_template
+	 *      Search into table c_email_templates
 	 *
 	 * 		@param	DoliDB		$db				Database handler
 	 * 		@param	string		$type_template	Get message for key module
@@ -692,22 +692,25 @@ class FormMail
 	{
 		$ret=array();
 
-		$sql = "SELECT topic, content";
+		$sql = "SELECT label, topic, content, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template='".$db->escape($type_template)."'";
 		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
 		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
-		// TODO Add field and where filter on language code
+		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
+		$sql.= $db->order("lang,label","ASC");
 		//print $sql;
 
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$obj = $db->fetch_object($resql);
+			$obj = $db->fetch_object($resql);	// Get first found
 			if ($obj)
 			{
+				$ret['label']=$obj->label;
 				$ret['topic']=$obj->topic;
 				$ret['content']=$obj->content;
+				$ret['lang']=$obj->lang;
 			}
 			else
 			{
@@ -722,8 +725,10 @@ class FormMail
 	        	elseif ($type_template=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
 	        	elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
 
+	        	$ret['label']='default';
 	        	$ret['topic']='';
 	        	$ret['content']=$defaultmessage;
+	        	$ret['lang']=$outputlangs->defaultlang;
 			}
 
 			$db->free($resql);

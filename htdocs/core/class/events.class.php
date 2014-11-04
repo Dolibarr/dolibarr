@@ -111,7 +111,7 @@ class Events // extends CommonObject
 		$this->description=trim($this->description);
 
 		// Check parameters
-		if (! $this->description) { $this->error='ErrorBadValueForParameter'; return -1; }
+		if (empty($this->description)) { $this->error='ErrorBadValueForParameter'; return -1; }
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
@@ -129,7 +129,7 @@ class Events // extends CommonObject
 		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".dol_trunc($_SERVER['HTTP_USER_AGENT'],250)."'":'NULL').",";
 		$sql.= " '".$this->db->idate($this->dateevent)."',";
 		$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
-		$sql.= " '".$this->db->escape($this->description)."'";
+		$sql.= " '".$this->db->escape(dol_trunc($this->description,250))."'";
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);

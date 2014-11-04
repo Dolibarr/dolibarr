@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 
 $langs->load('orders');
 $langs->load('deliveries');
@@ -325,22 +326,77 @@ if ($resql)
 	$total=0;
 	$subtotal=0;
 
-	$generic_commande = new Commande($db);
-	while ($i < min($num,$limit))
-	{
-		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
-		print '<td class="nowrap">';
+    $generic_commande = new Commande($db);
+    $generic_product = new Product($db);
+    while ($i < min($num,$limit)) {
+        $objp = $db->fetch_object($resql);
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td class="nowrap">';
 
-		$generic_commande->id=$objp->rowid;
-		$generic_commande->ref=$objp->ref;
+        $generic_commande->id=$objp->rowid;
+        $generic_commande->ref=$objp->ref;
+        $generic_commande->lines=array();
+        $generic_commande->getLinesArray();
 
-		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-		print '<td class="nobordernopadding nowrap">';
-		print $generic_commande->getNomUrl(1,($viewstatut != 2?0:$objp->fk_statut));
-		print '</td>';
+        print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+        print '<td class="nobordernopadding nowrap">';
+        print $generic_commande->getNomUrl(1,($viewstatut != 2?0:$objp->fk_statut));
+        print '</td>';
 
+        // Shippable Icon
+        if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && ! empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
+            $notshippable=0;
+            $text_info='';
+            $nbprod=0;
+            for ($lig=0; $lig<(count($generic_commande->lines)); $lig++) {
+                if ($generic_commande->lines[$lig]->product_type==0) {
+                    $nbprod++; // order contains real products
+                    $generic_product->id = $generic_commande->lines[$lig]->fk_product;
+                    $generic_product->load_stock();
+                    // stock order and stock order_supplier
+                    $stock_order=0;
+                    $stock_order_supplier=0;
+                    if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+                        if (! empty($conf->commande->enabled)) {
+                            $generic_product->load_stats_commande(0,'1,2');
+                            $stock_order=$generic_product->stats_commande['qty'];
+                        }
+                        if (! empty($conf->fournisseur->enabled)) {
+                            $generic_product->load_stats_commande_fournisseur(0,'3');
+                            $stock_order_supplier=$generic_product->stats_commande_fournisseur['qty'];
+                        }
+                    }
+                    $text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
+                    $text_stock_reel = $generic_product->stock_reel.'/'.$stock_order;
+                    if ($generic_product->stock_reel<$generic_commande->lines[$lig]->qty) {
+                        $notshippable++;
+                        $text_info.='<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
+                    } else {
+                        $text_info.='<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
+                    }
+                    if ($stock_order_supplier>0) {
+                        $text_info.= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier.'<br>';
+                    } else {
+                        $text_info.= '<br>';
+                    }
+                }
+            }
+            if ($notshippable==0) {
+                $text_icon = img_picto('', 'object_sending');
+                $text_info = $langs->trans('Shippable').'<br>'.$text_info;
+            } else {
+                $text_icon = img_picto('', 'error');
+                $text_info = $langs->trans('NonShippable').'<br>'.$text_info;
+            }
+            if ($nbprod>0) {
+                print '<td>';
+                print $form->textwithtooltip('',$text_info,2,1,$text_icon,'',2);
+                print '</td>';
+            }
+        }
+
+        // warning late icon
 		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
 		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && max($db->jdate($objp->date_commande),$db->jdate($objp->date_livraison)) < ($now - $conf->commande->client->warning_delay))
 			print img_picto($langs->trans("Late"),"warning");

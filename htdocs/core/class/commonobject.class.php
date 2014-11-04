@@ -156,7 +156,7 @@ abstract class CommonObject
      *  Add a link between element $this->element and a contact
      *
      *  @param	int		$fk_socpeople       Id of contact to link
-     *  @param 	int		$type_contact 		Type of contact (code or id)
+     *  @param 	int		$type_contact 		Type of contact (code or id). For example: SALESREPFOLL
      *  @param  int		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
      *  @param  int		$notrigger			Disable all triggers
      *  @return int                 		<0 if KO, >0 if OK
@@ -192,9 +192,10 @@ abstract class CommonObject
             // On recherche id type_contact
             $sql = "SELECT tc.rowid";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
-            $sql.= " WHERE element='".$this->element."'";
-            $sql.= " AND source='".$source."'";
-            $sql.= " AND code='".$type_contact."' AND active=1";
+            $sql.= " WHERE tc.element='".$this->element."'";
+            $sql.= " AND tc.source='".$source."'";
+            $sql.= " AND tc.code='".$type_contact."' AND tc.active=1";
+			//print $sql;
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -337,12 +338,14 @@ abstract class CommonObject
     /**
      *    Delete all links between an object $this and all its contacts
      *
-     *    @return     int	>0 if OK, <0 if KO
+     *	  @param	string	$source		'' or 'internal' or 'external'
+     *	  @param	string	$code		Type of contact (code or id)
+     *    @return   int					>0 if OK, <0 if KO
      */
-    function delete_linked_contact()
+    function delete_linked_contact($source='',$code='')
     {
         $temp = array();
-        $typeContact = $this->liste_type_contact('');
+        $typeContact = $this->liste_type_contact($source,'',0,0,$code);
 
         foreach($typeContact as $key => $value)
         {
@@ -351,7 +354,7 @@ abstract class CommonObject
         $listId = implode(",", $temp);
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
-        $sql.= " WHERE element_id =".$this->id;
+        $sql.= " WHERE element_id = ".$this->id;
         $sql.= " AND fk_c_type_contact IN (".$listId.")";
 
         dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
@@ -360,7 +363,7 @@ abstract class CommonObject
             return 1;
         }
         else
-        {
+		{
             $this->error=$this->db->lasterror();
             return -1;
         }
@@ -478,21 +481,23 @@ abstract class CommonObject
      *      @param	string	$source     'internal', 'external' or 'all'
      *      @param	string	$order		Sort order by : 'code' or 'rowid'
      *      @param  string	$option     0=Return array id->label, 1=Return array code->label
-     *      @param  string	$activeonly    0=all type of contact, 1=only the active
+     *      @param  string	$activeonly 0=all status of contact, 1=only the active
+     *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
      *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
      */
-    function liste_type_contact($source='internal', $order='code', $option=0, $activeonly=0)
+    function liste_type_contact($source='internal', $order='', $option=0, $activeonly=0, $code='')
     {
         global $langs;
+
+        if (empty($order)) $order='code';
 
         $tab = array();
         $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE tc.element='".$this->element."'";
-        if ($activeonly == 1)
-        	$sql.= " AND tc.active=1"; // only the active type
-
-        if (! empty($source)) $sql.= " AND tc.source='".$source."'";
+        if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active type
+        if (! empty($source) && $source != 'all') $sql.= " AND tc.source='".$source."'";
+        if (! empty($code)) $sql.= " AND tc.code='".$code."'";
         $sql.= " ORDER by tc.".$order;
 
         //print "sql=".$sql;
@@ -1742,6 +1747,7 @@ abstract class CommonObject
      *	@param		string	$origin		Linked element type
      *	@param		int		$origin_id	Linked element id
      *	@return		int					<=0 if KO, >0 if OK
+     *	@see		fetchObjectLinked, updateObjectLinked, deleteObjectLinked
      */
     function add_object_linked($origin=null, $origin_id=null)
     {
@@ -1785,6 +1791,7 @@ abstract class CommonObject
      *	@param  string	$targettype		Object target type
      *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
      *	@return	void
+     *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
      */
 	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
     {
@@ -1813,6 +1820,12 @@ abstract class CommonObject
         $targetid = (! empty($targetid) ? $targetid : $this->id);
         $sourcetype = (! empty($sourcetype) ? $sourcetype : $this->element);
         $targettype = (! empty($targettype) ? $targettype : $this->element);
+
+        if (empty($sourceid) && empty($targetid))
+        {
+        	dol_print_error('','Bad usage of function. No parameter defined and no id defined');
+        	return -1;
+        }
 
         // Links beetween objects are stored in this table
         $sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
@@ -1939,6 +1952,7 @@ abstract class CommonObject
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
      *	@return							int	>0 if OK, <0 if KO
+     *	@see	add_object_linked, fetObjectLinked, deleteObjectLinked
      */
     function updateObjectLinked($sourceid='', $sourcetype='', $targetid='', $targettype='')
     {
@@ -1984,6 +1998,7 @@ abstract class CommonObject
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
 	 *	@return     int	>0 if OK, <0 if KO
+	 *	@see	add_object_linked, updateObjectLinked, fetchObjectLinked
 	 */
 	function deleteObjectLinked($sourceid='', $sourcetype='', $targetid='', $targettype='')
 	{
@@ -2059,7 +2074,8 @@ abstract class CommonObject
         	if (! $error)
 			{
 				$trigkey='';
-				if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFYBILLED';
+				if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
+				if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
 
 				if ($trigkey)
 				{
@@ -2551,6 +2567,11 @@ abstract class CommonObject
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
 					$reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
+				else
+				{
+					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
+					$reshook=$hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				}
 			}
 			else
 			{
@@ -2997,13 +3018,13 @@ abstract class CommonObject
 
 		print '<table class="nobordernopadding margintable" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td width="30%">'.$langs->trans('Margins').'</td>';
-		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
+		print '<td width="15%">'.$langs->trans('Margins').'</td>';
+		print '<td width="15%" align="right">'.$langs->trans('SellingPrice').'</td>';
 		if ($conf->global->MARGIN_TYPE == "1")
-			print '<td width="20%" align="right">'.$langs->trans('BuyingPrice').'</td>';
+			print '<td width="15%" align="right">'.$langs->trans('BuyingPrice').'</td>';
 		else
-			print '<td width="20%" align="right">'.$langs->trans('CostPrice').'</td>';
-		print '<td width="20%" align="right">'.$langs->trans('Margin').'</td>';
+			print '<td width="15%" align="right">'.$langs->trans('CostPrice').'</td>';
+		print '<td width="15%" align="right">'.$langs->trans('Margin').'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			print '<td align="right">'.$langs->trans('MarginRate').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
