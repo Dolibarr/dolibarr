@@ -40,14 +40,12 @@ $id = GETPOST('id');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->access)
-	accessforbidden();
 	
 /*
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->access) 
+if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) 
 {
 	if (! GETPOST('cancel', 'alpha'))
 	{
@@ -109,7 +107,7 @@ if (! empty($id)) {
 			print '<input type="hidden" name="action" value="ventil">';
 			
 			$linkback='<a href="'.DOL_URL_ROOT.'/accountancy/customer/lines.php">'.$langs->trans("Back").'</a>';
-			print_fiche_titre($langs->trans('AccountingVentilationCustomer'),$linkback,'setup');
+			print_fiche_titre($langs->trans('CustomersVentilation'),$linkback,'setup');
 			
 			print '<table class="border" width="100%">';
 			
