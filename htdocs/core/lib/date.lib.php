@@ -524,7 +524,7 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
     }
 	$tmpmonth = $prev_month;
 	$tmpyear = $prev_year;
-    
+
     //Get first day of next week
 	$tmptime=dol_mktime(12,0,0,$month,$tmpday,$year,1,0);
 	$tmptime-=24*60*60*7;
@@ -720,7 +720,7 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
  *	@param     	int			$inhour             0: return number of days, 1: return number of hours
  *	@param		int			$lastday            We include last day, 0: no, 1:yes
  *  @param		int			$halfday			Tag to define half day when holiday start and end
- *  @param      string		$countrycode        Country code (company country code if not defined)
+ *  @param      string		$country_code       Country code (company country code if not defined)
  *	@return    	int								Number of days or hours
  */
 function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $halfday=0, $country_code='')
