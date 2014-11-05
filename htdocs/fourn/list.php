@@ -32,15 +32,15 @@ $langs->load("suppliers");
 $langs->load("orders");
 $langs->load("companies");
 
-$socname                   = GETPOST("socname");
-$search_nom                = GETPOST("search_nom");
-$search_zipcode            = GETPOST("search_zipcode");
-$search_town               = GETPOST("search_town");
-$search_code_fournisseur   = GETPOST("search_code_fournisseur");
-$search_compta_fournisseur = GETPOST("search_compta_fournisseur");
-$search_datec              = GETPOST("search_datec");
-$search_categ              = GETPOST('search_categ','int');
-$catid                     = GETPOST("catid",'int');
+$socname					= GETPOST("socname");
+$search_name				= GETPOST("search_name");
+$search_zipcode				= GETPOST("search_zipcode");
+$search_town				= GETPOST("search_town");
+$search_supplier_code		= GETPOST("search_supplier_code");
+$search_supplier_accounting = GETPOST("search_supplier_accounting");
+$search_datec				= GETPOST("search_datec");
+$search_categ				= GETPOST('search_categ','int');
+$catid						= GETPOST("catid",'int');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -59,6 +59,19 @@ if (! $sortfield) $sortfield="nom";
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('supplierlist'));
+
+if (GETPOST("button_removefilter_x"))
+{
+	$socname="";
+	$search_name="";
+	$search_zipcode="";
+	$search_town="";
+	$search_supplier_code="";
+	$search_supplier_accounting="";
+	$search_datec="";
+	$search_categ="";
+	$catid="";
+}
 
 /*
  * 	Actions
@@ -95,15 +108,15 @@ if ($socname) {
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
-if ($search_nom) {
-	$sql .= natural_search('s.nom', $search_nom);
+if ($search_name) {
+	$sql .= natural_search('s.nom', $search_name);
 }
 if ($search_zipcode) $sql .= " AND s.zip LIKE '".$db->escape($search_zipcode)."%'";
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
 }
-if ($search_code_fournisseur)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_code_fournisseur)."%'";
-if ($search_compta_fournisseur) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_compta_fournisseur)."%'";
+if ($search_supplier_code)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_supplier_code)."%'";
+if ($search_supplier_accounting) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_supplier_accounting)."%'";
 if ($search_datec)   $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
 if ($catid > 0)          $sql.= " AND cf.fk_categorie = ".$catid;
 if ($catid == -2)        $sql.= " AND cf.fk_categorie IS NULL";
@@ -126,7 +139,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = "&amp;search_nom=".$search_nom."&amp;search_code_fournisseur=".$search_code_fournisseur."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
+	$param = "&amp;search_name=".$search_name."&amp;search_supplier_code=".$search_supplier_code."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
 
 	print_barre_liste($langs->trans("ListOfSuppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
@@ -166,26 +179,28 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
+	print '<td class="liste_titre"><input type="text" size="10" class="flat" name="search_name" value="'.$search_name.'"></td>';
 
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_zipcode" value="'.$search_zipcode.'"></td>';
+	print '<td class="liste_titre"><input type="text" size="10" class="flat" name="search_zipcode" value="'.$search_zipcode.'"></td>';
 
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_town" value="'.$search_town.'"></td>';
+	print '<td class="liste_titre"><input type="text" size="10" class="flat" name="search_town" value="'.$search_town.'"></td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_code_fournisseur" value="'.$search_code_fournisseur.'">';
+	print '<input class="flat" type="text" size="10" name="search_supplier_code" value="'.$search_supplier_code.'">';
 	print '</td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_compta_fournisseur" value="'.$search_compta_fournisseur.'">';
+	print '<input class="flat" type="text" size="10" name="search_supplier_accounting" value="'.$search_supplier_accounting.'">';
 	print '</td>';
 
 	print '<td align="right" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
 	print '</td>';
 
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
-
+	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print "</td></tr>\n";
+	
 	$parameters=array();
 	$formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 
