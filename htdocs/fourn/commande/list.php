@@ -45,7 +45,6 @@ $search_ttc=GETPOST('search_ttc');
 $sall=GETPOST('search_all');
 $search_status=GETPOST('search_status','int');
 
-
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
 $sortorder = GETPOST('sortorder','alpha');
