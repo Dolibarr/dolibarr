@@ -255,6 +255,16 @@ class FactureFournisseur extends CommonInvoice
             $result=$this->update_price();
             if ($result > 0)
             {
+            	
+            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+            	
                 // Call trigger
                 $result=$this->call_trigger('BILL_SUPPLIER_CREATE',$user);
                 if ($result < 0) $error++;
