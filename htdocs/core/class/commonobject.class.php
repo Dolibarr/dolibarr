@@ -609,6 +609,8 @@ abstract class CommonObject
 
         if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty)) return 0;
 
+	    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
         $thirdparty = new Societe($this->db);
         $result=$thirdparty->fetch(isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty));
         $this->client = $thirdparty;  // deprecated
