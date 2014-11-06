@@ -21,10 +21,14 @@
 
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_MODIFY','Intervention modified','Executed when a intervention is modified','ficheinter',19);
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention delete','Executed when a intervention is delete','ficheinter',19);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLASSIFYBILLED','Intervention set billed','Executed when a intervention is set to billed (when option FICHINTER_DISABLE_DETAILS is set)','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLASSIFY_BILLED','Intervention set billed','Executed when a intervention is set to billed (when option FICHINTER_CLASSIFY_BILLED is set)','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLASSIFY_UNBILLED','Intervention set unbilled','Executed when a intervention is set to unbilled (when option FICHINTER_CLASSIFY_BILLED is set)','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_REOPEN','Intervention opened','Executed when a intervention is re-opened','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFY_BILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
 
 ALTER TABLE llx_notify ADD COLUMN fk_soc integer NULL after fk_action;
+ALTER TABLE llx_notify ADD COLUMN type varchar(16) DEFAULT 'email' after fk_soc;
 
 ALTER TABLE llx_bank_account ADD COLUMN fk_user_author integer;
 
@@ -45,8 +49,6 @@ ALTER TABLE llx_fichinter ADD COLUMN ref_ext 	varchar(255);
 
 -- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
 ALTER TABLE llx_c_typent ADD COLUMN fk_country integer NULL AFTER libelle;
-
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (29,'FICHINTER_CLASSIFY_BILLED','Classify intervention as billed','Executed when a intervention is classified as billed (when option FICHINTER_DISABLE_DETAILS is set)','ficheinter',19);
 
 INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
 

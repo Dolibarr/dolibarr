@@ -38,4 +38,6 @@ BuyingCost=Costos
 UnitCharges=Carga unitaria
 Charges=Cargas
 AgentContactType=Tipo de contacto comisionado
-AgentContactTypeDetails=Indica el tipo de contacto enlazado a las facturas que serán asociados a los agentes comerciales
+AgentContactTypeDetails=Indique qué tipo de contacto (enlazado a las facturas) será el utilizado para el informe de márgenes de agentes comerciales
+rateMustBeNumeric=El margen  debe ser un valor numérico
+markRateShouldBeLesserThan100=El margen tiene que ser menor que 100

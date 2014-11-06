@@ -105,9 +105,12 @@ if ($action == 'confirm_rejet')
 	}
 }
 
+
 /*
  * View
  */
+
+$invoicestatic=new Facture($db);
 
 llxHeader('',$langs->trans("StandingOrder"));
 
@@ -134,9 +137,7 @@ if ($id)
 		print '<a href="card.php?id='.$lipre->bon_rowid.'">'.$lipre->bon_ref.'</a></td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>';
-
-		print $lipre->LibStatut($lipre->statut,1).'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>'.$lipre->LibStatut($lipre->statut,1).'</td></tr>';
 
 		if ($lipre->statut == 3)
 		{
@@ -215,7 +216,7 @@ if ($id)
 		print '</table><br>';
 
 		//Confirm Button
-		print '<center><input type="submit" class="valid" value='.$langs->trans("Confirm").'><center>';
+		print '<center><input type="submit" class="button" value='.$langs->trans("Confirm").'><center>';
 		print '</form>';
 	}
 
@@ -229,13 +230,20 @@ if ($id)
 
 	if ($action == '')
 	{
-		if ($bon->statut == 2 && $lipre->statut == 2 && $user->rights->prelevement->bons->credit)
+		if ($bon->statut == 2 && $lipre->statut == 2)
 		{
-	  		print "<a class=\"butAction\" href=\"ligne.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("StandingOrderReject")."</a>";
+			if ($user->rights->prelevement->bons->credit)
+			{
+	  			print "<a class=\"butAction\" href=\"ligne.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("StandingOrderReject")."</a>";
+			}
+			else
+			{
+				print "<a class=\"butActionRefused\" href=\"#\" title=\"".$langs->trans("NotAllowed")."\">".$langs->trans("StandingOrderReject")."</a>";
+			}
 		}
 		else
 		{
-			print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("StandingOrderReject")."</a>";
+			print "<a class=\"butActionRefused\" href=\"#\" title=\"".$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine")."\">".$langs->trans("StandingOrderReject")."</a>";
 		}
 	}
 
@@ -256,7 +264,7 @@ if ($id)
 	 * Liste des factures
 	 */
 	$sql = "SELECT pf.rowid";
-	$sql.= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc";
+	$sql.= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc, f.paye, f.fk_statut";
 	$sql.= " , s.rowid as socid, s.nom as name";
 	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -287,7 +295,7 @@ if ($id)
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("ThirdParty").'</td><td align="right">'.$langs->trans("Amount").'</td>';
+		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("ThirdParty").'</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 
 		$var=True;
@@ -311,6 +319,11 @@ if ($id)
 			print img_object($langs->trans("ShowCompany"),"company"). ' '.$obj->name."</a></td>\n";
 
 			print '<td align="right">'.price($obj->total_ttc)."</td>\n";
+
+			print '<td align="right">';
+			$invoicestatic->fetch($obj->facid);
+			print $invoicestatic->getLibStatut(5);
+			print "</td>\n";
 
 			print "</tr>\n";
 

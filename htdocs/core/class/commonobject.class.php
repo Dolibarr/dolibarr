@@ -609,6 +609,8 @@ abstract class CommonObject
 
         if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty)) return 0;
 
+	    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
         $thirdparty = new Societe($this->db);
         $result=$thirdparty->fetch(isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty));
         $this->client = $thirdparty;  // deprecated
@@ -2074,7 +2076,8 @@ abstract class CommonObject
         	if (! $error)
 			{
 				$trigkey='';
-				if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFYBILLED';
+				if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
+				if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
 
 				if ($trigkey)
 				{
@@ -2566,7 +2569,7 @@ abstract class CommonObject
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
 					$reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
-				else 
+				else
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
 					$reshook=$hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks

@@ -42,10 +42,10 @@ $result = restrictedArea($user, 'prelevement','','','bons');
 $page = GETPOST('page','int');
 $sortorder = ((GETPOST('sortorder','alpha')=="")) ? "DESC" : GETPOST('sortorder','alpha');
 $sortfield = ((GETPOST('sortfield','alpha')=="")) ? "p.datec" : GETPOST('sortfield','alpha');
-$search_line = GETPOST('search_ligne','alpha');
+$search_line = GETPOST('search_line','alpha');
 $search_bon = GETPOST('search_bon','alpha');
 $search_code = GETPOST('search_code','alpha');
-$search_societe = GETPOST('search_societe','alpha');
+$search_company = GETPOST('search_company','alpha');
 $statut = GETPOST('statut','int');
 
 $bon=new BonPrelevement($db,"");
@@ -53,7 +53,14 @@ $ligne=new LignePrelevement($db,$user);
 
 $offset = $conf->liste_limit * $page ;
 
-
+if (GETPOST("button_removefilter"))
+{
+	$search_line="";
+	$search_bon="";
+	$search_code="";
+    $search_company="";
+	$statut="";
+}
 
 /*
  *  View
@@ -88,9 +95,9 @@ if ($search_code)
 {
     $sql.= " AND s.code_client LIKE '%".$db->escape($search_code)."%'";
 }
-if ($search_societe)
+if ($search_company)
 {
-    $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
+    $sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 }
 $sql.=$db->order($sortfield,$sortorder);
 $sql.=$db->plimit($conf->liste_limit+1, $offset);
@@ -122,15 +129,17 @@ if ($result)
 
     print '<form action="list.php" method="GET">';
     print '<tr class="liste_titre">';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. dol_escape_htmltag($search_line).'" size="6"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_line" value="'. dol_escape_htmltag($search_line).'" size="6"></td>';
     print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. dol_escape_htmltag($search_bon).'" size="8"></td>';
     print '<td>&nbsp;</td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" value="'. dol_escape_htmltag($search_societe).'" size="12"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'. dol_escape_htmltag($search_company).'" size="12"></td>';
     print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. dol_escape_htmltag($search_code).'" size="8"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
-    print '</tr>';
+    print '<td class="liste_titre" align="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
     print '</form>';
 
     $var=True;
