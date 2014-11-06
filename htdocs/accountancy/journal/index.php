@@ -36,8 +36,6 @@ $langs->load("accountancy");
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->access)
-	accessforbidden();
 
 llxHeader('', 'Journaux', '');
 
