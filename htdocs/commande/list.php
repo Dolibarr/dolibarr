@@ -43,9 +43,9 @@ $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
 $deliveryyear=GETPOST("deliveryyear","int");
 $deliverymonth=GETPOST("deliverymonth","int");
-$sref=GETPOST('sref','alpha');
-$sref_client=GETPOST('sref_client','alpha');
-$snom=GETPOST('snom','alpha');
+$search_ref=GETPOST('search_ref','alpha');
+$search_ref_customer=GETPOST('search_ref_customer','alpha');
+$search_company=GETPOST('search_company','alpha');
 $sall=GETPOST('sall');
 $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
@@ -69,6 +69,20 @@ $limit = $conf->liste_limit;
 
 $viewstatut=GETPOST('viewstatut');
 
+// Purge search criteria
+if (GETPOST("button_removefilter"))
+{
+    $search_categ='';
+    $search_user='';
+    $search_sale='';
+    $search_ref='';
+    $search_ref_customer='';
+    $search_company='';
+    $orderyear='';
+    $ordermonth='';
+    $deliverymonth='';
+    $deliveryyear='';
+}
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('orderlist'));
@@ -80,24 +94,6 @@ $hookmanager->initHooks(array('orderlist'));
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hook
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-// Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
-{
-    $search_categ='';
-    $search_user='';
-    $search_sale='';
-    $search_ref='';
-    $search_refcustomer='';
-    $search_societe='';
-    $search_montant_ht='';
-    $orderyear='';
-    $ordermonth='';
-    $deliverymonth='';
-    $deliveryyear='';
-}
-
-
 
 /*
  * View
@@ -128,8 +124,8 @@ $sql.= ' WHERE c.fk_soc = s.rowid';
 $sql.= ' AND c.entity = '.$conf->entity;
 if ($socid)	$sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($sref) {
-	$sql .= natural_search('c.ref', $sref);
+if ($search_ref) {
+	$sql .= natural_search('c.ref', $search_ref);
 }
 if ($sall)
 {
@@ -188,13 +184,13 @@ else if ($deliveryyear > 0)
 {
     $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($deliveryyear,1,false))."' AND '".$db->idate(dol_get_last_day($deliveryyear,12,false))."'";
 }
-if (!empty($snom))
+if (!empty($search_company))
 {
-	$sql .= natural_search('s.nom', $snom);
+	$sql .= natural_search('s.nom', $search_company);
 }
-if (!empty($sref_client))
+if (!empty($search_ref_customer))
 {
-	$sql.= ' AND c.ref_client LIKE \'%'.$db->escape($sref_client).'%\'';
+	$sql.= ' AND c.ref_client LIKE \'%'.$db->escape($search_ref_customer).'%\'';
 }
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
@@ -246,15 +242,15 @@ if ($resql)
 	$title.=' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled)?'':$langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
-	if ($ordermonth)      $param.='&ordermonth='.$ordermonth;
-	if ($orderyear)       $param.='&orderyear='.$orderyear;
-	if ($deliverymonth)   $param.='&deliverymonth='.$deliverymonth;
-	if ($deliveryyear)    $param.='&deliveryyear='.$deliveryyear;
-	if ($sref)            $param.='&sref='.$sref;
-	if ($snom)            $param.='&snom='.$snom;
-	if ($sref_client)     $param.='&sref_client='.$sref_client;
-	if ($search_user > 0) $param.='&search_user='.$search_user;
-	if ($search_sale > 0) $param.='&search_sale='.$search_sale;
+	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
+	if ($orderyear)       		$param.='&orderyear='.$orderyear;
+	if ($deliverymonth)   		$param.='&deliverymonth='.$deliverymonth;
+	if ($deliveryyear)    		$param.='&deliveryyear='.$deliveryyear;
+	if ($search_ref)      		$param.='&search_ref='.$search_ref;
+	if ($search_company)  		$param.='&search_company='.$search_company;
+	if ($search_ref_customer)	$param.='&search_ref_customer='.$search_ref_customer;
+	if ($search_user > 0) 		$param.='&search_user='.$search_user;
+	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
 
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
@@ -294,33 +290,35 @@ if ($resql)
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'c.ref','',$param,'width="25%"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomerOrder'),$_SERVER["PHP_SELF"],'c.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
 	print '</tr>';
+	
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="sref" value="'.$sref.'">';
+	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="6" name="sref_client" value="'.$sref_client.'">';
+	print '<input class="flat" type="text" size="6" name="search_ref_customer" value="'.$search_ref_customer.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
+	print '<input class="flat" type="text" name="search_company" value="'.$search_company.'">';
 	print '</td>';
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="orderday" value="'.$orderday.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="ordermonth" value="'.$ordermonth.'">';
     $formother->select_year($orderyear?$orderyear:-1,'orderyear',1, 20, 5);
-	print '</td><td class="liste_titre">';
+	print '</td><td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="deliveryday" value="'.$deliveryday.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="deliverymonth" value="'.$deliverymonth.'">';
     $formother->select_year($deliveryyear?$deliveryyear:-1,'deliveryyear',1, 20, 5);
-	print '</td><td class="liste_titre">&nbsp;';
-	print '</td><td align="right" class="liste_titre">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td></tr>';
+	print '</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print "</td></tr>\n";
 
 	$var=true;
 	$total=0;
@@ -443,12 +441,12 @@ if ($resql)
 		print '</td>';
 
 		// Order date
-		print '<td align="right">';
+		print '<td align="center">';
 		print dol_print_date($db->jdate($objp->date_commande), 'day');
 		print '</td>';
 
 		// Delivery date
-		print '<td align="right">';
+		print '<td align="center">';
 		print dol_print_date($db->jdate($objp->date_livraison), 'day');
 		print '</td>';
 
