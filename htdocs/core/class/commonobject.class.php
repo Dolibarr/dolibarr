@@ -1825,7 +1825,7 @@ abstract class CommonObject
 
         if (empty($sourceid) && empty($targetid))
         {
-        	dol_print_error('','Bad usage of function. No parameter defined and no id defined');
+        	dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERROR);
         	return -1;
         }
 
