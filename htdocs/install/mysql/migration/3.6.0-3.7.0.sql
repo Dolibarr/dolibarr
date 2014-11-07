@@ -28,6 +28,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFY_BILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
 
 ALTER TABLE llx_notify ADD COLUMN fk_soc integer NULL after fk_action;
+ALTER TABLE llx_notify ADD COLUMN type varchar(16) DEFAULT 'email' after fk_soc;
 
 ALTER TABLE llx_bank_account ADD COLUMN fk_user_author integer;
 

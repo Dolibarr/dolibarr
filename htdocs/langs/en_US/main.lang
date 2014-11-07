@@ -367,6 +367,7 @@ ActionsOnCompany=Events about this third party
 ActionsOnMember=Events about this member
 NActions=%s events
 NActionsLate=%s late
+RequestAlreadyDone=Request already recorded
 Filter=Filter
 RemoveFilter=Remove filter
 ChartGenerated=Chart generated

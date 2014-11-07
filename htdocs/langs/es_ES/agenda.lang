@@ -7,10 +7,10 @@ Agendas=Agendas
 Calendar=Calendario
 Calendars=Calendarios
 LocalAgenda=Calendario interno
-ActionsOwnedBy=Evento asignado a
+ActionsOwnedBy=Acontecimiento asignado a
 AffectedTo=Asignada a
 DoneBy=Realizado por
-Event=Evento
+Event=Acontecimiento
 Events=Eventos
 EventsNb=Número de eventos
 MyEvents=Mis eventos
@@ -23,12 +23,12 @@ MenuToDoActions=Eventos incompletos
 MenuDoneActions=Eventos terminados
 MenuToDoMyActions=Mis eventos incompletos
 MenuDoneMyActions=Mis eventos terminados
-ListOfEvents=Listado de eventos (calendario interno)
+ListOfEvents=lista de acontecimientos (calendario interno)
 ActionsAskedBy=Eventos registrados por
 ActionsToDoBy=Eventos asignados a
 ActionsDoneBy=Eventos realizados por
-ActionsForUser=Eventos del usuario
-ActionsForUsersGroup=Eventos de todos los usuarios del grupo
+ActionsForUser=Acontecimientos del usuario
+ActionsForUsersGroup=Acontecimientos de todos los usuarios del grupo
 AllMyActions= Todos mis eventos/tareas
 AllActions= Todos los eventos/tareas
 ViewList=Vista listado
@@ -72,7 +72,7 @@ AgendaUrlOptions1=Puede también añadir estos parámetros al filtro de salida:
 AgendaUrlOptions2=<b>login=%s</b> para restringir inserciones a acciones creadas , que afecten o realizadas por el usuario <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> para restringir inserciones a acciones creadas por el usuario <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> para restringir inserciones a acciones que afecten al usuario <b>%s</b>.
-AgendaUrlOptions5=<b>logind=%s</b> para restringir inserciones a acciones realizadas por el usuario <b>%s</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> para restringir inserciones a acciones asociadas al proyecto <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Mostrar cumpleaños de los contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
 Busy=Ocupado
@@ -89,5 +89,5 @@ ExtSiteUrlAgenda=Url de acceso al archivo .ical
 ExtSiteNoLabel=Sin descripción
 WorkingTimeRange=Rango temporal
 WorkingDaysRange=Rango diario
-AddEvent=Añadir evento
+AddEvent=Crear evento
 MyAvailability=Mi disponibilidad

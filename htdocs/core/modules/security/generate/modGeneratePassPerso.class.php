@@ -90,11 +90,12 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->NbRepeat = $tabConf[4];
 		$this->WithoutAmbi = $tabConf[5];
 
-		if($this->WithoutAmbi){
-			$this->Maj = str_replace($this->Ambi,"",$this->Maj );
-			$this->Min = str_replace($this->Ambi,"",$this->Min );
-			$this->Nb  = str_replace($this->Ambi,"",$this->Nb  );
-			$this->Spe = str_replace($this->Ambi,"",$this->Spe );
+		if ($this->WithoutAmbi)
+		{
+			$this->Maj = str_replace($this->Ambi,"",$this->Maj);
+			$this->Min = str_replace($this->Ambi,"",$this->Min);
+			$this->Nb  = str_replace($this->Ambi,"",$this->Nb);
+			$this->Spe = str_replace($this->Ambi,"",$this->Spe);
 		}
 
 		$this->All = str_shuffle($this->Maj. $this->Min. $this->Nb. $this->Spe);
@@ -148,11 +149,13 @@ class modGeneratePassPerso extends ModeleGenPassword
 			$pass .= $this->All[rand(0,strlen($this->All) -1)];
 		}
 
-		$pass = str_shuffle($pass) ;
+		$pass = str_shuffle($pass);
 
-		if($this->validatePassword($pass)) {
+		if ($this->validatePassword($pass))
+		{
 			return $pass;
 		}
+
 		return $this->getNewGeneratedPassword();
 	}
 
