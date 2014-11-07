@@ -87,8 +87,8 @@
 </td>
 <td>
 <table class="nobordernopadding">
-<tr><td width="30%">
-	<textarea name="param" id="param"><?php echo GETPOST('param'); ?></textarea>
+<tr><td>
+	<textarea name="param" id="param" cols="80" rwos="<?php echo ROWS_4 ?>"><?php echo GETPOST('param'); ?></textarea>
 </td><td id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></td>
 <td id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></td></tr>
 </table>
