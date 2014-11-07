@@ -39,6 +39,7 @@ $langs->load("products");
 $langs->load("orders");
 $langs->load("bills");
 $langs->load("stocks");
+$langs->load("sendings");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 
@@ -331,58 +332,62 @@ if ($id > 0 || $ref)
 		print '</td>';
 		print '</tr>';
 
-		// Calculating a theorical value
+        // Calculating a theorical value
+        print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
+        print "<td>".$product->stock_theorique;
+        if ($product->stock_theorique < $product->seuil_stock_alerte) {
+            print ' '.img_warning($langs->trans("StockLowerThanLimit"));
+        }
+        print '</td>';
+        print '</tr>';
 
-		// If stock if stock increment is done on real sending
-		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
-		{
-			// Stock theorique
-			print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
-			print "<td>".$product->stock_theorique;
-			if ($product->stock_theorique < $product->seuil_stock_alerte)
-			{
-				print ' '.img_warning($langs->trans("StockLowerThanLimit"));
-			}
-			print '</td>';
-			print '</tr>';
+        print '<tr><td>';
+        $text_stock_options = (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)?$langs->trans("DeStockOnShipment").'<br>':'');
+        $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)?$langs->trans("DeStockOnValidateOrder").'<br>':'');
+        $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_BILL)?$langs->trans("DeStockOnBill").'<br>':'');
+        $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)?$langs->trans("ReStockOnBill").'<br>':'');
+        $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)?$langs->trans("ReStockOnValidateOrder").'<br>':'');
+        $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)?$langs->trans("ReStockOnDispatchOrder").'<br>':'');
+        print $form->textwithtooltip($langs->trans("StockDiffPhysicTeoric"),$text_stock_options,2,1,img_picto('', 'info'),'',0);;
+        print '</td>';
+        print '<td>';
 
-			print '<tr><td>';
-			if ($product->stock_theorique != $product->stock_reel) print $langs->trans("StockDiffPhysicTeoric");
-			else print $langs->trans("RunningOrders");
-			print '</td>';
-			print '<td>';
+        $found=0;
 
-			$found=0;
+        // Number of customer orders running
+        if (! empty($conf->commande->enabled))
+        {
+            if ($found) print '<br>'; else $found=1;
+            print $langs->trans("CustomersOrdersRunning").': '.$product->stats_commande['qty'];
+            $result=$product->load_stats_commande(0,'0');
+            if ($result < 0) dol_print_error($db,$product->error);
+            print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
+        }
 
-			// Nbre de commande clients en cours
-			if (! empty($conf->commande->enabled))
-			{
-				if ($found) print '<br>'; else $found=1;
-				print $langs->trans("CustomersOrdersRunning").': '.($product->stats_commande['qty']-$product->stats_sendings['qty']);
-				$result=$product->load_stats_commande(0,'0');
-				if ($result < 0) dol_print_error($db,$product->error);
-				print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
-				//print '<br>';
-				//print $langs->trans("CustomersSendingRunning").': '.$stock_sending_client;
-			}
+        // Number of product from customer order already sent (partial shipping)
+        if (! empty($conf->expedition->enabled)) {
+            if ($found) print '<br>'; else $found=1;
+            $result=$product->load_stats_sending(0,'2');
+            print $langs->trans("SendingRunning").': '.$product->stats_expedition['qty'];
+        }
 
-			// Nbre de commande fournisseurs en cours
-			if (! empty($conf->fournisseur->enabled))
-			{
-				if ($found) print '<br>'; else $found=1;
-				print $langs->trans("SuppliersOrdersRunning").': '.($product->stats_commande_fournisseur['qty']-$product->stats_reception['qty']);
-				$result=$product->load_stats_commande_fournisseur(0,'0,1,2');
-				if ($result < 0) dol_print_error($db,$product->error);
-				print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
-			}
-			print '</td></tr>';
-		}
+        // Number of supplier order running
+        if (! empty($conf->fournisseur->enabled)) {
+            if ($found) print '<br>'; else $found=1;
+            $result=$product->load_stats_commande_fournisseur(0,'3,4');
+            print $langs->trans("SuppliersOrdersRunning").': '.$product->stats_commande_fournisseur['qty'];
+            $result=$product->load_stats_commande_fournisseur(0,'0,1,2');
+            if ($result < 0) dol_print_error($db,$product->error);
+            print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
+        }
 
-		// If stock if stock increment is done on
-		// TODO Add information when stock increment is done on other option
+	    // Number of product from supplier order already received (partial receipt)
+        if (! empty($conf->fournisseur->enabled)) {
+            if ($found) print '<br>'; else $found=1;
+            print $langs->trans("SuppliersReceiptRunning").': '.$product->stats_reception['qty'];
+        }
 
-		// TODO Add also information on possible decrease stock accroding to stock decrease option
-
+        print '</td></tr>';
 
 		// Last movement
 		$sql = "SELECT max(m.datem) as datem";
