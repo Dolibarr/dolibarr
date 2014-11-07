@@ -2525,14 +2525,14 @@ abstract class CommonObject
 		if (! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
-				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
+				print '<td align="right" class="margininfos" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
-				print '<td align="right" width="80">'.$langs->trans('CostPrice').'</td>';
+				print '<td align="right" class="margininfos" width="80">'.$langs->trans('CostPrice').'</td>';
 
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
+				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" width="50">'.$langs->trans('MarkRate').'</td>';
+				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarkRate').'</td>';
 		}
 
 		// Total HT
@@ -3012,11 +3012,16 @@ abstract class CommonObject
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		if (! empty($conf->global->MARGININFO_HIDE_SHOW))
-		{
-			print "<img onclick=\"$('.margininfos').toggle();\" src='".img_picto($langs->trans("Hide")."/".$langs->trans("Show"),'object_margin.png','','',1)."'>";
-			if ($conf->global->MARGININFO_HIDE_SHOW == 2) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';	// hide by default
-		}
+		print $langs->trans('ShowMarginInfos').' : ';
+        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
+    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'':'hideobject').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
+    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'hideobject':'').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
+
+        print '<script>$(document).ready(function() {
+            $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
+            $("span#hideMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
+        });</script>';
+        if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
 
 		print '<table class="nobordernopadding margintable" width="100%">';
 		print '<tr class="liste_titre">';
