@@ -182,7 +182,7 @@ ALTER TABLE llx_product MODIFY COLUMN fk_barcode_type INTEGER NULL DEFAULT NULL;
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type NOT IN (SELECT rowid from llx_c_barcode_type);
-ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
+--ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
 
 
 -- Added missing relations of llx_product_price

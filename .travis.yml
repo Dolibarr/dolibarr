@@ -16,8 +16,8 @@ language: php
 php:
 # - "5.2" is not supported because pyrus to install PHP_Codesniffer is not available
  - "5.3"
- - "5.4"
- - "5.5" 
+# - "5.4"
+# - "5.5" 
 
 env:
  - DB=mysql
