@@ -277,20 +277,14 @@ if ($object->id > 0)
 	print '<tr><td width="30%" nowrap>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
-		print '</table>';
+	print '</table>';
 
-	print '</div>';
+	dol_fiche_end();
 
-	$modulepart = 'actions';
-	$permission = $user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create;
-	$param = '&id=' . $object->id;
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
 
 	if ($action != 'edit')
 	{
-		print "<br>";
-
 		// Link to agenda views
 		print '<div id="agendaviewbutton">';
 		print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
@@ -330,13 +324,23 @@ if ($object->id > 0)
 		print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
 		print '</form>'."\n";
 		print '</div>';
+
+		print '<div style="clear: both"></div>';
+		print "<br><br>";
 	}
+
+
+	$modulepart = 'actions';
+	$permission = $user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create;
+	$param = '&id=' . $object->id;
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {
 	print $langs->trans("ErrorUnknown");
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
