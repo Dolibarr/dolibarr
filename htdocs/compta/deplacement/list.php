@@ -115,7 +115,7 @@ if ($month > 0)
 }
 else if ($year > 0)
 {
-	$sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+	$sql.= " AND d.dated BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 
 $sql.= $db->order($sortfield,$sortorder);
