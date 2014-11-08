@@ -2220,8 +2220,6 @@ class User extends CommonObject
 	 * 	Reconstruit l'arborescence hierarchique des users sous la forme d'un tableau
 	 *	Renvoi un tableau de tableau('id','id_parent',...) trie selon arbre et avec:
 	 *				id = id du user
-	 *				id_parent = id du user parent
-	 *				id_children = tableau des id enfant
 	 *				name = nom du user
 	 *				fullname = nom avec chemin complet du user
 	 *				fullpath = chemin complet compose des id
@@ -2304,6 +2302,29 @@ class User extends CommonObject
 		//$this->debug_users();
 
 		return $this->users;
+	}
+
+	/**
+	 * 	Return list of all childs users in herarchy.
+	 *
+	 *	@return		array		      		  	Array of user id lower than user. This overwrite this->users.
+	 */
+	function getAllChildIds()
+	{
+		// Init this->users
+		$this->get_full_tree();
+
+		$idtoscan=$this->id;
+		$childids=array();
+
+		dol_syslog("Build childid for id = ".$idtoscan);
+		foreach($this->users as $id => $val)
+		{
+			//var_dump($val['fullpath']);
+			if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) $childids[$val['id']]=$val['id'];
+		}
+
+		return $childids;
 	}
 
 	/**

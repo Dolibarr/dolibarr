@@ -159,7 +159,7 @@ print $total;
 print '</td></tr>';
 print '</table>';
 
-if (! empty($conf->categorie->enabled))
+if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES))
 {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';

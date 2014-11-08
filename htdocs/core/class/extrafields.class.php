@@ -154,7 +154,7 @@ class ExtraFields
 	{
 		$table=$elementtype.'_extrafields';
 
-		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
+		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9_]*$/",$attrname) && ! is_numeric($attrname))
 		{
 			if ($type=='boolean') {
 				$typedb='int';
@@ -743,15 +743,17 @@ class ExtraFields
 					if (strpos($InfoFieldList[4], 'extra')!==false)
 					{
 						$sql.= ' as main, '.MAIN_DB_PREFIX .$InfoFieldList[0].'_extrafields as extra';
-						$sqlwhere.= ' AND extra.fk_object=main.'.$InfoFieldList[2]. ' AND '.$InfoFieldList[4];
+						$sqlwhere.= ' WHERE extra.fk_object=main.'.$InfoFieldList[2]. ' AND '.$InfoFieldList[4];
 					}
 					else
 					{
-						$sqlwhere.= ' AND '.$InfoFieldList[4];
+						$sqlwhere.= ' WHERE '.$InfoFieldList[4];
 					}
+				}else {
+					$sqlwhere.= ' WHERE 1';
 				}
 				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
-				$sql.=preg_replace('/^ AND /','',$sqlwhere);
+				//$sql.=preg_replace('/^ AND /','',$sqlwhere);
 				//print $sql;
 
 				dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
@@ -979,7 +981,10 @@ class ExtraFields
 				{
 					foreach ($fields_label as $field_toshow)
 					{
-						$translabel=$langs->trans($obj->$field_toshow);
+						$translabel='';
+						if (!empty($obj->$field_toshow)) {
+							$translabel=$langs->trans($obj->$field_toshow);
+						}
 						if ($translabel!=$field_toshow) {
 							$value.=dol_trunc($translabel,18).' ';
 						}else {
@@ -989,7 +994,10 @@ class ExtraFields
 				}
 				else
 				{
-					$translabel=$langs->trans($obj->$InfoFieldList[1]);
+					$translabel='';
+					if (!empty($obj->$InfoFieldList[1])) {
+						$translabel=$langs->trans($obj->$InfoFieldList[1]);
+					}
 					if ($translabel!=$obj->$InfoFieldList[1]) {
 						$value=dol_trunc($translabel,18);
 					}else {
