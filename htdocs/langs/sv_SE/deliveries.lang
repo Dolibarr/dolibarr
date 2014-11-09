@@ -24,3 +24,5 @@ Deliverer=Utlämnad av:
 Sender=Avsändare
 Recipient=Mottagare
 ErrorStockIsNotEnough=Det finns inte tillräckligt i lager
+Shippable=Sändbara
+NonShippable=Inte sändbara

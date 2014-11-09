@@ -14,7 +14,7 @@ TasksDesc=هذا الرأي يعرض جميع المشاريع والمهام (�
 Myprojects=بلدي المشاريع
 ProjectsArea=مشاريع المنطقة
 NewProject=مشروع جديد
-AddProject=يضيف المشروع
+AddProject=إنشاء مشروع
 DeleteAProject=حذف مشروع
 DeleteATask=حذف مهمة
 ConfirmDeleteAProject=هل أنت متأكد من أنك تريد حذف هذا المشروع؟
@@ -45,7 +45,7 @@ TaskDateStart=Task start date
 TaskDateEnd=Task end date
 TaskDescription=Task description
 NewTask=مهمة جديدة
-AddTask=إضافة مهمة
+AddTask=خلق مهمة
 AddDuration=تضاف المدة
 Activity=النشاط
 Activities=المهام والأنشطة
@@ -85,18 +85,18 @@ ActionsOnProject=الإجراءات على المشروع
 YouAreNotContactOfProject=كنت لا اتصال لهذا المشروع الخاص
 DeleteATimeSpent=قضى الوقت حذف
 ConfirmDeleteATimeSpent=هل أنت متأكد أنك تريد حذف هذا الوقت الذي يقضيه؟
-DoNotShowMyTasksOnly=See also tasks not assigned to me
-ShowMyTasksOnly=View only tasks assigned to me
+DoNotShowMyTasksOnly=انظر أيضا المهام  الغير موكلة الي
+ShowMyTasksOnly=عرض فقط المهام الموكلة الي
 TaskRessourceLinks=ملتقيات
 ProjectsDedicatedToThisThirdParty=مشاريع مخصصة لهذا الطرف الثالث
 NoTasks=أية مهام لهذا المشروع
 LinkedToAnotherCompany=ربط طرف ثالث آخر
-TaskIsNotAffectedToYou=Task not assigned to you
+TaskIsNotAffectedToYou=مهمة غيرموكلة اليك
 ErrorTimeSpentIsEmpty=الوقت الذي يقضيه فارغة
 ThisWillAlsoRemoveTasks=وهذا العمل أيضا حذف كافة مهام المشروع <b>(%s</b> المهام في الوقت الحاضر) وجميع المدخلات من الوقت الذي تستغرقه.
 IfNeedToUseOhterObjectKeepEmpty=إذا كانت بعض الكائنات (فاتورة، والنظام، ...)، الذين ينتمون إلى طرف ثالث آخر، يجب أن تكون مرتبطة بمشروع لإنشاء، والحفاظ على هذا فارغة لديها مشروع كونها متعددة الأطراف الثالثة.
-CloneProject=Clone project
-CloneTasks=Clone tasks
+CloneProject=استنساخ المشروع
+CloneTasks=استنساخ المهام
 CloneContacts=Clone contacts
 CloneNotes=Clone notes
 CloneProjectFiles=Clone project joined files

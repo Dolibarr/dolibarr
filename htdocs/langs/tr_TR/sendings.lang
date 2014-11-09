@@ -74,5 +74,5 @@ SumOfProductVolumes=Ürün hacimleri toplamı
 SumOfProductWeights=Ürün ağırlıkları toplamı
 
 # warehouse details
-DetailWarehouseNumber= Warehouse details
-DetailWarehouseFormat= W:%s (Qty : %d)
+DetailWarehouseNumber= Depo ayrıntıları
+DetailWarehouseFormat= Ağ:%s (Mik : %d)
