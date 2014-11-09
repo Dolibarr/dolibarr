@@ -53,12 +53,14 @@ before_script:
  - sh -c "if [ '$PHPV' = '5.3' ]; then echo 'zend_extension_ts = xdebug.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
  - sh -c "if [ '$PHPV' = '5.4' ]; then echo 'zend_extension_ts = xdebug.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
  - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - echo Mysql version
+ - mysql --version
  - echo Init database
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE myapp_test;' -U postgres; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'DROP DATABASE IF EXISTS myapp_test;'; fi"
  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE IF NOT EXISTS myapp_test;'; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then mysql -D myapp_test < $(pwd)/dev/initdata/mysqldump_dolibarr_3.4.0.sql; fi"
+ - sh -c "if [ '$DB' = 'mysql' ]; then mysql -D myapp_test < $(pwd)/dev/initdata/mysqldump_dolibarr_3.5.0.sql; fi"
  - echo Create config file htdocs/conf/conf.php
  - echo '<?php ' > htdocs/conf/conf.php
  - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$'dolibarr_main_db_type=\'pgsql\'';' >> htdocs/conf/conf.php; fi"
@@ -88,12 +90,12 @@ before_script:
 script: 
  - cd htdocs/install
  - date
- - php upgrade.php 3.4.0 3.5.0 > upgrade.log
- - php upgrade2.php 3.4.0 3.5.0 > upgrade2.log
+# - php upgrade.php 3.4.0 3.5.0 > upgrade.log
+# - php upgrade2.php 3.4.0 3.5.0 > upgrade2.log
  - php upgrade.php 3.5.0 3.6.0 >> upgrade.log
  - php upgrade2.php 3.5.0 3.6.0 >> upgrade2.log
- - php upgrade.php 3.6.0 3.7.0 >> upgrade360370.log
- - cat upgrade360370.log
+ - php upgrade.php 3.6.0 3.7.0 >> upgrade.log
+# - cat upgrade360370.log
  - php upgrade2.php 3.6.0 3.7.0 >> upgrade2.log
 # - cat upgrade2.log
  - cd ../..

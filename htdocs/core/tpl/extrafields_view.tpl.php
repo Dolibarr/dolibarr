@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
  * $conf
@@ -49,21 +49,30 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 			print '<table width="100%" class="nobordernopadding"><tr><td';
 			if (! empty($extrafields->attribute_required [$key])) print ' class="fieldrequired"';
 			print '>' . $label . '</td>';
-			
+
 			//TODO Improve element and rights detection
-			if (($object->statut == 0 || $extrafields->attribute_alwayseditable[$key]) && ($object->element=='order_supplier'?$user->rights->fournisseur>commande:($object->element=='invoice_supplier'?$user->rights->fournisseur>facture:$user->rights->{$object->element}->creer)) && ($action != 'edit_extras' || GETPOST('attribute') != $key))
+			//var_dump($user->rights);
+			$permok=false;
+			$keyforperm=$object->element;
+			if ($object->element == 'fichinter') $keyforperm='ficheinter';
+			if (isset($user->rights->$keyforperm)) $permok=$user->rights->$keyforperm->creer||$user->rights->$keyforperm->create||$user->rights->$keyforperm->write;
+			if ($object->element=='order_supplier') $permok=$user->rights->fournisseur->commande->creer;
+			if ($object->element=='invoice_supplier') $permok=$user->rights->fournisseur->facture->creer;
+
+			if (($object->statut == 0 || $extrafields->attribute_alwayseditable[$key])
+				&& $permok && ($action != 'edit_extras' || GETPOST('attribute') != $key))
 				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
-			
+
 			print '</tr></table>';
 			print '<td colspan="5">';
-			
+
 			// Convert date into timestamp format
 			if (in_array($extrafields->attribute_type [$key], array('date','datetime'))) {
 				$value = isset($_POST ["options_" . $key]) ? dol_mktime($_POST ["options_" . $key . "hour"], $_POST ["options_" . $key . "min"], 0, $_POST ["options_" . $key . "month"], $_POST ["options_" . $key . "day"], $_POST ["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
 			}
-			
+
 			//TODO Improve element and rights detection
-			if ($action == 'edit_extras' && ($object->element=='order_supplier'?$user->rights->fournisseur>commande:($object->element=='invoice_supplier'?$user->rights->fournisseur>facture:$user->rights->{$object->element}->creer)) && GETPOST('attribute') == $key)
+			if ($action == 'edit_extras' && $permok && GETPOST('attribute') == $key)
 			{
 				print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';

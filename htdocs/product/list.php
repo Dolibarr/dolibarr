@@ -510,7 +510,7 @@ else
                 $product_static->status_buy = $objp->tobuy;
                 $product_static->status     = $objp->tosell;
                 // Status (to sell)
-                print '<td align="right" nowrap="nowrap">';
+                print '<td align="center" nowrap="nowrap">';
                 if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
                     print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
                 } else {
@@ -519,7 +519,7 @@ else
                 print '</td>';
 
                 // Status (to buy)
-                print '<td align="right" nowrap="nowrap">';
+                print '<td align="center" nowrap="nowrap">';
                 if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
                     print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
                 } else {

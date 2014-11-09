@@ -146,7 +146,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function create($user)
     {
-        global $langs,$conf;
+        global $langs,$conf,$hookmanager;
 
 		$error=0;
         $now=dol_now();
