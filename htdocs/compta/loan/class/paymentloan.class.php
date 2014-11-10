@@ -39,8 +39,10 @@ class PaymentLoan extends CommonObject
 	var $datec='';
 	var $tms='';
 	var $datep='';
-    var $amount;            // Total amount of payment
     var $amounts=array();   // Array of amounts
+    var $amount_capital;    // Total amount of payment
+	var $amount_insurance;
+	var $amount_interest;
 	var $fk_typepayment;
 	var $num_payment;
 	var $note;
@@ -82,7 +84,9 @@ class PaymentLoan extends CommonObject
 
 		// Clean parameters
 		if (isset($this->fk_loan)) 			$this->fk_loan = trim($this->fk_loan);
-		if (isset($this->amount))			$this->amount = trim($this->amount);
+		if (isset($this->amount_capital))	$this->amount_capital = trim($this->amount_capital);
+		if (isset($this->amount_insurance))	$this->amount_insurance = trim($this->amount_insurance);
+		if (isset($this->amount_interest))	$this->amount_interest = trim($this->amount_interest);
 		if (isset($this->fk_typepayment))	$this->fk_typepayment = trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment = trim($this->num_payment);
 		if (isset($this->note))				$this->note = trim($this->note);
@@ -107,7 +111,7 @@ class PaymentLoan extends CommonObject
 
 		if ($totalamount != 0)
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_loan (fk_loan, datec, datep, amount,";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_loan (fk_loan, datec, datep, amount_capital, amount_insurance, amount_interest,";
 			$sql.= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
 			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaid)."',";
@@ -130,7 +134,7 @@ class PaymentLoan extends CommonObject
 
 		if ($totalamount != 0 && ! $error)
 		{
-		    $this->amount=$totalamount;
+		    $this->amount_capital=$totalamount;
             $this->total=$totalamount;    // deprecated
 		    $this->db->commit();
 			return $this->id;
@@ -158,7 +162,9 @@ class PaymentLoan extends CommonObject
 		$sql.= " t.datec,";
 		$sql.= " t.tms,";
 		$sql.= " t.datep,";
-		$sql.= " t.amount,";
+		$sql.= " t.amount_capital,";
+		$sql.= " t.amount_insurance,";
+		$sql.= " t.amount_interest,";
 		$sql.= " t.fk_typepayment,";
 		$sql.= " t.num_payment,";
 		$sql.= " t.note,";
@@ -186,7 +192,9 @@ class PaymentLoan extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->datep = $this->db->jdate($obj->datep);
-				$this->amount = $obj->amount;
+				$this->amount_capital = $obj->amount_capital;
+				$this->amount_insurance = $obj->amount_insurance;
+				$this->amount_interest = $obj->amount_interest;
 				$this->fk_typepayment = $obj->fk_typepayment;
 				$this->num_payment = $obj->num_payment;
 				$this->note = $obj->note;
@@ -225,9 +233,10 @@ class PaymentLoan extends CommonObject
 		$error=0;
 
 		// Clean parameters
-
 		if (isset($this->fk_loan)) $this->fk_loan=trim($this->fk_loan);
-		if (isset($this->amount)) $this->amount=trim($this->amount);
+		if (isset($this->amount_capital)) $this->amount_capital=trim($this->amount_capital);
+		if (isset($this->amount_insurance)) $this->amount_insurance=trim($this->amount_insurance);
+		if (isset($this->amount_interest)) $this->amount_interest=trim($this->amount_interest);
 		if (isset($this->fk_typepayment)) $this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment)) $this->num_payment=trim($this->num_payment);
 		if (isset($this->note)) $this->note=trim($this->note);
@@ -245,7 +254,9 @@ class PaymentLoan extends CommonObject
 		$sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql.= " datep=".(dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";
+		$sql.= " amount_capital=".(isset($this->amount_capital)?$this->amount_capital:"null").",";
+		$sql.= " amount_insurance=".(isset($this->amount_insurance)?$this->amount_insurance:"null").",";
+		$sql.= " amount_interest=".(isset($this->amount_interest)?$this->amount_interest:"null").",";
 		$sql.= " fk_typepayment=".(isset($this->fk_typepayment)?$this->fk_typepayment:"null").",";
 		$sql.= " num_payment=".(isset($this->num_payment)?"'".$this->db->escape($this->num_payment)."'":"null").",";
 		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";

@@ -47,6 +47,7 @@ $limit = $conf->liste_limit;
 
 $search_ref=GETPOST('search_ref','int');
 $search_label=GETPOST('search_label','alpha');
+$search_amount=GETPOST('search_amount','alpha');
 $filtre=GETPOST("filtre");
 
 if (GETPOST("button_removefilter"))
@@ -60,36 +61,37 @@ if (GETPOST("button_removefilter"))
  *	View
  */
 
-$loan = new Loan($db);
+$loan_static = new Loan($db);
 
 llxHeader();
 
 $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend,";
-$sql.= " SUM(pl.amount) as alreadypayed";
-$sql.= " FROM ".MAIN_DB_PREFIX."loan as l,";
-$sql.= " ".MAIN_DB_PREFIX."payment_loan as pl";
-$sql.= " WHERE pl.fk_loan = l.rowid";
-$sql.= " AND l.entity = ".$conf->entity;
-if (GETPOST("search_ref")) $sql.=" AND (l.rowid = ".$db->escape($search_ref).")";
-if (GETPOST("search_label")) $sql.=" AND l.label LIKE '%".$db->escape($search_label)."%'";
-
+$sql.= " SUM(pl.amount_capital) as alreadypayed";
+$sql.= " FROM ".MAIN_DB_PREFIX."loan as l LEFT JOIN ".MAIN_DB_PREFIX."payment_loan AS pl";
+$sql.= " ON l.rowid = pl.fk_loan";
+$sql.= " WHERE l.entity = ".$conf->entity;
+if ($search_amount)	$sql.=" AND l.capital='".$db->escape(price2num(trim($search_amount)))."'";
+if ($search_ref) 	$sql.=" AND l.rowid = ".$db->escape($search_ref);
+if ($search_label)	$sql.=" AND l.label LIKE '%".$db->escape($search_label)."%'";
 if ($filtre) {
     $filtre=str_replace(":","=",$filtre);
     $sql .= " AND ".$filtre;
 }
+$sql.= " GROUP BY l.rowid, l.label, l.capital, l.datestart, l.dateend";
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($limit + 1, $offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 //print $sql;
 $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
+	$i = 0;
+	$var=true;
 
 	print_fiche_titre($langs->trans("Loans"));
 
-	$i = 0;
-    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"l.rowid","",$param,"",$sortfield,$sortorder);
@@ -101,9 +103,9 @@ if ($resql)
 
 	// Filters lines
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.GETPOST("search_label").'"></td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre"><input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'"></td>';
+	print '<td class="liste_titre"><input class="flat" size="12" type="text" name="search_label" value="'.$search_label.'"></td>';
+	print '<td class="liste_titre" align="right" ><input class="flat" size="8" type="text" name="search_amount" value="'.$search_amount.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -111,19 +113,15 @@ if ($resql)
 	print '</td>';
 	print '</tr>';
 	
-	$var=true;
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-
+		
 		$var = !$var;
 		print "<tr ".$bc[$var].">";
 
 		// Ref
-		print '<td width="60">';
-		$loan->id = $obj->id;
-		print $loan->getNameUrl(1,'20');
-		print '</td>';
+		print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowLoan"),"label").' '.$obj->rowid.'</a></td>';
 
 		// Label
 		print '<td>'.dol_trunc($obj->label,42).'</td>';
@@ -134,7 +132,7 @@ if ($resql)
 		// Date start
 		print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->datestart), 'day').'</td>';
 
-		print '<td align="right" class="nowrap">'.$loan->LibStatut($obj->paid,5,$obj->alreadypayed).'</a></td>';
+		print '<td align="right" class="nowrap">'.$loan_static->LibStatut($obj->paid,5,$obj->alreadypayed).'</a></td>';
 
         print "</tr>\n";
 		

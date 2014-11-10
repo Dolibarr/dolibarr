@@ -263,8 +263,8 @@ class Loan extends CommonObject
     /**
      *      Update loan
      *
-     *      @param	User	$user   Utilisateur qui modifie
-     *      @return int     		<0 si erreur, >0 si ok
+     *      @param	User	$user   User who modified
+     *      @return int     		<0 if error, >0 if ok
      */
     function update($user)
     {
@@ -273,7 +273,8 @@ class Loan extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."loan";
         $sql.= " SET label='".$this->db->escape($this->label)."',";
         $sql.= " datestart='".$this->db->idate($this->datestart)."',";
-        $sql.= " dateend='".$this->db->idate($this->dateend)."'";
+        $sql.= " dateend='".$this->db->idate($this->dateend)."',";
+		$sql.= " fk_user_modif = ".$user->id;
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -379,7 +380,7 @@ class Loan extends CommonObject
      * 	@param	int		$maxlen			Label max length
      *	@return	string					Chaine with URL
      */
-    function getNameUrl($withpicto=0,$maxlen=0)
+    function getLinkUrl($withpicto=0,$maxlen=0)
     {
         global $langs;
 
@@ -432,40 +433,43 @@ class Loan extends CommonObject
 	 * @param	int		$id      Id of record
 	 * @return	void
 	 */
-    function info($id)
-    {
-        $sql = "SELECT l.rowid, l.tms as datem, l.fk_user_author as user_author, l.datec as datec";
-        $sql.= " FROM ".MAIN_DB_PREFIX."loan as l";
-        $sql.= " WHERE l.rowid = ".$id;
+	function info($id)
+	{
+		$sql = 'SELECT l.rowid, l.datec, l.fk_user_author, l.fk_user_modif,';
+		$sql.= ' l.tms';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'loan as l';
+		$sql.= ' WHERE l.rowid = '.$id;
 
-        dol_syslog(get_class($this)."::info", LOG_DEBUG);
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result))
-            {
-                $obj = $this->db->fetch_object($result);
+		dol_syslog(get_class($this).'::info', LOG_DEBUG);
+		$result = $this->db->query($sql);
 
-                $this->id = $obj->rowid;
-
-                if ($obj->user_author) {
-                    $cuser = new User($this->db);
-                    $cuser->fetch($obj->user_author);
-                    $this->user_creation = $cuser;
-                }
-
-                $this->date_creation     = $this->db->jdate($obj->datec);
-                $this->date_modification = $this->db->jdate($obj->datem);
-
-            }
-
-            $this->db->free($result);
-
-        }
-        else
-        {
-            dol_print_error($this->db);
-        }
-    }
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation = $cuser;
+				}
+				if ($obj->fk_user_modif)
+				{
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
+				}
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				if (empty($obj->fk_user_modif)) $obj->tms = "";
+				$this->date_modification = $this->db->jdate($obj->tms);
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
 }
-

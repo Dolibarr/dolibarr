@@ -118,7 +118,6 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->loan->wri
 llxHeader();
 
 $loan = new Loan($db);
-
 $form = new Form($db);
 
 $h=0;
@@ -168,7 +167,9 @@ print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$lan
 print '<tr><td valign="top">'.$langs->trans('Number').'</td><td colspan="3">'.$payment->num_payment.'</td></tr>';
 
 // Amount
-print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($payment->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Capital').'</td><td colspan="3">'.price($payment->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Insurance').'</td><td colspan="3">'.price($payment->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Interest').'</td><td colspan="3">'.price($payment->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
 print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($payment->note).'</td></tr>';
@@ -198,7 +199,7 @@ print '</table>';
  */
 
 $disable_delete = 0;
-$sql = 'SELECT l.rowid as id, l.label, l.paid, l.capital as capital, pl.amount';
+$sql = 'SELECT l.rowid as id, l.label, l.paid, l.capital as capital, pl.amount_capital, pl.amount_insurance, pl.amount_interest';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'payment_loan as pl,'.MAIN_DB_PREFIX.'loan as l';
 $sql.= ' WHERE pl.fk_loan = l.rowid';
 $sql.= ' AND l.entity = '.$conf->entity;
@@ -234,22 +235,22 @@ if ($resql)
 			// Ref
 			print '<td>';
 			$loan->fetch($objp->id);
-			print $loan->getNameUrl(1);
+			print $loan->getLinkUrl(1);
 			print "</td>\n";
 			// Label
 			print '<td>'.$objp->label.'</td>';
 			// Expected to pay
 			print '<td align="right">'.price($objp->capital).'</td>';
 			// Status
-			print '<td align="center">'.$loan->getLibStatut(4,$objp->amount).'</td>';
+			print '<td align="center">'.$loan->getLibStatut(4,$objp->amount_capital).'</td>';
 			// Amount payed
-			print '<td align="right">'.price($objp->amount).'</td>';
+			print '<td align="right">'.price($objp->amount_capital).'</td>';
 			print "</tr>\n";
-			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete
+			if ($objp->paid == 1)	// If at least one invoice is paid, disable delete
 			{
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount;
+			$total = $total + $objp->amount_capital;
 			$i++;
 		}
 	}
@@ -267,7 +268,7 @@ print '</div>';
 
 
 /*
- * Boutons Actions
+ * Actions buttons
  */
 print '<div class="tabsAction">';
 

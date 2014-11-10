@@ -29,9 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->load("bills");
 $langs->load("loan");
 
-$chid=GETPOST("id");
+$chid=GETPOST('id','int');
 $action=GETPOST('action');
 $amounts = array();
+$cancel=GETPOST('cancel','alpha');
 
 // Security check
 $socid=0;
@@ -47,7 +48,7 @@ if ($action == 'add_payment')
 {
 	$error=0;
 
-	if ($_POST["cancel"])
+	if ($cancel)
 	{
 		$loc = DOL_URL_ROOT.'/compta/loan/card.php?id='.$chid;
 		header("Location: ".$loc);
@@ -98,12 +99,15 @@ if ($action == 'add_payment')
 
     		// Create a line of payments
     		$payment = new PaymentLoan($db);
-    		$payment->chid         = $chid;
-    		$payment->datepaid     = $datepaid;
-    		$payment->amounts      = $amounts;   // Tableau de montant
-    		$payment->paymenttype  = $_POST["paymenttype"];
-    		$payment->num_payment  = $_POST["num_payment"];
-    		$payment->note         = $_POST["note"];
+    		$payment->chid				= $chid;
+    		$payment->datepaid			= $datepaid;
+    		$payment->amounts			= $amounts;   // Tableau de montant
+			$payment->amount_capital	= $_POST["amount_capital"];
+			$payment->amount_insurance	= $_POST["amount_insurance"];
+			$payment->amount_interest	= $_POST["amount_interest"];
+			$payment->paymenttype		= $_POST["paymenttype"];
+    		$payment->num_payment		= $_POST["num_payment"];
+    		$payment->note				= $_POST["note"];
 
     		if (! $error)
     		{
@@ -177,12 +181,12 @@ if ($_GET["action"] == 'create')
 
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 
-	print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Loan")."</td>";
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Loan").'</td>';
 
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/compta/loan/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
-	print '<tr><td>'.$langs->trans("DateStart")."</td><td colspan=\"2\">".dol_print_date($loan->datestart,'day')."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="2">'.dol_print_date($loan->datestart,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$loan->label."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Amount")."</td><td colspan=\"2\">".price($loan->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($loan->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p";
@@ -204,7 +208,7 @@ if ($_GET["action"] == 'create')
 	
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 	print '<tr class="liste_titre">';
-	print "<td colspan=\"3\">".$langs->trans("Payment").'</td>';
+	print '<td colspan="3">'.$langs->trans("Payment").'</td>';
 	print '</tr>';
 
 	print '<tr><td  width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
@@ -249,10 +253,10 @@ if ($_GET["action"] == 'create')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$langs->trans("DateDue").'</td>';
-	print '<td align="right">'.$langs->trans("Amount").'</td>';
+	print '<td align="right">'.$langs->trans("Capital").'</td>';
 	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td align="center">'.$langs->trans("Amount").'</td>';
+	print '<td align="right">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
 	$var=True;
@@ -269,24 +273,44 @@ if ($_GET["action"] == 'create')
 
 		if ($objp->datestart > 0)
 		{
-			print "<td align=\"left\">".dol_print_date($objp->datestart,'day')."</td>\n";
+			print '<td align="left" valign="center">'.dol_print_date($objp->datestart,'day').'</td>';
 		}
 		else
 		{
-			print "<td align=\"center\"><b>!!!</b></td>\n";
+			print '<td align="center" valign="center"><b>!!!</b></td>';
 		}
 
-		print '<td align="right">'.price($objp->capital)."</td>";
+		print '<td align="right" valign="center">'.price($objp->capital)."</td>";
 
-		print '<td align="right">'.price($sumpaid)."</td>";
+		print '<td align="right" valign="center">'.price($sumpaid)."</td>";
 
-		print '<td align="right">'.price($objp->capital - $sumpaid)."</td>";
+		print '<td align="right" valign="center">'.price($objp->capital - $sumpaid)."</td>";
 
-		print '<td align="center">';
+		print '<td align="right">';
 		if ($sumpaid < $objp->capital)
 		{
-			$namef = "amount_".$objp->id;
-			print '<input type="text" size="8" name="'.$namef.'">';
+			$namec = "amount_capital_".$objp->id;
+			print $langs->trans("Capital") .': <input type="text" size="8" name="'.$namec.'">';
+		}
+		else
+		{
+			print '-';
+		}
+		print '<br>';		
+		if ($sumpaid < $objp->capital)
+		{
+			$namea = "amount_insurance_".$objp->id;
+			print $langs->trans("Insurance") .': <input type="text" size="8" name="'.$namea.'">';
+		}
+		else
+		{
+			print '-';
+		}
+		print '<br>';		
+		if ($sumpaid < $objp->capital)
+		{
+			$namei = "amount_interest_".$objp->id;
+			print $langs->trans("Interest") .': <input type="text" size="8" name="'.$namei.'">';
 		}
 		else
 		{
@@ -305,9 +329,9 @@ if ($_GET["action"] == 'create')
 		// Print total
 		print "<tr ".$bc[!$var].">";
 		print '<td colspan="2" align="left">'.$langs->trans("Total").':</td>';
-		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
-		print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
-		print "<td align=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
+		print '<td align="right"><b>"'.price($total_ttc).'"</b></td>';
+		print '<td align="right"><b>"'.price($totalrecu).'"</b></td>';
+		print '<td align="right"><b>"'.price($total_ttc - $totalrecu).'"</b></td>';
 		print '<td align="center">&nbsp;</td>';
 		print "</tr>\n";
 	}

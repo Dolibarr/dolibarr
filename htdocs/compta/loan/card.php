@@ -33,12 +33,14 @@ $langs->load("loan");
 $id=GETPOST('id','int');
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'loan', $id, '','');
+
+$object = new Loan($db);
 
 /*
  * Actions
@@ -47,7 +49,6 @@ $result = restrictedArea($user, 'loan', $id, '','');
 // Classify paid
 if ($action == 'confirm_paid' && $confirm == 'yes')
 {
-	$object = new Loan($db);
 	$object->fetch($id);
 	$result = $object->set_paid($user);
 }
@@ -55,7 +56,6 @@ if ($action == 'confirm_paid' && $confirm == 'yes')
 // Delete loan
 if ($action == 'confirm_delete' && $confirm == 'yes')
 {
-	$object = new Loan($db);
 	$object->fetch($id);
 	$result=$object->delete($user);
 	if ($result > 0)
@@ -72,86 +72,88 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 // Add loan
 if ($action == 'add' && $user->rights->loan->write)
 {
-	$datestart=@dol_mktime(12,0,0, $_POST["startmonth"], $_POST["startday"], $_POST["startyear"]);
-	$dateend=@dol_mktime(12,0,0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-	
-	if (! $datestart)
+	if (! $cancel)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
-		$action = 'create';
-	}
-	elseif (! $dateend)
-	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")), 'errors');
-		$action = 'create';
-	}
-	elseif (! $_POST["capital"])
-	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Capital")), 'errors');
-		$action = 'create';
-	}
-	else
-	{
-		$object = new Loan($db);
-
-		$object->label		= $_POST["label"];
-		$object->fk_bank	= $_POST["accountid"];
-		$object->capital	= $_POST["capital"];
-		$object->datestart	= $datestart;
-		$object->dateend	= $dateend;
-		$object->nbterm		= $_POST["nbterm"];
-		$object->rate		= $_POST["rate"];
+		$datestart=@dol_mktime(12,0,0, $_POST["startmonth"], $_POST["startday"], $_POST["startyear"]);
+		$dateend=@dol_mktime(12,0,0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 		
-		$object->account_capital	= $_POST["accountancy_account_capital"];
-		$object->account_insurance	= $_POST["accountancy_account_insurance"];
-		$object->account_interest	= $_POST["accountancy_account_interest"];		
-
-		$id=$object->create($user);
-		if ($id <= 0)
+		if (! $datestart)
 		{
-			setEventMessage($object->error, 'errors');
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
+			$action = 'create';
 		}
-	}
-}
-
-
-if ($action == 'update' && ! $cancel && $user->rights->loan->write)
-{
-	$datestart=dol_mktime(12,0,0, $GETPOST("startmonth"), $GETPOST("startday"), $GETPOST("startyear"));
-	$dateend=dol_mktime(12,0,0, $GETPOST("endmonth"), $GETPOST("endday"), $GETPOST("endyear"));
-	if (! $datestart)
-	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
-		$action = 'edit';
-	}
-	elseif (! $dateend)
-	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")), 'errors');
-		$action = 'edit';
-	}
-	else
-	{
-		$object = new Loan($db);
-		if ($object->fetch($id))
+		elseif (! $dateend)
 		{
-			$object->label		= $GETPOST("label");
-			$object->datestart	= $datestart;
-			$object->dateend	= $dateend;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")), 'errors');
+			$action = 'create';
 		}
-		
-		if ($object->update($id, $user) > 0)
+		elseif (! $_POST["capital"])
 		{
-			$action = '';
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Capital")), 'errors');
+			$action = 'create';
 		}
 		else
 		{
-			$action = 'edit';
-			setEventMessage($object->error, 'errors');
+			$object->label		= $_POST["label"];
+			$object->fk_bank	= $_POST["accountid"];
+			$object->capital	= $_POST["capital"];
+			$object->datestart	= $datestart;
+			$object->dateend	= $dateend;
+			$object->nbterm		= $_POST["nbterm"];
+			$object->rate		= $_POST["rate"];
+			
+			$object->account_capital	= $_POST["accountancy_account_capital"];
+			$object->account_insurance	= $_POST["accountancy_account_insurance"];
+			$object->account_interest	= $_POST["accountancy_account_interest"];		
+
+			$id=$object->create($user);
+			if ($id <= 0)
+			{
+				setEventMessage($object->error, 'errors');
+			}
 		}
+	}
+	else
+	{
+		header("Location: index.php");
+		exit();
 	}
 }
 
+// Update record
+else if ($action == 'update' && $user->rights->loan->write)
+{
+	if (! $cancel)
+	{
+		$result = $object->fetch($id);
+			
+		if ($object->fetch($id))
+		{
+			$object->label		= GETPOST("label");
+			$object->datestart	= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
+			$object->dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
+			$object->nbterm		= GETPOST("nbterm");
+			$object->rate		= GETPOST("rate");
+		}
+			
+        $result = $object->update($user);
 
+        if ($result > 0)
+        {
+            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+            exit;
+        }
+        else
+        {
+	        setEventMessage($object->error, 'errors');
+        }
+    }
+    else
+    {
+        header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+        exit;
+    }
+}
 
 /*
  * View
@@ -212,10 +214,10 @@ if ($action == 'create')
     print '</td></tr>';
 	
 	// Number of terms
-	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="4" value="' . GETPOST('nbterm') . '"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="' . GETPOST('nbterm') . '"></td></tr>';
 			
 	// Rate
-    print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="10" value="' . GETPOST("rate") . '"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . GETPOST("rate") . '"> %</td></tr>';
 
 	// Note
     print '<tr>';
@@ -273,7 +275,6 @@ if ($action == 'create')
 // View
 if ($id > 0)
 {
-	$object = new Loan($db);
     $result = $object->fetch($id);
 
 	if ($result > 0)
@@ -297,8 +298,10 @@ if ($id > 0)
 
 		if ($action == 'edit')
 		{
-			print '<form name="loan" action="' . $_SERVER["PHP_SELF"] . '?id=$object->id&amp;action=update" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="action" value="update">';
+            print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
 		print '<table class="border" width="100%">';
@@ -353,7 +356,7 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("Nbterms").'</td><td>'.$object->nbterm.'</td></tr>';
 		
 		// Rate
-		print '<tr><td>'.$langs->trans("Rate").'</td><td>'.$object->rate.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Rate").'</td><td>'.$object->rate.' %</td></tr>';
 
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
@@ -378,8 +381,9 @@ if ($id > 0)
 		/*
 		 * Payments
 		 */
-		$sql = "SELECT p.rowid, p.num_payment, datep as dp, p.amount,";
-		$sql.= "c.libelle as paiement_type";
+		$sql = "SELECT p.rowid, p.num_payment, datep as dp,";
+		$sql.= " p.amount_capital, p.amount_insurance, p.amount_interest,";
+		$sql.= " c.libelle as paiement_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p";
 		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 		$sql.= ", ".MAIN_DB_PREFIX."loan as l";
@@ -400,7 +404,9 @@ if ($id > 0)
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
-      		print '<td align="right">'.$langs->trans("Amount").'</td>';
+			print '<td align="center" colspan="2">'.$langs->trans("Insurance").'</td>';
+			print '<td align="center" colspan="2">'.$langs->trans("Interest").'</td>';
+      		print '<td align="center" colspan="2">'.$langs->trans("Capital").'</td>';
       		print '<td>&nbsp;</td>';
       		print '</tr>';
 
@@ -413,21 +419,23 @@ if ($id > 0)
 				print '<a href="'.DOL_URL_ROOT.'/compta/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";
-        		print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+				print '<td align="right">'.price($objp->amount_insurance)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+				print '<td align="right">'.price($objp->amount_interest)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+        		print '<td align="right">'.price($objp->amount_capital)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
 				print "</tr>";
-				$totalpaid += $objp->amount;
+				$totalpaid += $objp->amount_capital;
 				$i++;
 			}
 
 			if ($object->paid == 0)
 			{
-				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaid)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->capital)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+				print '<tr><td colspan="7" align="right">'.$langs->trans("AlreadyPaid").' :</td><td align="right"><b>'.price($totalpaid).'</b></td><td>&nbsp;'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+				print '<tr><td colspan="7" align="right">'.$langs->trans("AmountExpected").' :</td><td align="right" bgcolor="#d0d0d0">'.price($object->capital).'</td><td bgcolor="#d0d0d0">&nbsp;'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 				$staytopay = $object->capital - $totalpaid;
 
-				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-				print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($staytopay)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+				print '<tr><td colspan="7" align="right">'.$langs->trans("RemainderToPay").' :</td>';
+				print '<td align="right" bgcolor="#f0f0f0"><b>'.price($staytopay).'</b></td><td bgcolor="#f0f0f0">&nbsp;'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 			}
 			print "</table>";
 			$db->free($resql);
@@ -444,7 +452,7 @@ if ($id > 0)
 		 */
 		if ($action != 'edit')
 		{
-			print "<div class=\"tabsAction\">\n";
+			print '<div class="tabsAction">';
 
 			// Edit
 			if ($user->rights->loan->write)

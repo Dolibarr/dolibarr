@@ -5,10 +5,13 @@ NewLoan=Nouvel emprunt
 ShowLoan=Voir emprunt
 PaymentLoan=Règlement d'emprunt
 Capital=Capital
+Insurance=Assurance
+Interest=Intérêt
 Nbterms=Nombre d'échéances
 LoanAccountancyCapitalCode=Compte comptable capital
 LoanAccountancyInsuranceCode=Compte comptable assurance
 LoanAccountancyInterestCode=Compte comptable intérêts
+LoanPayment=Règlement emprunt
 ConfirmDeleteLoan=Confirmation de supression de cet emprunt
 ConfirmPayLoan=Confirmation que cet emprunt est classé comme payé
 ErrorLoanCapital=<font color=red>Le capital de l'emprunt</font> doit être au format numérique et supérieur à zéro.

@@ -5,10 +5,13 @@ NewLoan=New Loan
 ShowLoan=Show Loan
 PaymentLoan=Loan payment
 Capital=Capital
+Insurance=Insurance
+Interest=Interest
 Nbterms=Number of terms
 LoanAccountancyCapitalCode=Accountancy code capital
 LoanAccountancyInsuranceCode=Accountancy code insurance
 LoanAccountancyInterestCode=Accountancy code interest
+LoanPayment=Loan payment
 ConfirmDeleteLoan=Confirm deleting this loan
 ConfirmPayLoan=Confirm classify paid this loan 
 ErrorLoanCapital=<font color=red>Loan amount</font> has to be numeric and greater than zero.
