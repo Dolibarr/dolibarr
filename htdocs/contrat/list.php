@@ -40,11 +40,11 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-$search_nom=GETPOST('search_nom');
+$search_name=GETPOST('search_name');
 $search_contract=GETPOST('search_contract');
 $search_ref_supplier=GETPOST('search_ref_supplier','alpha');
 $sall=GETPOST('sall');
-$statut=GETPOST('statut')?GETPOST('statut'):1;
+$search_status=GETPOST('search_status');
 $socid=GETPOST('socid');
 
 if (! $sortfield) $sortfield="c.rowid";
@@ -57,6 +57,17 @@ $result = restrictedArea($user, 'contrat', $id);
 
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
+
+if (GETPOST("button_removefilter"))
+{
+	$search_name="";
+	$search_contract="";
+	$search_ref_supplier="";
+	$sall="";
+	$search_status="";
+}
+
+if ($search_status == '') $search_status=1;
 
 
 /*
@@ -74,7 +85,7 @@ $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')",1,0).') as nb_late,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
 $sql.= " c.rowid as cid, c.ref, c.datec, c.date_contrat, c.statut,";
-$sql.= " s.nom, s.rowid as socid";
+$sql.= " s.nom as name, s.rowid as socid";
 $sql.= " ,c.ref_supplier";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -84,8 +95,8 @@ $sql.= " WHERE c.fk_soc = s.rowid ";
 $sql.= " AND c.entity = ".$conf->entity;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($search_nom) {
-    $sql .= natural_search('s.nom', $search_nom);
+if ($search_name) {
+    $sql .= natural_search('s.nom', $search_name);
 }
 if ($search_contract) {
     $sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
@@ -106,13 +117,13 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], '&search_contract='.$search_contract.'&search_nom='.$search_nom, $sortfield, $sortorder,'',$num);
+    print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], '&search_contract='.$search_contract.'&search_name='.$search_name, $sortfield, $sortorder,'',$num);
 
     print '<table class="liste" width="100%">';
 
     print '<tr class="liste_titre">';
     $param='&amp;search_contract='.$search_contract;
-    $param.='&amp;search_nom='.$search_nom;
+    $param.='&amp;search_name='.$search_name;
     $param.='&amp;search_ref_supplier='.$search_ref_supplier;
     print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","$param",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("RefCustomer"), $_SERVER["PHP_SELF"], "c.ref_supplier","","$param",'',$sortfield,$sortorder);
@@ -136,13 +147,13 @@ if ($resql)
     print '<input type="text" class="flat" size="7" name="search_ref_supplier value="'.$search_ref_supplier.'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input type="text" class="flat" size="24" name="search_nom" value="'.$search_nom.'">';
+    print '<input type="text" class="flat" size="24" name="search_name" value="'.$search_name.'">';
     print '</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     //print '<td class="liste_titre">&nbsp;</td>';
-    print '<td colspan="4" class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print "</td>";
-    print "</tr>\n";
+    print '<td colspan="4" class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print "</td></tr>\n";
     print '</form>';
 
     $var=true;

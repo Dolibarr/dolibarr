@@ -44,14 +44,31 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
  * @param	string 	$class		Class name
  * @param 	string 	$member		Name of property
  * @return 	mixed				Return value of static property
- * @deprecated PHP 5.3 is now the minimum requirement, this is no longer necessary
  */
 function getStaticMember($class, $member)
 {
-	if (isset($class::$member)) {
-		return $class::$member;
-	}
+	// This part is deprecated. Uncomment if for php 5.2.*, and comment next isset class::member
+	/*if (version_compare(phpversion(), '5.3.0', '<'))
+	{
+		if (is_object($class)) $class = get_class($class);
+		$classObj = new ReflectionClass($class);
+		$result = null;
 
+		$found=0;
+		foreach($classObj->getStaticProperties() as $prop => $value)
+		{
+			if ($prop == $member)
+			{
+				$result = $value;
+				$found++;
+				break;
+			}
+		}
+
+		if ($found) return $result;
+	}*/
+
+	if (isset($class::$member)) return $class::$member;
 	dol_print_error('','Try to get a static member "'.$member.'" in class "'.$class.'" that does not exists or is not static.');
 	return null;
 }
@@ -2862,7 +2879,11 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 
 		$listofcurrenciesbefore=array('USD');
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
-		else $cursymbolafter.=$outlangs->getCurrencySymbol($currency_code);
+		else
+		{
+			$tmpcur=$outlangs->getCurrencySymbol($currency_code);
+			$cursymbolafter.=($tmpcur == $currency_code ? ' '.$tmpcur : $tmpcur);
+		}
 	}
 	$output=$cursymbolbefore.$output.$end.$cursymbolafter;
 

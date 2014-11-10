@@ -1,10 +1,8 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
 About = Hakkında
 CronAbout = Cron hakkında
 CronAboutPage = Cron hakkında sayfası
-
 # Right
 Permission23101 = Planlı görev oku
 Permission23102 = Planlı görev oluştur/güncelle
@@ -70,7 +68,7 @@ CronStatusActiveBtn=Etkin
 CronStatusInactiveBtn=Engelle
 CronTaskInactive=Bu iş devre dışı
 CronDtLastResult=Son sonuç tarihi
-CronId=Id
+CronId=Kimlik
 CronClassFile=Sınıflar (dosyaadı.sınıf.php)
 CronModuleHelp=Dolibarr modül dizini adı (aynı zamanda dış Dolibarr modülü ile de çalışır). <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/<u>product</u>/class/product.class.php, modül değeri <i>product</i>
 CronClassFileHelp=Yüklenecek dosya adı. <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/product/class/<u>product.class.php</u>, sınıf dosya adı değeri <i>product.class.php</i>

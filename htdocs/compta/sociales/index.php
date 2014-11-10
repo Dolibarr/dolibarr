@@ -36,6 +36,9 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
+$search_ref = GETPOST('search_ref','int');
+$search_label = GETPOST('search_label','alpha');
+$search_amount = GETPOST('search_amount','alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -65,6 +68,15 @@ else
 	$typeid=$_REQUEST['typeid'];
 }
 
+if (GETPOST("button_removefilter"))
+{
+	$search_ref="";
+	$search_label="";
+	$search_amount="";
+    $typeid="";
+	$year="";
+	$month="";
+}
 
 /*
  *	View
@@ -85,7 +97,11 @@ $sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 $sql.= " WHERE cs.fk_type = c.id";
 $sql.= " AND cs.entity = ".$conf->entity;
-if (GETPOST("search_label")) $sql.=" AND cs.libelle LIKE '%".$db->escape(GETPOST("search_label"))."%'";
+
+// Search criteria
+if ($search_ref)	$sql.=" AND cs.rowid=".$search_ref;
+if ($search_label) 	$sql.=" AND cs.libelle LIKE '%".$db->escape($search_label)."%'";
+if ($search_amount) $sql.=" AND cs.amount='".$db->escape(price2num(trim($search_amount)))."'";
 if ($year > 0)
 {
     $sql .= " AND (";
@@ -139,10 +155,8 @@ if ($resql)
 	{
 
 		print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-
-		print "<table class=\"noborder\" width=\"100%\">";
-
-		print "<tr class=\"liste_titre\">";
+		print '<table class="liste" width="100%">';
+		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"id","",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"cs.libelle","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
@@ -153,20 +167,26 @@ if ($resql)
 		print "</tr>\n";
 
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre">&nbsp;</td>';
-		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.GETPOST("search_label").'"></td>';
+		// Ref
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
+		print '</td>';
+		// Label
+		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.$search_label.'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
 	    $formsocialcontrib->select_type_socialcontrib($typeid,'typeid',1,16,0);
 	    print '</td>';
 		// Period end date
 		print '<td class="liste_titre">&nbsp;</td>';
-	    print '<td class="liste_titre">&nbsp;</td>';
-		print '<td class="liste_titre">&nbsp;</td>';
+	    // Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+		print '<input class="flat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
 		print '</td>';
-		print "</tr>\n";
+		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		print "</td></tr>\n";
 
 		while ($i < min($num,$limit))
 		{

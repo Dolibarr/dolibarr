@@ -70,9 +70,9 @@ DateActionStart= Date de début
 DateActionEnd= Date de fin
 AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
 AgendaUrlOptions2=<b>login=%s</b> pour limiter l'export aux actions créées, affectées ou réalisées par l'utilisateur <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions créées par l'utilisateur <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur <b>%s</b> est propriétaire.
 AgendaUrlOptions4=<b>logint=%s</b> pour limiter l'export aux actions affectées à l'utilisateur <b>%s</b>.
-AgendaUrlOptions5=<b>logind=%s</b> pour limiter l'export aux actions réalisées par l'utilisateur <b>%s</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux écévements associés au projet <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Afficher l'anniversaire des contacts
 AgendaHideBirthdayEvents=Cacher l'anniversaire des contacts
 Busy=Occupé
@@ -89,5 +89,5 @@ ExtSiteUrlAgenda=URL d'accès au fichier ical
 ExtSiteNoLabel=Aucune description
 WorkingTimeRange=Plage d'heures travaillées
 WorkingDaysRange=Plage de jours travaillés
-AddEvent=Créer événement
+AddEvent=Créer un événement
 MyAvailability=Ma disponibilité

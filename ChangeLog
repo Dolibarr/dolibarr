@@ -5,6 +5,10 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Agenda export by project #1967.
+- New: Increase length of thirdparty to 128 chars.
+- New: "Is Order shippable" icon #1975.
+- New: statistics on supplier orders and invoices on home page.
 - New: Add permissions to read all trips and expenses.
 - New: Can filter on date into tab "Referring object" of a project.
 - New: Module notification has been enhanced:
@@ -95,6 +99,7 @@ For users:
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
+- Fix: [ bug #1535 ] Supplier invoice Extrafields are not shown
 
 For users, new experimental module (need to set feature level of instance to experimental to see them):
 - New: Module Accounting Expert to manage accountancy
@@ -159,18 +164,20 @@ Dolibarr better:
 
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
-- Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice
-- Fix: bug 1588 : relative discount
+- Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
+- Fix: bug 1588 : relative discount.
 - Fix: label of input method not tranlated.
 - Fix: box of customer and propsects were not correctly disabled.
-- Fix: right and error management #1961
-- Fix: Fix Error when trying to clone an Order #1943
 - Fix: [ bug #1618 ] PHP Error thrown when saving a barcode
+- Fix: Civility & birthdate wasn't save into adherent module.
+- Fix: webservice Thirdparty parameter lastname for invidual creation is now lastname and not ref
+- Fix: Chars - is no more allowed into value for code for extra fields.
+( Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
 - Fix: Can upload files on services.
-- Fix: sql errors on updat fichinter.
+- Fix: sql errors on update fichinter.
 - Fix: debian script syntax error.
 - Fix: error "menu param is not inside list" into pos module.
 - Fix: Salary payments are not reflected on the reporting sheets.
@@ -305,6 +312,9 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Properties "civilite_id" were renamed into "civility_id".
 - Remove add_photo_web() that is ot used anymore by core code.
 
+
+***** ChangeLog for 3.5.6 compared to 3.5.5 *****
+Fix: Avoid missing class error for fetch_thirdparty method #1973
 
 ***** ChangeLog for 3.5.5 compared to 3.5.4 *****
 Fix: Holiday module was broken. Initializaion of amount of holidays failed.

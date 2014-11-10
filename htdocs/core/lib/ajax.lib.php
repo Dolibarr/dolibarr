@@ -173,6 +173,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						}
     						$("#search_'.$htmlname.'").trigger("change");	// To tell that input text field was modified
     					}
+    					,delay: 500
 					}).data( "autocomplete" )._renderItem = function( ul, item ) {
 						return $( "<li></li>" )
 						.data( "item.autocomplete", item )
@@ -460,35 +461,36 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
 }
 
 /**
- *  On/off button for product tosell or tobuy
+ *  On/off button for object
  *
- *  @param  int     $id         Id product to set
- *  @param  string  $code       Name of constant : status or status_buy
+ *  @param  int     $object     Id product to set
+ *  @param  string  $code       Name of constant : status or status_buy for product by example
+ *  @param  string  $field      Name of database field : tosell or tobuy for product by example
+ *  @param  string  $text_on    Text if on
+ *  @param  string  $text_off   Text if off
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  *  @return void
  */
-function ajax_productonoff($id, $code, $input=array())
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=array())
 {
-    require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-    global $conf, $langs, $db;
-
-    $object = new Product($db);
-    $object->fetch($id);
+    global $langs;
 
     $out= '<script type="text/javascript">
         $(function() {
             var input = '.json_encode($input).';
 
             // Set constant
-            $("#set_'.$code.'").click(function() {
-                $.get( "'.DOL_URL_ROOT.'/core/ajax/productonoff.php", {
-                    action: \'set'.$code.'\',
+            $("#set_'.$code.'_'.$object->id.'").click(function() {
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
+                    action: \'set\',
+                    field: \''.$field.'\',
                     value: \'1\',
-                    id: \''.$id.'\'
+                    element: \''.$object->element.'\',
+                    id: \''.$object->id.'\'
                 },
                 function() {
-                    $("#set_'.$code.'").hide();
-                    $("#del_'.$code.'").show();
+                    $("#set_'.$code.'_'.$object->id.'").hide();
+                    $("#del_'.$code.'_'.$object->id.'").show();
                     // Enable another element
                     if (input.disabled && input.disabled.length > 0) {
                         $.each(input.disabled, function(key,value) {
@@ -508,15 +510,17 @@ function ajax_productonoff($id, $code, $input=array())
             });
 
             // Del constant
-            $("#del_'.$code.'").click(function() {
-                $.get( "'.DOL_URL_ROOT.'/core/ajax/productonoff.php", {
-                    action: \'set'.$code.'\',
+            $("#del_'.$code.'_'.$object->id.'").click(function() {
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
+                    action: \'set\',
+                    field: \''.$field.'\',
                     value: \'0\',
-                    id: \''.$id.'\'
+                    element: \''.$object->element.'\',
+                    id: \''.$object->id.'\'
                 },
                 function() {
-                    $("#del_'.$code.'").hide();
-                    $("#set_'.$code.'").show();
+                    $("#del_'.$code.'_'.$object->id.'").hide();
+                    $("#set_'.$code.'_'.$object->id.'").show();
                     // Disable another element
                     if (input.disabled && input.disabled.length > 0) {
                         $.each(input.disabled, function(key,value) {
@@ -536,14 +540,9 @@ function ajax_productonoff($id, $code, $input=array())
             });
         });
     </script>';
-    if ($code=='status') {
-        $out.= '<span id="set_'.$code.'" class="linkobject '.($object->$code==1?'hideobject':'').'">'.img_picto($langs->trans("ProductStatusNotOnSell"),'switch_off').'</span>';
-        $out.= '<span id="del_'.$code.'" class="linkobject '.($object->$code==1?'':'hideobject').'">'.img_picto($langs->trans("ProductStatusOnSell"),'switch_on').'</span>';
-    }
-    if ($code=='status_buy') {
-    $out.= '<span id="set_'.$code.'" class="linkobject '.($object->$code==1?'hideobject':'').'">'.img_picto($langs->trans("ProductStatusNotOnBuy"),'switch_off').'</span>';
-    $out.= '<span id="del_'.$code.'" class="linkobject '.($object->$code==1?'':'hideobject').'">'.img_picto($langs->trans("ProductStatusOnBuy"),'switch_on').'</span>';
-    }
+    $out.= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'hideobject':'').'">'.img_picto($langs->trans($text_off),'switch_off').'</span>';
+    $out.= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'':'hideobject').'">'.img_picto($langs->trans($text_on),'switch_on').'</span>';
+
     return $out;
 }
 

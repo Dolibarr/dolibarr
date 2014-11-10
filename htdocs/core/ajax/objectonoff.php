@@ -32,9 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 $action=GETPOST('action','alpha');
 $id=GETPOST('id', 'int');
 $value=GETPOST('value', 'int');
+$field=GETPOST('field', 'alpha');
+$element=GETPOST('element', 'alpha');
 
 $object = new GenericObject($db);
-
 /*
  * View
  */
@@ -44,9 +45,5 @@ top_httphead();
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Registering new values
-if (! empty($action) && ! empty($id) && $user->rights->produit->creer) {
-    if ($action == 'setstatus') 
-        $object->setValueFrom('tosell', $value, 'product', $id);
-    else if ($action == 'setstatus_buy') 
-        $object->setValueFrom('tobuy', $value, 'product', $id);
-}
+if (($action == 'set') && ! empty($id))
+    $object->setValueFrom($field, $value, $element, $id);

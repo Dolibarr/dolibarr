@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
-$langs->load("widthdrawals");
+$langs->load("withdrawals");
 $langs->load("companies");
 
 // Security check

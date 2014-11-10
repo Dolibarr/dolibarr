@@ -1835,11 +1835,12 @@ class Form
      *	@param  string	$filterkey      Filtre des produits
      *  @param  int		$statut         -1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param  int		$outputmode     0=HTML select string, 1=Array
+     *  @param  int     $limit          Limit of line number
      *  @return array           		Array of keys for json
      */
-    function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0)
+    function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0,$limit=100)
     {
-        global $langs,$conf;
+        global $langs,$conf,$db;
 
         $out='';
         $outarray=array();
@@ -1877,6 +1878,7 @@ class Form
         	$sql.=')';
         }
         $sql.= " ORDER BY pfp.ref_fourn DESC, pfp.quantity ASC";
+        $sql.= $db->plimit($limit);
 
         // Build output string
 
@@ -4032,9 +4034,10 @@ class Form
      *	@param  int		$translate		Translate and encode value
      * 	@param	int		$maxlen			Length maximum for labels
      * 	@param	int		$disabled		Html select box is disabled
-     *  @param	int		$sort			'ASC' or 'DESC' =Sort on label, '' or 'NONE'=Do not sort
+     *  @param	int		$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' = Do not sort
      *  @param	string	$morecss		Add more class to css styles
      * 	@return	string					HTML select string.
+     *  @see multiselectarray
      */
     static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='')
     {
@@ -4092,54 +4095,65 @@ class Form
      *
      *	@param	string	$htmlname		Name of select
      *	@param	array	$array			Array with key+value
-     *	@param	array	$selected		Preselected keys
+     *	@param	array	$selected		Array with key+value preselected
      *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int		$value_as_key   1 to use value as key
      *	@param  string	$option         Valeur de l'option en fonction du type choisi
      *	@param  int		$translate		Translate and encode value
+     *  @param	int		$width			Force width of select box. May be used only when using jquery couch.
      *	@return	string					HTML multiselect string
+     *  @see selectarray
      */
-    function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $option='', $translate=0)
+    static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $option='', $translate=0, $width=0)
     {
     	global $conf, $langs;
 
-    	$out = '<select id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.'>'."\n";
+    	// Add code for jquery to use multiselect
+    	// Note: Plugin "multiselect" is no more provided by Dolibarr. You must include it and load it into your module to use it.
+    	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiselect'))
+    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT')))
+    	{
+	    	print '<!-- JS CODE FOR multiselect -->
+				<script type="text/javascript">
+				$(document).ready(function () {
+					$.extend($.ui.multiselect.locale, {
+						addAll:\''.$langs->transnoentities("AddAll").'\',
+						removeAll:\''.$langs->transnoentities("RemoveAll").'\',
+						itemsCount:\''.$langs->transnoentities("ItemsCount").'\'
+					});
+					$(function(){
+						$("#'.$htmlname.'").multiselect({
+							searchable: false,
+							width: '.($width?$width:300).',
+							height: 120
+						});
+					});
+				});
+				</script>';
+    	}
+
+        // Add code for jquery to use multiple-select
+    	// Note: Plugin "multiselect" is no more provided by Dolibarr. You must include it and load it into your module to use it.
+    	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiple-select'))
+    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT')))
+    	{
+	    	print '<!-- JS CODE FOR multiple-select -->
+			<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiple-select/jquery.multiple.select.js"></script>
+	    	<script type="text/javascript">
+				$(document).ready(function () {
+        			$(\'#'.$htmlname.'\').multipleSelect();
+        		});
+			</script>';
+    	}
+
+    	// Try also magic suggest
+
+    	$out = '<select id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.($width?' style="width: '.$width.'px"':'').'>'."\n";
     	if (is_array($array) && ! empty($array))
     	{
     		if ($value_as_key) $array=array_combine($array, $array);
 
-    		if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && is_array($selected) && ! empty($selected))
-    		{
-    			foreach ($selected as $selected_value)
-    			{
-    				foreach($array as $key => $value)
-    				{
-    					if ($selected_value == $key)
-    					{
-    						$value=$array[$selected_value];
-    						$out.= '<option value="'.$key.'" selected="selected">';
-    						$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
-    						$newval = ($key_in_label ? $key.' - '.$newval : $newval);
-    						$out.= dol_htmlentitiesbr($newval);
-    						$out.= '</option>'."\n";
-    						unset($array[$key]);
-    					}
-    				}
-    			}
-
-    			if (! empty($array))
-    			{
-    				foreach ($array as $key => $value)
-    				{
-    					$out.= '<option value="'.$key.'">';
-    					$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
-    					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
-    					$out.= dol_htmlentitiesbr($newval);
-    					$out.= '</option>'."\n";
-    				}
-    			}
-    		}
-    		else
+    		if (! empty($array))
     		{
     			foreach ($array as $key => $value)
     			{
@@ -4150,7 +4164,7 @@ class Form
     				}
     				$out.= '>';
 
-    				$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
+    				$newval = ($translate ? $langs->trans($value) : $value);
     				$newval = ($key_in_label ? $key.' - '.$newval : $newval);
     				$out.= dol_htmlentitiesbr($newval);
     				$out.= '</option>'."\n";
@@ -4166,18 +4180,18 @@ class Form
     /**
      *	Return an html string with a select combo box to choose yes or no
      *
-     *	@param	string	$htmlname		Name of html select field
-     *	@param	string	$value			Pre-selected value
-     *	@param	int		$option			0 return yes/no, 1 return 1/0
-     *	@param	bool	$disabled		true or false
-     *	@return	mixed					See option
+     *	@param	string		$htmlname		Name of html select field
+     *	@param	string		$value			Pre-selected value
+     *	@param	int			$option			0 return yes/no, 1 return 1/0
+     *	@param	bool		$disabled		true or false
+     *  @param	useempty	$useempty		1=Add empty line
+     *	@return	mixed						See option
      */
-    function selectyesno($htmlname,$value='',$option=0,$disabled=false)
+    function selectyesno($htmlname,$value='',$option=0,$disabled=false,$useempty='')
     {
         global $langs;
 
         $yes="yes"; $no="no";
-
         if ($option)
         {
             $yes="1";
@@ -4187,15 +4201,17 @@ class Form
         $disabled = ($disabled ? ' disabled="disabled"' : '');
 
         $resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+        if ($useempty) $resultyesno .= '<option value="-1"'.(($value < 0)?' selected="selected"':'').'></option>'."\n";
         if (("$value" == 'yes') || ($value == 1))
         {
             $resultyesno .= '<option value="'.$yes.'" selected="selected">'.$langs->trans("Yes").'</option>'."\n";
             $resultyesno .= '<option value="'.$no.'">'.$langs->trans("No").'</option>'."\n";
         }
         else
-        {
+       {
+       		$selected=($useempty?'':' selected="selected"');
             $resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
-            $resultyesno .= '<option value="'.$no.'" selected="selected">'.$langs->trans("No").'</option>'."\n";
+            $resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";
         }
         $resultyesno .= '</select>'."\n";
         return $resultyesno;

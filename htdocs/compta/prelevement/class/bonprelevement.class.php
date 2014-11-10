@@ -821,7 +821,9 @@ class BonPrelevement extends CommonObject
                         {
                         	$bac = new CompanyBankAccount($this->db);
                         	$bac->fetch(0,$soc->id);
+
                             if ($bac->verif() >= 1)
+                            //if (true)
                             {
                                 $factures_prev[$i] = $fac;
                                 /* second tableau necessaire pour BonPrelevement */
@@ -1226,26 +1228,24 @@ class BonPrelevement extends CommonObject
      *	@return		int			0 if OK, <0 if KO
      */
     //TODO: Optimize code to read lines in a single function
-    function Generate()
+    function generate()
     {
         global $conf,$langs,$mysoc;
 
         $result = 0;
 
-        dol_syslog(get_class($this)."::Generate build file ".$this->filename);
+        dol_syslog(get_class($this)."::generate build file ".$this->filename);
 
         $this->file = fopen($this->filename,"w");
 
         $found=0;
 
         // Build file for European countries
-        if (! $mysoc->isInEEC())
+        if ($mysoc->isInEEC())
         {
         	$found++;
 
 			/**
-			 * SECTION CREATION FICHIER SEPA
-			 * SECTION CREATION FICHIER SEPA
 			 * SECTION CREATION FICHIER SEPA
 			 */
 			// SEPA Initialisation
@@ -1308,8 +1308,6 @@ class BonPrelevement extends CommonObject
 			}
 
 			/**
-			 * SECTION CREATION FICHIER SEPA
-			 * SECTION CREATION FICHIER SEPA
 			 * SECTION CREATION FICHIER SEPA
 			 */
 			// SEPA File Header
@@ -1401,11 +1399,14 @@ class BonPrelevement extends CommonObject
                 }
             }
             else
-            {
+			{
                 $result = -2;
             }
+
             $langs->load('withdrawals');
-            fputs($this->file, $langs->trans('WithdrawalFileNotCapable'));
+
+            // TODO Add here code to generate a generic file
+            fputs($this->file, $langs->trans('WithdrawalFileNotCapable', $mysoc->country_code));
         }
 
         fclose($this->file);

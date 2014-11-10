@@ -146,7 +146,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function create($user)
     {
-        global $langs,$conf;
+        global $langs,$conf,$hookmanager;
 
 		$error=0;
         $now=dol_now();
@@ -255,6 +255,23 @@ class FactureFournisseur extends CommonInvoice
             $result=$this->update_price();
             if ($result > 0)
             {
+				// Actions on extra fields (by external module or standard code)
+				// FIXME le hook fait double emploi avec le trigger !!
+				$hookmanager->initHooks(array('supplierinvoicedao'));
+				$parameters=array('socid'=>$this->id);
+				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				if (empty($reshook))
+				{
+	            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					{
+						$result=$this->insertExtraFields();
+						if ($result < 0)
+						{
+							$error++;
+						}
+					}
+				}
+				else if ($reshook < 0) $error++;
                 // Call trigger
                 $result=$this->call_trigger('BILL_SUPPLIER_CREATE',$user);
                 if ($result < 0) $error++;
@@ -1613,6 +1630,48 @@ class FactureFournisseur extends CommonInvoice
         $this->total_tva      = $xnbp*19.6;
         $this->total_ttc      = $xnbp*119.6;
     }
+
+	/**
+	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 *      @return         int     <0 if KO, >0 if OK
+	 */
+	function load_state_board()
+	{
+		global $conf, $user;
+
+		$this->nb=array();
+
+		$clause = "WHERE";
+
+		$sql = "SELECT count(f.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$clause = "AND";
+		}
+		$sql.= " ".$clause." f.entity = ".$conf->entity;
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["supplier_invoices"]=$obj->nb;
+			}
+            $this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 
     /**
      *	Load an object from its id and create a new one in database

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -229,10 +229,11 @@ if ($result)
 		// Description
 		print '<td>';
 		$text=$langs->trans($obj->description);
-		if (preg_match('/\((.*)\)/i',$obj->description,$reg))
+		if (preg_match('/\((.*)\)(.*)/i',$obj->description,$reg))
 		{
 			$val=explode(',',$reg[1]);
 			$text=$langs->trans($val[0], isset($val[1])?$val[1]:'', isset($val[2])?$val[2]:'', isset($val[3])?$val[3]:'', isset($val[4])?$val[4]:'');
+			if (! empty($reg[2])) $text.=$reg[2];
 		}
 		print $text;
 		print '</td>';

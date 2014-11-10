@@ -187,3 +187,20 @@ UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS
 -- update llx_facturedet set total_tva = total_ttc - total_ht where total_vat = 0;
 -- update llx_facture set total = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
 -- update llx_facture set tva = total_ttc - total where tva = 0;
+
+-- To insert elements into a category
+-- Search idcategory: select rowid from llx_categorie where type=0 and ref like '%xxx%'
+-- Select all products to include: select * from llx_product where ref like '%xxx%'
+-- If ok, insert: insert into llx_categorie_product(fk_categorie, fk_product) select idcategory, rowid from llx_product where ref like '%xxx%'
+-- List of product with a category xxx: select distinct cp.fk_product from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' order by fk_product;
+-- List of product into 2 categories xxx: select cp.fk_product, count(cp.fk_product) as nb from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' group by fk_product having nb > 1;
+-- List of product with no category xxx yet: select rowid, ref from llx_product where rowid not in (select distinct cp.fk_product from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' order by fk_product);
+
+-- Replace xxx with your IP Address 
+-- bind-address        = xxx.xxx.xxx.xxx
+-- CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypass';
+-- CREATE USER 'myuser'@'%' IDENTIFIED BY 'mypass';
+-- GRANT ALL ON *.* TO 'myuser'@'localhost';
+-- GRANT ALL ON *.* TO 'myuser'@'%';
+-- flush privileges;
+

@@ -119,7 +119,7 @@ if (empty($reshook))
     	$res=$object->setValueFrom('localtax2_value', $value);
     }
 
-    // Add new third party
+    // Add new or update third party
     if ((! GETPOST('getcustomercode') && ! GETPOST('getsuppliercode'))
     && ($action == 'add' || $action == 'update') && $user->rights->societe->creer)
     {
@@ -189,6 +189,10 @@ if (empty($reshook))
         $object->commercial_id         = GETPOST('commercial_id', 'int');
         $object->default_lang          = GETPOST('default_lang');
 
+        // Webservices url/key
+        $object->webservices_url       = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
+        $object->webservices_key       = GETPOST('webservices_key', 'san_alpha');
+
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
@@ -216,6 +220,18 @@ if (empty($reshook))
                 $langs->load("errors");
                 $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
                 $action = ($action=='add'?'create':'edit');
+            }
+            if (! empty($object->webservices_url)) {
+                //Check if has transport, without any the soap client will give error
+                if (strpos($object->webservices_url, "http") === false)
+                {
+                    $object->webservices_url = "http://".$object->webservices_url;
+                }
+                if (! isValidUrl($object->webservices_url)) {
+                    $langs->load("errors");
+                    $error++; $errors[] = $langs->trans("ErrorBadUrl",$object->webservices_url);
+                    $action = ($action=='add'?'create':'edit');
+                }
             }
 
             // We set country_id, country_code and country for the selected country
@@ -504,6 +520,7 @@ if (empty($reshook))
     // Actions to send emails
     $id=$socid;
     $actiontypecode='AC_OTH_AUTO';
+    $trigger_name='COMPANY_SENTBYMAIL';
     $paramname='socid';
     $mode='emailfromthirdparty';
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -765,7 +782,7 @@ else
             print '<div class="hideonsmartphone float">';
             print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
             print '</div>';
-            print '<input type="radio" id="1radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked="checked"').'>';
+            print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked="checked"').'>';
 	        print '<label for="radiocompany">';
 	        print '&nbsp;';
             print $langs->trans("Company/Fundation");
@@ -805,7 +822,7 @@ else
 			print '<span span id="TypeName" class="fieldrequired"><label for="name">'.$langs->trans('ThirdPartyName').'</label></span>';
         }
 	    print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
-	    print '<input type="text" size="30" maxlength="60" name="nom" id="name" value="'.$object->name.'" autofocus="autofocus"></td>';
+	    print '<input type="text" size="60" maxlength="128" name="nom" id="name" value="'.$object->name.'" autofocus="autofocus"></td>';
 	    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	    {
 		    print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
@@ -816,7 +833,7 @@ else
         if ($conf->use_javascript_ajax)
         {
             print '<tr class="individualline"><td><label for="firstname">'.$langs->trans('FirstName').'</label></td>';
-	        print '<td><input type="text" size="30" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
+	        print '<td><input type="text" size="60" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
             print '<td colspan=2>&nbsp;</td></tr>';
             print '<tr class="individualline"><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td>';
             print $formcompany->select_civility($object->civility_id).'</td>';
@@ -1179,6 +1196,10 @@ else
                 $object->tva_intra				= GETPOST('tva_intra', 'alpha');
                 $object->status					= GETPOST('status', 'int');
 
+                // Webservices url/key
+                $object->webservices_url        = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
+                $object->webservices_key        = GETPOST('webservices_key', 'san_alpha');
+
                 //Local Taxes
                 $object->localtax1_assuj		= GETPOST('localtax1assuj_value');
                 $object->localtax2_assuj		= GETPOST('localtax2assuj_value');
@@ -1266,7 +1287,7 @@ else
 
             // Name
             print '<tr><td><label for="name"><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></label></td>';
-	        print '<td colspan="3"><input type="text" size="40" maxlength="60" name="nom" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
+	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="nom" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1558,6 +1579,14 @@ else
             	print $object->showOptionals($extrafields,'edit');
             }
 
+            // Webservices url/key
+            if (!empty($conf->syncsupplierwebservices->enabled)) {
+                print '<tr><td><label for="webservices_url">'.$langs->trans('WebServiceURL').'</label></td>';
+                print '<td><input type="text" name="webservices_url" id="webservices_url" size="32" value="'.$object->webservices_url.'"></td>';
+                print '<td><label for="webservices_key">'.$langs->trans('WebServiceKey').'</label></td>';
+                print '<td><input type="text" name="webservices_key" id="webservices_key" size="32" value="'.$object->webservices_key.'"></td></tr>';
+            }
+
             // Logo
             print '<tr class="hideonsmartphone">';
             print '<td><label for="photoinput">'.$langs->trans("Logo").'</label></td>';
@@ -1698,7 +1727,11 @@ else
         // Status
         print '<tr><td>'.$langs->trans("Status").'</td>';
         print '<td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
-        print $object->getLibStatut(2);
+        if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer) {
+            print ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+        } else {
+            print $object->getLibStatut(2);
+        }
         print '</td>';
         print $htmllogobar; $htmllogobar='';
         print '</tr>';
@@ -2012,6 +2045,12 @@ else
             }
             print '</td>';
             print "</tr>\n";
+        }
+
+        // Webservices url/key
+        if (!empty($conf->syncsupplierwebservices->enabled)) {
+            print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td>'.dol_print_url($object->webservices_url).'</td>';
+            print '<td class="nowrap">'.$langs->trans('WebServiceKey').'</td><td>'.$object->webservices_key.'</td></tr>';
         }
 
         print '</table>';

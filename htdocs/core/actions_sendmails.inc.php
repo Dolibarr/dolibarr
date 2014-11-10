@@ -87,10 +87,10 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 	if ($result > 0)
 	{
-		if ($_POST['sendto'])
+		if (trim($_POST['sendto']))
 		{
 			// Recipient is provided into free text
-			$sendto = $_POST['sendto'];
+			$sendto = trim($_POST['sendto']);
 			$sendtoid = 0;
 		}
 		elseif ($_POST['receiver'] != '-1')
@@ -107,6 +107,22 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				$sendtoid = $_POST['receiver'];
 			}
 		}
+		if (trim($_POST['sendtocc']))
+		{
+			$sendtocc = trim($_POST['sendtocc']);
+		}
+		elseif ($_POST['receivercc'] != '-1')
+		{
+			// Recipient was provided from combo list
+			if ($_POST['receivercc'] == 'thirdparty')	// Id of third party
+			{
+				$sendtocc = $thirdparty->email;
+			}
+			else	// Id du contact
+			{
+				$sendtocc = $thirdparty->contact_get_property($_POST['receivercc'],'email');
+			}
+		}
 
 		if (dol_strlen($sendto))
 		{
@@ -115,8 +131,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
 			$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
 			$message = $_POST['message'];
-			$sendtocc = $_POST['sendtocc'];
-			$sendtobcc='';
+			$sendtocc = $sendtocc;
+			$sendtobcc= GETPOST('sendtoccc');
 			if ($mode == 'emailfromproposal') $sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO);
 			if ($mode == 'emailfromorder')    $sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO);
 			if ($mode == 'emailfrominvoice')  $sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
@@ -126,13 +142,14 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			if ($action == 'send' || $action == 'relance')
 			{
 				if (dol_strlen($_POST['subject'])) $subject = $_POST['subject'];
-				$actionmsg2=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+				$actionmsg2=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
 				if ($message)
 				{
-					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
-					$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
-					$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
-					$actionmsg.=$message;
+					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+					$actionmsg = dol_concatdesc($actionmsg, $message);
 				}
 			}
 
@@ -171,7 +188,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					// Appel des triggers
 					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					$interface=new Interfaces($db);
-					$result=$interface->run_triggers('COMPANY_SENTBYMAIL',$object,$user,$langs,$conf);
+					$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
 					if ($result < 0) {
 						$error++; $this->errors=$interface->errors;
 					}

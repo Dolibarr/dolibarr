@@ -300,10 +300,16 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         $_GET['socid']=$_POST['socid'];
         $error++;
     }
-
+    
+    // Fill array 'array_options' with data from add form
+    
     if (! $error)
     {
         $db->begin();
+        
+        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		if ($ret < 0) $error ++;
 
         $tmpproject = GETPOST('projectid', 'int');
 
@@ -903,12 +909,13 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                     if (dol_strlen($_POST['subject'])) $subject=$_POST['subject'];
                     else $subject = $langs->transnoentities('CustomerOrder').' '.$object->ref;
                     $actiontypecode='AC_SUP_INV';
-                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
                     if ($message)
                     {
-                        $actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
-                        $actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
-                        $actionmsg.=$message;
+						if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+						$actionmsg = dol_concatdesc($actionmsg, $message);
                     }
                     $actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
                 }
@@ -1076,7 +1083,7 @@ elseif ($action == 'update_extras')
 	{
 		// Actions on extra fields (by external module or standard code)
 		// FIXME le hook fait double emploi avec le trigger !!
-		$hookmanager->initHooks(array('supplierorderdao'));
+		$hookmanager->initHooks(array('supplierinvoicedao'));
 		$parameters=array('id'=>$object->id);
 
 		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
@@ -1178,6 +1185,9 @@ llxHeader('','','');
 // Mode creation
 if ($action == 'create')
 {
+	$facturestatic = new FactureFournisseur($db);
+	$extralabels = $extrafields->fetch_name_optionals_label($facturestatic->table_element);
+	
     print_fiche_titre($langs->trans('NewBill'));
 
     dol_htmloutput_events();
@@ -1418,6 +1428,11 @@ if ($action == 'create')
     print '</td>';
     // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
     print '</tr>';
+    
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields, 'edit');
+	}
 
     if (is_object($objectsrc))
     {
@@ -1529,6 +1544,9 @@ else
         $societe = new Fournisseur($db);
         $result=$societe->fetch($object->socid);
         if ($result < 0) dol_print_error($db);
+        
+        // fetch optionals attributes and labels
+		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
         /*
          *	View card

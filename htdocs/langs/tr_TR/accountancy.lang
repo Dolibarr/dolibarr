@@ -25,12 +25,12 @@ Selectchartofaccounts=Hesap planı seç
 Validate=Doğrula
 Addanaccount=Muhasebe hesabı ekle
 AccountAccounting=Muhasebe hesabı
-Ventilation=Ventilation
+Ventilation=Analiz
 ToDispatch=Gönderilecek
 Dispatched=Gönderilmiş
 
-CustomersVentilation=Ventilation customers
-SuppliersVentilation=Ventilation suppliers
+CustomersVentilation=Müşteri analizi
+SuppliersVentilation=Tedarikçi analizi
 TradeMargin=Ticaret marjı
 Reports=Raporlar
 ByCustomerInvoice=Müşteri faturalarına göre
@@ -45,52 +45,52 @@ WriteBookKeeping=Büyük defter hesap kayıtları
 Bookkeeping=Büyük Defter
 AccountBalanceByMonth=Aylık hesap bakiyesi
 
-AccountingVentilation=Accounting ventilation
-AccountingVentilationSupplier=Accounting ventilation supplier
-AccountingVentilationCustomer=Accounting ventilation customer
+AccountingVentilation=Analiz muhasebesi
+AccountingVentilationSupplier=Teadrikçi hesabı analizi
+AccountingVentilationCustomer=Müşteri hesabı analizi
 Line=Satır
 
-CAHTF=Total purchase supplier HT
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
+CAHTF=Tedarikçi HT toplam sipariş
+InvoiceLines=Analiz edilecek fatura kalemleri
+InvoiceLinesDone=Analiz edilen fatura kalemleri
 IntoAccount=Muhasebe hesabında
 
-Ventilate=Ventilate
-VentilationAuto=Automatic ventilation
+Ventilate=Analiz
+VentilationAuto=Otomatik analiz
 
 Processing=İşleme
 EndProcessing=İşleme sonu
-AnyLineVentilate=Any lines to ventilate
+AnyLineVentilate=Analiz edilecek herhangi bir kalem
 SelectedLines=Seçilen satırlar
 Lineofinvoice=Fatura satırı
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+VentilatedinAccount=Muhasebe hesabında başarıyla analiz edildi
+NotVentilatedinAccount=Muhasebe hesabında analiz edilmedi.
 
-ACCOUNTING_SEPARATORCSV=Separator CSV
+ACCOUNTING_SEPARATORCSV=CSV Ayırıcı
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Bir sayfada gösterilecek analiz edilen öğe sayısı (önerilen ençok:50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO="Analizlenecek" analiz sayfalarının sıralamasını son öğelerden başlat
+ACCOUNTING_LIST_SORT_VENTILATION_DONE="Analizlenen" analiz sayfalarının sıralamasını son öğelerden başlat
 
 AccountLength=Dolibarr'da gösterilen muhasebe hesapları uzunluğu
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+AccountLengthDesc=Boşlukların sıfır figürü ile değiştirilmesiyle muhasebe hesap uzunluğunun uydurulmasını sağlayan işlevdir. Bu işlev yalnızca görüntüyü değiştirir, Dolibarr'da kayıtlı muhasebe hesaplarını değiştirmez. Dışaaktarma için bu fonksiyonun belirli yazılımla uyumlu olması gerekir.
+ACCOUNTING_LENGTH_GACCOUNT=Genel hesapların uzunluğu
+ACCOUNTING_LENGTH_AACCOUNT=Üçüncü parti hesaplarının uzunluğu
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
-ACCOUNTING_CASH_JOURNAL=Cash journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=Satış günlüğü
+ACCOUNTING_PURCHASE_JOURNAL=Satınalma günlüğü
+ACCOUNTING_BANK_JOURNAL=Banka günlüğü
+ACCOUNTING_CASH_JOURNAL=Kasa günlüğü
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Çeşitli günlük
+ACCOUNTING_SOCIAL_JOURNAL=Sosyal günlük
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Transfer hesabı
+ACCOUNTING_ACCOUNT_SUSPENSE=Bekleme hesabı
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Satınalınan ürünler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Satılan ürünler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Satınalınan hizmetler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Satılan hizmetler için varsayılan muhasebe kodu (hizmet sayfasında tanımlanmamışsa)
 
 Doctype=Belge türü
 Docdate=Tarih
@@ -128,7 +128,7 @@ ListeMvts=Hareket listesi
 ErrorDebitCredit=Borç ve Alacak aynı anda bir değere sahip olamaz
 
 ReportThirdParty=Üçüncü parti hesabını listele
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+DescThirdPartyReport=Burada üçüncü parti müşterileri ve tedarikçileri ile onların muhasebe hesaplarının listesine bakın
 
 ListAccounts=Muhasebe hesapları listesi
 
@@ -140,15 +140,15 @@ Active=Hesap özeti
 
 NewFiscalYear=Yeni mali yıl
 
-DescVentilCustomer=Consult here the annual accounting ventilation of your invoices customers
+DescVentilCustomer=Burada müşteri faturalarınızın yıllık hesap analizine bakın
 TotalVente=Toplam ciro HT
 TotalMarge=Toplam satışlar oranı
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilDoneCustomer=Burada müşteri faturaları satırlarına ve onların muhasebe hesaplarının listesine bakın.
+DescVentilTodoCustomer=Bir muhasebe hesabıyla müşteri faturanızın kalemlerini analiz edin
+ChangeAccount=Muhasebe hesabını, hesap tarafından seçilen satırlar için değiştirin:
 Vide=-
-DescVentilSupplier=Consult here the annual accounting ventilation of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
+DescVentilSupplier=Burada tedarikçi faturalarınızın yıllık hesap analizine bakın
+DescVentilTodoSupplier=Bir muhasebe hesabıyla tedarikçi faturanızın kalemlerini analiz edin
 DescVentilDoneSupplier=Burada tedarikçi faturaları ve muhasebe hesapları satırları listesine başvurun
 
 ValidateHistory=Otomatikman doğrula

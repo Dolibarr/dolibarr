@@ -535,7 +535,7 @@ else if ($action == 'classifybilled' && $user->rights->propal->cloturer) {
 // Reopen proposal
 else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
 	// prevent browser refresh from reopening proposal several times
-	if ($object->statut == 2 || $object->statut == 3) {
+	if ($object->statut == 2 || $object->statut == 3 || $object->statut == 4) {
 		$object->reopen($user, 1);
 	}
 }
@@ -553,145 +553,19 @@ else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST(
 	}
 }
 
-// Add file in email form
-if (GETPOST('addfile')) {
-	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-
-	// Set tmp user directory TODO Use a dedicated directory for temp mails files
-	$vardir = $conf->user->dir_output . "/" . $user->id;
-	$upload_dir_tmp = $vardir . '/temp';
-
-	dol_add_file_process($upload_dir_tmp, 0, 0);
-	$action = 'presend';
-}
-
-// Remove file in email form
-if (GETPOST('removedfile')) {
-	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-
-	// Set tmp user directory
-	$vardir = $conf->user->dir_output . "/" . $user->id;
-	$upload_dir_tmp = $vardir . '/temp';
-
-	// TODO Delete only files that was uploaded from email form
-	dol_remove_file_process($_POST['removedfile'], 0);
-	$action = 'presend';
-}
 
 /*
  * Send mail
  */
-if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! GETPOST('cancel')) {
-	$langs->load('mails');
 
-	if ($object->id > 0) {
-		if ($_POST['sendto']) {
-			// Le destinataire a ete fourni via le champ libre
-			$sendto = $_POST['sendto'];
-			$sendtoid = 0;
-		} elseif ($_POST['receiver'] != '-1') {
-			// Recipient was provided from combo list
-			if ($_POST['receiver'] == 'thirdparty') 			// Id of third party
-			{
-				$sendto = $object->thirdparty->email;
-				$sendtoid = 0;
-			} else 			// Id du contact
-			{
-				$sendto = $object->thirdparty->contact_get_property($_POST['receiver'], 'email');
-				$sendtoid = $_POST['receiver'];
-			}
-		}
+// Actions to send emails
+$actiontypecode='AC_PROP';
+$trigger_name='PROPAL_SENTBYMAIL';
+$paramname='id';
+$mode='emailfromproposal';
+include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-		if (dol_strlen($sendto)) {
-			$langs->load("commercial");
 
-			$from = $_POST['fromname'] . ' <' . $_POST['frommail'] . '>';
-			$replyto = $_POST['replytoname'] . ' <' . $_POST['replytomail'] . '>';
-			$message = $_POST['message'];
-			$sendtocc = $_POST['sendtocc'];
-			$sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO);
-			$deliveryreceipt = $_POST['deliveryreceipt'];
-
-			if (dol_strlen($_POST['subject']))
-				$subject = $_POST['subject'];
-			else
-				$subject = $langs->transnoentities('Propal') . ' ' . $object->ref;
-			$actiontypecode = 'AC_PROP';
-			$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto . ".\n";
-			if ($message) {
-				$actionmsg .= $langs->transnoentities('MailTopic') . ": " . $subject . "\n";
-				$actionmsg .= $langs->transnoentities('TextUsedInTheMessageBody') . ":\n";
-				$actionmsg .= $message;
-			}
-			$actionmsg2 = $langs->transnoentities('Action' . $actiontypecode);
-
-			// Create form object
-			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-
-			$attachedfiles = $formmail->get_attached_files();
-			$filepath = $attachedfiles ['paths'];
-			$filename = $attachedfiles ['names'];
-			$mimetype = $attachedfiles ['mimes'];
-
-			// Envoi de la propal
-			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, - 1);
-			if ($mailfile->error) {
-				setEventMessage($mailfile->error, 'errors');
-			} else {
-				$result = $mailfile->sendfile();
-				if ($result) {
-					// Initialisation donnees
-					$object->sendtoid = $sendtoid;
-					$object->actiontypecode = $actiontypecode;
-					$object->actionmsg = $actionmsg;
-					$object->actionmsg2 = $actionmsg2;
-					$object->fk_element = $object->id;
-					$object->elementtype = $object->element;
-
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface = new Interfaces($db);
-					$result = $interface->run_triggers('PROPAL_SENTBYMAIL', $object, $user, $langs, $conf);
-					if ($result < 0) {
-						$error++;
-						$object->errors = $interface->errors;
-					}
-					// Fin appel triggers
-
-					if (! $error) {
-						// Redirect here
-						// This avoid sending mail twice if going out and then back to page
-						$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2));
-						setEventMessage($mesg);
-						header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
-						exit();
-					} else {
-						dol_print_error($db);
-					}
-				} else {
-					$langs->load("other");
-					if ($mailfile->error) {
-						$mesg .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
-						$mesg .= '<br>' . $mailfile->error;
-					} else {
-						$mesg .= 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
-					}
-					setEventMessage($mesg, 'errors');
-				}
-			}
-		} else {
-			$langs->load("other");
-			setEventMessage($langs->trans('ErrorMailRecipientIsEmpty') . '!', 'errors');
-			dol_syslog($langs->trans('ErrorMailRecipientIsEmpty'));
-		}
-	} else {
-		$langs->load("other");
-		setEventMessage($langs->trans('ErrorFailedToReadEntity', $langs->trans("Proposal")), 'errors');
-		dol_syslog($langs->trans('ErrorFailedToReadEntity', $langs->trans("Proposal")));
-	}
-}
 
 // Go back to draft
 if ($action == 'modif' && $user->rights->propal->creer)
@@ -2200,7 +2074,7 @@ if ($action == 'create')
 				}
 
 				// ReOpen
-				if (($object->statut == 2 || $object->statut == 3) && $user->rights->propal->cloturer) {
+				if (($object->statut == 2 || $object->statut == 3 || $object->statut == 4) && $user->rights->propal->cloturer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=reopen' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen') . '"';
 					print '>' . $langs->trans('ReOpen') . '</a></div>';
 				}
@@ -2367,13 +2241,13 @@ if ($action == 'create')
 		$formmail->withcancel = 1;
 
 		// Tableau des substitutions
-		$formmail->substit ['__PROPREF__'] = $object->ref;
-		$formmail->substit ['__SIGNATURE__'] = $user->signature;
-		$formmail->substit ['__REFCLIENT__'] = $object->ref_client;
-		$formmail->substit ['__THIRPARTY_NAME__'] = $object->thirdparty->name;
-		$formmail->substit ['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-		$formmail->substit ['__PERSONALIZED__'] = '';
-		$formmail->substit ['__CONTACTCIVNAME__'] = '';
+		$formmail->substit['__PROPREF__'] = $object->ref;
+		$formmail->substit['__SIGNATURE__'] = $user->signature;
+		$formmail->substit['__REFCLIENT__'] = $object->ref_client;
+		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+		$formmail->substit['__PERSONALIZED__'] = '';
+		$formmail->substit['__CONTACTCIVNAME__'] = '';
 
 		// Find the good contact adress
 		$custcontact = '';
@@ -2390,15 +2264,15 @@ if ($action == 'create')
 			}
 
 			if (! empty($custcontact)) {
-				$formmail->substit ['__CONTACTCIVNAME__'] = $custcontact;
+				$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
 			}
 		}
 
 		// Tableau des parametres complementaires
-		$formmail->param ['action'] = 'send';
-		$formmail->param ['models'] = 'propal_send';
-		$formmail->param ['id'] = $object->id;
-		$formmail->param ['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+		$formmail->param['action'] = 'send';
+		$formmail->param['models'] = 'propal_send';
+		$formmail->param['id'] = $object->id;
+		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 		// Init list of files
 		if (GETPOST("mode") == 'init') {
 			$formmail->clear_attached_files();

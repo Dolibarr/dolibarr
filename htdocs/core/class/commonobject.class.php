@@ -609,6 +609,8 @@ abstract class CommonObject
 
         if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty)) return 0;
 
+	    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
         $thirdparty = new Societe($this->db);
         $result=$thirdparty->fetch(isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty));
         $this->client = $thirdparty;  // deprecated
@@ -1823,7 +1825,7 @@ abstract class CommonObject
 
         if (empty($sourceid) && empty($targetid))
         {
-        	dol_print_error('','Bad usage of function. No parameter defined and no id defined');
+        	dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERROR);
         	return -1;
         }
 
@@ -2074,7 +2076,8 @@ abstract class CommonObject
         	if (! $error)
 			{
 				$trigkey='';
-				if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFYBILLED';
+				if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
+				if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
 
 				if ($trigkey)
 				{
@@ -2522,14 +2525,14 @@ abstract class CommonObject
 		if (! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
-				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
+				print '<td align="right" class="margininfos" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
-				print '<td align="right" width="80">'.$langs->trans('CostPrice').'</td>';
+				print '<td align="right" class="margininfos" width="80">'.$langs->trans('CostPrice').'</td>';
 
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
+				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" width="50">'.$langs->trans('MarkRate').'</td>';
+				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarkRate').'</td>';
 		}
 
 		// Total HT
@@ -2566,7 +2569,7 @@ abstract class CommonObject
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
 					$reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
-				else 
+				else
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
 					$reshook=$hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
@@ -3009,21 +3012,26 @@ abstract class CommonObject
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		if (! empty($conf->global->MARGININFO_HIDE_SHOW))
-		{
-			print "<img onclick=\"$('.margininfos').toggle();\" src='".img_picto($langs->trans("Hide")."/".$langs->trans("Show"),'object_margin.png','','',1)."'>";
-			if ($conf->global->MARGININFO_HIDE_SHOW == 2) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';	// hide by default
-		}
+		print $langs->trans('ShowMarginInfos').' : ';
+        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
+    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'':'hideobject').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
+    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'hideobject':'').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
+
+        print '<script>$(document).ready(function() {
+            $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
+            $("span#hideMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
+        });</script>';
+        if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
 
 		print '<table class="nobordernopadding margintable" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td width="30%">'.$langs->trans('Margins').'</td>';
-		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
+		print '<td width="15%">'.$langs->trans('Margins').'</td>';
+		print '<td width="15%" align="right">'.$langs->trans('SellingPrice').'</td>';
 		if ($conf->global->MARGIN_TYPE == "1")
-			print '<td width="20%" align="right">'.$langs->trans('BuyingPrice').'</td>';
+			print '<td width="15%" align="right">'.$langs->trans('BuyingPrice').'</td>';
 		else
-			print '<td width="20%" align="right">'.$langs->trans('CostPrice').'</td>';
-		print '<td width="20%" align="right">'.$langs->trans('Margin').'</td>';
+			print '<td width="15%" align="right">'.$langs->trans('CostPrice').'</td>';
+		print '<td width="15%" align="right">'.$langs->trans('Margin').'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			print '<td align="right">'.$langs->trans('MarginRate').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
