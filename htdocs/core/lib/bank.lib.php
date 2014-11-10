@@ -89,6 +89,39 @@ function bank_prepare_head($object)
 
     return $head;
 }
+/**
+ * Prepare array with list of tabs
+ * 
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
+function bank_admin_prepare_head($object)
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT . '/admin/bank.php';
+	$head[$h][1] = $langs->trans("Miscellaneous");
+	$head[$h][2] = 'general';
+	$h++;
+
+	
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
+	
+	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][2] = 'attributes';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
+
+	return $head;
+		}
 
 /**
  * 		Check account number informations for a bank account
