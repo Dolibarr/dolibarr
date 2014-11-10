@@ -408,7 +408,18 @@ class Categorie extends CommonObject
 				$error++;
 			}
 		}
-
+		if (! $error)
+		{
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_lang";
+			$sql .= " WHERE fk_category = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
+		
 		// Delete category
 		if (! $error)
 		{
