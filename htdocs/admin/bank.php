@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->load("admin");
@@ -88,6 +89,9 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("BankSetupModule"),$linkback,'setup');
 print '<br>';
 
+
+$head = bank_admin_prepare_head(null);
+dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), 0, 'account');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
