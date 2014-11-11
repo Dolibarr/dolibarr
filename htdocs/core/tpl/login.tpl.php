@@ -83,13 +83,17 @@ $(document).ready(function () {
 <tr>
 <td valign="middle" class="loginfield"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
 <td valign="middle" class="nowrap">
-<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
+<span class="span-icon-user">
+<input type="text" id="username" name="username" class="flat input-icon-user" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
+</span>
 </td>
 </tr>
 <!-- Password -->
 <tr><td valign="middle" class="loginfield nowrap"><strong><label for="password"><?php echo $langs->trans('Password'); ?></label></strong></td>
 <td valign="middle" class="nowrap">
-<input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="off" />
+<span class="span-icon-password">
+<input id="password" name="password" class="flat input-icon-password" type="password" size="15" maxlength="30" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="off" />
+</span>
 </td></tr>
 <?php
 if (! empty($hookmanager->resArray['options'])) {
@@ -111,7 +115,11 @@ if (! empty($hookmanager->resArray['options'])) {
 	<td valign="top" class="nowrap none" align="left">
 
 	<table class="login_table_securitycode" style="width: 100px;"><tr>
-	<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
+	<td>
+	<span class="span-icon-security">
+	<input id="securitycode" class="flat input-icon-security" type="text" size="6" maxlength="5" name="code" tabindex="4" />
+	</span>
+	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
 	<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
