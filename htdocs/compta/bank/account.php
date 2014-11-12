@@ -727,7 +727,7 @@ if ($id > 0 || ! empty($ref))
 							$loanstatic->label=$links[$key]['label'];
 						}
 						$loanstatic->ref=$loanstatic->label;
-						print $loanstatic->getNameUrl(1,16);
+						print $loanstatic->getLinkUrl(1,16);
 					}
 					else if ($links[$key]['type']=='member')
 					{
