@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-IdAgenda=Kimlik etkinliği
+IdAgenda=Etkinlik kimliği
 Actions=Eylemler
 ActionsArea=Eylem alanı (Olaylar ve görevler)
 Agenda=Gündem
@@ -7,7 +7,7 @@ Agendas=Gündemler
 Calendar=Takvim
 Calendars=Takvimler
 LocalAgenda=İç takvim
-ActionsOwnedBy=Event owned by
+ActionsOwnedBy=Etkinlik sahibi
 AffectedTo=Etkilenen
 DoneBy=Yapan
 Event=Etkinlik
@@ -70,9 +70,9 @@ DateActionStart= Başlama tarihi
 DateActionEnd= Bitiş tarihi
 AgendaUrlOptions1=Süzgeç çıktısına ayrıca aşağıdaki parametreleri ekleyebilirsiniz:
 AgendaUrlOptions2=Eylem çıktılarını eylem, oluşturan, eylemden etkilenen ya da eylemi yapan kullanıcı <b>login=%s</b> sınırlayacak kullanıcı <b>%s</b>.
-AgendaUrlOptions3=Çıktıyı kullanıcı <b>%s</b> tarafından oluşturulan etkinliklerle sınırlamak için<b>logina=%s</b>.
+AgendaUrlOptions3=<b>kullanıcı=%s</b>,  bir <b>%s</b> kullanıcısına ait eylemlerin çıkışlarını sınırlamak içindir.
 AgendaUrlOptions4=Çıktıyı kullanıcı <b>%s</b> tarafından etkilenen etkinliklerle sınırlamak için<b>logint=%s</b>.
-AgendaUrlOptions5=Çıktıyı kullanıcı<b>%s</b> tarafından yapılan etkinliklerle sınırlamak için<b>logind=%s</b>.
+AgendaUrlOptionsProject=<b>proje=PROJECT_ID</b>, bu <b>PROJECT_ID</b> projesi ile ilişkilendirilmiş eylemlerin çıkışını çıkışını sınırlamak içindir.
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
 Busy=Meşgul
@@ -89,5 +89,5 @@ ExtSiteUrlAgenda=.ical dosyasına erişmek için URL
 ExtSiteNoLabel=Tanımlama yok
 WorkingTimeRange=Çalışma saati aralığı
 WorkingDaysRange=Çalışma günleri aralığı
-AddEvent=Add event
-MyAvailability=My availability
+AddEvent=Etkinlik oluştur
+MyAvailability=Uygunluğum

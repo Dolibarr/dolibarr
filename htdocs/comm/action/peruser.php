@@ -1008,8 +1008,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			if ($output[0]['color']) $color2 = $output[0]['color'];
 		}
 		else if (count($cases2[$h]) > 1) $color2='222222';
-		$ids1=join(',',array_keys($cases1[$h]));
-		$ids2=join(',',array_keys($cases2[$h]));
+		$ids1='';$ids2='';
+		if (count($cases1[$h]) && array_keys($cases1[$h])) $ids1=join(',',array_keys($cases1[$h]));
+		if (count($cases2[$h]) && array_keys($cases2[$h])) $ids2=join(',',array_keys($cases2[$h]));
 		//var_dump($cases1[$h]);
 		print '<table class="nobordernopadding" width="100%">';
 		print '<tr><td '.($color1?'style="background: #'.$color1.';"':'').'class="'.($style1?$style1.' ':'').'onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_00_'.($ids1?$ids1:'none').'"'.($title1?' title="'.$title1.'"':'').'>';

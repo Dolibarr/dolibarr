@@ -27,7 +27,7 @@ MenuRunningServices=Löpande tjänster
 MenuExpiredServices=Utlöpta tjänster
 MenuClosedServices=Stängda tjänster
 NewContract=Nytt kontrakt
-AddContract=Lägg till kontrakt
+AddContract=Skapa kontrakt
 SearchAContract=Sök ett kontrakt
 DeleteAContract=Ta bort ett kontrakt
 CloseAContract=Stäng ett kontrakt
@@ -89,8 +89,8 @@ ListOfServicesToExpireWithDuration=Förteckning över tjänster som löper ut in
 ListOfServicesToExpireWithDurationNeg=Förteckning över tjänster som löpt ut sedan mer än %s dagar
 ListOfServicesToExpire=Förteckning över tjänster som löper ut
 NoteListOfYourExpiredServices=Denna förteckning omfattar endast tjänster från avtal med tredje part i förhållande till vilka du är säljare.
-StandardContractsTemplate=Standard contracts template
-ContactNameAndSignature=For %s, name and signature:
+StandardContractsTemplate=Standardkontrakt mall
+ContactNameAndSignature=För %s, namn och underskrift:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Säljare som tecknar avtal

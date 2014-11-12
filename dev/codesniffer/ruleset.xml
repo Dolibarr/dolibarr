@@ -108,7 +108,7 @@
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
             <property name="complexity" value="80" />
-            <property name="absoluteComplexity" value="200" />
+            <property name="absoluteComplexity" value="250" />
         </properties>
     </rule>
     <rule ref="Generic.Metrics.NestingLevel">

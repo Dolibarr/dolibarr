@@ -897,6 +897,13 @@ div#login_left, div#login_right {
 table.login_table tr td table.none tr td {
 	padding: 2px;
 }
+table.login_table_securitycode {
+	border-spacing: 0px;
+}
+table.login_table_securitycode tr td {
+	padding-left: 0px;
+	padding-right: 4px;
+}
 #securitycode {
 	min-width: 60px;
 }
