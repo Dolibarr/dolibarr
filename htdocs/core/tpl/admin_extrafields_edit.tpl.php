@@ -98,8 +98,8 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($typ
 </td>
 <td>
 <table class="nobordernopadding">
-<tr><td width="30%">
-	<textarea name="param" id="param"><?php echo $param_chain; ?></textarea>
+<tr><td>
+	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo $param_chain; ?></textarea>
 </td><td><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelp".$type),1,0)?></td></tr>
 </table>
 </td>

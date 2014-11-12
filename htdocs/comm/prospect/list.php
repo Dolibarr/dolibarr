@@ -48,7 +48,6 @@ $search_state       = GETPOST("search_state");
 $search_datec       = GETPOST("search_datec");
 $search_categ       = GETPOST("search_categ",'int');
 $search_status		= GETPOST("search_status",'int');
-if ($search_status=='') $search_status=1; // always display activ customer first
 $catid              = GETPOST("catid",'int');
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -154,6 +153,21 @@ $sts = array(-1,0,1,2,3);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('prospectlist'));
 
+// Do we click on purge search criteria ?
+if (GETPOST("button_removefilter_x"))
+{
+    $socname="";
+	$stcomm="";
+	$search_nom="";
+	$search_zipcode="";
+	$search_town="";
+	$search_state="";
+	$search_datec="";
+	$search_categ="";
+	$search_status="";
+}
+
+if ($search_status=='') $search_status=1; // always display active customer first
 
 /*
  * Actions
@@ -361,7 +375,7 @@ if ($resql)
  	// Print these two select
  	print $langs->trans("From").' <select class="flat" name="search_level_from">'.$options_from.'</select>';
  	print ' ';
- 	print $langs->trans("To").' <select class="flat" name="search_level_to">'.$options_to.'</select>';
+ 	print $langs->trans("to").' <select class="flat" name="search_level_to">'.$options_to.'</select>';
 
     print '</td>';
 
@@ -378,9 +392,9 @@ if ($resql)
     print '</td>';
 
     // Print the search button
-    print '<td class="liste_titre" align="right">';
-	print '<input class="liste_titre" name="button_search" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print "</td></tr>\n";
 
 	$parameters=array();
 	$formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook

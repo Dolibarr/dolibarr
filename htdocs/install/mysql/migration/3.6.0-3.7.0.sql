@@ -28,6 +28,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFY_BILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
 
 ALTER TABLE llx_notify ADD COLUMN fk_soc integer NULL after fk_action;
+ALTER TABLE llx_notify ADD COLUMN type varchar(16) DEFAULT 'email' after fk_soc;
 
 ALTER TABLE llx_bank_account ADD COLUMN fk_user_author integer;
 
@@ -55,7 +56,7 @@ ALTER TABLE llx_user ADD COLUMN fk_user_creat integer AFTER tms;
 ALTER TABLE llx_user ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
 
 -- Add module accounting Expert
-ALTER TABLE llx_bookkeeping RENAME TO llx_accounting_bookkeeping; -- To update old user of module Accounting Expert
+--ALTER TABLE llx_bookkeeping RENAME TO llx_accounting_bookkeeping; -- To update old user of module Accounting Expert -> Line should be added into file sql/x.y.z-a.b.c.sql of module. 
 
 
 CREATE TABLE llx_accounting_bookkeeping
@@ -181,7 +182,9 @@ ALTER TABLE llx_product MODIFY COLUMN fk_barcode_type INTEGER NULL DEFAULT NULL;
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type NOT IN (SELECT rowid from llx_c_barcode_type);
-ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
+
+-- This request make mysql drop (mysql bug):
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
 
 
 -- Added missing relations of llx_product_price

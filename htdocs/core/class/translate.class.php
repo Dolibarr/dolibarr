@@ -33,7 +33,6 @@ class Translate
 
 	var $defaultlang;					// Current language for current user
 	var $direction = 'ltr';				// Left to right or Right to left
-	var $charset_inputfile=array();	// To store charset encoding used for language
 	var $charset_output='UTF-8';		// Codage used by "trans" method outputs
 
 	var $tab_translate=array();		// Array of all translations key=>value

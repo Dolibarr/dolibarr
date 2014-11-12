@@ -424,6 +424,10 @@ th .button {
 	border-radius: 10px;
 }
 
+.borderrightlight
+{
+	border-right: 1px solid #DDD;
+}
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -862,7 +866,7 @@ form#login {
 	max-width: 540px;
 
 	background-color: #FFFFFF;
-	
+
 	-moz-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	-webkit-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
@@ -872,7 +876,7 @@ form#login {
 
 	border-radius: 8px;
 	border:solid 1px rgba(80,80,80,.4);
-	
+
 	border-top:solid 1px f8f8f8;
 	/*
 	background-color: #f8f8f8;
@@ -892,6 +896,13 @@ div#login_left, div#login_right {
 }
 table.login_table tr td table.none tr td {
 	padding: 2px;
+}
+table.login_table_securitycode {
+	border-spacing: 0px;
+}
+table.login_table_securitycode tr td {
+	padding-left: 0px;
+	padding-right: 4px;
 }
 #securitycode {
 	min-width: 60px;

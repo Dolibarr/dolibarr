@@ -610,6 +610,21 @@ IMG;
 			closedir($handle);
 		}
 	}
+
+	/**
+	 * return the value present on odt in [valuename][/valuename]
+	 * @param string $value name balise in the template
+	 * @return string the value inside the balise
+	 *
+	 */
+	public function getvalue($valuename)
+	{
+		$searchreg="/\\[".$valuename."\\](.*)\\[\\/".$valuename."\\]/";
+		preg_match($searchreg, $this->contentXml, $matches); 
+		$this->contentXml = preg_replace($searchreg, "", $this->contentXml);
+		return  $matches[1];
+	}
+
 }
 
 ?>

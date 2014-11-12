@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,7 +376,7 @@ if ($result > 0)
     print '</tr>';
 
     // List
-    $sql = "SELECT n.rowid, n.daten, n.email, n.objet_type, n.objet_id as object_id, n.type,";
+    $sql = "SELECT n.rowid, n.daten, n.email, n.objet_type as object_type, n.objet_id as object_id, n.type,";
     $sql.= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail,";
     $sql.= " a.code, a.label";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";

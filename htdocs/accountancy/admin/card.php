@@ -181,11 +181,6 @@ else if ($id)
 		
 		if ($action == 'update')
 		{
-			// WYSIWYG Editor
-			$htmlacc = new FormVentilation($db);
-			
-			require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-			
 			$soc = new Societe($db);
 			if ($object->socid) {
 				$soc->fetch($object->socid);

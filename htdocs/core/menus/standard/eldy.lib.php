@@ -770,15 +770,18 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (! empty($conf->facture->enabled)) $newmenu->add("/commande/list.php?leftmenu=orders&amp;viewstatut=-3", $langs->trans("MenuOrdersToBill2"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
 				//                  if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
 			}
-			
+
 			// Supplier Orders
 			if (! empty($conf->fournisseur->enabled))
 			{
-				$langs->load("supplier");
-				$newmenu->add("/fourn/commande/list.php?leftmenu=orders&amp;search_status=5", $langs->trans("MenuOrdersSupplierToBill"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
-				//                  if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
+				if (! empty($conf->global->SUPPLIER_MENU_ORDER_RECEIVED_INTO_INVOICE))
+				{
+					$langs->load("supplier");
+					$newmenu->add("/fourn/commande/list.php?leftmenu=orders&amp;search_status=5", $langs->trans("MenuOrdersSupplierToBill"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
+					//                  if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
+				}
 			}
-			
+
 
 			// Donations
 			if (! empty($conf->don->enabled))
@@ -952,7 +955,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			if (! empty($conf->accounting->enabled))
 			{
 				$newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy", $langs->trans("Fiscalyear"),0,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
-				$newmenu->add("/accountancy/admin/account.php?mainmenu=home", $langs->trans("Chartofaccounts"),0,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
+				$newmenu->add("/accountancy/admin/account.php?mainmenu=accountancy", $langs->trans("Chartofaccounts"),0,$user->rights->accounting->chartofaccount, '', $mainmenu, 'chartofaccount');
 			}
 		}
 

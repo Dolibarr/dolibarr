@@ -42,6 +42,11 @@ $paymentstatic=new Paiement($db);
 $accountstatic=new Account($db);
 $companystatic=new Societe($db);
 
+$search_ref=GETPOST("search_ref","int");
+$search_account=GETPOST("search_account","int");
+$search_paymenttype=GETPOST("search_paymenttype");
+$search_amount=GETPOST("search_amount");
+$search_company=GETPOST("search_company");
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -53,8 +58,14 @@ $limit = $conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
 
-
-
+if (GETPOST("button_removefilter"))
+{
+	$search_ref="";
+	$search_account="";
+	$search_amount="";
+    $search_paymenttype="";
+	$search_company="";
+}
 
 /*
  * 	View
@@ -110,11 +121,11 @@ else
         else  $sql.= " AND f.fk_user_author = ".$userid;
     }
     // Search criteria
-    if (GETPOST("search_ref"))         		$sql .=" AND p.rowid=".GETPOST("search_ref",'int');
-    if (GETPOST("search_account") > 0)      $sql .=" AND b.fk_account=".GETPOST("search_account",'int');
-    if (GETPOST("search_paymenttype") != "")  $sql .=" AND c.code='".GETPOST("search_paymenttype")."'";
-    if (GETPOST("search_amount"))      		$sql .=" AND p.amount=".price2num(GETPOST("search_amount"));
-    if (GETPOST("search_company"))     		$sql .= natural_search('s.nom', GETPOST('search_company'));
+    if ($search_ref)         		$sql .=" AND p.rowid=".$search_ref;
+    if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
+    if ($search_paymenttype != "")  $sql .=" AND c.code='".$search_paymenttype."'";
+    if ($search_amount)      		$sql .=" AND p.amount='".price2num($search_amount)."'";
+    if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
@@ -129,9 +140,9 @@ if ($resql)
 
     $paramlist='';
     $paramlist.=(GETPOST("orphelins")?"&orphelins=1":"");
-    $paramlist.=($_REQUEST["search_ref"]?"&search_ref=".$_REQUEST["search_ref"]:"");
-    $paramlist.=($_REQUEST["search_company"]?"&search_company=".$_REQUEST["search_company"]:"");
-    $paramlist.=($_REQUEST["search_amount"]?"&search_amount=".$_REQUEST["search_amount"]:"");
+    $paramlist.=($search_ref?"&search_ref=".$search_ref:"");
+    $paramlist.=($search_company?"&search_company=".$search_company:"");
+    $paramlist.=($search_amount?"&search_amount=".$search_amount:"");
 
     print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num);
 
@@ -149,26 +160,29 @@ if ($resql)
     {
         print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
     }
-    print "</tr>\n";
+    print '<td class="liste_titre">&nbsp;</td>';
+	print "</tr>\n";
 
     // Lines for filters fields
     print '<tr class="liste_titre">';
     print '<td align="left">';
-    print '<input class="fat" type="text" size="4" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
+    print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
     print '<td>&nbsp;</td>';
     print '<td align="left">';
-    print '<input class="fat" type="text" size="6" name="search_company" value="'.$_REQUEST["search_company"].'">';
+    print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
     print '</td>';
     print '<td>';
-    $form->select_types_paiements($_REQUEST["search_paymenttype"],'search_paymenttype','',2,1,1);
+    $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
     print '</td>';
     print '<td>';
-    $form->select_comptes($_REQUEST["search_account"],'search_account',0,'',1);
+    $form->select_comptes($search_account,'search_account',0,'',1);
     print '</td>';
     print '<td align="right">';
-    print '<input class="fat" type="text" size="4" name="search_amount" value="'.$_REQUEST["search_amount"].'">';
+    print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
+	print '</td><td align="right">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
     if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
     {
@@ -223,7 +237,8 @@ if ($resql)
             if ($objp->statut == 0) print '</a>';
             print '</td>';
         }
-
+		
+		print '<td>&nbsp;</td>';
         print '</tr>';
 
         $i++;
