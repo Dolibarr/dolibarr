@@ -746,7 +746,7 @@ class Form
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
-     *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	array	$events			Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *	@param	int		$limit			Maximum number of elements
      * 	@return	string					HTML string with
 	 *  @deprecated						Use select_thirdparty instead
@@ -816,10 +816,67 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
+            if (! empty($conf->use_javascript_ajax))
             {
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            	$out.= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+            	if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
+	            {
+					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	            	$out.= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+	            }
+	            else
+				{
+					if (count($events))		// Add management of event
+					{
+						print '<script type="text/javascript">
+								$(document).ready(function() {
+									jQuery("#'.$htmlname.'").change(function () {
+										var obj = '.json_encode($events).';
+							   			$.each(obj, function(key,values) {
+						    				if (values.method.length) {
+						    					runJsCodeForEvent'.$htmlname.'(values);
+						    				}
+										});
+									});
+
+								function runJsCodeForEvent'.$htmlname.'(obj) {
+									var id = $("#'.$htmlname.'").val();
+									var method = obj.method;
+									var url = obj.url;
+									var htmlname = obj.htmlname;
+									var showempty = obj.showempty;
+						    		$.getJSON(url,
+											{
+												action: method,
+												id: id,
+												htmlname: htmlname,
+												showempty: showempty
+											},
+											function(response) {
+												$.each(obj.params, function(key,action) {
+													if (key.length) {
+														var num = response.num;
+														if (num > 0) {
+															$("#" + key).removeAttr(action);
+														} else {
+															$("#" + key).attr(action, action);
+														}
+													}
+												});
+												$("select#" + htmlname).html(response.value);
+												if (response.num) {
+													var selecthtml_str = response.value;
+													var selecthtml_dom=$.parseHTML(selecthtml_str);
+													$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+												} else {
+													$("#inputautocomplete"+htmlname).val("");
+												}
+												$("select#" + htmlname).change();	/* Trigger event change */
+											});
+								}
+							})
+							</script>';
+					}
+	            }
             }
 
             // Construct $out and $outarray
