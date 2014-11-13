@@ -1121,3 +1121,12 @@ ALTER TABLE llx_extrafields ADD alwayseditable INTEGER DEFAULT 0 AFTER pos;
 -- add supplier webservice fields
 ALTER TABLE llx_societe ADD webservices_url varchar(255) DEFAULT NULL;
 ALTER TABLE llx_societe ADD webservices_key varchar(128) DEFAULT NULL;
+
+-- changes size of ref in commande_fourn and facture_fourn
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN ref VARCHAR(255);
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN ref_ext VARCHAR(255);
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN ref_supplier VARCHAR(255);
+
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref VARCHAR(255);
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_ext VARCHAR(255);
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_supplier VARCHAR(255);
