@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,11 +145,12 @@ abstract class CommonInvoice extends CommonObject
 	function getLibType()
 	{
 		global $langs;
-		if ($this->type == 0) return $langs->trans("InvoiceStandard");
-		if ($this->type == 1) return $langs->trans("InvoiceReplacement");
-		if ($this->type == 2) return $langs->trans("InvoiceAvoir");
-		if ($this->type == 3) return $langs->trans("InvoiceDeposit");
-		if ($this->type == 4) return $langs->trans("InvoiceProForma");
+		if ($this->type == Facture::TYPE_STANDARD) return $langs->trans("InvoiceStandard");
+		if ($this->type == Facture::TYPE_REPLACEMENT) return $langs->trans("InvoiceReplacement");
+		if ($this->type == Facture::TYPE_CREDIT_NOTE) return $langs->trans("InvoiceAvoir");
+		if ($this->type == Facture::TYPE_DEPOSIT) return $langs->trans("InvoiceDeposit");
+		if ($this->type == Facture::TYPE_PROFORMA) return $langs->trans("InvoiceProForma");
+		if ($this->type == Facture::TYPE_SITUATION) return $langs->trans("InvoiceSituation");
 		return $langs->trans("Unknown");
 	}
 

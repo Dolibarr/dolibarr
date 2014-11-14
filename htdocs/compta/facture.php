@@ -7,9 +7,10 @@
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2013 Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014 Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014	   Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -802,7 +803,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	}
 
 	// Standard or deposit or proforma invoice
-	if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT || $_POST['type'] == Facture::TYPE_PROFORMA) && $_POST['fac_rec'] <= 0)
+	if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT || $_POST['type'] == Facture::TYPE_PROFORMA || ($_POST['type'] == Facture::TYPE_SITUATION && empty($_POST['situations']))) && $_POST['fac_rec'] <= 0)
 	{
 		if (GETPOST('socid', 'int') < 1)
 		{
@@ -836,6 +837,12 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->amount				= $_POST['amount'];
 			$object->remise_absolue		= $_POST['remise_absolue'];
 			$object->remise_percent		= $_POST['remise_percent'];
+
+			if($_POST['type'] == Facture::TYPE_SITUATION) {
+				$object->situation_counter = 1;
+				$object->situation_final = 0;
+				$object->situation_cycle_ref = $object->newCycle();
+			}
 
 			$object->fetch_thirdparty();
 
@@ -987,6 +994,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 								$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
 								$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
+								if ($object->situation_counter == 1) $lines[$i]->situation_percent =  0;
 
 								if ($lines[$i]->subprice < 0)
 								{
@@ -1040,7 +1048,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 										$array_option = $lines[$i]->array_options;
 									}
 
-									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_option);
+									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_option, $lines[$i]->situation_percent, $lines[$i]->fk_prev_id);
 
 									if ($result > 0) {
 										$lineid = $result;
@@ -1086,6 +1094,44 @@ else if ($action == 'add' && $user->rights->facture->creer)
 					}
 				}
 			}
+		}
+	}
+
+	if ($_POST['type'] == Facture::TYPE_SITUATION && (!empty($_POST['situations']))) {
+		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($datefacture)) {
+			$error++;
+			$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->trans("Date")) . '</div>';
+		}
+
+		if (!($_POST['situations'] > 0)) {
+			$error++;
+			$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->trans("InvoiceSituation")) . '</div>';
+		}
+
+		if (!$error) {
+			$result = $object->fetch($_POST['situations']);
+			$object->fk_facture_source = $_POST['situations'];
+			$object->type = Facture::TYPE_SITUATION;
+
+			$object->fetch_thirdparty();
+			$object->date = $datefacture;
+			$object->note_public = trim($_POST['note_public']);
+			$object->note = trim($_POST['note']);
+			$object->ref_client = $_POST['ref_client'];
+			$object->ref_int = $_POST['ref_int'];
+			$object->modelpdf = $_POST['model'];
+			$object->fk_project = $_POST['projectid'];
+			$object->cond_reglement_id = $_POST['cond_reglement_id'];
+			$object->mode_reglement_id = $_POST['mode_reglement_id'];
+			$object->remise_absolue = $_POST['remise_absolue'];
+			$object->remise_percent = $_POST['remise_percent'];
+
+			// Proprietes particulieres a facture de remplacement
+
+			$object->situation_counter = $object->situation_counter + 1;
+			$id = $object->createFromCurrent($user);
+			if ($id <= 0) $mesg = $object->error;
 		}
 	}
 
@@ -1312,7 +1358,7 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 			setEventMessage($mesg, 'errors');
 		} else {
 			// Insert line
-			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, '', $price_base_type, $pu_ttc, $type, - 1, $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_option);
+			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, '', $price_base_type, $pu_ttc, $type, - 1, $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_option, $_POST['progress']);
 
 			if ($result > 0)
 			{
@@ -1363,6 +1409,9 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 		    	unset($_POST['date_endday']);
 		    	unset($_POST['date_endmonth']);
 		    	unset($_POST['date_endyear']);
+
+				unset($_POST['situations']);
+				unset($_POST['progress']);
 			} else {
 				setEventMessage($object->error, 'errors');
 			}
@@ -1413,6 +1462,17 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 		}
 	}
 
+	$line = new FactureLigne($db);
+	$line->fetch(GETPOST('lineid'));
+	$percent = $line->get_prev_progress();
+
+	if (GETPOST('progress') < $percent) {
+		$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
+		setEventMessages($mesg, null, 'warnings');
+		$error++;
+		$result = -1;
+	}
+
 	// Check minimum price
 	$productid = GETPOST('productid', 'int');
 	if (! empty($productid)) {
@@ -1450,7 +1510,7 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 
 	// Update line
 	if (! $error) {
-		$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'), $date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, 0, $array_option);
+		$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'), $date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, 0, $array_option, GETPOST('progress'));
 
 		if ($result >= 0) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1484,8 +1544,24 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 			unset($_POST['buying_price']);
 			unset($_POST['np_marginRate']);
 			unset($_POST['np_markRate']);
+			unset($_POST['situations']);
+			unset($_POST['progress']);
 		} else {
 			setEventMessage($object->error, 'errors');
+		}
+	}
+}
+
+else if ($action == 'updatealllines' && $user->rights->facture->creer && $_POST['all_percent'] == $langs->trans('Modifier')) {
+	if (!$object->fetch($id) > 0) dol_print_error($db);
+	if (!is_null(GETPOST('all_progress')) && GETPOST('all_progress') != "") {
+		foreach ($object->lines as $line) {
+			$percent = $line->get_prev_progress();
+			if (GETPOST('all_progress') < $percent) {
+				$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
+				$result = -1;
+			} else
+				$object->update_percent($line, $_POST['all_progress']);
 		}
 	}
 }
@@ -1800,6 +1876,8 @@ if ($action == 'create')
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 		print ajax_combobox('fac_replacement');
 		print ajax_combobox('fac_avoir');
+		print ajax_combobox('situations');
+
 	}
 
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
@@ -1961,6 +2039,29 @@ if ($action == 'create')
 
 	if ($socid > 0)
 	{
+		// First situation invoice
+		print '<tr height="18"><td width="16px" valign="middle">';
+		print '<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked="checked"' : '') . '>';
+		print '</td><td valign="middle">';
+		$desc = $form->textwithpicto($langs->trans("InvoiceFirstSituationAsk"), $langs->transnoentities("InvoiceFirstSituationDesc"), 1);
+		print $desc;
+		print '</td></tr>' . "\n";
+
+		// Next situation invoice
+		$opt = $form->load_situation_invoices(GETPOST('originid'), $socid);
+		print '<tr height="18"><td valign="middle">';
+		print '<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked="checked"' : '') . ' ';
+		if ($opt == '<option value ="0" selected="selected">' . $langs->trans('NoSituations') . '</option>' || (GETPOST('origin') && GETPOST('origin') != 'facture')) print 'disabled="disabled"';
+		print '>';
+		print '</td><td valign="middle">';
+		$text = $langs->trans("InvoiceSituationAsk") . ' ';
+		$text .= '<select class="flat" id="situations" name="situations">';
+		$text .= $opt;
+		$text .= '</select>';
+		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceSituationDesc"), 1);
+		print $desc;
+		print '</td></tr>' . "\n";
+
 		// Replacement
 		print '<tr height="18"><td valign="middle">';
 		print '<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOST('type') == 1 ? ' checked="checked"' : '');
@@ -3093,6 +3194,50 @@ if ($action == 'create')
 	print "</td>";
 	print '</tr>';
 
+	// Situations
+	if ($object->type == 5 && ($object->situation_counter > 1)) {
+		$prevsits = $object->get_prev_sits();
+		print '<tr><td>';
+		print $langs->trans('SituationAmount');
+		print ' ';
+
+		print $prevsits[0]->situation_counter;
+		for ($i = 1; $i < count($prevsits); $i++) {
+			print ' + ';
+			print $prevsits[$i]->situation_counter;
+		}
+		print ' + ';
+		print $object->situation_counter;
+
+		print '</td>';
+		print '<td align="right" colspan="2" nowrap>';
+
+		$prevsits_total_amount = 0;
+		foreach ($prevsits as $situation) {
+			$prevsits_total_amount += $situation->total_ht;
+		}
+		$prevsits_total_amount += $object->total_ht;
+
+		print price($prevsits_total_amount);
+		print '</td>';
+		print '<td>' . $langs->trans('Currency' . $conf->currency) . '</td></tr>';
+
+		// Previous situation(s) deduction(s)
+		for ($i = 0; $i < count($prevsits); $i++) {
+			print '<tr><td>';
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?facid=' . $prevsits[$i]->id . '">';
+			print $langs->trans('SituationDeduction');
+			print ' ';
+			print $prevsits[$i]->situation_counter;
+			print '</a></td>';
+
+			print '<td align="right" colspan="2" nowrap>';
+			print '- ' . price($prevsits[$i]->total_ht);
+			print '</td>';
+			print '<td>' . $langs->trans('Currency' . $conf->currency) . '</td></tr>';
+		}
+	}
+
 	// Amount
 	print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
 	print '<td align="right" colspan="3" nowrap>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
@@ -3190,6 +3335,58 @@ if ($action == 'create')
 	// Lines
 	$result = $object->getLinesArray();
 
+	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) {
+		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+	}
+
+	print '<table id="tablelines" class="noborder noshadow" width="100%">';
+
+	// Show global modifiers
+	if ($object->situation_cycle_ref && $object->statut == 0) {
+		print '<tr class="liste_titre nodrag nodrop">';
+		print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '"#updatealllines" method="POST">';
+		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '" />';
+		print '<input type="hidden" name="action" value="updatealllines" />';
+		print '<input type="hidden" name="id" value="' . $object->id . '" />';
+
+		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+			print '<td align="center" width="5">&nbsp;</td>';
+		}
+		print '<td>' . $langs->trans('ModifyAllLines') . '</td>';
+		print '<td align="right" width="50">&nbsp;</td>';
+		print '<td align="right" width="80">&nbsp;</td>';
+		if ($inputalsopricewithtax) print '<td align="right" width="80">&nbsp;</td>';
+		print '<td align="right" width="50">&nbsp</td>';
+		print '<td align="right" width="50">&nbsp</td>';
+		print '<td align="right" width="50">' . $langs->trans('Progress') . '</td>';
+		if (! empty($conf->margin->enabled) && empty($user->societe_id))
+		{
+			print '<td align="right" class="margininfos" width="80">&nbsp;</td>';
+			if ((! empty($conf->global->DISPLAY_MARGIN_RATES) || ! empty($conf->global->DISPLAY_MARK_RATES)) && $user->rights->margins->liretous) {
+				print '<td align="right" class="margininfos" width="50">&nbsp;</td>';
+			}
+		}
+		print '<td align="right" width="50">&nbsp;</td>';
+		print '<td>&nbsp;</td>';
+		print '<td width="10">&nbsp;</td>';
+		print '<td width="10">&nbsp;</td>';
+		print "</tr>\n";
+
+		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+			print '<td align="center" width="5">&nbsp;</td>';
+		}
+		print '<tr width="100%" height="18" class="nodrag nodrop">';
+		print '<td>&nbsp;</td>';
+		print '<td width="50">&nbsp;</td>';
+		print '<td width="80">&nbsp;</td>';
+		print '<td width="50">&nbsp;</td>';
+		print '<td width="50">&nbsp;</td>';
+		print '<td align="right" class="nowrap"><input type="text" size="1" value="" name="all_progress">%</td>';
+		print '<td colspan="4" align="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
+		print '</tr>';
+		print '</form>';
+	}
+
 	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
 	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
@@ -3197,18 +3394,12 @@ if ($action == 'create')
 	<input type="hidden" name="id" value="' . $object->id . '">
 	';
 
-	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) {
-		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
-	}
-
-	print '<table id="tablelines" class="noborder noshadow" width="100%">';
-
 	// Show object lines
 	if (! empty($object->lines))
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline')
+	if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline' && ($object->is_first() || !$object->situation_cycle_ref))
 	{
 		if ($action != 'editline')
 		{
@@ -3245,12 +3436,14 @@ if ($action == 'create')
 				$ventilExportCompta = $object->getVentilExportCompta();
 
 				if ($resteapayer == $object->total_ttc && $object->paye == 0 && $ventilExportCompta == 0) {
-					if (! $objectidnext) {
+					if (! $objectidnext && $object->is_last_in_cycle()) {
 						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
 						} else {
 							print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("NotEnoughPermissions") . '">' . $langs->trans('Modify') . '</span></div>';
 						}
+					} else if (!$object->is_last_in_cycle()) {
+						print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("NotLastInCycle") . '">' . $langs->trans('Modify') . '</span></div>';
 					} else {
 						print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('Modify') . '</span></div>';
 					}
@@ -3273,7 +3466,7 @@ if ($action == 'create')
 			}
 
 			// Validate
-			if ($object->statut == 0 && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && (! empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
+			if ($object->statut == 0 && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA|| $object->type == Facture::TYPE_SITUATION) && (! empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
 				if ($user->rights->facture->valider) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=valid">' . $langs->trans('Validate') . '</a></div>';
 				}
@@ -3382,6 +3575,17 @@ if ($action == 'create')
 				if (! $objectidnext)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="facture/fiche-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a></div>';
+				}
+			}
+
+			//Create next situation invoice
+			if ($user->rights->facture->creer && ($object->type == 5) && ($object->statut == 1 || $object->statut == 2)) {
+				if ($object->is_last_in_cycle() && $object->situation_final != 1) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=create&amp;type=5&amp;origin=facture&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '" >' . $langs->trans('CreateNextSituationInvoice') . '</a></div>';
+				} else if (!$object->is_last_in_cycle()) {
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastInCycle") . '">' . $langs->trans('CreateNextSituationInvoice') . '</a></div>';
+				} else {
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseFinal") . '">' . $langs->trans('CreateNextSituationInvoice') . '</a></div>';
 				}
 			}
 

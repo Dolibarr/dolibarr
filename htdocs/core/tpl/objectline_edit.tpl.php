@@ -2,6 +2,8 @@
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,22 +85,44 @@ $coldisplay=-1; // We remove first td
 	    $reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
 	}
 
-	// editeur wysiwyg
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $nbrows=ROWS_2;
-    if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-    $enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
-	$doleditor=new DolEditor('product_desc',$line->description,'',164,'dolibarr_details','',false,true,$enable,$nbrows,'98%');
-	$doleditor->Create();
+	// Do not allow editing during a situation cycle
+	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
+		// editeur wysiwyg
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$nbrows=ROWS_2;
+		if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+		$enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
+		$doleditor=new DolEditor('product_desc',$line->description,'',164,'dolibarr_details','',false,true,$enable,$nbrows,'98%');
+		$doleditor->Create();
+	} else {
+		print '<textarea id="desc" class="flat" name="desc" readonly="readonly" style="width: 200px; height:80px;">' . $line->description . '</textarea>';
+	}
 	?>
 	</td>
 
-	<td align="right"><?php $coldisplay++; ?><?php echo $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type); ?></td>
+	<?php
+	$coldisplay++;
+	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
+		print '<td align="right">' . $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type) . '</td>';
+	} else {
+		print '<td align="right"><input size="1" type="text" class="flat" name="tva_tx" value="' . price($line->tva_tx) . '" readonly="readonly" />%</td>';
+	}
 
-	<td align="right"><?php $coldisplay++; ?><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
-	<?php if ($inputalsopricewithtax) { ?>
-	<td align="right"><?php $coldisplay++; ?><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="<?php echo price($pu_ttc,0,'',0); ?>"></td>
-	<?php } ?>
+	$coldisplay++;
+	print '<td align="right"><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="' . price($line->subprice,0,'',0) . '" ';
+	if ($this->situation_counter > 1) {
+		print 'readonly="readonly" ';
+	}
+	print '></td>';
+
+	if ($inputalsopricewithtax) {
+		$coldisplay++;
+		print '<td align="right"><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="' . price($pu_ttc,0,'',0) . '"';
+		if ($this->situation_counter > 1) {
+			print 'readonly="readonly" ';
+		}
+		print '></td>';
+	} ?>
 
 	<td align="right"><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) {
@@ -106,22 +130,32 @@ $coldisplay=-1; // We remove first td
 		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-	?>
-		<input size="3" type="text" class="flat" name="qty" id="qty" value="<?php echo $line->qty; ?>">
-	<?php } else { ?>
+		print '<input size="3" type="text" class="flat" name="qty" id="qty" value="' . $line->qty . '" ';
+		if ($this->situation_counter > 1) {
+			print 'readonly="readonly" ';
+		}
+		print '/>';
+	} else { ?>
 		&nbsp;
 	<?php } ?>
 	</td>
 
 	<td align="right" nowrap><?php $coldisplay++; ?>
-	<?php if (($line->info_bits & 2) != 2) { ?>
-		<input size="1" type="text" class="flat" name="remise_percent" id="remise_percent" value="<?php echo $line->remise_percent; ?>">%
-	<?php } else { ?>
+	<?php if (($line->info_bits & 2) != 2) {
+		print '<input size="1" type="text" class="flat" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '" ';
+		if ($this->situation_counter > 1) {
+			print 'readonly="readonly" ';
+		}
+		print '/>%';
+	} else { ?>
 		&nbsp;
 	<?php } ?>
 	</td>
-
 	<?php
+	if ($this->situation_cycle_ref) {
+		$coldisplay++;
+		print '<td align="right" nowrap><input type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
+	}
 	if (! empty($usemargins))
 	{
 	?>

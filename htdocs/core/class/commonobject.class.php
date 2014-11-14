@@ -7,6 +7,7 @@
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1740,6 +1741,19 @@ abstract class CommonObject
             // Add revenue stamp to total
             $this->total_ttc       += isset($this->revenuestamp)?$this->revenuestamp:0;
 
+			// Situations totals
+			if ($this->situation_cycle_ref && $this->situation_counter > 1) {
+				$prev_sits = $this->get_prev_sits();
+
+				foreach ($prev_sits as $sit) {
+					$this->total_ht -= $sit->total_ht;
+					$this->total_tva -= $sit->total_tva;
+					$this->total_localtax1 -= $sit->total_localtax1;
+					$this->total_localtax2 -= $sit->total_localtax2;
+					$this->total_ttc -= $sit->total_ttc;
+				}
+			}
+
             $this->db->free($resql);
 
             // Now update global field total_ht, total_ttc and tva
@@ -2567,6 +2581,10 @@ abstract class CommonObject
 
 		// Reduction short
 		print '<td align="right" width="50"><label for="remise_percent">'.$langs->trans('ReductionShort').'</label></td>';
+
+		if ($this->situation_cycle_ref) {
+			print '<td align="right" width="50"><label for="progress">' . $langs->trans('Progress') . '</label></td>';
+		}
 
 		if (! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
