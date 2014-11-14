@@ -111,9 +111,8 @@ This page is a sample of page using tables. To make test with<br>
 <?php
 	$tasksarray=array(1,2,3);	// To force having several lines
 	$tagidfortablednd='tablelines';
-	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+	if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 ?>
-
 <div class="tagtable centpercent" id="tablelines">
     <div class="tagtr liste_titre">
         <div class="tagtd">line3<input type="hidden" name="cartitem" value="3"></div>
@@ -302,7 +301,7 @@ $('xxxth').replaceWith(
     </tr>
     </tbody>
 </table>
-
+<br>
 
 
 <br><hr><br>Example 3 : Standard table => Use this if you need the drag and drop for lines<br>
@@ -310,11 +309,10 @@ $('xxxth').replaceWith(
 <?php
 	$tasksarray=array(1,2,3);	// To force having several lines
 	$tagidfortablednd='tablelines3';
-	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+	if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 ?>
-
 <table class="tagtable centpercent centpercent" id="tablelines3">
-<tr class="liste_titre"><td>title1</td><td class="tdlineupdown">title2</td></tr>
+<tr class="liste_titre"><td>title1</td><td>title2</td></tr>
 <tr class="pair"><td class="pair">a1</td><td class="tdlineupdown pair">b1</td></tr>
 <tr class="impair"><td class="impair">a2</td><td class="tdlineupdown impair">b2</td></tr>
 </table>
