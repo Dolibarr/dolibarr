@@ -4168,7 +4168,7 @@ class Form
     	// Add code for jquery to use multiselect
     	// Note: Plugin "multiselect" is no more provided by Dolibarr. You must include it and load it into your module to use it.
     	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiselect'))
-    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT')))
+    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT') == 'multiselect'))
     	{
 	    	print '<!-- JS CODE FOR multiselect -->
 				<script type="text/javascript">
@@ -4190,15 +4190,16 @@ class Form
     	}
 
         // Add code for jquery to use multiple-select
-    	// Note: Plugin "multiselect" is no more provided by Dolibarr. You must include it and load it into your module to use it.
     	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiple-select'))
-    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT')))
+    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT') == 'multiple-select'))
     	{
 	    	print '<!-- JS CODE FOR multiple-select -->
 			<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiple-select/jquery.multiple.select.js"></script>
 	    	<script type="text/javascript">
 				$(document).ready(function () {
-        			$(\'#'.$htmlname.'\').multipleSelect();
+        			$(\'#'.$htmlname.'\').multipleSelect({
+        				filter: true
+        				});
         		});
 			</script>';
     	}
