@@ -408,7 +408,18 @@ class Categorie extends CommonObject
 				$error++;
 			}
 		}
-
+		if (! $error)
+		{
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_lang";
+			$sql .= " WHERE fk_category = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
+		
 		// Delete category
 		if (! $error)
 		{
@@ -1263,7 +1274,7 @@ class Categorie extends CommonObject
 		$result='';
 
 		$lien = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'">';
-		$label=$langs->trans("ShowCategory").': '.$this->label;
+		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
 		$lienfin='</a>';
 
 		$picto='category';
@@ -1271,7 +1282,7 @@ class Categorie extends CommonObject
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.dol_trunc($this->ref,$maxlength).$lienfin;
+		if ($withpicto != 2) $result.=$lien.dol_trunc(($this->ref?$this->ref:$this->label),$maxlength).$lienfin;
 		return $result;
 	}
 
@@ -1369,7 +1380,7 @@ class Categorie extends CommonObject
     					// Objet
     					$obj=array();
     					$obj['photo']=$photo;
-    					if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']=$photo_vignette;
+    					if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']='thumbs/' . $photo_vignette;
     					else $obj['photo_vignette']="";
 
     					$tabobj[$nbphoto-1]=$obj;
