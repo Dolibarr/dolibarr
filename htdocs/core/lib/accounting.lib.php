@@ -26,6 +26,7 @@
 /**
  *	Prepare array with list of admin tabs
  *
+ *	@param	$object				Object instance we show card
  *	@return	array				Array of tabs to show
  */
 function admin_accounting_prepare_head($object=null)

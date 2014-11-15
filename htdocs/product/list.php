@@ -69,7 +69,7 @@ $limit = $conf->liste_limit;
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas=GETPOST("canvas");
-$objcanvas='';
+$objcanvas=null;
 if (! empty($canvas))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';

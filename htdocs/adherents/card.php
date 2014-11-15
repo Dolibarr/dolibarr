@@ -70,7 +70,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($rowid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
-$objcanvas='';
+$objcanvas=null;
 if (! empty($canvas))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
@@ -79,7 +79,7 @@ if (! empty($canvas))
 }
 
 // Security check
-$result=restrictedArea($user,'adherent',$rowid,'','','fk_soc', 'rowid', $objcanvas);
+$result=restrictedArea($user, 'adherent', $rowid, '', '', 'fk_soc', 'rowid', $objcanvas);
 
 if ($rowid > 0)
 {

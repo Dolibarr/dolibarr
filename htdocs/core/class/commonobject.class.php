@@ -34,7 +34,7 @@
  */
 abstract class CommonObject
 {
-    protected $db;
+    public $db;
     public $error;
     public $errors;
     public $canvas;                // Contains canvas name if it is
