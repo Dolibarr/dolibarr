@@ -214,11 +214,6 @@ tools:
         path_configs: {  }
 
 
-checks:
-    php:
-        code_rating: true
-        duplication: true
-        
 before_commands: {  }
 after_commands: {  }
 artifacts: {  }
