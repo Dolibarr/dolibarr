@@ -1,7 +1,7 @@
 <?php
 //define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-define('REQUIRE_JQUERY_MULTISELECT','multiple-select');
+define('REQUIRE_JQUERY_MULTISELECT','select2');
 
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -54,6 +54,14 @@ print "Test 4: a multiselect<br>\n";
 $array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3');
 $arrayselected=array(1,3);
 print $form->multiselectarray('testmulti', $array, $arrayselected, '', 0, '', 0, 250);
+
+print '<br><br>'."\n";
+
+// Test5: a select
+print "Test 5: a select<br>\n";
+$array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3');
+$selected=3;
+print $form->selectarray('testselect', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"');
 
 
 llxFooter();

@@ -4102,7 +4102,22 @@ class Form
 
         if ($value_as_key) $array=array_combine($array, $array);
 
-        $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($moreparam?$moreparam:'').'>';
+        $out='';
+        
+        // Add code for jquery to use multiselect
+        if (empty($conf->dol_use_jmobile) && (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')))
+        {
+        	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
+        	$out='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+        			<script type="text/javascript">
+        				$(document).ready(function () {
+        					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+        				});
+        			});
+        		   </script>';
+        }
+        
+        $out.='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($moreparam?$moreparam:'').'>';
 
         if ($show_empty)
         {
@@ -4166,47 +4181,22 @@ class Form
     	global $conf, $langs;
 
     	// Add code for jquery to use multiselect
-    	// Note: Plugin "multiselect" is no more provided by Dolibarr. You must include it and load it into your module to use it.
-    	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiselect'))
-    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT') == 'multiselect'))
+    	if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
     	{
-	    	print '<!-- JS CODE FOR multiselect -->
-				<script type="text/javascript">
-				$(document).ready(function () {
-					$.extend($.ui.multiselect.locale, {
-						addAll:\''.$langs->transnoentities("AddAll").'\',
-						removeAll:\''.$langs->transnoentities("RemoveAll").'\',
-						itemsCount:\''.$langs->transnoentities("ItemsCount").'\'
-					});
-					$(function(){
-						$("#'.$htmlname.'").multiselect({
-							searchable: false,
-							width: '.($width?$width:300).',
-							height: 120
-						});
-					});
-				});
-				</script>';
-    	}
-
-        // Add code for jquery to use multiple-select
-    	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiple-select'))
-    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT') == 'multiple-select'))
-    	{
-	    	print '<!-- JS CODE FOR multiple-select -->
-			<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiple-select/jquery.multiple.select.js"></script>
-	    	<script type="text/javascript">
-				$(document).ready(function () {
-        			$(\'#'.$htmlname.'\').multipleSelect({
-        				filter: true
-        				});
-        		});
-			</script>';
+    		$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
+   			print '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+    			<script type="text/javascript">
+	    			$(document).ready(function () {
+    					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+    					});
+    				});
+    			</script>';
     	}
 
     	// Try also magic suggest
 
-    	$out = '<select id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.($width?' style="width: '.$width.'px"':'').'>'."\n";
+    	// Add data-role="none" to diable jmobile decoration
+    	$out = '<select data-role="none" id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.($width?' style="width: '.$width.'px"':'').'>'."\n";
     	if (is_array($array) && ! empty($array))
     	{
     		if ($value_as_key) $array=array_combine($array, $array);
