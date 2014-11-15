@@ -158,8 +158,8 @@ abstract class DoliDB implements Database
 	/**
 	 *	Annulation d'une transaction et retour aux anciennes valeurs
 	 *
-	 * 	@param	string	$log		Add more log to default log line
-	 * 	@return	int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * 	@param	string			$log		Add more log to default log line
+	 * 	@return	resource|int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
 	function rollback($log='')
 	{

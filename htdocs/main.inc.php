@@ -637,7 +637,7 @@ if (! defined('NOLOGIN'))
         {
             $db->rollback();
             session_destroy();
-            dol_print_error($db,'Error in some triggers on action USER_LOGIN',LOG_ERR);
+            dol_print_error($db,'Error in some triggers on action USER_LOGIN');
             exit;
         }
         else

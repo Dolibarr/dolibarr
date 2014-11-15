@@ -127,7 +127,7 @@ class PaymentSalary extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('PAYMENT_SALARY_MODIFY',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
 
 			//FIXME: Add rollback if trigger fail
@@ -223,12 +223,12 @@ class PaymentSalary extends CommonObject
 		global $conf, $langs;
 
 		$error=0;
-		
+
 		// Call trigger
 		$result=$this->call_trigger('PAYMENT_SALARY_DELETE',$user);
 		if ($result < 0) return -1;
 		// End call triggers
-		
+
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_salary";
 		$sql.= " WHERE rowid=".$this->id;
@@ -279,7 +279,7 @@ class PaymentSalary extends CommonObject
 	function create($user)
 	{
 		global $conf,$langs;
-		
+
 		$error=0;
 
 		// Clean parameters
@@ -414,7 +414,6 @@ class PaymentSalary extends CommonObject
 						$this->fk_user,
 						DOL_URL_ROOT.'/user/card.php?id=',
 						$langs->trans("SalaryPayment").' '.$fuser->getFullName($langs).' '.dol_print_date($this->datesp,'dayrfc').' '.dol_print_date($this->dateep,'dayrfc'),
-						'(User)',
 						'user'
 					);
 
@@ -427,9 +426,9 @@ class PaymentSalary extends CommonObject
 
 	            // Call trigger
 	            $result=$this->call_trigger('PAYMENT_SALARY_CREATE',$user);
-	            if ($result < 0) $error++;            
+	            if ($result < 0) $error++;
 	            // End call triggers
-	
+
 			}
 			else $error++;
 

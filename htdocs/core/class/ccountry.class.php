@@ -256,10 +256,10 @@ class Ccountry // extends CommonObject
 
 
  	/**
-	 *  Delete object in database
+ 	 *  Delete object in database
 	 *
-     *	@param     User	$user        User that delete
-     *  @param     int		$notrigger	 0=launch triggers after, 1=disable triggers
+     *	@param  User	$user        User that delete
+     *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger=0)

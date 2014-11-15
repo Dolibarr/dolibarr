@@ -316,6 +316,7 @@ function measuring_units_string($unit,$measuring_style='')
 {
 	global $langs;
 
+	$measuring_units=array();
 	if ($measuring_style == 'weight')
 	{
 		$measuring_units[3] = $langs->trans("WeightUnitton");
