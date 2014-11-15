@@ -180,7 +180,7 @@ tools:
                 - 'htdocs/includes/*'
             paths: {  }
 
-	php_changetracking:
+    php_changetracking:
         enabled: false
         bug_patterns:
             - '\bfix(?:es|ed)?\b'
@@ -197,21 +197,21 @@ tools:
             paths: {  }
             
     # Coding-Style / Bug Detection
-	js_hint:
-		enabled: false
-	    use_native_config: true
-	    extensions:
-	        - js
-	    filter:
-	        excluded_paths:
-	            - 'build/*'
-	            - 'dev/*'
-	            - 'doc/*'
-	            - 'test/*'
-	            - 'htdocs/includes/*'
-	        paths: {  }
-	    config: {  }
-	    path_configs: {  }
+    js_hint:
+        enabled: false
+        use_native_config: true
+        extensions:
+            - js
+        filter:
+            excluded_paths:
+                - 'build/*'
+                - 'dev/*'
+                - 'doc/*'
+                - 'test/*'
+                - 'htdocs/includes/*'
+            paths: {  }
+        config: {  }
+        path_configs: {  }
 
 
 checks:
