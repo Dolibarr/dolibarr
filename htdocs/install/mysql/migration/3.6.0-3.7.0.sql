@@ -183,9 +183,6 @@ UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type NOT IN (SELECT rowid from llx_c_barcode_type);
 
--- This request make mysql drop (mysql bug):
-ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
-
 
 -- Added missing relations of llx_product_price
 -- fk_user_author
@@ -1130,3 +1127,8 @@ ALTER TABLE llx_commande_fournisseur MODIFY COLUMN ref_supplier VARCHAR(255);
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref VARCHAR(255);
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_ext VARCHAR(255);
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_supplier VARCHAR(255);
+
+
+-- This request make mysql drop (mysql bug, so we add it at end):
+--ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
+
