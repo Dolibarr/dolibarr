@@ -220,7 +220,7 @@ class Contact extends CommonObject
 	 *      @param		string	$action			Current action for hookmanager
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($id, $user=0, $notrigger=0, $action='update')
+	function update($id, $user=null, $notrigger=0, $action='update')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -427,7 +427,7 @@ class Contact extends CommonObject
 	 *  @param      User		$user		User asking to change alert or birthday
      *  @return     int         			<0 if KO, >=0 if OK
 	 */
-	function update_perso($id, $user=0)
+	function update_perso($id, $user=null)
 	{
 	    $error=0;
 	    $result=false;
@@ -492,7 +492,7 @@ class Contact extends CommonObject
 	 *  @param      User	$user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
 	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
 	 */
-	function fetch($id, $user=0)
+	function fetch($id, $user=null)
 	{
 		global $langs;
 

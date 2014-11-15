@@ -74,7 +74,7 @@ class Menubase
      *      @param      User	$user       User that create
      *      @return     int      			<0 if KO, Id of record if OK
      */
-    function create($user=0)
+    function create($user=null)
     {
         global $conf, $langs;
 
@@ -185,7 +185,7 @@ class Menubase
      *  @param  int		$notrigger	    0=no, 1=yes (no update trigger)
      *  @return int 		        	<0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
         global $conf, $langs;
 
@@ -250,7 +250,7 @@ class Menubase
      *   @param		User    $user       User that load
      *   @return	int         		<0 if KO, >0 if OK
      */
-    function fetch($id, $user=0)
+    function fetch($id, $user=null)
     {
         global $langs;
 

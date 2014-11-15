@@ -107,7 +107,7 @@ class Categorie extends CommonObject
 				$this->type			= $res['type'];
 				$this->entity		= $res['entity'];
 
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals($this->id,null);
 
 				$this->db->free($resql);
 
@@ -202,7 +202,7 @@ class Categorie extends CommonObject
 				// FIXME le hook fait double emploi avec le trigger !!
 				$hookmanager->initHooks(array('HookModuleNamedao'));
 				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,'create');    // Note that $action and $object may have been modified by some hooks
 				if (empty($reshook))
 				{
 					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -294,7 +294,7 @@ class Categorie extends CommonObject
 			// FIXME le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('HookCategorydao'));
 			$parameters=array();
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,'update');    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
 			{
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -419,7 +419,7 @@ class Categorie extends CommonObject
 				$error++;
 			}
 		}
-		
+
 		// Delete category
 		if (! $error)
 		{
@@ -441,7 +441,7 @@ class Categorie extends CommonObject
 						if ($result < 0)
 						{
 							$error++;
-							dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+							dol_syslog(get_class($this)."::delete erreur ".$this->error, LOG_ERR);
 						}
 					}
 				}
@@ -799,7 +799,7 @@ class Categorie extends CommonObject
 	 */
 	function get_full_arbo($type,$markafterid=0)
 	{
-	    global $langs;
+	    global $conf, $langs;
 
 		$this->cats = array();
 
@@ -809,11 +809,9 @@ class Categorie extends CommonObject
 
 		// Init $this->cats array
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.fk_parent";	// Distinct reduce pb with old tables with duplicates
-		if (! empty($conf->global->MAIN_MULTILANGS))
-		    $sql.= ", t.label as label_trans, t.description as description_trans";
+		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
-		if (! empty($conf->global->MAIN_MULTILANGS))
-		    $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
+		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
 		$sql.= " WHERE c.entity IN (".getEntity('category',1).")";
 		$sql.= " AND c.type = ".$type;
 

@@ -96,7 +96,7 @@ class Cronjob extends CommonObject
 		$error=0;
 
 		$now=dol_now();
-		
+
 		// Clean parameters
 
 		if (isset($this->label)) $this->label=trim($this->label);
@@ -501,7 +501,7 @@ class Cronjob extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
     	global $conf, $langs;
 

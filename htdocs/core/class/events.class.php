@@ -154,7 +154,7 @@ class Events // extends CommonObject
 	 * @param   int		$notrigger	    0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
-	function update($user=0, $notrigger=0)
+	function update($user=null, $notrigger=0)
 	{
 		global $conf, $langs;
 
@@ -191,7 +191,7 @@ class Events // extends CommonObject
 	 *  @param  User	$user       User that load
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id, $user=0)
+	function fetch($id, $user=null)
 	{
 		global $langs;
 
