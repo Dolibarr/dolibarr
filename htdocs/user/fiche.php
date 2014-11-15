@@ -1208,7 +1208,11 @@ else
 
             // Signature
             print '<tr><td valign="top">'.$langs->trans('Signature').'</td><td>';
-            print dol_htmlentitiesbr($object->signature);
+            if (empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)) {
+            	print dol_htmlentitiesbr($object->signature);
+            } else {
+            	print $object->signature;
+            }
             print "</td></tr>\n";
 
             // Hierarchy
