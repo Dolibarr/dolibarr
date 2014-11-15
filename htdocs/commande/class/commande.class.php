@@ -801,6 +801,8 @@ class Commande extends CommonOrder
 
                     if (! $error)
                     {
+                    	$action='create';
+
 	                    // Actions on extra fields (by external module or standard code)
 	                    // FIXME le hook fait double emploi avec le trigger !!
 	                    $hookmanager->initHooks(array('orderdao'));
@@ -2928,6 +2930,8 @@ class Commande extends CommonOrder
      */
     function update_extrafields($user)
     {
+    	$action='create';
+
     	// Actions on extra fields (by external module or standard code)
     	// FIXME le hook fait double emploi avec le trigger !!
     	$hookmanager->initHooks(array('orderdao'));
@@ -3280,7 +3284,7 @@ class OrderLine extends CommonOrderLine
 
 		$error=0;
 
-        dol_syslog("OrderLine::insert rang=".$this->rang);
+        dol_syslog(get_class($this)."::insert rang=".$this->rang);
 
         // Clean parameters
         if (empty($this->tva_tx)) $this->tva_tx=0;

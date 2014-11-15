@@ -878,6 +878,8 @@ class Societe extends CommonObject
 	            	}
             	}
 
+            	$action='update';
+
                 // Actions on extra fields (by external module or standard code)
                 // FIXME le hook fait double emploi avec le trigger !!
                 $hookmanager->initHooks(array('thirdpartydao'));

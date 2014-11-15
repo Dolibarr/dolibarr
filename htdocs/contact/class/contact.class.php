@@ -283,6 +283,8 @@ class Contact extends CommonObject
 		    unset($this->state_code);
 		    unset($this->state);
 
+		    $action='update';
+
 		    // Actions on extra fields (by external module or standard code)
 		    $hookmanager->initHooks(array('contactdao'));
 		    $parameters=array('socid'=>$this->id);

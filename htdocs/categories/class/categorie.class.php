@@ -198,11 +198,13 @@ class Categorie extends CommonObject
 			{
 				$this->id = $id;
 
+				$action='create';
+
 				// Actions on extra fields (by external module or standard code)
 				// FIXME le hook fait double emploi avec le trigger !!
 				$hookmanager->initHooks(array('HookModuleNamedao'));
 				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,'create');    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				if (empty($reshook))
 				{
 					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -289,12 +291,14 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
+			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
 			// FIXME le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('HookCategorydao'));
 			$parameters=array();
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,'update');    // Note that $action and $object may have been modified by some hooks
+			$action='update';
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
 			{
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
