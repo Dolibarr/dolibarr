@@ -23,11 +23,11 @@ create table llx_commande_fournisseur
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
 
-  ref					varchar(30) NOT NULL,          -- order number
+  ref					varchar(255) NOT NULL,          -- order number
   entity				integer DEFAULT 1 NOT NULL,	 -- multi company id
 
-  ref_ext				varchar(30),                  -- reference into an external system (not used by dolibarr)
-  ref_supplier			varchar(30),
+  ref_ext				varchar(64),                  -- reference into an external system (not used by dolibarr)
+  ref_supplier			varchar(255),
 
   fk_soc				integer NOT NULL,
   fk_projet				integer DEFAULT 0,             -- project id
