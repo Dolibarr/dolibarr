@@ -2,11 +2,10 @@
 /* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2014 Philippe Grand	<philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014      Charles-Fr Benke     <charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1812,6 +1811,7 @@ abstract class CommonObject
         	$justsource=true;
         	if (! empty($targettype)) $withtargettype=true;
         }
+
         if (! empty($targetid) && ! empty($targettype) && empty($sourceid))
         {
         	$justtarget=true;
@@ -1863,11 +1863,11 @@ abstract class CommonObject
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($resql);
-                if ($obj->fk_source == $sourceid)
+                if ($obj->fk_source == $sourceid && $obj->sourcetype == $sourcetype)
                 {
                     $this->linkedObjectsIds[$obj->targettype][]=$obj->fk_target;
                 }
-                if ($obj->fk_target == $targetid)
+                if ($obj->fk_target == $targetid && $obj->targettype == $targettype)
                 {
                     $this->linkedObjectsIds[$obj->sourcetype][]=$obj->fk_source;
                 }
@@ -1921,7 +1921,7 @@ abstract class CommonObject
                         $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
                     }
 
-                    if ($conf->$module->enabled && $element != $this->element)
+                    if ($conf->$module->enabled)
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 
