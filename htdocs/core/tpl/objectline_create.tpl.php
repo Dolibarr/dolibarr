@@ -271,7 +271,7 @@ else {
 </tr>
 
 <?php
-if (! empty($conf->service->enabled) && $dateSelector)
+if (! empty($conf->service->enabled) && $dateSelector && GETPOST('type') != '0')
 {
 	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;
