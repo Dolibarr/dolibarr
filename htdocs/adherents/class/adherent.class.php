@@ -465,8 +465,11 @@ class Adherent extends CommonObject
 
 		    $nbrowsaffected+=$this->db->affected_rows($resql);
 
+		    $action='update';
+
             // Actions on extra fields (by external module)
-            $hookmanager->initHooks(array('memberdao'));
+			// FIXME le hook fait double emploi avec le trigger !!
+		    $hookmanager->initHooks(array('memberdao'));
             $parameters=array('id'=>$this->id);
             $action='';
             $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

@@ -56,7 +56,7 @@ class ExtraFields
 	var $error;
 	var $errno;
 
-	static $type2label=array(
+	public static $type2label=array(
 	'varchar'=>'String',
 	'text'=>'TextLong',
 	'int'=>'Int',

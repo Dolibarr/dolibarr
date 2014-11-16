@@ -680,6 +680,8 @@ class Product extends CommonObject
 					}
 				}
 
+				$action='update';
+
 				// Actions on extra fields (by external module or standard code)
 				$hookmanager->initHooks(array('productdao'));
 				$parameters=array('id'=>$this->id);
@@ -1396,7 +1398,7 @@ class Product extends CommonObject
 		if (! $id && ! $ref && ! $ref_ext)
 		{
 			$this->error='ErrorWrongParameters';
-			dol_print_error(get_class($this)."::fetch ".$this->error, LOG_ERR);
+			dol_print_error(get_class($this)."::fetch ".$this->error);
 			return -1;
 		}
 

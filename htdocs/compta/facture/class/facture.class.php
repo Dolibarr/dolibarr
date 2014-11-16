@@ -464,6 +464,8 @@ class Facture extends CommonInvoice
 				$result=$this->update_price(1);
 				if ($result > 0)
 				{
+					$action='create';
+
 					// Actions on extra fields (by external module or standard code)
 					// FIXME le hook fait double emploi avec le trigger !!
 					$hookmanager->initHooks(array('invoicedao'));
@@ -1040,7 +1042,7 @@ class Facture extends CommonInvoice
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($user=0, $notrigger=0)
+	function update($user=null, $notrigger=0)
 	{
 		global $conf, $langs;
 		$error=0;

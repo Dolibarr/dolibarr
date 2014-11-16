@@ -74,7 +74,7 @@ if ($id > 0 || ! empty($ref))
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = !empty($object->canvas)?$object->canvas:GETPOST("canvas");
-$objcanvas='';
+$objcanvas=null;
 if (! empty($canvas))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';

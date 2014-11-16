@@ -5,6 +5,8 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Match other auth system: Login can be done entering login or user 
+       email (this open the road for SSO).
 - New: Agenda export by project #1967.
 - New: Increase length of thirdparty to 128 chars.
 - New: "Is Order shippable" icon #1975.

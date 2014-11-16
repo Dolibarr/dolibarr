@@ -755,6 +755,8 @@ class BonPrelevement extends CommonObject
         $factures = array();
         $factures_prev = array();
         $factures_result = array();
+        $factures_prev_id=array();
+        $factures_errors=array();
 
         if (! $error)
         {

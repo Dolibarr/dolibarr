@@ -1145,7 +1145,7 @@ class AccountLine extends CommonObject
      *		@param	User	$user	User object that delete
      *      @return	int 			<0 if KO, >0 if OK
      */
-    function delete($user=0)
+    function delete($user=null)
     {
         $nbko=0;
 
@@ -1194,7 +1194,7 @@ class AccountLine extends CommonObject
      *		@param	User	$user	User object that delete
      *      @return	int 			<0 if KO, >0 if OK
      */
-    function delete_urls($user=0)
+    function delete_urls($user=null)
     {
         $nbko=0;
 

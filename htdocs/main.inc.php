@@ -637,7 +637,7 @@ if (! defined('NOLOGIN'))
         {
             $db->rollback();
             session_destroy();
-            dol_print_error($db,'Error in some triggers on action USER_LOGIN',LOG_ERR);
+            dol_print_error($db,'Error in some triggers on action USER_LOGIN');
             exit;
         }
         else
@@ -1015,13 +1015,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 //print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/css/ColVisAlt.css'.($ext?'?'.$ext:'').'" />'."\n";
                 print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/css/TableTools.css'.($ext?'?'.$ext:'').'" />'."\n";
             }
-            if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && $conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiselect') || (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT') == 'multiselect'))     // jQuery multiselect
+            if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))     // jQuery plugin "mutiselect", "multiple-select", "select2"...
             {
-            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiselect/css/ui.multiselect.css'.($ext?'?'.$ext:'').'" />'."\n";
-            }
-            if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && $conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiple-select') || (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT') == 'multiple-select'))     // jQuery multiple-select
-            {
-            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiple-select/multiple-select.css'.($ext?'?'.$ext:'').'" />'."\n";
+            	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
+            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.css'.($ext?'?'.$ext:'').'" />'."\n";
             }
             // jQuery Timepicker
             if (! empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER'))
@@ -1130,14 +1127,12 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
                 if (constant('JS_JQUERY_FLOT'))
                 {
-                    print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="/javascript/excanvas/excanvas.min.js'.($ext?'?'.$ext:'').'"></script><![endif]-->'."\n";
                     print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                     print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                     print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 }
                 else
                 {
-                    print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/excanvas.min.js'.($ext?'?'.$ext:'').'"></script><![endif]-->'."\n";
                     print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                     print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                     print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
@@ -1187,6 +1182,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
+            }
+            if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))     // jQuery plugin "mutiselect", "multiple-select", "select2"...
+            {
+            	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.js'.($ext?'?'.$ext:'').'" />'."\n";
             }
             // jQuery jMobile
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
@@ -1414,6 +1414,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $loginhtmltext.='<u>'.$langs->trans("User").'</u>';
 	    $loginhtmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->getFullName($langs);
 	    $loginhtmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
+	    $loginhtmltext.='<br><b>'.$langs->trans("EMail").'</b>: '.$user->email;
 	    $loginhtmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
 	    $type=($user->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
 	    $loginhtmltext.='<br><b>'.$langs->trans("Type").'</b>: '.$type;

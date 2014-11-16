@@ -878,6 +878,8 @@ class Societe extends CommonObject
 	            	}
             	}
 
+            	$action='update';
+
                 // Actions on extra fields (by external module or standard code)
                 // FIXME le hook fait double emploi avec le trigger !!
                 $hookmanager->initHooks(array('thirdpartydao'));
@@ -2811,7 +2813,7 @@ class Societe extends CommonObject
     		}
     		else                    // For backward compatibility
     		{
-    			dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
+    			dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_ERR);
     			include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
     			$country_code=getCountry($country_id,2,$this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
     			$country_label=getCountry($country_id,0,$this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
