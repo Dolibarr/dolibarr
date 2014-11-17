@@ -87,7 +87,7 @@ else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
  * Actions
  */
 
-if (GETPOST([)"button_removefilter_x"))
+if (GETPOST("button_removefilter_x"))
 {
 	$sref="";
 	$sbarcode="";
