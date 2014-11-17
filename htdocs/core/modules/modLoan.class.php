@@ -118,6 +118,14 @@ class modLoan extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
 		$this->rights[$r][5] = '';
+		
+		$r++;
+		$this->rights[$r][0] = 525;
+		$this->rights[$r][1] = 'Access loan calculator';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'calc';
+		$this->rights[$r][5] = '';
 
 		$r++;
 		$this->rights[$r][0] = 527;
