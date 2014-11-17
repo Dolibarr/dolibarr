@@ -56,6 +56,8 @@ $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_author=GETPOST('search_author','alpha');
 $search_town=GETPOST('search_town','alpha');
+$viewstatut=$db->escape(GETPOST('viewstatut'));
+$object_statut=$db->escape(GETPOST('propal_statut'));
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -78,6 +80,26 @@ if (! empty($socid))
 }
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
+if (GETPOST("button_removefilter"))
+{
+    $search_categ='';
+    $search_user='';
+    $search_sale='';
+    $search_ref='';
+    $search_refcustomer='';
+    $search_societe='';
+    $search_montant_ht='';
+    $search_author='';
+    $search_town='';
+    $year='';
+    $month='';
+	$viewstatut='';
+	$object_statut='';
+}
+
+if($object_statut != '')
+$viewstatut=$object_statut;
+
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('propallist'));
@@ -93,21 +115,6 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-// Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
-{
-    $search_categ='';
-    $search_user='';
-    $search_sale='';
-    $search_ref='';
-    $search_refcustomer='';
-    $search_societe='';
-    $search_montant_ht='';
-    $search_author='';
-    $search_town='';
-    $year='';
-    $month='';
-}
 
 
 /*
@@ -131,11 +138,6 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
-$viewstatut=$db->escape(GETPOST('viewstatut'));
-$object_statut = $db->escape(GETPOST('propal_statut'));
-if($object_statut != '')
-$viewstatut=$object_statut;
 
 if (! $sortfield) $sortfield='p.datep';
 if (! $sortorder) $sortorder='DESC';
@@ -322,11 +324,9 @@ if ($result)
 	print '<td class="liste_titre" align="right">';
 	$formpropal->selectProposalStatus($viewstatut,1);
 	print '</td>';
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" value="button_search" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" value="button_removefilter" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
-	print "</tr>\n";
+	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print "</td></tr>\n";
 
 	$var=true;
 	$total=0;
