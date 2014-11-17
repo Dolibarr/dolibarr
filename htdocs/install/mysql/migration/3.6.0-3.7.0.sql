@@ -90,7 +90,6 @@ ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT N
 
 ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_accountingaccount add column datec datetime AFTER entity;
-ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
 ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
 ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;
 
@@ -127,6 +126,7 @@ DROP TABLE llx_compta_compte_generaux;
 -- Align size for accounting account
 ALTER TABLE llx_accountingaccount MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN account_parent varchar(32);
+ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
 ALTER TABLE llx_accountingdebcred MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_bank_account MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_c_chargesociales MODIFY COLUMN accountancy_code varchar(32);
