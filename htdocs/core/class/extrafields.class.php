@@ -535,8 +535,7 @@ class ExtraFields
 		$array_name_label=array();
 
 		// For avoid conflicts with external modules
-		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
-			return $array_name_label;
+		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
@@ -569,13 +568,13 @@ class ExtraFields
 					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
 				}
 			}
-
-			return $array_name_label;
 		}
 		else
 		{
 			print dol_print_error($this->db);
 		}
+
+		return $array_name_label;
 	}
 
 
