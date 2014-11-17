@@ -27,6 +27,11 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_REOPEN','Intervention opened','Executed when a intervention is re-opened','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFY_BILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
 
+-- VPGSQL8.2 ALTER TABLE llx_contrat ALTER COLUMN fk_commercial_signature DROP NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_contrat ALTER COLUMN fk_commercial_suivi DROP NOT NULL;
+ALTER TABLE llx_contrat MODIFY fk_commercial_signature integer NULL;
+ALTER TABLE llx_contrat MODIFY fk_commercial_suivi integer NULL;
+
 ALTER TABLE llx_notify ADD COLUMN fk_soc integer NULL after fk_action;
 ALTER TABLE llx_notify ADD COLUMN type varchar(16) DEFAULT 'email' after fk_soc;
 

@@ -2000,7 +2000,7 @@ if ($action == 'create')
 		{
 			$var = true;
 
-			// Add free products/services
+			// Add products/services form
 			$object->formAddObjectLine(1, $mysoc, $soc);
 
 			$parameters = array();
