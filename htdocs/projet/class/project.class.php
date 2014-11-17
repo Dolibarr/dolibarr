@@ -411,13 +411,13 @@ class Project extends CommonObject
 		{
 			if (empty($datefieldname) && ! empty($this->table_element_date)) $datefieldname=$this->table_element_date;
 			if (empty($datefieldname)) return 'Error this object has no date field defined';
-			$sql.=" AND ".$datefieldname." >= '".$this->db->jdate($dates)."'";
+			$sql.=" AND ".$datefieldname." >= '".$this->db->idate($dates)."'";
 		}
     	if ($datee > 0)
 		{
 			if (empty($datefieldname) && ! empty($this->table_element_date)) $datefieldname=$this->table_element_date;
 			if (empty($datefieldname)) return 'Error this object has no date field defined';
-			$sql.=" AND ".$datefieldname." <= '".$this->db->jdate($datee)."'";
+			$sql.=" AND ".$datefieldname." <= '".$this->db->idate($datee)."'";
 		}
 		if (! $sql) return -1;
 
