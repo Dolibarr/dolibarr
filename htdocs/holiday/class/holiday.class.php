@@ -1045,7 +1045,8 @@ class Holiday extends CommonObject
         $result = $this->db->query($sql);
         if($result) {
             $obj = $this->db->fetch_object($result);
-            return number_format($obj->nb_holiday,2);
+            //return number_format($obj->nb_holiday,2);
+			return $obj->nb_holiday;
         } else {
             return '0';
         }
