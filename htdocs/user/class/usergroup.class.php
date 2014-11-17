@@ -620,16 +620,10 @@ class UserGroup extends CommonObject
 
 			if ($this->update(1) < 0) return -2;
 
-			if (! $notrigger)
-			{
-                // Call trigger
-                $result=$this->call_trigger('GROUP_CREATE',$user);
-                if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-                // End call triggers
-			}
-
+			$action='create';
 
 			// Actions on extra fields (by external module or standard code)
+            // FIXME le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('groupdao'));
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -645,6 +639,14 @@ class UserGroup extends CommonObject
 				}
 			}
 			else if ($reshook < 0) $error++;
+
+			if (! $error && ! $notrigger)
+			{
+                // Call trigger
+                $result=$this->call_trigger('GROUP_CREATE',$user);
+                if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+                // End call triggers
+			}
 
 			if ($error > 0) { $error++; $this->db->rollback(); return -1; }
 			else $this->db->commit();
@@ -689,15 +691,10 @@ class UserGroup extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if (! $notrigger)
-			{
-                // Call trigger
-                $result=$this->call_trigger('GROUP_MODIFY',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-			}
+			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
+            // FIXME le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('groupdao'));
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -713,6 +710,14 @@ class UserGroup extends CommonObject
 				}
 			}
 			else if ($reshook < 0) $error++;
+
+			if (! $error && ! $notrigger)
+			{
+                // Call trigger
+                $result=$this->call_trigger('GROUP_MODIFY',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+			}
 
 			if (! $error)
 			{

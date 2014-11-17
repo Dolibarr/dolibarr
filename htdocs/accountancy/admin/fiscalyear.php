@@ -59,9 +59,9 @@ $max=100;
 
 $form = new Form($db);
 
-llxHeader('',$title);
-
 $title = $langs->trans('FiscalYears');
+
+llxHeader('',$title,LOG_ERR);
 
 print_fiche_titre($langs->trans('FiscalYears'));
 

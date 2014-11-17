@@ -184,7 +184,7 @@ print '<tr class="liste_titre"><td>&nbsp;</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	if ($modecompta == 'CREANCES-DETTES') print '<td align="center" width="10%" colspan="3">';
-	else print '<td align="center" width="10%" colspan="2">';
+	else print '<td align="center" width="10%" colspan="2" class="borderrightlight">';
 	print '<a href="casoc.php?year='.$annee.'">';
 	print $annee;
     if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee+1);
@@ -198,7 +198,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-	print '<td align="right">'.$langs->trans("Delta").'</td>';
+	print '<td align="right" class="borderrightlight">'.$langs->trans("Delta").'</td>';
 	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';
@@ -244,7 +244,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			}
 			print "</td>";
 		}
-		
+
 		// Valeur CA du mois
 		print '<td align="right">';
 		if ($cum[$case])
@@ -266,29 +266,29 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			{
 				$percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100);
 				//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
-				print '<td align="right">'.($percent>=0?"+$percent":"$percent").'%</td>';
+				print '<td align="right" class="borderrightlight">'.($percent>=0?"+$percent":"$percent").'%</td>';
 			}
 			if ($cum[$caseprev] && ! $cum[$case])
 			{
-				print '<td align="right">-100%</td>';
+				print '<td align="right" class="borderrightlight">-100%</td>';
 			}
 			if (! $cum[$caseprev] && $cum[$case])
 			{
 				//print '<td align="right">+Inf%</td>';
-				print '<td align="right">-</td>';
+				print '<td align="right" class="borderrightlight">-</td>';
 			}
 			if (isset($cum[$caseprev]) && ! $cum[$caseprev] && ! $cum[$case])
 			{
-				print '<td align="right">+0%</td>';
+				print '<td align="right" class="borderrightlight">+0%</td>';
 			}
 			if (! isset($cum[$caseprev]) && ! $cum[$case])
 			{
-				print '<td align="right">-</td>';
+				print '<td align="right" class="borderrightlight">-</td>';
 			}
 		}
 		else
 		{
-			print '<td align="right">';
+			print '<td align="right" class="borderrightlight">';
 			if ($minyearmonth <= $case && $case <= $maxyearmonth) { print '-'; }
 			else { print '&nbsp;'; }
 			print '</td>';
@@ -382,7 +382,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 			print '<td>&nbsp;</td>';
 		}
 	}
-	
+
 	// Montant total
 	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear,$maxyear)))
 	{
@@ -398,24 +398,24 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
 		if ($total[$annee-1] && $total[$annee]) {
 			$percent=(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100);
-			print '<td align="right" class="nowrap">'.($percent>=0?"+$percent":"$percent").'%</td>';
+			print '<td align="right" class="nowrap borderrightlight">'.($percent>=0?"+$percent":"$percent").'%</td>';
 		}
 		if ($total[$annee-1] && ! $total[$annee])
 		{
-			print '<td align="right">-100%</td>';
+			print '<td align="right" class="borderrightlight">-100%</td>';
 		}
 		if (! $total[$annee-1] && $total[$annee])
 		{
-			print '<td align="right">+Inf%</td>';
+			print '<td align="right" class="borderrightlight">+Inf%</td>';
 		}
 		if (! $total[$annee-1] && ! $total[$annee])
 		{
-			print '<td align="right">+0%</td>';
+			print '<td align="right" class="borderrightlight">+0%</td>';
 		}
 	}
 	else
 	{
-		print '<td align="right">';
+		print '<td align="right" class="borderrightlight">';
 		if ($total[$annee] || ($minyear <= $annee && $annee <= max($nowyear,$maxyear))) { print '-'; }
 		else { print '&nbsp;'; }
 		print '</td>';

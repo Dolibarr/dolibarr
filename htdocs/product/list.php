@@ -69,7 +69,7 @@ $limit = $conf->liste_limit;
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas=GETPOST("canvas");
-$objcanvas='';
+$objcanvas=null;
 if (! empty($canvas))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
@@ -130,25 +130,22 @@ else
 
     $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
     $sql.= ' p.fk_product_type, p.tms as datem,';
-    $sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte,';
+    $sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
-    $sql .= ', p.desiredstock';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
     if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 	// multilang
-	if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-	{
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
-	}
+	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
 	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 	if ($sall)
 	{
 		// For natural search
 		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
 		// multilang
-		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
+			$params[] = 'pl.label';
 			$params[] = 'pl.description';
 			$params[] = 'pl.note';
 		}
@@ -169,7 +166,7 @@ else
 	{
 		$params = array('p.label');
 		// multilang
-		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
 			$params[] = 'pl.label';
 		}
@@ -199,7 +196,6 @@ else
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
-    dol_syslog("product:list.php:", LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -510,7 +506,7 @@ else
                 $product_static->status_buy = $objp->tobuy;
                 $product_static->status     = $objp->tosell;
                 // Status (to sell)
-                print '<td align="right" nowrap="nowrap">';
+                print '<td align="center" nowrap="nowrap">';
                 if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
                     print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
                 } else {
@@ -519,7 +515,7 @@ else
                 print '</td>';
 
                 // Status (to buy)
-                print '<td align="right" nowrap="nowrap">';
+                print '<td align="center" nowrap="nowrap">';
                 if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
                     print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
                 } else {

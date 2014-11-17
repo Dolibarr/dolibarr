@@ -103,7 +103,7 @@ class CActionComm
      *  @param	string		$idorcode		'id' or 'code'
      *  @param	string		$excludetype	Type to exclude
      *  @param	string		$onlyautoornot	Group list by auto events or not
-     *  @return array      					Array of all event types if OK, <0 if KO
+     *  @return mixed      					Array of all event types if OK, <0 if KO
      */
     function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0)
     {

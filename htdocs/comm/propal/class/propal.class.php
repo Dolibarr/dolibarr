@@ -846,6 +846,8 @@ class Propal extends CommonObject
                     $resql=$this->update_price(1);
                     if ($resql)
                     {
+                    	$action='update';
+
                     	// Actions on extra fields (by external module or standard code)
                     	// FIXME le hook fait double emploi avec le trigger !!
                     	$hookmanager->initHooks(array('propaldao'));
@@ -1264,6 +1266,8 @@ class Propal extends CommonObject
      */
     function update_extrafields($user)
     {
+    	$action='update';
+
     	// Actions on extra fields (by external module or standard code)
     	// FIXME le hook fait double emploi avec le trigger !!
     	$hookmanager->initHooks(array('propaldao'));
@@ -2118,7 +2122,7 @@ class Propal extends CommonObject
 
                     if (! $error)
                     {
-                        dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
+                        dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
                         $this->db->commit();
                         return 1;
                     }
@@ -2879,7 +2883,7 @@ class PropaleLigne  extends CommonObject
 
         $error=0;
 
-        dol_syslog("PropaleLigne::insert rang=".$this->rang);
+        dol_syslog(get_class($this)."::insert rang=".$this->rang);
 
         // Clean parameters
         if (empty($this->tva_tx)) $this->tva_tx=0;

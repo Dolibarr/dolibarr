@@ -241,8 +241,11 @@ class ActionComm extends CommonObject
 
             if (! $error)
             {
+            	$action='create';
+
 	            // Actions on extra fields (by external module or standard code)
-	            $hookmanager->initHooks(array('actioncommdao'));
+				// FIXME le hook fait double emploi avec le trigger !!
+            	$hookmanager->initHooks(array('actioncommdao'));
 	            $parameters=array('actcomm'=>$this->id);
 	            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 	            if (empty($reshook))
@@ -560,8 +563,10 @@ class ActionComm extends CommonObject
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
         if ($this->db->query($sql))
         {
+			$action='update';
 
         	// Actions on extra fields (by external module or standard code)
+			// FIXME le hook fait double emploi avec le trigger !!
         	$hookmanager->initHooks(array('actioncommdao'));
         	$parameters=array('actcomm'=>$this->id);
         	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

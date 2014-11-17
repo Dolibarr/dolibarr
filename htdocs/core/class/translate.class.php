@@ -33,7 +33,6 @@ class Translate
 
 	var $defaultlang;					// Current language for current user
 	var $direction = 'ltr';				// Left to right or Right to left
-	var $charset_inputfile=array();	// To store charset encoding used for language
 	var $charset_output='UTF-8';		// Codage used by "trans" method outputs
 
 	var $tab_translate=array();		// Array of all translations key=>value
@@ -197,6 +196,12 @@ class Translate
 		$langarray=explode('_',$langofdir);
 		if ($alt < 1 && isset($langarray[1]) && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
 		if ($alt < 2 && strtolower($langofdir) == 'en_us') $alt=2;
+
+		if (empty($langofdir))	// This may occurs when load is called without setting the language and without providing a value for forcelangdir
+		{
+			dol_syslog("Error: ".get_class($this)."::Load was called but language was not set yet with langs->setDefaultLang(). Nothing will be loaded.", LOG_WARNING);
+			return -1;
+		}
 
 		foreach($this->dir as $keydir => $searchdir)
 		{

@@ -93,8 +93,8 @@ if ($action == 'validatehistory') {
  */
 llxHeader('', $langs->trans("CustomersVentilation"));
 
-$textprevyear = "<a href=\"index.php?year=" . ($year_current - 1) . "\">" . img_previous() . "</a>";
-$textnextyear = " <a href=\"index.php?year=" . ($year_current + 1) . "\">" . img_next() . "</a>";
+$textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
+$textnextyear = ' <a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
 print_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
 
@@ -197,7 +197,7 @@ print "</table>\n";
 
 print "<br>\n";
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("TotalVente") . '</td>';
+print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("Total") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("JanuaryMin") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("FebruaryMin") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("MarchMin") . '</td>';
@@ -212,7 +212,7 @@ print '<td width="60" align="center">' . $langs->trans("NovemberMin") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("DecemberMin") . '</td>';
 print '<td width="60" align="center"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
-$sql = "SELECT '" . $langs->trans("Vide") . "' AS 'Total',";
+$sql = "SELECT '" . $langs->trans("TotalVente") . "' AS 'Total',";
 $sql .= "  ROUND(SUM(IF(MONTH(f.datef)=1,fd.total_ht,0)),2) AS 'Janvier',";
 $sql .= "  ROUND(SUM(IF(MONTH(f.datef)=2,fd.total_ht,0)),2) AS 'Fevrier',";
 $sql .= "  ROUND(SUM(IF(MONTH(f.datef)=3,fd.total_ht,0)),2) AS 'Mars',";

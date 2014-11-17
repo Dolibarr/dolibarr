@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - agenda
-IdAgenda=Kimlik etkinliği
-Actions=Eylemler
-ActionsArea=Eylem alanı (Olaylar ve görevler)
+IdAgenda=Etkinlik kimliği
+Actions=Etkinlikler
+ActionsArea=Etkinlik alanı (Olaylar ve görevler)
 Agenda=Gündem
 Agendas=Gündemler
 Calendar=Takvim
 Calendars=Takvimler
 LocalAgenda=İç takvim
-ActionsOwnedBy=Event owned by
+ActionsOwnedBy=Etkinlik sahibi
 AffectedTo=Etkilenen
 DoneBy=Yapan
 Event=Etkinlik
@@ -24,12 +24,12 @@ MenuDoneActions=Tüm sonlanan eylemler
 MenuToDoMyActions=Sonlanmayan eylemlerim
 MenuDoneMyActions=Sonlanan eylemlerim
 ListOfEvents=Etkinlik listesi (iç takvim)
-ActionsAskedBy=Eylemi bildiren
-ActionsToDoBy=Eylemden etkilenen
-ActionsDoneBy=Eylemi yapan
-ActionsForUser=Kullanıcı eylemleri
-ActionsForUsersGroup=Grupun tüm üyelerine ait eylemler
-AllMyActions= Tüm eylemlerim/görevlerim
+ActionsAskedBy=Etkinliği bildiren
+ActionsToDoBy=Etkinlikten etkilenen
+ActionsDoneBy=Etkinliği yapan
+ActionsForUser=Kullanıcı etkinlikleri
+ActionsForUsersGroup=Grupun tüm üyelerine ait etkinlikler
+AllMyActions= Tüm etkinliklerim/görevlerim
 AllActions= Tüm eylemler/görevler
 ViewList=Liste görünümü
 ViewCal=Ay görünümü
@@ -38,8 +38,8 @@ ViewWeek=Hafta görünümü
 ViewPerUser=Kullanıcı görünümü başına
 ViewWithPredefinedFilters= Öntanımlı süzgeçler ile görünüm
 AutoActions= Gündemin otomatik doldurulması
-AgendaAutoActionDesc= Burada Dolibarr'ın otomatik olarak gündemde oluşturmasını istediğiniz olayları tanımlayın. İşaretli bir şey yoksa (varsayılan olarak) sadece el ile girilen eylemler gündeme dahil edilecektir.
-AgendaSetupOtherDesc= Bu sayfa Dolibarr eylemlerinin dış bir takvime aktarılması için seçenekler sağlar. (thunderbird, google calendar, ...)
+AgendaAutoActionDesc= Burada Dolibarr'ın otomatik olarak gündemde oluşturmasını istediğiniz etkinlikleri tanımlayın. İşaretli bir şey yoksa (varsayılan olarak) sadece el ile girilen etkinlikler gündeme dahil edilecektir.
+AgendaSetupOtherDesc= Bu sayfa Dolibarr etkinliklerinin dış bir takvime aktarılması için seçenekler sağlar. (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Bu sayfa takvimlerin dış kaynaklarında Dolibarr gündemindeki etkinliklerinin görünmesini sağlar.
 ActionsEvents= Dolibarr'ın otomatik olarak gündemde bir etkinlik oluşturacağı eylemler
 PropalValidatedInDolibarr= %s Teklifi doğrulandı
@@ -70,9 +70,9 @@ DateActionStart= Başlama tarihi
 DateActionEnd= Bitiş tarihi
 AgendaUrlOptions1=Süzgeç çıktısına ayrıca aşağıdaki parametreleri ekleyebilirsiniz:
 AgendaUrlOptions2=Eylem çıktılarını eylem, oluşturan, eylemden etkilenen ya da eylemi yapan kullanıcı <b>login=%s</b> sınırlayacak kullanıcı <b>%s</b>.
-AgendaUrlOptions3=Çıktıyı kullanıcı <b>%s</b> tarafından oluşturulan etkinliklerle sınırlamak için<b>logina=%s</b>.
+AgendaUrlOptions3=<b>kullanıcı=%s</b>,  bir <b>%s</b> kullanıcısına ait eylemlerin çıkışlarını sınırlamak içindir.
 AgendaUrlOptions4=Çıktıyı kullanıcı <b>%s</b> tarafından etkilenen etkinliklerle sınırlamak için<b>logint=%s</b>.
-AgendaUrlOptions5=Çıktıyı kullanıcı<b>%s</b> tarafından yapılan etkinliklerle sınırlamak için<b>logind=%s</b>.
+AgendaUrlOptionsProject=<b>proje=PROJECT_ID</b>, bu <b>PROJECT_ID</b> projesi ile ilişkilendirilmiş eylemlerin çıkışını çıkışını sınırlamak içindir.
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
 Busy=Meşgul
@@ -89,5 +89,5 @@ ExtSiteUrlAgenda=.ical dosyasına erişmek için URL
 ExtSiteNoLabel=Tanımlama yok
 WorkingTimeRange=Çalışma saati aralığı
 WorkingDaysRange=Çalışma günleri aralığı
-AddEvent=Add event
-MyAvailability=My availability
+AddEvent=Etkinlik oluştur
+MyAvailability=Uygunluğum
