@@ -4867,7 +4867,7 @@ CREATE TABLE `llx_opensurvey_sondage` (
   `mailsonde` tinyint(4) NOT NULL DEFAULT '0',
   `survey_link_visible` int(11) DEFAULT '1',
   `origin` varchar(64) DEFAULT NULL,
-  `tms` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_sondage`),
   KEY `idx_id_sondage_admin` (`id_sondage_admin`),
   KEY `idx_date_fin` (`date_fin`)
