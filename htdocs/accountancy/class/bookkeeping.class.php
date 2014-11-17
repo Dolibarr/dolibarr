@@ -31,6 +31,7 @@ class BookKeeping
 {
 	var $db;
 	var $error;
+	var $errors;
 
 	var $id;
 	var $doc_date;
