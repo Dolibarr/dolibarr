@@ -107,7 +107,7 @@ else if ($action == 'MAIN_ANTIVIRUS_PARAM')
 }
 else if ($action == 'MAIN_APPLICATION_TITLE')
 {
-	if (! dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	if (! dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_APPLICATION_TITLE"],'chaine',0,'',$conf->entity)) dol_print_error($db);
 	else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
 
@@ -176,11 +176,10 @@ if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATIO
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_APPLICATION_TITLE" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("HiddeNumVersion").'</td><td align="right">';
-print $form->textwithpicto('',$langs->trans("HiddeNumVersionExample",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="20" value="'.htmlentities($conf->global->MAIN_APPLICATION_TITLE).'"> ';
+print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.htmlentities($conf->global->MAIN_APPLICATION_TITLE).'"> ';
 print '</td>';
 print '<td align="right">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
