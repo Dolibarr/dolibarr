@@ -31,3 +31,9 @@ DonationRecipient=Donation recipient
 ThankYou=Thank You
 IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount
 MinimumAmount=Minimum amount is  %s
+FreeTextOnDonations=Free text on donations
+#### French options #####
+FrenchOptions=French options
+DONATION_ART200=Activate article 200 from CGI if you are concerned 
+DONATION_ART238=Activate article 238 from CGI if you are concerned
+DONATION_ART885=Activate article 885 from CGI if you are concerned
