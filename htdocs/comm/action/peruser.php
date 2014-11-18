@@ -659,10 +659,12 @@ while ($obj = $db->fetch_object($resql))
 $todayarray=dol_getdate($now,'fast');
 $sav = $tmpday;
 $showheader = true;
+$var = false;
 foreach ($usernames as $username)
 {
+	$var = ! $var;
 	echo "<tr>";
-	echo '<td class="cal_current_month">' . $username->getNomUrl(1). '</td>';
+	echo '<td class="cal_current_month"'.($var?' style="background: #F8F8F8"':'').'>' . $username->getNomUrl(1). '</td>';
 	$tmpday = $sav;
 
 	// Lopp on each day of week
@@ -688,7 +690,7 @@ foreach ($usernames as $username)
 		if ($todayarray['mday']==$tmpday && $todayarray['mon']==$tmpmonth && $todayarray['year']==$tmpyear) $today=1;
 		if ($today) $style='cal_today_peruser';
 
-		show_day_events2($username, $tmpday, $tmpmonth, $tmpyear, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader, $colorsbytype);
+		show_day_events2($username, $tmpday, $tmpmonth, $tmpyear, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader, $colorsbytype, $var);
 
 		$i++;
 	}
@@ -785,9 +787,10 @@ $db->close();
  * @param   int		$minheight      Minimum height for each event. 60px by default.
  * @param	boolean	$showheader		Show header
  * @param	array	$colorsbytype	Array with colors by type
+ * @param	string	$var			true or false for alternat style on tr/td
  * @return	void
  */
-function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false, $colorsbytype=array())
+function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false, $colorsbytype=array(), $var=false)
 {
 	global $db;
 	global $user, $conf, $langs, $hookmanager, $action;
@@ -989,8 +992,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 
 
-		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser">';
-		else echo '<td class="'.$style.' cal_peruser">';
+		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser"'.($var?' style="background: #F8F8F8"':'').'>';
+		else echo '<td class="'.$style.' cal_peruser"'.($var?' style="background: #F8F8F8"':'').'>';
 		if (count($cases1[$h]) == 1)	// 1 seul evenement
 		{
 			$ids=array_keys($cases1[$h]);
