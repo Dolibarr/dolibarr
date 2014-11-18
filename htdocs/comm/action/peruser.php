@@ -201,6 +201,7 @@ if ($filter)  $param.="&filter=".$filter;
 if ($filtera) $param.="&filtera=".$filtera;
 if ($filtert) $param.="&filtert=".$filtert;
 if ($filterd) $param.="&filterd=".$filterd;
+if ($usergroup) $param.="&usergroup=".$usergroup;
 if ($socid)   $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
 if ($pid)     $param.="&projectid=".$pid;
@@ -242,6 +243,20 @@ $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$
 $picto='calendarweek';
 
 $nav.=' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
+$nav.='<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+$nav.='<input type="hidden" name="action" value="' . $action . '">';
+$nav.='<input type="hidden" name="usertodo" value="' . $filtert . '">';
+$nav.='<input type="hidden" name="usergroup" value="' . $usergroup . '">';
+$nav.='<input type="hidden" name="actioncode" value="' . $actioncode . '">';
+$nav.='<input type="hidden" name="status" value="' . $status . '">';
+$nav.='<input type="hidden" name="socid" value="' . $socid . '">';
+$nav.='<input type="hidden" name="projectid" value="' . $projectid . '">';
+$nav.='<input type="hidden" name="begin_h" value="' . $begin_h . '">';
+$nav.='<input type="hidden" name="end_h" value="' . $end_h . '">';
+$nav.='<input type="hidden" name="begin_d" value="' . $begin_d . '">';
+$nav.='<input type="hidden" name="end_d" value="' . $end_d . '">';
+$nav.='<input type="hidden" name="showbirthday" value="' . $showbirthday . '">';
+
 $nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav.='</form>';
