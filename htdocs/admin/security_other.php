@@ -170,23 +170,6 @@ print '<input type="submit" class="button" name="button" value="'.$langs->trans(
 print '</td>';
 print '</tr></form>';
 
-$var=!$var;
-$sessiontimeout=ini_get("session.gc_maxlifetime");
-if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE="";
-print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_APPLICATION_TITLE" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("HiddeNumVersion").'</td><td align="right">';
-print $form->textwithpicto('',$langs->trans("HiddeNumVersionExample",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
-print '</td>';
-print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="20" value="'.htmlentities($conf->global->MAIN_APPLICATION_TITLE).'"> ';
-print '</td>';
-print '<td align="right">';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '</tr></form>';
-
 print '</table>';
 print '<br>';
 
@@ -199,6 +182,28 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
+
+// Hide number version of Dolibarr
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td colspan="3">'.$langs->trans("HideNumVersion").'</td>';
+print '<td align="right">';
+if (! empty($conf->use_javascript_ajax))
+{
+	print ajax_constantonoff('MAIN_HIDE_NUM_VERSION');
+}
+else
+{
+	if (empty($conf->global->MAIN_HIDE_NUM_VERSION))
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_HIDE_NUM_VERSION">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	}
+	else
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_HIDE_NUM_VERSION">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	}
+}
+print "</td></tr>";
 
 // Enable Captcha code
 $var=!$var;
