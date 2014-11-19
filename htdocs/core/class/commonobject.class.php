@@ -2238,7 +2238,7 @@ abstract class CommonObject
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field of attribut
             	if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
-                	$sql.=",".$attributeKey;
+					$sql.=', `'.$attributeKey.'`';
             }
             $sql .= ") VALUES (".$this->id;
             foreach($this->array_options as $key => $value)
