@@ -128,52 +128,6 @@ $head=security_prepare_head();
 
 dol_fiche_head($head, 'misc', $langs->trans("Security"));
 
-// Timeout
-$var=true;
-
-print '<table width="100%" class="noborder">';
-print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
-print '<td width="100">&nbsp;</td>';
-print "</tr>\n";
-
-$var=!$var;
-$sessiontimeout=ini_get("session.gc_maxlifetime");
-if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=$sessiontimeout;
-print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_SESSION_TIMEOUT" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
-print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
-print '</td>';
-print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.htmlentities($conf->global->MAIN_SESSION_TIMEOUT).'"> '.strtolower($langs->trans("Seconds"));
-print '</td>';
-print '<td align="right">';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '</tr></form>';
-
-$var=!$var;
-$sessiontimeout=ini_get("session.gc_maxlifetime");
-if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE="";
-print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_APPLICATION_TITLE" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td align="right">';
-print '</td>';
-print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.htmlentities($conf->global->MAIN_APPLICATION_TITLE).'"> ';
-print '</td>';
-print '<td align="right">';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '</tr></form>';
-
-print '</table>';
-print '<br>';
-
 
 // Other Options
 $var=true;
