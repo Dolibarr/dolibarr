@@ -651,7 +651,7 @@ class Propal extends CommonObject
      * 	@param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      *  @return     int     			<0 if KO, >=0 if OK
      */
-    function create($user='', $notrigger=0)
+    function create($user, $notrigger=0)
     {
         global $langs,$conf,$mysoc,$hookmanager;
         $error=0;
@@ -919,7 +919,7 @@ class Propal extends CommonObject
     {
         $this->products=$this->lines;
 
-        return $this->create();
+        return $this->create($user);
     }
 
     /**
