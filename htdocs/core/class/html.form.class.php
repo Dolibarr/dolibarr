@@ -3102,7 +3102,7 @@ class Form
      *    @param    string	$htmlname    Name of select field
      *    @return	void
      */
-    function form_project($page, $socid, $selected='', $htmlname='projectid')
+    function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0)
     {
         global $langs;
 
@@ -3119,8 +3119,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            //print "$socid,$selected,$htmlname";
-            $formproject->select_projects($socid,$selected,$htmlname);
+            $formproject->select_projects($socid,$selected,$htmlname,20,0,1,$discard_closed);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -4103,7 +4102,7 @@ class Form
         if ($value_as_key) $array=array_combine($array, $array);
 
         $out='';
-        
+
         // Add code for jquery to use multiselect
         if (empty($conf->dol_use_jmobile) && (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')))
         {
@@ -4116,7 +4115,7 @@ class Form
         			});
         		   </script>';
         }
-        
+
         $out.='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($moreparam?$moreparam:'').'>';
 
         if ($show_empty)
