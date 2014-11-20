@@ -1,6 +1,9 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox module setup
 PayBoxDesc=This module offer pages to allow payment on <a href="http://www.paybox.com" target="_blank">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PAYBOX_PBX_SITE=Paybox number site
+PAYBOX_PBX_RANG=Paybox rank
+PAYBOX_PBX_IDENTIFIANT=Paybox identifier
 FollowingUrlAreAvailableToMakePayments=Following URLs are available to offer a page to a customer to make a payment on Dolibarr objects
 PaymentForm=Payment form
 WelcomeOnPaymentPage=Welcome on our online payment service
