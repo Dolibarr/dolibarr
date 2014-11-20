@@ -511,24 +511,13 @@ class ExtraFields
 
 
 	/**
-	 *  Load array of labels
-	 *
-	 *  @return	void
-	 */
-	function fetch_optionals()
-	{
-		$this->fetch_name_optionals_label();
-	}
-
-
-	/**
 	 * 	Load array this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
 	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', societe', 'facture', 'propal', 'product', ...)
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
 	 * 	@return	array							Array of attributes for all extra fields
 	 */
-	function fetch_name_optionals_label($elementtype='adherent',$forceload=false)
+	function fetch_name_optionals_label($elementtype,$forceload=false)
 	{
 		global $conf;
 
