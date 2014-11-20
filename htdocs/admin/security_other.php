@@ -80,35 +80,15 @@ else if (preg_match('/del_(.*)/',$action,$reg))
 	}
 }
 
-else if ($action == 'MAIN_SESSION_TIMEOUT')
+else if ($action == 'updateform')
 {
-    if (! dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-    else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
-}
-else if ($action == 'MAIN_UPLOAD_DOC')
-{
-    if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-    else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
-}
-else if ($action == 'MAIN_UMASK')
-{
-    if (! dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-    else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
-}
-else if ($action == 'MAIN_ANTIVIRUS_COMMAND')
-{
-    if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-    else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
-}
-else if ($action == 'MAIN_ANTIVIRUS_PARAM')
-{
-    if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-    else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
-}
-else if ($action == 'MAIN_APPLICATION_TITLE')
-{
-	if (! dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_APPLICATION_TITLE"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-	else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+	$res1=dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_APPLICATION_TITLE"],'chaine',0,'',$conf->entity);
+    $res2=dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity);
+	$res3=dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity);
+    $res4=dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity);
+    $res5=dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity);
+    $res6=dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity);
+	if ($res1 && $res2 && $res3 && $res4 && $res5 && $res6) setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
 
 
@@ -138,10 +118,15 @@ print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 print $langs->trans("MiscellaneousDesc")."<br>\n";
 print "<br>\n";
 
+
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="updateform">';
+
 $head=security_prepare_head();
 
 dol_fiche_head($head, 'misc', $langs->trans("Security"));
-
 
 // Timeout
 $var=true;
@@ -253,6 +238,44 @@ print "</td></tr>";
 
 print '</table>';
 
+
+print '<br>';
+
+
+// Timeout
+$var=true;
+
+print '<table width="100%" class="noborder">';
+print '<tr class="liste_titre">';
+print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print "</tr>\n";
+
+$var=!$var;
+$sessiontimeout=ini_get("session.gc_maxlifetime");
+if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=$sessiontimeout;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
+print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+print '</td>';
+print '<td class="nowrap">';
+print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.htmlentities($conf->global->MAIN_SESSION_TIMEOUT).'"> '.strtolower($langs->trans("Seconds"));
+print '</td>';
+print '</tr>';
+
+$var=!$var;
+$sessiontimeout=ini_get("session.gc_maxlifetime");
+if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE="";
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td align="right">';
+print '</td>';
+print '<td class="nowrap">';
+print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.htmlentities($conf->global->MAIN_APPLICATION_TITLE).'"> ';
+print '</td>';
+print '</tr>';
+
+print '</table>';
+
 print '<br>';
 
 // Upload options
@@ -262,11 +285,8 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-print '<td width="100">&nbsp;</td>';
 print '</tr>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_UPLOAD_DOC" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'>';
 print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max=@ini_get('upload_max_filesize');
@@ -276,14 +296,9 @@ print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UPLOAD_DOC).'"> '.$langs->trans("Kb");
 print '</td>';
-print '<td align="right">';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '</tr></form>';
+print '</tr>';
 
 $var=!$var;
-print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_UMASK" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UMask").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
@@ -291,15 +306,10 @@ print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UMASK).'">';
 print '</td>';
-print '<td align="right">';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '</tr></form>';
+print '</tr>';
 
 // Use anti virus
 $var=!$var;
-print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_ANTIVIRUS_COMMAND" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<tr ".$bc[$var].">";
 print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
 print $langs->trans("AntiVirusCommandExample");
@@ -319,16 +329,10 @@ if (ini_get('safe_mode') && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 }
 print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" size="72" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_COMMAND)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_COMMAND):'').'">';
 print "</td>";
-print '<td align="right">';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</td>';
 print '</tr>';
-print '</form>';
 
 // Use anti virus
 $var=!$var;
-print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_ANTIVIRUS_PARAM" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<tr ".$bc[$var].">";
 print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print $langs->trans("AntiVirusParamExample");
@@ -336,15 +340,17 @@ print '</td>';
 print '<td>';
 print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" size="72" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_PARAM)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_PARAM):'').'">';
 print "</td>";
-print '<td align="right">';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</td>';
 print '</tr>';
-print '</form>';
 
 print '</table>';
 
 dol_fiche_end();
+
+print '<div class="center"><input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'"></div>';
+
+print '</form>';
+
+
 
 // Form to test upload
 print '<br>';

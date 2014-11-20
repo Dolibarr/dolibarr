@@ -935,8 +935,8 @@ if ($action == 'create')
     }
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$tmpcode.'</td></tr>';
 
-	// Ref Int
-	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+	// Ref supplier
+	print '<tr><td>'.$langs->trans('RefSupplier').'</td>';
 	print '<td colspan="2"><input type="text" size="5" name="ref_supplier" id="ref_supplier" value="'.GETPOST('ref_supplier','alpha').'"></td></tr>';
 
     // Customer
@@ -1134,9 +1134,9 @@ else
 
         print '<tr>';
 		print '<td  width="20%">';
-		print $form->editfieldkey("RefCustomer",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
+		print $form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
 		print '</td><td>';
-		print $form->editfieldval("RefCustomer",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
+		print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
 		print '</td>';
 		print '</tr>';
 
@@ -1290,7 +1290,7 @@ else
                         	$productstatic->ref=$objp->label;
                         	print $productstatic->getNomUrl(0,'',16);
                         }
-                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM) and $objp->description) 
+                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM) and $objp->description)
                             print '<br>'.dol_nl2br($objp->description);
                         print '</td>';
                     }
