@@ -105,8 +105,6 @@
 	<rule ref="Generic.Strings.UnnecessaryStringConcat.Found">
         <severity>0</severity>
 	</rule>
-    
-    <rule ref="Generic.VersionControl.SubversionProperties" />
 
 	<!-- Rules from PEAR Standard -->
 
