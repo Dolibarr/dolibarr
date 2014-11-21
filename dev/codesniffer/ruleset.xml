@@ -181,31 +181,8 @@
 
 	<!-- Test if () are removed for includes -->
 	<!-- <rule ref="PEAR.Files.IncludingFile"/> -->
-
 	<rule ref="PEAR.Formatting.MultiLineAssignment" />
-
-	<rule ref="PEAR.NamingConventions.ValidFunctionName" />
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNameInvalid">
-        <severity>0</severity>
-	</rule>
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCapital">
-        <severity>0</severity>
-	</rule>
-	<!-- some phpcs have a typo error in rule, so we add it too -->
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCaptial">
-        <severity>0</severity>
-	</rule>
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
-        <severity>0</severity>
-	</rule>
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.PrivateNoUnderscore">
-        <severity>0</severity>
-	</rule>
-
-	<rule ref="PEAR.NamingConventions.ValidVariableName" />
-
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
-	
     <rule ref="PEAR.WhiteSpace.ScopeClosingBrace.Line">
         <severity>0</severity>
     </rule>
