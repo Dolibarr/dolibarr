@@ -16,23 +16,14 @@
         <!-- Dolibarr uses tabs instead of spaces -->
         <exclude name="Generic.WhiteSpace.ScopeIndent"/>
         <exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
+        <!-- Disallow warnings because of line length -->
+        <exclude name="Generic.Files.LineLength" />
+        <!-- Dolibarr does not follow namespaces yet... -->
+        <exclude name="PSR1.Classes.ClassDeclaration" />
     </rule>
 
     <!-- Dolibarr uses tabs instead of spaces -->
     <rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
-
-    <!-- Dolibarr choose to use only the long tag -->
-    <rule ref="Generic.PHP.DisallowShortOpenTag" />
-
-    <!-- Lines can be 85 chars long, but never show errors -->
-    <!-- Rule disabled because PSR2 simply issues a warning (not an error) on lines longer than 120 characters
-    <rule ref="Generic.Files.LineLength">
-        <properties>
-            <property name="lineLimit" value="1000" />
-            <property name="absoluteLineLimit" value="0" />
-        </properties>
-    </rule>
-    -->
 
     <!-- END MAIN RULES -->
 
