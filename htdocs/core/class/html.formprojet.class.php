@@ -49,11 +49,12 @@ class FormProjets
 	 *	@param  int		$selected   	Id project preselected
 	 *	@param  string	$htmlname   	Nom de la zone html
 	 *	@param	int		$maxlength		Maximum length of label
-	 *	@param	int		$option_only	Option only
+	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
+	 *  @param	int		$discard_closed Discard closed projects
 	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1)
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0)
 	{
 		global $user,$conf,$langs;
 
@@ -104,6 +105,12 @@ class FormProjets
 					}
 					else
 					{
+						if ($discard_closed && $obj->fk_statut == 2)
+						{
+							$i++;
+							continue;
+						}
+
 						$labeltoshow=dol_trunc($obj->ref,18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';

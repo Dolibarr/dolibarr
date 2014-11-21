@@ -453,8 +453,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
+        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
     	if ($value == 'country' && in_array($tablib[$id],array('DictionaryCanton','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
-        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryRegion','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
         if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
         if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
         if ($value == 'color' && empty($_POST['color'])) continue;
@@ -1361,14 +1361,18 @@ function fieldList($fieldlist,$obj='',$tabname='')
 				continue;
 			}	// For state page, we do not show the country input (we link to region, not country)
 			print '<td>';
-			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:'')), 'country', '', 28);
+			$fieldname='country';
+			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:'')), $fieldname, '', 28);
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'country_id') {
-			$country_id = (! empty($obj->$fieldlist[$field]) ? $obj->$fieldlist[$field] : 0);
-			print '<td>';
-			print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$country_id.'">';
-			print '</td>';
+			if (! in_array('country',$fieldlist))	// If there is already a field country, we don't show country_id (avoid duplicate)
+			{
+				$country_id = (! empty($obj->$fieldlist[$field]) ? $obj->$fieldlist[$field] : 0);
+				print '<td>';
+				print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$country_id.'">';
+				print '</td>';
+			}
 		}
 		elseif ($fieldlist[$field] == 'region') {
 			print '<td>';

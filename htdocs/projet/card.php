@@ -260,7 +260,7 @@ if (empty($reshook))
 		{
 	    	$db->commit();
 
-			if (GETPOST('socid','int') > 0) $object->thirdparty->fetch(GETPOST('socid','int'));
+			if (GETPOST('socid','int') > 0) $object->fetch_thirdparty(GETPOST('socid','int'));
 			else unset($object->thirdparty);
 	    }
 	}
