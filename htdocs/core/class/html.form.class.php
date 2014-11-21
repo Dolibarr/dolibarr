@@ -3096,10 +3096,11 @@ class Form
     /**
      *    Show a form to select a project
      *
-     *    @param	int		$page        Page
-     *    @param	int		$socid       Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-     *    @param    int		$selected    Id pre-selected project
-     *    @param    string	$htmlname    Name of select field
+     *    @param	int		$page        		Page
+     *    @param	int		$socid       		Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+     *    @param    int		$selected    		Id pre-selected project
+     *    @param    string	$htmlname    		Name of select field
+     *    @param	int		$discard_closed		Hide all closed projects
      *    @return	void
      */
     function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0)
