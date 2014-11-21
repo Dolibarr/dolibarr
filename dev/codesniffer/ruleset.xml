@@ -35,32 +35,24 @@
 		<severity>0</severity>
 	</rule>
 
-	<!-- Rules from Generic Standard -->
+	<!-- Rules for CodeAnalysis -->
 		
 	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
- 
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowed">
 		<severity>0</severity>
 	</rule>
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowedWarning">
 		<severity>0</severity>
 	</rule>
-
     <!-- <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" /> -->
-
     <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall" />
-
     <rule ref="Generic.CodeAnalysis.JumbledIncrementer" />
-
     <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement" />
-
     <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier" />
-
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter" />
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.Found">
 		<severity>0</severity>
     </rule>
-
     <rule ref="Generic.CodeAnalysis.UselessOverridingMethod" />
 
     <!--
