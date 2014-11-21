@@ -136,19 +136,6 @@
     <rule ref="PEAR.Commenting.ClassComment.MissingTag">
         <severity>0</severity>
     </rule>
-    
-    <!-- 
-    <rule ref="PEAR.Commenting.FileComment" />
-    <rule ref="PEAR.Commenting.FileComment.WrongStyle">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FileComment.MissingVersion">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FileComment.MissingTag">
-        <severity>0</severity>
-    </rule>
-    -->
     <rule ref="PEAR.Commenting.FunctionComment.WrongStyle">
         <severity>0</severity>
     </rule>
