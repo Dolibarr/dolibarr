@@ -110,11 +110,8 @@
 
 	<!-- Rules from PEAR Standard -->
 
-	<rule ref="PEAR.Classes.ClassDeclaration" />
-
     <!-- Check for duplicate class names -->
     <!-- <rule ref="Generic.Classes.DuplicateClassName" /> -->
-
     <rule ref="PEAR.Commenting.ClassComment" />
     <rule ref="PEAR.Commenting.ClassComment.MissingTag">
         <severity>0</severity>
