@@ -229,7 +229,7 @@ if ($resql)
 	if ($viewstatut == 1)
 	$title.=' - '.$langs->trans('StatusOrderValidatedShort');
 	if ($viewstatut == 2)
-	$title.=' - '.$langs->trans('StatusOrderOnProcessShort');
+	$title.=' - '.$langs->trans('StatusOrderSentShort');
 	if ($viewstatut == 3)
 	$title.=' - '.$langs->trans('StatusOrderToBillShort');
 	if ($viewstatut == 4)
@@ -295,7 +295,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
 	print '</tr>';
-	
+
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
