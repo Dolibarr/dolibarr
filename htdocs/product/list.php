@@ -87,12 +87,14 @@ else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
  * Actions
  */
 
-if (isset($_POST["button_removefilter_x"]))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$sref="";
 	$sbarcode="";
 	$snom="";
 	$search_categ=0;
+	$tosell="";
+	$tobuy="";
 }
 
 
@@ -379,7 +381,7 @@ else
 
     		print '<td class="liste_titre nowrap" align="right">';
     		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     		print '</td>';
     		print '</tr>';
 
