@@ -96,7 +96,7 @@ else if ($type == "o")
 	$urlfiche="";
 }
 
-if (GETPOST('button_removefilter_x'))
+if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter'))	// Both tests are required to be compatible with all browsers
 {
     $search_firstlast_only="";
     $search_lastname="";
