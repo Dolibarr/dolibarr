@@ -2179,6 +2179,331 @@ abstract class CommonObject
         }
     }
 
+<<<<<<< HEAD
+=======
+
+    /**
+     *  Function to get extra fields of a member into $this->array_options
+     *  This method is in most cases called by method fetch of objects but you can call it separately.
+     *
+     *  @param	int		$rowid			Id of line
+     *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label()
+     *  @return	int						<0 if error, 0 if no optionals to find nor found, 1 if a line is found and optional loaded
+     */
+    function fetch_optionals($rowid,$optionsArray='')
+    {
+        if (! is_array($optionsArray))
+        {
+            // optionsArray not already loaded, so we load it
+            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+            $extrafields = new ExtraFields($this->db);
+            $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
+        }
+
+
+        // Request to get complementary values
+        if (count($optionsArray) > 0)
+        {
+            $sql = "SELECT rowid";
+            foreach ($optionsArray as $name => $label)
+            {
+                $sql.= ", ".$name;
+            }
+            $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
+            $sql.= " WHERE fk_object = ".$rowid;
+
+            dol_syslog(get_class($this)."::fetch_optionals sql=".$sql, LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+            	$numrows=$this->db->num_rows($resql);
+                if ($numrows)
+                {
+                    $tab = $this->db->fetch_array($resql);
+
+                    foreach ($tab as $key => $value)
+                    {
+                    	// Test fetch_array ! is_int($key) because fetch_array result is a mix table with some key as alpha and some key as int (depend db engine)
+                        if ($key != 'rowid' && $key != 'tms' && ! is_int($key))
+                        {
+                            // we can add this attribute to object properties
+                            $this->array_options["options_".$key]=$value;
+                        }
+                    }
+                }
+
+                $this->db->free($resql);
+
+                if ($numrows) return $numrows;
+                else return 0;
+            }
+            else
+            {
+                dol_print_error($this->db);
+                return -1;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     *	Delete all extra fields values for the current object.
+     *
+     *  @return	int		<0 if KO, >0 if OK
+     */
+	function deleteExtraFields()
+	{
+		global $langs;
+
+		$error=0;
+
+		$this->db->begin();
+
+		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
+		dol_syslog(get_class($this)."::deleteExtraFields delete sql=".$sql_del);
+		$resql=$this->db->query($sql_del);
+		if (! $resql)
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this)."::deleteExtraFields ".$this->error,LOG_ERR);
+			$this->db->rollback();
+			return -1;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+    /**
+     *	Add/Update all extra fields values for the current object.
+     *  All data to describe values to insert are stored into $this->array_options=array('keyextrafield'=>'valueextrafieldtoadd')
+     *
+     *  @return int -1=error, O=did nothing, 1=OK
+     */
+    function insertExtraFields()
+    {
+        global $conf,$langs;
+
+		$error=0;
+
+		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
+
+        if (! empty($this->array_options))
+        {
+            // Check parameters
+            $langs->load('admin');
+            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+            $extrafields = new ExtraFields($this->db);
+            $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
+
+            foreach($this->array_options as $key => $value)
+            {
+               	$attributeKey = substr($key,8);   // Remove 'options_' prefix
+               	$attributeType  = $extrafields->attribute_type[$attributeKey];
+               	$attributeSize  = $extrafields->attribute_size[$attributeKey];
+               	$attributeLabel = $extrafields->attribute_label[$attributeKey];
+               	switch ($attributeType)
+               	{
+               		case 'int':
+              			if (!is_numeric($value) && $value!='')
+               			{
+               				$error++; $this->errors[]=$langs->trans("ExtraFieldHasWrongValue",$attributeLabel);
+               				return -1;
+              			}
+               			elseif ($value=='')
+               			{
+               				$this->array_options[$key] = null;
+               			}
+             			break;
+            		case 'price':
+            			$this->array_options[$key] = price2num($this->array_options[$key]);
+            			break;
+            		case 'date':
+            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
+            			break;
+            		case 'datetime':
+            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
+            			break;
+               	}
+            }
+            $this->db->begin();
+
+            $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
+            dol_syslog(get_class($this)."::insertExtraFields delete sql=".$sql_del);
+            $this->db->query($sql_del);
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
+            foreach($this->array_options as $key => $value)
+            {
+            	$attributeKey = substr($key,8);   // Remove 'options_' prefix
+                // Add field of attribut
+            	if (isset($extrafields->attribute_type[$attributeKey]) && $extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
+                	$sql.=",".$attributeKey;
+            }
+            $sql .= ") VALUES (".$this->id;
+            foreach($this->array_options as $key => $value)
+            {
+            	$attributeKey = substr($key,8);   // Remove 'options_' prefix
+                // Add field o fattribut
+            	if(isset($extrafields->attribute_type[$attributeKey]) && $extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
+            	{
+	                if ($this->array_options[$key] != '')
+	                {
+	                    $sql.=",'".$this->db->escape($this->array_options[$key])."'";
+	                }
+	                else
+	                {
+	                    $sql.=",null";
+	                }
+            	}
+            }
+            $sql.=")";
+
+            dol_syslog(get_class($this)."::insertExtraFields insert sql=".$sql);
+            $resql = $this->db->query($sql);
+            if (! $resql)
+            {
+                $this->error=$this->db->lasterror();
+                dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
+                $this->db->rollback();
+                return -1;
+            }
+            else
+            {
+                $this->db->commit();
+                return 1;
+            }
+        }
+        else return 0;
+    }
+
+   /**
+     * Function to show lines of extrafields with output datas
+     *
+     * @param	object	$extrafields	Extrafield Object
+     * @param	string	$mode			Show output (view) or input (edit) for extrafield
+	 * @param	array	$params			Optionnal parameters
+	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+     *
+     * @return string
+     */
+    function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
+    {
+		global $_POST, $conf;
+
+		$out = '';
+
+		if (count($extrafields->attribute_label) > 0)
+		{
+			$out .= "\n";
+			$out .= '<!-- showOptionalsInput --> ';
+			$out .= "\n";
+
+			$e = 0;
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				if (is_array($params) && count($params)>0) {
+					if (array_key_exists('colspan',$params)) {
+						$colspan=$params['colspan'];
+					}
+				}else {
+					$colspan='3';
+				}
+				switch($mode) {
+					case "view":
+						$value=$this->array_options["options_".$key];
+						break;
+					case "edit":
+						$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+						break;
+				}
+				if ($extrafields->attribute_type[$key] == 'separate')
+				{
+					$out .= $extrafields->showSeparator($key);
+				}
+				else
+				{
+					$csstyle='';
+					if (is_array($params) && count($params)>0) {
+						if (array_key_exists('style',$params)) {
+							$csstyle=$params['style'];
+						}
+					}
+					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
+					{
+						$out .= '<tr '.$csstyle.'>';
+						$colspan='0';
+					}
+					else
+					{
+						$out .= '<tr '.$csstyle.'>';
+					}
+					// Convert date into timestamp format
+					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+					{
+						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->db->jdate($this->array_options['options_'.$key]);
+					}
+
+					if($extrafields->attribute_required[$key])
+						$label = '<span class="fieldrequired">'.$label.'</span>';
+
+					$out .= '<td>'.$label.'</td>';
+					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
+
+					switch($mode) {
+					case "view":
+						$out .= $extrafields->showOutputField($key,$value);
+						break;
+					case "edit":
+						$out .= $extrafields->showInputField($key,$value,'',$keyprefix);
+						break;
+					}
+
+					$out .= '</td>'."\n";
+
+					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
+					else $out .= '</tr>';
+					$e++;
+				}
+			}
+			$out .= "\n";
+			$out .= '<!-- /showOptionalsInput --> ';
+			$out .= '
+				<script type="text/javascript">
+				    jQuery(document).ready(function() {
+				    	function showOptions(child_list, parent_list)
+				    	{
+				    		var val = $("select[name=\"options_"+parent_list+"\"]").val();
+				    		var parentVal = parent_list + ":" + val;
+							if(val > 0) {
+					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
+					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+							} else {
+								$("select[name=\""+child_list+"\"] option").show();
+							}
+				    	}
+						function setListDependencies() {
+					    	jQuery("select option[parent]").parent().each(function() {
+					    		var child_list = $(this).attr("name");
+								var parent = $(this).find("option[parent]:first").attr("parent");
+								var infos = parent.split(":");
+								var parent_list = infos[0];
+								$("select[name=\"options_"+parent_list+"\"]").change(function() {
+									showOptions(child_list, parent_list);
+								});
+					    	});
+						}
+
+						setListDependencies();
+				    });
+				</script>';
+		}
+		return $out;
+	}
+
+
+>>>>>>> refs/remotes/origin/3.6
     /**
      *  Function to check if an object is used by others.
      *  Check is done into this->childtables. There is no check into llx_element_element.
