@@ -142,7 +142,7 @@ if ($action == 'edit')	// Edit
 	print '</table><br>'."\n";
 
     // Themes
-    show_theme('',1);
+    show_theme(null,1);
     print '<br>';
 
     // Liste des zone de recherche permanantes supportees
@@ -323,7 +323,7 @@ else	// Show
 
 
 	// Themes
-    show_theme('',0);
+    show_theme(null,0);
     print '<br>';
 
 

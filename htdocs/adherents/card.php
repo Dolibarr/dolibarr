@@ -291,8 +291,6 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		//$object->note        = trim($_POST["comment"]);
 		$object->morphy      = $_POST["morphy"];
 
-		$object->amount      = $_POST["amount"];
-
 		if (GETPOST('deletephoto')) $object->photo='';
 		elseif (! empty($_FILES['photo']['name'])) $object->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
 

@@ -242,7 +242,7 @@ function entity_prepare_head($object, $aEntities)
 /**
  * 	Show list of themes. Show all thumbs of themes
  *
- * 	@param	User	$fuser				User concerned or '' for global theme
+ * 	@param	User	$fuser				User concerned or null for global theme
  * 	@param	int		$edit				1 to add edit form
  * 	@param	boolean	$foruserprofile		Show for user profile view
  * 	@return	void
@@ -265,7 +265,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 
     $selected_theme='';
     if (empty($foruserprofile)) $selected_theme=$conf->global->MAIN_THEME;
-    else $selected_theme=empty($fuser->conf->MAIN_THEME)?'':$fuser->conf->MAIN_THEME;
+    else $selected_theme=((is_object($fuser) && ! empty($fuser->conf->MAIN_THEME))?$fuser->conf->MAIN_THEME:'');
 
     $colspan=2;
     if ($foruserprofile) $colspan=4;

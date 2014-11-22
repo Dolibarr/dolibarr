@@ -135,7 +135,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->number          = trim($_POST["number"]);
     $account->cle_rib         = trim($_POST["cle_rib"]);
     $account->bic             = trim($_POST["bic"]);
-    $account->iban_prefix     = trim($_POST["iban_prefix"]);
+    $account->iban            = trim($_POST["iban"]);
     $account->domiciliation   = trim($_POST["domiciliation"]);
 
     $account->proprio 	      = trim($_POST["proprio"]);

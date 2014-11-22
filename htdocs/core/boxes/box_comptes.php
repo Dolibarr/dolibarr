@@ -79,7 +79,7 @@ class box_comptes extends ModeleBoxes
 		if ($user->rights->banque->lire)
 		{
 			$sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
-			$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
+			$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
 			$sql.= " domiciliation, proprio, owner_address,";
 			$sql.= " account_number, currency_code,";
 			$sql.= " min_allowed, min_desired, comment";
