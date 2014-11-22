@@ -155,7 +155,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Date
 		print '<tr><td>'.$langs->trans("Date").'</td>';
-		print "<td colspan=\"2\">".dol_print_date($object->date,"daytext")."</td>\n";
+		print "<td colspan=\"2\">".dol_print_date($object->datec,"daytext")."</td>\n";
 		print '</tr>';
 
 		print '</table>';
