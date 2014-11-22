@@ -29,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
+$langs->load("compta");
+$langs->load("bills");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

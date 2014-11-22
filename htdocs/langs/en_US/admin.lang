@@ -779,6 +779,7 @@ DictionaryOrderMethods=Ordering methods
 DictionarySource=Origin of proposals/orders
 DictionaryAccountancyplan=Chart of accounts
 DictionaryAccountancysystem=Models for chart of accounts
+DictionaryEMailTemplates=Email templates
 SetupSaved=Setup saved
 BackToModuleList=Back to modules list
 BackToDictionaryList=Back to dictionaries list
