@@ -2237,7 +2237,7 @@ abstract class CommonObject
             {
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field of attribut
-            	if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
+            	if (isset($extrafields->attribute_type[$attributeKey]) && $extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
                 	$sql.=",".$attributeKey;
             }
             $sql .= ") VALUES (".$this->id;
@@ -2245,7 +2245,7 @@ abstract class CommonObject
             {
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field o fattribut
-            	if($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
+            	if(isset($extrafields->attribute_type[$attributeKey]) && $extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
             	{
 	                if ($this->array_options[$key] != '')
 	                {

@@ -725,6 +725,11 @@ class Facture extends CommonInvoice
 			$marginInfos			= getMarginInfos($object->lines[$i]->subprice, $object->lines[$i]->remise_percent, $object->lines[$i]->tva_tx, $object->lines[$i]->localtax1_tx, $object->lines[$i]->localtax2_tx, $object->lines[$i]->fk_fournprice, $object->lines[$i]->pa_ht);
 			$line->pa_ht			= $marginInfos[0];
 
+            // get extrafields from original line
+			$object->lines[$i]->fetch_optionals($object->lines[$i]->rowid);
+			foreach($object->lines[$i]->array_options as $options_key => $value)
+				$line->array_options[$options_key] = $value;
+
 			$this->lines[$i] = $line;
 		}
 
@@ -743,6 +748,11 @@ class Facture extends CommonInvoice
 
 		$this->origin				= $object->element;
 		$this->origin_id			= $object->id;
+
+        // get extrafields from original line
+		$object->fetch_optionals($object->id);
+		foreach($object->array_options as $options_key => $value)
+			$this->array_options[$options_key] = $value;
 
 		// Possibility to add external linked objects with hooks
 		$this->linked_objects[$this->origin] = $this->origin_id;
