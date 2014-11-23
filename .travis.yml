@@ -84,7 +84,7 @@ before_script:
  - sudo /etc/init.d/apache2 restart
  - wget http://localhost/
  - sudo cat /etc/apache2/envvars
- - sudo ls /var/log/apache2*
+ - sudo cat /var/log/apache2/error.log
  - cat index.html
 
 
