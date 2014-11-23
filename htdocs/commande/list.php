@@ -70,7 +70,7 @@ $limit = $conf->liste_limit;
 $viewstatut=GETPOST('viewstatut');
 
 // Purge search criteria
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_categ='';
     $search_user='';

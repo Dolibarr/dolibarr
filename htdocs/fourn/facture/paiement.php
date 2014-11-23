@@ -459,7 +459,7 @@ if (empty($action))
     $search_amount=GETPOST('search_amount');
     $search_company=GETPOST('search_company');
 	
-	if (GETPOST("button_removefilter"))
+	if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 	{
 		$search_ref="";
 		$search_account="";

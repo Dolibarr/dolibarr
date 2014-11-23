@@ -100,7 +100,7 @@ if (! $user->rights->agenda->allactions->read || $filter=='mine')	// If no permi
 }
 
 // Purge search criteria
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $datestart='';
     $dateend='';
