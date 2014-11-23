@@ -129,6 +129,8 @@ else
 	{
 		$texte = $langs->trans("ProductsAndServices");
 	}
+    // Add what we are searching for
+    if (! empty($sall)) $texte.= " - ".$sall;
 
     $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
     $sql.= ' p.fk_product_type, p.tms as datem,';
