@@ -334,15 +334,16 @@ if ($id > 0 || $ref)
 
         // Calculating a theorical value
         print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
-        print "<td>".$product->stock_theorique;
+        print "<td>".(empty($product->stock_theorique)?0:$product->stock_theorique);
         if ($product->stock_theorique < $product->seuil_stock_alerte) {
             print ' '.img_warning($langs->trans("StockLowerThanLimit"));
         }
         print '</td>';
         print '</tr>';
-
+        
         print '<tr><td>';
-        $text_stock_options = (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)?$langs->trans("DeStockOnShipment").'<br>':'');
+        $text_stock_options = '';
+        $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)?$langs->trans("DeStockOnShipment").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)?$langs->trans("DeStockOnValidateOrder").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_BILL)?$langs->trans("DeStockOnBill").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)?$langs->trans("ReStockOnBill").'<br>':'');
@@ -353,7 +354,6 @@ if ($id > 0 || $ref)
         print '<td>';
 
         $found=0;
-
         // Number of customer orders running
         if (! empty($conf->commande->enabled))
         {

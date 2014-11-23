@@ -83,7 +83,8 @@ before_script:
  - sudo cat /etc/apache2/sites-available/default
  - sudo /etc/init.d/apache2 restart
  - wget http://localhost/
- - cat /var/log/apache2/error.log
+ - sudo cat /etc/apache2/envvars
+ - sudo cat /var/log/apache2/error.log
  - cat index.html
 
 
