@@ -18,7 +18,7 @@ llxHeader();
 ?>
 
 <h1>
-This page is a sample of page using html methods. It is designed to make test with<br>
+This page is a sample of page using Dolibarr HTML widget methods. It is designed to make test with<br>
 - css (edit page to change to test another css)<br>
 - jmobile (add parameter dol_use_jmobile=1 to enable view with jmobile)<br>
 <br>
