@@ -153,7 +153,7 @@ if ($action == 'create')
 	
 	print_fiche_titre($langs->trans("NewBookmark"));
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
+	dol_fiche_head($head, 'card', $langs->trans("Bookmark"),0,'bookmark');
 	
 	print '<table class="border" width="100%">';
 
@@ -196,8 +196,15 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	$bookmark=new Bookmark($db);
 	$bookmark->fetch($id);
 
+	$head = array(
+		array(
+			'',
+			$langs->trans('Card'),
+			'card'
+		)
+	);
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
+	dol_fiche_head($head, 'card', $langs->trans("Bookmark"),0,'bookmark');
 
 	if ($action == 'edit')
 	{
