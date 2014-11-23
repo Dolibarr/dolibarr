@@ -60,7 +60,7 @@ $offset = $conf->liste_limit * $page;
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $year='';
     $month='';
