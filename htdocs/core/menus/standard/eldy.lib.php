@@ -1053,16 +1053,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				//if (empty($leftmenu) || $leftmenu=="cat") $newmenu->add("/categories/list.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 			}
 
-			// Stocks
+			// Warehouse
 			if (! empty($conf->stock->enabled))
 			{
 				$langs->load("stocks");
-				$newmenu->add("/product/stock/index.php?leftmenu=stock", $langs->trans("Stocks"), 0, $user->rights->stock->lire, '', $mainmenu, 'stock');
-				if (empty($leftmenu) || $leftmenu=="stock") $newmenu->add("/product/stock/card.php?action=create", $langs->trans("MenuNewWarehouse"), 1, $user->rights->stock->creer);
-				if (empty($leftmenu) || $leftmenu=="stock") $newmenu->add("/product/stock/list.php", $langs->trans("List"), 1, $user->rights->stock->lire);
-				if (empty($leftmenu) || $leftmenu=="stock") $newmenu->add("/product/stock/mouvement.php", $langs->trans("Movements"), 1, $user->rights->stock->mouvement->lire);
-                if ($conf->fournisseur->enabled) if (empty($leftmenu) || $leftmenu=="stock") $newmenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, $user->rights->stock->mouvement->lire && $user->rights->fournisseur->lire);
-                if ($conf->fournisseur->enabled) if (empty($leftmenu) || $leftmenu=="stock") $newmenu->add("/product/stock/massstockmove.php", $langs->trans("StockTransfer"), 1, $user->rights->stock->mouvement->lire && $user->rights->fournisseur->lire);
+				$newmenu->add("/product/stock/index.php?leftmenu=stock", $langs->trans("Warehouses"), 0, $user->rights->stock->lire, '', $mainmenu, 'stock');
+				$newmenu->add("/product/stock/card.php?action=create", $langs->trans("MenuNewWarehouse"), 1, $user->rights->stock->creer);
+				$newmenu->add("/product/stock/list.php", $langs->trans("List"), 1, $user->rights->stock->lire);
+				$newmenu->add("/product/stock/mouvement.php", $langs->trans("Movements"), 1, $user->rights->stock->mouvement->lire);
+                if ($conf->fournisseur->enabled) $newmenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, $user->rights->stock->mouvement->lire && $user->rights->fournisseur->lire);
+                if ($conf->fournisseur->enabled) $newmenu->add("/product/stock/massstockmove.php", $langs->trans("StockTransfer"), 1, $user->rights->stock->mouvement->lire && $user->rights->fournisseur->lire);
 			}
 
 			// Expeditions
