@@ -346,8 +346,11 @@ if ($action == 'create')
     }
 
 	// Accountancy journal
-	print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
-    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.$account->accountancy_journal.'"></td></tr>';
+	if (! empty($conf->accounting->enabled))
+	{
+		print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
+	    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.$account->accountancy_journal.'"></td></tr>';
+	}
 
 	print '</table>';
 
@@ -470,8 +473,11 @@ else
 		print '<td colspan="3">'.$account->account_number.'</td></tr>';
 
 		// Accountancy journal
-		print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
-		print '<td colspan="3">'.$account->accountancy_journal.'</td></tr>';
+		if (! empty($conf->accounting->enabled))
+		{
+			print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
+			print '<td colspan="3">'.$account->accountancy_journal.'</td></tr>';
+		}
 
 		print '</table>';
 
@@ -633,8 +639,11 @@ else
         }
 
 		// Accountancy journal
-        print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
-        print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$account->accountancy_journal).'"></td></tr>';
+		if (! empty($conf->accounting->enabled))
+		{
+	        print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
+	        print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$account->accountancy_journal).'"></td></tr>';
+		}
 
 		print '</table>';
 
