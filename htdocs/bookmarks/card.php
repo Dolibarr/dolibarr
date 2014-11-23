@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,12 +224,31 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$bookmark->ref.'</td></tr>';
 
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("BookmarkTitle").'</span></td><td>';
+	print '<tr><td>';
+	if ($action == 'edit') {
+		print '<span class="fieldrequired">';
+	}
+
+	print $langs->trans("BookmarkTitle");
+
+	if ($action == 'edit') {
+		print '</span>';
+	}
+
+	print '</td><td>';
 	if ($action == 'edit') print '<input class="flat" name="title" size="30" value="'.(isset($_POST["title"])?$_POST["title"]:$bookmark->title).'">';
 	else print $bookmark->title;
 	print '</td></tr>';
 
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("UrlOrLink").'</span></td><td>';
+	print '<tr><td>';
+	if ($action == 'edit') {
+		print '<span class="fieldrequired">';
+	}
+	print $langs->trans("UrlOrLink");
+	if ($action == 'edit') {
+		print '</span>';
+	}
+	print '</td><td>';
 	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"])?$_POST["url"]:$bookmark->url).'">';
 	else print '<a href="'.(preg_match('/^http/i',$bookmark->url)?$bookmark->url:DOL_URL_ROOT.$bookmark->url).'"'.($bookmark->target?' target="_blank"':'').'>'.$bookmark->url.'</a>';
 	print '</td></tr>';
