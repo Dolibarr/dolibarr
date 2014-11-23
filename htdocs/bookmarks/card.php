@@ -153,8 +153,6 @@ if ($action == 'create')
 	
 	print_fiche_titre($langs->trans("NewBookmark"));
 
-	dol_fiche_head($head, 'card', $langs->trans("Bookmark"),0,'bookmark');
-	
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td class="hideonsmartphone">'.$langs->trans("SetHereATitleForLink").'</td></tr>';
@@ -183,8 +181,6 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
-	
-	dol_fiche_end();
 }
 
 
@@ -220,12 +216,12 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$bookmark->ref.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("BookmarkTitle").'</td><td>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("BookmarkTitle").'</span></td><td>';
 	if ($action == 'edit') print '<input class="flat" name="title" size="30" value="'.(isset($_POST["title"])?$_POST["title"]:$bookmark->title).'">';
 	else print $bookmark->title;
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("UrlOrLink").'</td><td>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("UrlOrLink").'</span></td><td>';
 	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"])?$_POST["url"]:$bookmark->url).'">';
 	else print '<a href="'.(preg_match('/^http/i',$bookmark->url)?$bookmark->url:DOL_URL_ROOT.$bookmark->url).'"'.($bookmark->target?' target="_blank"':'').'>'.$bookmark->url.'</a>';
 	print '</td></tr>';
