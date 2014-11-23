@@ -79,14 +79,13 @@ $now=dol_now();
 llxHeader();
 
 $sql = 'SELECT';
+$sql.= " c.rowid as cid, c.ref, c.datec, c.date_contrat, c.statut, c.ref_supplier,";
+$sql.= " s.nom as name, s.rowid as socid,";
 $sql.= ' SUM('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')",1,0).') as nb_running,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')",1,0).') as nb_expired,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')",1,0).') as nb_late,';
-$sql.= ' SUM('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
-$sql.= " c.rowid as cid, c.ref, c.datec, c.date_contrat, c.statut,";
-$sql.= " s.nom as name, s.rowid as socid";
-$sql.= " ,c.ref_supplier";
+$sql.= ' SUM('.$db->ifsql("cd.statut=5",1,0).') as nb_closed';
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."contrat as c";
@@ -107,7 +106,7 @@ if (!empty($search_ref_supplier)) {
 if ($sall) {
     $sql .= natural_search(array('s.nom', 'cd.label', 'cd.description'), $sall);
 }
-$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut, s.nom, s.rowid";
+$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut, c.ref_supplier, s.nom, s.rowid";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit + 1, $offset);
 

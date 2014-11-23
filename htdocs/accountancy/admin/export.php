@@ -26,7 +26,7 @@
  */
 
 require '../../main.inc.php';
-	
+
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -44,7 +44,7 @@ $action = GETPOST('action', 'alpha');
 
 // Other parameters ACCOUNTING_*
 $list = array (
-		'ACCOUNTING_SEPARATORCSV' 
+		'ACCOUNTING_SEPARATORCSV'
 );
 
 /*
@@ -52,26 +52,26 @@ $list = array (
  */
 if ($action == 'update') {
 	$error = 0;
-	
+
 	$modelcsv = GETPOST('modelcsv', 'int');
-	
+
 	if (! empty($modelcsv)) {
-		
+
 		if (! dolibarr_set_const($db, 'ACCOUNTING_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
 	} else {
 		$error ++;
 	}
-	
+
 	foreach ( $list as $constname ) {
 		$constvalue = GETPOST($constname, 'alpha');
-		
+
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
 	}
-	
+
 	if (! $error) {
 		setEventMessage($langs->trans("SetupSaved"));
 	} else {
@@ -90,7 +90,7 @@ $form = new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'setup');
 
-$head = admin_accounting_prepare_head(null);
+$head = admin_accounting_prepare_head();
 
 dol_fiche_head($head, 'export', $langs->trans("Configuration"), 0, 'cron');
 
@@ -142,13 +142,13 @@ if ($num) {
 
 foreach ( $list as $key ) {
 	$var = ! $var;
-	
+
 	print '<tr ' . $bc[$var] . ' class="value">';
-	
+
 	// Param
 	$label = $langs->trans($key);
 	print '<td>' . $label . '</td>';
-	
+
 	// Value
 	print '<td>';
 	print '<input type="text" size="20" name="' . $key . '" value="' . $conf->global->$key . '">';

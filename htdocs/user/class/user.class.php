@@ -1265,7 +1265,10 @@ class User extends CommonObject
 				}
 			}
 
+			$action='update';
+
 			// Actions on extra fields (by external module or standard code)
+			// FIXME le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('userdao'));
 			$parameters=array('socid'=>$this->id);
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

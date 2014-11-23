@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -155,7 +155,7 @@ print '</td></tr>';
 
 print '</table>';
 
-print '</div>';
+dol_fiche_end();
 
 
 /*

@@ -197,6 +197,12 @@ class Translate
 		if ($alt < 1 && isset($langarray[1]) && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
 		if ($alt < 2 && strtolower($langofdir) == 'en_us') $alt=2;
 
+		if (empty($langofdir))	// This may occurs when load is called without setting the language and without providing a value for forcelangdir
+		{
+			dol_syslog("Error: ".get_class($this)."::Load was called but language was not set yet with langs->setDefaultLang(). Nothing will be loaded.", LOG_WARNING);
+			return -1;
+		}
+
 		foreach($this->dir as $keydir => $searchdir)
 		{
 			// Directory of translation files

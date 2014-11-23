@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
@@ -34,7 +34,7 @@
  */
 abstract class CommonObject
 {
-    protected $db;
+    public $db;
     public $error;
     public $errors;
     public $canvas;                // Contains canvas name if it is
@@ -601,18 +601,22 @@ abstract class CommonObject
     /**
      *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdparty
      *
-     *		@return		int					<0 if KO, >0 if OK
+     *		@param		int		$force_thirdparty_id	Force thirdparty id
+     *		@return		int								<0 if KO, >0 if OK
      */
-    function fetch_thirdparty()
+    function fetch_thirdparty($force_thirdparty_id=0)
     {
         global $conf;
 
-        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty)) return 0;
+        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id)) return 0;
 
 	    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
+	    $idtofetch=isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty);
+		if ($force_thirdparty_id) $idtofetch=$force_thirdparty_id;
+
         $thirdparty = new Societe($this->db);
-        $result=$thirdparty->fetch(isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty));
+        $result=$thirdparty->fetch($idtofetch);
         $this->client = $thirdparty;  // deprecated
         $this->thirdparty = $thirdparty;
 

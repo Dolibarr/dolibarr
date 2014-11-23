@@ -26,15 +26,15 @@
 /**
 *    Show header of a VAT report
 *
-*    @param		string	$nom            Name of report
-*    @param 	string	$variante       Link for alternate report
-*    @param 	string	$period         Period of report
-*    @param 	string	$periodlink     Link to switch period
-*    @param 	string	$description    Description
-*    @param 	date	$builddate      Date generation
-*    @param 	string	$exportlink     Link for export or ''
-*    @param		array	$moreparam		Array with list of params to add into form
-*    @param		string	$calcmode		Calculation mode
+*    @param		string				$nom            Name of report
+*    @param 	string				$variante       Link for alternate report
+*    @param 	string				$period         Period of report
+*    @param 	string				$periodlink     Link to switch period
+*    @param 	string				$description    Description
+*    @param 	timestamp|integer	$builddate      Date generation
+*    @param 	string				$exportlink     Link for export or ''
+*    @param		array				$moreparam		Array with list of params to add into form
+*    @param		string				$calcmode		Calculation mode
 *    @return	void
 */
 function report_header($nom,$variante,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='')
@@ -79,7 +79,7 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 		print '</td>';
 		print '</tr>';
 	}
-		
+
 	// Ligne de la periode d'analyse du rapport
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';

@@ -56,7 +56,7 @@ class ExtraFields
 	var $error;
 	var $errno;
 
-	static $type2label=array(
+	public static $type2label=array(
 	'varchar'=>'String',
 	'text'=>'TextLong',
 	'int'=>'Int',
@@ -511,32 +511,20 @@ class ExtraFields
 
 
 	/**
-	 *  Load array of labels
-	 *
-	 *  @return	void
-	 */
-	function fetch_optionals()
-	{
-		$this->fetch_name_optionals_label();
-	}
-
-
-	/**
 	 * 	Load array this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
 	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', societe', 'facture', 'propal', 'product', ...)
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
 	 * 	@return	array							Array of attributes for all extra fields
 	 */
-	function fetch_name_optionals_label($elementtype='adherent',$forceload=false)
+	function fetch_name_optionals_label($elementtype,$forceload=false)
 	{
 		global $conf;
 
 		$array_name_label=array();
 
 		// For avoid conflicts with external modules
-		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
-			return $array_name_label;
+		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
@@ -569,13 +557,13 @@ class ExtraFields
 					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
 				}
 			}
-
-			return $array_name_label;
 		}
 		else
 		{
 			print dol_print_error($this->db);
 		}
+
+		return $array_name_label;
 	}
 
 

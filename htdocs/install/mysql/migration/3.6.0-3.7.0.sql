@@ -18,6 +18,7 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (1, '60', 'Entreprise Individuelle à Responsabilité Limitée (EIRL)', 1);
 
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_MODIFY','Intervention modified','Executed when a intervention is modified','ficheinter',19);
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention delete','Executed when a intervention is delete','ficheinter',19);
@@ -26,6 +27,11 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_REOPEN','Intervention opened','Executed when a intervention is re-opened','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFY_BILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
+
+-- VPGSQL8.2 ALTER TABLE llx_contrat ALTER COLUMN fk_commercial_signature DROP NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_contrat ALTER COLUMN fk_commercial_suivi DROP NOT NULL;
+ALTER TABLE llx_contrat MODIFY fk_commercial_signature integer NULL;
+ALTER TABLE llx_contrat MODIFY fk_commercial_suivi integer NULL;
 
 ALTER TABLE llx_notify ADD COLUMN fk_soc integer NULL after fk_action;
 ALTER TABLE llx_notify ADD COLUMN type varchar(16) DEFAULT 'email' after fk_soc;
@@ -85,7 +91,6 @@ ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT N
 
 ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_accountingaccount add column datec datetime AFTER entity;
-ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
 ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
 ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;
 
@@ -97,6 +102,8 @@ UPDATE llx_const SET name = 'ACCOUNTING_PRODUCT_BUY_ACCOUNT' WHERE name = 'COMPT
 UPDATE llx_const SET name = 'ACCOUNTING_PRODUCT_SOLD_ACCOUNT' WHERE name = 'COMPTA_PRODUCT_SOLD_ACCOUNT';
 UPDATE llx_const SET name = 'ACCOUNTING_SERVICE_BUY_ACCOUNT' WHERE name = 'COMPTA_SERVICE_BUY_ACCOUNT';
 UPDATE llx_const SET name = 'ACCOUNTING_SERVICE_SOLD_ACCOUNT' WHERE name = 'COMPTA_SERVICE_SOLD_ACCOUNT';
+UPDATE llx_const SET name = 'ACCOUNTING_VAT_ACCOUNT' WHERE name = 'COMPTA_VAT_ACCOUNT';
+UPDATE llx_const SET name = 'ACCOUNTING_VAT_BUY_ACCOUNT' WHERE name = 'COMPTA_VAT_BUY_ACCOUNT';
 
 -- Compatibility with module Accounting Expert
 UPDATE llx_const SET name = 'ACCOUNTING_SEPARATORCSV' WHERE name = 'ACCOUNTINGEX_SEPARATORCSV';
@@ -122,6 +129,7 @@ DROP TABLE llx_compta_compte_generaux;
 -- Align size for accounting account
 ALTER TABLE llx_accountingaccount MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN account_parent varchar(32);
+ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
 ALTER TABLE llx_accountingdebcred MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_bank_account MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_c_chargesociales MODIFY COLUMN accountancy_code varchar(32);
@@ -182,9 +190,6 @@ ALTER TABLE llx_product MODIFY COLUMN fk_barcode_type INTEGER NULL DEFAULT NULL;
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type NOT IN (SELECT rowid from llx_c_barcode_type);
-
--- This request make mysql drop (mysql bug):
-ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
 
 
 -- Added missing relations of llx_product_price
@@ -1121,3 +1126,17 @@ ALTER TABLE llx_extrafields ADD alwayseditable INTEGER DEFAULT 0 AFTER pos;
 -- add supplier webservice fields
 ALTER TABLE llx_societe ADD webservices_url varchar(255) DEFAULT NULL;
 ALTER TABLE llx_societe ADD webservices_key varchar(128) DEFAULT NULL;
+
+-- changes size of ref in commande_fourn and facture_fourn
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN ref VARCHAR(255);
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN ref_ext VARCHAR(255);
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN ref_supplier VARCHAR(255);
+
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref VARCHAR(255);
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_ext VARCHAR(255);
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_supplier VARCHAR(255);
+
+
+-- This request make mysql drop (mysql bug, so we add it at end):
+--ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
+

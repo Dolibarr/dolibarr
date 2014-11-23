@@ -26,7 +26,7 @@ TCPDF                  6.0.093       LGPL-3+                     Yes            
 JS libraries:
 jQuery                 1.8.2         MIT License                 Yes             JS library
 jQuery UI              1.9.1         GPL and MIT License         Yes             JS library plugin UI
-jQuery multiple-select 1.1.0        MIT License                 Yes             JS library plugin for sexier multiselect
+jQuery select2         3.5.2         GPL and Apache License      Yes             JS library plugin for sexier multiselect
 jQuery blockUI         2.43          GPL and MIT License         Yes             JS library plugin blockUI (to use ajax popups)
 jQuery Colorpicker     1.1           MIT License                 Yes             JS library for color picker for a defined list of colors
 jQuery DataTables      1.9.4         BSD                         Yes             JS library for tables output

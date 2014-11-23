@@ -181,6 +181,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		global $langs,$conf;
 
 		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
+		$bcx=array();
 		$bcx[0] = 'class="box_pair"';
 		$bcx[1] = 'class="box_impair"';
 		$var = false;

@@ -345,13 +345,13 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
     			var obj = '.json_encode($events).';
     			$.each(obj, function(key,values) {
     				if (values.method.length) {
-    					runJsCodeForEvent(values);
+    					runJsCodeForEvent'.$htmlname.'(values);
     				}
 				});
 			}
 		});
 
-		function runJsCodeForEvent(obj) {
+		function runJsCodeForEvent'.$htmlname.'(obj) {
 			var id = $("#'.$htmlname.'").val();
 			var method = obj.method;
 			var url = obj.url;

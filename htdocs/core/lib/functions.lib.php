@@ -1100,7 +1100,11 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 				$default_timezone=@date_default_timezone_get();
 			}
 		}
-		else $localtz = new DateTimeZone('UTC');
+		
+		if (empty($localtz)) {
+			$localtz = new DateTimeZone('UTC');
+		}
+		
 		$dt = new DateTime(null,$localtz);
 		$dt->setDate($year,$month,$day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);
@@ -3837,13 +3841,14 @@ function dol_html_entity_decode($a,$b,$c='UTF-8')
 /**
  * Replace htmlentities functions to manage errors
  * http://php.net/manual/en/function.htmlentities.php
+ * TODO Remove this function to replace it with direct htmlentities.
  *
  * @param   string  $string         The input string.
  * @param   int     $flags          Flags(see PHP doc above)
  * @param   string  $encoding       Encoding
  * @param   bool    $double_encode  When double_encode is turned off PHP will not encode existing html entities
  * @return  string  $ret            Encoded string
- * @deprecated Since PHP4 support is no longer available, this function does not make sense
+ * @deprecated Since PHP4 support is no longer available, this function does not make sense.
  */
 function dol_htmlentities($string, $flags=null, $encoding='UTF-8', $double_encode=false)
 {
@@ -3998,10 +4003,7 @@ function dol_concatdesc($text1,$text2,$forxml=false)
 }
 
 /**
- *  Make substition into a string
- *  There is two type of substitions:
- * 	- From $substitutionarray (oldval=>newval)
- * 	- From special constants (__XXX__=>f(objet->xxx)) by substitutions modules
+ *  Make substition into a string replacing key with vals from $substitutionarray (oldval=>newval)
  *
  *  @param	string	$chaine      			Source string in which we must do substitution
  *  @param  array	$substitutionarray		Array with key->val to substitute

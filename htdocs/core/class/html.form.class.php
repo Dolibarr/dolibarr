@@ -746,7 +746,7 @@ class Form
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
-     *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	array	$events			Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *	@param	int		$limit			Maximum number of elements
      * 	@return	string					HTML string with
 	 *  @deprecated						Use select_thirdparty instead
@@ -816,10 +816,67 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
+            if (! empty($conf->use_javascript_ajax))
             {
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            	$out.= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+            	if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
+	            {
+					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	            	$out.= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+	            }
+	            else
+				{
+					if (count($events))		// Add management of event
+					{
+						print '<script type="text/javascript">
+								$(document).ready(function() {
+									jQuery("#'.$htmlname.'").change(function () {
+										var obj = '.json_encode($events).';
+							   			$.each(obj, function(key,values) {
+						    				if (values.method.length) {
+						    					runJsCodeForEvent'.$htmlname.'(values);
+						    				}
+										});
+									});
+
+								function runJsCodeForEvent'.$htmlname.'(obj) {
+									var id = $("#'.$htmlname.'").val();
+									var method = obj.method;
+									var url = obj.url;
+									var htmlname = obj.htmlname;
+									var showempty = obj.showempty;
+						    		$.getJSON(url,
+											{
+												action: method,
+												id: id,
+												htmlname: htmlname,
+												showempty: showempty
+											},
+											function(response) {
+												$.each(obj.params, function(key,action) {
+													if (key.length) {
+														var num = response.num;
+														if (num > 0) {
+															$("#" + key).removeAttr(action);
+														} else {
+															$("#" + key).attr(action, action);
+														}
+													}
+												});
+												$("select#" + htmlname).html(response.value);
+												if (response.num) {
+													var selecthtml_str = response.value;
+													var selecthtml_dom=$.parseHTML(selecthtml_str);
+													$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+												} else {
+													$("#inputautocomplete"+htmlname).val("");
+												}
+												$("select#" + htmlname).change();	/* Trigger event change */
+											});
+								}
+							})
+							</script>';
+					}
+	            }
             }
 
             // Construct $out and $outarray
@@ -3039,13 +3096,14 @@ class Form
     /**
      *    Show a form to select a project
      *
-     *    @param	int		$page        Page
-     *    @param	int		$socid       Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-     *    @param    int		$selected    Id pre-selected project
-     *    @param    string	$htmlname    Name of select field
+     *    @param	int		$page        		Page
+     *    @param	int		$socid       		Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+     *    @param    int		$selected    		Id pre-selected project
+     *    @param    string	$htmlname    		Name of select field
+     *    @param	int		$discard_closed		Hide all closed projects
      *    @return	void
      */
-    function form_project($page, $socid, $selected='', $htmlname='projectid')
+    function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0)
     {
         global $langs;
 
@@ -3062,8 +3120,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            //print "$socid,$selected,$htmlname";
-            $formproject->select_projects($socid,$selected,$htmlname);
+            $formproject->select_projects($socid,$selected,$htmlname,20,0,1,$discard_closed);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -4045,7 +4102,22 @@ class Form
 
         if ($value_as_key) $array=array_combine($array, $array);
 
-        $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($moreparam?$moreparam:'').'>';
+        $out='';
+
+        // Add code for jquery to use multiselect
+        if (empty($conf->dol_use_jmobile) && (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')))
+        {
+        	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
+        	$out='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+        			<script type="text/javascript">
+        				$(document).ready(function () {
+        					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+        				});
+        			});
+        		   </script>';
+        }
+
+        $out.='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($moreparam?$moreparam:'').'>';
 
         if ($show_empty)
         {
@@ -4109,46 +4181,22 @@ class Form
     	global $conf, $langs;
 
     	// Add code for jquery to use multiselect
-    	// Note: Plugin "multiselect" is no more provided by Dolibarr. You must include it and load it into your module to use it.
-    	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiselect'))
-    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT')))
+    	if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
     	{
-	    	print '<!-- JS CODE FOR multiselect -->
-				<script type="text/javascript">
-				$(document).ready(function () {
-					$.extend($.ui.multiselect.locale, {
-						addAll:\''.$langs->transnoentities("AddAll").'\',
-						removeAll:\''.$langs->transnoentities("RemoveAll").'\',
-						itemsCount:\''.$langs->transnoentities("ItemsCount").'\'
-					});
-					$(function(){
-						$("#'.$htmlname.'").multiselect({
-							searchable: false,
-							width: '.($width?$width:300).',
-							height: 120
-						});
-					});
-				});
-				</script>';
-    	}
-
-        // Add code for jquery to use multiple-select
-    	// Note: Plugin "multiselect" is no more provided by Dolibarr. You must include it and load it into your module to use it.
-    	if ((! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ($conf->global->MAIN_USE_JQUERY_MULTISELECT == 'multiple-select'))
-    		|| (defined('REQUIRE_JQUERY_MULTISELECT') && constant('REQUIRE_JQUERY_MULTISELECT')))
-    	{
-	    	print '<!-- JS CODE FOR multiple-select -->
-			<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiple-select/jquery.multiple.select.js"></script>
-	    	<script type="text/javascript">
-				$(document).ready(function () {
-        			$(\'#'.$htmlname.'\').multipleSelect();
-        		});
-			</script>';
+    		$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
+   			print '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+    			<script type="text/javascript">
+	    			$(document).ready(function () {
+    					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+    					});
+    				});
+    			</script>';
     	}
 
     	// Try also magic suggest
 
-    	$out = '<select id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.($width?' style="width: '.$width.'px"':'').'>'."\n";
+    	// Add data-role="none" to diable jmobile decoration
+    	$out = '<select data-role="none" id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.($width?' style="width: '.$width.'px"':'').'>'."\n";
     	if (is_array($array) && ! empty($array))
     	{
     		if ($value_as_key) $array=array_combine($array, $array);

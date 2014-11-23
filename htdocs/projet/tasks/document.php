@@ -121,7 +121,7 @@ llxHeader('',$langs->trans('Task'));
 
 if ($object->id > 0)
 {
-	if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+	$projectstatic->fetch_thirdparty();
 
 	$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
 
@@ -152,7 +152,7 @@ if ($object->id > 0)
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
+		if (! empty($projectstatic->thirdparty->id)) print $projectstatic->thirdparty->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td>';
 		print '</tr>';
@@ -225,7 +225,7 @@ if ($object->id > 0)
 
 		// Third party
 		print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
-		if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
+		if ($projectstatic->thirdparty->id) print $projectstatic->thirdparty->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
 	}
