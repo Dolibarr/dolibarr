@@ -62,7 +62,7 @@ $search_desc=GETPOST('search_desc','alpha');
 $search_status=GETPOST('search_status');
 $sall=GETPOST('sall');
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_company="";
