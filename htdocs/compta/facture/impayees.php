@@ -374,7 +374,7 @@ $search_montant_ttc = GETPOST("search_montant_ttc");
 $late = GETPOST("late");
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_ref='';
     $search_refcustomer='';
