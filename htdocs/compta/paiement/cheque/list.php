@@ -61,7 +61,7 @@ $checkdepositstatic=new RemiseCheque($db);
 $accountstatic=new Account($db);
 
 // If click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_ref='';
     $search_amount='';
