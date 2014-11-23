@@ -50,7 +50,7 @@ $search_amount = GETPOST('search_amount','alpha');
 
 if (!$user->rights->don->lire) accessforbidden();
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_company="";
