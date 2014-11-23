@@ -50,6 +50,13 @@ $backtopage=GETPOST('backtopage','alpha');
 
 if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 {
+
+	if ($action == 'update') {
+		$invertedaction = 'edit';
+	} else {
+		$invertedaction = 'create';
+	}
+
 	$error = 0;
 
 	if (GETPOST("cancel"))
@@ -101,12 +108,12 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 			{
 				setEventMessage($bookmark->error, 'errors');
 			}
-			$action='create';
+			$action = $invertedaction;
 		}
 	}
 	else
 	{
-		$action='create';
+		$action = $invertedaction;
 	}
 }
 
