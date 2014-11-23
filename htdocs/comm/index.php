@@ -90,15 +90,15 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$var=false;
-	print '<table class="noborder nohover" width="100%">';
 	print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchACustomerOrder").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
 	print '<label for="sref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="sref" id="sref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="sall" id="sall" size="18"></td>';
 	print '</tr>';
-	print "</form></table><br>\n";
+	print "</table></form><br>\n";
 }
 
 // Search contract
