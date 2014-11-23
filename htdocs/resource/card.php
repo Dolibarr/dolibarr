@@ -139,7 +139,7 @@ if ( $object->fetch($id) > 0 )
 
 		/*---------------------------------------
 		 * Edit object
-		*/
+		 */
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
@@ -171,7 +171,7 @@ if ( $object->fetch($id) > 0 )
 	}
 	else
 	{
-	    // Confirmation suppression resource line
+	    // Confirm deleting resource line
 	    if ($action == 'delete')
 	    {
 	        print $form->formconfirm("card.php?&id=".$id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
@@ -228,9 +228,9 @@ if ( $object->fetch($id) > 0 )
 				print '</div>';
 			}
 		}
-		if ($action != "delete" )
+		if ($action != "delete" && $action != "edit")
 		{
-		    // Edit resource
+		    // Delete resource
 		    if($user->rights->resource->delete)
 		    {
 		        print '<div class="inline-block divButAction">';
