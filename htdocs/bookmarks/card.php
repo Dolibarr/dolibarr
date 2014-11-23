@@ -111,28 +111,6 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 	}
 }
 
-if ($action == 'delete')
-{
-	$bookmark=new Bookmark($db);
-	$bookmark->id=$_GET["bid"];
-	$bookmark->url=$user->id;
-	$bookmark->target=$user->id;
-	$bookmark->title='xxx';
-	$bookmark->favicon='xxx';
-
-	$res=$bookmark->remove();
-	if ($res > 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		setEventMessage($bookmark->error, 'errors');
-	}
-}
-
-
 /*
  * View
  */
