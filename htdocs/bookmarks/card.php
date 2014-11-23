@@ -69,12 +69,12 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	if (! $title) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("BookmarkTitle")), 'errors');
+		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("BookmarkTitle")), 'errors');
 	}
 
 	if (! $url) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink")), 'errors');
+		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("UrlOrLink")), 'errors');
 	}
 
 	if (! $error)
@@ -95,7 +95,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 			if ($bookmark->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$langs->load("errors");
-				setEventMessage($langs->trans("WarningBookmarkAlreadyExists"), 'warnings');
+				setEventMessage($langs->transnoentities("WarningBookmarkAlreadyExists"), 'warnings');
 			}
 			else
 			{
