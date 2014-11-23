@@ -118,6 +118,13 @@ if ($fourn_id > 0)
 {
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
+// Count total nb of records without orderby and limit
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit($limit + 1, $offset);
 
@@ -143,7 +150,7 @@ if ($resql)
 
 
 	$param="&tobuy=".$tobuy."&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type)?"&amp;type=".$type:"").(empty($sRefSupplier)?"":"&amp;srefsupplier=".$sRefSupplier);
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
 
 	if (isset($catid))
