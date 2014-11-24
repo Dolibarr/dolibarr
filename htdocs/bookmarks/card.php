@@ -154,7 +154,9 @@ if ($action == 'create')
 	print '<input class="flat" name="position" size="5" value="'.(isset($_POST["position"])?$_POST["position"]:$bookmark->position).'">';
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
-	print '</table><br>';
+	print '</table>';
+
+	dol_fiche_end();
 
 	print '<div align="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
@@ -162,8 +164,6 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
-
-	dol_fiche_end();
 }
 
 
@@ -176,8 +176,6 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	$bookmark->fetch($id);
 
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
-
 	if ($action == 'edit')
 	{
 		print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data">';
@@ -187,6 +185,8 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 		print '<input type="hidden" name="urlsource" value="'.DOL_URL_ROOT.'/bookmarks/card.php?id='.$bookmark->id.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
+
+	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
 
 	print '<table class="border" width="100%">';
 
@@ -265,11 +265,13 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 
 	print '</table>';
 
-	if ($action == 'edit') print '<br><div align="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
-
-	if ($action == 'edit') print '</form>';
-
 	dol_fiche_end();
+
+	if ($action == 'edit')
+	{
+		print '<div align="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+		print '</form>';
+	}
 
 
 	print "<div class=\"tabsAction\">\n";
