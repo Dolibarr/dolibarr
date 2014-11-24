@@ -178,7 +178,8 @@ if ($action == 'set_ASK_PAYMENT_BANK_DURING_PROPOSAL')
         setEventMessage($langs->trans("Error"),'errors');
     }
 }
-+// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
+
+// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
 if ($action == 'setModuleOptions')
 {
 	$post_size=count($_POST);
