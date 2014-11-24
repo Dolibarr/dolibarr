@@ -279,7 +279,7 @@ if ($id > 0 || $ref)
 
         // Status (to sell)
         print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             print ajax_object_onoff($product, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
         } else {
             print $product->getLibStatut(2,0);
@@ -288,7 +288,7 @@ if ($id > 0 || $ref)
 
         // Status (to buy)
         print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
-        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             print ajax_object_onoff($product, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
         } else {
             print $product->getLibStatut(2,1);
@@ -340,7 +340,7 @@ if ($id > 0 || $ref)
         }
         print '</td>';
         print '</tr>';
-        
+
         print '<tr><td>';
         $text_stock_options = '';
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)?$langs->trans("DeStockOnShipment").'<br>':'');
