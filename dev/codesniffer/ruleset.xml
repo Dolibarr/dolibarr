@@ -16,23 +16,14 @@
         <!-- Dolibarr uses tabs instead of spaces -->
         <exclude name="Generic.WhiteSpace.ScopeIndent"/>
         <exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
+        <!-- Disallow warnings because of line length -->
+        <exclude name="Generic.Files.LineLength" />
+        <!-- Dolibarr does not follow namespaces yet... -->
+        <exclude name="PSR1.Classes.ClassDeclaration" />
     </rule>
 
     <!-- Dolibarr uses tabs instead of spaces -->
     <rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
-
-    <!-- Dolibarr choose to use only the long tag -->
-    <rule ref="Generic.PHP.DisallowShortOpenTag" />
-
-    <!-- Lines can be 85 chars long, but never show errors -->
-    <!-- Rule disabled because PSR2 simply issues a warning (not an error) on lines longer than 120 characters
-    <rule ref="Generic.Files.LineLength">
-        <properties>
-            <property name="lineLimit" value="1000" />
-            <property name="absoluteLineLimit" value="0" />
-        </properties>
-    </rule>
-    -->
 
     <!-- END MAIN RULES -->
 
@@ -44,32 +35,24 @@
 		<severity>0</severity>
 	</rule>
 
-	<!-- Rules from Generic Standard -->
+	<!-- Rules for CodeAnalysis -->
 		
 	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
- 
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowed">
 		<severity>0</severity>
 	</rule>
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowedWarning">
 		<severity>0</severity>
 	</rule>
-
     <!-- <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" /> -->
-
     <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall" />
-
     <rule ref="Generic.CodeAnalysis.JumbledIncrementer" />
-
     <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement" />
-
     <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier" />
-
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter" />
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.Found">
 		<severity>0</severity>
     </rule>
-
     <rule ref="Generic.CodeAnalysis.UselessOverridingMethod" />
 
     <!--
@@ -122,33 +105,15 @@
 	<rule ref="Generic.Strings.UnnecessaryStringConcat.Found">
         <severity>0</severity>
 	</rule>
-    
-    <rule ref="Generic.VersionControl.SubversionProperties" />
 
 	<!-- Rules from PEAR Standard -->
 
-	<rule ref="PEAR.Classes.ClassDeclaration" />
-
     <!-- Check for duplicate class names -->
     <!-- <rule ref="Generic.Classes.DuplicateClassName" /> -->
-
     <rule ref="PEAR.Commenting.ClassComment" />
     <rule ref="PEAR.Commenting.ClassComment.MissingTag">
         <severity>0</severity>
     </rule>
-    
-    <!-- 
-    <rule ref="PEAR.Commenting.FileComment" />
-    <rule ref="PEAR.Commenting.FileComment.WrongStyle">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FileComment.MissingVersion">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FileComment.MissingTag">
-        <severity>0</severity>
-    </rule>
-    -->
     <rule ref="PEAR.Commenting.FunctionComment.WrongStyle">
         <severity>0</severity>
     </rule>
@@ -181,31 +146,8 @@
 
 	<!-- Test if () are removed for includes -->
 	<!-- <rule ref="PEAR.Files.IncludingFile"/> -->
-
 	<rule ref="PEAR.Formatting.MultiLineAssignment" />
-
-	<rule ref="PEAR.NamingConventions.ValidFunctionName" />
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNameInvalid">
-        <severity>0</severity>
-	</rule>
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCapital">
-        <severity>0</severity>
-	</rule>
-	<!-- some phpcs have a typo error in rule, so we add it too -->
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCaptial">
-        <severity>0</severity>
-	</rule>
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
-        <severity>0</severity>
-	</rule>
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.PrivateNoUnderscore">
-        <severity>0</severity>
-	</rule>
-
-	<rule ref="PEAR.NamingConventions.ValidVariableName" />
-
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
-	
     <rule ref="PEAR.WhiteSpace.ScopeClosingBrace.Line">
         <severity>0</severity>
     </rule>
