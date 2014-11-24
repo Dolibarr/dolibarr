@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,11 +151,11 @@ if ($action == 'create')
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
-	
+
 	print_fiche_titre($langs->trans("NewBookmark"));
 
 	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
-	
+
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td class="hideonsmartphone">'.$langs->trans("SetHereATitleForLink").'</td></tr>';
@@ -176,14 +177,14 @@ if ($action == 'create')
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	print '</table><br>';
-	
+
 	print '<div align="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
 	print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';
 	print '</div>';
 
 	print '</form>';
-	
+
 	dol_fiche_end();
 }
 
@@ -213,12 +214,31 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$bookmark->ref.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("BookmarkTitle").'</td><td>';
+	print '<tr><td>';
+	if ($action == 'edit') {
+		print '<span class="fieldrequired">';
+	}
+
+	print $langs->trans("BookmarkTitle");
+
+	if ($action == 'edit') {
+		print '</span>';
+	}
+
+	print '</td><td>';
 	if ($action == 'edit') print '<input class="flat" name="title" size="30" value="'.(isset($_POST["title"])?$_POST["title"]:$bookmark->title).'">';
 	else print $bookmark->title;
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("UrlOrLink").'</td><td>';
+	print '<tr><td>';
+	if ($action == 'edit') {
+		print '<span class="fieldrequired">';
+	}
+	print $langs->trans("UrlOrLink");
+	if ($action == 'edit') {
+		print '</span>';
+	}
+	print '</td><td>';
 	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"])?$_POST["url"]:$bookmark->url).'">';
 	else print '<a href="'.(preg_match('/^http/i',$bookmark->url)?$bookmark->url:DOL_URL_ROOT.$bookmark->url).'"'.($bookmark->target?' target="_blank"':'').'>'.$bookmark->url.'</a>';
 	print '</td></tr>';
@@ -268,7 +288,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	print '</table>';
 
 	if ($action == 'edit') print '<br><div align="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
-	
+
 	if ($action == 'edit') print '</form>';
 
 	dol_fiche_end();
