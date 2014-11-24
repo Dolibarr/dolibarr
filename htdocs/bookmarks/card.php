@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,13 @@ $backtopage=GETPOST('backtopage','alpha');
 
 if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 {
+
+	if ($action == 'update') {
+		$invertedaction = 'edit';
+	} else {
+		$invertedaction = 'create';
+	}
+
 	$error = 0;
 
 	if (GETPOST("cancel"))
@@ -69,12 +77,12 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	if (! $title) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("BookmarkTitle")), 'errors');
+		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("BookmarkTitle")), 'errors');
 	}
 
 	if (! $url) {
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink")), 'errors');
+		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("UrlOrLink")), 'errors');
 	}
 
 	if (! $error)
@@ -95,42 +103,20 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 			if ($bookmark->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$langs->load("errors");
-				setEventMessage($langs->trans("WarningBookmarkAlreadyExists"), 'warnings');
+				setEventMessage($langs->transnoentities("WarningBookmarkAlreadyExists"), 'warnings');
 			}
 			else
 			{
 				setEventMessage($bookmark->error, 'errors');
 			}
-			$action='create';
+			$action = $invertedaction;
 		}
 	}
 	else
 	{
-		$action='create';
+		$action = $invertedaction;
 	}
 }
-
-if ($action == 'delete')
-{
-	$bookmark=new Bookmark($db);
-	$bookmark->id=$_GET["bid"];
-	$bookmark->url=$user->id;
-	$bookmark->target=$user->id;
-	$bookmark->title='xxx';
-	$bookmark->favicon='xxx';
-
-	$res=$bookmark->remove();
-	if ($res > 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		setEventMessage($bookmark->error, 'errors');
-	}
-}
-
 
 /*
  * View
@@ -153,8 +139,6 @@ if ($action == 'create')
 	
 	print_fiche_titre($langs->trans("NewBookmark"));
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
-	
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td class="hideonsmartphone">'.$langs->trans("SetHereATitleForLink").'</td></tr>';
@@ -183,8 +167,6 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
-	
-	dol_fiche_end();
 }
 
 
@@ -196,8 +178,15 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	$bookmark=new Bookmark($db);
 	$bookmark->fetch($id);
 
+	$head = array(
+		array(
+			'',
+			$langs->trans('Card'),
+			'card'
+		)
+	);
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
+	dol_fiche_head($head, 'card', $langs->trans("Bookmark"),0,'bookmark');
 
 	if ($action == 'edit')
 	{
@@ -213,12 +202,31 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$bookmark->ref.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("BookmarkTitle").'</td><td>';
+	print '<tr><td>';
+	if ($action == 'edit') {
+		print '<span class="fieldrequired">';
+	}
+
+	print $langs->trans("BookmarkTitle");
+
+	if ($action == 'edit') {
+		print '</span>';
+	}
+
+	print '</td><td>';
 	if ($action == 'edit') print '<input class="flat" name="title" size="30" value="'.(isset($_POST["title"])?$_POST["title"]:$bookmark->title).'">';
 	else print $bookmark->title;
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("UrlOrLink").'</td><td>';
+	print '<tr><td>';
+	if ($action == 'edit') {
+		print '<span class="fieldrequired">';
+	}
+	print $langs->trans("UrlOrLink");
+	if ($action == 'edit') {
+		print '</span>';
+	}
+	print '</td><td>';
 	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"])?$_POST["url"]:$bookmark->url).'">';
 	else print '<a href="'.(preg_match('/^http/i',$bookmark->url)?$bookmark->url:DOL_URL_ROOT.$bookmark->url).'"'.($bookmark->target?' target="_blank"':'').'>'.$bookmark->url.'</a>';
 	print '</td></tr>';
