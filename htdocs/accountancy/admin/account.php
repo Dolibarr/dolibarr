@@ -88,7 +88,7 @@ if ($action == 'disable') {
 	}
 }
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_account="";
     $search_label="";

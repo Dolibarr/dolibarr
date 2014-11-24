@@ -51,7 +51,13 @@ $page = $page == -1 ? 0 : $page;
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
-
+// Purge criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_project="";
+	$search_status="";
+}
+if (empty($search_status)) $search_status=1;
 
 /*
  * View
@@ -122,9 +128,10 @@ print $form->selectarray('search_status', $listofstatus, $search_status);
 print '</td>';
 print '<td class="liste_titre" colspan="7">';
 print '&nbsp;';
+print '<td class="liste_titre nowrap" align="right">';
+print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 print '</td>';
-print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
-print "</tr>\n";
 
 if (count($tasksarray) > (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA))
 {

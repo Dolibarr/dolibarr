@@ -58,7 +58,7 @@ $result = restrictedArea($user, 'contrat', $id);
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_name="";
 	$search_contract="";
