@@ -217,7 +217,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 <?php if ($main_home)
 {
 ?>
-	<div class="center" class="login_main_home" style="max-width: 80%">
+	<div class="login_main_home center" style="max-width: 80%">
 	<?php echo $main_home; ?>
 	</div><br>
 <?php
@@ -280,7 +280,6 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLI
 
 
 </div>
-</center>	<!-- end of center -->
 
 
 </body>

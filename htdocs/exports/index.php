@@ -102,9 +102,9 @@ if (count($export->array_export_code))
 		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("NewExport").'</a>';
 	}
 	/*
-	 print '<center><form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
+	 print '<form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
 	print ($user->rights->export->creer?'':' disabled="disabled"');
-	print '></form></center>';
+	print '><div class="center"></div></form>';
 	*/
 }
 print '</div>';

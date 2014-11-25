@@ -507,7 +507,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 
 	for ($i = 0; $i < $_SESSION["nbrecaseshoraires"]; $i++) {
 		$j = $i+1;
-		print '<td classe="somme">'. $langs->trans("Time") .' '.$j.'</center></td>'."\n";
+		print '<td classe="somme"><div class="center">'. $langs->trans("Time") .' '.$j.'</div></td>'."\n";
 	}
 
 	if ($_SESSION["nbrecaseshoraires"] < 10) {
