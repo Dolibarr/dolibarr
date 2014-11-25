@@ -44,7 +44,7 @@ $(document).ready(function () {
 <?php } ?>
 
 
-<div class="login_vertical_align center">
+<div align="center" class="login_vertical_align">
 
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">

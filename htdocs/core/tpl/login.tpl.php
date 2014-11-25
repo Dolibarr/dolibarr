@@ -46,7 +46,7 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div class="center">
+<div align="center">
 <div class="login_vertical_align">
 
 
@@ -67,8 +67,8 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
-<table class="login_table_title center" summary="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td class="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
+<table align="center" class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>">
+<tr class="vmenu"><td align="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
 </table>
 <br>
 
@@ -134,7 +134,6 @@ if (! empty($hookmanager->resArray['options'])) {
 
 <img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
 
-</div>
 </div>
 
 <div id="login_line2" style="clear: both">
