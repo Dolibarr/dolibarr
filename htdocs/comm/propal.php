@@ -1514,10 +1514,11 @@ if ($action == 'create')
 
 
 	$langs->load("bills");
-	print '<center>';
+	print '<div class="center">';
 	print '<input type="submit" class="button" value="' . $langs->trans("CreateDraft") . '">';
-	print '&nbsp;<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
-	print '</center>';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print "</form>";
 

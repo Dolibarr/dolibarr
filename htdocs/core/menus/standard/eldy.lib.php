@@ -436,7 +436,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			print '<div class="menu_titre" id="menu_titre_logo"></div>';
 			print '<div class="menu_top" id="menu_top_logo"></div>';
 			print '<div class="menu_contenu" id="menu_contenu_logo">';
-			print '<center><img title="" src="'.$urllogo.'"></center>'."\n";
+			print '<div class="center"><img title="" src="'.$urllogo.'"></div>'."\n";
 			print '</div>';
 			print '<div class="menu_end" id="menu_end_logo"></div>';
 			print '</div>'."\n";

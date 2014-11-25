@@ -779,11 +779,11 @@ if ($action == 'create')
 
 	print '</table>';
 
-	print '<center><br>';
+	print '<br><div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	print ' &nbsp; &nbsp; ';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</center>';
+	print '</div>';
 
 	print "</form>";
 }
@@ -1013,9 +1013,11 @@ if ($id > 0)
 
 		dol_fiche_end();
 
-		print '<center><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</center>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
 		print '</form>';
 	}

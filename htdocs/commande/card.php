@@ -1530,7 +1530,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '</table>';
 
 	// Button "Create Draft"
-	print '<br><center><input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '"></center>';
+	print '<br><div class="center"><input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '"></div>';
 
 	print '</form>';
 

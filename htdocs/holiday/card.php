@@ -822,11 +822,11 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '</div>';
         print '</from>'."\n";
 
-        print '<center>';
+        print '<div class="center">';
         print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
         print '&nbsp; &nbsp; ';
         print '<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)">';
-        print '</center>';
+        print '</div>';
     }
 
 }

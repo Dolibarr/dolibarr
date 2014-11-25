@@ -1026,7 +1026,7 @@ if ($action == 'create')
         print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 	}
 
-    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+    print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
     print "</form>\n";
 

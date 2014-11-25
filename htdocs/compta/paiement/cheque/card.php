@@ -358,14 +358,14 @@ if ($action == 'new')
     print $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
     print '</td></tr>';
 	print '</table>';
-    print '<center>';
+    print '<div class="center">';
 	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
     if ($filterdate || $filteraccountid > 0)
     {
     	print ' &nbsp; ';
     	print '<input type="submit" class="button" name="removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     }
-	print '</center>';
+	print '</div>';
     //print '</fieldset>';
 	print '</form>';
 	print '<br>';

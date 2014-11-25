@@ -313,7 +313,7 @@ print $urllink;
 
 print '</table>';
 
-if ($action == 'edit') print '<center><br><input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></center>';
+if ($action == 'edit') print '<br><div class="center"><input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 
 print '</form>'."\n";
 

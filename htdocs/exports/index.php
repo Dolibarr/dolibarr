@@ -90,7 +90,7 @@ else
 print '</table>';
 print '<br>';
 
-print '<center>';
+print '<div class="center">';
 if (count($export->array_export_code))
 {
 	if ($user->rights->export->creer)
@@ -107,7 +107,7 @@ if (count($export->array_export_code))
 	print '></form></center>';
 	*/
 }
-print '</center>';
+print '</div>';
 print '<br>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
