@@ -347,6 +347,10 @@ if ($id > 0)
 	print '</td><td colspan="3">';
 	if ($action == 'editmode')
 	{
+		if (empty($object->mode_reglement_id))
+		{
+			$object->mode_reglement_id=$conf->global->MAIN_PAYMENT_MODE_DEFAULT;
+		}
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
 	}
 	else
