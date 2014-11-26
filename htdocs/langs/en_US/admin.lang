@@ -1383,6 +1383,7 @@ RSSUrlExample=An interesting RSS feed
 MailingSetup=EMailing module setup
 MailingEMailFrom=Sender EMail (From) for emails sent by emailing module
 MailingEMailError=Return EMail (Errors-to) for emails with errors
+MailingDelay=Seconds to wait after sending next message
 ##### Notification #####
 NotificationSetup=EMail notification module setup
 NotificationEMailFrom=Sender EMail (From) for emails sent for notifications

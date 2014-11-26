@@ -316,7 +316,10 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 							}
 						}
 
-
+                        if (!empty($conf->global->MAILING_DELAY)) {
+                            sleep($conf->global->MAILING_DELAY);
+                        }
+                        
 						//test if CHECK READ change statut prospect contact
 					}
 					else
