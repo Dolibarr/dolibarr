@@ -77,16 +77,7 @@ if ($id > 0 || ! empty($ref))
 
         // Ref
         print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
-        print '<td colspan="2">'.$object->ref.'</td>';
-        print '<td width="50%">'.$langs->trans("Source").' : '.$object->getLabelSource();
-        if ($object->source == 0)
-        {
-            // Propale
-            $propal = new Propal($db);
-            $propal->fetch($object->propale_id);
-            print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$propal->id.'">'.$propal->ref.'</a>';
-        }
-        print "</td></tr>";
+        print '<td colspan="2">'.$object->ref.'</td></tr>';
 
         // Ref cde client
 		print '<tr><td>';
@@ -183,15 +174,14 @@ if ($id > 0 || ! empty($ref))
 
 		// ligne 6
 		// partie Gauche
-		print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
+		print '<tr><td class="nowrap">'.$langs->trans('GlobalDiscount').'</td>';
 		print '<td colspan="2">'.$object->remise_percent.'%</td>';
 		print '</tr>';
 
 		// ligne 7
 		// partie Gauche
-		print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-		print '<td align="right" colspan="1"><b>'.price($object->total_ht).'</b></td>';
-		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+		print '<tr><td>'.$langs->trans('AmountHT').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td></tr>';
 		print '</table>';
 
 		dol_fiche_end();
