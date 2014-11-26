@@ -353,14 +353,17 @@ if ($id > 0 || ! empty($ref))
         }
         print "</td></tr>";
 
+        // Total HT
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-        print '<td align="right" colspan="2"><b>'.price($object->total_ht).'</b></td>';
-        print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td></tr>';
 
-        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
-        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+        // Total VAT
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td></tr>';
+
+        // Total TTC
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td></tr>';
 
         // Statut
         print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($object->getLibStatut(4,$totalpaye)).'</td></tr>';
