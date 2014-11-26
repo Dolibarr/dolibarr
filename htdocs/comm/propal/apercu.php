@@ -170,8 +170,7 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-		print '<td align="right" colspan="2"><b>'.price($object->price).'</b></td>';
-		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td></tr>';
 		print '</table>';
 
 		dol_fiche_end();
