@@ -1139,7 +1139,7 @@ AddDeliveryAddressAbility=Add delivery date ability
 UseOptionLineIfNoQuantity=A line of product/service with a zero amount is considered as an option
 FreeLegalTextOnProposal=Free text on commercial proposals
 WatermarkOnDraftProposal=Watermark on draft commercial proposals (none if empty)
-ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
+BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
 ##### Orders #####
 OrdersSetup=Order management setup
 OrdersNumberingModules=Orders numbering models
