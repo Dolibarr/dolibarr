@@ -1810,13 +1810,13 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
 
     $ret='';
     $ret.='<form action="'.$urlaction.'" method="post">';
-	$ret.='<label for="'.$htmlinputname.'">';
 	$ret.='<div class="menu_titre menu_titre_search">';
+	$ret.='<label for="'.$htmlinputname.'">';
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
 	$ret.=$title;
 	$ret.='</a>';
-	$ret.='</div>';
 	$ret.='</label>';
+	$ret.='</div>';
     $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     $ret.='<input type="hidden" name="mode" value="search">';
     $ret.='<input type="hidden" name="mode_search" value="'.$htmlmodesearch.'">';

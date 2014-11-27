@@ -76,7 +76,7 @@ if ($action == 'update')
 
 	if (empty($amount))
 	{
-		$setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
 		$action = "create";
 		$error++;
 	}
