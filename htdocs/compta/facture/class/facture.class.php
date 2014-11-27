@@ -2213,7 +2213,15 @@ class Facture extends CommonInvoice
 			$this->line->skip_update_total	= $skip_update_total;
 
 			// infos marge
-			$this->line->fk_fournprice = $fk_fournprice;
+			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			    // POS or external module, take lowest buying price
+			    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			    $productFournisseur = new ProductFournisseur($this->db);
+			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
+			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
+			} else {
+			    $this->line->fk_fournprice = $fk_fournprice;
+			}
 			$this->line->pa_ht = $pa_ht;
 
 			if (is_array($array_option) && count($array_option)>0) {
@@ -3476,6 +3484,14 @@ class FactureLigne  extends CommonInvoiceLine
 				$this->error='ErrorProductIdDoesNotExists';
 				return -1;
 			}
+		}
+		
+		// POS or by external module, take lowest buying price
+		if (!empty($this->fk_product) && empty($this->fk_fournprice) && empty($this->pa_ht)) {
+		    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		    $productFournisseur = new ProductFournisseur($this->db);
+		    $productFournisseur->find_min_price_product_fournisseur($this->fk_product);
+		    $this->fk_fournprice = $productFournisseur->product_fourn_price_id;
 		}
 
 		$this->db->begin();

@@ -516,7 +516,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,0);
 
 		// Sender properties
-		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
+		$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->client);
 
 		$pdf->SetFont('','', $default_font_size - 3);
 		$pdf->SetXY($blSocX,$blSocY+4);
