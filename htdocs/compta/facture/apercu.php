@@ -238,24 +238,12 @@ if ($id > 0 || ! empty($ref))
         print "</tr>";
 
         // Date payment term
-        print '<tr><td>';
-        print '<table class="nobordernopadding" width="100%"><tr><td>';
-        print $langs->trans('DateMaxPayment');
-        print '</td>';
-        if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td colspan="5">';
+        print '<tr><td>'.$langs->trans('DateMaxPayment').'</td>';
+        print '<td colspan="5">';
         if ($object->type != Facture::TYPE_CREDIT_NOTE)
         {
-            if ($action == 'editpaymentterm')
-            {
-                $form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->date_lim_reglement,'paymentterm');
-            }
-            else
-            {
-                print dol_print_date($object->date_lim_reglement,'daytext');
-                if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == 1 && ! $object->am) print img_warning($langs->trans('Late'));
-            }
+            print dol_print_date($object->date_lim_reglement,'daytext');
+            if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == 1 && ! $object->am) print img_warning($langs->trans('Late'));
         }
         else
         {
@@ -270,21 +258,8 @@ if ($id > 0 || ! empty($ref))
         print '</td></tr>';
 
         // Mode de reglement
-        print '<tr><td>';
-        print '<table class="nobordernopadding" width="100%"><tr><td>';
-        print $langs->trans('PaymentMode');
-        print '</td>';
-        if ($action != 'editmode' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td colspan="3">';
-        if ($action == 'editmode')
-        {
-            $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
-        }
-        else
-        {
-            $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'none');
-        }
+        print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="3">';
+        $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'none');
         print '</td>';
 
         $nbrows=5;
@@ -313,8 +288,8 @@ if ($id > 0 || ! empty($ref))
         if (file_exists($file))
         {
             $encfile = urlencode($file);
-            print_titre($langs->trans("Documents"));
-            print '<table class="border" width="100%">';
+            print '<table class="nobordernopadding" width="100%">';
+            print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Documents").'</td></tr>';
 
             print "<tr ".$bc[$var]."><td>".$langs->trans("Bill")." PDF</td>";
 
@@ -353,14 +328,17 @@ if ($id > 0 || ! empty($ref))
         }
         print "</td></tr>";
 
+        // Total HT
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-        print '<td align="right" colspan="2"><b>'.price($object->total_ht).'</b></td>';
-        print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td></tr>';
 
-        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
-        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+        // Total VAT
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td></tr>';
+
+        // Total TTC
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td></tr>';
 
         // Statut
         print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($object->getLibStatut(4,$totalpaye)).'</td></tr>';
