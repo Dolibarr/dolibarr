@@ -19,14 +19,14 @@
 </head>
 <body class="body">
 
-<center>
+<div class="center">
 
 <div class="login_table" align="center">
 
 <!-- <tr><td colspan="2" valign="middle"> -->
 <div id="login_line1" align="center">
 
-<div id="login_left" style="display: inline-block; min-width: 250px; margin: 0 auto;"><center>
+<div id="login_left" style="display: inline-block; min-width: 250px; margin: 0 auto;"><div class="center">
 
 <table class="none" summary="Login pass" cellpadding="2" align="center">
 
@@ -46,7 +46,7 @@
 
 </table>
 
-</center>
+</div>
 </div> <!-- end div left -->
 
 <!-- </td>
@@ -64,7 +64,7 @@
 
 </div>
 
-</center>
+</div>
 
 </body>
 </html>

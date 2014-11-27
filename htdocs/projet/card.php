@@ -471,14 +471,14 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     print '</table>';
 
-    print '<br><center>';
+    print '<br><div class="center">';
     print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
     if (! empty($backtopage))
     {
         print ' &nbsp; &nbsp; ';
 	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     }
-    print '</center>';
+    print '</div>';
 
     print '</form>';
 

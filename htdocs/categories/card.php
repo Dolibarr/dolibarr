@@ -256,11 +256,11 @@ if ($user->rights->categorie->creer)
 
 		print '</table>';
 
-		print '<center><br>';
+		print '<br><div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
-		print ' &nbsp; &nbsp; ';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel" />';
-		print '</center>';
+		print '</div>';
 
 		print '</form>';
 	}

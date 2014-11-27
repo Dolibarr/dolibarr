@@ -2275,10 +2275,11 @@ if ($action == 'create')
 	print "</table>\n";
 
 	// Button "Create Draft"
-	print '<br><center>';
+	print '<br><div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
-	print '&nbsp;<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
-	print '</center>';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print "</form>\n";
 
@@ -3486,7 +3487,7 @@ if ($action == 'create')
 					$i ++;
 				}
 				print '</table>';
-				print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></center>';
+				print '<br><div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
 				print '</form>';
 				$db->free($resqlorderlist);
 			} else {

@@ -1122,9 +1122,9 @@ if ($action == 'create')
 	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 		}
 
-		print '<center><br>';
+		print '<br><div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '</center>';
+		print '</div>';
 
 		print '</form>';
 	}
@@ -1137,10 +1137,10 @@ if ($action == 'create')
 		print '</td></tr>';
 		print '</table>';
 
-		print '<br><center>';
+		print '<br><div class="center">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '</center>';
+		print '</div>';
 
 		print '</form>';
 	}

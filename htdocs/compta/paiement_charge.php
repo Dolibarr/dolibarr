@@ -312,13 +312,11 @@ if ($_GET["action"] == 'create')
 
 	print "</table>";
 
-	print '<br><center>';
-
+	print '<br><div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp; &nbsp;';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-
-	print '</center>';
+	print '</div>';
 
 	print "</form>\n";
 }

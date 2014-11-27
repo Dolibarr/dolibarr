@@ -1095,9 +1095,9 @@ else
 
         print '</table>'."\n";
 
-        print '<br><center>';
+        print '<br><div align="center">';
         print '<input type="submit" class="button" value="'.$langs->trans('AddThirdParty').'">';
-        print '</center>'."\n";
+        print '</div>'."\n";
 
         print '</form>'."\n";
     }
@@ -1608,11 +1608,11 @@ else
             print '</table>';
             print '<br>';
 
-            print '<center>';
+            print '<div align="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-            print ' &nbsp; &nbsp; ';
+            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-            print '</center>';
+            print '</div>';
 
             print '</form>';
 

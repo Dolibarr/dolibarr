@@ -1302,7 +1302,7 @@ if ($action=="create")
 	// Bouton "Create Draft"
     print "</table>\n";
 
-	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
+	print '<br><div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></div>';
 
 	print "</form>\n";
 }

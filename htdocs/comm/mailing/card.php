@@ -701,7 +701,7 @@ if ($action == 'create')
 	print '</td></tr>';
 	print '</table>';
 
-	print '<br><center><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></center>';
+	print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
 
 	print '</form>';
 }
@@ -1139,11 +1139,11 @@ else
 
 			print '</table>';
 
-			print '<br><center>';
+			print '<br><div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'" name="save">';
-			print ' &nbsp; ';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';
-			print '</center>';
+			print '</div>';
 
 			print '</form>';
 			print '<br>';
