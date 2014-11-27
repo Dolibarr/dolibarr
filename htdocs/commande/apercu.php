@@ -22,18 +22,15 @@
 /**
  *		\file		htdocs/commande/apercu.php
  *		\ingroup	commande
- *		\brief		Page de l'onglet apercu d'une commande
+ *		\brief		Preview tab of order
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('orders');
-$langs->load('propal');
 $langs->load("bills");
 $langs->load('compta');
 $langs->load('sendings');
@@ -52,7 +49,6 @@ $result=restrictedArea($user,'commande',$id,'');
 
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
-$form = new Form($db);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -89,7 +85,7 @@ if ($id > 0 || ! empty($ref))
         print '<td colspan="2">';
 		print $object->ref_client;
         print '</td>';
-        $nbrow=6;
+        $nbrow=8;
 		print '<td rowspan="'.$nbrow.'" valign="top">';
 
 		/*
@@ -110,16 +106,16 @@ if ($id > 0 || ! empty($ref))
 
 		$var=true;
 
-		// Si fichier PDF existe
+		// if PDF file exist
 		if (file_exists($file))
 		{
 			$encfile = urlencode($file);
-			print_titre($langs->trans("Documents"));
-			print '<table class="border" width="100%">';
+            print '<table class="nobordernopadding" width="100%">';
+            print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Documents").'</td></tr>';
 
 			print "<tr ".$bc[$var]."><td>".$langs->trans("Order")." PDF</td>";
 
-			print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
+			print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&amp;file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
 			print '<td align="right">'.dol_print_size(dol_filesize($file)).'</td>';
 			print '<td align="right">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
 			print '</tr>';
@@ -130,7 +126,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				print "<tr ".$bc[$var]."><td>Commande detaillee</td>";
 
-				print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
+				print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&amp;file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
 				print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';
 				print '<td align="right">'.dol_print_date(dol_filemtime($filedetail),'dayhour').'</td>';
 				print '</tr>';
@@ -156,33 +152,41 @@ if ($id > 0 || ! empty($ref))
 		print "</td></tr>";
 
         // Client
-        print "<tr><td>".$langs->trans("Customer")."</td>";
-        print '<td colspan="2">';
-        print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$soc->id.'">'.$soc->getNomUrl(1).'</a>';
-        print '</td>';
+        print '<tr><td>'.$langs->trans("Customer").'</td>';
+        print '<td colspan="2">'.$soc->getNomUrl(1).'</td>';
         print '</tr>';
 
         // Statut
         print '<tr><td>'.$langs->trans("Status").'</td>';
-        print "<td colspan=\"2\">".$object->getLibStatut(4)."</td>\n";
+        print '<td colspan="2">'.$object->getLibStatut(4).'</td>';
         print '</tr>';
 
         // Date
         print '<tr><td>'.$langs->trans("Date").'</td>';
-        print "<td colspan=\"2\">".dol_print_date($object->date,"daytext")."</td>\n";
-		print '</tr>';
+        print '<td colspan="2">'.dol_print_date($object->date,"daytext").'</td>';
+        print '</tr>';
 
-		// ligne 6
-		// partie Gauche
-		print '<tr><td class="nowrap">'.$langs->trans('GlobalDiscount').'</td>';
-		print '<td colspan="2">'.$object->remise_percent.'%</td>';
-		print '</tr>';
+        // Discount - left part
+        print '<tr><td class="nowrap">'.$langs->trans('GlobalDiscount').'</td>';
+        print '<td colspan="2">'.$object->remise_percent.'%</td>';
+        print '</tr>';
 
-		// ligne 7
-		// partie Gauche
-		print '<tr><td>'.$langs->trans('AmountHT').'</td>';
-        print '<td align="right" class="nowrap"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td></tr>';
-		print '</table>';
+        // Total HT - left part
+        print '<tr><td>'.$langs->trans('AmountHT').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
+        print '</tr>';
+
+        // Total VAT - left part
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
+        print '</tr>';
+
+        // Total TTC - left part
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
+        print '</tr>';
+
+        print '</table>';
 
 		dol_fiche_end();
 	}
@@ -193,10 +197,13 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
+print '<table class="border" width="100%">';
+print '<tr><td>';
+print '<div class="photolist">';
 // Si fichier png PDF d'1 page trouve
 if (file_exists($fileimage))
 {
-	print '<img style="background: #FFF" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($relativepathimage).'">';
+	print '<img class="photo photowithmargin"  src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&amp;file='.urlencode($relativepathimage).'">';
 }
 // Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
@@ -209,10 +216,13 @@ elseif (file_exists($fileimagebis))
 
 		if (file_exists($dir_output.$preview))
 		{
-			print '<img style="background: #FFF" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($preview).'"><p>';
+			print '<img class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&amp;file='.urlencode($preview).'"><p>';
 		}
 	}
 }
+print '</div>';
+print '</td></tr>';
+print '</table>';
 
 
 llxFooter();
