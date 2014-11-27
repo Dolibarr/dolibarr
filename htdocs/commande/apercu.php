@@ -3,7 +3,8 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,6 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 $langs->load('orders');
 $langs->load("bills");
 $langs->load('compta');
-$langs->load('sendings');
 
 // Security check
 $socid=0;
@@ -44,17 +44,10 @@ $result=restrictedArea($user,'commande',$id,'');
 
 
 /*
- * View
+ * View Mode
  */
 
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
-
-
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode fiche                                                                  */
-/*                                                                             */
-/* *************************************************************************** */
 
 if ($id > 0 || ! empty($ref))
 {
@@ -66,31 +59,46 @@ if ($id > 0 || ! empty($ref))
 		$soc->fetch($object->socid);
 
 
-		$head = commande_prepare_head($object);
+        $head = commande_prepare_head($object);
         dol_fiche_head($head, 'preview', $langs->trans("CustomerOrder"), 0, 'order');
 
-		print '<table class="border" width="100%">';
+        print '<table class="border" width="100%">';
 
         // Ref
-        print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
-        print '<td colspan="2">'.$object->ref.'</td></tr>';
+        print '<tr><td width="25%">'.$langs->trans("Ref")."</td>";
+        print '<td colspan="5">'.$object->ref.'</td></tr>';
 
         // Ref cde client
-		print '<tr><td>';
-        print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-		print $langs->trans('RefCustomer').'</td><td align="left">';
-        print '</td>';
-        print '</tr></table>';
-		print '</td>';
-        print '<td colspan="2">';
-		print $object->ref_client;
-        print '</td>';
-        $nbrow=8;
-		print '<td rowspan="'.$nbrow.'" valign="top">';
+        print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+        print '<td colspan="5">'.$object->ref_client.'</td>';
+        print '</tr>';
 
-		/*
-		 * Documents
-		 */
+        // Client
+        print '<tr><td>'.$langs->trans("Customer").'</td>';
+        print '<td colspan="5">'.$soc->getNomUrl(1).'</td>';
+        print '</tr>';
+
+        // Statut
+        print '<tr><td>'.$langs->trans("Status").'</td>';
+        print '<td colspan="5">'.$object->getLibStatut(4).'</td>';
+        print '</tr>';
+
+        // Discount - left part
+        print '<tr><td>'.$langs->trans('Discounts').'</td>';
+        print '<td colspan="5">'.$object->remise_percent.'%</td>';
+        print '</tr>';
+
+        // Date - left part
+        print '<tr><td>'.$langs->trans("Date").'</td>';
+        print '<td colspan="3">'.dol_print_date($object->date,"daytext").'</td>';
+
+        // Right part with $rowspan lines
+        $rowspan=4;
+        print '<td rowspan="'.$rowspan.'" valign="top" width="50%">';
+
+        /*
+         * Documents
+         */
 		$objectref = dol_sanitizeFileName($object->ref);
 		$dir_output = $conf->commande->dir_output . "/";
 		$filepath = $dir_output . $objectref . "/";
@@ -149,27 +157,7 @@ if ($id > 0 || ! empty($ref))
 			}
 		}
 
-		print "</td></tr>";
-
-        // Client
-        print '<tr><td>'.$langs->trans("Customer").'</td>';
-        print '<td colspan="2">'.$soc->getNomUrl(1).'</td>';
-        print '</tr>';
-
-        // Statut
-        print '<tr><td>'.$langs->trans("Status").'</td>';
-        print '<td colspan="2">'.$object->getLibStatut(4).'</td>';
-        print '</tr>';
-
-        // Date
-        print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="2">'.dol_print_date($object->date,"daytext").'</td>';
-        print '</tr>';
-
-        // Discount - left part
-        print '<tr><td class="nowrap">'.$langs->trans('GlobalDiscount').'</td>';
-        print '<td colspan="2">'.$object->remise_percent.'%</td>';
-        print '</tr>';
+        print '</td></tr>';
 
         // Total HT - left part
         print '<tr><td>'.$langs->trans('AmountHT').'</td>';
@@ -203,7 +191,7 @@ print '<div class="photolist">';
 // Si fichier png PDF d'1 page trouve
 if (file_exists($fileimage))
 {
-	print '<img class="photo photowithmargin"  src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&amp;file='.urlencode($relativepathimage).'">';
+	print '<img class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&amp;file='.urlencode($relativepathimage).'">';
 }
 // Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
