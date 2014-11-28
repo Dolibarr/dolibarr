@@ -232,10 +232,6 @@ if ($object->fetch($id))
 	print '</td><td colspan="3">';
 	if ($action == 'editmode')
 	{
-		if (empty($object->mode_reglement_supplier_id))
-		{
-			$object->mode_reglement_supplier_id=$conf->global->MAIN_PAYMENT_MODE_DEFAULT;
-		}
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_supplier_id,'mode_reglement_supplier_id');
 	}
 	else
