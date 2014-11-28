@@ -1483,11 +1483,14 @@ ClickToDialDesc=This module allows to add an icon after phone numbers. A click o
 ##### Point Of Sales (CashDesk) #####
 CashDesk=Point of sales
 CashDeskSetup=Point of sales module setup
-CashDeskThirdPartyForSell=Generic third party to use for sells
+CashDeskThirdPartyForSell=Default generic third party to use for sells
 CashDeskBankAccountForSell=Default account to use to receive cash payments
 CashDeskBankAccountForCheque= Default account to use to receive payments by cheque
 CashDeskBankAccountForCB= Default account to use to receive payments by credit cards
-CashDeskIdWareHouse=Warehouse to use for sells
+CashDeskDoNotDecreaseStock=Disable stock decrease when a sell is done from Point of Sale
+CashDeskIdWareHouse=Force and restrict warehouse to use for stock decrease
+StockDecreaseForPointOfSaleDisabled=Stock decrease from Point Of Sale disabled
+CashDeskYouDidNotDisableStockDecease=You did not disable stock decrease when making a sell from Point Of Sale. So a warehouse is required.
 ##### Bookmark #####
 BookmarkSetup=Bookmark module setup
 BookmarkDesc=This module allows you to manage bookmarks. You can also add shortcuts to any Dolibarr pages or externale web sites on your left menu.

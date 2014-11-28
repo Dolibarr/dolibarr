@@ -45,6 +45,8 @@ $id = GETPOST("id",'int');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
+$backtopage=GETPOST("backtopage");
+
 // Security check
 $result=restrictedArea($user,'stock');
 
@@ -71,16 +73,29 @@ if ($action == 'add' && $user->rights->stock->creer)
 	$object->town        = GETPOST("town");
 	$object->country_id  = GETPOST("country_id");
 
-	if (! empty($object->libelle)) {
+	if (! empty($object->libelle)) 
+	{
 		$id = $object->create($user);
 		if ($id > 0)
 		{
-			header("Location: card.php?id=".$id);
-			exit;
+			setEventMessage($langs->trans("RecordSaved"));
+			
+			if (! empty($backtopage))
+			{
+				header("Location: ".$backtopage);
+				exit;
+			}
+			else
+			{
+				header("Location: card.php?id=".$id);
+				exit;
+			}
 		}
-
-		$action = 'create';
-		setEventMessage($object->error, 'errors');
+		else
+		{
+			$action = 'create';
+			setEventMessage($object->error, 'errors');
+		}
 	}
 	else {
 		setEventMessage($langs->trans("ErrorWarehouseRefRequired"), 'errors');
@@ -164,7 +179,10 @@ if ($action == 'create')
 	print "<form action=\"card.php\" method=\"post\">\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
-
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	
+	dol_fiche_head();
+	
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -206,7 +224,9 @@ if ($action == 'create')
 
 	print '</table>';
 
-	print '<center><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+	dol_fiche_end();
+	
+	print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 
 	print '</form>';
 }
