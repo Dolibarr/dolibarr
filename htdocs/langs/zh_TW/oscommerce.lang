@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=商務部操作系統
-OSCommerceSetup=商務部模塊安裝操作系統
-OSCommerceSetupSaved=商務部操作系統設置保存
-OSCommerceServer=商業服務器操作系統的主機/ IP
-OSCommerceDatabaseName=操作系統商業數據庫的名稱
-OSCommercePrefix=操作系統商務部表前綴
-OSCommerceUser=操作系統商業數據庫登錄
