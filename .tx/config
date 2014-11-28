@@ -218,12 +218,6 @@ source_file = htdocs/langs/en_US/orders.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
-[dolibarr.oscommerce]
-file_filter = htdocs/langs/<lang>/oscommerce.lang
-source_file = htdocs/langs/en_US/oscommerce.lang
-source_lang = en_US
-type = MOZILLAPROPERTIES
-
 [dolibarr.other]
 file_filter = htdocs/langs/<lang>/other.lang
 source_file = htdocs/langs/en_US/other.lang
