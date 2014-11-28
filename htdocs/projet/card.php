@@ -434,9 +434,13 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Customer
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    $text=$form->select_company(GETPOST('socid','int'),'socid','',1,1);
-    $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-    print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+   	$text=$form->select_company(GETPOST('socid','int'),'socid','',1,1);
+    if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
+    {
+    	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+    	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+    }
+    else print $text;
     print '</td></tr>';
 
     // Public

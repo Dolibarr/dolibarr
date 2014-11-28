@@ -782,16 +782,18 @@ else
             print '<div class="hideonsmartphone float">';
             print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
             print '</div>';
-            print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked="checked"').'>';
 	        print '<label for="radiocompany">';
+            print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked="checked"').'>';
 	        print '&nbsp;';
             print $langs->trans("Company/Fundation");
 	        print '</label>';
             print ' &nbsp; &nbsp; ';
+	        print '<label for="radioprivate">';
             print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'').'>';
 	        print '&nbsp;';
             print $langs->trans("Individual");
-            print ' ('.$langs->trans("ToCreateContactWithSameName").')';
+            print '<div class="hideonsmartphone">('.$langs->trans("ToCreateContactWithSameName").')</div>';
+            print '</label>';
             print '</div>';
             print "<br>\n";
         }

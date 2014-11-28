@@ -163,6 +163,22 @@ if ($action == 'setdefaultduration')
 	}
 }
 
+if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
+{
+    $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL",$value,'chaine',0,'',$conf->entity);
+
+    if (! $res > 0) $error++;
+
+    if (! $error)
+    {
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        setEventMessage($langs->trans("Error"),'errors');
+    }
+}
+
 // Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
 if ($action == 'setModuleOptions')
 {
@@ -581,6 +597,35 @@ print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
+
+if ($conf->banque->enabled)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp</td><td align="center">';
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL');
+    }
+    else
+    {
+        if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL))
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+        }
+        else
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+        }
+    }
+    print '</td></tr>';
+}
+else
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
+}
 
 print '</table>';
 

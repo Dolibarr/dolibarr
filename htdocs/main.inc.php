@@ -1632,9 +1632,9 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
         print "\n";
         print "<!-- Begin Help Block-->\n";
         print '<div id="blockvmenuhelp" class="blockvmenuhelp">'."\n";
+
         //Dolibarr version
         $doliurl='http://www.dolibarr.org';
-
 		//local communities
 		if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
 		if (preg_match('/es/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.es';
@@ -1653,7 +1653,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    	else $appli.=" ".DOL_VERSION;
 	    }
 	    else $appli.=" ".DOL_VERSION;
-	    print '<div class="blockvmenuhelp">';
+	    print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
 	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
 	    print $appli;
 	    if ($doliurl) print '</a>';
@@ -1677,7 +1677,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        // Link to help pages
 	        if ($helpbaseurl && $helppage)
 	        {
-	            print '<div class="blockvmenuhelp">';
+	            print '<div id="blockvmenuhelpwiki" class="blockvmenuhelp">';
 	            print '<a class="help" target="_blank" title="'.$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 	            if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
 	            print '" href="';
@@ -1705,7 +1705,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        $bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
 	        $bugbaseurl.=urlencode($langs->trans("PHP").": ".version_php()."\n");
 	        $bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
-	        print '<div class="blockvmenuhelp"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
+	        print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
 	    }
 
         print "</div>\n";
