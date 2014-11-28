@@ -296,22 +296,22 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
 		print dol_print_date($object->date_start,'dayhour');
 		print '</td></tr>';
-		
+
 		// Date end
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
 		print dol_print_date($object->date_end,'dayhour');
 		print '</td></tr>';
-		
+
 		// Planned workload
 		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
 		print convertSecondToTime($object->planned_workload,'allhourmin');
 		print '</td></tr>';
-		
+
 		// Progress declared
 		print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 		print $object->progress.' %';
 		print '</td></tr>';
-		
+
 		// Progress calculated
 		print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
 		if ($object->planned_workload)
@@ -322,7 +322,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		else print '';
 		print '</td></tr>';
-		
+
 		// Project
 		if (empty($withproject))
 		{
@@ -400,11 +400,11 @@ if ($id > 0 || ! empty($ref))
 
 			// Contributor
 			print '<td class="nowrap">';
-			print img_object('','user');
+			print img_object('','user','class="hideonsmartphone"');
 			$contactsoftask=$object->getListContactId('internal');
 			if (count($contactsoftask)>0) {
 				$userid=$contactsoftask[0];
-				$form->select_users($userid,'userid',0,'',0,'',$contactsoftask);
+				print $form->select_dolusers($userid,'userid',0,'',0,'',$contactsoftask);
 			}else {
 				print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
 			}
@@ -506,7 +506,7 @@ if ($id > 0 || ! empty($ref))
 					$contactsoftask[]=$task_time->fk_user;
 				}
 				if (count($contactsoftask)>0) {
-					$form->select_users($task_time->fk_user,'userid_line',0,'',0,'',$contactsoftask);
+					print $form->select_dolusers($task_time->fk_user,'userid_line',0,'',0,'',$contactsoftask);
 				}else {
 					print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
 				}

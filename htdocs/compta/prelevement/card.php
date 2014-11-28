@@ -218,7 +218,7 @@ if ($id > 0)
 		print '<input class="flat" type="file" name="userfile"><br>';
 		print '</td></tr>';*/
 		print '</table><br>';
-		print '<center><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'">';
+		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'"></div>';
 		print '</form>';
 	}
 
@@ -235,7 +235,7 @@ if ($id > 0)
 		print '</td></tr>';
 		print '</table>';
 		print '<br>'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice");
-		print '<center><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("ClassCredited")).'">';
+		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("ClassCredited")).'"></div>';
 		print '</form>';
 	}
 

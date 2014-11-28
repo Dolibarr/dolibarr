@@ -287,9 +287,9 @@ if ($action == 'edit')	// Edit
 	print '</table>'."\n";
 
 
-    print '<br><center>';
+    print '<br><div class="center">';
     print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-    print '</center>';
+    print '</div>';
 
     print '</form>';
     print '<br>';

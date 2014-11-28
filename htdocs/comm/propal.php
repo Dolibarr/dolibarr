@@ -1310,9 +1310,11 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Bank Account
-    print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
-    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
-    print '</td></tr>';
+    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->module->banque->enabled) {
+        print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+        $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+        print '</td></tr>';
+    }
 
 	// What trigger creation
 	print '<tr><td>' . $langs->trans('Source') . '</td><td>';
@@ -1514,10 +1516,11 @@ if ($action == 'create')
 
 
 	$langs->load("bills");
-	print '<center>';
+	print '<div class="center">';
 	print '<input type="submit" class="button" value="' . $langs->trans("CreateDraft") . '">';
-	print '&nbsp;<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
-	print '</center>';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print "</form>";
 
@@ -1892,7 +1895,7 @@ if ($action == 'create')
 		print '</tr>';
 	}
 
-	if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL))
+	if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled)
 	{
 	    // Bank Account
 	    print '<tr><td>';

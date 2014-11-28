@@ -2622,7 +2622,7 @@ class Form
                     $i++;
                 }
                 print "</select>";
-                if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+                if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             } else {
                 print $langs->trans("NoShippingMethodDefined");
             }

@@ -3,7 +3,8 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +23,13 @@
 /**
  *  \file		htdocs/comm/propal/apercu.php
  *  \ingroup	propal
- *  \brief		Page de l'onglet apercu d'une propal
+ *  \brief		Preview tab of propal
  */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('propal');
 $langs->load("bills");
@@ -44,18 +44,11 @@ $result = restrictedArea($user, 'propal', $id);
 
 
 /*
- * View
+ * View Mode
  */
 
 llxHeader();
 
-$form = new Form($db);
-
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode fiche                                                                  */
-/*                                                                             */
-/* *************************************************************************** */
 
 if ($id > 0 || ! empty($ref))
 {
@@ -73,29 +66,30 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 *   Propal
 		 */
-		print '<table class="border" width="100%">';
+        print '<table class="border" width="100%">';
 
-		// Ref
-		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$object->ref.'</td></tr>';
+        // Ref
+        print '<tr><td width="25%">'.$langs->trans('Ref').'</td>';
+        print '<td colspan="5">'.$object->ref.'</td>';
+        print '</tr>';
 
-		// Ref client
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-		print $langs->trans('RefCustomer').'</td><td align="left">';
-		print '</td>';
-		print '</tr></table>';
-		print '</td><td colspan="5">';
-		print $object->ref_client;
-		print '</td>';
-		print '</tr>';
+        // Ref client
+        print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+        print '<td colspan="5">'.$object->ref_client.'</td>';
+        print '</tr>';
 
-		$rowspan=2;
 
-		// Tiers
-		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
-		print '</tr>';
+        // Thirdparty
+        print '<tr><td>'.$langs->trans('Company').'</td>';
+        print '<td colspan="5">'.$soc->getNomUrl(1).'</td>';
+        print '</tr>';
 
-		// Ligne info remises tiers
+        // Status
+        print '<tr><td>'.$langs->trans("Status").'</td>';
+        print '<td colspan="5">'.$object->getLibStatut(4).'</td>';
+        print '</tr>';
+
+        // Discount
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
@@ -103,44 +97,43 @@ if ($id > 0 || ! empty($ref))
 		print '. ';
 		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->currency));
 		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-		print '.';
-		print '</td></tr>';
+        print '.</td>';
+        print '</tr>';
 
-		// ligne
-		// partie Gauche
-		print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-		print dol_print_date($object->date,'daytext');
-		print '</td>';
+        // Date
+        print '<tr><td>'.$langs->trans('Date').'</td>';
+        print '<td>'.dol_print_date($object->date,'daytext').'</td>';
 
-		// partie Droite sur $rowspan lignes
-		print '<td colspan="2" rowspan="'.$rowspan.'" valign="top" width="50%">';
+        // Right part with $rowspan lines
+        $rowspan=4;
+        print '<td rowspan="'.$rowspan.'" valign="top" width="50%">';
 
-		/*
-		 * Documents
-		 */
-		$objectref = dol_sanitizeFileName($object->ref);
-		$dir_output = $conf->propal->dir_output . "/";
-		$filepath = $dir_output . $objectref . "/";
-		$file = $filepath . $objectref . ".pdf";
-		$filedetail = $filepath . $objectref . "-detail.pdf";
+        /*
+         * Documents
+         */
+        $objectref = dol_sanitizeFileName($object->ref);
+        $dir_output = $conf->propal->dir_output . "/";
+        $filepath = $dir_output . $objectref . "/";
+        $file = $filepath . $objectref . ".pdf";
+        $filedetail = $filepath . $objectref . "-detail.pdf";
         $relativepath = $objectref.'/'.$objectref.'.pdf';
         $relativepathdetail = $objectref.'/'.$objectref.'-detail.pdf';
 
         // Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
-        $fileimage = $file.'_preview.png';          	// If PDF has 1 page
+        $fileimage = $file.'_preview.png';              // If PDF has 1 page
         $fileimagebis = $file.'_preview-0.pdf.png';     // If PDF has more than one page
         $relativepathimage = $relativepath.'_preview.png';
 
-		$var=true;
+        $var=true;
 
 		// Si fichier PDF existe
 		if (file_exists($file))
 		{
 			$encfile = urlencode($file);
-			print_titre($langs->trans("Documents"));
-			print '<table class="border" width="100%">';
+            print '<table class="nobordernopadding" width="100%">';
+            print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Documents").'</td></tr>';
 
-			print "<tr ".$bc[$var]."><td>".$langs->trans("Propal")." PDF</td>";
+            print '<tr '.$bc[$var].'><td>'.$langs->trans("Proposal").' PDF</td>';
 
 			print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
 
@@ -166,13 +159,25 @@ if ($id > 0 || ! empty($ref))
 			}
 		}
 
-		print "</td>";
-		print '</tr>';
+        print '</td>';
+        print '</tr>';
 
-		print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-		print '<td align="right" colspan="2"><b>'.price($object->price).'</b></td>';
-		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		print '</table>';
+        // Total HT - left part
+        print '<tr><td>'.$langs->trans('AmountHT').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
+        print '</tr>';
+
+        // Total VAT - left part
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
+        print '</tr>';
+
+        // Total TTC - left part
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
+        print '</tr>';
+
+        print '</table>';
 
 		dol_fiche_end();
 	}
@@ -183,10 +188,13 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
+print '<table class="border" width="100%">';
+print '<tr><td>';
+print '<div class="photolist">';
 // Si fichier png PDF d'1 page trouve
 if (file_exists($fileimage))
 {
-	print '<img style="background: #FFF" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimage).'">';
+	print '<img class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&amp;file='.urlencode($relativepathimage).'">';
 }
 // Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
@@ -199,10 +207,13 @@ elseif (file_exists($fileimagebis))
 
 		if (file_exists($dir_output.$preview))
 		{
-			print '<img style="background: #FFF" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($preview).'"><p>';
+			print '<img class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&amp;file='.urlencode($preview).'"><p>';
 		}
 	}
 }
+print '</div>';
+print '</td></tr>';
+print '</table>';
 
 
 llxFooter();

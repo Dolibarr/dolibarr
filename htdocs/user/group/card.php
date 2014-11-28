@@ -264,7 +264,7 @@ if ($action == 'create')
 
     print "</table>\n";
 
-    print '<center><br><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></center>';
+    print '<br><div class="center"><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></div>';
 
     print "</form>";
 }
@@ -536,7 +536,7 @@ else
 
             print "</table>\n";
 
-            print '<center><br><input class="button" value="'.$langs->trans("Save").'" type="submit"></center>';
+            print '<br><div class="center"><input class="button" value="'.$langs->trans("Save").'" type="submit"></div>';
 
             print '</form>';
 

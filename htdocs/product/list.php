@@ -511,7 +511,7 @@ else
                 $product_static->status     = $objp->tosell;
                 // Status (to sell)
                 print '<td align="center" nowrap="nowrap">';
-                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
                     print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
                 } else {
                     print $product_static->LibStatut($objp->tosell,5,0);
@@ -520,7 +520,7 @@ else
 
                 // Status (to buy)
                 print '<td align="center" nowrap="nowrap">';
-                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
                     print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
                 } else {
                     print $product_static->LibStatut($objp->tobuy,5,1);

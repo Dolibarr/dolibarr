@@ -626,7 +626,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         	$buttontitle=$langs->trans('ToMakePayment');
         	if ($facture->type == 2) $buttontitle=$langs->trans('ToMakePaymentBack');
 
-        	print '<center><br>';
+        	print '<br><div class="center">';
         	print '<input type="checkbox" checked="checked" name="closepaidinvoices"> '.$checkboxlabel;
             /*if (! empty($conf->prelevement->enabled))
             {
@@ -634,7 +634,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 if (! empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
             }*/
             print '<br><input type="submit" class="button" value="'.dol_escape_htmltag($buttontitle).'"><br><br>';
-            print '</center>';
+            print '</div>';
         }
 
         // Form to confirm payment

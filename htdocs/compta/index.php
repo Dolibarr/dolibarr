@@ -678,7 +678,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
                 $societestatic->name=$obj->name;
                 $societestatic->client=1;
                 print $societestatic->getNomUrl(1,'customer',44);
-				print '</a></td>';
+				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td>';
@@ -777,7 +777,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $societestatic->name=$obj->name;
                 $societestatic->client=1;
 				print $societestatic->getNomUrl(1,'customer',44);
-				print '</a></td>';
+				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';

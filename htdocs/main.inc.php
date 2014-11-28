@@ -1630,9 +1630,12 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        print "<!-- End Bookmarks -->\n";
 	    }
 
-		//Dolibarr version
-	    $doliurl='http://www.dolibarr.org';
+        print "\n";
+        print "<!-- Begin Help Block-->\n";
+        print '<div id="blockvmenuhelp" class="blockvmenuhelp">'."\n";
 
+        //Dolibarr version
+        $doliurl='http://www.dolibarr.org';
 		//local communities
 		if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
 		if (preg_match('/es/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.es';
@@ -1651,11 +1654,11 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    	else $appli.=" ".DOL_VERSION;
 	    }
 	    else $appli.=" ".DOL_VERSION;
-	    print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
+	    print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
 	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
 	    print $appli;
 	    if ($doliurl) print '</a>';
-	    print '</div>';
+	    print '</div>'."\n";
 
 	    // Link to Dolibarr wiki pages
 	    if ($helppagename && empty($conf->global->MAIN_HELP_DISABLELINK))
@@ -1675,7 +1678,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        // Link to help pages
 	        if ($helpbaseurl && $helppage)
 	        {
-	            print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
+	            print '<div id="blockvmenuhelpwiki" class="blockvmenuhelp">';
 	            print '<a class="help" target="_blank" title="'.$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 	            if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
 	            print '" href="';
@@ -1686,7 +1689,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	            print $langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
 	            //if ($mode == 'wiki') print ' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
 	            print '</a>';
-	            print '</div>';
+	            print '</div>'."\n";
 	        }
 	    }
 
@@ -1703,14 +1706,16 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        $bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
 	        $bugbaseurl.=urlencode($langs->trans("PHP").": ".version_php()."\n");
 	        $bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
-	        print '<div id="blockvmenubugtracker" class="blockvmenuhelp"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
+	        print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
 	    }
-	    print "\n";
 
-	    print "</div>\n";
-	    print "<!-- End left menu -->\n";
+        print "</div>\n";
+        print "<!-- End Help Block-->\n";
+        print "\n";
 
-	    print "\n";
+        print "</div>\n";
+        print "<!-- End left menu -->\n";
+        print "\n";
 
 	    // Execute hook printLeftBlock
 	    $parameters=array();
@@ -1811,13 +1816,13 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
 
     $ret='';
     $ret.='<form action="'.$urlaction.'" method="post">';
-	$ret.='<label for="'.$htmlinputname.'">';
 	$ret.='<div class="menu_titre menu_titre_search">';
+	$ret.='<label for="'.$htmlinputname.'">';
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
 	$ret.=$title;
 	$ret.='</a>';
-	$ret.='</div>';
 	$ret.='</label>';
+	$ret.='</div>';
     $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     $ret.='<input type="hidden" name="mode" value="search">';
     $ret.='<input type="hidden" name="mode_search" value="'.$htmlmodesearch.'">';

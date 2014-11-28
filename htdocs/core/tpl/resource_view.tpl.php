@@ -32,7 +32,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 		print '<div class="tagtd">'.$langs->trans('Resource').'</div>';
 		print '<div class="tagtd">'.$langs->trans('Busy').'</div>';
 		print '<div class="tagtd">'.$langs->trans('Mandatory').'</div>';
-		print '<div class="tagtd">'.$langs->trans('Edit').'</div>';
+		print '<div class="tagtd">'.$langs->trans('Action').'</div>';
 		print '</form>';
 		//print '</div>';
 
@@ -86,8 +86,13 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print '</div>';
 
 			print '<div class="tagtd">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">'.$langs->trans('Delete').'</a>';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?mode=edit&resource_type='.$linked_resource['resource_type'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">'.$langs->trans('Edit').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?mode=edit&resource_type='.$linked_resource['resource_type'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
+			print img_edit();
+			print '</a>';
+			print '&nbsp;';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';			
+			print img_delete();
+			print '</a>';
 			print '</div>';
 
 			print '</div>';
