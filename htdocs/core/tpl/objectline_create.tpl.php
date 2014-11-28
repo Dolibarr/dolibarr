@@ -107,9 +107,7 @@ else {
 		print '<input type="hidden" name="type" value="'.((! empty($object->element) && $object->element == 'contrat')?'1':'0').'">';
 	}
 	else {*/
-	        echo '<label for="select_type">';
 		echo $langs->trans("FreeLineOfType");
-		echo '</label>';
 		/*
 		if (empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans("Type");
 		else if (! empty($forceall) || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))) echo $langs->trans("FreeLineOfType");
@@ -125,7 +123,7 @@ else {
 	{
 		echo '<br><span>';
 		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked="true"':'').'> ';
-                echo '<label for="prod_entry_mode_predef">';
+
 		if (empty($senderissupplier))
 		{
 			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
@@ -138,7 +136,6 @@ else {
 			else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToPurchase');
 			else echo $langs->trans('PredefinedProductsAndServicesToPurchase');
 		}
-		echo '</label>';
 		echo ' ';
 
 		$filtertype='';
