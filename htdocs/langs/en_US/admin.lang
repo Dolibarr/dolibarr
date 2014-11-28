@@ -702,8 +702,8 @@ Permission701=Read donations
 Permission702=Create/modify donations
 Permission703=Delete donations
 Permission1001=Read stocks
-Permission1002=Create/modify stocks
-Permission1003=Delete stocks
+Permission1002=Create/modify warehouses
+Permission1003=Delete warehouses
 Permission1004=Read stock movements
 Permission1005=Create/modify stock movements
 Permission1101=Read delivery orders
@@ -1416,8 +1416,9 @@ OSCommerceTestOk=Connection to server '%s' on database '%s' with user '%s' succe
 OSCommerceTestKo1=Connection to server '%s' succeed but database '%s' could not be reached.
 OSCommerceTestKo2=Connection to server '%s' with user '%s' failed.
 ##### Stock #####
-StockSetup=Configuration module stock
-UserWarehouse=Use user personal stocks
+StockSetup=Warehouse module setup
+UserWarehouse=Use user personal warehouses
+IfYouUsePointOfSaleCheckModule=If you use a Point of Sale module (POS module provided by default or another external module), check also setup of this module: Most point of sales modules are designed to create immediatly an invoice. If you need to have a stock decrease when registering a sell from your Point Of Sale whatever is the option set here, check your POS module is set up for that.
 ##### Menu #####
 MenuDeleted=Menu deleted
 TreeMenu=Tree menus
