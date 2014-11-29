@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2014      Ion Agorria          <ion@agorria.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/priceexpression.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
 
 $langs->load("products");
 $langs->load("suppliers");
@@ -174,6 +177,27 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 			{
 				$error++;
 				setEventMessage($product->error, 'errors');
+			} 
+			else 
+			{
+				$price_expression = GETPOST('eid', 'int') == 0 ? 'NULL' : GETPOST('eid', 'int'); //Discard expression if not in expression mode
+				if ($price_expression != 'NULL') {
+					//Check the expression validity by parsing it
+	                $priceparser = new PriceParser($db);
+	                $price_result = $priceparser->parse_product_supplier($id, $price_expression, $quantity, $tva_tx);
+	                if ($price_result < 0) { //Expression is not valid
+						$error++;
+						setEventMessage($priceparser->translated_error(), 'errors');
+					}
+				}
+				if (! $error && ! empty($conf->dinamicprices->enabled)) {
+					$ret=$product->set_price_expression($price_expression);
+					if ($ret < 0)
+					{
+						$error++;
+						setEventMessage($product->error, 'errors');
+					}
+				}
 			}
 		}
 
@@ -267,7 +291,7 @@ if ($id || $ref)
 
 				if ($rowid)
 				{
-					$product->fetch_product_fournisseur_price($rowid);
+					$product->fetch_product_fournisseur_price($rowid, 1); //Ignore the math expression when getting the price
 					print_fiche_titre($langs->trans("ChangeSupplierPrice"));
 				}
 				else
@@ -369,8 +393,41 @@ if ($id || $ref)
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):'')).'">';
 				print '</td></tr>';
 
+				if (! empty($conf->dinamicprices->enabled)) { //Only show price mode and expression selector if module is enabled
+					// Price mode selector
+					print '<tr><td class="fieldrequired">'.$langs->trans("PriceMode").'</td><td>';
+					$price_expression = new PriceExpression($db);
+					$price_expression_list = array(0 => $langs->trans("PriceNumeric")); //Put the numeric mode as first option
+					foreach ($price_expression->list_price_expression() as $entry) {
+						$price_expression_list[$entry->id] = $entry->title;
+					}
+					$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($product->fk_price_expression ? $product->fk_price_expression : '0');
+					print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
+					print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
+					print '</td></tr>';
+					// This code hides the numeric price input if is not selected, loads the editor page if editor button is pressed
+					print '<script type="text/javascript">
+						jQuery(document).ready(run);
+						function run() {
+							jQuery("#expression_editor").click(on_click);
+							jQuery("#eid").change(on_change);
+							on_change();
+						}
+						function on_click() {
+							window.location = "'.DOL_URL_ROOT.'/product/expression.php?id='.$id.'&tab=fournisseurs&eid=" + $("#eid").attr("value");
+						}
+						function on_change() {
+							if ($("#eid").attr("value") == 0) {
+								jQuery("#price_numeric").show();
+							} else {
+								jQuery("#price_numeric").hide();
+							}
+						}
+					</script>';
+				}
+
 				// Price qty min
-				print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
+				print '<tr id="price_numeric"><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 				print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price')?price(GETPOST('price')):(isset($product->fourn_price)?price($product->fourn_price):'')).'">';
 				print '&nbsp;';
 				print $form->select_PriceBaseType((GETPOST('price_base_type')?GETPOST('price_base_type'):$product->price_base_type), "price_base_type");
