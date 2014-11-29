@@ -107,8 +107,7 @@ if (! empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_
 	print '<td>';
 	$disabled=0;
 	if ($conf->global->CASHDESK_ID_WAREHOUSE > 0) $disabled=1;	// If a particular stock is defined, we disable choice
-	print $formproduct->selectWarehouses((GETPOST('warehouseid')?GETPOST('warehouseid'):(empty($conf->global->CASHDESK_ID_WAREHOUSE)?'ifone':$conf->global->CASHDESK_ID_WAREHOUSE)),'warehouseid','',!$disabled,$disabled);
-	//print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
+	print $formproduct->selectWarehouses((GETPOST('warehouseid')?GETPOST('warehouseid','int'):(empty($conf->global->CASHDESK_ID_WAREHOUSE)?'ifone':$conf->global->CASHDESK_ID_WAREHOUSE)),'warehouseid','',!$disabled,$disabled);
 	print '</td>';
 	print "</tr>\n";
 }

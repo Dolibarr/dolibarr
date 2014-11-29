@@ -117,8 +117,9 @@ if ( $retour >= 0 )
 		$_SESSION['uname'] = $username;
 		$_SESSION['lastname'] = $tab['lastname'];
 		$_SESSION['firstname'] = $tab['firstname'];
-		$_SESSION['CASHDESK_ID_THIRDPARTY'] = $thirdpartyid;
-        $_SESSION['CASHDESK_ID_WAREHOUSE'] = $warehouseid;
+		$_SESSION['CASHDESK_ID_THIRDPARTY'] = ($thirdpartyid > 0 ? $thirdpartyid : '');
+        $_SESSION['CASHDESK_ID_WAREHOUSE'] = ($warehouseid > 0 ? $warehouseid : '');
+        
         $_SESSION['CASHDESK_ID_BANKACCOUNT_CASH'] = ($bankid_cash > 0 ? $bankid_cash : '');
         $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] = ($bankid_cheque > 0 ? $bankid_cheque : '');
         $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] = ($bankid_cb > 0 ? $bankid_cb : '');
@@ -131,7 +132,6 @@ if ( $retour >= 0 )
 	{
 		dol_print_error($db);
 	}
-
 }
 else
 {
