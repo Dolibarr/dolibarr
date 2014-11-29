@@ -276,7 +276,8 @@ if ($object->fetch($id) >= 0)
 
 				$obj = new $classname($db);
 
-				$qualified=1;
+				// Check dependencies
+				$qualified=(isset($obj->enabled)?$obj->enabled:1);
 				foreach ($obj->require_module as $key)
 				{
 					if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
