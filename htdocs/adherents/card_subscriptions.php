@@ -947,9 +947,10 @@ if ($rowid)
             print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.GETPOST('cotisation').'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
             // Label
-            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-            print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
-            print dol_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
+            print '<tr><td>'.$langs->trans("Label").'</td>';
+            print '<td><input name="label" type="text" size="32" value="';
+            if (empty($conf->global->MEMBER_NO_DEFAULT_LABEL)) print $langs->trans("Subscription").' '.dol_print_date(($datefrom?$datefrom:time()),"%Y");
+            print '"></td></tr>';
 
             // Complementary action
             if (! empty($conf->banque->enabled) || ! empty($conf->facture->enabled))
