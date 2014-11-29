@@ -1391,10 +1391,13 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '</td></tr>';
 
     // Bank Account
-    print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
-    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
-    print '</td></tr>';
-
+	if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER) && ! empty($conf->banque->enabled))
+	{
+		print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+    	$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+    	print '</td></tr>';
+	}
+	
 	// Delivery delay
 	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
 	$form->selectAvailabilityDelay($availability_id, 'availability_id', '', 1);
@@ -1995,22 +1998,25 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$rowspan ++;
 
         // Bank Account
-        print '<tr><td class="nowrap">';
-        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-        print $langs->trans('BankAccount');
-        print '<td>';
-        if ($action != 'editbankaccount' && $user->rights->commande->creer)
-            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td colspan="3">';
-        if ($action == 'editbankaccount') {
-            $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
-        } else {
-            $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
-        }
-        print '</td>';
-        print '</tr>';
-
+		if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER) && ! empty($conf->banque->enabled))
+		{	
+	        print '<tr><td class="nowrap">';
+        	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        	print $langs->trans('BankAccount');
+        	print '<td>';
+        	if ($action != 'editbankaccount' && $user->rights->commande->creer)
+        	    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+        	print '</tr></table>';
+        	print '</td><td colspan="3">';
+        	if ($action == 'editbankaccount') {
+        	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+        	} else {
+        	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+        	}
+        	print '</td>';
+        	print '</tr>';
+		}
+		
 		// Total HT
 		print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
 		print '<td align="right">' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td>';

@@ -136,9 +136,10 @@ else if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
 }
 
 // bank account
-else if ($action == 'setbankaccount' && $user->rights->fournisseur->commande->creer) {
+else if ($action == 'setbankaccount' && $user->rights->fournisseur->commande->creer) 
+{
      $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
-    }
+}
 
 // date de livraison
 if ($action == 'setdate_livraison' && $user->rights->fournisseur->commande->creer)
@@ -1268,10 +1269,14 @@ if ($action=="create")
 	print '</td></tr>';
 
     // Bank Account
-    print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
-    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
-    print '</td></tr>';
-
+    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER) && ! empty($conf->banque->enabled))
+    {
+    	$langs->load("bank");
+	    print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+	    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+	    print '</td></tr>';
+    }
+    
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 	$doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
@@ -1539,22 +1544,25 @@ elseif (! empty($object->id))
 	print '</td></tr>';
 
     // Bank Account
-    print '<tr><td class="nowrap">';
-    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-    print $langs->trans('BankAccount');
-    print '<td>';
-    if ($action != 'editbankaccount' && $user->rights->fournisseur->commande->creer)
-        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
-    print '</tr></table>';
-    print '</td><td colspan="3">';
-    if ($action == 'editbankaccount') {
-        $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
-    } else {
-        $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
-    }
-    print '</td>';
-    print '</tr>';
-
+	if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER) && ! empty($conf->banque->enabled))
+	{
+	    print '<tr><td class="nowrap">';
+	    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	    print $langs->trans('BankAccount');
+	    print '<td>';
+	    if ($action != 'editbankaccount' && $user->rights->fournisseur->commande->creer)
+	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+	    print '</tr></table>';
+	    print '</td><td colspan="3">';
+	    if ($action == 'editbankaccount') {
+	        $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+	    } else {
+	        $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+	    }
+	    print '</td>';
+	    print '</tr>';
+	}
+	
 	// Delivery date planed
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
