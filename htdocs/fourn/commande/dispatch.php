@@ -405,9 +405,9 @@ if ($id > 0 || ! empty($ref))
 				// print ' / '.$commande->ref_supplier;	// Not yet available
 				print '" class="flat"><br><br>';
 
-				print '<center><input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"';
+				print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"';
 				if (count($listwarehouses) <= 0) print ' disabled="disabled"';
-				print '></center>';
+				print '></div>';
 			}
 			if (! $nbproduct && $nbfreeproduct)
 			{

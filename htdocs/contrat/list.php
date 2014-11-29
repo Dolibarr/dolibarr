@@ -118,6 +118,7 @@ if ($resql)
 
     print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], '&search_contract='.$search_contract.'&search_name='.$search_name, $sortfield, $sortorder,'',$num);
 
+    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     print '<table class="liste" width="100%">';
 
     print '<tr class="liste_titre">';
@@ -136,7 +137,6 @@ if ($resql)
     print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
     print "</tr>\n";
 
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
@@ -153,7 +153,6 @@ if ($resql)
     print '<td colspan="4" class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print "</td></tr>\n";
-    print '</form>';
 
     $var=true;
     while ($i < min($num,$limit))
@@ -179,7 +178,8 @@ if ($resql)
     }
     $db->free($resql);
 
-    print "</table>";
+    print '</table>';
+    print '</form>';
 }
 else
 {

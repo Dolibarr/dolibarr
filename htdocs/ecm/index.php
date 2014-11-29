@@ -416,12 +416,6 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 
 print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
 
-$helptext1=''; $helptext2='';
-$helptext1.=$langs->trans("ECMAreaDesc");
-$helptext1.=$langs->trans("ECMAreaDesc2");
-$helptext2.=$langs->trans("ECMAreaDesc");
-$helptext2.=$langs->trans("ECMAreaDesc2");
-
 /*
 print '<div class="hideonsmartphone">';
 print $langs->trans("ECMAreaDesc")."<br>";

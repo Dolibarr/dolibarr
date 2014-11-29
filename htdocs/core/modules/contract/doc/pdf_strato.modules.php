@@ -54,6 +54,18 @@ class pdf_strato extends ModelePDFContract
 	var	$marge_basse;
 
 	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
+
+	/**
+	 * Recipient
+	 * @var Societe
+	 */
+	public $recipient;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -543,7 +555,7 @@ class pdf_strato extends ModelePDFContract
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 			}
 
-			$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);
+			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posy=42;
@@ -581,17 +593,17 @@ class pdf_strato extends ModelePDFContract
 				$result=$object->fetch_contact($arrayidcontact[0]);
 			}
 
+			$this->recipient = $object->client;
+
 			// Recipient name
-			if (! empty($usecontact))
-			{
+			if (! empty($usecontact)) {
 				// On peut utiliser le nom de la societe du contact
 				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
 				else $socname = $object->client->name;
-				$this->recipient->name=$outputlangs->convToOutputCharset($socname);
+				$this->recipient->name = $outputlangs->convToOutputCharset($socname);
 			}
-			else
-			{
-				$this->recipient->name=$outputlangs->convToOutputCharset($object->client->name);
+			else {
+				$this->recipient->name = $outputlangs->convToOutputCharset($object->client->name);
 			}
 
 			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->client, (isset($object->contact)?$object->contact:''), $usecontact, 'target');

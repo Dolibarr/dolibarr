@@ -1,6 +1,5 @@
 <?php
-/* Module to manage locations, buildings, floors and rooms into Dolibarr ERP/CRM
- * Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +31,7 @@ require 'class/resource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load traductions files requiredby by page
-$langs->load("resource@resource");
+$langs->load("resource");
 $langs->load("other");
 
 // Get parameters
@@ -70,8 +69,9 @@ $resource_id 	= GETPOST('fk_resource','int');
 $resource_type	= GETPOST('resource_type','alpha');
 $busy 			= GETPOST('busy','int');
 $mandatory 		= GETPOST('mandatory','int');
+$cancel			= GETPOST('cancel','alpha');
 
-if($action == 'add_element_resource' && !GETPOST('cancel'))
+if($action == 'add_element_resource' && ! $cancel)
 {
 	$objstat = fetchObjectByElement($element_id,$element);
 	$res = $objstat->add_element_resource($resource_id,$resource_type,$busy,$mandatory);
@@ -251,9 +251,6 @@ else
 
 	foreach ($object->available_resources as $modresources => $resources)
 	{
-		$langs->load($resources);
-		//print '<h2>'.$modresources.'</h2>';
-
 		$resources=(array) $resources;	// To be sure $resources is an array
 		foreach($resources as $resource_obj)
 		{
@@ -301,7 +298,7 @@ else
 			{
 				print '<div class="tabsAction">';
 				print '<div class="inline-block divButAction">';
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?mode=add&resource_type='.$resource_obj.'&element='.$element.'&element_id='.$element_id.'">Add resource</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?mode=add&resource_type='.$resource_obj.'&element='.$element.'&element_id='.$element_id.'">'.$langs->trans('AddResource').'</a>';
 				print '</div>';
 				print '</div>';
 			}

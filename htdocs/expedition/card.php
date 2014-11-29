@@ -962,7 +962,7 @@ if ($action == 'create')
 
             print "</table>";
 
-            print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+            print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
             print '</form>';
 

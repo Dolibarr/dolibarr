@@ -537,9 +537,11 @@ if ($id > 0 || ! empty($ref))
 
 			if($num > 0)
 			{
-				print '<br><center><input type="submit" class="button" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
-				print ' &nbsp; &nbsp; <input type="submit" class="button" value="'.$langs->trans("Cancel").'">';
-				print '</center>';
+				print '<br><div class="center">';
+				print '<input type="submit" class="button" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
+				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'">';
+				print '</div>';
 			}
 
 			print '</form>';
