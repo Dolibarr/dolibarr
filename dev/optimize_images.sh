@@ -37,7 +37,8 @@ optimize_image()
 	max_input_size=$(expr $max_input_size + $input_file_size)
 
 	if [ "${1##*.}" = "png" ]; then
-		optipng -o1 -clobber -quiet $1 -out $2.firstpass
+		#optipng -o1 -clobber -quiet $1 -out $2.firstpass
+		optipng -o1 -quiet $1 -out $2.firstpass
 		pngcrush -q -rem alla -reduce $2.firstpass $2 >/dev/null
 		rm -fr $2.firstpass
 	fi
@@ -67,6 +68,25 @@ get_max_file_length()
 
 main()
 {
+	test=`type pngcrush >/dev/null 2>&1`
+	result=$?
+	if [ "x$result" == "x1" ]; then
+		echo "Tool pngcrush not found" && exit 
+	fi
+	
+	test=`type optipng >/dev/null 2>&1`
+	result=$?
+	if [ "x$result" == "x1" ]; then
+		echo "Tool optipng not found" && exit 
+	fi
+
+	test=`type jpegtran >/dev/null 2>&1`
+	result=$?
+	if [ "x$result" == "x1" ]; then
+		echo "Tool jpegtran not found" && exit 
+	fi
+
+
 	# If $INPUT is empty, then we use current directory
 	if [[ "$INPUT" == "" ]]; then
 		INPUT=$(pwd)
@@ -81,6 +101,8 @@ main()
 		OUTPUT='/tmp/optimize'
 	fi
 
+	echo "Mode is $INPLACE (0=Images are replaced, 1=New images are stored into $OUTPUT)"
+	
 	# We create the output directory
 	mkdir -p $OUTPUT
 
@@ -96,6 +118,7 @@ main()
 
 	# Search of all jpg/jpeg/png in $INPUT
 	# We remove images from $OUTPUT if $OUTPUT is a subdirectory of $INPUT
+	echo "Scan $INPUT to find images"
 	IMAGES=$(find $INPUT -regextype posix-extended -regex '.*\.(jpg|jpeg|png)' | grep -v $OUTPUT)
 
 	if [ "$QUIET" == "0" ]; then
@@ -103,6 +126,7 @@ main()
 		echo
 	fi
 	for CURRENT_IMAGE in $IMAGES; do
+		echo "Process $CURRENT_IMAGE"
 		filename=$(basename $CURRENT_IMAGE)
 		if [ "$QUIET" == "0" ]; then
 			printf '%s ' "$filename"
