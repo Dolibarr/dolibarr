@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Contracts area
 ListOfContracts=List of contracts
-LastContracts=Last %s modified contracts
+LastModifiedContracts=Last %s modified contracts
 AllContracts=All contracts
 ContractCard=Contract card
 ContractStatus=Contract status

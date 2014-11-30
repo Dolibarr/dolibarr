@@ -41,3 +41,4 @@ AgentContactType=Ticari temsilci ilgili tipi
 AgentContactTypeDetails=Satış temsilcisine göre oran raporu için kullanılacak kişi türünü (faturala bağlantılı) tanımla
 rateMustBeNumeric=Oran sayısal bir değer olmalı
 markRateShouldBeLesserThan100=İşaretli oran 100 den daha düşük olmalı
+ShowMarginInfos=Oran bilgisi göster

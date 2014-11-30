@@ -18,9 +18,8 @@ CronExplainHowToRunUnix=Về môi trường Unix bạn nên sử dụng crontab 
 CronExplainHowToRunWin=Trên Microsoft (tm) Windows environement bạn có thể sử dụng công cụ nhiệm vụ theo lịch trình để chạy dòng lệnh mỗi phút
 # Menu
 CronJobs=Việc theo lịch trình
-CronListActive= Danh sách các công việc mới
-CronListInactive= Danh sách việc làm người khuyết tật
-CronListActive= Danh sách các công việc mới
+CronListActive=List of active/scheduled jobs
+CronListInactive=Danh sách việc làm người khuyết tật
 # Page list
 CronDateLastRun=Chạy cuối
 CronLastOutput=Bài đầu ra chạy

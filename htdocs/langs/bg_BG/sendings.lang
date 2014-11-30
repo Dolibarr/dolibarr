@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=За момента се извършва от �
 RelatedShippings=Свързани shippings
 ShipmentLine=Shipment line
 CarrierList=List of transporters
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Улов от клиента
@@ -74,5 +76,5 @@ SumOfProductVolumes=Sum of product volumes
 SumOfProductWeights=Sum of product weights
 
 # warehouse details
-DetailWarehouseNumber= Warehouse details
-DetailWarehouseFormat= W:%s (Qty : %d)
+DetailWarehouseNumber= Склад детайли
+DetailWarehouseFormat= Тегло:%s (Количество : %d)

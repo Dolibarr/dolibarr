@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=بد کد حسابداری مشتری برا
 SuppliersProductsSellSalesTurnover=گردش مالی تولید شده توسط فروش محصولات تولید کننده است.
 CheckReceipt=چک سپرده
 CheckReceiptShort=چک سپرده
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=تخفیف های جدید
 NewCheckDeposit=واریز چک های جدید
 NewCheckDepositOn=ایجاد رسید سپرده در حساب:٪ s را

@@ -35,3 +35,6 @@ MessageKO=取消支付返回页面的讯息
 NewPayboxPaymentReceived=新的出纳收到货款
 NewPayboxPaymentFailed=新的出纳支付的尝试，但未能
 PAYBOX_PAYONLINE_SENDEMAIL=电子邮件提醒后付款（成功或失败）
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID

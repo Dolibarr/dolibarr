@@ -53,9 +53,9 @@ ShippingExist=Zásilka existuje
 DraftOrWaitingApproved=Návrh nebo schválena ještě objednat
 DraftOrWaitingShipped=Návrh nebo ověřeno dosud odesláno
 MenuOrdersToBill=Objednávky dodáno
-MenuOrdersToBill2=Objednávky do účtu
+MenuOrdersToBill2=Billable orders
 SearchOrder=Hledat účelem
-# SearchACustomerOrder=Search a customer order
+SearchACustomerOrder=Search a customer order
 ShipProduct=Loď produkt
 Discount=Sleva
 CreateOrder=Vytvořit objednávku
@@ -65,7 +65,7 @@ ValidateOrder=Potvrzení objednávky
 UnvalidateOrder=Unvalidate objednávku
 DeleteOrder=Smazat objednávku
 CancelOrder=Zrušení objednávky
-AddOrder=Objednané
+AddOrder=Create order
 AddToMyOrders=Přidat do mých objednávek
 AddToOtherOrders=Přidat do jiných objednávek
 AddToDraftOrders=Přidat k předloze
@@ -101,7 +101,6 @@ RelatedOrders=Související objednávky
 OnProcessOrders=V procesu objednávky
 RefOrder=Ref. objednávka
 RefCustomerOrder=Ref. objednávka zákazníka
-CustomerOrder=Zákazníka
 RefCustomerOrderShort=Ref. zák. objednávka
 SendOrderByMail=Objednávku zašlete poštou
 ActionsOnOrder=Akce na objednávku
@@ -132,8 +131,6 @@ Error_COMMANDE_ADDON_NotDefined=Konstantní COMMANDE_ADDON není definováno
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Nepodařilo se načíst soubor modulu &quot;%s&quot;
 Error_FailedToLoad_COMMANDE_ADDON_File=Nepodařilo se načíst soubor modulu &quot;%s&quot;
 Error_OrderNotChecked=Žádné objednávky do faktury vybrané
-
-
 # Sources
 OrderSource0=Komerční návrh
 OrderSource1=Internet
@@ -144,7 +141,6 @@ OrderSource5=Obchodní
 OrderSource6=Skladujte
 QtyOrdered=Množství objednat
 AddDeliveryCostLine=Přidat přepravné čáru označující hmotnost objednávky
-
 # Documents models
 PDFEinsteinDescription=Kompletní objednávka modelu (logo. ..)
 PDFEdisonDescription=Jednoduchý model, aby
@@ -155,14 +151,12 @@ OrderByFax=Fax
 OrderByEMail=EMail
 OrderByWWW=Online
 OrderByPhone=Telefon
-
 CreateInvoiceForThisCustomer=Bill objednávky
 NoOrdersToInvoice=Žádné objednávky zúčtovatelné
 CloseProcessedOrdersAutomatically=Klasifikovat &quot;zpracování&quot; všechny vybrané příkazy.
-MenuOrdersToBill2=Objednávky do účtu
 OrderCreation=Objednat tvorba
 Ordered=Objednal
 OrderCreated=Vaše objednávky byly vytvořeny
 OrderFail=Došlo k chybě během vytváření objednávky
 CreateOrders=Vytvoření objednávky
-# ToBillSeveralOrderSelectCustomer=To create an invoice for several orders, click first onto customer, then choose "%s".
+ToBillSeveralOrderSelectCustomer=To create an invoice for several orders, click first onto customer, then choose "%s".

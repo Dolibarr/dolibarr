@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Kontrakt område
 ListOfContracts=Förteckning över avtal
-LastContracts=Senast %s ändrat avtal
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Alla kontrakt
 ContractCard=Kontrakt kort
 ContractStatus=Kontrakt status
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Förteckning över löpande kontrakt linjer
 ListOfRunningServices=Förteckning över löpande tjänster
 NotActivatedServices=Inaktiva tjänster (bland validerade kontrakt)
 BoardNotActivatedServices=Tjänster att aktivera bland validerade kontrakt
-LastContracts=Senast %s ändrat avtal
+LastContracts=Last % contracts
 LastActivatedServices=Senaste %s aktiverade tjänster
 LastModifiedServices=Senast %s uppdaterade tjänster
 EditServiceLine=Redigera servicelinjen

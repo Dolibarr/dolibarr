@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=Aktuell ist die Erstellung der neuen Sendung üb
 RelatedShippings=Ähnliche Sendungen
 ShipmentLine=Sendungszeilen
 CarrierList=Liste der Transporter
+SendingRunning=Produkt aus Kundenbestellung bereits versandt
+SuppliersReceiptRunning=Produkt aus Lieferantenbestellung bereits erhalten
 
 # Sending methods
 SendingMethodCATCH=Abholung durch Kunden
@@ -74,5 +76,5 @@ SumOfProductVolumes=Summe der Produktevolumen
 SumOfProductWeights=Summe der Produktegewichte
 
 # warehouse details
-DetailWarehouseNumber= Warehouse details
+DetailWarehouseNumber= Warenlager-Details
 DetailWarehouseFormat= W:%s (Qty : %d)

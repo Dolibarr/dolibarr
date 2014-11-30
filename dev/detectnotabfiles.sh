@@ -1,6 +1,6 @@
 #!/bin/sh
 #------------------------------------------------------
-# Script to find files that are not Unix encoded
+# Detect files that does not contains any tab inside
 #
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------

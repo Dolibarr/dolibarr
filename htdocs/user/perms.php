@@ -276,7 +276,7 @@ print '</table><br>';
 
 if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"), 0, 1).'<br>';
 // Show warning about external users
-if (empty($user->societe_id)) print showModulesExludedForExternal($modules).'<br><br>'."\n";
+if (empty($user->societe_id)) print info_admin(showModulesExludedForExternal($modules)).'<br><br>'."\n";
 
 // For multicompany transversal mode
 // TODO Place a hook here

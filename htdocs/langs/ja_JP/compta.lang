@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=%sの悪い顧客の会計コード
 SuppliersProductsSellSalesTurnover=サプライヤーの製品の販売によって生成された売上高。
 CheckReceipt=入金を確認してください
 CheckReceiptShort=入金を確認してください
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=新しい割引
 NewCheckDeposit=新しいチェック預金
 NewCheckDepositOn=%s：アカウント上で預金の領収書を作成する

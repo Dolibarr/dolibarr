@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=De moment, la creació d'una nova expedició es 
 RelatedShippings=Expedició(ns) associades
 ShipmentLine=Línia d'expedició
 CarrierList=Llistat de transportistes
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Recollit pel client

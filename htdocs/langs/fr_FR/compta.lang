@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Compte comptable client incorrect pour %s
 SuppliersProductsSellSalesTurnover=Chiffre d'affaires généré par la vente des produits des fournisseurs
 CheckReceipt=Bordereau de remise de chèques
 CheckReceiptShort=Bordereau
+LastCheckReceiptShort=Les %s derniers chèques reçus
 NewCheckReceipt=Nouvelle remise
 NewCheckDeposit=Nouveau dépôt
 NewCheckDepositOn=Créer bordereau de dépôt sur compte: %s

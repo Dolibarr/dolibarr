@@ -2,3 +2,4 @@
 ExternalSiteSetup=Nastavení odkaz na externí webové stránky
 ExternalSiteURL=Externí URL stránek
 ExternalSiteModuleNotComplete=Modul ExternalSite nebyl správně nakonfigurován.
+ExampleMyMenuEntry=My menu entry
