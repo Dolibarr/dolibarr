@@ -49,7 +49,6 @@ $(document).ready(function () {
 <div align="center">
 <div class="login_vertical_align">
 
-
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 <input type="hidden" name="loginfunction" value="loginfunction" />
@@ -110,7 +109,7 @@ if (! empty($hookmanager->resArray['options'])) {
 	if ($captcha) {
 		// TODO: provide accessible captha variants
 ?>
-	<!-- Captcha -->
+<!-- Captcha -->
 	<tr><td valign="middle" class="loginfield nowrap"><label for="securitycode"><b><?php echo $langs->trans('SecurityCode'); ?></b></label></td>
 	<td valign="top" class="nowrap none" align="left">
 
@@ -191,17 +190,13 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 	echo '</div>';
 }
 
-
 ?>
 
 </div>
-
+</div>
 </div>
 
 </form>
-
-
-
 
 <?php if (! empty($_SESSION['dol_loginmesg']))
 {
@@ -216,21 +211,17 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 <?php if ($main_home)
 {
 ?>
-	<div class="login_main_home center" style="max-width: 80%">
-	<?php echo $main_home; ?>
-	</div><br>
+<!-- main_home message -->
+<div class="login_main_home center" style="max-width: 80%"><?php echo $main_home; ?></div>
+<br>
 <?php
 }
 ?>
-
 <!-- authentication mode = <?php echo $main_authentication ?> -->
 <!-- cookie name used for this session = <?php echo $session_name ?> -->
 <!-- urlfrom in this session = <?php echo isset($_SESSION["urlfrom"])?$_SESSION["urlfrom"]:''; ?> -->
-
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
-
 <?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
-
 <?php
 // Google Analytics (need Google module)
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
@@ -276,10 +267,8 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLI
 	}
 }
 ?>
-
-
 </div>
-
+</div>
 
 </body>
 </html>
