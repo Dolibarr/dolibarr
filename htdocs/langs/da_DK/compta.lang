@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Bad kunde regnskabspool kode for %s
 SuppliersProductsSellSalesTurnover=Det gav en omsætning fra salg af leverandørernes produkter.
 CheckReceipt=Check depositum
 CheckReceiptShort=Check depositum
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Ny rabat
 NewCheckDeposit=Ny check depositum
 NewCheckDepositOn=Ny tjekke depositum på konto: %s

@@ -14,8 +14,9 @@ WithdrawalReceiptShort=دریافت
 LastWithdrawalReceipts=تاریخ و زمان آخرین٪ بازدید کنندگان رسید خروج
 WithdrawedBills=فاکتورها خارج
 WithdrawalsLines=خطوط برداشت
-RequestStandingOrderToTreat=درخواست دستورات برای درمان ایستاده
-RequestStandingOrderTreated=درخواست دستورات ایستاده درمان
+RequestStandingOrderToTreat=Request for standing orders to process
+RequestStandingOrderTreated=Request for standing orders processed
+NotPossibleForThisStatusOfWithdrawReceiptORLine=Not yet possible. Withdraw status must be set to 'credited' before declaring reject on specific lines.
 CustomersStandingOrders=سفارشات ایستاده با مشتری
 CustomerStandingOrder=مشتری منظور ایستاده
 NbOfInvoiceToWithdraw=نیوبیوم. از فاکتور با برداشت درخواست
@@ -40,14 +41,13 @@ TransMetod=طريقة البث
 Send=فرستادن
 Lines=خطوط
 StandingOrderReject=شماره رد
-InvoiceRefused=فاکتور خودداری کرد
 WithdrawalRefused=برداشت خودداری کرد
 WithdrawalRefusedConfirm=آیا مطمئن هستید که می خواهید را وارد کنید رد عقب نشینی برای جامعه
 RefusedData=تاریخ رد
 RefusedReason=دلیلی برای رد
 RefusedInvoicing=حسابداری رد
 NoInvoiceRefused=آیا رد اتهام نیست
-InvoiceRefused=فاکتور خودداری کرد
+InvoiceRefused=Invoice refused (Charge the rejection to customer)
 Status=وضعیت
 StatusUnknown=ناشناخته
 StatusWaiting=انتظار
@@ -76,7 +76,7 @@ WithBankUsingRIB=برای حساب های بانکی با استفاده از RI
 WithBankUsingBANBIC=برای حساب های بانکی با استفاده از IBAN / BIC / SWIFT
 BankToReceiveWithdraw=حساب بانکی برای دریافت خارج
 CreditDate=در اعتباری
-WithdrawalFileNotCapable=قادر به تولید خروج فایل رسید برای کشور شما
+WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country %s (Your country is not supported)
 ShowWithdraw=نمایش برداشت
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=با این حال، اگر فاکتور حداقل یک عقب نشینی پرداخت هنوز پردازش نشده، آن را مجموعه ای به عنوان پرداخت می شود اجازه می دهد تا مدیریت خروج قبل.
 DoStandingOrdersBeforePayments=در این تب شما اجازه می دهد به درخواست حکم ایستاده. پس از آن کامل شده است، شما می توانید پرداخت تایپ برای بستن صورتحساب.
@@ -86,11 +86,11 @@ ThisWillAlsoAddPaymentOnInvoice=این نیز خواهد پرداخت به فا�
 
 ### Notifications
 InfoCreditSubject=پرداخت سفارش ثابت٪ توسط بانک
-InfoCreditMessage=منظور ایستاده٪ بازدید کنندگان شده است توسط بانک پرداخت می شود <br> اطلاعات پرداخت:%s را
+InfoCreditMessage=منظور ایستاده٪ بازدید کنندگان شده است توسط بانک پرداخت می شود <br> اطلاعات پرداخت:٪ s را
 InfoTransSubject=انتقال ایستاده منظور٪ به بانک
-InfoTransMessage=منظور ایستاده%s بر به بانک توسط%s%s ارسال شد. <br><br>
-InfoTransData=مقدار:%s را <br> روش: از%s <br> تاریخ:%s را
+InfoTransMessage=منظور ایستاده٪ s بر به بانک توسط٪ s٪ s ارسال شد. <br><br>
+InfoTransData=مقدار:٪ s را <br> روش: از٪ s <br> تاریخ:٪ s را
 InfoFoot=این یک پیام خودکار ارسال شده توسط Dolibarr است
 InfoRejectSubject=منظور ایستاده خودداری کرد
-InfoRejectMessage=سلام، <br><br> به ترتیب ایستاده از فاکتور%s را مربوط به شرکت٪، با میزان٪ بازدید کنندگان شده است توسط بانک خودداری کرد. <br><br> - <br> از%s
+InfoRejectMessage=سلام، <br><br> به ترتیب ایستاده از فاکتور٪ s را مربوط به شرکت٪، با میزان٪ بازدید کنندگان شده است توسط بانک خودداری کرد. <br><br> - <br> از٪ s
 ModeWarning=انتخاب برای حالت واقعی تنظیم نشده بود، ما بعد از این شبیه سازی را متوقف کند

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Раздел договоров
 ListOfContracts=Список договоров
-LastContracts=Последние %s измененных договоров
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Все договоры
 ContractCard=Карточка договора
 ContractStatus=Статус договора
@@ -27,7 +27,7 @@ MenuRunningServices=Запуск служб
 MenuExpiredServices=Истекшим сроком службы
 MenuClosedServices=Закрытые услуги
 NewContract=Новый договор
-AddContract=Добавить договор
+AddContract=Create contract
 SearchAContract=Искать договор
 DeleteAContract=Удалить договор
 CloseAContract=Закрыть контракта
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Список запуска контракта ли�
 ListOfRunningServices=Список запущенных служб
 NotActivatedServices=Не активируется услуг (в том числе утверждены контракты)
 BoardNotActivatedServices=Услуги для активации среди утверждены контракты
-LastContracts=Последние %s измененных договоров
+LastContracts=Last % contracts
 LastActivatedServices=Последнее %s активированных услуг
 LastModifiedServices=Последнее% с измененными услуги
 EditServiceLine=Изменить направление

@@ -18,9 +18,8 @@ CronExplainHowToRunUnix=On Unix environment you should use crontab to run Comman
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run Command line each minutes
 # Menu
 CronJobs=Запланированные задания
-CronListActive= Список активных заданий
-CronListInactive= Список неактивных заданий
-CronListActive= Список активных заданий
+CronListActive=List of active/scheduled jobs
+CronListInactive=Список неактивных заданий
 # Page list
 CronDateLastRun=Последний раз выполнено
 CronLastOutput=Last run output

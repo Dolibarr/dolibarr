@@ -25,12 +25,12 @@ Selectchartofaccounts=Seleccione un plan contable
 Validate=Validar
 Addanaccount=Añadir una cuenta contable
 AccountAccounting=Cuenta contable
-Ventilation=Contabilizar
+Ventilation=Breakdown
 ToDispatch=A realizar
 Dispatched=Realizadas
 
-CustomersVentilation=Contabilización ventas
-SuppliersVentilation=Contabilización compras
+CustomersVentilation=Breakdown customers
+SuppliersVentilation=Breakdown suppliers
 TradeMargin=Margen de beneficio
 Reports=Informes
 ByCustomerInvoice=Por facturas a clientes
@@ -45,9 +45,9 @@ WriteBookKeeping=Registrar los asientos en el libro mayor
 Bookkeeping=Libro Mayor
 AccountBalanceByMonth=Saldo mensual
 
-AccountingVentilation=Contabilización
-AccountingVentilationSupplier=Contabilización compras
-AccountingVentilationCustomer=Contabilización ventas
+AccountingVentilation=Breakdown accounting
+AccountingVentilationSupplier=Breakdown accounting supplier
+AccountingVentilationCustomer=Breakdown accounting customer
 Line=Línea
 
 CAHTF=Total (base imponible) compras a proveedor
@@ -56,7 +56,7 @@ InvoiceLinesDone=Líneas de facturas contabilizadas
 IntoAccount=En la cuenta
 
 Ventilate=Contabilizar
-VentilationAuto=Contabilización automática
+VentilationAuto=Automatic breakdown
 
 Processing=Tratamiento
 EndProcessing=Final del tratamiento
@@ -68,9 +68,9 @@ NotVentilatedinAccount=Cuenta sin contabilización en la contabilidad
 
 ACCOUNTING_SEPARATORCSV=Separador CSV
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a contabilizar que se muestran por página (máximo recomendado: 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ordenar las páginas de contabilización "A contabilizar" por los elementos más recientes
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "Contabilizadas" por los elementos más recientes
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
 AccountLength=Longitud de las cuentas contables mostradas en Dolibarr
 AccountLengthDesc=Función para simular una longitud de cuenta contable sustituyendo los espacios por cero. Esta función sólo afecta a la pantalla, no cambia las cuentas contables registradas en Dolibarr. Esta función es necesaria para la exportación, para ser compatible con algunos programas.
@@ -140,14 +140,14 @@ Active=Estado
 
 NewFiscalYear=Nuevo año fiscal
 
-DescVentilCustomer=Consulte aquí la contabilización anual de sus facturas a clientes
+DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total ventas (base imponible)
 TotalMarge=Total margen ventas
 DescVentilDoneCustomer=Consulte aquí las líneas de facturas a clientes y sus cuentas contables
 DescVentilTodoCustomer=Contabilice sus líneas de facturas a clientes con una cuenta contable
 ChangeAccount=Cambie la cuenta para las líneas seleccionadas a la cuenta:
 Vide=-
-DescVentilSupplier=Consulte aquí la contabilidad anual de sus facturas de proveedores
+DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
 DescVentilTodoSupplier=Contabilize sus líneas de facturas de proveedores
 DescVentilDoneSupplier=Consulte aquí la lista de facturas de proveedores y sus cuentas contables
 
@@ -155,4 +155,4 @@ ValidateHistory=Validar automáticamente
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
 
-FicheVentilation=Ficha contable
+FicheVentilation=Breakdown card

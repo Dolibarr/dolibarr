@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Codi comptable incorrecte per a %s
 SuppliersProductsSellSalesTurnover=Volum de vendes generat per la venda dels productes dels proveïdors
 CheckReceipt=Llista de remeses
 CheckReceiptShort=Remeses
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Nova remesa
 NewCheckDeposit=Nou ingrés
 NewCheckDepositOn=Crear nova remesa al compte: %s

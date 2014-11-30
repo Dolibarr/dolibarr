@@ -1,11 +1,6 @@
-# Dolibarr language file - Source file is en_US - marges
-
-Margin=Margem
+# Dolibarr language file - Source file is en_US - margins
 Margins=Margems
 TotalMargin=Total margem
-MarginOnProducts=Margem / Produtos
-MarginOnServices=Margem / Serviços
-MarginRate=Taxa de margem
 MarkRate=Taxa de marca
 DisplayMarginRates=Visualizar taxas de margem
 DisplayMarkRates=Visualizar taxas de aumento
@@ -17,8 +12,6 @@ ProductMargins=Margem de produtos
 CustomerMargins=Margems de clientes
 SalesRepresentativeMargins=Tolerância aos representante de vendas
 ProductService=Produto ou serviço
-AllProducts=Todos os produtos e serviços
-ChooseProduct/Service=Escolher produto ou serviço
 StartDate=Data inicio
 EndDate=Data fim
 Launch=Inicio
@@ -29,13 +22,13 @@ UseDiscountAsProduct=Como o produto
 UseDiscountAsService=Como serviço
 UseDiscountOnTotal=Em sub-total
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define se um desconto global e tratado como o produto, serviço, ou somente sob o sub-total na margem.
-MARGIN_TYPE=Tipo de margem
 MargeBrute=Margem grosa
 MargeNette=Mergem neta
-MARGIN_TYPE_DETAILS=Margem grosa: Preço de venda - Preço de compra<br/>Margem neta: Preço de venda - Preço de custo 
-CostPrice=Preço de custo
-BuyingCost=Preço de custo
+MARGIN_TYPE_DETAILS=Margem grosa: Preço de venda - Preço de compra<br/>Margem neta: Preço de venda - Preço de custo
 UnitCharges=Taxas unitárias
 Charges=Despesas
 AgentContactType=Tipo contato do agente comercial
-AgentContactTypeDetails=Define o tipo de contato (conectado as faturas) sera usado para relatorio de margem dos agentes comerciais
+AgentContactTypeDetails=Defina o tipo de contato (conectado coma as faturas) sera usado para o relatorio de margem dos representantes
+rateMustBeNumeric=Rata deve ser um valor numerico
+markRateShouldBeLesserThan100=Rata marcada teria que ser menor do que 100
+ShowMarginInfos=Mostrar informações de margems

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - bills
 Bill=Faktura
 Bills=Fakturor
-BillsCustomers=Kundens fakturor
+BillsCustomers=Kundfakturor
 BillsCustomer=Kundens faktura
 BillsSuppliers=Leverantörens fakturor
 BillsCustomersUnpaid=Obetalda kundens fakturor
@@ -137,8 +137,6 @@ BillFrom=Från
 BillTo=Bill till
 ActionsOnBill=Åtgärder mot faktura
 NewBill=Ny faktura
-Prélèvements=Stående order
-Prélèvements=Stående order
 LastBills=Senaste %s fakturor
 LastCustomersBills=Senaste %s kunder fakturor
 LastSuppliersBills=Senaste %s leverantörer fakturor
@@ -219,8 +217,7 @@ NoInvoice=Ingen faktura
 ClassifyBill=Klassificera faktura
 SupplierBillsToPay=Leverantörer fakturor att betala
 CustomerBillsUnpaid=Obetalda kunder fakturor
-DispenseMontantLettres=Det lagförslag som utarbetats av mekanisk undantas från beslutet i skrivelser
-DispenseMontantLettres=Det lagförslag som utarbetats av mekanisk undantas från beslutet i skrivelser
+DispenseMontantLettres=The written invoices through mecanographic procedures are dispensed by the order in letters
 NonPercuRecuperable=Icke återvinningsbara
 SetConditions=Ställ betalningsvillkor
 SetMode=Ställ betalningssätt

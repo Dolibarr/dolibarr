@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=For øjeblikket er skabelsen af ​​en ny fors
 RelatedShippings=Related shippings
 ShipmentLine=Shipment line
 CarrierList=List of transporters
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Fangst af kunden

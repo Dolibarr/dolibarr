@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Klaidingas kliento apskaitos kodas %s
 SuppliersProductsSellSalesTurnover=Sugeneruota apyvarta pagal tiekėjo produktų pardavimus.
 CheckReceipt=Čekio depozitas
 CheckReceiptShort=Čekio depozitas
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Nauja nuolaida
 NewCheckDeposit=Naujas čekio depozitas
 NewCheckDepositOn=Sukurti sąskaitos %s depozito kvitą

@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Onjuiste boekhoudkundige afnemerscode voor %
 SuppliersProductsSellSalesTurnover=De omzet gegenereerd door de verkoop van leveranciersproducten.
 CheckReceipt=Controleer stortingen
 CheckReceiptShort=Controleer stortingen
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Nieuwe korting
 NewCheckDeposit=Nieuwe chequestorting
 NewCheckDepositOn=Creeer een kwitantie voor de storting op rekening: %s

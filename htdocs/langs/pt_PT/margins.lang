@@ -10,24 +10,18 @@ MarkRate=Mark rate
 DisplayMarginRates=Display margin rates
 DisplayMarkRates=Display mark rates
 InputPrice=Input price
-
 margin=Profit margins management
 margesSetup=Profit margins management setup
-
 MarginDetails=Detalhes da margem
-
 ProductMargins=Margens do produto
 CustomerMargins=Margens do cliente
 SalesRepresentativeMargins=Sales representative margins
-
 ProductService=Produto ou Serviço
 AllProducts=Todos os produtos e serviços
 ChooseProduct/Service=Escolher produto ou serviço
-
 StartDate=Data de Início
 EndDate=Data Fim
 Launch=Iniciar
-
 ForceBuyingPriceIfNull=Force buying price if null
 ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
 MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
@@ -35,16 +29,16 @@ UseDiscountAsProduct=Como um produto
 UseDiscountAsService=Como um serviço
 UseDiscountOnTotal=No subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define se um desconto global é tratado como um produto, um serviço, ou apenas no subtotal para cálculo de margem
-
 MARGIN_TYPE=Tipo de margem
 MargeBrute=Raw margin
 MargeNette=Net margin
 MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br/>Net margin : Selling price - Cost price
-
 CostPrice=Preço de custo
 BuyingCost=Preço de custo
 UnitCharges=Custos unitários
 Charges=Custos
-
 AgentContactType=Tipo de contacto usado para comissionamento
-AgentContactTypeDetails=Defina que tipo de contacto (acoplado na factura) será associado com os agentes comerciais
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per sale representative
+rateMustBeNumeric=Rate must be a numeric value
+markRateShouldBeLesserThan100=Mark rate should be lower than 100
+ShowMarginInfos=Show margin infos

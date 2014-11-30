@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Плохо заказчику бухгалт
 SuppliersProductsSellSalesTurnover=Генерируемый оборот по продажам поставщиков продукции.
 CheckReceipt=Проверьте депозит
 CheckReceiptShort=Проверьте депозит
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Новые скидки
 NewCheckDeposit=Новая проверка депозит
 NewCheckDepositOn=Новый депозит проверить на счету: %s
