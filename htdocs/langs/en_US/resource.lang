@@ -16,11 +16,8 @@ ResourceType=Resource type
 ResourceFormLabel_description=Resource description
 
 ResourcesLinkedToElement=Resources linked to element
-RessourceLineSuccessfullyUpdated=Resource successfully updated
-RessourceLineSuccessfullyDeleted=Resource successfully deleted
 
 ShowResourcePlanning=Show resource planning
-NoResourceInDatabase=No resource in database
 GotoDate=Go to date
 
 ResourceElementPage=Element resources
