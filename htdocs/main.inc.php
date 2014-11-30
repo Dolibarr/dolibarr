@@ -1534,8 +1534,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    // Instantiate hooks of thirdparty module
 	    $hookmanager->initHooks(array('searchform','leftblock'));
 
-    	if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
-		else print '<div id="id-left"> <!-- Begin id-left -->';
+    	if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<!-- Begin left layout -->'."\n".'<div class="ui-layout-west">'."\n";
+		else print "\n".'<!-- Begin id-left -->'."\n".'<div id="id-left">'."\n";
 
 	    print "\n";
 
