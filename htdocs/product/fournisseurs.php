@@ -196,7 +196,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 						setEventMessage($priceparser->translated_error(), 'errors');
 					}
 				}
-				if (! $error && ! empty($conf->dinamicprices->enabled)) {
+				if (! $error && ! empty($conf->dynamicprices->enabled)) {
 					$ret=$product->set_price_expression($price_expression);
 					if ($ret < 0)
 					{
@@ -399,7 +399,7 @@ if ($id || $ref)
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):'')).'">';
 				print '</td></tr>';
 
-				if (! empty($conf->dinamicprices->enabled)) { //Only show price mode and expression selector if module is enabled
+				if (! empty($conf->dynamicprices->enabled)) { //Only show price mode and expression selector if module is enabled
 					// Price mode selector
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceMode").'</td><td>';
 					$price_expression = new PriceExpression($db);

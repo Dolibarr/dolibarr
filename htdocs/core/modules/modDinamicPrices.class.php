@@ -16,19 +16,19 @@
  */
 
 /**
- *  \defgroup   produit     Module dinamic prices
- *  \brief      Module to manage dinamic prices in products
- *  \file       htdocs/core/modules/modDinamicPrices.class.php
+ *  \defgroup   produit     Module dynamic prices
+ *  \brief      Module to manage dynamic prices in products
+ *  \file       htdocs/core/modules/modDynamicPrices.class.php
  *  \ingroup    produit
- *  \brief      File to describe module to manage dinamic prices in products
+ *  \brief      File to describe module to manage dynamic prices in products
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *  Class descriptor of DinamicPrices module
+ *  Class descriptor of DynamicPrices module
  */
-class modDinamicPrices extends DolibarrModules
+class modDynamicPrices extends DolibarrModules
 {
 
     /**
@@ -58,7 +58,7 @@ class modDinamicPrices extends DolibarrModules
 
         // Config pages
         //-------------
-        //$this->config_page_url = array("dinamicprices.php@dinamicprices");
+        //$this->config_page_url = array("dynamicprices.php@dynamicprices");
 
         // Dependancies
         //-------------
@@ -81,7 +81,7 @@ class modDinamicPrices extends DolibarrModules
         // Permissions
         //------------
         $this->rights = array();
-        $this->rights_class = 'dinamicprices';
+        $this->rights_class = 'dynamicprices';
         $r=0;
     }
 
