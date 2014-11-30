@@ -162,7 +162,8 @@ Dolibarr better:
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
 - A lot of pages called fiche.php were renamed into card.php
 - A lot of pages called liste.php were renamed into list.php
-
+- If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
+  warehouse module and your Point Of Sale module if you use one.
 
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
