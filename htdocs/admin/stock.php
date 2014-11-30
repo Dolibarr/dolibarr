@@ -194,10 +194,10 @@ if (! empty($conf->expedition->enabled))
 }
 print '</table>';
 
-if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
-{
-	print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
-}
+//if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
+//{
+print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
+//}
 print '<br>';
 
 // Title rule for stock increase

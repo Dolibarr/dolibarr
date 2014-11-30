@@ -234,11 +234,11 @@ switch ($action)
 					{
 						if ($invoice->lines[$i]->fk_product > 0)
 						{
-							$mouvP = new MouvementStock($this->db);
+							$mouvP = new MouvementStock($db);
 							$mouvP->origin = &$invoice;
 							// We decrease stock for product
-							if ($invoice->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $idwarehouse, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
-							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $idwarehouse, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
+							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
+							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
 							if ($result < 0) {
 								$error++;
 							}
@@ -274,11 +274,11 @@ switch ($action)
 					{
 						if ($invoice->lines[$i]->fk_product > 0)
 						{
-							$mouvP = new MouvementStock($this->db);
+							$mouvP = new MouvementStock($db);
 							$mouvP->origin = &$invoice;
 							// We decrease stock for product
-							if ($invoice->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $idwarehouse, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
-							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $idwarehouse, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
+							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
+							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
 							if ($result < 0) {
 								$error++;
 							}
