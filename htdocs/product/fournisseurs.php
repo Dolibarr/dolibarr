@@ -107,6 +107,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
     $npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
     $tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
     $tva_tx = price2num($tva_tx);
+    $price_expression = GETPOST('eid', 'int') == 0 ? 'NULL' : GETPOST('eid', 'int'); //Discard expression if not in expression mode
 
     if ($tva_tx == '')
     {
@@ -130,8 +131,14 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 	}
 	if ($_POST["price"] < 0 || $_POST["price"] == '')
 	{
-		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")), 'errors');
+		if ($price_expression == 'NULL') { //This is not because of using expression instead of numeric price
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")), 'errors');
+		}
+		else
+		{
+			$_POST["price"] = 0;
+		}
 	}
 
 	$product = new ProductFournisseur($db);
@@ -180,7 +187,6 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 			} 
 			else 
 			{
-				$price_expression = GETPOST('eid', 'int') == 0 ? 'NULL' : GETPOST('eid', 'int'); //Discard expression if not in expression mode
 				if ($price_expression != 'NULL') {
 					//Check the expression validity by parsing it
 	                $priceparser = new PriceParser($db);
