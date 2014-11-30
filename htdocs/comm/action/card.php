@@ -1282,6 +1282,33 @@ if ($id > 0)
 		print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
 		print '</form>'."\n";
 		print '</div>';
+
+		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC))
+		{
+			print '<div style="clear:both;">&nbsp;</div><div class="fichecenter"><div class="fichehalfleft">';
+            print '<a name="builddoc"></a>'; // ancre
+
+            /*
+             * Documents generes
+             */
+
+            $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
+            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+
+            $genallowed=$user->rights->agenda->myactions->create;
+	        $delallowed=$user->rights->agenda->myactions->delete;
+
+            $var=true;
+
+            $somethingshown=$formfile->show_documents('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
+
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+
+			print '</div></div></div>';
+
+            print '<div style="clear:both;">&nbsp;</div>';
+	    }
 	}
 }
 
