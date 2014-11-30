@@ -1958,6 +1958,10 @@ input.liste_titre {
 	background: none;
 }
 
+.margintable td {
+	border: 0px !important;
+}
+
 /* Disable shadows */
 .noshadow {
 	-moz-box-shadow: 0px 0px 0px #DDD !important;

@@ -218,7 +218,33 @@ switch ($action)
 			$resultcreate=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiementLe()));
 			if ($resultcreate > 0)
 			{
-				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), (isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0));
+				$warehouseidtodecrease=(isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0);
+				if (! empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) $warehouseidtodecrease=0;	// If a particular stock is defined, we disable choice
+				
+				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), 0);
+
+				if ($warehouseidtodecrease > 0)
+				{
+					// Decrease
+					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+					$langs->load("agenda");
+					// Loop on each line
+					$cpt=count($invoice->lines);
+					for ($i = 0; $i < $cpt; $i++)
+					{
+						if ($invoice->lines[$i]->fk_product > 0)
+						{
+							$mouvP = new MouvementStock($db);
+							$mouvP->origin = &$invoice;
+							// We decrease stock for product
+							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
+							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
+							if ($result < 0) {
+								$error++;
+							}
+						}
+					}
+				}
 			}
 			else
 			{
@@ -232,7 +258,33 @@ switch ($action)
 			$resultcreate=$invoice->create($user,0,0);
 			if ($resultcreate > 0)
 			{
-				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), (isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0));
+				$warehouseidtodecrease=(isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0);
+				if (! empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) $warehouseidtodecrease=0;	// If a particular stock is defined, we disable choice
+				
+				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), 0);
+
+				if ($warehouseidtodecrease > 0)
+				{
+					// Decrease
+					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+					$langs->load("agenda");
+					// Loop on each line
+					$cpt=count($invoice->lines);
+					for ($i = 0; $i < $cpt; $i++)
+					{
+						if ($invoice->lines[$i]->fk_product > 0)
+						{
+							$mouvP = new MouvementStock($db);
+							$mouvP->origin = &$invoice;
+							// We decrease stock for product
+							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
+							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
+							if ($result < 0) {
+								$error++;
+							}
+						}
+					}
+				}
 
 				$id = $invoice->id;
 

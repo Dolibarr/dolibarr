@@ -94,6 +94,13 @@ $object->substitutionarrayfortest=array(
 	//,'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
 );
 
+// List of sending methods
+$listofmethods=array();
+$listofmethods['mail']='PHP mail function';
+//$listofmethods['simplemail']='Simplemail class';
+$listofmethods['smtps']='SMTP/SMTPS socket library';
+
+
 
 /*
  * Actions
@@ -741,10 +748,21 @@ else
 			{
                 // Define message to recommand from command line
 
-			    // Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
-                // on affiche donc juste un message
+				$sendingmode=$conf->global->MAIN_MAIL_SENDMODE;
+				if (empty($sendingmode)) $sendingmode='mail';	// If not defined, we use php mail function
 
-				if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
+				if (! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
+				{
+					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
+					// You ensure that every user is using its own SMTP server.
+					$linktoadminemailbefore='<a href="'.DOL_URL_ROOT.'/admin/mails.php">';
+					$linktoadminemailend='</a>';
+					setEventMessage($langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]), 'warnings');
+					setEventMessage($langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']), 'warnings');
+					if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) setEventMessage($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), 'warnings');
+					$_GET["action"]='';
+				}
+				else if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 				{
 					// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 					// on affiche donc juste un message
@@ -764,7 +782,7 @@ else
                     }
 				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';
 					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,260);
+					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,270);
 				}
 			}
 

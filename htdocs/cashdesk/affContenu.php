@@ -45,7 +45,17 @@ else
 
 
 
-// Left area with selected articles (shopping cart)
+$obj_facturation->calculTotaux();	// Redefine prix_total_ttc, prix_total_ht et montant_tva from $_SESSION['poscart']
+
+$total_ttc = $obj_facturation->prixTotalTtc();
+
+/*var_dump($obj_facturation);
+var_dump($_SESSION['poscart']);
+var_dump($total_ttc);
+exit;*/
+
+
+// Left area with selected articles (area for article, amount and payments)
 print '<div class="principal">';
 
 $page=GETPOST('menu','alpha');
@@ -72,13 +82,10 @@ print '</div>';
 
 
 
-
 // Right area with selected articles (shopping cart)
 print '<div class="liste_articles">';
 
 require ('tpl/liste_articles.tpl.php');
-$obj_facturation->prixTotalHt($lst_total_ht);
-$obj_facturation->prixTotalTtc($lst_total_ttc);
 
 print '</div>';
 
