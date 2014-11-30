@@ -10,6 +10,7 @@ INPLACE='0'
 max_input_size=0
 max_output_size=0
 
+
 usage()
 {
   cat <<EO
@@ -101,7 +102,7 @@ main()
 		OUTPUT='/tmp/optimize'
 	fi
 
-	echo "Mode is $INPLACE (0=Images are replaced, 1=New images are stored into $OUTPUT)"
+	echo "Mode is $INPLACE (1=Images are replaced, 0=New images are stored into $OUTPUT)"
 	
 	# We create the output directory
 	mkdir -p $OUTPUT
@@ -179,6 +180,13 @@ SHORTOPTS="h,i:,o:,q,s,p"
 LONGOPTS="help,input:,output:,quiet,no-stats,inplace"
 ARGS=$(getopt -s bash --options $SHORTOPTS --longoptions $LONGOPTS --name $PROGNAME -- "$@")
 
+# Syntax
+if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
+then
+	echo "Usage: optimize_images.sh (list|fix) -i dirtoscan"
+	exit
+fi
+
 eval set -- "$ARGS"
 while true; do
 	case $1 in
@@ -214,6 +222,12 @@ while true; do
 	esac
 	shift
 done
+
+# To convert
+if [ "x$1" = "xlist" ]
+then
+	INPLACE=0
+fi
 
 main
 
