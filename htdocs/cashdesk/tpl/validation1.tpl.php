@@ -17,6 +17,7 @@
  */
 
 $langs->load("main");
+$langs->load("bills");
 
 // Object $form must de defined
 
@@ -111,8 +112,9 @@ $langs->load("main");
 		</p>
 		<p class="note_label"><?php echo $langs->trans("Notes"); ?><br><textarea class="textarea_note" name="txtaNotes"></textarea></p>
 
-		<span><input class="bouton_validation" type="submit" name="btnValider" value="<?php echo $langs->trans("ValidateInvoice"); ?>" /></span>
-		<p><a class="lien1" href="affIndex.php?menu=facturation"><?php echo $langs->trans("RestartSelling"); ?></a></p>
+		<div class="center"><input class="button" type="submit" name="btnValider" value="<?php echo $langs->trans("ValidateInvoice"); ?>" /><br>
+		<br><a class="lien1" href="affIndex.php?menu=facturation"><?php echo $langs->trans("RestartSelling"); ?></a>
+		</div>
 	</form>
 
 
