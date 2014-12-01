@@ -151,7 +151,7 @@ print '</td></tr></table>';
 if ($choice != 'confirm_allfiles')
 {
 	print '<br>';
-	print '<center><input class="button" type="submit" value="'.$langs->trans("PurgeRunNow").'"></center>';
+	print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("PurgeRunNow").'"></div>';
 }
 
 print '</form>';

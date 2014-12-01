@@ -107,7 +107,7 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
     $res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
-		$setEventMessage($langs->trans('PaymentNumberUpdateSucceeded'));
+		setEventMessage($langs->trans('PaymentNumberUpdateSucceeded'));
 	}
 	else
 	{

@@ -228,7 +228,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 				print '</td><td class="nocellnopadd boxclose nowrap">';
 				// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 				print img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone" style="cursor:move;"');
-				print img_picto($langs->trans("Close",$this->box_id),'close_title','class="boxclose" rel="x:y" style="cursor:pointer;" id="imgclose'.$this->box_id.'"');
+				print img_picto($langs->trans("Close2",$this->box_id),'close_title','class="boxclose" rel="x:y" style="cursor:pointer;" id="imgclose'.$this->box_id.'"');
 				$label=$head['text'];
 				if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
 				print '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';

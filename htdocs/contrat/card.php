@@ -536,10 +536,10 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model=$object->modelpdf;
-				if (empty($model)) { $tmp=getListOfModels($db, 'contract'); $keys=array_keys($tmp); $model=$keys[0]; }
+
 				$ret = $object->fetch($id); // Reload to get new records
-				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
 			unset($_POST ['prod_entry_mode']);
@@ -1026,7 +1026,7 @@ if ($action == 'create')
         print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 	}
 
-    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+    print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
     print "</form>\n";
 

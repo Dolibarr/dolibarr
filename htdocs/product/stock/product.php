@@ -279,7 +279,7 @@ if ($id > 0 || $ref)
 
         // Status (to sell)
         print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             print ajax_object_onoff($product, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
         } else {
             print $product->getLibStatut(2,0);
@@ -288,7 +288,7 @@ if ($id > 0 || $ref)
 
         // Status (to buy)
         print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
-        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             print ajax_object_onoff($product, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
         } else {
             print $product->getLibStatut(2,1);
@@ -340,7 +340,7 @@ if ($id > 0 || $ref)
         }
         print '</td>';
         print '</tr>';
-        
+
         print '<tr><td>';
         $text_stock_options = '';
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)?$langs->trans("DeStockOnShipment").'<br>':'');
@@ -483,8 +483,11 @@ if ($id > 0 || $ref)
 		}
 		print '</table>';
 
-		print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 		print '</form>';
 	}
 
@@ -519,8 +522,11 @@ if ($id > 0 || $ref)
 
 		print '</table>';
 
-		print '<center><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"></center>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+		print '</div>';
 
 		print '</form>';
 	}
@@ -627,12 +633,14 @@ if ($resql)
 		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
 		// PMP
 		print '<td align="right">'.(price2num($obj->pmp)?price2num($obj->pmp,'MU'):'').'</td>'; // Ditto : Show PMP from movement or from product
+		// Value purchase
 		print '<td align="right">'.(price2num($obj->pmp)?price(price2num($obj->pmp*$obj->reel,'MT')):'').'</td>'; // Ditto : Show PMP from movement or from product
         // Sell price
 		print '<td align="right">';
         if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price,'MU'),1);
         else print $langs->trans("Variable");
         print '</td>'; // Ditto : Show PMP from movement or from product
+        // Value sell
         print '<td align="right">';
         if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price*$obj->reel,'MT'),1).'</td>'; // Ditto : Show PMP from movement or from product
         else print $langs->trans("Variable");
@@ -663,6 +671,7 @@ print '<td class="liste_total" align="right">'.$total.'</td>';
 print '<td class="liste_total" align="right">';
 print ($totalwithpmp?price($totalvalue/$totalwithpmp):'&nbsp;');
 print '</td>';
+// Value purchase
 print '<td class="liste_total" align="right">';
 print price(price2num($totalvalue,'MT'),1);
 print '</td>';
@@ -670,6 +679,7 @@ print '<td class="liste_total" align="right">';
 if (empty($conf->global->PRODUIT_MULTI_PRICES)) print ($total?price($totalvaluesell/$total,1):'&nbsp;');
 else print $langs->trans("Variable");
 print '</td>';
+// Value to sell
 print '<td class="liste_total" align="right">';
 if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($totalvaluesell,'MT'),1);
 else print $langs->trans("Variable");

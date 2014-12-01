@@ -497,9 +497,11 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
     print '</table><br>';
 
-    print '<center><input class="button" value="'.$langs->trans("Modify").'" type="submit">';
-    print ' &nbsp; <input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
-    print '</center>';
+    print '<div align="center">';
+	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+    print '</div>';
 
     print '</form>';
 }
@@ -577,9 +579,11 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     print '</table><br>';
 
-    print '<center><input class="button" value="'.$langs->trans("Add").'" type="submit">';
-    print ' &nbsp; <input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
-    print '</center>';
+    print '<div align="center">';
+	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; 
+	print '<input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
+    print '</div>';
 
     print '</form>';
 }

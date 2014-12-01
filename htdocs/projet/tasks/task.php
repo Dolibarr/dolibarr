@@ -372,10 +372,11 @@ if ($id > 0 || ! empty($ref))
 
 			print '</table>';
 
-			print '<center><br>';
-			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
+			print '<br><div class="center">';
+			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '<center>';
+			print '</div>';
 
 			print '</form>';
 		}

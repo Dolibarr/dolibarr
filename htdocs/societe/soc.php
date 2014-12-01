@@ -782,16 +782,18 @@ else
             print '<div class="hideonsmartphone float">';
             print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
             print '</div>';
-            print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked="checked"').'>';
 	        print '<label for="radiocompany">';
+            print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked="checked"').'>';
 	        print '&nbsp;';
             print $langs->trans("Company/Fundation");
 	        print '</label>';
             print ' &nbsp; &nbsp; ';
+	        print '<label for="radioprivate">';
             print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'').'>';
 	        print '&nbsp;';
             print $langs->trans("Individual");
-            print ' ('.$langs->trans("ToCreateContactWithSameName").')';
+            print '<div class="hideonsmartphone">('.$langs->trans("ToCreateContactWithSameName").')</div>';
+            print '</label>';
             print '</div>';
             print "<br>\n";
         }
@@ -1095,9 +1097,9 @@ else
 
         print '</table>'."\n";
 
-        print '<br><center>';
+        print '<br><div align="center">';
         print '<input type="submit" class="button" value="'.$langs->trans('AddThirdParty').'">';
-        print '</center>'."\n";
+        print '</div>'."\n";
 
         print '</form>'."\n";
     }
@@ -1608,11 +1610,11 @@ else
             print '</table>';
             print '<br>';
 
-            print '<center>';
+            print '<div align="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-            print ' &nbsp; &nbsp; ';
+            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-            print '</center>';
+            print '</div>';
 
             print '</form>';
 
@@ -1727,7 +1729,7 @@ else
         // Status
         print '<tr><td>'.$langs->trans("Status").'</td>';
         print '<td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
-        if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer) {
+        if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             print ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
         } else {
             print $object->getLibStatut(2);

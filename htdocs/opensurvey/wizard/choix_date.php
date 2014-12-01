@@ -338,7 +338,7 @@ print $langs->trans("OpenSurveyStep2")."\n";
 print '</div>'."\n";
 
 //debut du tableau qui affiche le calendrier
-print '<center><div class="corps">'."\n";
+print '<div class="center"><div class="corps">'."\n";
 print '<table align=center>'."\n";
 print '<tr><td><input type="image" name="anneeavant" value="<<" src="../img/rewind.png"></td><td><input type="image" name="moisavant" value="<" src="../img/previous.png"></td>';
 print '<td width="150px" align="center"> '.$motmois.' '.$_SESSION["annee"].'<br>';
@@ -490,9 +490,9 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 //fin du tableau
 print '</tr>'."\n";
 print '</table>'."\n";
-print '</div></center>'."\n";
+print '</div></div>'."\n";
 
-print '<div class="bodydate"><center>'."\n";
+print '<div class="bodydate"><div class="center">'."\n";
 
 // affichage de tous les jours choisis
 if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
@@ -507,7 +507,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 
 	for ($i = 0; $i < $_SESSION["nbrecaseshoraires"]; $i++) {
 		$j = $i+1;
-		print '<td classe="somme">'. $langs->trans("Time") .' '.$j.'</center></td>'."\n";
+		print '<td classe="somme"><div class="center">'. $langs->trans("Time") .' '.$j.'</div></td>'."\n";
 	}
 
 	if ($_SESSION["nbrecaseshoraires"] < 10) {
@@ -555,7 +555,7 @@ print '<a name=bas></a>'."\n";
 print '</form>'."\n";
 //bandeau de pied
 print '<br><br><br><br>'."\n";
-print '</center></div>'."\n";
+print '</div></div>'."\n";
 
 llxFooter();
 

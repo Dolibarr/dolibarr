@@ -162,7 +162,8 @@ Dolibarr better:
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
 - A lot of pages called fiche.php were renamed into card.php
 - A lot of pages called liste.php were renamed into list.php
-
+- If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
+  warehouse module and your Point Of Sale module if you use one.
 
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
@@ -174,7 +175,10 @@ Dolibarr better:
 - Fix: Civility & birthdate wasn't save into adherent module.
 - Fix: webservice Thirdparty parameter lastname for invidual creation is now lastname and not ref
 - Fix: Chars - is no more allowed into value for code for extra fields.
-( Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
+- Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
+- Fix: [ bug #1595 ] Selected boolean extrafield in intervention creation page, does not save state
+- Fix: Show sender Country on PDF docs when sender Country <> receiver Country
+- Fix: [ bug #1624 ] Use lowest buying price for margin when selling with POS
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:

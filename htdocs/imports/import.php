@@ -1278,7 +1278,7 @@ if ($step == 5 && $datatoimport)
         print '<br>';
 
         // Actions
-        print '<center>';
+        print '<div class="center">';
         if ($user->rights->import->run)
         {
             print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=5&action=launchsimu'.$param.'">'.$langs->trans("RunSimulateImportFile").'</a>';
@@ -1287,7 +1287,7 @@ if ($step == 5 && $datatoimport)
         {
             print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
         }
-        print '</center>';
+        print '</div>';
     }
     else
     {
@@ -1401,15 +1401,15 @@ if ($step == 5 && $datatoimport)
         // Show import id
         $importid=dol_print_date(dol_now(),'%Y%m%d%H%M%S');
 
-        print '<center>';
+        print '<div class="center">';
         print $langs->trans("NowClickToRunTheImport",$langs->transnoentitiesnoconv("RunImportFile")).'<br>';
         print $langs->trans("DataLoadedWithId",$importid).'<br>';
-        print '</center>';
+        print '</div>';
 
         print '<br>';
 
         // Actions
-        print '<center>';
+        print '<div class="center">';
         if ($user->rights->import->run)
         {
             if (empty($nboferrors))
@@ -1429,7 +1429,7 @@ if ($step == 5 && $datatoimport)
 
             print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunImportFile").'</a>';
         }
-        print '</center>';
+        print '</div>';
     }
 }
 
@@ -1664,12 +1664,12 @@ if ($step == 6 && $datatoimport)
 
 
 	// Show result
-	print '<center>';
 	print '<br>';
+	print '<div class="center">';
 	print $langs->trans("NbOfLinesImported",$nbok).'</b><br><br>';
 	print $langs->trans("FileWasImported",$importid).'<br>';
 	print $langs->trans("YouCanUseImportIdToFindRecord",$importid).'<br>';
-	print '</center>';
+	print '</div>';
 }
 
 
