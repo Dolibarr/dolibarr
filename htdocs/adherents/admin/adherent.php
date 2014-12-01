@@ -53,7 +53,7 @@ if ($action == 'update' || $action == 'add')
 	$constname=GETPOST('constname','alpha');
 	$constvalue=(GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
 
-	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE') && $constvalue == -1) $constvalue='';
+	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE' || $constname=='ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) $constvalue='';
 	if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
 	{
 		if ($constvalue) $constvalue=0;
@@ -205,6 +205,23 @@ if ($conf->facture->enabled)
 	{
 		print '<td align="right" colspan="2">';
 		print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name"));
+		print '</td>';
+	}
+	print "</tr>\n";
+	print '</form>';
+
+	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+	{
+		$var=!$var;
+		print '<form action="adherent.php" method="POST">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="constname" value="ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS">';
+		print '<tr '.$bc[$var].'><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
+		print '<td>';
+		print $form->select_produits($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS, 'constvalue_ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
+		print '</td><td align="center" width="80">';
+		print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 		print '</td>';
 	}
 	print "</tr>\n";
