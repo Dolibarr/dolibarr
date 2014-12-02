@@ -864,7 +864,7 @@ else
 	    // Batch number management
 		if (! empty($conf->productbatch->enabled))
 		{
-			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Batch").')</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
 			$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
 			print $form->selectarray('status_batch',$statutarray,GETPOST('status_batch'));
 			print '</td></tr>';
@@ -1441,7 +1441,7 @@ else
                 if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
                     print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
                 } else {
-                    print $object->getLibStatut(2,2);
+                    print $object->getLibStatut(0,2);
                 }
                 print '</td></tr>';
             }

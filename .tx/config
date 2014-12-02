@@ -249,8 +249,8 @@ source_lang = en_US
 type = MOZILLAPROPERTIES
 
 [dolibarr.productbatch]
-file_filter = htdocs/langs/<lang>/products.lang
-source_file = htdocs/langs/en_US/products.lang
+file_filter = htdocs/langs/<lang>/productbatch.lang
+source_file = htdocs/langs/en_US/productbatch.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
