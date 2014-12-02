@@ -1,9 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 CHARSET= UTF-8
-ProductStatusOnBatch= Managed
-ProductStatusNotOnBatch= Not Managed
-ProductStatusOnBatchShort= Managed
-ProductStatusNotOnBatchShort= Not Managed
+ManageLotSerial=Manage lot or serial
+ProductStatusOnBatch=Managed
+ProductStatusNotOnBatch=Not Managed
+ProductStatusOnBatchShort=Managed
+ProductStatusNotOnBatchShort=Not Managed
 Batch=Batch
 atleast1batchfield= Eat-by date or Sell-by date or Batch number
 batch_number= Batch number
