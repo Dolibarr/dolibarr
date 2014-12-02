@@ -1,33 +1,33 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
 
-Accounting=Accounting
+Accounting=Akuntansi
 Globalparameters=Global parameters
 Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
-Menuaccount=Accounting accounts
-Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tools
+Fiscalyear=Tahun Pajak
+Menuaccount=Akun Akuntansi
+Menuthirdpartyaccount=Akun Pihak Ketiga
+MenuTools=Prangkat
 
-ConfigAccountingExpert=Configuration of the module accounting expert
-Journaux=Journals
-JournalFinancial=Financial journals
-Exports=Exports
-Modelcsv=Model of export
-Selectmodelcsv=Select a model of export
-Modelcsv_normal=Classic export
+ConfigAccountingExpert=Konfigurasi Modul Ahli Akuntansi
+Journaux=Jurnal
+JournalFinancial=Jurnal Keuangan
+Exports=Ekspor
+Modelcsv=Model ekspor
+Selectmodelcsv=Pilih model ekspor
+Modelcsv_normal=Ekspor klasik
 Modelcsv_CEGID=Export towards CEGID Expert
 BackToChartofaccounts=Return chart of accounts
-Back=Return
+Back=Kembali
 
 Definechartofaccounts=Define a chart of accounts
 Selectchartofaccounts=Select a chart of accounts
-Validate=Validate
-Addanaccount=Add an accounting account
-AccountAccounting=Accounting account
-Ventilation=Ventilation
-ToDispatch=To dispatch
-Dispatched=Dispatched
+Validate=Validasi
+Addanaccount=Tambah Akun Akuntansi
+AccountAccounting=Akun Akuntansi
+Ventilation=Ventilasi
+ToDispatch=Dikirimkan
+Dispatched=Terkirim
 
 CustomersVentilation=Ventilation customers
 SuppliersVentilation=Ventilation suppliers
