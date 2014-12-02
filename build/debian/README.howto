@@ -101,6 +101,12 @@ http://packages.qa.debian.org/package.html
 http://bugs.debian.org/package
 
 
+##### Modify severity of a bug ticket
+
+- Send this email to control@bugs.debian.org and wait 10 minutes
+
+severity 123 xxx
+
 
 ##### Testing a package into unstable env
 
