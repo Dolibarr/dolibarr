@@ -667,7 +667,7 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_del_spip' && $conf
 	{
 		if (!$mailmanspip->del_to_spip($object))
 		{
-			setEventMessage($langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error, 'errors');
+			setEventMessage($langs->trans('DeleteIntoSpipError').' : '.$mailmanspip->error, 'errors');
 		}
 	}
 }
@@ -678,7 +678,7 @@ if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm 
 	{
 		if (!$mailmanspip->add_to_spip($object))
 		{
-			setEventMessage($langs->trans('AddIntoSpipError').': '.$mailmanspip->error, 'errors');
+			setEventMessage($langs->trans('AddIntoSpipError').' : '.$mailmanspip->error, 'errors');
 		}
 	}
 }
@@ -1665,7 +1665,7 @@ else
 
 		if ($isinspip == -1)
 		{
-			print '<br><br><font class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</font>';
+			print '<br><br><font class="error">'.$langs->trans('SPIPConnectionFailed').' : '.$mailmanspip->error.'</font>';
 		}
 		print "<br>\n";
 

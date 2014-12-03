@@ -984,7 +984,7 @@ if ($rowid)
                     print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(! empty($invoiceonly)?' checked="checked"':'');
                     //if (empty($object->fk_soc)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionInvoiceOnly");
-                    if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
+                    if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").' : '.$company->getNomUrl(1).')';
                     else
 					{
                     	print ' (';
@@ -1009,7 +1009,7 @@ if ($rowid)
                     print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(! empty($bankviainvoice)?' checked="checked"':'');
                     //if (empty($object->fk_soc)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionBankViaInvoice");
-                    if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
+                    if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").' : '.$company->getNomUrl(1).')';
                     else
 					{
                     	print ' (';

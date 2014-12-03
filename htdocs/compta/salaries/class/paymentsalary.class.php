@@ -491,7 +491,7 @@ class PaymentSalary extends CommonObject
 		$lienfin='</a>';
 
 		$picto='payment';
-		$label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
+		$label=$langs->trans("ShowSalaryPayment").' : '.$this->ref;
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
