@@ -38,6 +38,7 @@ if (!$user->admin)
 $langs->load("admin");
 $langs->load("other");
 $langs->load("bills");
+$langs->load("orders");
 $langs->load("suppliers");
 
 $extrafields = new ExtraFields($db);

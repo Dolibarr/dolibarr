@@ -2978,12 +2978,13 @@ class Form
 			// Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
             $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
             if (! empty($more)) {
-            	$formconfirm.= '<p>'.$more.'</p>';
+            	$formconfirm.= '<div>'.$more.'</div>';
             }
             $formconfirm.= img_help('','').' '.$question;
-            $formconfirm.= '</div>';
+            $formconfirm.= '</div>'."\n";
 
-            $formconfirm.= '<script type="text/javascript">';
+            $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
+            $formconfirm.= '<script type="text/javascript">'."\n";
             $formconfirm.='
             $(function() {
             	$( "#'.$dialogconfirm.'" ).dialog({
@@ -3050,13 +3051,14 @@ class Form
                 }
             });
             </script>';
+            $formconfirm.= "<!-- end ajax form_confirm -->\n";
         }
         else
         {
         	$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
 
             $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
-            $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">';
+            $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">'."\n";
             $formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
             $formconfirm.= '<table width="100%" class="valid">'."\n";
