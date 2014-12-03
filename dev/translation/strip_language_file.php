@@ -1,9 +1,22 @@
 #!/usr/bin/php
 <?php
-/*
- * strip_language_file.php
+/* Copyright (C) 2014 by FromDual GmbH, licensed under GPL v2
+ * Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
- * (c) 2014 by FromDual GmbH, licensed under GPL v2
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * -----
  *
  * Compares a secondary language translation file with its primary
  * language file and strips redundant translations.
@@ -12,11 +25,10 @@
  *
  * Usage:
  * cd htdocs/langs
- * ../../dev/translation/strip_language_file.php <primary_lang_dir> <secondary_lang_dir> <languagefile.lang>
+ * ../../dev/translation/strip_language_file.php <primary_lang_dir> <secondary_lang_dir> [file.lang|all]
  *
- * Parameters:
- * 1 - Primary Language
- * 2 - Secondary Language
+ * To rename all .delta files, you can do
+ * for fic in `ls *.delta`; do f=`echo $fic | sed -e 's/\.delta//'`; echo $f; mv $f.delta $f; done
  *
  * Rules:
  * secondary string == primary string -> strip
@@ -24,9 +36,6 @@
  * secondary string not in primary -> strip and warning
  * secondary string has no value -> strip and warning
  * secondary string != primary string -> secondary.lang.delta
- *
- * To rename all .delta fils, you can do
- * for fic in `ls *.delta`; do f=`echo $fic | sed -e 's/\.delta//'`; echo $f; mv $f.delta $f; done
  */
 
 /**
@@ -260,6 +269,9 @@ foreach($filesToProcess as $fileToProcess)
 	}
 
 	print "Output can be found at $output.\n";
+
+	print "To rename all .delta files, you can do\n";
+	print 'for fic in `ls *.delta`; do f=`echo $fic | sed -e \'s/\.delta//\'`; echo $f; mv $f.delta $f; done'."\n";
 }
 
 

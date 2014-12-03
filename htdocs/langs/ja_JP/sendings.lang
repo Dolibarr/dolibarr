@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=現時点では、新たな出荷の作成は、
 RelatedShippings=Related shippings
 ShipmentLine=Shipment line
 CarrierList=List of transporters
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=顧客がキャッチ

@@ -18,14 +18,13 @@ CronExplainHowToRunUnix=Par Unix vidē, jums vajadzētu izmantot crontab palaist
 CronExplainHowToRunWin=Microsoft (tm), Windows environement jūs varat izmantot regulāro uzdevums rīkus, lai palaistu komandrindas viena otras minūtes
 # Menu
 CronJobs=Plānotie darbi
-CronListActive= Aktīvo darbu saraksts
-CronListInactive= Saraksts ar invaliditāti darba vietas
-CronListActive= Aktīvo darbu saraksts
+CronListActive=List of active/scheduled jobs
+CronListInactive=Saraksts ar invaliditāti darba vietas
 # Page list
 CronDateLastRun=Pēdējo reizi palaists
 CronLastOutput=Pēdējo reizi palaist izejas
-CronLastResult=Pēdējais rezultāts kods
-CronListOfCronJobs=Saraksts ar plānoto darbu
+CronLastResult=Pēdējais rezultātu kods
+CronListOfCronJobs=Saraksts ar plānotajiem darbiem
 CronCommand=Komanda
 CronList=Darbu saraksts
 CronDelete= Dzēst cron darbavietas

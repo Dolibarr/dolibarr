@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Dårlig kunde regnskap koden for %s
 SuppliersProductsSellSalesTurnover=Den genererte omsetningen av salg av leverandørens produkter.
 CheckReceipt=Sjekk innskudd
 CheckReceiptShort=Sjekk innskudd
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Nye rabatt
 NewCheckDeposit=Ny sjekk innskudd
 NewCheckDepositOn=Lag kvittering for innskudd på konto: %s

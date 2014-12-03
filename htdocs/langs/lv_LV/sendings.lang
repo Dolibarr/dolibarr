@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=Izveidot jaunu sūtījumu var no pasūtījuma ka
 RelatedShippings=Saistītie sūtījumi
 ShipmentLine=Sūtījumu līnija
 CarrierList=Saraksts pārvadātājiem
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Nozvejas klienta
@@ -74,5 +76,5 @@ SumOfProductVolumes=Summa saražotās produkcijas apjomu
 SumOfProductWeights=Summēt produkta svaru
 
 # warehouse details
-DetailWarehouseNumber= Warehouse details
+DetailWarehouseNumber= Noliktavas detaļas
 DetailWarehouseFormat= W:%s (Qty : %d)

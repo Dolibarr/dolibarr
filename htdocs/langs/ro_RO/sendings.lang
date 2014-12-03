@@ -54,13 +54,15 @@ StatsOnShipmentsOnlyValidated=Statisticil ectuate privind numai livrările valid
 DateDeliveryPlanned=Data de livrare planificată
 DateReceived=Data de livrare reală
 SendShippingByEMail=Trimite dispoziţia de livrare prin e-mail
-SendShippingRef=Submission of shipment %s
+SendShippingRef=Transmitere livrare %s
 ActionsOnShipping=Evenimente pe livrare
 LinkToTrackYourPackage=Link pentru a urmări pachetul dvs
 ShipmentCreationIsDoneFromOrder=Pentru moment, crearea unei noi livrări se face din fişa comenzii.
 RelatedShippings=Livrări asociate
 ShipmentLine=Linie de livrare
 CarrierList=Lista transportatori
+SendingRunning=Produs pentru comanda client deja trimis
+SuppliersReceiptRunning=Produs pentru comanda furnizor deja recepţionată
 
 # Sending methods
 SendingMethodCATCH=Colectată de client
@@ -74,5 +76,5 @@ SumOfProductVolumes=Volumul total al produselor
 SumOfProductWeights=Greutatea totală a produselor
 
 # warehouse details
-DetailWarehouseNumber= Warehouse details
-DetailWarehouseFormat= W:%s (Qty : %d)
+DetailWarehouseNumber= Detalii Depozit
+DetailWarehouseFormat= W:%s (Cant : %d)

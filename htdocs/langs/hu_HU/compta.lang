@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Rossz ügyfél számviteli kódot %s
 SuppliersProductsSellSalesTurnover=A forgalmat az eladások a beszállító termékeit.
 CheckReceipt=Ellenőrizze a betéti
 CheckReceiptShort=Ellenőrizze a betéti
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Új kedvezmény
 NewCheckDeposit=Új ellenőrizze betéti
 NewCheckDepositOn=Készítsen nyugtát letét számla: %s

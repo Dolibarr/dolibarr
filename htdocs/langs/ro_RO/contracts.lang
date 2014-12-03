@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Zona Contracte
 ListOfContracts=Lista contracte
-LastContracts=Ultimele %s contracte modificare
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Toate contractele
 ContractCard=Fişă Contract
 ContractStatus=Status Contract
@@ -27,7 +27,7 @@ MenuRunningServices=Servicii active
 MenuExpiredServices=Servicii expirate
 MenuClosedServices=Servicii închise
 NewContract=Contract nou
-AddContract=Adaugă contract
+AddContract=Crează contract
 SearchAContract=Caută contract
 DeleteAContract=Şterge contract
 CloseAContract=Închide contract
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Lista liniilor contractului in service
 ListOfRunningServices=Lista servicii active
 NotActivatedServices=Servicii  inactive (printre contracte validate  )
 BoardNotActivatedServices=Servicii de activat în contractele validate
-LastContracts=Ultimele %s contracte modificare
+LastContracts=Last % contracts
 LastActivatedServices=Ultimele %s servicii  activate
 LastModifiedServices=Ultimele %s servicii modificate
 EditServiceLine=Editează  linie serviciu
@@ -89,8 +89,8 @@ ListOfServicesToExpireWithDuration=Lista servicii care expiră în %s zile
 ListOfServicesToExpireWithDurationNeg=Lista serviciilor expirate de mai bine de %s zile
 ListOfServicesToExpire=Lista  servicii care expiră
 NoteListOfYourExpiredServices=Această listă conține numai serviciile pentru terții la care sunteţi reprezentant de vânzării.
-StandardContractsTemplate=Standard contracts template
-ContactNameAndSignature=For %s, name and signature:
+StandardContractsTemplate=Model standard Contracte
+ContactNameAndSignature=Pentru %s nume şi semnătura:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Reprezentant vanzari de semnare a contractului

@@ -23,4 +23,6 @@ GoodStatusDeclaration=Au primit bunurile în bună stare de mai sus,
 Deliverer=Eliberator:
 Sender=Expeditor
 Recipient=Recipient
-# ErrorStockIsNotEnough=There's not enough stock
+ErrorStockIsNotEnough=Nu există stoc suficient
+Shippable=Livrabil
+NonShippable=Nelivrabil

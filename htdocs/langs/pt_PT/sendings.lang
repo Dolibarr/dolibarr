@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=A criação de uma nova remessa é efectuada a p
 RelatedShippings=Envios relacionados
 ShipmentLine=Shipment line
 CarrierList=Lista de transportadores
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Capturas por cliente

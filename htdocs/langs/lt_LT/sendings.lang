@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=Šiuo metu, naujos siuntos sukūrimas atliktas i
 RelatedShippings=Susiję siuntos
 ShipmentLine=Siuntimo eilutė
 CarrierList=Vežėjų sąrašas
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Kliento pagautė

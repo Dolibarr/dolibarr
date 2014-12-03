@@ -48,7 +48,6 @@ ConfirmDeleteCP=Bekräfta raderingen av denna ledighet förfrågan?
 ErrorCantDeleteCP=Fel att du inte har rätt att ta bort denna ledighet begäran.
 CantCreateCP=Du har inte rätt att göra ledighet förfrågningar.
 InvalidValidatorCP=Du måste välja en approbator till din ledighet förfrågan.
-UpdateButtonCP=Uppdatera
 CantUpdate=Du kan inte uppdatera denna ledighet begäran.
 NoDateDebut=Du måste välja ett startdatum.
 NoDateFin=Du måste välja ett slutdatum.

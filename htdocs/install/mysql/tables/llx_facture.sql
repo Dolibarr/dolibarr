@@ -65,6 +65,7 @@ create table llx_facture
 
   fk_account			integer,								-- bank account
   fk_currency			varchar(3),								-- currency code
+  
   fk_cond_reglement		integer  DEFAULT 1 NOT NULL,			-- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement		integer,								-- mode de reglement (Virement, Prelevement)
   date_lim_reglement	date,									-- date limite de reglement

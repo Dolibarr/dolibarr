@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Bad klienta rachunkowych kod %s
 SuppliersProductsSellSalesTurnover=Obrotów generowanych przez sprzedaż dostawców produktów.
 CheckReceipt=Sprawdź depozyt
 CheckReceiptShort=Sprawdź depozyt
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Nowe zniżki
 NewCheckDeposit=Nowe sprawdzić depozytu
 NewCheckDepositOn=Nowe sprawdzić depozytu na konto: %s

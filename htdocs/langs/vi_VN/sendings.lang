@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=Đối với thời điểm này, tạo ra một
 RelatedShippings=Shippings liên quan
 ShipmentLine=Đường vận chuyển
 CarrierList=Danh sách vận chuyển
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Catch của khách hàng

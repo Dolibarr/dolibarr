@@ -1136,6 +1136,9 @@ ALTER TABLE llx_facture_fourn MODIFY COLUMN ref VARCHAR(255);
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_ext VARCHAR(255);
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_supplier VARCHAR(255);
 
+ALTER TABLE llx_facture_rec ADD COLUMN revenuestamp double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN tva_tx double(6,3);
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_contract_line integer NULL;
 
 -- This request make mysql drop (mysql bug, so we add it at end):
 --ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);

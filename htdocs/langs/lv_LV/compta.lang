@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Bad klienta grāmatvedības kodu %s
 SuppliersProductsSellSalesTurnover=Radītais apgrozījums, ko no piegādātāja produkcijas pārdošanas.
 CheckReceipt=Čeka depozīts
 CheckReceiptShort=Pārbaudīt depozītu
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Jauna atlaide
 NewCheckDeposit=Jauns pārbaude depozīts
 NewCheckDepositOn=Izveidot kvīti par depozīta kontā: %s

@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Napačna računovodska koda kupca za %s
 SuppliersProductsSellSalesTurnover=Generiran promet po prodaji dobavljenih proizvodov.
 CheckReceipt=Kontrola priliva
 CheckReceiptShort=Kontrola prilivov
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Nov popust
 NewCheckDeposit=Nova kontrola depozita
 NewCheckDepositOn=Nova kontrola depozita na račun: %s

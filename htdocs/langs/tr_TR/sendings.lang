@@ -55,12 +55,14 @@ DateDeliveryPlanned=Planlanan teslim tarihi
 DateReceived=Teslim alınan tarih
 SendShippingByEMail=Sevkiyatı EPostayla gönder
 SendShippingRef=% Nakliyatının yapılması
-ActionsOnShipping=Sevkiyat eylemleri
+ActionsOnShipping=Sevkiyat etkinlikleri
 LinkToTrackYourPackage=Paketinizi izleyeceğiniz bağlantı
 ShipmentCreationIsDoneFromOrder=Şu an için, yeni bir sevkiyatın oluşturulması sipariş kartından yapılmıştır.
 RelatedShippings=İlgili sevkiyatlar
 ShipmentLine=Sevkiyat kalemi
 CarrierList=Taşımacı listesi
+SendingRunning=Müşteri siparişindeki ürün zaten gönderildi
+SuppliersReceiptRunning=Tedarikçi siparişindeki ürün zaten alındı
 
 # Sending methods
 SendingMethodCATCH=Müşteri tarafından

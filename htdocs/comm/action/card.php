@@ -1291,28 +1291,28 @@ if ($id > 0)
 		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC))
 		{
 			print '<div style="clear:both;">&nbsp;</div><div class="fichecenter"><div class="fichehalfleft">';
-	        print '<a name="builddoc"></a>'; // ancre
+            print '<a name="builddoc"></a>'; // ancre
 
-	        /*
-	         * Documents generes
-	         */
+            /*
+             * Documents generes
+             */
 
-	        $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
-	        $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+            $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
+            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
 
-	        $genallowed=$user->rights->agenda->myactions->create;
+            $genallowed=$user->rights->agenda->myactions->create;
 	        $delallowed=$user->rights->agenda->myactions->delete;
 
-	        $var=true;
+            $var=true;
 
-	        $somethingshown=$formfile->show_documents('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
+            $somethingshown=$formfile->show_documents('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 			print '</div></div></div>';
 
-	        print '<div style="clear:both;">&nbsp;</div>';
+            print '<div style="clear:both;">&nbsp;</div>';
 	    }
 	}
 }

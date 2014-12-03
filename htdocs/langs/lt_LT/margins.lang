@@ -1,50 +1,44 @@
 # Dolibarr language file - Source file is en_US - marges
 
-Margin=Margin
-Margins=Margins
-TotalMargin=Total Margin
-MarginOnProducts=Margin / Products
-MarginOnServices=Margin / Services
-MarginRate=Margin rate
-MarkRate=Mark rate
-DisplayMarginRates=Display margin rates
-DisplayMarkRates=Display mark rates
-InputPrice=Input price
-
-margin=Profit margins management
-margesSetup=Profit margins management setup
-
-MarginDetails=Margin details
-
-ProductMargins=Product margins
-CustomerMargins=Customer margins
-SalesRepresentativeMargins=Sales representative margins
-
-ProductService=Product or Service
-AllProducts=All products and services
-ChooseProduct/Service=Choose product or service
-
-StartDate=Start date
-EndDate=End date
-Launch=Start
-
-ForceBuyingPriceIfNull=Force buying price if null
-ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
-MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
-UseDiscountAsProduct=As a product
-UseDiscountAsService=As a service
-UseDiscountOnTotal=On subtotal
-MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
-
-MARGIN_TYPE=Margin type
-MargeBrute=Raw margin
-MargeNette=Net margin
-MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br/>Net margin : Selling price - Cost price
-
-CostPrice=Cost price
-BuyingCost=Cost price
-UnitCharges=Unit charges
-Charges=Charges
-
-AgentContactType=Commercial agent contact type
-AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+Margin=Marža
+Margins=Maržos
+TotalMargin=Visa marža
+MarginOnProducts=Maržos/Produktai
+MarginOnServices=Maržos/Paslaugos
+MarginRate=Maržos norma
+MarkRate=Pažymėti normą
+DisplayMarginRates=Rodyti maržos normas
+DisplayMarkRates=Rodyti žymių normas
+InputPrice=Įvesti kaina
+margin=Pelno maržų valdymas
+margesSetup=Pelno maržų valdymo nustatymai
+MarginDetails=Maržos detalės
+ProductMargins=Produkto maržos
+CustomerMargins=Kliento maržos
+SalesRepresentativeMargins=Prekybos atstovo maržos
+ProductService=Produktas ar Paslaugos
+AllProducts=Visi produktai ir paslaugos
+ChooseProduct/Service=Pasirinkite produktą ar paslaugą
+StartDate=Pradžios data
+EndDate=Pabaigos data
+Launch=Pradžia
+ForceBuyingPriceIfNull=Priverstinė pirkimo kaina, jei nulis
+ForceBuyingPriceIfNullDetails=Jei "ON", marža bus 0 (pirkimo kaina = pardavimo kaina), kitaip ("OFF"), marža bus lygi pardavimo kainai (pirkimo kaina = 0)
+MARGIN_METHODE_FOR_DISCOUNT=Maržos metodas visuotinėms nuolaidoms
+UseDiscountAsProduct=Kaip produktas
+UseDiscountAsService=Kaip paslauga
+UseDiscountOnTotal=Tarpinė suma
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Apibrėžia, ar visuotinė nuolaida yra traktuojama kaip produktas, kaip paslaugos ar tik tarpinė sumamaržos skaičiavimui.
+MARGIN_TYPE=Maržos tipas
+MargeBrute=Maržos eilutė
+MargeNette=Grynojo pelno marža
+MARGIN_TYPE_DETAILS=Maržos eilutė: Pardavimo kaina - Pirkimo kaina<br/> Grynoji marža: Pardavimo kaina - Savikaina
+CostPrice=Savikaina
+BuyingCost=Savikaina
+UnitCharges=Vieneto sąnaudos
+Charges=Sąnaudos
+AgentContactType=Prekybos agento kontakto tipas
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per sale representative
+rateMustBeNumeric=Rate must be a numeric value
+markRateShouldBeLesserThan100=Mark rate should be lower than 100
+ShowMarginInfos=Show margin infos

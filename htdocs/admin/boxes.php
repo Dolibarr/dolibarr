@@ -46,7 +46,6 @@ $boxes = array();
  */
 
 if ($action == 'addconst')
-
 {
     dolibarr_set_const($db, "MAIN_BOXES_MAXLINES",$_POST["MAIN_BOXES_MAXLINES"],'',0,'',$conf->entity);
 }
@@ -54,9 +53,12 @@ if ($action == 'addconst')
 if ($action == 'add') {
     $error=0;
     $db->begin();
-    if (isset($_POST['boxid']) && is_array($_POST['boxid'])) {
-        foreach($_POST['boxid'] as $boxid) {
-            if ($boxid['active']=='on') {
+    if (isset($_POST['boxid']) && is_array($_POST['boxid']))
+    {
+        foreach($_POST['boxid'] as $boxid)
+        {
+            if (is_numeric($boxid['pos']) && $boxid['pos'] >= 0)	// 0=Home, 1=...
+            {
                 $pos = $boxid['pos'];
 
                 // Initialize distinct fkuser with all already existing values of fk_user (user that use a personalized view of boxes for page "pos")
@@ -330,7 +332,7 @@ print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("SourceFile").'</td>';
-print '<td class="center" width="160">'.$langs->trans("ActivateOn").'</td>';
+print '<td width="160" align="center">'.$langs->trans("ActivateOn").'</td>';
 print "</tr>\n";
 $var=true;
 foreach($boxtoadd as $box)
@@ -363,17 +365,16 @@ foreach($boxtoadd as $box)
 
     // Pour chaque position possible, on affiche un lien d'activation si boite non deja active pour cette position
     print '<td class="center">';
-    print $form->selectarray("boxid[".$box->box_id."][pos]",$pos_name,0,0,0,0,'',1)."\n";
+    print $form->selectarray("boxid[".$box->box_id."][pos]", $pos_name, 0, 1, 0, 0, '', 1)."\n";
     print '<input type="hidden" name="boxid['.$box->box_id.'][value]" value="'.$box->box_id.'">'."\n";
-    print '<input type="checkbox" class="flat" name="boxid['.$box->box_id.'][active]">'."\n";
     print '</td>';
 
     print '</tr>'."\n";
 }
 
 print '</table>'."\n";
-print '<br><div class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Activate").'">';
+print '<div class="right">';
+print '<input type="submit" class="button"'.(count($boxtoadd)?'':' disabled="disabled"').' value="'.$langs->trans("Activate").'">';
 print '</div>'."\n";
 print '</form>';
 print "\n".'<!-- End Boxes Available -->'."\n";
