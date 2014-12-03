@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=نظام التشغيل والتجارة
-OSCommerceSetup=نظام تشغيل وحدة التجارة الإعداد
-OSCommerceSetupSaved=التجارة إعداد نظام التشغيل الموفرة
-OSCommerceServer=نظام تشغيل الخادم المضيف التجارة / الملكية الفكرية
-OSCommerceDatabaseName=اسم قاعدة بيانات نظام التشغيل والتجارة
-OSCommercePrefix=نظام التشغيل التجاري بادئة الجداول
-OSCommerceUser=قاعدة بيانات التجارة ادخل نظام التشغيل
