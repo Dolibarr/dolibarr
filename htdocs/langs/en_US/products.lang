@@ -242,3 +242,8 @@ ForceUpdateChildPriceSoc=Set same price on customer subsidiaries
 PriceByCustomerLog=Price by customer log
 MinimumPriceLimit=Minimum price can't be lower that %s
 MinimumRecommendedPrice=Minimum recommended price is : %s
+PriceExpressionEditor=Price expression editor
+PriceExpressionSelected=Selected price expression
+PriceExpressionEditorHelp="price = 2 + 2" or "2 + 2" for setting the price<br>ExtraFields are variables like "#options_myextrafieldkey# * 2"<br>There are special variables like #quantity# and #tva_tx#<br>Use ; to separate expressions
+PriceMode=Price mode
+PriceNumeric=Number
