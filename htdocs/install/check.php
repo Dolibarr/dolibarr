@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2014	Juanjo Menent			<jmenent@2byte.es>
@@ -380,22 +380,14 @@ else
 			$allowupgrade=false;
 		}
 		if (defined("MAIN_NOT_INSTALLED")) $allowupgrade=false;
-		$migrationscript=array( //array('from'=>'2.0.0', 'to'=>'2.1.0'),
-								//array('from'=>'2.1.0', 'to'=>'2.2.0'),
-								//array('from'=>'2.2.0', 'to'=>'2.4.0'),
-								//array('from'=>'2.4.0', 'to'=>'2.5.0'),
-								//array('from'=>'2.5.0', 'to'=>'2.6.0'),
-								array('from'=>'2.6.0', 'to'=>'2.7.0'),
-								array('from'=>'2.7.0', 'to'=>'2.8.0'),
-								array('from'=>'2.8.0', 'to'=>'2.9.0'),
-								array('from'=>'2.9.0', 'to'=>'3.0.0'),
-								array('from'=>'3.0.0', 'to'=>'3.1.0'),
+		$migrationscript=array(	array('from'=>'3.0.0', 'to'=>'3.1.0'),
 								array('from'=>'3.1.0', 'to'=>'3.2.0'),
 								array('from'=>'3.2.0', 'to'=>'3.3.0'),
 								array('from'=>'3.3.0', 'to'=>'3.4.0'),
 								array('from'=>'3.4.0', 'to'=>'3.5.0'),
 								array('from'=>'3.5.0', 'to'=>'3.6.0'),
-								array('from'=>'3.6.0', 'to'=>'3.7.0')
+								array('from'=>'3.6.0', 'to'=>'3.7.0'),
+								array('from'=>'3.7.0', 'to'=>'3.8.0')
 		);
 
 		$count=0;

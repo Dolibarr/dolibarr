@@ -74,7 +74,7 @@ if (! empty($idprod))
 
                 if (!empty($objp->fk_price_expression)) {
                     $priceparser = new PriceParser($db);
-                    $price_result = $priceparser->parse_product_supplier($idprod, $objp->fk_price_expression, $objp->quantity, $objp->tva_tx);
+                    $price_result = $priceparser->parseProductSupplier($idprod, $objp->fk_price_expression, $objp->quantity, $objp->tva_tx);
                     if ($price_result >= 0) {
                         $objp->fprice = $price_result;
                         if ($objp->quantity >= 1)

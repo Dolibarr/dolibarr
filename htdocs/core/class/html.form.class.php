@@ -1990,7 +1990,7 @@ class Form
 					$outdiscount=$objp->remise_percent;
                     if (!empty($objp->fk_price_expression)) {
                         $priceparser = new PriceParser($this->db);
-                        $price_result = $priceparser->parse_product_supplier($objp->fk_product, $objp->fk_price_expression, $objp->quantity, $objp->tva_tx);
+                        $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_price_expression, $objp->quantity, $objp->tva_tx);
                         if ($price_result >= 0) {
                             $objp->fprice = $price_result;
                             if ($objp->quantity >= 1)
@@ -2129,7 +2129,7 @@ class Form
 
                     if (!empty($objp->fk_price_expression)) {
                         $priceparser = new PriceParser($this->db);
-                        $price_result = $priceparser->parse_product_supplier($objp->fk_product, $objp->fk_price_expression, $objp->quantity, $objp->tva_tx);
+                        $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_price_expression, $objp->quantity, $objp->tva_tx);
                         if ($price_result >= 0) {
                             $objp->fprice = $price_result;
                             if ($objp->quantity >= 1)

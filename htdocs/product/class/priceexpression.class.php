@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
-/* Copyright (C) 2014      Ion Agorria          <ion@agorria.com> 
+/* Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/product/class/priceexpresion.class.php
+ *	\file       htdocs/product/class/priceexpression.class.php
  *	\ingroup    product
  *  \brief      Class for accesing price expression table
  */
@@ -59,12 +59,12 @@ class PriceExpression
     {
 		$error=0;
 
-		// Clean parameters        
+		// Clean parameters
 		if (isset($this->title)) $this->title=trim($this->title);
 		if (isset($this->expression)) $this->expression=trim($this->expression);
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."price_expression (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_price_expression (";
 		$sql.= "title, expression";
 		$sql.= ") VALUES (";
 		$sql.= " ".(isset($this->title)?"'".$this->db->escape($this->title)."'":"''").",";
@@ -121,7 +121,7 @@ class PriceExpression
     function fetch($id)
     {
         $sql = "SELECT title, expression";
-        $sql.= " FROM ".MAIN_DB_PREFIX."price_expression";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_price_expression";
         $sql.= " WHERE rowid = ".$id;
 
     	dol_syslog(get_class($this)."::fetch");
@@ -156,7 +156,7 @@ class PriceExpression
     function list_price_expression()
     {
         $sql = "SELECT rowid, title, expression";
-        $sql.= " FROM ".MAIN_DB_PREFIX."price_expression";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_price_expression";
         $sql.= " ORDER BY title";
 
     	dol_syslog(get_class($this)."::list_price_expression");
@@ -194,7 +194,7 @@ class PriceExpression
     function find_title($title)
     {
         $sql = "SELECT rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."price_expression";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_price_expression";
         $sql.= " WHERE title = '".$this->db->escape($title)."'";
 
     	dol_syslog(get_class($this)."::find_title");
@@ -230,12 +230,12 @@ class PriceExpression
     {
 		$error=0;
 
-		// Clean parameters        
+		// Clean parameters
 		if (isset($this->title)) $this->title=trim($this->title);
 		if (isset($this->expression)) $this->expression=trim($this->expression);
 
         // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."price_expression SET";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."c_price_expression SET";
 		$sql.= " title = ".(isset($this->title)?"'".$this->db->escape($this->title)."'":"''").",";
 		$sql.= " expression = ".(isset($this->expression)?"'".$this->db->escape($this->expression)."'":"''")."";
         $sql.= " WHERE rowid = ".$this->id;
@@ -309,7 +309,7 @@ class PriceExpression
 
 		if (! $error)
 		{
-    		$sql = "DELETE FROM ".MAIN_DB_PREFIX."price_expression";
+    		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_price_expression";
     		$sql.= " WHERE rowid = ".$rowid;
 
 	        dol_syslog(get_class($this)."::delete");

@@ -189,10 +189,10 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 				if ($price_expression != 'NULL') {
 					//Check the expression validity by parsing it
 	                $priceparser = new PriceParser($db);
-	                $price_result = $priceparser->parse_product_supplier($id, $price_expression, $quantity, $tva_tx);
+	                $price_result = $priceparser->parseProductSupplier($id, $price_expression, $quantity, $tva_tx);
 	                if ($price_result < 0) { //Expression is not valid
 						$error++;
-						setEventMessage($priceparser->translated_error(), 'errors');
+						setEventMessage($priceparser->translatedError(), 'errors');
 					}
 				}
 				if (! $error && ! empty($conf->dynamicprices->enabled)) {

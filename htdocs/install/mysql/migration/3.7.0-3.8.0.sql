@@ -19,7 +19,7 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 --create table for price expressions and add column in product supplier
-create table llx_price_expression
+create table llx_c_price_expression
 (
   rowid     integer AUTO_INCREMENT PRIMARY KEY,
   title     varchar(20) NOT NULL,

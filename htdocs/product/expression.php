@@ -70,9 +70,9 @@ if ($action == 'add')
 		{
 			//Check the expression validity by parsing it
             $priceparser = new PriceParser($db);
-            $price_result = $priceparser->parse_product_supplier_expression($id, $expression, 0, 0);
+            $price_result = $priceparser->parseProductSupplierExpression($id, $expression, 0, 0);
             if ($price_result < 0) { //Expression is not valid
-				setEventMessage($priceparser->translated_error(), 'errors');
+				setEventMessage($priceparser->translatedError(), 'errors');
 			}
 			else
 			{
@@ -109,9 +109,9 @@ if ($action == 'update')
 		{
 			//Check the expression validity by parsing it
             $priceparser = new PriceParser($db);
-            $price_result = $priceparser->parse_product_supplier_expression($id, $expression, 0, 0);
+            $price_result = $priceparser->parseProductSupplierExpression($id, $expression, 0, 0);
             if ($price_result < 0) { //Expression is not valid
-				setEventMessage($priceparser->translated_error(), 'errors');
+				setEventMessage($priceparser->translatedError(), 'errors');
 			}
 			else
 			{

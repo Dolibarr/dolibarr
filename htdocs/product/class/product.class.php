@@ -1185,7 +1185,7 @@ class Product extends CommonObject
 			{
                 if (!empty($obj->fk_price_expression)) {
                     $priceparser = new PriceParser($this->db);
-                    $price_result = $priceparser->parse_product_supplier($obj->fk_product, $obj->fk_price_expression, $obj->quantity, $obj->tva_tx);
+                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_price_expression, $obj->quantity, $obj->tva_tx);
                     if ($price_result >= 0) {
                     	$obj->price = $price_result;
                     }
@@ -1218,7 +1218,7 @@ class Product extends CommonObject
 					{
 		                if (!empty($obj->fk_price_expression)) {
 		                    $priceparser = new PriceParser($this->db);
-		                    $price_result = $priceparser->parse_product_supplier($obj->fk_product, $obj->fk_price_expression, $obj->quantity, $obj->tva_tx);
+		                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_price_expression, $obj->quantity, $obj->tva_tx);
 		                    if ($result >= 0) {
 		                    	$obj->price = $price_result;
 		                    }

@@ -359,7 +359,7 @@ class ProductFournisseur extends Product
 
                 if (empty($ignore_expression) && !empty($this->fk_price_expression)) {
                     $priceparser = new PriceParser($this->db);
-                    $price_result = $priceparser->parse_product_supplier($this->fk_product, $this->fk_price_expression, $this->fourn_qty, $this->fourn_tva_tx);
+                    $price_result = $priceparser->parseProductSupplier($this->fk_product, $this->fk_price_expression, $this->fourn_qty, $this->fourn_tva_tx);
                     if ($price_result >= 0) {
                     	$this->fourn_price = $price_result;
                     	//recalculation of unitprice, as probably the price changed...
@@ -443,7 +443,7 @@ class ProductFournisseur extends Product
 
                 if (!empty($prodfourn->fk_price_expression)) {
                     $priceparser = new PriceParser($this->db);
-                    $price_result = $priceparser->parse_product_supplier($prodid, $prodfourn->fk_price_expression, $prodfourn->fourn_qty, $prodfourn->fourn_tva_tx);
+                    $price_result = $priceparser->parseProductSupplier($prodid, $prodfourn->fk_price_expression, $prodfourn->fourn_qty, $prodfourn->fourn_tva_tx);
                     if ($price_result >= 0) {
                     	$prodfourn->fourn_price = $price_result;
                     	$prodfourn->fourn_unitprice = null; //force recalculation of unitprice, as probably the price changed...

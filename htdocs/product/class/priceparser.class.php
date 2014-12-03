@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014      Ion Agorria          <ion@agorria.com> 
+/* Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ class PriceParser
 	 *
 	 *	@return string      Translated error
 	 */
-	public function translated_error()
+	public function translatedError()
 	{
 		global $langs;
 		$langs->load("errors");
@@ -94,20 +94,20 @@ class PriceParser
 		*/
 		if (empty($this->error)) {
 			return $langs->trans("ErrorPriceExpressionUnknown", 0); //this is not supposed to happen
-		} 
+		}
 		list($code, $info) = $this->error;
 		if (in_array($code, array(9, 14, 19, 20))) //Errors which have 0 arg
 		{
 			return $langs->trans("ErrorPriceExpression".$code);
-		} 
+		}
 		else if (in_array($code, array(1, 2, 3, 4, 5, 8, 10, 11, 17, 21, 22))) //Errors which have 1 arg
 		{
 			return $langs->trans("ErrorPriceExpression".$code, $info);
-		} 
+		}
 		else if (in_array($code, array(6))) //Errors which have 2 args
 		{
 			return $langs->trans("ErrorPriceExpression".$code, $info[0], $info[1]);
-		} 
+		}
 		else if (in_array($code, array(7, 12, 13, 15, 16, 18))) //Internal errors
 		{
 			return $langs->trans("ErrorPriceExpressionInternal", $code);
@@ -125,11 +125,11 @@ class PriceParser
 	 *	@param	String 	$expression     The expression to parse
      *  @return int 					> 0 if OK, < 1 if KO
 	 */
-	public function parse_expression($values, $expression)
+	public function parseExpression($values, $expression)
 	{
 		//Check if empty
 		$expression = trim($expression);
-		if (empty($expression)) 
+		if (empty($expression))
 		{
 			$this->error = array(20, null);
 			return -1;
@@ -169,12 +169,12 @@ class PriceParser
 		if (empty($vars["price"])) {
 			$vars["price"] = $last_result;
 		}
-		if ($vars["price"] === null) 
+		if ($vars["price"] === null)
 		{
 			$this->error = array(21, $expression);
 			return -3;
 		}
-		if ($vars["price"] < 0) 
+		if ($vars["price"] < 0)
 		{
 			$this->error = array(22, $expression);
 			return -4;
@@ -185,14 +185,14 @@ class PriceParser
 	/**
 	 *	Calculates supplier product price based on product id and string expression
 	 *
-	 *	@param	int					$product     	The Product id to get information
+	 *	@param	int					$product_id    	The Product id to get information
 	 *	@param	string 				$expression     The expression to parse
 	 *	@param	int					$quantity     	Min quantity
 	 *	@param	int					$tva_tx     	VAT rate
 	 *	@param	array 				$extra_values   Any aditional values for expression
      *  @return int 				> 0 if OK, < 1 if KO
 	 */
-	public function parse_product_supplier_expression($product_id, $expression, $quantity = null, $tva_tx = null, $extra_values = array())
+	public function parseProductSupplierExpression($product_id, $expression, $quantity = null, $tva_tx = null, $extra_values = array())
 	{
 		//Accessible values by expressions
 		$expression_values = array(
@@ -212,20 +212,20 @@ class PriceParser
 		}
 
 		//Parse the expression and return the price
-		return $this->parse_expression($expression_values, $expression);
+		return $this->parseExpression($expression_values, $expression);
 	}
 
 	/**
 	 *	Calculates supplier product price based on product id and expression id
 	 *
-	 *	@param	int					$product     	The Product id to get information
+	 *	@param	int					$product_id    	The Product id to get information
 	 *	@param	int 				$expression_id  The expression to parse
 	 *	@param	int					$quantity     	Min quantity
 	 *	@param	int					$tva_tx     	VAT rate
 	 *	@param	array 				$extra_values   Any aditional values for expression
      *  @return int 				> 0 if OK, < 1 if KO
 	 */
-	public function parse_product_supplier($product_id, $expression_id, $quantity = null, $tva_tx = null, $extra_values = array())
+	public function parseProductSupplier($product_id, $expression_id, $quantity = null, $tva_tx = null, $extra_values = array())
 	{
 		$price_expression = new PriceExpression($this->db);
 		$res = $price_expression->fetch($expression_id);
@@ -235,6 +235,6 @@ class PriceParser
 		}
 
 		//Parse the expression and return the price
-		return $this->parse_product_supplier_expression($product_id, $price_expression->expression, $quantity, $tva_tx, $extra_values);
+		return $this->parseProductSupplierExpression($product_id, $price_expression->expression, $quantity, $tva_tx, $extra_values);
 	}
 }
