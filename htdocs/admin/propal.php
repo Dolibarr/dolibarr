@@ -263,7 +263,7 @@ $form=new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
 
-$head = propal_admin_prepare_head(null);
+$head = propal_admin_prepare_head();
 
 dol_fiche_head($head, 'general', $langs->trans("Proposals"), 0, 'propal');
 
@@ -602,7 +602,7 @@ if ($conf->banque->enabled)
 {
     $var=!$var;
     print '<tr '.$bc[$var].'><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp</td><td align="center">';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp</td><td align="right">';
     if (! empty($conf->use_javascript_ajax))
     {
         print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL');

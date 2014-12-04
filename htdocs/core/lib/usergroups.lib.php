@@ -242,9 +242,9 @@ function entity_prepare_head($object, $aEntities)
 /**
  * 	Show list of themes. Show all thumbs of themes
  *
- * 	@param	User	$fuser				User concerned or null for global theme
- * 	@param	int		$edit				1 to add edit form
- * 	@param	boolean	$foruserprofile		Show for user profile view
+ * 	@param	User|null	$fuser				User concerned or null for global theme
+ * 	@param	int			$edit				1 to add edit form
+ * 	@param	boolean		$foruserprofile		Show for user profile view
  * 	@return	void
  */
 function show_theme($fuser,$edit=0,$foruserprofile=false)

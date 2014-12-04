@@ -69,7 +69,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
 
 
-$head = propal_admin_prepare_head(null);
+$head = propal_admin_prepare_head();
 
 dol_fiche_head($head, 'attributes', $langs->trans("Proposals"), 0, 'propal');
 

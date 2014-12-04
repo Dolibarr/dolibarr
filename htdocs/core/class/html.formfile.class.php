@@ -270,7 +270,13 @@ class FormFile
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
-        $printer = (!empty($user->rights->printipp->read) && !empty($conf->printipp->enabled))?true:false;
+        
+        $printer=0;
+        if (in_array($modulepart,array('facture','propal','proposal','order','commande')))	// This feature is implemented only for such elements
+        {
+        	$printer = (!empty($user->rights->printipp->read) && !empty($conf->printipp->enabled))?true:false;
+        }
+        
         $hookmanager->initHooks(array('formfile'));
         $forname='builddoc';
         $out='';

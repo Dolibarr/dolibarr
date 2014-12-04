@@ -147,10 +147,9 @@ function product_prepare_head($object, $user)
 /**
 *  Return array head with list of tabs to view object informations.
 *
-*  @param	Object	$object		Product
 *  @return	array   	        head array with tabs
 */
-function product_admin_prepare_head($object=null)
+function product_admin_prepare_head()
 {
 	global $langs, $conf, $user;
 
@@ -166,14 +165,14 @@ function product_admin_prepare_head($object=null)
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'product_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'product_admin','remove');
 
 	return $head;
 }
