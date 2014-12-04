@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=OS Commerce
-OSCommerceSetup=OS Commerce modul beállítása
-OSCommerceSetupSaved=OS Commerce beállítás mentése
-OSCommerceServer=OS Commerce Server host / ip
-OSCommerceDatabaseName=OS Commerce adatbázis neve
-OSCommercePrefix=OS Commerce táblázatok előtag
-OSCommerceUser=OS Commerce adatbázis bejelentkezés

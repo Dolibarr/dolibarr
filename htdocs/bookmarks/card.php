@@ -44,6 +44,8 @@ $userid=GETPOST("userid","int");
 $position=GETPOST("position","int");
 $backtopage=GETPOST('backtopage','alpha');
 
+$bookmark=new Bookmark($db);
+
 
 /*
  * Actions
@@ -60,7 +62,6 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 		exit;
 	}
 
-	$bookmark=new Bookmark($db);
 	if ($action == 'update') $bookmark->fetch($_POST["id"]);
 	$bookmark->fk_user=$userid;
 	$bookmark->title=$title;
@@ -120,6 +121,17 @@ llxHeader();
 $form=new Form($db);
 
 
+$head = array();
+$h=1;
+
+$head[$h][0] = $_SERVER["PHP_SELF"].($bookmark->id?'id='.$bookmark->id:'');
+$head[$h][1] = $langs->trans("Card");
+$head[$h][2] = 'card';
+$h++;
+
+$hselected='card';
+
+
 if ($action == 'create')
 {
 	/*
@@ -172,7 +184,6 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	/*
 	 * Fact bookmark mode or visually edition
 	 */
-	$bookmark=new Bookmark($db);
 	$bookmark->fetch($id);
 
 
