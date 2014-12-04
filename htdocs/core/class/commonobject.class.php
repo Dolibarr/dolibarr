@@ -633,7 +633,7 @@ abstract class CommonObject
 
     /**
      *	Load data for barcode into properties ->barcode_type*
-     *	Properties ->barcode_type that is id of barcode type is used to find other properties, but
+     *	Properties ->barcode_type that is id of barcode. Type is used to find other properties, but
      *  if it is not defined, ->element must be defined to know default barcode type.
      *
      *	@return		int			<0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
@@ -3029,7 +3029,7 @@ abstract class CommonObject
       	        });</script>';
     	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
 		}
-		
+
 		print '<table class="noborder margintable" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">'.$langs->trans('Margins').'</td>';
