@@ -1115,15 +1115,6 @@ else if ($action == 'remove_file') {
 	}
 }
 
-// Print file
-else if ($action == 'print_file' and $user->rights->printipp->read) {
-	require_once DOL_DOCUMENT_ROOT . '/core/class/dolprintipp.class.php';
-	$printer = new dolPrintIPP($db, $conf->global->PRINTIPP_HOST, $conf->global->PRINTIPP_PORT, $user->login, $conf->global->PRINTIPP_USER, $conf->global->PRINTIPP_PASSWORD);
-	$printer->print_file(GETPOST('file', 'alpha'), GETPOST('printer', 'alpha'));
-	setEventMessage($langs->trans("FileWasSentToPrinter", GETPOST('file')));
-	$action = '';
-}
-
 else if ($action == 'update_extras') {
 	// Fill array 'array_options' with data from update form
 	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -1150,6 +1141,9 @@ else if ($action == 'update_extras') {
 	if ($error)
 		$action = 'edit_extras';
 }
+
+include DOL_DOCUMENT_ROOT.'/core/actions_printipp.inc.php';
+
 
 /*
  * Send mail

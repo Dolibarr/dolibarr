@@ -74,7 +74,7 @@ llxHeader('',$langs->trans("PropalSetup"));
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
 
-$head = propal_admin_prepare_head(null);
+$head = propal_admin_prepare_head();
 
 dol_fiche_head($head, 'attributeslines', $langs->trans("Proposals"), 0, 'propal');
 

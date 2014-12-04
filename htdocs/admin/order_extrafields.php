@@ -73,7 +73,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'setup');
 print "<br>\n";
 
-$head = order_admin_prepare_head(null);
+$head = order_admin_prepare_head();
 
 dol_fiche_head($head, 'attributes', $langs->trans("Orders"), 0, 'order');
 

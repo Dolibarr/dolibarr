@@ -295,9 +295,6 @@ if ($id > 0 || ! empty($ref))
 		//$arrayofuseridoftask=$object->getListContactId('internal');
 
 		$head=task_prepare_head($object);
-		dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
-
-
 
 		if ($action == 'edit' && $user->rights->projet->creer)
 		{
@@ -306,6 +303,8 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
+
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
 
 			print '<table class="border" width="100%">';
 
@@ -372,9 +371,10 @@ if ($id > 0 || ! empty($ref))
 
 			print '</table>';
 
-			print '<br><div class="center">';
-			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			dol_fiche_end();
+
+			print '<div align="center">';
+			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
@@ -387,6 +387,8 @@ if ($id > 0 || ! empty($ref))
 			 */
 			$param=($withproject?'&withproject=1':'');
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
+
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
 
 			if ($action == 'delete')
 			{
@@ -472,12 +474,11 @@ if ($id > 0 || ! empty($ref))
 
 			print '</table>';
 
+			dol_fiche_end();
 		}
 
-		dol_fiche_end();
 
-
-		if ($_GET["action"] != 'edit')
+		if ($action != 'edit')
 		{
 			/*
 			 * Actions

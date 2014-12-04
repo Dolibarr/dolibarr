@@ -253,7 +253,7 @@ class DolGraph
 	/**
 	 * Set legend
 	 *
-	 * @param 	string	$legend		Legend
+	 * @param 	array	$legend		Legend. Example: array('seriename1','seriname2',...)
 	 * @return	void
 	 */
 	function SetLegend($legend)
