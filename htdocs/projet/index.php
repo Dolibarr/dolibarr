@@ -162,9 +162,9 @@ $max = (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global
 $sql = "SELECT p.ref, p.title, p.rowid as projectid, t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql.= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
-$sql.= " INNER JOIN ".MAIN_DB_PREFIX."projet_task_time as tasktime on tasktime.fk_task = t.rowid";
-$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u on tasktime.fk_user = u.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tasktime on tasktime.fk_task = t.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on tasktime.fk_user = u.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -221,23 +221,32 @@ if ( $resql )
 		print $projectstatic->getNomUrl(1,'',16);
 		//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
 		print '</td>';
-		print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a></td>';
+		print '<td>';
+		if (! empty($obj->taskid))
+		{
+			print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a>';
+		}
+		else print $langs->trans("NoTasks");
+		print '</td>';
 		print '<td>'.dol_print_date($db->jdate($obj->dateo),'day').'</td>';
 		print '<td>'.dol_print_date($db->jdate($obj->datee),'day').'</td>';
 		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
 		print convertSecondToTime($obj->planned_workload, 'all');
 		print '</a></td>';
 		print '<td align="right">';
-		print $obj->progress.'%';
+		print ($obj->taskid>0)?$obj->progress.'%':'';
 		print '</td>';
 		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
 		print convertSecondToTime($obj->timespent, 'all');
 		print '</a></td>';
 		print '<td align="right">';
-		if (empty($obj->planned_workload) > 0) {
-			$percentcompletion = $langs->trans("WorkloadNotDefined");
-		} else {
-			$percentcompletion = intval($obj->duration_effective*100/$obj->planned_workload).'%';
+		if (! empty($obj->taskid))
+		{
+			if (empty($obj->planned_workload) > 0) {
+				$percentcompletion = $langs->trans("WorkloadNotDefined");
+			} else {
+				$percentcompletion = intval($obj->duration_effective*100/$obj->planned_workload).'%';
+			}
 		}
 		print $percentcompletion;
 		print '</td>';
