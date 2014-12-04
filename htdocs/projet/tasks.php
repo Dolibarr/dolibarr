@@ -417,7 +417,7 @@ else
 	print '<td>'.$langs->trans("LabelTask").'</td>';
 	print '<td align="center">'.$langs->trans("DateStart").'</td>';
 	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-	print '<td align="center">'.$langs->trans("PlannedWorkload").'</td>';
+	print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 	print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 	print '<td align="right">'.$langs->trans("ProgressCalculated").'</td>';
