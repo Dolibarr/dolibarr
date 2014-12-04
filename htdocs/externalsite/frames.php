@@ -58,7 +58,7 @@ print "
 
 <noframes>
 <body>
-	<br><div class="center">
+	<br><div class=\"center\">
 	Sorry, your browser is too old or not correctly configured to view this area.<br>
 	Your browser must support frames.<br>
 	</div>
