@@ -153,6 +153,14 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973
+Fix: Can't update phone_pro from web service
+Fix: Some security holes.
+Fix: copy extrafields when creating order from proposal.
+Fix: report on action was not filtering by environment.
+Fix: Avoid missing class error.
+Fix: Add function dolEscapeXML.
+Fix: Bad days and month reported by function.
+Fix: Bad margin calculation.
 
 ***** ChangeLog for 3.5.5 compared to 3.5.4 *****
 Fix: Holiday module was broken. Initializaion of amount of holidays failed.
