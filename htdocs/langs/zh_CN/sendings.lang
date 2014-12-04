@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=就目前而言，建立一个新的装运完成
 RelatedShippings=相关运送
 ShipmentLine=航线
 CarrierList=转运列表
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=按客户捕捉

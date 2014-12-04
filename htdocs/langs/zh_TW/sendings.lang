@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=就目前而言，從這個訂單而建立的出
 RelatedShippings=相關出貨清單
 ShipmentLine=Shipment line
 CarrierList=List of transporters
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=按客戶捕捉

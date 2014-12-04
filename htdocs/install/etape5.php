@@ -115,7 +115,6 @@ if (empty($versionfrom) && empty($versionto) && ! is_writable($conffile))
 
 if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 {
-    print '<table cellspacing="0" cellpadding="2" width="100%">';
     $error=0;
 
     // If password is encoded, we decode it
@@ -298,12 +297,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
     $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT',1).",".$db->encrypt($setuplang,1).",'chaine',0,'Default language',1)");
     //if (! $resql) dol_print_error($db,'Error in setup program');
 
-    print '</table>';
-
     $db->close();
 }
 
-print "<br>";
 
 
 // Create lock file

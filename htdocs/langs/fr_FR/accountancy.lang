@@ -41,7 +41,7 @@ List=Liste
 Create=Créer
 UpdateAccount=Modification de compte comptable
 UpdateMvts=Modification de mouvements
-WriteBookKeeping=Comptabiliser les écritures dans le grand livre
+WriteBookKeeping=Enregistrer les écritures dans le grand livre
 Bookkeeping=Grand livre
 AccountBalanceByMonth=Solde par mois
 
@@ -55,24 +55,24 @@ InvoiceLines=Lignes de factures à ventiler
 InvoiceLinesDone=Lignes de factures ventilées
 IntoAccount=Dans le compte comptable
 
-Ventilate=Ventilation
+Ventilate=Ventiler
 VentilationAuto=Ventilation automatique
 
 Processing=Traitement en cours
-EndProcessing=Fin de traitement
+EndProcessing=Fin du traitement
 AnyLineVentilate=Aucune ligne à ventiler
 SelectedLines=Lignes sélectionnées
-Lineofinvoice=Ligne de facture
-VentilatedinAccount=Ventilée avec succès dans le compte comptable
-NotVentilatedinAccount=Non ventilée dans le compte comptable
+Lineofinvoice=Ligne de la facture
+VentilatedinAccount=Ventilé avec succès dans le compte comptable
+NotVentilatedinAccount=Non ventilé dans le compte comptable
 
-ACCOUNTING_SEPARATORCSV=Separateur CSV
+ACCOUNTING_SEPARATORCSV=Séparateur CSV
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre d'éléments à ventiler affichés par page (maximum conseillé : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Commencer le tri des pages de ventilation "A ventiler" par les éléments les plus récents
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencer le tri des pages de ventilation "Ventilées" par les éléments les plus récents
 
-AccountLength=Longueur des comptes comptables affichés dans Dolibarr
+AccountLength=Longueur des comptes comptables affichés dans Dolibarr 
 AccountLengthDesc=Fonction permettant de simuler une longueur de compte comptable en remplaçant les espaces par le chiffre zéro. Cette fonction touche uniquement à l'affichage, elle ne modifie pas les comptes comptables enregistrés dans Dolibarr. Pour l'export, cette fonction est nécessaire pour être compatible avec certains logiciels.
 ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes généraux
 ACCOUNTING_LENGTH_AACCOUNT=Longueur des comptes tiers
@@ -82,10 +82,10 @@ ACCOUNTING_PURCHASE_JOURNAL=Journal des achats
 ACCOUNTING_BANK_JOURNAL=Journal de banque
 ACCOUNTING_CASH_JOURNAL=Journal de caisse
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal des opérations diverses
-ACCOUNTING_SOCIAL_JOURNAL=Journal social
+ACCOUNTING_SOCIAL_JOURNAL=Journal de paie
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte de transfert espèce
-ACCOUNTING_ACCOUNT_SUSPENSE=Compte d'attente
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable de tranfert
+ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable d'attente
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (si non défini dans la fiche produit)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Compte comptable par défaut pour les produits vendus (si non défini dans la fiche produit)
@@ -97,7 +97,7 @@ Docdate=Date
 Docref=Référence
 Numerocompte=Compte
 Code_tiers=Tiers
-Labelcompte=Libellé compte
+Labelcompte=Libellé du compte
 Debit=Débit
 Credit=Crédit
 Amount=Montant
@@ -111,21 +111,21 @@ PurchasesJournal=Journal des achats
 DescSellsJournal=Journal des ventes
 DescPurchasesJournal=Journal des achats
 BankJournal=Journal de banque
-DescBankJournal=Journal de banque comprenant tous les types de règlements autres que espèce	
+DescBankJournal=Journal de banque comprenant tous les types de règlements autres que espèce\t
 CashJournal=Journal de caisse
 DescCashJournal=Journal de caisse comprenant le type de règlement "espèce"
 
 CashPayment=Règlement espèce
 
-SupplierInvoicePayment=Règlement de facture fournisseur
-CustomerInvoicePayment=Règlement de facture client
+SupplierInvoicePayment=Paiement de facture fournisseur
+CustomerInvoicePayment=Paiement de facture client
 
-ThirdPartyAccount=Compte tiers
+ThirdPartyAccount=Comptes de tiers
 
 NewAccountingMvt=Nouveau mouvement
-NumMvts=Numéro du mouvement
+NumMvts=Nombre de mouvement
 ListeMvts=Liste des mouvements
-ErrorDebitCredit=Debit et Credit ne peuvent avoir une valeur en même temps
+ErrorDebitCredit=Débit et crédit ne peuvent pas avoir la même valeur en même temps.
 
 ReportThirdParty=Liste compte tiers
 DescThirdPartyReport=Consultez ici la liste des tiers clients et fournisseurs et leurs codes comptables
@@ -136,16 +136,16 @@ Pcgversion=Version du plan
 Pcgtype=Classe de compte
 Pcgsubtype=Sous classe de compte
 Accountparent=Racine des comptes
-Active=État
+Active=Relevé
 
 NewFiscalYear=Nouvelle année fiscale
 
 DescVentilCustomer=Consultez ici la ventilation comptable annuelle de vos factures clients
-TotalVente=Total chiffre affaires HT
-TotalMarge=Total marge commerciale
+TotalVente=Chiffre d'affaires HT
+TotalMarge=Total marge
 DescVentilDoneCustomer=Consultez ici la liste des lignes de factures clients et leur compte comptable
-DescVentilTodoCustomer=Ventilez vos lignes de facture client avec un compte comptable
-ChangeAccount=Changer le compte comptable pour les lignes sélectionnées par le compte:
+DescVentilTodoCustomer=Consultez ici la liste des lignes de factures clients et leur compte comptable
+ChangeAccount=Changer le compte comptable pour les lignes sélectionnées par le compte :
 Vide=-
 DescVentilSupplier=Consultez ici la ventilation comptable annuelle de vos factures fournisseurs
 DescVentilTodoSupplier=Ventilez vos lignes de facture fournisseur avec un compte comptable
@@ -153,6 +153,6 @@ DescVentilDoneSupplier=Consultez ici la liste des lignes de factures fournisseur
 
 ValidateHistory=Valider Automatiquement
 
-ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas supprimer ce compte comptable car il est utilisé
+ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
 
 FicheVentilation=Fiche ventilation

@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=قانون محاسبة العملاء سي�
 SuppliersProductsSellSalesTurnover=وقد ولدت عن طريق الدوران مبيعات الموردين المنتجات.
 CheckReceipt=التحقق من إيداع
 CheckReceiptShort=التحقق من إيداع
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=خصم جديد
 NewCheckDeposit=تأكد من ايداع جديدة
 NewCheckDepositOn=تهيئة لتلقي الودائع على حساب : ٪ ق

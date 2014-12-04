@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=Op dit moment, is oprichting van een nieuwe zend
 RelatedShippings=Aanverwante verzendingen
 ShipmentLine=Verzendingslijn
 CarrierList=Lijst van transporteurs
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Afhalen door de afnemer

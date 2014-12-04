@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Bad viðskiptavina bókhalds kóðann fyrir 
 SuppliersProductsSellSalesTurnover=The mynda veltu af sölu á vörum birgis.
 CheckReceipt=Athugaðu innborgun
 CheckReceiptShort=Athugaðu innborgun
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=New afsláttur
 NewCheckDeposit=New stöðva afhendingu
 NewCheckDepositOn=Búa til kvittun fyrir innborgun á reikning: %s

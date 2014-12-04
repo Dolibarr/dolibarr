@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Código contabilidade incorrecto para %s
 SuppliersProductsSellSalesTurnover=Volume de negócio gerado por venda de produtos aos Fornecedores
 CheckReceipt=Ficha de cheques
 CheckReceiptShort=Ficha
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Novo Cheque
 NewCheckDeposit=Novo Deposito
 NewCheckDepositOn=Criar Novo deposito na conta: %s

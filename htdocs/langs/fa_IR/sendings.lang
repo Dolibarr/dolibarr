@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=برای لحظه ای، ایجاد یک محم�
 RelatedShippings=shippings های مرتبط
 ShipmentLine=خط حمل و نقل
 CarrierList=فهرست از حمل و نقل
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=گرفتن توسط مشتری

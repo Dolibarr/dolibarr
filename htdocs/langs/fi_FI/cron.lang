@@ -18,9 +18,8 @@ CronExplainHowToRunUnix=Unix ympäristössä sinun tulee käyttää crontabia aj
 CronExplainHowToRunWin=Microsoft(tm) Windows ympäristössä voit käyttää ajastetut tehtävät -työkalua ajaaksesi komentorivin minuuteittain
 # Menu
 CronJobs=Scheduled jobs
-CronListActive= Aktiivisten tehtävien lista
-CronListInactive= Hylättyjen tehtävien lista
-CronListActive= Aktiivisten tehtävien lista
+CronListActive=List of active/scheduled jobs
+CronListInactive=Hylättyjen tehtävien lista
 # Page list
 CronDateLastRun=Viimeinen ajo
 CronLastOutput=Viimeisen ajon tulostus

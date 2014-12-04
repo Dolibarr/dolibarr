@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=Pre túto chvíľu, je vytvorenie novej zásielk
 RelatedShippings=Súvisiace shippings
 ShipmentLine=Zásielka linka
 CarrierList=Zoznam dopravcov
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Chytiť zákazníka

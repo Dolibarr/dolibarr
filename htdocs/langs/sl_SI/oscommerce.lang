@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=Nakupovalni voziček
-OSCommerceSetup=Nastavitev modula Nakupovalni voziček
-OSCommerceSetupSaved=Shranjene nastavitve za Nakupovalni voziček
-OSCommerceServer=Gostiteljski strežnik/IP za Nakupovalni voziček
-OSCommerceDatabaseName=Ime baze podatkov za Nakupovalni voziček
-OSCommercePrefix=Predpone tabel za Nakupovalni voziček
-OSCommerceUser=Uporabniško ime za bazo podatkov za Nakupovalni voziček

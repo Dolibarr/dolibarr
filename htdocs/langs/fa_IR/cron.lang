@@ -18,9 +18,8 @@ CronExplainHowToRunUnix=در محیط یونیکس شما باید crontab کا�
 CronExplainHowToRunWin=در مایکروسافت، محصول محیط ویندوز شما می توانید ابزار کار برنامه ریزی شده برای اجرای خط فرمان در هر دقیقه استفاده
 # Menu
 CronJobs=شغل برنامه ریزی
-CronListActive= لیست شغل ها فعال
-CronListInactive= لیست شغل ها غیر فعال
-CronListActive= لیست شغل ها فعال
+CronListActive=List of active/scheduled jobs
+CronListInactive=لیست شغل ها غیر فعال
 # Page list
 CronDateLastRun=تاریخ و زمان آخرین اجرا
 CronLastOutput=تاریخ و زمان آخرین خروجی اجرا
@@ -62,7 +61,7 @@ CronObject= به عنوان مثال / شی برای ایجاد
 CronArgs=پارامترها
 CronSaveSucess=صرفه جویی در موفقیت
 CronNote=توضیح
-CronFieldMandatory=زمینه های از%s الزامی است
+CronFieldMandatory=زمینه های از٪ s الزامی است
 CronErrEndDateStartDt=تاریخ پایان نمی تواند قبل از تاریخ شروع می شود
 CronStatusActiveBtn=قادر ساختن
 CronStatusInactiveBtn=از کار انداختن
@@ -83,5 +82,5 @@ CronType=نوع کار
 CronType_method=روش تماس از یک کلاس Dolibarr
 CronType_command=فرمان شل
 CronMenu=cron را
-CronCannotLoadClass=آیا می توانم کلاس%s ​​را بار نیست و یا شی از%s
+CronCannotLoadClass=آیا می توانم کلاس٪ s ​​را بار نیست و یا شی از٪ s
 UseMenuModuleToolsToAddCronJobs=برو به منوی "صفحه اصلی - ماژول ابزار - فهرست فرصت های شغلی" برای دیدن و ویرایش کار برنامه ریزی شده.

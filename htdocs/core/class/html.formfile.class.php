@@ -301,12 +301,10 @@ class FormFile
                     $modellist=ModeleThirdPartyDoc::liste_modeles($this->db);
                 }
             }
-			
 			else if ($modulepart == 'agenda')
             {
                null;
             }
-			
             else if ($modulepart == 'propal')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
@@ -439,7 +437,7 @@ class FormFile
             }
             else
             {
-            	
+
                 // For normalized standard modules
                 $file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 if (file_exists($file))

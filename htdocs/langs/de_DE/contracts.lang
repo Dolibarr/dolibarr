@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Vertragsübersicht
 ListOfContracts=Liste der Verträge
-LastContracts=%s zuletzt geänderte Verträge
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Alle Verträge
 ContractCard=Vertragskarte
 ContractStatus=Vertragsstatus
@@ -27,7 +27,7 @@ MenuRunningServices=Aktive Services
 MenuExpiredServices=Abgelaufene Services
 MenuClosedServices=Geschlossene Services
 NewContract=Neuer Vertrag
-AddContract=Vertrag hinzufügen
+AddContract=Kontrakt erstellen
 SearchAContract=Suche einen Vertrag
 DeleteAContract=Löschen eines Vertrages
 CloseAContract=Schließen eines Vertrages
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Liste der aktiven Vertragspositionen
 ListOfRunningServices=Liste aktiver Services
 NotActivatedServices=Inaktive Services (in freigegebenen Verträgen)
 BoardNotActivatedServices=Zu aktivierende Services (in freigegebenen Verträgen)
-LastContracts=%s zuletzt geänderte Verträge
+LastContracts=Last % contracts
 LastActivatedServices=%s zuletzt aktivierte Services
 LastModifiedServices=%s zuletzt bearbeitete Services
 EditServiceLine=Service-Position bearbeiten

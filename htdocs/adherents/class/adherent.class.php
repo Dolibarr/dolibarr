@@ -1306,7 +1306,7 @@ class Adherent extends CommonObject
                 return $rowid;
             }
             else
-            {
+			{
                 $this->db->rollback();
                 return -2;
             }

@@ -62,7 +62,7 @@ $rowspan=2;
 if (! empty($conf->barcode->enabled)) $rowspan++;
 print '<form method="post" action="'.DOL_URL_ROOT.'/societe/societe.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">';
+print '<table class="noborder nohover" width="100%">'."\n";
 print '<tr class="liste_titre">';
 print '<th colspan="3">'.$langs->trans("SearchThirdparty").'</th></tr>';
 print "<tr ".$bc[false]."><td>";
@@ -78,8 +78,8 @@ if (! empty($conf->barcode->enabled))
 print "<tr ".$bc[false]."><td ".$bc[false].">";
 print '<label for="search_all">'.$langs->trans("Other").'</label>:</td><td '.$bc[false].'><input class="flat" type="text" size="14" name="search_all" id="search_all"></td>';
 //print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
-print '</tr>';
-print "</table></form><br>";
+print '</tr>'."\n";
+print "</table></form><br>\n";
 
 /*
  * Search contact
@@ -87,18 +87,18 @@ print "</table></form><br>";
 $rowspan=2;
 if (! empty($conf->barcode->enabled)) $rowspan++;
 print '<form method="post" action="'.DOL_URL_ROOT.'/contact/list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+print '<table class="noborder nohover" width="100%">'."\n";
 print '<tr class="liste_titre">';
-print '<th colspan="3">'.$langs->trans("SearchContact").'</th></tr>';
+print '<th colspan="3">'.$langs->trans("SearchContact").'</th></tr>'."\n";
 print "<tr ".$bc[false]."><td>";
 print '<label for="search_nom_only">'.$langs->trans("Name").'</label>:</td><td><input class="flat" type="text" size="14" name="search_firstlast_only" id="search_firstlast_only"></td>';
-print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>'."\n";
 print "<tr ".$bc[false]."><td ".$bc[false].">";
 print '<label for="search_all">'.$langs->trans("Other").'</label>:</td><td '.$bc[false].'><input class="flat" type="text" size="14" name="contactname" id="contactname"></td>';
 //print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
-print '</tr>';
-print "</table></form><br>";
+print '</tr>'."\n";
+print "</table></form><br>\n";
 
 /*
  * Statistics area
@@ -134,7 +134,7 @@ if ($result)
 }
 else dol_print_error($db);
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2))
 {
@@ -146,7 +146,7 @@ if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(rou
     if (! empty($conf->societe->enabled))                                                              $dataseries[]=array('label'=>$langs->trans("Others"),'data'=>round($third['other']));
     $data=array('series'=>$dataseries);
     dol_print_graph('stats',300,180,$data,1,'pie',0);
-    print '</td></tr>';
+    print '</td></tr>'."\n";
 }
 else
 {
@@ -267,12 +267,13 @@ if ($result)
     {
         $transRecordedType = $langs->trans("LastModifiedThirdParties",$max);
 
+        print "\n<!-- last thirdparties modified -->\n";
         print '<table class="noborder" width="100%">';
 
-        print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</td>';
-        print '<th>&nbsp;</td>';
-        print '<th align="right">'.$langs->trans('Status').'</td>';
-        print '</tr>';
+        print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
+        print '<th>&nbsp;</th>';
+        print '<th align="right">'.$langs->trans('Status').'</th>';
+        print '</tr>'."\n";
 
         $var=True;
 
@@ -326,7 +327,8 @@ if ($result)
 
         $db->free();
 
-        print "</table>";
+        print "</table>\n";
+        print "<!-- End last thirdparties modified -->\n";
     }
 }
 else

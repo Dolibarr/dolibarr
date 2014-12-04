@@ -365,6 +365,7 @@ if ($nboftargetok) {
 		print "Clean $BUILDROOT\n";
 		$ret=`rm -f  $BUILDROOT/$PROJECT/.buildpath`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.editorconfig`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.git*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
@@ -373,7 +374,6 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.travis.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.tx`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build.xml`;
-		$ret=`rm -f  $BUILDROOT/$PROJECT/quickbuild.xml`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
 		
 		$ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;

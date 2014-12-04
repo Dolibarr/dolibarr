@@ -1906,7 +1906,7 @@ class Form
 
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
         $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
-        $sql.= " s.nom as name";
+        $sql.= " pfp.fk_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
@@ -1943,6 +1943,7 @@ class Form
         $result=$this->db->query($sql);
         if ($result)
         {
+            require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
 
             $num = $this->db->num_rows($result);
 
@@ -1987,6 +1988,17 @@ class Form
                 {
                     $outqty=$objp->quantity;
 					$outdiscount=$objp->remise_percent;
+                    if (!empty($objp->fk_price_expression)) {
+                        $priceparser = new PriceParser($this->db);
+                        $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_price_expression, $objp->quantity, $objp->tva_tx);
+                        if ($price_result >= 0) {
+                            $objp->fprice = $price_result;
+                            if ($objp->quantity >= 1)
+                            {
+                                $objp->unitprice = $objp->fprice / $objp->quantity;
+                            }
+                        }
+                    }
                     if ($objp->quantity == 1)
                     {
 	                    $opt.= price($objp->fprice,1,$langs,0,0,-1,$conf->currency)."/";
@@ -2075,7 +2087,7 @@ class Form
 
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
         $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
-        $sql.= " s.nom as name";
+        $sql.= " pfp.fk_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
@@ -2100,6 +2112,7 @@ class Form
             }
             else
             {
+                require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
                 $form.= '<option value="0">&nbsp;</option>';
 
                 $i = 0;
@@ -2114,6 +2127,17 @@ class Form
                     }
                     $opt.= '>'.$objp->name.' - '.$objp->ref_fourn.' - ';
 
+                    if (!empty($objp->fk_price_expression)) {
+                        $priceparser = new PriceParser($this->db);
+                        $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_price_expression, $objp->quantity, $objp->tva_tx);
+                        if ($price_result >= 0) {
+                            $objp->fprice = $price_result;
+                            if ($objp->quantity >= 1)
+                            {
+                                $objp->unitprice = $objp->fprice / $objp->quantity;
+                            }
+                        }
+                    }
                     if ($objp->quantity == 1)
                     {
                         $opt.= price($objp->fprice,1,$langs,0,0,-1,$conf->currency)."/";
@@ -2978,12 +3002,13 @@ class Form
 			// Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
             $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
             if (! empty($more)) {
-            	$formconfirm.= '<p>'.$more.'</p>';
+            	$formconfirm.= '<div>'.$more.'</div>';
             }
             $formconfirm.= img_help('','').' '.$question;
-            $formconfirm.= '</div>';
+            $formconfirm.= '</div>'."\n";
 
-            $formconfirm.= '<script type="text/javascript">';
+            $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
+            $formconfirm.= '<script type="text/javascript">'."\n";
             $formconfirm.='
             $(function() {
             	$( "#'.$dialogconfirm.'" ).dialog({
@@ -3050,13 +3075,14 @@ class Form
                 }
             });
             </script>';
+            $formconfirm.= "<!-- end ajax form_confirm -->\n";
         }
         else
         {
         	$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
 
             $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
-            $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">';
+            $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">'."\n";
             $formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
             $formconfirm.= '<table width="100%" class="valid">'."\n";
