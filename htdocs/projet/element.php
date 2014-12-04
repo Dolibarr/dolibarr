@@ -164,18 +164,21 @@ dol_fiche_end();
 
 $listofreferent=array(
 'propal'=>array(
+	'name'=>"Proposalq",
 	'title'=>"ListProposalsAssociatedProject",
 	'class'=>'Propal',
 	'table'=>'propal',
     'datefieldname'=>'datep',
 	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
 'order'=>array(
+	'name'=>"CustomerOrderq",
 	'title'=>"ListOrdersAssociatedProject",
 	'class'=>'Commande',
 	'table'=>'commande',
 	'datefieldname'=>'date_commande',
 	'test'=>$conf->commande->enabled && $user->rights->commande->lire),
 'invoice'=>array(
+	'name'=>"CustomerInvoiceq",
 	'title'=>"ListInvoicesAssociatedProject",
 	'class'=>'Facture',
 	'margin'=>'add',
@@ -183,18 +186,21 @@ $listofreferent=array(
 	'datefieldname'=>'datef',
 	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'invoice_predefined'=>array(
+	'name'=>"PredefinedInvoices",
 	'title'=>"ListPredefinedInvoicesAssociatedProject",
 	'class'=>'FactureRec',
 	'table'=>'facture_rec',
 	'datefieldname'=>'datec',
 	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'order_supplier'=>array(
+	'name'=>"SuplierOrders",
 	'title'=>"ListSupplierOrdersAssociatedProject",
 	'class'=>'CommandeFournisseur',
 	'table'=>'commande_fournisseur',
 	'datefieldname'=>'date_commande',
 	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire),
 'invoice_supplier'=>array(
+	'name'=>"BillsSuppliers",
 	'title'=>"ListSupplierInvoicesAssociatedProject",
 	'class'=>'FactureFournisseur',
 	'margin'=>'minus',
@@ -202,12 +208,14 @@ $listofreferent=array(
 	'datefieldname'=>'datef',
 	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire),
 'contract'=>array(
+	'name'=>"Contracts",
 	'title'=>"ListContractAssociatedProject",
 	'class'=>'Contrat',
 	'table'=>'contrat',
 	'datefieldname'=>'date_contrat',
 	'test'=>$conf->contrat->enabled && $user->rights->contrat->lire),
 'intervention'=>array(
+	'name'=>"Interventions",
 	'title'=>"ListFichinterAssociatedProject",
 	'class'=>'Fichinter',
 	'table'=>'fichinter',
@@ -215,6 +223,7 @@ $listofreferent=array(
 	'disableamount'=>1,
 	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
 'trip'=>array(
+	'name'=>"TripAndExpenses",
 	'title'=>"ListTripAssociatedProject",
 	'class'=>'Deplacement',
 	'table'=>'deplacement',
@@ -223,6 +232,7 @@ $listofreferent=array(
 	'disableamount'=>1,
 	'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
 'agenda'=>array(
+	'name'=>"Agenda",
 	'title'=>"ListActionsAssociatedProject",
 	'class'=>'ActionComm',
 	'table'=>'actioncomm',
@@ -445,8 +455,13 @@ foreach ($listofreferent as $key => $value)
 	}
 }
 
-// Margin display of the project
-print_titre("Margin");
+// Profit for all project
+$langs->load("suppliers");
+$langs->load("bills");
+$langs->load("orders");
+$langs->load("proposals");
+$langs->load("margin");
+print_titre($langs->trans("Profit"));
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td align="left" width="200">'.$langs->trans("Element").'</td>';
@@ -455,9 +470,9 @@ print '<td align="right" width="100">'.$langs->trans("AmountHT").'</td>';
 print '<td align="right" width="100">'.$langs->trans("AmountTTC").'</td>';
 print '</tr>';
 
-
 foreach ($listofreferent as $key => $value)
 {
+	$name=$langs->trans($value['name']);
 	$title=$value['title'];
 	$classname=$value['class'];
 	$tablename=$value['table'];
@@ -486,7 +501,7 @@ foreach ($listofreferent as $key => $value)
 			}
 
 			print '<tr >';
-			print '<td align="left" >'.$classname.'</td>';
+			print '<td align="left" >'.$name.'</td>';
 			print '<td align="right">'.$i.'</td>';
 			print '<td align="right">'.price($total_ht).'</td>';
 			print '<td align="right">'.price($total_ttc).'</td>';
