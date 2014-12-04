@@ -1,3 +1,10 @@
+dolibarr (3.5.6-3) unstable; urgency=low
+
+  [ Laurent Destailleur (eldy) ]
+  * New upstream release.
+    
+ -- Laurent Destailleur (eldy) <eldy@users.sourceforge.net>  Tue, 2 Dec 2014 12:00:00 +0100     
+
 dolibarr (3.5.5-3) unstable; urgency=low
 
   [ Laurent Destailleur (eldy) ]
