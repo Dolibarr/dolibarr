@@ -543,10 +543,10 @@ class ProductFournisseur extends Product
     /**
      *  Sets the price expression
      *
-     *  @param  string  $expression Expression
-     *  @return int                 <0 if KO, >0 if OK
+     *  @param  string  $expression_id	Expression
+     *  @return int                 	<0 if KO, >0 if OK
      */
-    function set_price_expression($expression_id)
+    function setPriceExpression($expression_id)
     {
         global $conf;
 
@@ -557,7 +557,7 @@ class ProductFournisseur extends Product
         $sql.= " SET fk_price_expression = ".$expression_id;
         $sql.= " WHERE rowid = ".$this->product_fourn_price_id;
 
-        dol_syslog(get_class($this)."::set_price_expression", LOG_DEBUG);
+        dol_syslog(get_class($this)."::setPriceExpression", LOG_DEBUG);
 
         $resql = $this->db->query($sql);
         if ($resql)

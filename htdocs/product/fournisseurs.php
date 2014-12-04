@@ -196,7 +196,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 					}
 				}
 				if (! $error && ! empty($conf->dynamicprices->enabled)) {
-					$ret=$product->set_price_expression($price_expression);
+					$ret=$product->setPriceExpression($price_expression);
 					if ($ret < 0)
 					{
 						$error++;
