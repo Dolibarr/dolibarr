@@ -575,6 +575,11 @@ abstract class CommonObject
         global $conf;
 
         if (empty($this->socid)) return 0;
+        
+        if (!class_exists('Societe'))
+	    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
         $thirdparty = new Societe($this->db);
         $result=$thirdparty->fetch($this->socid);
@@ -2192,7 +2197,7 @@ abstract class CommonObject
             {
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field of attribut
-            	if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
+            	if (isset($extrafields->attribute_type[$attributeKey]) && $extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
                 	$sql.=",".$attributeKey;
             }
             $sql .= ") VALUES (".$this->id;
@@ -2200,7 +2205,7 @@ abstract class CommonObject
             {
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field o fattribut
-            	if($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
+            	if(isset($extrafields->attribute_type[$attributeKey]) && $extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
             	{
 	                if ($this->array_options[$key] != '')
 	                {
