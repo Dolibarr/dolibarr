@@ -38,6 +38,7 @@ before_script:
  - pyrus install pear/PHP_CodeSniffer
  - phpenv rehash
  - which phpcs
+ - phpcs --version
  - phpcs -i
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
