@@ -6,6 +6,7 @@
 	<exclude-pattern>*/conf.php</exclude-pattern>
 	<exclude-pattern>*/includes/*</exclude-pattern>
 	<exclude-pattern>*/documents/*</exclude-pattern>
+	<exclude-pattern>*/dev/vagrant/*</exclude-pattern>
 	<exclude-pattern>*/custom/*</exclude-pattern>
 	<exclude-pattern>*/nltechno*</exclude-pattern>
 		
@@ -260,7 +261,10 @@
 	<rule ref="PEAR.Functions.FunctionCallSignature.Indent">
 	    <severity>0</severity>
 	</rule>
-    <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterOpenBracket">
+    <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeOpenBracket">
+        <severity>0</severity>
+    </rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterOpenBracket">
         <severity>0</severity>
     </rule>
     <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeCloseBracket">
@@ -275,7 +279,6 @@
     <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
         <severity>0</severity>
     </rule>
-
 	
 	<rule ref="PEAR.Functions.ValidDefaultValue" />
 
