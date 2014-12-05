@@ -530,6 +530,7 @@ if ($id > 0)
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
+				$var=!$var;
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap"><a href="propal.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a>'."\n";
 				if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 )
@@ -539,7 +540,6 @@ if ($id > 0)
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td align="right" style="min-width: 60px" class="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
-				$var=!$var;
 				$i++;
 			}
 			$db->free($resql);
