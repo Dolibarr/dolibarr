@@ -58,10 +58,15 @@ print $form->multiselectarray('testmulti', $array, $arrayselected, '', 0, '', 0,
 print '<br><br>'."\n";
 
 // Test5: a select
-print "Test 5: a select<br>\n";
+print "Test 5a: a select<br>\n";
+$array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3 ith a very long text. aze eazeae e ae aeae a e a ea ea ea e a e aea e ae aeaeaeaze.');
+$selected=3;
+print $form->selectarray('testselecta', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
+print '<br>';
+print "Test 5b: a select<br>\n";
 $array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3');
 $selected=3;
-print $form->selectarray('testselect', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"');
+print $form->selectarray('testselectb', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
 
 
 llxFooter();

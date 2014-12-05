@@ -323,34 +323,23 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 	if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 
-	/* Some properties for combobox:
-	minLengthToAutocomplete: 2,
-	comboboxContainerClass: "comboboxContainer",
-	comboboxValueContainerClass: "comboboxValueContainer",
-	comboboxValueContentClass: "comboboxValueContent",
-	comboboxDropDownClass: "comboboxDropDownContainer",
-	comboboxDropDownButtonClass: "comboboxDropDownButton",
-	comboboxDropDownItemClass: "comboboxItem",
-	comboboxDropDownItemHoverClass: "comboboxItemHover",
-	comboboxDropDownGroupItemHeaderClass: "comboboxGroupItemHeader",
-	comboboxDropDownGroupItemContainerClass: "comboboxGroupItemContainer",
-	animationType: "slide",
-	width: "500px" */
-
 	$msg = '<script type="text/javascript">
 	$(document).ready(function() {
-    	$("#'.$htmlname.'").combobox({
-    		minLengthToAutocomplete : '.$minLengthToAutocomplete.',
-    		selected : function(event,ui) {
-    			var obj = '.json_encode($events).';
-    			$.each(obj, function(key,values) {
+
+		$(\'#'.$htmlname.'\').select2({
+					width: \'resolve\',
+					minimumInputLength: '.$minLengthToAutocomplete.',
+		});
+		jQuery("#'.$htmlname.'").change(function () {
+				var obj = '.json_encode($events).';
+	   			$.each(obj, function(key,values) {
     				if (values.method.length) {
     					runJsCodeForEvent'.$htmlname.'(values);
     				}
 				});
-			}
 		});
-
+		
+		
 		function runJsCodeForEvent'.$htmlname.'(obj) {
 			var id = $("#'.$htmlname.'").val();
 			var method = obj.method;
