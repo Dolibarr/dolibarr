@@ -108,6 +108,23 @@ http://bugs.debian.org/package
 severity 123 xxx
 
 
+##### Update but tracker system
+
+To set status of a bug to "pending"
+> bts tag 999999 +pending
+
+or replay to email 999999@bugs.debian.org + submitter of bug
+With a message starting with: 
+
+Control: tag -1 +pending
+Thanks. Fixed into git.
+
+or replay to email control@bugs.debian.org
+With only message 
+tag 729538 +pending
+
+
+
 ##### Testing a package into unstable env
 
 Check you have a mysql server available from another interface than localhost
@@ -200,23 +217,6 @@ Note: If there was errors managed manually, you may need to make a git commit bu
 http://packages.qa.debian.org/t/tcpdf.html
 
 * Package will be into release when test will be moved as stable.
-
-
-
-##### Update but tracker system
-To set status of a bug to pending
-> bts tag 999999 +pending
-
-or replay to email 999999@bugs.debian.org + submitter of bug
-With a message starting with: 
-Control: tag -1 +pending
-and then a text like:
-Thanks. Fixed into git.
-
-or replay to email control@bugs.debian.org
-With only message 
-tag 729538 +pending
-
 
 
 ##### Create/Maintain dolibarr package
