@@ -1007,7 +1007,8 @@ class Task extends CommonObject
 
 		$error=0;
 
-		$now=dol_now();
+		//Use 00:00 of today if time is use on task.
+		$now=dol_mktime(0,0,0,dol_print_date(dol_now(),'%m'),dol_print_date(dol_now(),'%d'),dol_print_date(dol_now(),'%Y'));
 
 		$datec = $now;
 
