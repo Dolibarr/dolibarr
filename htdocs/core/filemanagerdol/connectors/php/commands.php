@@ -53,6 +53,13 @@ function GetFolders( $resourceType, $currentFolder )
 	echo "</Folders>" ;
 }
 
+/**
+ * GetFoldersAndFiles
+ *
+ * @param	string	$resourceType	Resource type
+ * @param	string	$currentFolder	Current folder
+ * @return void
+ */
 function GetFoldersAndFiles( $resourceType, $currentFolder )
 {
 	// Map the virtual path to the local server path.
