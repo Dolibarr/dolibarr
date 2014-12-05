@@ -72,8 +72,6 @@ class Conf
 
 	/**
 	 * Constructor
-	 *
-	 * @return Conf
 	 */
 	function __construct()
 	{
