@@ -32,10 +32,12 @@ before_script:
 # - echo Update composer
 # - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
  - echo PHPUnit version
+ - which phpunit
  - phpunit --version
  - echo Install phpcs then show installed rules
  - pyrus install pear/PHP_CodeSniffer
  - phpenv rehash
+ - which phpcs
  - phpcs -i
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
