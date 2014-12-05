@@ -28,7 +28,7 @@ class dolprintIPP
 {
     var $host;
     var $port;
-    var $userid;	/* user login */
+    var $userid;    /* user login */
     var $user;
     var $password;
     var $error;

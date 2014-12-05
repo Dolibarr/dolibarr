@@ -274,7 +274,7 @@ class FormFile
         $printer=0;
         if (in_array($modulepart,array('facture','propal','proposal','order','commande')))	// This feature is implemented only for such elements
         {
-        	$printer = (!empty($user->rights->printipp->read) && !empty($conf->printipp->enabled))?true:false;
+            $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
         }
         
         $hookmanager->initHooks(array('formfile'));

@@ -553,7 +553,7 @@ else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST(
 	}
 }
 
-include DOL_DOCUMENT_ROOT.'/core/actions_printipp.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 
 /*
