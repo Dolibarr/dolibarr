@@ -127,11 +127,12 @@ tag 729538 +pending
 
 ##### Testing a package into unstable env
 
-Check you have a mysql server available from another interface than localhost
+Check you have a mysql server available from another interface than "localhost".
 Comment line in /etc/mysql/my.cnf if required and restart mysql
 #bind-address = 127.0.0.1
 
-Create a chroot called "unstable-amd64-sbuild"
+Create a chroot called "unstable-amd64-sbuild".
+Chroot env is stored into /srv/chroot directory.
 > sudo sbuild-createchroot --keyring= unstable /srv/chroot/unstable http://ftp.uk.debian.org/debian
 
 Pour lister les env chroot
@@ -139,6 +140,7 @@ Pour lister les env chroot
 
 Puis pour se connecter et préparer l'environnement 
 > schroot -c name_of_chroot
+> cat /etc/debian_chroot       to check which debian branch we are into
 > vi /usr/sbin/policy-rc.d     and replace return code 101 (not allowed) into 0 (ok)
 > apt-get install links mysql-client
 
@@ -152,7 +154,10 @@ Pour tester un package
 > dpkg -i dolibarr*.deb  ou   pour avoir des traces: dpkg -D77777 -i dolibarr*.deb
 > apt-get install -f
 
-Puis http://localhost/dolibarr/ (cela peut etre appeler depuis le hote).
+If there is a problem launching apache, because port is already used, change it into your chroot install with
+> vi /etc/apache2/ports.conf
+Then restart.
+Then you can call/test dolibarr with http://localhost:port/dolibarr/ (It can be also called from host).
 
 
 
@@ -257,7 +262,7 @@ x.y.z+dfsgw
 Note: If there was errors solved manually after get-orig-sources.sh, you may need to make a git commit
 
 * Add an entry into debian/changelog
-> dch -v x.y.z+dfsg-w "My comment" will add entry.
+> dch -v x.y.z+dfsgw-v "My comment" will add entry.
 For example: dch -v x.y.z+dfsgw-1 "New upstream release." for a new version (x.y.z = version, w start from 1 and increaed for each new import)
 Then modify changelog to replace "version" or "unstable" with "UNRELEASED".
 Then check/modify also the user/date signature:
