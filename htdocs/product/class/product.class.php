@@ -2659,7 +2659,7 @@ class Product extends CommonObject
 	function getFather()
 	{
 
-		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
+		$sql = "SELECT p.ref, p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
@@ -2672,6 +2672,7 @@ class Product extends CommonObject
 			while ($record = $this->db->fetch_array($res))
 			{
 				$prods[$record['id']]['id'] =  $record['rowid'];
+				$prods[$record['id']]['ref'] =  $record['ref'];
 				$prods[$record['id']]['label'] =  $this->db->escape($record['label']);
 				$prods[$record['id']]['fk_product_type'] =  $record['fk_product_type'];
 			}
