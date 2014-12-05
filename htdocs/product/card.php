@@ -1122,7 +1122,7 @@ else
 
 			// Batch number managment
 			if ($conf->productbatch->enabled) {
-				print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
+				print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
 				$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
 				print $form->selectarray('status_batch',$statutarray,$object->status_batch);
 				print '</td></tr>';
