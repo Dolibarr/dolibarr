@@ -183,8 +183,9 @@ foreach ($syslogModules as $moduleName)
 {
 	$module = new $moduleName;
 
-	$moduleactive=$module->isActive();
-	if ($moduleactive == -1 && empty($conf->global->MAIN_FEATURES_LEVEL)) continue;		// Some modules are hidden if not activable and not into debug mode (end user must not see them)
+	$moduleactive=(int) $module->isActive();
+	//print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";
+	if (($moduleactive == -1) && empty($conf->global->MAIN_FEATURES_LEVEL)) continue;		// Some modules are hidden if not activable and not into debug mode (end user must not see them)
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
@@ -199,7 +200,7 @@ foreach ($syslogModules as $moduleName)
 	{
 		foreach ($setuparray as $option)
 		{
-			if (isset($_POST[$option['constant']])) $value=$_POST[$option['constant']]; 
+			if (isset($_POST[$option['constant']])) $value=$_POST[$option['constant']];
 			else if (defined($option['constant'])) $value = constant($option['constant']);
 			else $value = (isset($option['default']) ? $option['default'] : '');
 
@@ -220,7 +221,7 @@ foreach ($syslogModules as $moduleName)
 print "</table>\n";
 print "</form>\n";
 
-print '<br>';
+print '<br>'."\n\n";
 
 print_titre($langs->trans("SyslogLevel"));
 

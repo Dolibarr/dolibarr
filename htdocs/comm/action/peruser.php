@@ -201,6 +201,7 @@ if ($filter)  $param.="&filter=".$filter;
 if ($filtera) $param.="&filtera=".$filtera;
 if ($filtert) $param.="&filtert=".$filtert;
 if ($filterd) $param.="&filterd=".$filterd;
+if ($usergroup) $param.="&usergroup=".$usergroup;
 if ($socid)   $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
 if ($pid)     $param.="&projectid=".$pid;
@@ -242,6 +243,20 @@ $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$
 $picto='calendarweek';
 
 $nav.=' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
+$nav.='<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+$nav.='<input type="hidden" name="action" value="' . $action . '">';
+$nav.='<input type="hidden" name="usertodo" value="' . $filtert . '">';
+$nav.='<input type="hidden" name="usergroup" value="' . $usergroup . '">';
+$nav.='<input type="hidden" name="actioncode" value="' . $actioncode . '">';
+$nav.='<input type="hidden" name="status" value="' . $status . '">';
+$nav.='<input type="hidden" name="socid" value="' . $socid . '">';
+$nav.='<input type="hidden" name="projectid" value="' . $projectid . '">';
+$nav.='<input type="hidden" name="begin_h" value="' . $begin_h . '">';
+$nav.='<input type="hidden" name="end_h" value="' . $end_h . '">';
+$nav.='<input type="hidden" name="begin_d" value="' . $begin_d . '">';
+$nav.='<input type="hidden" name="end_d" value="' . $end_d . '">';
+$nav.='<input type="hidden" name="showbirthday" value="' . $showbirthday . '">';
+
 $nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav.='</form>';
@@ -659,10 +674,12 @@ while ($obj = $db->fetch_object($resql))
 $todayarray=dol_getdate($now,'fast');
 $sav = $tmpday;
 $showheader = true;
+$var = false;
 foreach ($usernames as $username)
 {
+	$var = ! $var;
 	echo "<tr>";
-	echo '<td class="cal_current_month">' . $username->getNomUrl(1). '</td>';
+	echo '<td class="cal_current_month"'.($var?' style="background: #F8F8F8"':'').'>' . $username->getNomUrl(1). '</td>';
 	$tmpday = $sav;
 
 	// Lopp on each day of week
@@ -688,7 +705,7 @@ foreach ($usernames as $username)
 		if ($todayarray['mday']==$tmpday && $todayarray['mon']==$tmpmonth && $todayarray['year']==$tmpyear) $today=1;
 		if ($today) $style='cal_today_peruser';
 
-		show_day_events2($username, $tmpday, $tmpmonth, $tmpyear, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader, $colorsbytype);
+		show_day_events2($username, $tmpday, $tmpmonth, $tmpyear, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader, $colorsbytype, $var);
 
 		$i++;
 	}
@@ -785,9 +802,10 @@ $db->close();
  * @param   int		$minheight      Minimum height for each event. 60px by default.
  * @param	boolean	$showheader		Show header
  * @param	array	$colorsbytype	Array with colors by type
+ * @param	string	$var			true or false for alternat style on tr/td
  * @return	void
  */
-function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false, $colorsbytype=array())
+function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false, $colorsbytype=array(), $var=false)
 {
 	global $db;
 	global $user, $conf, $langs, $hookmanager, $action;
@@ -989,8 +1007,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 
 
-		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser">';
-		else echo '<td class="'.$style.' cal_peruser">';
+		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser"'.($var?' style="background: #F8F8F8"':'').'>';
+		else echo '<td class="'.$style.' cal_peruser"'.($var?' style="background: #F8F8F8"':'').'>';
 		if (count($cases1[$h]) == 1)	// 1 seul evenement
 		{
 			$ids=array_keys($cases1[$h]);
@@ -1008,8 +1026,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			if ($output[0]['color']) $color2 = $output[0]['color'];
 		}
 		else if (count($cases2[$h]) > 1) $color2='222222';
-		$ids1=join(',',array_keys($cases1[$h]));
-		$ids2=join(',',array_keys($cases2[$h]));
+		$ids1='';$ids2='';
+		if (count($cases1[$h]) && array_keys($cases1[$h])) $ids1=join(',',array_keys($cases1[$h]));
+		if (count($cases2[$h]) && array_keys($cases2[$h])) $ids2=join(',',array_keys($cases2[$h]));
 		//var_dump($cases1[$h]);
 		print '<table class="nobordernopadding" width="100%">';
 		print '<tr><td '.($color1?'style="background: #'.$color1.';"':'').'class="'.($style1?$style1.' ':'').'onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_00_'.($ids1?$ids1:'none').'"'.($title1?' title="'.$title1.'"':'').'>';

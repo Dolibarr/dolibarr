@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Zákazky oblasť
 ListOfContracts=Prehľad zmlúv
-LastContracts=Posledné %s upravenej zmluvy
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Všetky zmluvy
 ContractCard=Zmluva karty
 ContractStatus=Stav zmluvy
@@ -27,7 +27,7 @@ MenuRunningServices=Spustené služby
 MenuExpiredServices=Prepadnuté služby
 MenuClosedServices=Uzavreté služby
 NewContract=Nová zmluva
-AddContract=Pridať zákazku
+AddContract=Create contract
 SearchAContract=Hľadať zmluvu
 DeleteAContract=Odstránenie zmluvu
 CloseAContract=Zavrieť zmluvu
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Zoznam bežiacich zmlúv liniek
 ListOfRunningServices=Zoznam spustených služieb
 NotActivatedServices=Neaktívne služby (u overených zmlúv)
 BoardNotActivatedServices=Služby pre aktiváciu u overených zmlúv
-LastContracts=Posledné %s upravenej zmluvy
+LastContracts=Last % contracts
 LastActivatedServices=Posledné %s aktiváciu služby
 LastModifiedServices=Posledné %s upravené služby
 EditServiceLine=Upraviť linka

@@ -63,6 +63,14 @@ $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
 $search_all=GETPOST("search_all");
 
+// Purge criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_ref="";
+	$search_label="";
+	$search_societe="";
+	$search_all=0;
+}
 
 /*
  * View
@@ -147,8 +155,10 @@ if ($resql)
 	print '<input type="text" class="flat" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
-	print "</tr>\n";
+	print '<td class="liste_titre nowrap" align="right">';
+    print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print '</td>';
 
 	while ($i < $num)
 	{

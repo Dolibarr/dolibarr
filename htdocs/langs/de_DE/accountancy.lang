@@ -25,12 +25,12 @@ Selectchartofaccounts=Kontenplan wählen
 Validate=Freigeben
 Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
 AccountAccounting=Buchhaltungs Konto
-Ventilation=Erörterung
+Ventilation=Breakdown
 ToDispatch=Zu versenden
 Dispatched=Versandt
 
-CustomersVentilation=Ventilation customers
-SuppliersVentilation=Ventilation suppliers
+CustomersVentilation=Breakdown customers
+SuppliersVentilation=Breakdown suppliers
 TradeMargin=Handelsspanne
 Reports=Berichte
 ByCustomerInvoice=Nach Kundenrechnungen
@@ -45,9 +45,9 @@ WriteBookKeeping=Record accounts in general ledger
 Bookkeeping=Hauptbuch
 AccountBalanceByMonth=Kontostand pro Monat
 
-AccountingVentilation=Accounting ventilation
-AccountingVentilationSupplier=Accounting ventilation supplier
-AccountingVentilationCustomer=Accounting ventilation customer
+AccountingVentilation=Breakdown accounting
+AccountingVentilationSupplier=Breakdown accounting supplier
+AccountingVentilationCustomer=Breakdown accounting customer
 Line=Zeile
 
 CAHTF=Total purchase supplier HT
@@ -56,32 +56,32 @@ InvoiceLinesDone=Ventilated lines of invoice
 IntoAccount=In the accounting account
 
 Ventilate=erörtern
-VentilationAuto=Automatic ventilation
+VentilationAuto=Automatic breakdown
 
-Processing=Processing
-EndProcessing=The end of processing
+Processing=Bearbeitung
+EndProcessing=Das Ende der Verarbeitung
 AnyLineVentilate=Any lines to ventilate
 SelectedLines=Gewählte Zeilen
 Lineofinvoice=Rechnungszeile
 VentilatedinAccount=Ventilated successfully in the accounting account
 NotVentilatedinAccount=Not ventilated in the accounting account
 
-ACCOUNTING_SEPARATORCSV=Separator CSV
+ACCOUNTING_SEPARATORCSV=CSV Trennzeichen
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
 AccountLength=Length of the accounting accounts shown in Dolibarr
 AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
-ACCOUNTING_CASH_JOURNAL=Cash journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
+ACCOUNTING_SELL_JOURNAL=Verkaufsjournal
+ACCOUNTING_PURCHASE_JOURNAL=Einkaufsjournal
+ACCOUNTING_BANK_JOURNAL=Bankauszug
+ACCOUNTING_CASH_JOURNAL=Kassenbeleg
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Verschiedenes Journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
@@ -110,9 +110,9 @@ SellsJournal=Verkaufsjournal
 PurchasesJournal=Einkaufsjournal
 DescSellsJournal=Verkaufsjournal
 DescPurchasesJournal=Einkaufsjournal
-BankJournal=Bank journal
+BankJournal=Bankauszug
 DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
+CashJournal=Kassenbeleg
 DescCashJournal=Cash journal including the type of payment cash
 
 CashPayment=Barzahlung
@@ -120,7 +120,7 @@ CashPayment=Barzahlung
 SupplierInvoicePayment=Rechnungszahlung (Lieferant)
 CustomerInvoicePayment=Rechnungszahlung (Kunde)
 
-ThirdPartyAccount=Thirdparty account
+ThirdPartyAccount=Partner Konto
 
 NewAccountingMvt=Neue Änderung
 NumMvts=Number of movement
@@ -140,14 +140,14 @@ Active=Auszug
 
 NewFiscalYear=Neues fiskalisches Jahr
 
-DescVentilCustomer=Consult here the annual accounting ventilation of your invoices customers
+DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover HT
 TotalMarge=Gesamt-Spanne
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
 DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
 ChangeAccount=Change the accounting account for lines selected by the account:
 Vide=-
-DescVentilSupplier=Consult here the annual accounting ventilation of your invoices suppliers
+DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
 DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
 DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
 
@@ -155,4 +155,4 @@ ValidateHistory=Automatisch geltend machen
 
 ErrorAccountancyCodeIsAlreadyUse=Fehler, Sie können dieses Buchaltungskonto nicht löschen, da es benutzt wird.
 
-FicheVentilation=Ventilation card
+FicheVentilation=Breakdown card

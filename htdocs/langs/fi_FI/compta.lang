@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Bad asiakas kirjanpitotietojen koodi %s
 SuppliersProductsSellSalesTurnover=Luotu liikevaihto myynti toimittajien tuotteita.
 CheckReceipt=Tarkista tallettaa
 CheckReceiptShort=Tarkista tallettaa
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Uusi edullisista
 NewCheckDeposit=Uusi tarkistaa talletus
 NewCheckDepositOn=Uusi tarkistaa talletuksen huomioon: %s

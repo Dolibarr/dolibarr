@@ -58,7 +58,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
 // Purge search criteria
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_ref='';
     $search_refsupp='';
@@ -123,7 +123,7 @@ if ($search_user)
 }
 if ($search_ttc)
 {
-	$sql .= " AND total_ttc = ".price2num($search_ttc);
+	$sql .= " AND total_ttc = '".$db->escape(price2num($search_ttc))."'";
 }
 if ($sall)
 {

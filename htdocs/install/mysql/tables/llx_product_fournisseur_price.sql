@@ -39,5 +39,6 @@ create table llx_product_fournisseur_price
   tva_tx				double(6,3) NOT NULL,
   info_bits				integer NOT NULL DEFAULT 0,
   fk_user				integer,
+  fk_price_expression	integer,                     -- Link to the rule for dynamic amount calculation
   import_key			varchar(14)                  -- Import key
 )ENGINE=innodb;

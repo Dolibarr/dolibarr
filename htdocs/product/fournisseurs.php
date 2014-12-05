@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2014      Ion Agorria          <ion@agorria.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +31,12 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/priceexpression.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
 
 $langs->load("products");
 $langs->load("suppliers");
 $langs->load("bills");
-// Charges ????
 if (! empty($conf->margin->enabled)) $langs->load("margins");
 
 $id = GETPOST('id', 'int');
@@ -104,6 +106,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
     $npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
     $tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
     $tva_tx = price2num($tva_tx);
+    $price_expression = GETPOST('eid', 'int') == 0 ? 'NULL' : GETPOST('eid', 'int'); //Discard expression if not in expression mode
 
     if ($tva_tx == '')
     {
@@ -127,8 +130,14 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 	}
 	if ($_POST["price"] < 0 || $_POST["price"] == '')
 	{
-		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")), 'errors');
+		if ($price_expression == 'NULL') { //This is not because of using expression instead of numeric price
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")), 'errors');
+		}
+		else
+		{
+			$_POST["price"] = 0;
+		}
 	}
 
 	$product = new ProductFournisseur($db);
@@ -174,6 +183,26 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 			{
 				$error++;
 				setEventMessage($product->error, 'errors');
+			} 
+			else 
+			{
+				if ($price_expression != 'NULL') {
+					//Check the expression validity by parsing it
+	                $priceparser = new PriceParser($db);
+	                $price_result = $priceparser->parseProductSupplier($id, $price_expression, $quantity, $tva_tx);
+	                if ($price_result < 0) { //Expression is not valid
+						$error++;
+						setEventMessage($priceparser->translatedError(), 'errors');
+					}
+				}
+				if (! $error && ! empty($conf->dynamicprices->enabled)) {
+					$ret=$product->setPriceExpression($price_expression);
+					if ($ret < 0)
+					{
+						$error++;
+						setEventMessage($product->error, 'errors');
+					}
+				}
 			}
 		}
 
@@ -267,7 +296,7 @@ if ($id || $ref)
 
 				if ($rowid)
 				{
-					$product->fetch_product_fournisseur_price($rowid);
+					$product->fetch_product_fournisseur_price($rowid, 1); //Ignore the math expression when getting the price
 					print_fiche_titre($langs->trans("ChangeSupplierPrice"));
 				}
 				else
@@ -369,8 +398,41 @@ if ($id || $ref)
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):'')).'">';
 				print '</td></tr>';
 
+				if (! empty($conf->dynamicprices->enabled)) { //Only show price mode and expression selector if module is enabled
+					// Price mode selector
+					print '<tr><td class="fieldrequired">'.$langs->trans("PriceMode").'</td><td>';
+					$price_expression = new PriceExpression($db);
+					$price_expression_list = array(0 => $langs->trans("PriceNumeric")); //Put the numeric mode as first option
+					foreach ($price_expression->list_price_expression() as $entry) {
+						$price_expression_list[$entry->id] = $entry->title;
+					}
+					$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($product->fk_price_expression ? $product->fk_price_expression : '0');
+					print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
+					print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
+					print '</td></tr>';
+					// This code hides the numeric price input if is not selected, loads the editor page if editor button is pressed
+					print '<script type="text/javascript">
+						jQuery(document).ready(run);
+						function run() {
+							jQuery("#expression_editor").click(on_click);
+							jQuery("#eid").change(on_change);
+							on_change();
+						}
+						function on_click() {
+							window.location = "'.DOL_URL_ROOT.'/product/expression.php?id='.$id.'&tab=fournisseurs&eid=" + $("#eid").attr("value");
+						}
+						function on_change() {
+							if ($("#eid").attr("value") == 0) {
+								jQuery("#price_numeric").show();
+							} else {
+								jQuery("#price_numeric").hide();
+							}
+						}
+					</script>';
+				}
+
 				// Price qty min
-				print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
+				print '<tr id="price_numeric"><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 				print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price')?price(GETPOST('price')):(isset($product->fourn_price)?price($product->fourn_price):'')).'">';
 				print '&nbsp;';
 				print $form->select_PriceBaseType((GETPOST('price_base_type')?GETPOST('price_base_type'):$product->price_base_type), "price_base_type");
@@ -383,15 +445,18 @@ if ($id || $ref)
 				print '</tr>';
 
 				// Charges ????
-				if (! empty($conf->margin->enabled))
+				if ($conf->global->PRODUCT_CHARGES)
 				{
-					print '<tr>';
-					print '<td>'.$langs->trans("Charges").'</td>';
-					print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges')?price(GETPOST('charges')):(isset($product->fourn_charges)?price($product->fourn_charges):'')).'">';
-	        		print '</td>';
-					print '</tr>';
+					if (! empty($conf->margin->enabled))
+					{
+						print '<tr>';
+						print '<td>'.$langs->trans("Charges").'</td>';
+						print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges')?price(GETPOST('charges')):(isset($product->fourn_charges)?price($product->fourn_charges):'')).'">';
+		        		print '</td>';
+						print '</tr>';
+					}
 				}
-
+				
 				if (is_object($hookmanager))
 				{
 					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$product->id);
@@ -400,9 +465,11 @@ if ($id || $ref)
 
 				print '</table>';
 
-				print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'">';
-				print '&nbsp; &nbsp;';
-				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+				print '<br><div class="center">';
+				print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '</div>';
 
 				print '</form>';
 			}
@@ -444,11 +511,17 @@ if ($id || $ref)
 				print '<td class="liste_titre" align="right">'.$langs->trans("VATRate").'</td>';
 				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
 				// Charges ????
-				if (! empty($conf->margin->enabled)) print '<td align="right">'.$langs->trans("Charges").'</td>';
+				if ($conf->global->PRODUCT_CHARGES)
+				{
+					if (! empty($conf->margin->enabled)) print '<td align="right">'.$langs->trans("Charges").'</td>';
+				}
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("DiscountQtyMin").'</td>';
 				// Charges ????
-				if (! empty($conf->margin->enabled)) print '<td align="right">'.$langs->trans("UnitCharges").'</td>';
+				if ($conf->global->PRODUCT_CHARGES)
+				{
+					if (! empty($conf->margin->enabled)) print '<td align="right">'.$langs->trans("UnitCharges").'</td>';
+				}
 				print '<td class="liste_titre"></td>';
 				print "</tr>\n";
 
@@ -494,13 +567,16 @@ if ($id || $ref)
 						print '</td>';
 
 						// Charges ????
-						if (! empty($conf->margin->enabled))
-						{
-							print '<td align="right">';
-							print $productfourn->fourn_charges?price($productfourn->fourn_charges):"";
-							print '</td>';
+						if ($conf->global->PRODUCT_CHARGES)
+						{	
+							if (! empty($conf->margin->enabled))
+							{
+								print '<td align="right">';
+								print $productfourn->fourn_charges?price($productfourn->fourn_charges):"";
+								print '</td>';
+							}
 						}
-
+						
 						// Unit price
 						print '<td align="right">';
 						print price($productfourn->fourn_unitprice);
@@ -512,14 +588,17 @@ if ($id || $ref)
 						print price2num($productfourn->fourn_remise_percent).'%';
 						print '</td>';
 
-						// Unit Charges ???
-						if (! empty($conf->margin->enabled))
+						// Charges ????
+						if ($conf->global->PRODUCT_CHARGES)
 						{
-							print '<td align="right">';
-							print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
-							print '</td>';
+							if (! empty($conf->margin->enabled))
+							{
+								print '<td align="right">';
+								print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
+								print '</td>';
+							}
 						}
-
+						
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$product->id);

@@ -192,7 +192,7 @@ $tabfield[3] = "code,libelle,country_id,country";
 $tabfield[4] = "code,label";
 $tabfield[5] = "code,label";
 $tabfield[6] = "code,libelle,type,color,position";
-$tabfield[7] = "code,libelle,country_id,country,accountancy_code,deductible";
+$tabfield[7] = "code,libelle,country,accountancy_code,deductible";
 $tabfield[8] = "code,libelle,country_id,country";
 $tabfield[9] = "code,label,unicode";
 $tabfield[10]= "country_id,country,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
@@ -453,8 +453,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
+        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
     	if ($value == 'country' && in_array($tablib[$id],array('DictionaryCanton','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
-        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryRegion','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
         if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
         if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
         if ($value == 'color' && empty($_POST['color'])) continue;
@@ -1361,14 +1361,18 @@ function fieldList($fieldlist,$obj='',$tabname='')
 				continue;
 			}	// For state page, we do not show the country input (we link to region, not country)
 			print '<td>';
-			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:'')), 'country', '', 28);
+			$fieldname='country';
+			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:'')), $fieldname, '', 28);
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'country_id') {
-			$country_id = (! empty($obj->$fieldlist[$field]) ? $obj->$fieldlist[$field] : 0);
-			print '<td>';
-			print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$country_id.'">';
-			print '</td>';
+			if (! in_array('country',$fieldlist))	// If there is already a field country, we don't show country_id (avoid duplicate)
+			{
+				$country_id = (! empty($obj->$fieldlist[$field]) ? $obj->$fieldlist[$field] : 0);
+				print '<td>';
+				print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$country_id.'">';
+				print '</td>';
+			}
 		}
 		elseif ($fieldlist[$field] == 'region') {
 			print '<td>';

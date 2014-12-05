@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Bad zákazník účetní kód pro %s
 SuppliersProductsSellSalesTurnover=Celkový obrat z prodeje výrobků dodavatele.
 CheckReceipt=Podívejte se vklad
 CheckReceiptShort=Podívejte se vklad
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Nová sleva
 NewCheckDeposit=Nová kontrola záloha
 NewCheckDepositOn=Vytvořte potvrzení o vkladu na účet: %s

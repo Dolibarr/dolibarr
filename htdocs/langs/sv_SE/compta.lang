@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - compta
 Accountancy=Bokföring
-AccountancyCard=Bokföring kort
+AccountancyCard=Bokföringskort
 Treasury=Treasury
 MenuFinancial=Finansiella
 TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
@@ -100,14 +100,15 @@ AccountNumberShort=Kontonummer
 AccountNumber=Kontonummer
 NewAccount=Nytt konto
 SalesTurnover=Omsättningen
-SalesTurnoverMinimum=Minimum sales turnover
-ByThirdParties=Bu tredje part
+SalesTurnoverMinimum=Minsta omsättning
+ByThirdParties=Av tredje part
 ByUserAuthorOfInvoice=Mot faktura författare
 AccountancyExport=Bokföring export
 ErrorWrongAccountancyCodeForCompany=Bad kund bokföring kod för %s
 SuppliersProductsSellSalesTurnover=Den omsättning som försäljningen av leverantörens produkter.
 CheckReceipt=Kontrollera insättning
 CheckReceiptShort=Kontrollera insättning
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Ny rabatt
 NewCheckDeposit=Nya kontrollera insättning
 NewCheckDepositOn=Skapa kvitto för insättning på konto: %s

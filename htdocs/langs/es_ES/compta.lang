@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=Código contable incorrecto para %s
 SuppliersProductsSellSalesTurnover=Volumen de ventas generado por la venta de los productos de los proveedores
 CheckReceipt=Lista de remesas
 CheckReceiptShort=Remesas
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=Nueva remesa
 NewCheckDeposit=Nuevo ingreso
 NewCheckDepositOn=Crear nueva remesa en la cuenta: %s

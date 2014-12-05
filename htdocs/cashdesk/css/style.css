@@ -222,6 +222,7 @@ p.titre {
 	margin: 0 15px;
 	padding: 0;
 	max-width: 500px;
+	width: 100%;
 }
 
 .titre1 {
@@ -308,7 +309,7 @@ p.titre {
 }
 
 .texte_ref {
-	width: 80px;
+	min-width: 150px;
 }
 
 .texte1,.texte1_off {
@@ -321,8 +322,8 @@ p.titre {
 
 /* ------------------- */
 .textarea_note {
-	width: 300px;
-	height: 150px;
+	width: 100%;
+	height: 50px;
 	padding: 2px 2px;
 }
 
@@ -362,7 +363,7 @@ p.titre {
 }
 
 .resume_label,.note_label {
-	width: 200px;
+	min-width: 200px;
 	font-weight: bold;
 	font-size: 1.1em;
 }

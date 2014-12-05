@@ -71,7 +71,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("BillsSetup"),$linkback,'setup');
 print '<br>';
 
-$head = invoice_admin_prepare_head(null);
+$head = invoice_admin_prepare_head();
 
 dol_fiche_head($head, 'attributeslines', $langs->trans("Invoices"), 0, 'invoice');
 

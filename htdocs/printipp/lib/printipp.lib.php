@@ -36,12 +36,12 @@ function printippadmin_prepare_head()
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT."/printipp/admin/printipp.php?mode=config";
-    $head[$h][1] = $langs->trans("Config");
+    $head[$h][1] = $langs->trans("CupsServer");
     $head[$h][2] = 'config';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT."/printipp/admin/printipp.php?mode=test";
-    $head[$h][1] = $langs->trans("Test");
+    $head[$h][1] = $langs->trans("Printer");
     $head[$h][2] = 'test';
     $h++;
 

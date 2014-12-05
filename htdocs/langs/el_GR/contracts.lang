@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Περιοχή Συμβολαίων
 ListOfContracts=Λίστα Συμβολαίων
-LastContracts=%s συμβόλαια που τροποποιήθηκαν πρόσφατα
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Όλα τα συμβόλαια
 ContractCard=Κάρτέλα  Συμβολαίου
 ContractStatus=Κατάσταση συμβολαίου
@@ -27,7 +27,7 @@ MenuRunningServices=Ενεργές Υπηρεσίες
 MenuExpiredServices=Ληγμένες Υπηρεσίες
 MenuClosedServices=Τερματισμένες Υπηρεσίες
 NewContract=Νέο Συμβόλαιο
-AddContract=Προσθήκη Συμβολαίου
+AddContract=Δημιουργία σύμβασης
 SearchAContract=Εύρεση Συμβολαίου
 DeleteAContract=Διαγραφή Συμβολαίου
 CloseAContract=Τερματισμός Συμβολαίου
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=List of running contract lines
 ListOfRunningServices=Λίστα τρέχουσων υπηρεσιών
 NotActivatedServices=Inactive services (among validated contracts)
 BoardNotActivatedServices=Υπηρεσίες προς ενεργοποίηση σε επικυρωμένα συμβόλαια
-LastContracts=%s συμβόλαια που τροποποιήθηκαν πρόσφατα
+LastContracts=Last % contracts
 LastActivatedServices=Last %s activated services
 LastModifiedServices=Last %s modified services
 EditServiceLine=Edit service line

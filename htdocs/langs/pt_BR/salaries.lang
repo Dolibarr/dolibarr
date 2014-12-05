@@ -1,8 +1,4 @@
-# Dolibarr language file - Source file is en_US - users
-Salary=Salário
-Salaries=Salários
-Employee=Empregado
+# Dolibarr language file - Source file is en_US - salaries
 NewSalaryPayment=Novo pagamento de salário
 SalaryPayment=Pagamento de salário
 SalariesPayments=Pagamentos de salários
-ShowSalaryPayment=Mostrar pagamento de salário

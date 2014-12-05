@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=%s için hatalı müşteri muhasebe kodu
 SuppliersProductsSellSalesTurnover=Tedarikçi ürünlerinin satışından oluşan ciro.
 CheckReceipt=Çek hesabı
 CheckReceiptShort=Çek hesabı
+LastCheckReceiptShort=Son %s çek makbuzu
 NewCheckReceipt=Yeni indirim
 NewCheckDeposit=Yeni çek hesabı
 NewCheckDepositOn=Bu hesap için makbuz oluştur: %s

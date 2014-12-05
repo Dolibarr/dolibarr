@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2014       Alexandre Spangaro		<alexandre.spangaro@gmail.com>  
+ * Copyright (C) 2014       Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@ if (!$user->admin) accessforbidden();
 $typeconst=array('yesno','texte','chaine');
 
 $action = GETPOST('action','alpha');
+
+$type='donation';
 
 
 /*
@@ -135,7 +137,7 @@ else if ($action == 'setart200') {
 	$res = dolibarr_set_const($db, "DONATION_ART200", $setart200, 'yesno', 0, '', $conf->entity);
 	if (! $res > 0)
 		$error ++;
-	
+
 	if (! $error) {
 		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
 	} else {
@@ -147,7 +149,7 @@ else if ($action == 'setart238') {
 	$res = dolibarr_set_const($db, "DONATION_ART238", $setart238, 'yesno', 0, '', $conf->entity);
 	if (! $res > 0)
 		$error ++;
-	
+
 	if (! $error) {
 		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
 	} else {
@@ -159,7 +161,7 @@ else if ($action == 'setart885') {
 	$res = dolibarr_set_const($db, "DONATION_ART885", $setart885, 'yesno', 0, '', $conf->entity);
 	if (! $res > 0)
 		$error ++;
-	
+
 	if (! $error) {
 		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
 	} else {
@@ -183,7 +185,7 @@ print_fiche_titre($langs->trans("DonationsSetup"),$linkback,'setup');
  *  Params
  */
 print_titre($langs->trans("Options"));
- 
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -207,11 +209,11 @@ print '</form>';
 /*
  *  French params
  */
-if ($conf->global->MAIN_LANG_DEFAULT == "fr_FR") 
+if ($conf->global->MAIN_LANG_DEFAULT == "fr_FR")
 {
 	print '<br>';
 	print_titre($langs->trans("FrenchOptions"));
-	  
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">' . $langs->trans('Parameters') . '</td>';
@@ -377,7 +379,7 @@ if (is_resource($handle))
                 print '<td align="center">';
                 print $form->textwithpicto('',$htmltooltip,-1,0);
                 print '</td>';
-				
+
 				// Preview
 				print '<td align="center">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';

@@ -44,8 +44,7 @@ $(document).ready(function () {
 <?php } ?>
 
 
-<center>
-<div class="login_vertical_align">
+<div align="center" class="login_vertical_align">
 
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
@@ -53,7 +52,7 @@ $(document).ready(function () {
 <input type="hidden" name="action" value="buildnewpassword">
 
 <table class="login_table_title center" summary="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
+<tr class="vmenu"><td class="center"><?php echo $title; ?></td></tr>
 </table>
 <br>
 
@@ -69,7 +68,9 @@ $(document).ready(function () {
 <tr>
 <td valign="bottom" class="loginfield nowrap"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
 <td valign="bottom" class="nowrap">
-<input type="text" <?php echo $disabled; ?> id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
+<span class="span-icon-user">
+<input type="text" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
+</span>
 </td>
 </tr>
 
@@ -91,7 +92,11 @@ if (! empty($hookmanager->resArray['options'])) {
 	<td valign="top" class="nowrap none" align="left">
 
 	<table class="login_table_securitycode" style="width: 100px;"><tr>
-	<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
+	<td>
+	<span class="span-icon-security">
+	<input id="securitycode" class="flat input-icon-security" type="text" size="6" maxlength="5" name="code" tabindex="4" />
+	</span>
+	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
 	<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
@@ -116,7 +121,7 @@ if (! empty($hookmanager->resArray['options'])) {
 <br><input id="password" type="submit" <?php echo $disabled; ?> class="button" name="password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
-<div align="center" style="margin-top: 4px;">
+<div class="center" style="margin-top: 4px;">
 	<?php
 	$moreparam='';
 	if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
@@ -141,7 +146,7 @@ if (! empty($hookmanager->resArray['options'])) {
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
 	</font>
 <?php }else{ ?>
-	<div class="warning" align="center">
+	<div class="warning center">
 	<?php echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode); ?>
 	</div>
 <?php } ?>
@@ -158,7 +163,6 @@ if (! empty($hookmanager->resArray['options'])) {
 
 
 </div>
-</center>	<!-- end of center -->
 
 
 </body>

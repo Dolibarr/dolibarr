@@ -50,25 +50,23 @@ if (in_array($object->element,array('propal','facture','invoice','commande','ord
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
-	<td align="right"><span id="title_vat"><label for="tva_tx"><?php echo $langs->trans('VAT'); ?></label></span></td>
-	<td align="right"><span id="title_up_ht"><label for="price_ht"><?php echo $langs->trans('PriceUHT'); ?></label></span></td>
+	<td align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
+	<td align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
-	<td align="right"><span id="title_up_ttc"><label for="price_ttc"><?php echo $langs->trans('PriceUTTC'); ?></label></span></td>
+	<td align="right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 	<?php } ?>
-	<td align="right"><label for="qty"><?php echo $langs->trans('Qty'); ?></label></td>
-	<td align="right"><label for="remise_percent"><?php echo $langs->trans('ReductionShort'); ?></label></td>
+	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
+	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
 	if (! empty($usemargins))
 	{
 		?>
 		<td align="right" class="margininfos">
 		<?php
-		echo '<label for="buying_price">';
 		if ($conf->global->MARGIN_TYPE == "1")
 			echo $langs->trans('BuyingPrice');
 		else
 			echo $langs->trans('CostPrice');
-		echo '</label>';
 		?>
 		</td>
 		<?php
@@ -103,20 +101,25 @@ else {
 	// Show radio free line
 	if ($forceall >= 0 && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
 	{
+		echo '<label for="prod_entry_mode_free">';
 		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 		//echo (GETPOST('prod_entry_mode')=='free' ? ' checked="true"' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked="true"':'') );
 		echo (GETPOST('prod_entry_mode')=='free' ? ' checked="true"' : '');
 		echo '> ';
-	}
-	else echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
-
-	// Show type selector
-	if ($forceall >= 0)
-	{
-		echo '<label for="select_type">';
+		// Show type selector
 		echo $langs->trans("FreeLineOfType");
 		echo '</label>';
 		echo ' ';
+	}
+	else
+	{
+		echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
+		// Show type selector
+		if ($forceall >= 0)
+		{
+			echo $langs->trans("FreeLineOfType");
+			echo ' ';
+		}
 	}
 
 	echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,1,$forceall);
@@ -128,9 +131,8 @@ else {
 	{
 		if ($forceall >= 0) echo '<br>';
 		echo '<span>';
-		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked="true"':'').'> ';
-
 		echo '<label for="prod_entry_mode_predef">';
+		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked="true"':'').'> ';
 		if (empty($senderissupplier))
 		{
 			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
@@ -271,7 +273,7 @@ else {
 </tr>
 
 <?php
-if (! empty($conf->service->enabled) && $dateSelector)
+if (! empty($conf->service->enabled) && $dateSelector && GETPOST('type') != '0')
 {
 	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;

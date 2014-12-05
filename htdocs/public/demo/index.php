@@ -259,9 +259,7 @@ color: #444444 !important;
 
 margin: 8px 0px 8px 2px;
 
-border-left: 1px solid #DDD;
-border-right: 1px solid #DDD;
-border-bottom: 1px solid #EEE;
+border: 1px solid #bbb;
 border-radius: 8px;
 -moz-border-radius: 8px;
 
@@ -269,11 +267,7 @@ border-radius: 8px;
 -webkit-box-shadow: 4px 4px 4px #EEE;
 box-shadow: 4px 4px 4px #EEE;
 
-background-image: linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -o-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -moz-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -webkit-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -ms-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
+background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
 
 }
 </style>
@@ -311,7 +305,7 @@ print "\n";
 print '<table style="font-size:14px;" class="centpercent" summary="Main table for Dolibarr demos">';
 
 print '<tr><td>';
-print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></center><br>';
+print '<div class="center"><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></div><br>';
 print '<br>';
 
 print $langs->trans("DemoDesc").'<br>';

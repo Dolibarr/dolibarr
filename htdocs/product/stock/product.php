@@ -279,7 +279,7 @@ if ($id > 0 || $ref)
 
         // Status (to sell)
         print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             print ajax_object_onoff($product, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
         } else {
             print $product->getLibStatut(2,0);
@@ -288,7 +288,7 @@ if ($id > 0 || $ref)
 
         // Status (to buy)
         print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
-        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+        if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             print ajax_object_onoff($product, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
         } else {
             print $product->getLibStatut(2,1);
@@ -296,8 +296,8 @@ if ($id > 0 || $ref)
         print '</td></tr>';
 
 		if ($conf->productbatch->enabled) {
-			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("l_sellby").')</td><td>';
-			print $product->getLibStatut(2,2);
+			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
+			print $product->getLibStatut(0,2);
 			print '</td></tr>';
 		}
 
@@ -334,7 +334,7 @@ if ($id > 0 || $ref)
 
         // Calculating a theorical value
         print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
-        print "<td>".$product->stock_theorique;
+        print "<td>".(empty($product->stock_theorique)?0:$product->stock_theorique);
         if ($product->stock_theorique < $product->seuil_stock_alerte) {
             print ' '.img_warning($langs->trans("StockLowerThanLimit"));
         }
@@ -342,7 +342,8 @@ if ($id > 0 || $ref)
         print '</tr>';
 
         print '<tr><td>';
-        $text_stock_options = (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)?$langs->trans("DeStockOnShipment").'<br>':'');
+        $text_stock_options = '';
+        $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)?$langs->trans("DeStockOnShipment").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)?$langs->trans("DeStockOnValidateOrder").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_BILL)?$langs->trans("DeStockOnBill").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)?$langs->trans("ReStockOnBill").'<br>':'');
@@ -353,7 +354,6 @@ if ($id > 0 || $ref)
         print '<td>';
 
         $found=0;
-
         // Number of customer orders running
         if (! empty($conf->commande->enabled))
         {
@@ -471,20 +471,26 @@ if ($id > 0 || $ref)
 		//eat-by date
 		if ((! empty($conf->productbatch->enabled)) && $product->hasbatch()) {
 			print '<tr>';
-			print '<td width="15%">'.$langs->trans("l_eatby").'</td><td width="15%">';
+			print '<td colspan="2">'.$langs->trans("batch_number").'</td><td colspan="4">';
+			print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
+			print '</td>';
+			print '</tr><tr>';
+			print '<td colspan="2">'.$langs->trans("l_eatby").'</td><td>';
 			$form->select_date('','eatby','','',1,"");
 			print '</td>';
-			print '<td width="15%">'.$langs->trans("l_sellby").'</td><td width="15%">';
+			print '<td></td>';
+			print '<td>'.$langs->trans("l_sellby").'</td><td>';
 			$form->select_date('','sellby','','',1,"");
 			print '</td>';
-			print '<td width="15%">'.$langs->trans("batch_number").'</td><td width="15%">';
-			print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
-			print '</td></tr>';
+			print '</tr>';
 		}
 		print '</table>';
 
-		print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 		print '</form>';
 	}
 
@@ -519,8 +525,11 @@ if ($id > 0 || $ref)
 
 		print '</table>';
 
-		print '<center><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"></center>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+		print '</div>';
 
 		print '</form>';
 	}
@@ -591,9 +600,10 @@ print '<td align="right">'.$langs->trans("SellPriceMin").'</td>';
 print '<td align="right">'.$langs->trans("EstimatedStockValueSellShort").'</td>';
 print '</tr>';
 if ( (! empty($conf->productbatch->enabled)) && $product->hasbatch()) {
-	print '<tr class="liste_titre"><td width="10%"></td><td align="right" width="10%">'.$langs->trans("l_eatby").'</td>';
-	print '<td align="right" width="10%">'.$langs->trans("l_sellby").'</td>';
+	print '<tr class="liste_titre"><td width="10%"></td>';
 	print '<td align="right" width="10%">'.$langs->trans("batch_number").'</td>';
+	print '<td align="right" width="10%">'.$langs->trans("l_eatby").'</td>';
+	print '<td align="right" width="10%">'.$langs->trans("l_sellby").'</td>';
 	print '<td align="right" colspan="5"></td>';
 	print '</tr>';
 }
@@ -627,12 +637,14 @@ if ($resql)
 		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
 		// PMP
 		print '<td align="right">'.(price2num($obj->pmp)?price2num($obj->pmp,'MU'):'').'</td>'; // Ditto : Show PMP from movement or from product
+		// Value purchase
 		print '<td align="right">'.(price2num($obj->pmp)?price(price2num($obj->pmp*$obj->reel,'MT')):'').'</td>'; // Ditto : Show PMP from movement or from product
         // Sell price
 		print '<td align="right">';
         if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price,'MU'),1);
         else print $langs->trans("Variable");
         print '</td>'; // Ditto : Show PMP from movement or from product
+        // Value sell
         print '<td align="right">';
         if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price*$obj->reel,'MT'),1).'</td>'; // Ditto : Show PMP from movement or from product
         else print $langs->trans("Variable");
@@ -642,15 +654,18 @@ if ($resql)
 		$totalvalue = $totalvalue + price2num($obj->pmp*$obj->reel,'MU'); // Ditto : Show PMP from movement or from product
         $totalvaluesell = $totalvaluesell + price2num($product->price*$obj->reel,'MU'); // Ditto : Show PMP from movement or from product
 		//Batch Detail
-		if ((! empty($conf->productbatch->enabled)) && $product->hasbatch()) {
+		if ((! empty($conf->productbatch->enabled)) && $product->hasbatch()) 
+		{
 			$details=Productbatch::findAll($db,$obj->product_stock_id);
 			if ($details<0) dol_print_error($db);
-			foreach ($details as $pdluo) {
-				print "\n".'<tr><td width="10%"></td><td width="10%" align="right">'. dol_print_date($pdluo->eatby,'day') .'</td>';
-				print '<td align="right" width="10%">'. dol_print_date($pdluo->sellby,'day') .'</td>';
-				print '<td align="right" width="10%">'.$pdluo->batch.'</td>';
-				print '<td align="right" width="10%">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
-				print '<td colspan="4" width="50%"></td></tr>';
+			foreach ($details as $pdluo) 
+			{
+				print "\n".'<tr><td></td>';
+				print '<td align="right">'.$pdluo->batch.'</td>';
+				print '<td align="right">'. dol_print_date($pdluo->eatby,'day') .'</td>';
+				print '<td align="right">'. dol_print_date($pdluo->sellby,'day') .'</td>';
+				print '<td align="right">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
+				print '<td colspan="4"></td></tr>';
 			}
 		}
 		$i++;
@@ -663,6 +678,7 @@ print '<td class="liste_total" align="right">'.$total.'</td>';
 print '<td class="liste_total" align="right">';
 print ($totalwithpmp?price($totalvalue/$totalwithpmp):'&nbsp;');
 print '</td>';
+// Value purchase
 print '<td class="liste_total" align="right">';
 print price(price2num($totalvalue,'MT'),1);
 print '</td>';
@@ -670,6 +686,7 @@ print '<td class="liste_total" align="right">';
 if (empty($conf->global->PRODUIT_MULTI_PRICES)) print ($total?price($totalvaluesell/$total,1):'&nbsp;');
 else print $langs->trans("Variable");
 print '</td>';
+// Value to sell
 print '<td class="liste_total" align="right">';
 if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($totalvaluesell,'MT'),1);
 else print $langs->trans("Variable");

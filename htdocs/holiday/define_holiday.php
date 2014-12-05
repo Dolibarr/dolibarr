@@ -144,17 +144,14 @@ if($cp_events == 1)
 	print '</form><br>';
 }
 
-dol_fiche_head();
-
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<input type="hidden" name="action" value="update" />';
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
-print '<td width="5%">'.$langs->trans('ID').'</td>';
-print '<td width="50%">'.$langs->trans('Employee').'</td>';
+print '<td width="55%">'.$langs->trans('Employee').'</td>';
 print '<td width="20%" style="text-align:center">'.$langs->trans('Available').'</td>';
 print '<td width="20%" style="text-align:center">'.$langs->trans('Note').'</td>';
-print '<td style="text-align:center">'.$langs->trans('UpdateButtonCP').'</td>';
+print '<td></td>';
 print '</tr>';
 
 foreach($listUsers as $users)
@@ -163,7 +160,6 @@ foreach($listUsers as $users)
     $var=!$var;
 
     print '<tr '.$bc[$var].' style="height: 20px;">';
-    print '<td>'.$users['rowid'].'</td>';
     print '<td>';
     $userstatic->id=$users['rowid'];
     $userstatic->lastname=$users['name'];
@@ -182,9 +178,6 @@ foreach($listUsers as $users)
 
 print '</table>';
 print '</form>';
-
-dol_fiche_end();
-
 
 llxFooter();
 

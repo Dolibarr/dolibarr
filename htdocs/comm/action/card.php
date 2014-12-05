@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -74,6 +76,7 @@ $cactioncomm = new CActionComm($db);
 $object = new ActionComm($db);
 $contact = new Contact($db);
 $extrafields = new ExtraFields($db);
+$formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
@@ -710,9 +713,9 @@ if ($action == 'create')
 		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 		//For external user force the company to user company
 		if (!empty($user->societe_id)) {
-			print $form->select_company($user->societe_id,'socid','',1,1,0,$events);
+			print $form->select_thirdparty_list($user->societe_id,'socid','',1,1,0,$events);
 		} else {
-			print $form->select_company('','socid','',1,1,0,$events);
+			print $form->select_thirdparty_list('','socid','',1,1,0,$events);
 		}
 
 	}
@@ -776,11 +779,11 @@ if ($action == 'create')
 
 	print '</table>';
 
-	print '<center><br>';
+	print '<br><div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	print ' &nbsp; &nbsp; ';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</center>';
+	print '</div>';
 
 	print "</form>";
 }
@@ -1010,9 +1013,11 @@ if ($id > 0)
 
 		dol_fiche_end();
 
-		print '<center><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</center>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
 		print '</form>';
 	}
@@ -1282,6 +1287,33 @@ if ($id > 0)
 		print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
 		print '</form>'."\n";
 		print '</div>';
+
+		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC))
+		{
+			print '<div style="clear:both;">&nbsp;</div><div class="fichecenter"><div class="fichehalfleft">';
+            print '<a name="builddoc"></a>'; // ancre
+
+            /*
+             * Documents generes
+             */
+
+            $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
+            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+
+            $genallowed=$user->rights->agenda->myactions->create;
+	        $delallowed=$user->rights->agenda->myactions->delete;
+
+            $var=true;
+
+            $somethingshown=$formfile->show_documents('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
+
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+
+			print '</div></div></div>';
+
+            print '<div style="clear:both;">&nbsp;</div>';
+	    }
 	}
 }
 

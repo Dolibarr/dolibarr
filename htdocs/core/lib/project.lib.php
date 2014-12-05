@@ -357,7 +357,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 
 				// Planned Workload (in working hours)
-				print '<td align="center">';
+				print '<td align="right">';
 				$fullhour=convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
 				$workingdelay=convertSecondToTime($lines[$i]->planned_workload,'all',86400,7);	// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
 				if ($lines[$i]->planned_workload)
@@ -422,7 +422,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
-		print '<td align="center" class="nowrap liste_total">';
+		print '<td align="right" class="nowrap liste_total">';
 		print convertSecondToTime($total_projectlinesa_planned, 'allhourmin');
 		print '</td>';
 		print '<td></td>';

@@ -25,12 +25,12 @@ Selectchartofaccounts=Select a chart of accounts
 Validate=Apstiprināt
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
-Ventilation=Ventilation
+Ventilation=Breakdown
 ToDispatch=Jānosūta
 Dispatched=Nosūtīts
 
-CustomersVentilation=Ventilation customers
-SuppliersVentilation=Ventilation suppliers
+CustomersVentilation=Breakdown customers
+SuppliersVentilation=Breakdown suppliers
 TradeMargin=Trade margin
 Reports=Atskaites
 ByCustomerInvoice=By invoices customers
@@ -45,9 +45,9 @@ WriteBookKeeping=Record accounts in general ledger
 Bookkeeping=Virsgrāmata
 AccountBalanceByMonth=Konta bilance pa mēnešiem
 
-AccountingVentilation=Accounting ventilation
-AccountingVentilationSupplier=Accounting ventilation supplier
-AccountingVentilationCustomer=Accounting ventilation customer
+AccountingVentilation=Breakdown accounting
+AccountingVentilationSupplier=Breakdown accounting supplier
+AccountingVentilationCustomer=Breakdown accounting customer
 Line=Line
 
 CAHTF=Total purchase supplier HT
@@ -56,7 +56,7 @@ InvoiceLinesDone=Ventilated lines of invoice
 IntoAccount=In the accounting account
 
 Ventilate=Ventilate
-VentilationAuto=Automatic ventilation
+VentilationAuto=Automatic breakdown
 
 Processing=Apstrādā
 EndProcessing=The end of processing
@@ -66,11 +66,11 @@ Lineofinvoice=Line of invoice
 VentilatedinAccount=Ventilated successfully in the accounting account
 NotVentilatedinAccount=Not ventilated in the accounting account
 
-ACCOUNTING_SEPARATORCSV=Separator CSV
+ACCOUNTING_SEPARATORCSV=CSV atdalītājs
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
 AccountLength=Length of the accounting accounts shown in Dolibarr
 AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
@@ -140,14 +140,14 @@ Active=Statement
 
 NewFiscalYear=Jaauns fiskālais gads
 
-DescVentilCustomer=Consult here the annual accounting ventilation of your invoices customers
+DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover HT
 TotalMarge=Total sales margin
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
 DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
 ChangeAccount=Change the accounting account for lines selected by the account:
 Vide=-
-DescVentilSupplier=Consult here the annual accounting ventilation of your invoices suppliers
+DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
 DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
 DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
 
@@ -155,4 +155,4 @@ ValidateHistory=Validate Automatically
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 
-FicheVentilation=Ventilation card
+FicheVentilation=Breakdown card

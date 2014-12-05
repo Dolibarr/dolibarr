@@ -989,7 +989,7 @@ class Contrat extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return int     		   	 <0 if KO, >0 if OK
 	 */
-	function update($user=0, $notrigger=0)
+	function update($user=null, $notrigger=0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -2385,39 +2385,4 @@ class ContratLigne extends CommonObject
 		}
 	}
 
-	/**
-	 *  Create a contract document on disk using template defined into CONTRACT_ADDON_PDF
-	 *
-	 *  @param	string		$modele			force le modele a utiliser ('' par defaut)
-	 *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
-	 *  @param  int			$hidedetails    Hide details of lines
-	 *  @param  int			$hidedesc       Hide description
-	 *  @param  int			$hideref        Hide ref
-	 *  @return int         				0 if KO, 1 if OK
-	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
-	{
-		global $conf,$langs,$user,$hookmanager;
-
-		$langs->load("contracts");
-
-		// Positionne modele sur le nom du modele de contrat a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->CONTRACT_ADDON_PDF))
-			{
-				$modele = $conf->global->CONTRACT_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'strato';
-			}
-		}
-
-		$modelpath = "core/modules/contract/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	}
 }
-
-

@@ -296,22 +296,22 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
 		print dol_print_date($object->date_start,'dayhour');
 		print '</td></tr>';
-		
+
 		// Date end
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
 		print dol_print_date($object->date_end,'dayhour');
 		print '</td></tr>';
-		
+
 		// Planned workload
 		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
 		print convertSecondToTime($object->planned_workload,'allhourmin');
 		print '</td></tr>';
-		
+
 		// Progress declared
 		print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 		print $object->progress.' %';
 		print '</td></tr>';
-		
+
 		// Progress calculated
 		print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
 		if ($object->planned_workload)
@@ -322,7 +322,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		else print '';
 		print '</td></tr>';
-		
+
 		// Project
 		if (empty($withproject))
 		{
@@ -336,30 +336,6 @@ if ($id > 0 || ! empty($ref))
 			else print '&nbsp;';
 			print '</td></tr>';
 		}
-
-		// Date start
-		print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
-		print dol_print_date($object->date_start,'dayhour');
-		print '</td></tr>';
-
-		// Date end
-		print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
-		print dol_print_date($object->date_end,'dayhour');
-		print '</td></tr>';
-
-		// Planned workload
-		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">'.convertSecondToTime($object->planned_workload,'allhourmin').'</td></tr>';
-
-		// Declared progress
-		print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
-		print $object->progress.' %';
-		print '</td></tr>';
-
-		// Calculated progress
-		print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
-		if ($object->planned_workload) print round(100 * $object->duration_effective / $object->planned_workload,2).' %';
-		else print '';
-		print '</td></tr>';
 
 		print '</table>';
 
@@ -400,11 +376,11 @@ if ($id > 0 || ! empty($ref))
 
 			// Contributor
 			print '<td class="nowrap">';
-			print img_object('','user');
+			print img_object('','user','class="hideonsmartphone"');
 			$contactsoftask=$object->getListContactId('internal');
 			if (count($contactsoftask)>0) {
 				$userid=$contactsoftask[0];
-				$form->select_users($userid,'userid',0,'',0,'',$contactsoftask);
+				print $form->select_dolusers($userid,'userid',0,'',0,'',$contactsoftask);
 			}else {
 				print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
 			}
@@ -412,7 +388,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Note
 			print '<td class="nowrap">';
-			print '<textarea name="timespent_note" cols="80" rows="'.ROWS_3.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
+			print '<textarea name="timespent_note" cols="80" rows="'.ROWS_2.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
 			print '</td>';
 
 			// Progress declared
@@ -469,7 +445,8 @@ if ($id > 0 || ! empty($ref))
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="updateline">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
-
+		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+		
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="100">'.$langs->trans("Date").'</td>';
@@ -506,7 +483,7 @@ if ($id > 0 || ! empty($ref))
 					$contactsoftask[]=$task_time->fk_user;
 				}
 				if (count($contactsoftask)>0) {
-					$form->select_users($task_time->fk_user,'userid_line',0,'',0,'',$contactsoftask);
+					print $form->select_dolusers($task_time->fk_user,'userid_line',0,'',0,'',$contactsoftask);
 				}else {
 					print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
 				}
@@ -524,7 +501,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="left">';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print '<textarea name="timespent_note_line" cols="80" rows="'.ROWS_3.'">'.$task_time->note.'</textarea>';
+				print '<textarea name="timespent_note_line" cols="80" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
 			}
 			else
 			{

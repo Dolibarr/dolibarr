@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=OSCommerce
-OSCommerceSetup=OSCommerce mooduli seadistamine
-OSCommerceSetupSaved=OSCommercei seadistus salvestatud
-OSCommerceServer=OSCommerce serveri host/IP
-OSCommerceDatabaseName=OSCommercei andmebaasi nimi
-OSCommercePrefix=OSCommercei tabelite prefiks
-OSCommerceUser=OSCommercei andmebaasi kasutajanimi

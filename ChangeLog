@@ -5,6 +5,8 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Match other auth system: Login can be done entering login or user 
+       email (this open the road for SSO).
 - New: Agenda export by project #1967.
 - New: Increase length of thirdparty to 128 chars.
 - New: "Is Order shippable" icon #1975.
@@ -80,8 +82,9 @@ For users:
 - New: Add dunning into accountancy report.
 - New: Add favorite button into country dictionary to put value on top select list
 - Upgrade phpexcel lib to 1.7.8
-- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export
-- New : Option on extrafields to have them always editable regardless of the document status
+- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export.
+- New : Option on extrafields to have them always editable regardless of the document status.
+- New : New module PrintIPP to print without opening document is available as stable.
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -160,7 +163,8 @@ Dolibarr better:
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
 - A lot of pages called fiche.php were renamed into card.php
 - A lot of pages called liste.php were renamed into list.php
-
+- If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
+  warehouse module and your Point Of Sale module if you use one.
 
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
@@ -172,7 +176,10 @@ Dolibarr better:
 - Fix: Civility & birthdate wasn't save into adherent module.
 - Fix: webservice Thirdparty parameter lastname for invidual creation is now lastname and not ref
 - Fix: Chars - is no more allowed into value for code for extra fields.
-( Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
+- Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
+- Fix: [ bug #1595 ] Selected boolean extrafield in intervention creation page, does not save state
+- Fix: Show sender Country on PDF docs when sender Country <> receiver Country
+- Fix: [ bug #1624 ] Use lowest buying price for margin when selling with POS
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
@@ -315,6 +322,14 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973
+Fix: Can't update phone_pro from web service
+Fix: Some security holes.
+Fix: copy extrafields when creating order from proposal.
+Fix: report on action was not filtering by environment.
+Fix: Avoid missing class error.
+Fix: Add function dolEscapeXML.
+Fix: Bad days and month reported by function.
+Fix: Bad margin calculation.
 
 ***** ChangeLog for 3.5.5 compared to 3.5.4 *****
 Fix: Holiday module was broken. Initializaion of amount of holidays failed.

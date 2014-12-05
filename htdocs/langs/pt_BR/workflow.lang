@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - admin
+# Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Configuração do módulo de Fluxo de Trabalho
 WorkflowDesc=Este módulo foi projetado para modificar o comportamento de ações automáticas dentro a aplicação. Por padrão, o fluxo de trabalho e abilitado (você faz as coisas em ordem que você quiser). Você pode habilitar ações automáticas que são de seu interesse.
 ThereIsNoWorkflowToModify=Não há fluxo de trabalho que você pode modificar para o módulo que você ativou.

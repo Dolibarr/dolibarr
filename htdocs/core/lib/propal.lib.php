@@ -110,10 +110,9 @@ function propal_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object informations.
  *
- *  @param	Object	$object		Propal
  *  @return	array   	        head array with tabs
  */
-function propal_admin_prepare_head($object)
+function propal_admin_prepare_head()
 {
 	global $langs, $conf, $user;
 
@@ -129,7 +128,7 @@ function propal_admin_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'propal_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'propal_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propal_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
@@ -141,7 +140,7 @@ function propal_admin_prepare_head($object)
     $head[$h][2] = 'attributeslines';
     $h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'propal_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'propal_admin','remove');
 
 	return $head;
 }

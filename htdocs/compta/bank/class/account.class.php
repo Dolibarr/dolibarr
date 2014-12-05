@@ -59,7 +59,7 @@ class Account extends CommonObject
     //! BIC/SWIFT number
     var $bic;
     //! IBAN number (International Bank Account Number)
-    var $iban_prefix;
+    var $iban;			// stored into iban_prefix field into database
     var $proprio;
     var $owner_address;
 
@@ -220,7 +220,7 @@ class Account extends CommonObject
     /**
      *  Add an entry into table ".MAIN_DB_PREFIX."bank
      *
-     *  @param	timsestmap	$date			Date operation
+     *  @param	timestamp	$date			Date operation
      *  @param	string		$oper			1,2,3,4... (deprecated) or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
      *  @param	string		$label			Descripton
      *  @param	float		$amount			Amount
@@ -642,7 +642,6 @@ class Account extends CommonObject
                 $this->cle_rib       = $obj->cle_rib;
                 $this->bic           = $obj->bic;
                 $this->iban          = $obj->iban;
-                $this->iban_prefix   = $obj->iban;	// deprecated
                 $this->domiciliation = $obj->domiciliation;
                 $this->proprio       = $obj->proprio;
                 $this->owner_address = $obj->owner_address;
@@ -1011,7 +1010,6 @@ class Account extends CommonObject
         $this->cle_rib         = 50;
         $this->bic             = 'AA12';
         $this->iban            = 'FR999999999';
-        $this->iban_prefix     = 'FR';  // deprecated
         $this->domiciliation   = 'The bank addresse';
         $this->proprio         = 'Owner';
         $this->owner_address   = 'Owner address';
@@ -1145,7 +1143,7 @@ class AccountLine extends CommonObject
      *		@param	User	$user	User object that delete
      *      @return	int 			<0 if KO, >0 if OK
      */
-    function delete($user=0)
+    function delete($user=null)
     {
         $nbko=0;
 
@@ -1194,7 +1192,7 @@ class AccountLine extends CommonObject
      *		@param	User	$user	User object that delete
      *      @return	int 			<0 if KO, >0 if OK
      */
-    function delete_urls($user=0)
+    function delete_urls($user=null)
     {
         $nbko=0;
 

@@ -205,7 +205,7 @@ class Resource extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
     	global $conf, $langs;
     	$error=0;
@@ -633,7 +633,7 @@ class Resource extends CommonObject
 
     	if (! $this->table_element)
     	{
-    		dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
+    		dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined");
     		return -1;
     	}
 
@@ -695,7 +695,7 @@ class Resource extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update_element_resource($user=0, $notrigger=0)
+    function update_element_resource($user=null, $notrigger=0)
     {
     	global $conf, $langs;
 		$error=0;

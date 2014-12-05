@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
@@ -34,7 +34,7 @@
  */
 abstract class CommonObject
 {
-    protected $db;
+    public $db;
     public $error;
     public $errors;
     public $canvas;                // Contains canvas name if it is
@@ -601,18 +601,22 @@ abstract class CommonObject
     /**
      *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdparty
      *
-     *		@return		int					<0 if KO, >0 if OK
+     *		@param		int		$force_thirdparty_id	Force thirdparty id
+     *		@return		int								<0 if KO, >0 if OK
      */
-    function fetch_thirdparty()
+    function fetch_thirdparty($force_thirdparty_id=0)
     {
         global $conf;
 
-        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty)) return 0;
+        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id)) return 0;
 
 	    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
+	    $idtofetch=isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty);
+		if ($force_thirdparty_id) $idtofetch=$force_thirdparty_id;
+
         $thirdparty = new Societe($this->db);
-        $result=$thirdparty->fetch(isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty));
+        $result=$thirdparty->fetch($idtofetch);
         $this->client = $thirdparty;  // deprecated
         $this->thirdparty = $thirdparty;
 
@@ -629,7 +633,7 @@ abstract class CommonObject
 
     /**
      *	Load data for barcode into properties ->barcode_type*
-     *	Properties ->barcode_type that is id of barcode type is used to find other properties, but
+     *	Properties ->barcode_type that is id of barcode. Type is used to find other properties, but
      *  if it is not defined, ->element must be defined to know default barcode type.
      *
      *	@return		int			<0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
@@ -3012,30 +3016,33 @@ abstract class CommonObject
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		print $langs->trans('ShowMarginInfos').' : ';
-        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
-    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'':'hideobject').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
-    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'hideobject':'').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
+		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// FIXME Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
+		{
+			print $langs->trans('ShowMarginInfos').' : ';
+	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
+	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'':'hideobject').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
+	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'hideobject':'').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
 
-        print '<script>$(document).ready(function() {
-            $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
-            $("span#hideMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
-        });</script>';
-        if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
+    	    print '<script>$(document).ready(function() {
+        	    $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
+        	    $("span#hideMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
+      	        });</script>';
+    	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
+		}
 
-		print '<table class="nobordernopadding margintable" width="100%">';
+		print '<table class="noborder margintable" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td width="15%">'.$langs->trans('Margins').'</td>';
-		print '<td width="15%" align="right">'.$langs->trans('SellingPrice').'</td>';
+		print '<td class="liste_titre">'.$langs->trans('Margins').'</td>';
+		print '<td class="liste_titre" align="right">'.$langs->trans('SellingPrice').'</td>';
 		if ($conf->global->MARGIN_TYPE == "1")
-			print '<td width="15%" align="right">'.$langs->trans('BuyingPrice').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('BuyingPrice').'</td>';
 		else
-			print '<td width="15%" align="right">'.$langs->trans('CostPrice').'</td>';
-		print '<td width="15%" align="right">'.$langs->trans('Margin').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('CostPrice').'</td>';
+		print '<td class="liste_titre" align="right">'.$langs->trans('Margin').'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.$langs->trans('MarginRate').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('MarginRate').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.$langs->trans('MarkRate').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('MarkRate').'</td>';
 		print '</tr>';
 
 		if (! empty($conf->product->enabled))
@@ -3596,7 +3603,7 @@ abstract class CommonObject
 						break;
 					}
 
-					$out .= '</td>'."\n";
+					$out .= '</td>';
 
 					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
 					else $out .= '</tr>';
@@ -3604,7 +3611,6 @@ abstract class CommonObject
 				}
 			}
 			$out .= "\n";
-			$out .= '<!-- /showOptionalsInput --> ';
 			$out .= '
 				<script type="text/javascript">
 				    jQuery(document).ready(function() {
@@ -3633,7 +3639,8 @@ abstract class CommonObject
 
 						setListDependencies();
 				    });
-				</script>';
+				</script>'."\n";
+			$out .= '<!-- /showOptionalsInput --> '."\n";
 		}
 		return $out;
 	}

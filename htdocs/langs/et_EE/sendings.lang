@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=Praegu luuakse saadetised tellimuse kaardilt.
 RelatedShippings=Seotud saatmised
 ShipmentLine=Saadetise rida
 CarrierList=Vedajate nimekiri
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Kliendi saak

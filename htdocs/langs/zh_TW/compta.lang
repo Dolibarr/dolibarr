@@ -108,6 +108,7 @@ ErrorWrongAccountancyCodeForCompany=壞客戶對會計守則在%
 SuppliersProductsSellSalesTurnover=通過對供應商的產品銷售產生營業額。
 CheckReceipt=支票存款
 CheckReceiptShort=支票存款
+LastCheckReceiptShort=Last %s check receipts
 NewCheckReceipt=新優惠
 NewCheckDeposit=新的支票存款
 NewCheckDepositOn=創建於賬戶上的存款收據：%s的

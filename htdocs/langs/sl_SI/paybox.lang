@@ -35,3 +35,6 @@ MessageKO=Sporočilo na strani za preklic plačila
 NewPayboxPaymentReceived=Novo Paybox plačilo prejeto
 NewPayboxPaymentFailed=Zavrnjen poskus novega Paybox plačila
 PAYBOX_PAYONLINE_SENDEMAIL=E-poštno opozorilo po plačilu (uspešno ali zavrnjeno)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID

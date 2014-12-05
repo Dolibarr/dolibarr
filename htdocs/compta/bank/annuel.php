@@ -496,11 +496,11 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-	print '<div class="fichecenter"><div class="fichehalfleft"><center>';
+	print '<div class="fichecenter"><div class="fichehalfleft"><div class="center">';
 	print $show1;
-	print '</center></div><div class="fichehalfright"><div class="ficheaddleft"><center>';
+	print '</div></div><div class="fichehalfright"><div class="ficheaddleft"><div class="center">';
 	print $show2;
-	print '</center></div></div></div>';
+	print '</div></div></div></div>';
 	print '<div style="clear:both"></div>';
 }
 

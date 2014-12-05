@@ -58,8 +58,10 @@ if ($user->societe_id > 0)
 
 $action = GETPOST('action');
 
+
+
 /*
- * View
+ * Actions
  */
 
 $year_current = strftime("%Y", dol_now());
@@ -152,9 +154,6 @@ if ($result) {
 	dol_print_error($db);
 }
 
-/*
- * Actions
-*/
 // Bookkeeping Write
 if ($action == 'writebookkeeping') {
 	$now = dol_now();
@@ -237,9 +236,16 @@ if ($action == 'writebookkeeping') {
 	}
 }
 
-// export csv
 
-if ($action == 'export_csv') {
+/*
+ * View
+ */
+
+$companystatic = new Societe($db);
+
+// export csv
+if ($action == 'export_csv')
+{
 	$sep = $conf->global->ACCOUNTING_SEPARATORCSV;
 
 	header('Content-Type: text/csv');

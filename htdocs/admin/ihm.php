@@ -119,7 +119,7 @@ if ($action == 'edit')	// Edit
 
     print_fiche_titre($langs->trans("Language"),'','').'<br>';
     print '<table summary="edit" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
@@ -142,7 +142,7 @@ if ($action == 'edit')	// Edit
 	print '</table><br>'."\n";
 
     // Themes
-    show_theme('',1);
+    show_theme(null,1);
     print '<br>';
 
     // Liste des zone de recherche permanantes supportees
@@ -161,7 +161,7 @@ if ($action == 'edit')	// Edit
 
     // Other
     print '<table summary="edit" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
@@ -287,9 +287,9 @@ if ($action == 'edit')	// Edit
 	print '</table>'."\n";
 
 
-    print '<br><center>';
+    print '<br><div class="center">';
     print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-    print '</center>';
+    print '</div>';
 
     print '</form>';
     print '<br>';
@@ -301,7 +301,7 @@ else	// Show
     // Language
     print_fiche_titre($langs->trans("Language"),'','').'<br>';
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td><td>&nbsp;</td></tr>';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td><td>&nbsp;</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
@@ -323,7 +323,7 @@ else	// Show
 
 
 	// Themes
-    show_theme('',0);
+    show_theme(null,0);
     print '<br>';
 
 
@@ -345,7 +345,7 @@ else	// Show
     // Other
     $var=true;
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameters").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';

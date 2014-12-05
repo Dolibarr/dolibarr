@@ -62,7 +62,7 @@ $search_desc=GETPOST('search_desc','alpha');
 $search_status=GETPOST('search_status');
 $sall=GETPOST('sall');
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_company="";
@@ -158,7 +158,7 @@ if ($result)
 	}
 	print '<td class="liste_titre" align="right">';
 	$liststatus=$interventionstatic->statuts_short;
-	print $form->selectarray('search_status', $liststatus, GETPOST('search_status'), 1, 0, 0, '', 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

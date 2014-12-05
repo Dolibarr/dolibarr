@@ -25,12 +25,12 @@ Selectchartofaccounts=Chọn một biểu đồ của tài khoản
 Validate=Xác nhận
 Addanaccount=Thêm một tài khoản kế toán
 AccountAccounting=Tài khoản kế toán
-Ventilation=Thông gió
-ToDispatch=Cử
-Dispatched=Cử
+Ventilation=Breakdown
+ToDispatch=Gửi đi
+Dispatched=Đã gửi đi
 
-CustomersVentilation=Khách hàng thông gió
-SuppliersVentilation=Các nhà cung cấp hệ thống thông gió
+CustomersVentilation=Breakdown customers
+SuppliersVentilation=Breakdown suppliers
 TradeMargin=Lợi nhuận thương mại
 Reports=Báo cáo
 ByCustomerInvoice=Hoá đơn cho khách hàng
@@ -40,57 +40,57 @@ Update=Cập nhật
 List=Danh sách
 Create=Tạo
 UpdateAccount=Sự biến đổi của một tài khoản kế toán
-UpdateMvts=Sửa đổi của một phong trào
+UpdateMvts=Sửa đổi của một thay đổi
 WriteBookKeeping=Tài khoản ghi trong sổ kế toán tổng
 Bookkeeping=Sổ cái tổng hợp
 AccountBalanceByMonth=Số dư tài khoản theo tháng
 
-AccountingVentilation=Thông gió Kế toán
-AccountingVentilationSupplier=Nhà cung cấp hệ thống thông gió Kế toán
-AccountingVentilationCustomer=Kế toán thông gió khách hàng
+AccountingVentilation=Breakdown accounting
+AccountingVentilationSupplier=Breakdown accounting supplier
+AccountingVentilationCustomer=Breakdown accounting customer
 Line=Dòng
 
 CAHTF=Tổng số nhà cung cấp mua HT
-InvoiceLines=Dòng hoá đơn được thông gió
-InvoiceLinesDone=Đường thông gió hóa đơn
+InvoiceLines=Dòng hoá đơn được ventilation
+InvoiceLinesDone=Đường ventilation hóa đơn
 IntoAccount=Trong tài khoản kế toán
 
-Ventilate=Thông gió
-VentilationAuto=Thông gió tự động
+Ventilate=Ventilation
+VentilationAuto=Automatic breakdown
 
 Processing=Chế biến
 EndProcessing=Sự kết thúc của chế biến
-AnyLineVentilate=Bất kỳ dòng để thông gió
+AnyLineVentilate=Bất kỳ dòng để ventilation
 SelectedLines=Đường lựa chọn
 Lineofinvoice=Dòng của hóa đơn
-VentilatedinAccount=Thông gió thành công trong các tài khoản kế toán
-NotVentilatedinAccount=Không thông gió trong tài khoản kế toán
+VentilatedinAccount=Ventilation thành công trong các tài khoản kế toán
+NotVentilatedinAccount=Không ventilation trong tài khoản kế toán
 
 ACCOUNTING_SEPARATORCSV=Separator CSV
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
 AccountLength=Chiều dài của kế toán tài khoản thể hiện trong Dolibarr
 AccountLengthDesc=Chức năng cho phép để giả vờ chiều dài của tài khoản kế toán bằng cách thay thế không gian bởi các con số không. Chức năng này chỉ chạm vào màn hình, nó không sửa đổi các tài khoản kế toán đăng ký tại Dolibarr. Đối với xuất khẩu, chức năng này là cần thiết để tương thích với phần mềm nhất định.
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+ACCOUNTING_LENGTH_GACCOUNT=Chiều dài của các tài khoản tổng hợp
+ACCOUNTING_LENGTH_AACCOUNT=Chiều dài của các tài khoản của bên thứ ba
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
-ACCOUNTING_CASH_JOURNAL=Cash journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=Bán tạp chí
+ACCOUNTING_PURCHASE_JOURNAL=Mua tạp chí
+ACCOUNTING_BANK_JOURNAL=Tạp chí Ngân hàng
+ACCOUNTING_CASH_JOURNAL=Tạp chí tiền mặt
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Linh tinh tạp chí
+ACCOUNTING_SOCIAL_JOURNAL=Tạp chí Xã hội
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Tài khoản chuyển nhượng
+ACCOUNTING_ACCOUNT_SUSPENSE=Tài khoản của chờ đợi
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Kế toán tài khoản mặc định cho các sản phẩm đã mua (nếu không quy định trong bảng sản phẩm)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Kế toán tài khoản mặc định cho các sản phẩm bán ra (nếu không quy định trong bảng sản phẩm)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Kế toán tài khoản mặc định cho các dịch vụ mua (nếu không quy định trong bảng dịch vụ)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Kế toán tài khoản mặc định cho các dịch vụ bán ra (nếu không quy định trong bảng dịch vụ)
 
 Doctype=Loại văn bản
 Docdate=Ngày
@@ -122,9 +122,9 @@ CustomerInvoicePayment=Thanh toán hóa đơn của khách hàng
 
 ThirdPartyAccount=Tài khoản của bên thứ ba
 
-NewAccountingMvt=Phong trào mới
-NumMvts=Số phong trào
-ListeMvts=Danh sách của phong trào
+NewAccountingMvt=Thay đổi mới
+NumMvts=Số thay đổi
+ListeMvts=Danh sách của thay đổi
 ErrorDebitCredit=Thẻ ghi nợ và tín dụng không thể có một giá trị cùng một lúc
 
 ReportThirdParty=Danh sách tài khoản của bên thứ ba
@@ -140,19 +140,19 @@ Active=Trữ
 
 NewFiscalYear=Năm tài chính mới
 
-DescVentilCustomer=Tham khảo ý kiến ​​ở đây thông gió kế toán năm của hoá đơn khách hàng của bạn
+DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Tổng kim ngạch HT
 TotalMarge=Lợi nhuận tổng doanh thu
 DescVentilDoneCustomer=Tham khảo ý kiến ​​ở đây là danh sách các dòng hoá đơn cho khách hàng và tài khoản kế toán
-DescVentilTodoCustomer=Thông gió cho đường dây của bạn hóa đơn của khách hàng với một tài khoản kế toán
+DescVentilTodoCustomer=Ventilation cho đường dây của bạn hóa đơn của khách hàng với một tài khoản kế toán
 ChangeAccount=Thay đổi tài khoản kế toán cho dòng lựa chọn tài khoản:
 Vide=-
-DescVentilSupplier=Tham khảo ý kiến ​​ở đây thông gió kế toán năm của các nhà cung cấp hoá đơn của bạn
-DescVentilTodoSupplier=Thông gió cho đường dây của nhà cung cấp hóa đơn với một tài khoản kế toán
+DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
+DescVentilTodoSupplier=Ventilation cho đường dây của nhà cung cấp hóa đơn với một tài khoản kế toán
 DescVentilDoneSupplier=Tham khảo ý kiến ​​ở đây là danh sách các dòng nhà cung cấp hoá đơn, tài khoản kế toán
 
 ValidateHistory=Tự động xác nhận
 
 ErrorAccountancyCodeIsAlreadyUse=Lỗi, bạn không thể xóa tài khoản kế toán này bởi vì nó được sử dụng
 
-FicheVentilation=Thẻ thông gió
+FicheVentilation=Breakdown card

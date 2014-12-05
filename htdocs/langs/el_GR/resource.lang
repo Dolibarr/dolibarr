@@ -1,0 +1,36 @@
+
+MenuResourceIndex=Πόροι
+MenuResourceAdd=Νέος πόρος
+MenuResourcePlanning=Προγραμματισμός των πόρων
+DeleteResource=Διαγραφή πόρων
+ConfirmDeleteResourceElement=Επιβεβαιώστε τη διαγραφή των πόρων για αυτό το στοιχείο
+NoResourceInDatabase=No resource in database.
+NoResourceLinked=No resource linked
+
+ResourcePageIndex=Λίστα Πόρων
+ResourceSingular=Πόρος
+ResourceCard=Κάρτα Πόρων
+AddResource=Δημιουργήστε έναν πόρο
+ResourceFormLabel_ref=Όνομα Πόρου
+ResourceType=Τύπος Πόρου
+ResourceFormLabel_description=Η περιγραφή πόρου
+
+ResourcesLinkedToElement=Πόροι που σχετίζονται με το στοιχείο
+
+ShowResourcePlanning=Show resource planning
+GotoDate=Μετάβαση στην ημερομηνία
+
+ResourceElementPage=Element resources
+ResourceCreatedWithSuccess=Ο Πόρος δημιουργήθηκε με επιτυχία
+RessourceLineSuccessfullyDeleted=Resource line successfully deleted
+RessourceLineSuccessfullyUpdated=Resource line successfully updated
+ResourceLinkedWithSuccess=Resource linked with success
+
+TitleResourceCard=Resource card
+ConfirmDeleteResource=Επιβεβαιώστε την διαγραφή αυτού του πόρου
+RessourceSuccessfullyDeleted=Ο Πόρος διαγράφηκε με επιτυχία
+DictionaryResourceType=Το είδος των πόρων
+
+DictionaryEMailTemplates=Μοντέλα  των Emails
+
+SelectResource=Επιλέξτε πόρο

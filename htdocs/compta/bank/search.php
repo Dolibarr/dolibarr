@@ -73,7 +73,7 @@ $limit = $conf->liste_limit;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='b.dateo';
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$description="";
 	$type="";
@@ -175,7 +175,8 @@ if ($resql)
 		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 
-	print '<form method="post" action="search.php" name="search_form">';
+	print '<form method="post" action="search.php" name="search_form">'."\n";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
 	$moreforfilter .= $langs->trans('Period') . ' ' . $langs->trans('StartDate') . ': ';
 	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 1, 1);
@@ -185,10 +186,10 @@ if ($resql)
 	if ($moreforfilter) {
 		print '<div class="liste_titre">';
 		print $moreforfilter;
-		print '</div>';
+		print '</div>'."\n";
 	}
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste" width="100%">'."\n";
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
@@ -202,7 +203,6 @@ if ($resql)
 	print '<td class="liste_titre" align="left"> &nbsp; '.$langs->trans("Account").'</td>';
 	print "</tr>\n";
 
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
@@ -330,7 +330,7 @@ if ($resql)
 	}
 
 	print "</table>";
-
+    print '</form>';
 	$db->free($resql);
 }
 else

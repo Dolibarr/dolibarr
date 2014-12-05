@@ -166,7 +166,7 @@ if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcredi
 else if (! empty($conf->global->PAYBOX_CREDITOR)) $creditor=$conf->global->PAYBOX_CREDITOR;
 
 print '<span id="dolpaymentspan"></span>'."\n";
-print '<center>';
+print '<div class="center">';
 print '<form id="dolpaymentform" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="dopayment">';
@@ -778,7 +778,7 @@ print '</td></tr>'."\n";
 
 print '</table>'."\n";
 print '</form>'."\n";
-print '</center>'."\n";
+print '</div>'."\n";
 print '<br>';
 
 

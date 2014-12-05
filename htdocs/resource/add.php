@@ -32,7 +32,7 @@ if (! $res) die("Include of main fails");
 require_once 'class/resource.class.php';
 require_once 'class/html.formresource.class.php';
 
-// Load traductions files requiredby by page
+// Load traductions files required by page
 $langs->load("resource");
 $langs->load("companies");
 $langs->load("other");
@@ -41,6 +41,7 @@ $langs->load("resource@resource");
 // Get parameters
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
+$cancel		= GETPOST('cancel','alpha');
 if (empty($sortorder)) $sortorder="DESC";
 if (empty($sortfield)) $sortfield="t.rowid";
 if (empty($arch)) $arch = 0;
@@ -65,57 +66,64 @@ $object = new Resource($db);
 
 if ($action == 'confirm_add_resource')
 {
-	$error='';
-		
-	$ref=GETPOST('ref','alpha');
-	$description=GETPOST('description','alpha');
-	$fk_code_type_resource=GETPOST('fk_code_type_resource','alpha');
-		
-	if (empty($ref))
+	if (! $cancel)
 	{
-		$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
-		setEventMessage($mesg, 'errors');
-		$error++;
-	}
-		
-	if (! $error)
-	{
-		$object=new Resource($db);
-		$object->ref=$ref;
-		$object->description=$description;
-		$object->fk_code_type_resource=$fk_code_type_resource;
+		$error='';
 			
-		$result=$object->create($user);
-		if ($result > 0)
+		$ref=GETPOST('ref','alpha');
+		$description=GETPOST('description','alpha');
+		$fk_code_type_resource=GETPOST('fk_code_type_resource','alpha');
+			
+		if (empty($ref))
 		{
-			// Creation OK
-			$db->commit();
-			setEventMessage($langs->trans('ResourceCreatedWithSuccess'));
-			Header("Location: card.php?id=" . $object->id);
-			return;
+			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
+			setEventMessage($mesg, 'errors');
+			$error++;
+		}
+			
+		if (! $error)
+		{
+			$object=new Resource($db);
+			$object->ref=$ref;
+			$object->description=$description;
+			$object->fk_code_type_resource=$fk_code_type_resource;
+				
+			$result=$object->create($user);
+			if ($result > 0)
+			{
+				// Creation OK
+				$db->commit();
+				setEventMessage($langs->trans('ResourceCreatedWithSuccess'));
+				Header("Location: card.php?id=" . $object->id);
+				return;
+			}
+			else
+			{
+				// Creation KO
+				setEventMessage($object->error, 'errors');
+				$action = '';
+			}
 		}
 		else
 		{
-			// Creation KO
-			setEventMessage($object->error, 'errors');
 			$action = '';
 		}
 	}
 	else
 	{
-		$action = '';
+		Header("Location: list.php");
 	}
 }
 
-/***************************************************
-* VIEW
-*
-****************************************************/
+/*
+ * View
+ *
+ */
 
 $form=new Form($db);
 $formresource = new FormResource($db);
 
-if ( !$action ) 
+if (! $action) 
 {
 	$pagetitle=$langs->trans('AddResource');
 	llxHeader('',$pagetitle,'');
@@ -161,8 +169,10 @@ if ( !$action )
 
 	print '</table>';
 
-	echo '<div style="text-align: center">',
-	'	<input type="submit"  class="button" name="" value="'.$langs->trans('Save').'" />',
+	echo '<br><div align="center">',
+	'<input type="submit" class="button" name="add" value="'.$langs->trans('Save').'" />',
+	'&nbsp;',
+	'<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" />',
 	'</div>';
 
 	print '</form>';

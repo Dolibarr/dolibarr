@@ -232,7 +232,7 @@ class Address
 	 *  @param  User	$user        Objet de l'utilisateur
 	 *  @return int 			     >0 si ok, <0 si ko
 	 */
-	function fetch_lines($socid, $user=0)
+	function fetch_lines($socid, $user=null)
 	{
 		global $langs, $conf;
 
@@ -325,7 +325,7 @@ class Address
 	 *  @param  User	$user       Objet de l'utilisateur
 	 *  @return int 				>0 si ok, <0 si ko
 	 */
-	function fetch_address($id, $user=0)
+	function fetch_address($id, $user=null)
 	{
 		global $langs;
 		global $conf;

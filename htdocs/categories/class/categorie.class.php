@@ -107,7 +107,7 @@ class Categorie extends CommonObject
 				$this->type			= $res['type'];
 				$this->entity		= $res['entity'];
 
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals($this->id,null);
 
 				$this->db->free($resql);
 
@@ -197,6 +197,8 @@ class Categorie extends CommonObject
 			if ($id > 0)
 			{
 				$this->id = $id;
+
+				$action='create';
 
 				// Actions on extra fields (by external module or standard code)
 				// FIXME le hook fait double emploi avec le trigger !!
@@ -289,11 +291,13 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
+			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
 			// FIXME le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('HookCategorydao'));
 			$parameters=array();
+			$action='update';
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
 			{
@@ -408,6 +412,17 @@ class Categorie extends CommonObject
 				$error++;
 			}
 		}
+		if (! $error)
+		{
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_lang";
+			$sql .= " WHERE fk_category = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
 
 		// Delete category
 		if (! $error)
@@ -430,7 +445,7 @@ class Categorie extends CommonObject
 						if ($result < 0)
 						{
 							$error++;
-							dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+							dol_syslog(get_class($this)."::delete erreur ".$this->error, LOG_ERR);
 						}
 					}
 				}
@@ -788,7 +803,7 @@ class Categorie extends CommonObject
 	 */
 	function get_full_arbo($type,$markafterid=0)
 	{
-	    global $langs;
+	    global $conf, $langs;
 
 		$this->cats = array();
 
@@ -798,11 +813,9 @@ class Categorie extends CommonObject
 
 		// Init $this->cats array
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.fk_parent";	// Distinct reduce pb with old tables with duplicates
-		if (! empty($conf->global->MAIN_MULTILANGS))
-		    $sql.= ", t.label as label_trans, t.description as description_trans";
+		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
-		if (! empty($conf->global->MAIN_MULTILANGS))
-		    $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
+		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
 		$sql.= " WHERE c.entity IN (".getEntity('category',1).")";
 		$sql.= " AND c.type = ".$type;
 
@@ -1263,7 +1276,7 @@ class Categorie extends CommonObject
 		$result='';
 
 		$lien = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'">';
-		$label=$langs->trans("ShowCategory").': '.$this->label;
+		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
 		$lienfin='</a>';
 
 		$picto='category';
@@ -1271,7 +1284,7 @@ class Categorie extends CommonObject
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.dol_trunc($this->ref,$maxlength).$lienfin;
+		if ($withpicto != 2) $result.=$lien.dol_trunc(($this->ref?$this->ref:$this->label),$maxlength).$lienfin;
 		return $result;
 	}
 
@@ -1369,7 +1382,7 @@ class Categorie extends CommonObject
     					// Objet
     					$obj=array();
     					$obj['photo']=$photo;
-    					if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']=$photo_vignette;
+    					if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']='thumbs/' . $photo_vignette;
     					else $obj['photo_vignette']="";
 
     					$tabobj[$nbphoto-1]=$obj;

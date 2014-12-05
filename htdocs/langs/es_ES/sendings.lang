@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=De momento, la creación de una nueva expedició
 RelatedShippings=Expedición(es) asociada(s)
 ShipmentLine=Línea de expedición
 CarrierList=Listado de transportistas
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Recogido por el cliente

@@ -71,7 +71,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 	$account->number          = $_POST["number"];
 	$account->cle_rib         = $_POST["cle_rib"];
 	$account->bic             = $_POST["bic"];
-	$account->iban_prefix     = $_POST["iban_prefix"];
+	$account->iban            = $_POST["iban"];
 	$account->domiciliation   = $_POST["domiciliation"];
 	$account->proprio         = $_POST["proprio"];
 	$account->owner_address   = $_POST["owner_address"];
@@ -129,7 +129,7 @@ if ($action == 'add' && ! $_POST["cancel"])
 	    $account->number          = $_POST["number"];
 	    $account->cle_rib         = $_POST["cle_rib"];
 	    $account->bic             = $_POST["bic"];
-	    $account->iban_prefix     = $_POST["iban_prefix"];
+	    $account->iban            = $_POST["iban"];
 	    $account->domiciliation   = $_POST["domiciliation"];
 	    $account->proprio         = $_POST["proprio"];
 	    $account->owner_address   = $_POST["owner_address"];
@@ -292,7 +292,7 @@ if ($socid && $action != 'edit' && $action != "create")
 	}
 
 	print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-	print '<td colspan="4">'.$account->iban_prefix.'</td></tr>';
+	print '<td colspan="4">'.$account->iban.'</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
 	print '<td colspan="4">'.$account->bic.'</td></tr>';
@@ -476,13 +476,13 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
     // IBAN
     print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
+    print '<td colspan="4"><input size="30" type="text" name="iban" value="'.$account->iban.'"></td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
     print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
-    print "<textarea name=\"domiciliation\" rows=\"4\" cols=\"40\">";
+    print '<textarea name="domiciliation" rows="4" cols="40">';
     print $account->domiciliation;
     print "</textarea></td></tr>";
 
@@ -497,9 +497,11 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
     print '</table><br>';
 
-    print '<center><input class="button" value="'.$langs->trans("Modify").'" type="submit">';
-    print ' &nbsp; <input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
-    print '</center>';
+    print '<div align="center">';
+	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+    print '</div>';
 
     print '</form>';
 }
@@ -556,7 +558,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     // IBAN
     print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="iban_prefix" value="'.GETPOST('iban_prefix').'"></td></tr>';
+    print '<td colspan="4"><input size="30" type="text" name="iban" value="'.GETPOST('iban').'"></td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
     print '<td colspan="4"><input size="12" type="text" name="bic" value="'.GETPOST('bic').'"></td></tr>';
@@ -577,9 +579,11 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     print '</table><br>';
 
-    print '<center><input class="button" value="'.$langs->trans("Add").'" type="submit">';
-    print ' &nbsp; <input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
-    print '</center>';
+    print '<div align="center">';
+	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; 
+	print '<input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
+    print '</div>';
 
     print '</form>';
 }

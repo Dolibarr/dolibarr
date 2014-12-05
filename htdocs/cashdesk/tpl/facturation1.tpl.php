@@ -43,6 +43,7 @@ $langs->load("cashdesk");
 			<!-- Affichage de la reference et de la designation -->
 			<td><input class="texte_ref" type="text" id ="txtRef" name="txtRef" value="<?php echo $obj_facturation->ref() ?>"
 				onchange="javascript: setSource('REF');"
+				onkeyup="javascript: verifResultat('resultats_dhtml', this.value);"
 				onfocus="javascript: this.select(); verifResultat('resultats_dhtml', this.value);"
 				onBlur="javascript: document.getElementById('resultats_dhtml').innerHTML = '';"/>
 			</td>
@@ -147,7 +148,7 @@ $langs->load("cashdesk");
 	</form>
 </fieldset>
 
-<!-- ========================= Cadre "Difference" ============================= -->
+<!-- ========================= Cadre "Amount" ============================= -->
 <form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=valide_achat">
 	<input type="hidden" name="hdnChoix" value="" />
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
