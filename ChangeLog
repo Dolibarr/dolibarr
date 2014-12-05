@@ -1,6 +1,8 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
 --------------------------------------------------------------
+***** ChangeLog for 3.8 compared to 3.7.* *****
+- New: Add Option to not change date on cloning project
 
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****

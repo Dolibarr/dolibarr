@@ -984,7 +984,7 @@ class Project extends CommonObject
       *	@param	bool	$notrigger		no trigger flag
 	  * @return	int						New id of clone
 	  */
-	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$notrigger=0)
+	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$move_date=true,$notrigger=0)
 	{
 		global $user,$langs,$conf;
 
@@ -1006,11 +1006,13 @@ class Project extends CommonObject
 		$orign_project_ref=$clone_project->ref;
 
 		$clone_project->id=0;
-        $clone_project->date_start = $now;
-        if (!(empty($clone_project->date_end)))
-        {
-        	$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
-        }
+		if ($move_date) {
+	        $clone_project->date_start = $now;
+	        if (!(empty($clone_project->date_end)))
+	        {
+	        	$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
+	        }
+		}
 
         $clone_project->datec = $now;
 
@@ -1164,7 +1166,7 @@ class Project extends CommonObject
 
 			    foreach ($tasksarray as $tasktoclone)
 			    {
-					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,true,true,false,$clone_task_file,true,false);
+					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,$move_date,true,false,$clone_task_file,true,false);
 					if ($result_clone <= 0)
 				    {
 				    	$this->error.=$result_clone->error;
