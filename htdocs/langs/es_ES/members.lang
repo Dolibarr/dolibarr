@@ -203,3 +203,4 @@ MembersByNature=Miembros por naturaleza
 VATToUseForSubscriptions=Tasa de IVA para las afiliaciones
 NoVatOnSubscription=Sin IVA para en las afiliaciones
 MEMBER_PAYONLINE_SENDEMAIL=E-Mail para advertir en caso de recepción de confirmación de un pago validado de una afiliación
+ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Producto usado para las suscripciones en línea en facturas: %s
