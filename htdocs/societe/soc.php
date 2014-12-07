@@ -789,10 +789,11 @@ else
 	        print '</label>';
             print ' &nbsp; &nbsp; ';
 	        print '<label for="radioprivate">';
-            print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'').'>';
-	        print '&nbsp;';
-            print $langs->trans("Individual");
-            print '<div class="hideonsmartphone">('.$langs->trans("ToCreateContactWithSameName").')</div>';
+            $text ='<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'').'>';
+	        $text.='&nbsp;';
+	        $text.= $langs->trans("Individual");
+	        $htmltext=$langs->trans("ToCreateContactWithSameName");
+	        print $form->textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
             print '</label>';
             print '</div>';
             print "<br>\n";
