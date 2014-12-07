@@ -38,6 +38,7 @@ before_script:
  - pyrus install pear/PHP_CodeSniffer
  - phpenv rehash
  - which phpcs
+ - phpcs --version
  - phpcs -i
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
@@ -106,10 +107,10 @@ script:
 # - cat upgrade2.log
  - cd ../..
  - date
- - php -d zend.enable_gc=0 /usr/bin/phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+ - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
  - date
 # - phpcs -p --warning-severity=0 -s --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ htdocs/core/class/dolgraph.class.php 2>&1
- - php -d zend.enable_gc=0 /usr/bin/phpcs -p --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ . 2>&1
+ - phpcs -p --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/htdocs/conf/conf.php,/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ . 2>&1
  - date
 
 after_script:

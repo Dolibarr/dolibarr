@@ -72,8 +72,6 @@ class Conf
 
 	/**
 	 * Constructor
-	 *
-	 * @return Conf
 	 */
 	function __construct()
 	{
@@ -367,6 +365,26 @@ class Conf
 			unset($this->global->PROJECT_USE_SEARCH_TO_SELECT);
 		}
 
+		if (! empty($conf->productbatch->enabled))
+		{
+			$this->global->STOCK_CALCULATE_ON_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SHIPMENT=1;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
+		}
+
+		if (! empty($conf->productbatch->enabled))
+		{
+			$this->global->STOCK_CALCULATE_ON_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SHIPMENT=1;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
+		}
+
 		// conf->currency
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
 		$this->currency=$this->global->MAIN_MONNAIE;
@@ -376,7 +394,7 @@ class Conf
 
         // By default, suppliers ojbects can be linked to all projects
         $conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
-        
+
 		// conf->liste_limit = constante de taille maximale des listes
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;
 		$this->liste_limit=$this->global->MAIN_SIZE_LISTE_LIMIT;

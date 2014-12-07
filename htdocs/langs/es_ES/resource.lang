@@ -1,36 +1,36 @@
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Recursos
+MenuResourceAdd=Nuevo recurso
+MenuResourcePlanning=Planificación de recursos
+DeleteResource=Eliminar recurso
+ConfirmDeleteResourceElement=¿Está seguro de querer eliminar el recurso de este elemento?
+NoResourceInDatabase=Sin recursos en la base de datos.
+NoResourceLinked=Sin recursos enlazados
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=Listado de recursos
+ResourceSingular=Recurso
+ResourceCard=Ficha recurso
+AddResource=Crear un recurso
+ResourceFormLabel_ref=Nombre recurso
+ResourceType=Tipo de recurso
+ResourceFormLabel_description=Descripción recurso
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=Recursos enlazados a elemento
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ShowResourcePlanning=Ver planificación de recursos
+GotoDate=Ir a fecha
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=Elementos de recursos
+ResourceCreatedWithSuccess=Recurso creado correctamente
+RessourceLineSuccessfullyDeleted=Línea de recurso eliminada correctamente
+RessourceLineSuccessfullyUpdated=Línea de recurso actualizada correctamente
+ResourceLinkedWithSuccess=Recurso enlazado correctamente
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+TitleResourceCard=Ficha recurso
+ConfirmDeleteResource=¿Está seguro de querer eliminar este recurso?
+RessourceSuccessfullyDeleted=Recurso eliminado correctamente
+DictionaryResourceType=Tipo de recursos
 
-DictionaryEMailTemplates=Modèles d'Emails
+DictionaryEMailTemplates=Modelo de E-Mails
 
-SelectResource=Select resource
+SelectResource=Seleccionar recurso

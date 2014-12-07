@@ -126,7 +126,12 @@ function user_prepare_head($object)
 	return $head;
 }
 
-
+/**
+ * Prepare array with list of tabs
+ *
+ * @param 	Group $object		Object group
+ * @return	array				Array of tabs
+ */
 function group_prepare_head($object)
 {
 	global $langs, $conf, $user;

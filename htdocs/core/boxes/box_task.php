@@ -40,10 +40,8 @@ class box_task extends ModeleBoxes
 	var $info_box_contents = array();
 
 	/**
-	*      \brief      Constructeur de la classe
-	*
-	*  @return	void
-	*/
+	 *  Constructor
+	 */
 	function box_task()
 	{
 		global $langs;
@@ -126,7 +124,7 @@ class box_task extends ModeleBoxes
 		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalplannedtot,'all',25200,5));
 		$this->info_box_contents[$i][4] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totaldurationtot,'all',25200,5));
 		$this->info_box_contents[$i][5] = array('td' => '', 'text' => "");
-		
+
 	}
 
 	/**
