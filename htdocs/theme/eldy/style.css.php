@@ -849,7 +849,7 @@ form#login {
 	vertical-align: middle;
 }
 .login_table_title {
-	max-width: 540px;
+	max-width: 320px;
 	color: #888888;
 	text-shadow: 1px 1px 1px #FFF;
 }
@@ -863,7 +863,7 @@ form#login {
 	padding-right:6px;
 	padding-top:12px;
 	padding-bottom:12px;
-	max-width: 540px;
+	max-width: 320px;
 
 	background-color: #FFFFFF;
 

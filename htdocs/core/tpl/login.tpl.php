@@ -66,16 +66,17 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
-<table align="center" class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td align="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
-</table>
-<br>
-
 <div class="login_table">
 
 <div id="login_line1">
 
-<div id="login_left">
+<!-- Logo -->
+<div class="center"><img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" /></div>
+
+<table align="center" class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>">
+<tr class="vmenu"><td align="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
+</table>
+<br>
 
 <table class="left" summary="Login pass">
 <!-- Login -->
@@ -128,12 +129,6 @@ if (! empty($hookmanager->resArray['options'])) {
 </table>
 
 </div> <!-- end div left -->
-
-<div id="login_right">
-
-<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
-
-</div>
 
 <div id="login_line2" style="clear: both">
 
