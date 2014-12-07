@@ -2,6 +2,7 @@
 /* Copyright (C) phpBSM
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -184,6 +185,19 @@ function displayBox($selectedDate,$month,$year)
 			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/core/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&gt;&gt;</td>
 	</tr>
 	<tr class="dpDayNames">
+	<?php
+	$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
+	if($startday==1)
+	{?>
+		<td width="14%"><?php echo $langs->trans("ShortMonday") ?></td>
+		<td width="15%"><?php echo $langs->trans("ShortTuesday") ?></td>
+		<td width="14%"><?php echo $langs->trans("ShortWednesday") ?></td>
+		<td width="15%"><?php echo $langs->trans("ShortThursday") ?></td>
+		<td width="14%"><?php echo $langs->trans("ShortFriday") ?></td>
+		<td width="14%"><?php echo $langs->trans("ShortSaturday") ?></td>
+		<td width="14%"><?php echo $langs->trans("ShortSunday") ?></td>     
+	<?php
+	}else {?>	
 		<td width="14%"><?php echo $langs->trans("ShortSunday") ?></td>
 		<td width="14%"><?php echo $langs->trans("ShortMonday") ?></td>
 		<td width="15%"><?php echo $langs->trans("ShortTuesday") ?></td>
@@ -191,6 +205,8 @@ function displayBox($selectedDate,$month,$year)
 		<td width="15%"><?php echo $langs->trans("ShortThursday") ?></td>
 		<td width="14%"><?php echo $langs->trans("ShortFriday") ?></td>
 		<td width="14%"><?php echo $langs->trans("ShortSaturday") ?></td>
+		<?php
+	}?>
 	</tr>
 	<?php
 	//print "x ".$thedate." y";

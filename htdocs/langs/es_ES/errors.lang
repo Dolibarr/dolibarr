@@ -138,6 +138,24 @@ ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, este miembro aún no es
 ErrorThereIsSomeDeliveries=Error, hay entregas vinculadas a este envío. No se puede eliminar.
 ErrorCantDeletePaymentReconciliated=No se puede eliminar un pago que ha generado una transacción bancaria que se encuentra conciliada
 ErrorCantDeletePaymentSharedWithPayedInvoice=No se puede eliminar un pago de varias factura con alguna factura con estado Pagada
+ErrorPriceExpression1=No se puede asignar a la constante '%s'
+ErrorPriceExpression2=No se puede redefinir la función incorporada '%s'
+ErrorPriceExpression3=Variable '%s' no definida en la definición de la función
+ErrorPriceExpression4=Carácter '%s' ilegal
+ErrorPriceExpression5=No se esperaba '%s'
+ErrorPriceExpression6=Número de argumentos inadecuados (%s dados, %s esperados) 
+ErrorPriceExpression8=Operador '%s' no esperado
+ErrorPriceExpression9=Ha ocurrido un error no esperado
+ErrorPriceExpression10=Operador '%s' carece de operando
+ErrorPriceExpression11=Se esperaba '%s'
+ErrorPriceExpression14=División por cero
+ErrorPriceExpression17=Variable '%s' indefinida
+ErrorPriceExpression19=Expresión no encontrada
+ErrorPriceExpression20=Expresión vacía
+ErrorPriceExpression21=Resultado '%s' vacío
+ErrorPriceExpression22=Resultado '%s' negativo
+ErrorPriceExpressionInternal=Error interno '%s'
+ErrorPriceExpressionUnknown=Error desconocido '%s'
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos

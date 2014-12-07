@@ -643,7 +643,10 @@ if ($id > 0 || ! empty($ref))
 
 				if (! empty($conf->stock->enabled))
 				{
-					print '<td>'.$langs->trans("WarehouseSource").'</td>';
+					$warehousecanbeselectedlater=1;
+					if (! empty($conf->productbatch->enabled)) $warehousecanbeselectedlater=0;
+
+					print '<td'.($warehousecanbeselectedlater?'':' class="fieldrequired"').'>'.$langs->trans("WarehouseSource").'</td>';
 					print '<td>';
 					print $formproduct->selectWarehouses(-1,'entrepot_id','',1);
 					if (count($formproduct->cache_warehouses) <= 0)
