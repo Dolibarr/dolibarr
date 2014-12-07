@@ -298,7 +298,7 @@ class Project extends CommonObject
         else if (! empty($ref))
         {
         	$sql.= " WHERE ref='".$this->db->escape($ref)."'";
-        	$sql.= " AND entity IN (".getEntity('project').")";
+        	$sql.= " AND entity IN (".getEntity('project',1).")";
         }
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -910,7 +910,7 @@ class Project extends CommonObject
             $sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
             $sql.= ", " . MAIN_DB_PREFIX . "c_type_contact as ctc";
         }
-        $sql.= " WHERE p.entity IN (".getEntity('project').")";
+        $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
         // Internal users must see project he is contact to even if project linked to a third party he can't see.
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         if ($socid > 0) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = " . $socid . ")";

@@ -271,13 +271,13 @@ class FormFile
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
-        
+
         $printer=0;
         if (in_array($modulepart,array('facture','propal','proposal','order','commande')))	// This feature is implemented only for such elements
         {
         	$printer = (!empty($user->rights->printipp->read) && !empty($conf->printipp->enabled))?true:false;
         }
-        
+
         $hookmanager->initHooks(array('formfile'));
         $forname='builddoc';
         $out='';
@@ -1101,6 +1101,8 @@ class FormFile
         global $bc;
         global $sortfield, $sortorder;
 
+        $langs->load("link");
+
         require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
         $link = new Link($this->db);
         $links = array();
@@ -1162,7 +1164,7 @@ class FormFile
         $nboflinks = count($links);
         if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-        $var = false;
+        $var = true;
         foreach ($links as $link)
         {
             $var =! $var;

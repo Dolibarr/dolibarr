@@ -827,7 +827,7 @@ class Form
 				{
 					if (count($events))		// Add management of event
 					{
-						print '<script type="text/javascript">
+						$out.='<script type="text/javascript">
 								$(document).ready(function() {
 									jQuery("#'.$htmlname.'").change(function () {
 										var obj = '.json_encode($events).';
