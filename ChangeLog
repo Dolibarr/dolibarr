@@ -3,6 +3,18 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 3.8 compared to 3.7.* *****
+For users:
+- New:
+
+For translators:
+- Update language files.
+- New: When a translation is not available we always jump to en_US and only en_US.
+
+For developers:
+- New: Function yn can show a visual checkbox
+
+
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
 - New: Match other auth system: Login can be done entering login or user 
