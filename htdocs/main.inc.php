@@ -992,6 +992,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
         $ext='';
         if (! empty($conf->dol_use_jmobile)) $ext='version='.urlencode(DOL_VERSION);
+        if (GETPOST('version')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
 
         if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
         {

@@ -107,7 +107,7 @@ $colorbacklinepair2='255,255,255';    // line pair
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));
 $colorbackbody='#f9f9f9';
 $colortext='40,40,40';
-$fontsize='12';
+$fontsize='13';
 $fontsizesmaller='11';
 
 // Eldy colors
@@ -263,7 +263,7 @@ input, textarea, select {
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
 	/* box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
-	padding:2px;
+	padding:4px;
 	margin-left:1px;
 	margin-bottom:1px;
 	margin-top:1px;
@@ -2454,6 +2454,7 @@ li.cal_event       { border: none; list-style-type: none; }
 	       cursor:pointer;
 	     }
 
+
 /* ============================================================================== */
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
@@ -2642,7 +2643,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 {
     line-height: 1em !important;
 }
-.ui-autocomplete-input { margin: 0; padding: 2px; }
+.ui-autocomplete-input { margin: 0; padding: 4px; }
 
 
 /* ============================================================================== */
@@ -2908,6 +2909,31 @@ div.dolEventError h1, div.dolEventError h2 {
 	opacity: .35;
 	filter: Alpha(Opacity=35);
 	background-image: none;
+}
+
+/* ============================================================================== */
+/*  Select2                                                                       */
+/* ============================================================================== */
+
+.select2-choice, 
+.select2-drop.select2-drop-above.select2-drop-active, 
+.select2-container-active .select2-choice, 
+.select2-container-active .select2-choices,
+.select2-dropdown-open.select2-drop-above .select2-choice,
+.select2-dropdown-open.select2-drop-above .select2-choices,
+.select2-container-multi.select2-container-active .select2-choices
+{
+	border: 1px solid #aaa;
+}
+
+.select2-drop-active
+{
+	border: 1px solid #aaa;
+	border-top: none;
+}
+a span.select2-chosen
+{
+	font-weight: normal !important;
 }
 
 
