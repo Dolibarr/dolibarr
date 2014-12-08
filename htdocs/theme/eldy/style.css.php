@@ -38,6 +38,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 session_cache_limiter(FALSE);
 
 require_once '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSION['dol_login']);
@@ -131,12 +132,8 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='50,50,130';
-	/*if ($dol_use_jmobile)
-	{
-    	$conf->global->THEME_ELDY_BACKTABCARD1='245,245,245';    // topmenu
-		$conf->global->THEME_ELDY_BACKTABCARD2='245,245,245';
-		$conf->global->THEME_ELDY_BACKTABACTIVE='245,245,245';
-	}*/
+    $conf->global->THEME_ELDY_FONT_SIZE1='12';
+    $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
 
 $colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
@@ -166,6 +163,10 @@ if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($user->conf->
 	$colorbacklineimpairhover='';
 	$colorbacklinepairhover='';
 }
+
+// Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
+$colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
+$colorbacktabcard2=join(',',colorStringToArray($colorbacktabcard2));
 
 // Set text color to black or white
 $tmppart=explode(',',$colorbackhmenu1);
