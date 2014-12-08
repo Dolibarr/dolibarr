@@ -849,7 +849,7 @@ form#login {
 	vertical-align: middle;
 }
 .login_table_title {
-	max-width: 320px;
+	max-width: 560px;
 	color: #888888;
 	text-shadow: 1px 1px 1px #FFF;
 }
@@ -863,7 +863,7 @@ form#login {
 	padding-right:6px;
 	padding-top:12px;
 	padding-bottom:12px;
-	max-width: 320px;
+	max-width: 560px;
 
 	background-color: #FFFFFF;
 
@@ -891,6 +891,8 @@ div#login_left, div#login_right {
 	display: inline-block;
 	min-width: 245px;
 	padding-top: 10px;
+	padding-left: 16px;
+	padding-right: 16px;
 	text-align: center;
 	vertical-align: middle;
 }
@@ -964,6 +966,17 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 
+.span-icon-user {
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>) no-repeat scroll 7px 7px;
+}
+.span-icon-password {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
+	background-repeat: no-repeat;
+}
+.span-icon-user input, .span-icon-password input {
+	margin-right: 30px;
+	width: 98%;
+}
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
