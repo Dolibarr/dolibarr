@@ -131,7 +131,6 @@ class modPrinting extends DolibarrModules
      */
     function init($options='')
     {
-        // insertion modele dans llx_document_model 
         $sql = array();
 
         return $this->_init($sql, $options);
@@ -147,7 +146,6 @@ class modPrinting extends DolibarrModules
      */
     function remove($options='')
     {
-        // suppression des modeles "printing"
         $sql = array();
 
         return $this->_remove($sql, $options);

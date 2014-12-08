@@ -131,16 +131,16 @@ class printing_printipp extends PrintingDriver
         $var=true;
         $html = '<table width="100%" class="noborder">';
         $html.= '<tr class="liste_titre">';
-        $html.= '<td>Uri</td>';
-        $html.= '<td>Name</td>';
-        $html.= '<td>State</td>';
-        $html.= '<td>State_reason</td>';
-        $html.= '<td>State_reason1</td>';
-        $html.= '<td>BW</td>';
-        $html.= '<td>Color</td>';
-        //$html.= '<td>Device</td>';
-        $html.= '<td>Media</td>';
-        $html.= '<td>Supported</td>';
+        $html.= '<td>'.$langs->trans('IPP_Uri').'</td>';
+        $html.= '<td>'.$langs->trans('IPP_Name').'</td>';
+        $html.= '<td>'.$langs->trans('IPP_State').'</td>';
+        $html.= '<td>'.$langs->trans('IPP_State_reason').'</td>';
+        $html.= '<td>'.$langs->trans('IPP_State_reason1').'</td>';
+        $html.= '<td>'.$langs->trans('IPP_BW').'</td>';
+        $html.= '<td>'.$langs->trans('IPP_Color').'</td>';
+        //$html.= '<td>'.$langs->trans('IPP_Device').'</td>';
+        $html.= '<td>'.$langs->trans('IPP_Media').'</td>';
+        $html.= '<td>'.$langs->trans('IPP_Supported').'</td>';
         $html.= '<td align="center">'.$langs->trans("Select").'</td>';
         $html.= "</tr>\n";
         $list = $this->getlist_available_printers();
@@ -153,14 +153,14 @@ class printing_printipp extends PrintingDriver
             $html.= '<td>'.$value.'</td>';
             //$html.= '<td><pre>'.print_r($printer_det,true).'</pre></td>';
             $html.= '<td>'.$printer_det->printer_name->_value0.'</td>';
-            $html.= '<td>'.$printer_det->printer_state->_value0.'</td>';
-            $html.= '<td>'.$printer_det->printer_state_reasons->_value0.'</td>';
-            $html.= '<td>'.$printer_det->printer_state_reasons->_value1.'</td>';
-            $html.= '<td>'.$printer_det->printer_type->_value2.'</td>';
-            $html.= '<td>'.$printer_det->printer_type->_value3.'</td>';
+            $html.= '<td>'.$langs->trans('STATE_IPP_'.$printer_det->printer_state->_value0).'</td>';
+            $html.= '<td>'.$langs->trans('STATE_IPP_'.$printer_det->printer_state_reasons->_value0).'</td>';
+            $html.= '<td>'.(! empty($printer_det->printer_state_reasons->_value1)?$langs->trans('STATE_IPP_'.$printer_det->printer_state_reasons->_value1):'').'</td>';
+            $html.= '<td>'.$langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value2).'</td>';
+            $html.= '<td>'.$langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value3).'</td>';
             //$html.= '<td>'.$printer_det->device_uri->_value0.'</td>';
             $html.= '<td>'.$printer_det->media_default->_value0.'</td>';
-            $html.= '<td>'.$printer_det->media_type_supported->_value1.'</td>';
+            $html.= '<td>'.$langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1).'</td>';
             // Defaut
             $html.= '<td align="center">';
             if ($conf->global->PRINTIPP_URI_DEFAULT == $value)
