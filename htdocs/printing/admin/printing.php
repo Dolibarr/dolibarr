@@ -123,6 +123,7 @@ if ($mode == 'setup' && $user->admin)
     if (! empty($driver)) {
         require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
         $classname = 'printing_'.$driver;
+        $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
         $i=0;
@@ -211,6 +212,7 @@ if ($mode == 'test' && $user->admin)
     if (! empty($driver)) {
         require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
         $classname = 'printing_'.$driver;
+        $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
         print $printer->listAvailablePrinters();
