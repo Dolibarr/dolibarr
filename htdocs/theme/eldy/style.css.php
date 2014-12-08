@@ -63,7 +63,7 @@ $theme='eldy';	// Value of theme
 if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 // Define image path files and other constants
-$fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
+$fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Helvetica, Verdana, Arial, sans-serif';
 $img_head='';
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
@@ -2928,9 +2928,9 @@ div.dolEventError h1, div.dolEventError h2 {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
-.select2-choice, 
-.select2-drop.select2-drop-above.select2-drop-active, 
-.select2-container-active .select2-choice, 
+.select2-choice,
+.select2-drop.select2-drop-above.select2-drop-active,
+.select2-container-active .select2-choice,
 .select2-container-active .select2-choices,
 .select2-dropdown-open.select2-drop-above .select2-choice,
 .select2-dropdown-open.select2-drop-above .select2-choices,
