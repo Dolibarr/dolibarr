@@ -27,7 +27,7 @@
 /**
  *	Class to manage accountancy book keeping
  */
-class BookKeeping
+class BookKeeping extends CommonObject
 {
 	var $db;
 	var $error;

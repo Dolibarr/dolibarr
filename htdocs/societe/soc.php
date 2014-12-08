@@ -789,10 +789,11 @@ else
 	        print '</label>';
             print ' &nbsp; &nbsp; ';
 	        print '<label for="radioprivate">';
-            print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'').'>';
-	        print '&nbsp;';
-            print $langs->trans("Individual");
-            print '<div class="hideonsmartphone">('.$langs->trans("ToCreateContactWithSameName").')</div>';
+            $text ='<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'').'>';
+	        $text.='&nbsp;';
+	        $text.= $langs->trans("Individual");
+	        $htmltext=$langs->trans("ToCreateContactWithSameName");
+	        print $form->textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
             print '</label>';
             print '</div>';
             print "<br>\n";
@@ -810,6 +811,8 @@ else
         print '<input type="hidden" name="LastName" value="'.$langs->trans('LastName').'">';
         print '<input type="hidden" name="ThirdPartyName" value="'.$langs->trans('ThirdPartyName').'">';
         if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
+
+        dol_fiche_head(null, 'card', '', 0, '');
 
         print '<table class="border" width="100%">';
 
@@ -1053,14 +1056,7 @@ else
             print $form->selectyesno('localtax2assuj_value',0,1);
             print '</td><tr>';
         }
-/*
-        if ($mysoc->country_code=='ES' && $mysoc->localtax2_assuj!="1" && ! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")=='')  )
-        {
-        	print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
-        	print $form->selectyesno('localtax2assuj_value',0,1);
-        	print '</td><tr>';
-        }
-*/
+
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
             print '<tr><td><label for="default_lang">'.$langs->trans("DefaultLang").'</label></td><td colspan="3" class="maxwidthonsmartphone">'."\n";
@@ -1097,7 +1093,9 @@ else
 
         print '</table>'."\n";
 
-        print '<br><div align="center">';
+        dol_fiche_end();
+
+        print '<div class="center">';
         print '<input type="submit" class="button" value="'.$langs->trans('AddThirdParty').'">';
         print '</div>'."\n";
 

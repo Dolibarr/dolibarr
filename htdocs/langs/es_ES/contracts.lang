@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Área contratos
 ListOfContracts=Listado de contratos
-LastModifiedContracts=Last %s modified contracts
+LastModifiedContracts=%s Últimos contratos modificados
 AllContracts=Todos los contratos
 ContractCard=Ficha contrato
 ContractStatus=Estado del contrato
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Listado de líneas de contratos en servicio
 ListOfRunningServices=Listado de servicios activos
 NotActivatedServices=Servicios no activados (con los contratos validados)
 BoardNotActivatedServices=Servicios a activar con los contratos validados
-LastContracts=Last % contracts
+LastContracts=%s Últimos contratos
 LastActivatedServices=Los %s últimos servicios activados
 LastModifiedServices=Los %s últimos servicios modificados
 EditServiceLine=Edición línea del servicio

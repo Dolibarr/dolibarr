@@ -133,9 +133,10 @@ class FormFile
                 if ($perm)
                 {
                 	$langs->load('other');
-                    $out .= ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
-                    $out .= ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
-                    $out .= ')';
+                    //$out .= ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
+                    $out .= ' ';
+                    $out.=info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
+                    //$out .= ')';
                 }
             }
             else
@@ -270,13 +271,13 @@ class FormFile
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
-        
+
         $printer=0;
         if (in_array($modulepart,array('facture','propal','proposal','order','commande','expedition')))	// This feature is implemented only for such elements
         {
             $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
         }
-        
+
         $hookmanager->initHooks(array('formfile'));
         $forname='builddoc';
         $out='';
@@ -779,7 +780,7 @@ class FormFile
 
 			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-			$var=false;
+			$var=true;
 			foreach($filearray as $key => $file)      // filearray must be only files here
 			{
 				if ($file['name'] != '.'
@@ -1100,6 +1101,8 @@ class FormFile
         global $bc;
         global $sortfield, $sortorder;
 
+        $langs->load("link");
+
         require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
         $link = new Link($this->db);
         $links = array();
@@ -1161,7 +1164,7 @@ class FormFile
         $nboflinks = count($links);
         if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-        $var = false;
+        $var = true;
         foreach ($links as $link)
         {
             $var =! $var;

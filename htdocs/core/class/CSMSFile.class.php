@@ -54,7 +54,6 @@ class CSMSFile
 	 *	@param 	int		$deferred			Deferred or not
 	 *	@param 	int		$priority			Priority
 	 *	@param 	int		$class				Class
-	 *	@return	int
 	 */
 	function __construct($to,$from,$msg,$deliveryreceipt=0,$deferred=0,$priority=3,$class=1)
 	{

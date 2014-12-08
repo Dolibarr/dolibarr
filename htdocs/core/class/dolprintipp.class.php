@@ -45,7 +45,6 @@ class dolprintIPP
      * @param   string      $userid     userid
      * @param   string      $user       user
      * @param   string      $password   password
-     * @return  printIPP
      */
     function __construct($db,$host,$port,$userid,$user,$password)
     {
@@ -90,7 +89,7 @@ class dolprintIPP
         global $conf,$db;
 
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
-        
+
         $ipp = new CupsPrintIPP();
         $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
         $ipp->setHost($this->host);
@@ -121,12 +120,12 @@ class dolprintIPP
             	}
             }
         }
-        
+
         // Set number of copy
         $ipp->setCopies($obj->copy);
         $ipp->setData(DOL_DATA_ROOT.'/'.$module.'/'.$file);
         $ipp->printJob();
-        
+
         return '';
     }
 

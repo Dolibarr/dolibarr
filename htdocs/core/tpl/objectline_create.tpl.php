@@ -108,10 +108,10 @@ else {
 		echo '> ';
 		// Show type selector
 		echo $langs->trans("FreeLineOfType");
-		echo ' ';
 		echo '</label>';
+		echo ' ';
 	}
-	else 
+	else
 	{
 		echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
 		// Show type selector

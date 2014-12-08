@@ -825,9 +825,22 @@ class Form
 	            }
 	            else
 				{
+					if (! $forcecombo)
+					{
+						$out.='
+						<script type="text/javascript">
+	        				$(document).ready(function () {
+	        					$(\'#'.$htmlname.'\').select2({
+	        						width: \'resolve\',
+	        						minimumInputLength: 0,
+	        				});
+	        			});
+	        		    </script>';
+					}
+										
 					if (count($events))		// Add management of event
 					{
-						print '<script type="text/javascript">
+						$out.='<script type="text/javascript">
 								$(document).ready(function() {
 									jQuery("#'.$htmlname.'").change(function () {
 										var obj = '.json_encode($events).';
@@ -1077,7 +1090,7 @@ class Form
         {
             $num=$this->db->num_rows($resql);
 
-            if ($conf->use_javascript_ajax && $conf->global->CONTACT_USE_SEARCH_TO_SELECT && ! $forcecombo && ! $options_only)
+            if ($conf->use_javascript_ajax && ! $forcecombo && ! $options_only)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
             	$out.= ajax_combobox($htmlname, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
@@ -1338,10 +1351,20 @@ class Form
             }
             else
             {
-                $out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
+                $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'" disabled="disabled">';
                 $out.= '<option value="">'.$langs->trans("None").'</option>';
             }
             $out.= '</select>';
+            
+           	$out.= '<script type="text/javascript">
+						$(document).ready(function() {
+
+						$(\'#'.$htmlname.'\').select2({
+							width: \'resolve\',
+							minimumInputLength: 0
+						});
+           			})
+           		   </script>';
         }
         else
         {
@@ -4119,10 +4142,11 @@ class Form
      * 	@param	int		$disabled		Html select box is disabled
      *  @param	int		$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' = Do not sort
      *  @param	string	$morecss		Add more class to css styles
+     *  @param	int		$addjscombo		Add js combo
      * 	@return	string					HTML select string.
      *  @see multiselectarray
      */
-    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='')
+    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0)
     {
         global $conf, $langs;
 
@@ -4131,13 +4155,15 @@ class Form
         $out='';
 
         // Add code for jquery to use multiselect
-        if (empty($conf->dol_use_jmobile) && (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')))
+        if ($addjscombo && empty($conf->dol_use_jmobile) && (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')))
         {
         	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-        	$out='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+        	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
         			<script type="text/javascript">
         				$(document).ready(function () {
         					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+        					width: \'off\',
+        					minimumInputLength: 0
         				});
         			});
         		   </script>';

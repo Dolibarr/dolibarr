@@ -456,7 +456,7 @@ else
             {
                 if ($socid > 0)
                 {
-                    print '<tr><td><label for="socid">'.$langs->trans("Company").'</label></td>';
+                    print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
                     print '<td colspan="3" class="maxwidthonsmartphone">';
                     print $objsoc->getNomUrl(1);
                     print '</td>';
@@ -464,7 +464,7 @@ else
                     print '</td></tr>';
                 }
                 else {
-                    print '<tr><td><label for="socid">'.$langs->trans("Company").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+                    print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                     print $form->select_company($socid,'socid','',1);
                     print '</td></tr>';
                 }
@@ -690,7 +690,7 @@ else
             // Company
             if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
             {
-                print '<tr><td><label for="socid">'.$langs->trans("Company").'</label></td>';
+                print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
                 print '<td colspan="3" class="maxwidthonsmartphone">';
                 print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):($object->socid?$object->socid:-1),'socid','',1);
                 print '</td>';
@@ -924,7 +924,7 @@ else
         // Company
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
-            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
             if ($object->socid > 0)
             {
                 $objsoc->fetch($object->socid);

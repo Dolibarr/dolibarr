@@ -115,11 +115,18 @@ function ServerMapFolder($resourceType, $folderPath, $sCommand)
 	return CombinePaths($sResourceTypePath, $folderPath);
 }
 
-function GetParentFolder( $folderPath )
+/**
+ * GetParentFolder
+ *
+ * @param	string	$folderPath		Folder path
+ * @return 	string					Parent folder
+ */
+function GetParentFolder($folderPath)
 {
 	$sPattern = "-[/\\\\][^/\\\\]+[/\\\\]?$-" ;
 	return preg_replace($sPattern, '', $folderPath);
 }
+
 /**
  * CreateServerFolder
  *

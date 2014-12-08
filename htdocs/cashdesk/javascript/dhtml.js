@@ -16,7 +16,7 @@
  */
 
 // Instanciation et initialisation de l'objet xmlhttprequest
-function file (fichier) {
+function file(fichier) {
 
 	// Instanciation de l'objet pour Mozilla, Konqueror, Opera, Safari, etc ...
 	if (window.XMLHttpRequest) {
@@ -51,7 +51,7 @@ function file (fichier) {
 
 
 // Affichage des donnees aTexte dans le bloc identifie par aId
-function afficheDonnees (aId, aTexte) {
+function afficheDonnees(aId, aTexte) {
 
 	document.getElementById(aId).innerHTML = aTexte;
 
@@ -59,7 +59,7 @@ function afficheDonnees (aId, aTexte) {
 
 
 // aCible : id du bloc de destination; aCode : argument a passer a la page php chargee du traitement et de l'affichage
-function verifResultat (aCible, aCode) {
+function verifResultat(aCible, aCode) {
 	if (aCode != '') {
 
 		if (texte = file ('facturation_dhtml.php?code='+escape(aCode))) {
@@ -76,21 +76,9 @@ function verifResultat (aCible, aCode) {
 
 
 // Change dynamiquement la classe de l'element ayant l'id aIdElement pour aClasse
-function setStyle (aIdElement, aClasse) {
+function setStyle(aIdElement, aClasse) {
 
 	aIdElement.className = aClasse;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
 

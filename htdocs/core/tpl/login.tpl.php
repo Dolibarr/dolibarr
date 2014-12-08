@@ -46,8 +46,9 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div align="center">
+<center>
 <div class="login_vertical_align">
+
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -66,7 +67,7 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
-<table align="center" class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>">
+<table class="login_table_title center" summary="<?php echo dol_escape_htmltag($title); ?>">
 <tr class="vmenu"><td align="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
 </table>
 <br>
@@ -77,21 +78,28 @@ $(document).ready(function () {
 
 <div id="login_left">
 
-<table class="left" summary="Login pass">
+<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
+
+</div>
+
+
+
+<div id="login_right">
+
+<table class="left centpercent" summary="Login pass">
 <!-- Login -->
 <tr>
-<td valign="middle" class="loginfield"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
 <td valign="middle" class="nowrap">
 <span class="span-icon-user">
-<input type="text" id="username" name="username" class="flat input-icon-user" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
+<input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user" size="15" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </span>
 </td>
 </tr>
 <!-- Password -->
-<tr><td valign="middle" class="loginfield nowrap"><strong><label for="password"><?php echo $langs->trans('Password'); ?></label></strong></td>
+<tr>
 <td valign="middle" class="nowrap">
 <span class="span-icon-password">
-<input id="password" name="password" class="flat input-icon-password" type="password" size="15" maxlength="30" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="off" />
+<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password" type="password" size="15" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="off" />
 </span>
 </td></tr>
 <?php
@@ -109,18 +117,18 @@ if (! empty($hookmanager->resArray['options'])) {
 	if ($captcha) {
 		// TODO: provide accessible captha variants
 ?>
-<!-- Captcha -->
-	<tr><td valign="middle" class="loginfield nowrap"><label for="securitycode"><b><?php echo $langs->trans('SecurityCode'); ?></b></label></td>
+	<!-- Captcha -->
+	<tr>
 	<td valign="top" class="nowrap none" align="left">
 
 	<table class="login_table_securitycode" style="width: 100px;"><tr>
 	<td>
 	<span class="span-icon-security">
-	<input id="securitycode" class="flat input-icon-security" type="text" size="6" maxlength="5" name="code" tabindex="4" />
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security" type="text" size="12" maxlength="5" name="code" tabindex="3" />
 	</span>
 	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
+	<td><a href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
 
 	</td></tr>
@@ -129,9 +137,9 @@ if (! empty($hookmanager->resArray['options'])) {
 
 </div> <!-- end div left -->
 
-<div id="login_right">
 
-<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
+
+
 
 </div>
 
@@ -150,7 +158,7 @@ if ($forgetpasslink || $helpcenterlink)
 	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
 
 	echo '<br>';
-	echo '<div class="center" style="margin-top: 4px;">';
+	echo '<div align="center" style="margin-top: 4px;">';
 	if ($forgetpasslink) {
 		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">(';
 		echo $langs->trans('PasswordForgotten');
@@ -177,7 +185,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 
 	//if (! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
 	echo '<br>';
-	echo '<div class="center" style="margin-top: 4px;">';
+	echo '<div align="center" style="margin-top: 4px;">';
 
 	$url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 	if (! empty($url)) print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
@@ -190,13 +198,17 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 	echo '</div>';
 }
 
+
 ?>
 
 </div>
-</div>
+
 </div>
 
 </form>
+
+
+
 
 <?php if (! empty($_SESSION['dol_loginmesg']))
 {
@@ -211,17 +223,21 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 <?php if ($main_home)
 {
 ?>
-<!-- main_home message -->
-<div class="login_main_home center" style="max-width: 80%"><?php echo $main_home; ?></div>
-<br>
+	<div class="center" class="login_main_home" style="max-width: 80%">
+	<?php echo $main_home; ?>
+	</div><br>
 <?php
 }
 ?>
+
 <!-- authentication mode = <?php echo $main_authentication ?> -->
 <!-- cookie name used for this session = <?php echo $session_name ?> -->
 <!-- urlfrom in this session = <?php echo isset($_SESSION["urlfrom"])?$_SESSION["urlfrom"]:''; ?> -->
+
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
+
 <?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
+
 <?php
 // Google Analytics (need Google module)
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
@@ -251,7 +267,7 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLI
 	if (empty($conf->dol_use_jmobile))
 	{
 ?>
-	<div class="center"><br>
+	<div align="center"><br>
 		<script type="text/javascript"><!--
 			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
 			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
@@ -267,8 +283,11 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLI
 	}
 }
 ?>
+
+
 </div>
-</div>
+</center>	<!-- end of center -->
+
 
 </body>
 </html>

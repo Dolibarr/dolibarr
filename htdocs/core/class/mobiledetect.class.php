@@ -637,6 +637,11 @@ class MobileDetect
         return null;
     }
 
+    /**
+     * getMobileHeaders
+     *
+     * @return	string		mobile Headers
+     */
     public function getMobileHeaders()
     {
         return self::$mobileHeaders;

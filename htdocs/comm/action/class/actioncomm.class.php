@@ -57,7 +57,7 @@ class ActionComm extends CommonObject
     var $datef;			// Date action end (datep2)
     var $durationp = -1;      // -1=Unkown duration			// deprecated
     var $fulldayevent = 0;    // 1=Event on full day
-    var $punctual = 1;        // Milestone					// TODO Not sure we need this. Milestone is already event with end date = start date
+    var $punctual = 1;        // Milestone					// deprecated. Milestone is already event with end date = start date
     var $percentage;    // Percentage
     var $location;      // Location
 
@@ -1142,7 +1142,7 @@ class ActionComm extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
+        global $user,$langs,$conf,$user;
 
         $now=dol_now();
 
@@ -1166,6 +1166,9 @@ class ActionComm extends CommonObject
         $this->transparency=1;	// 1 means opaque
         $this->priority=1;
         $this->note = 'Note';
+
+        $this->userownerid=$user->id;
+        $this->userassigned[$user->id]=array('id'=>$user->id, 'transparency'=> 1);
     }
 
 }
