@@ -130,7 +130,7 @@ class printing_printgcp extends PrintingDriver
      *
      *  @return array      list of printers
      */
-    public function get_printer_detail()
+    function get_printer_detail()
     {
         // Check if we have auth token
         if(empty($this->authtoken)) {
@@ -159,10 +159,10 @@ class printing_printgcp extends PrintingDriver
      *
      * @param   string      $file       file
      * @param   string      $module     module
-     *
+     * @param   string      $subdir     subdir for file
      * @return  string                  '' if OK, Error message if KO
      */
-    public function print_file($file, $module, $subdir='')
+    function print_file($file, $module, $subdir='')
     {
         global $conf;
         if ($this->authtoken=='') {
@@ -256,8 +256,8 @@ class printing_printgcp extends PrintingDriver
     }
 
     /**
-     *
      *  Parse json response and return printers array
+     *
      *  @param  string    $jsonobj  Json response object
      *  @return array               return array of printers
      */
@@ -298,10 +298,10 @@ class printing_printgcp extends PrintingDriver
     /**
      *  Curl request
      *
-     *  @param   string  $url            url to hit
-     *  @param   array   $postfields     array of post fields
-     *  @param   array   $headers        array of http headers
-     *  @return
+     *  @param  string  $url            url to hit
+     *  @param  array   $postfields     array of post fields
+     *  @param  array   $headers        array of http headers
+     *  @return array                   response from curl
      */
     private function makeCurl($url,$postfields=array(),$headers=array())
     {
