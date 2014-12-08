@@ -67,7 +67,6 @@ class modPrinting extends DolibarrModules
         $this->config_page_url = array("printing.php@printing");
 
         // Dependances
-        $this->hidden =  (! empty($_SERVER["WINDIR"]));
         $this->depends = array();
         $this->requiredby = array();
         $this->phpmin = array(5,1);                     // Minimum version of PHP required by module
@@ -132,6 +131,7 @@ class modPrinting extends DolibarrModules
      */
     function init($options='')
     {
+        // insertion modele dans llx_document_model 
         $sql = array();
 
         return $this->_init($sql, $options);
@@ -142,11 +142,12 @@ class modPrinting extends DolibarrModules
      *   Remove from database constants, boxes and permissions from Dolibarr database.
      *   Data directories are not deleted
      *
-     *   @param      string	$options    Options when enabling module ('', 'noboxes')
+     *   @param      string $options    Options when enabling module ('', 'noboxes')
      *   @return     int                 1 if OK, 0 if KO
      */
     function remove($options='')
     {
+        // suppression des modeles "printing"
         $sql = array();
 
         return $this->_remove($sql, $options);

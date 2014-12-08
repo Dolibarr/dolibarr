@@ -1,6 +1,9 @@
 # Dolibarr language file - Source file is en_US - printipp
+PRINTIPP=PrintIPP Driver
 PrintIPPSetup=Setup of Direct Print module
-PrintIPPDesc=This module adds a Print button to send documents directly to a printer. It requires a Linux system with CUPS installed.
+PrintIPPDesc=This driver allow to send documents directly to a printer. It requires a Linux system with CUPS installed.
+PrintingDriverDescprintipp=Configuration variables for printing driver PrintIPP.
+PrintTestDescprintipp=List of Printers for driver PrintIPP.
 PRINTIPP_ENABLED=Show "Direct print" icon in document lists
 PRINTIPP_HOST=Print server
 PRINTIPP_PORT=Port

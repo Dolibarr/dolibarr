@@ -31,28 +31,34 @@
 if ($action == 'print_file' and $user->rights->printing->read) 
 {
     $langs->load("printing");
-    //require_once DOL_DOCUMENT_ROOT . '/core/class/dolprintipp.class.php';
-    //$printer = new dolPrintIPP($db, $conf->global->PRINTIPP_HOST, $conf->global->PRINTIPP_PORT, $user->login, $conf->global->PRINTIPP_USER, $conf->global->PRINTIPP_PASSWORD);
-    //$result = $printer->print_file(GETPOST('file', 'alpha'), GETPOST('printer', 'alpha'));
-    // Call trigger to Print Doc
-    //$actiontypecode='AC_PRINT';
-    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-    $interface=new Interfaces($db);
-    $trigger_name='PRINT_DOCPDF';
-    $printing->file = GETPOST('file', 'alpha');
-    $printing->printer = GETPOST('printer', 'alpha');
-    //print print_r($printing, true);
+    require_once DOL_DOCUMENT_ROOT . '/core/modules/printing/modules_printing.php';
+    $objectprint = new PrintingDriver($db);
+    $list = $objectprint->listDrivers($db, 10);
+    if (! empty($list)) {
+        $errorprint=0;
+        $printed=0;
+        foreach ($list as $driver) {
+            require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
+            $langs->load($driver);
+            $classname = 'printing_'.$driver;
+            $printer = new $classname($db);
+            //print '<pre>'.print_r($printer, true).'</pre>';
 
-    $result=$interface->run_triggers($trigger_name,$printing,$user,$langs,$conf);
-    if ($result < 0) {
-        setEventMessage($interface->errors, 'errors');
-    }
-    if ($result == 0) {
-        setEventMessage($langs->trans("NoModuleFound"));
-    }
-
-    if ($result>0) {
-        setEventMessage($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))));
+            if (! empty($conf->global->{$printer->active})) {
+                $subdir=(GETPOST('printer', 'alpha')=='expedition'?'sending':'');
+                $errorprint = $printer->print_file(GETPOST('file', 'alpha'), GETPOST('printer', 'alpha'), $subdir);
+                //if ($errorprint < 0) {
+                //    setEventMessage($interface->errors, 'errors');
+                //}
+                if ($errorprint=='') {
+                    setEventMessage($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->trans("ViaModule").' '.$printer->name);
+                    $printed++;
+                }
+            }
+        }
+        if ($printed==0) setEventMessage($langs->trans("NoActivePrintingModuleFound"));
+    } else {
+        setEventMessage($langs->trans("NoModuleFound"), 'warning');
     }
     $action = '';
 }

@@ -26,8 +26,8 @@ require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-//require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
-//require_once DOL_DOCUMENT_ROOT.'/printing/lib/printing.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
+require_once DOL_DOCUMENT_ROOT.'/printing/lib/printing.lib.php';
 
 $langs->load("admin");
 $langs->load("printing");
@@ -37,14 +37,58 @@ if (! $user->admin) accessforbidden();
 $action = GETPOST('action','alpha');
 $mode = GETPOST('mode','alpha');
 $value = GETPOST('value','alpha');
+$varname = GETPOST('varname', 'alpha');
+$driver = GETPOST('driver', 'alpha');
+
+if (! empty($driver)) $langs->load($driver);
 
 if (!$mode) $mode='config';
 
 /*
  * Action
  */
+if ($action == 'setconst' && $user->admin)
+{
+    $error=0;
+    $db->begin();
+    foreach ($_POST['setupdriver'] as $setupconst) {
+        //print '<pre>'.print_r($setupconst, true).'</pre>';
+        $result=dolibarr_set_const($db, $setupconst['varname'],$setupconst['value'],'chaine',0,'',$conf->entity);
+        if (! $result > 0) $error++;
+    }
 
+    if (! $error)
+    {
+        $db->commit();
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        $db->rollback();
+        dol_print_error($db);
+    }
+    $action='';
+}
 
+if ($action == 'setvalue' && $user->admin)
+{
+    $db->begin();
+
+    $result=dolibarr_set_const($db, $varname, $value,'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+
+    if (! $error)
+    {
+        $db->commit();
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        $db->rollback();
+        dol_print_error($db);
+    }
+    $action = '';
+}
 
 /*
  * View
@@ -55,71 +99,129 @@ $form = new Form($db);
 llxHeader('',$langs->trans("PrintingSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("PrintIPPSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("PrintingSetup"),$linkback,'setup');
 
-//$head=printippadmin_prepare_head();
+$head=printingadmin_prepare_head();
 
+if ($mode == 'setup' && $user->admin)
+{
+    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="setconst">';
 
+    dol_fiche_head($head, $mode, $langs->trans("ModuleDriverSetup"), 0, 'technic');
+
+    print $langs->trans("PrintingDriverDesc".$driver)."<br><br>\n";
+
+    print '<table class="noborder" width="100%">'."\n";
+    $var=true;
+    print '<tr class="liste_titre">';
+    print '<th>'.$langs->trans("Parameters").'</th>';
+    print '<th>'.$langs->trans("Value").'</th>';
+    print "</tr>\n";
+
+    if (! empty($driver)) {
+        require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
+        $classname = 'printing_'.$driver;
+        $printer = new $classname($db);
+        //print '<pre>'.print_r($printer, true).'</pre>';
+        $i=0;
+        foreach ($printer->conf as $key) {
+            $var=!$var;
+            print '<tr '.$bc[$var].'>';
+            print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td><td>';
+            print '<input size="32" type="'.(empty($key['type'])?'text':$key['type']).'" name="setupdriver['.$i.'][value]" value="'.$conf->global->{$key['varname']}.'">';
+            print '<input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'">';
+            print '&nbsp;'.($key['example']!=''?$langs->trans("Example").' : '.$key['example']:'');
+            print '</tr>';
+            $i++;
+        }
+    } else {
+        print $langs->trans('PleaseSelectaDriverfromList');
+    }
+
+    print '</table>';
+    if (! empty($driver)) {
+        print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></center>';
+    }
+    print '</form>';
+    dol_fiche_end();
+
+}
 if ($mode == 'config' && $user->admin)
 {
-    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="setvalue">';
-
     dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
 
     print $langs->trans("PrintingDesc")."<br><br>\n";
     
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder" width="100%">'."\n";
 
     $var=true;
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Parameters").'</td>';
-    print '<td>'.$langs->trans("Value").'</td>';
+    print '<th>'.$langs->trans("Description").'</th>';
+    print '<th class="center">'.$langs->trans("Active").'</th>';
+    print '<th class="center">'.$langs->trans("Setup").'</th>';
+    print '<th class="center">'.$langs->trans("Test").'</th>';
     print "</tr>\n";
 
-    
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td class="fieldrequired">';
-    print $langs->trans("PRINTIPP_HOST").'</td><td>';
-    print '<input size="64" type="text" name="PRINTIPP_HOST" value="'.$conf->global->PRINTIPP_HOST.'">';
-    print ' &nbsp; '.$langs->trans("Example").': localhost';
-    print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td class="fieldrequired">';
-    print $langs->trans("PRINTIPP_PORT").'</td><td>';
-    print '<input size="32" type="text" name="PRINTIPP_PORT" value="'.$conf->global->PRINTIPP_PORT.'">';
-    print ' &nbsp; '.$langs->trans("Example").': 631';
-    print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
-    print $langs->trans("PRINTIPP_USER").'</td><td>';
-    print '<input size="32" type="text" name="PRINTIPP_USER" value="'.$conf->global->PRINTIPP_USER.'">';
-    print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
-    print $langs->trans("PRINTIPP_PASSWORD").'</td><td>';
-    print '<input size="32" type="text" name="PRINTIPP_PASSWORD" value="'.$conf->global->PRINTIPP_PASSWORD.'">';
-    print '</td></tr>';
+    $object = new PrintingDriver($db);
+    $result = $object->listDrivers($db, 10);
+    foreach ($result as $driver) {
+        require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
+        $classname = 'printing_'.$driver;
+        $langs->load($driver);
+        $printer = new $classname($db);
+        //print '<pre>'.print_r($printer, true).'</pre>';
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td>'.img_picto('', $printer->picto).$langs->trans($printer->desc).'</td>';
+        print '<td class="center">';
+        if (! empty($conf->use_javascript_ajax))
+        {
+            print ajax_constantonoff($printer->active);
+        }
+        else
+        {
+            if (empty($conf->global->{$printer->conf}))
+            {
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=1">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+            }
+            else
+            {
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=0">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+            }
+        }
+        print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=setup&amp;driver='.$printer->name.'">'.img_picto('', 'setup').'</a></td>';
+        print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=test&amp;driver='.$printer->name.'">'.img_picto('', 'setup').'</a></td>';
+        print '</tr>'."\n";
+    }
 
     print '</table>';
 
     dol_fiche_end();
+}
+
+if ($mode == 'test' && $user->admin)
+{
+    dol_fiche_head($head, $mode, $langs->trans("PrintingTest"), 0, 'technic');
+
+    print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
     
-    //print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></center>';
-    
+    print '<table class="nobordernopadding" width="100%">';
+    if (! empty($driver)) {
+        require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
+        $classname = 'printing_'.$driver;
+        $printer = new $classname($db);
+        //print '<pre>'.print_r($printer, true).'</pre>';
+        print $printer->listAvailablePrinters();
 
-    print '</form>';
-
-
-    //if (count($list) == 0) print $langs->trans("NoPrinterFound");
+    } else {
+        print $langs->trans('PleaseSelectaDriverfromList');
+    }
+    print '</table>';
 
     dol_fiche_end();
 }
-
 
 
 llxFooter();

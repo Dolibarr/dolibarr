@@ -272,7 +272,7 @@ class FormFile
         }
         
         $printer=0;
-        if (in_array($modulepart,array('facture','propal','proposal','order','commande')))	// This feature is implemented only for such elements
+        if (in_array($modulepart,array('facture','propal','proposal','order','commande','expedition')))	// This feature is implemented only for such elements
         {
             $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
         }
@@ -603,8 +603,8 @@ class FormFile
 						$out.= '<td align="right">';
 						if ($delallowed)
 						{
-							$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&file='.urlencode($relativepath);
-							$out.= ($param?'&'.$param:'');
+							$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=remove_file&amp;file='.urlencode($relativepath);
+							$out.= ($param?'&amp;'.$param:'');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
 							$out.= '">'.img_picto($langs->trans("Delete"), 'delete.png').'</a>';
@@ -613,8 +613,8 @@ class FormFile
 						if ($printer)
 						{
 							//$out.= '<td align="right">';
-    	                    $out.= '&nbsp;<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
-        	                $out.= ($param?'&'.$param:'');
+    	                    $out.= '&nbsp;<a href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
+        	                $out.= ($param?'&amp;'.$param:'');
             	            $out.= '">'.img_picto($langs->trans("Print"),'printer.png').'</a>';
 						}
 						if ($morepicto)
