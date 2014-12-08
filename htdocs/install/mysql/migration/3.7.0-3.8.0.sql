@@ -27,4 +27,3 @@ create table llx_c_price_expression
 )ENGINE=innodb;
 
 ALTER TABLE llx_product_fournisseur_price ADD fk_price_expression integer DEFAULT NULL;
-ALTER TABLE llx_c_type_contact ADD contact_label text DEFAULT NULL;
