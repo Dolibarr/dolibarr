@@ -902,7 +902,7 @@ if ($id > 0)
 	    }
 
 		// Assigned to
-		print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
@@ -1072,7 +1072,7 @@ if ($id > 0)
     	}
 
 		// Assigned to
-    	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+    	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{

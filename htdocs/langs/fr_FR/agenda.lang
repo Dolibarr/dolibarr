@@ -29,6 +29,7 @@ ActionsToDoBy=Événements affectés à
 ActionsDoneBy=Événements réalisés par
 ActionsForUser=Evénements de l'utilisateur
 ActionsForUsersGroup=Evénements de tous les utilisateurs du groupe
+ActionAssignedTo=Événement assigné à
 AllMyActions= Tous mes événements
 AllActions= Tous les événements
 ViewList=Vue liste
