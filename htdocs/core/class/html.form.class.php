@@ -1720,13 +1720,11 @@ class Form
 			else if ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
         }
         $opt.= '>';
-        // Truncate label for small or big screen
-        $trunclabel = (($conf->dol_optimize_smallscreen==1)?32:92);
-        $opt.= $objp->ref.' - '.dol_trunc($label, $trunclabel).' - ';
+        $opt.= $objp->ref.' - '.dol_trunc($label, 99).' - ';
 
         $objRef = $objp->ref;
         if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
-        $outval.=$objRef.' - '.dol_trunc($label, $trunclabel).' - ';
+        $outval.=$objRef.' - '.dol_trunc($label, 99).' - ';
 
         $found=0;
 
@@ -2006,10 +2004,8 @@ class Form
                 $outval.=$objRef;
                 if (! empty($objp->idprodfournprice)) $outval.=' ('.$objRefFourn.')';
                 $outval.=' - ';
-                // Truncate label for small or big screen
-                $trunclabel = (($conf->dol_optimize_smallscreen==1)?18:78);
-                $opt.=dol_trunc($label,$trunclabel).' - ';
-                $outval.=dol_trunc($label,$trunclabel).' - ';
+                $opt.=dol_trunc($label, 72).' - ';
+                $outval.=dol_trunc($label, 72).' - ';
 
                 if (! empty($objp->idprodfournprice))
                 {
