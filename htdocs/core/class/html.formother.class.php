@@ -1017,6 +1017,7 @@ class FormOther
         if ($nbboxactivated)
         {
         	$langs->load("boxes");
+			$langs->load("projects");
 
         	$emptybox=new ModeleBoxes($db);
 
