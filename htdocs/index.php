@@ -294,15 +294,15 @@ $showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
 $rowspan=0;
 $dashboardlines=array();
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">';
-print '<th class="liste_titre"colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
-print '<th class="liste_titre"align="right">'.$langs->trans("Number").'</th>';
-print '<th class="liste_titre"align="right">'.$langs->trans("Late").'</th>';
+print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
+print '<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
+print '<th class="liste_titre" align="right">'.$langs->trans("Late").'</th>';
 print '<th class="liste_titre">&nbsp;</th>';
-print '<th class="liste_titre"width="20">&nbsp;</th>';
+print '<th class="liste_titre" width="20">&nbsp;</th>';
 if ($showweather) print '<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
-print '</tr>';
+print '</tr>'."\n";
 
 
 //
@@ -317,7 +317,7 @@ if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
     $board->load_board($user);
     $board->warning_delay=$conf->actions->warning_delay/60/60/24;
     $board->label=$langs->trans("ActionsToDo");
-    $board->url=DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&mainmenu=agenda';
+    $board->url=DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
     $board->img=img_object($langs->trans("Actions"),"action");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -458,7 +458,7 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
     {
         $board->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
         $board->label=$langs->trans("TransactionsToConciliate");
-        $board->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&mainmenu=bank';
+        $board->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank';
         $board->img=img_object($langs->trans("TransactionsToConciliate"),"payment");
         $rowspan++;
         $dashboardlines[]=$board;
@@ -475,7 +475,7 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
     $board->load_board($user);
     $board->warning_delay=$conf->bank->cheque->warning_delay/60/60/24;
     $board->label=$langs->trans("BankChecksToReceipt");
-    $board->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=accountancy';
+    $board->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=accountancy';
     $board->img=img_object($langs->trans("BankChecksToReceipt"),"payment");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -491,7 +491,7 @@ if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $use
     $board->load_board($user);
     $board->warning_delay=$conf->adherent->cotisation->warning_delay/60/60/24;
     $board->label=$langs->trans("MembersWithSubscriptionToReceive");
-    $board->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&statut=1';
+    $board->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1';
     $board->img=img_object($langs->trans("Members"),"user");
     $rowspan++;
     $dashboardlines[]=$board;
