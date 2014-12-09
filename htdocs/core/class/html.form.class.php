@@ -1678,6 +1678,8 @@ class Form
 		$outqty=1;
 		$outdiscount=0;
 
+		$maxlengtharticle=(empty($conf->global->PRODUCT_MAX_LENGTH_COMBO)?48:$conf->global->PRODUCT_MAX_LENGTH_COMBO);
+
         $label=$objp->label;
         if (! empty($objp->label_translated)) $label=$objp->label_translated;
         if (! empty($filterkey) && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
@@ -1697,11 +1699,11 @@ class Form
 			else if ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
         }
         $opt.= '>';
-        $opt.= $objp->ref.' - '.dol_trunc($label,32).' - ';
+        $opt.= $objp->ref.' - '.dol_trunc($label,$maxlengtharticle).' - ';
 
         $objRef = $objp->ref;
         if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
-        $outval.=$objRef.' - '.dol_trunc($label,32).' - ';
+        $outval.=$objRef.' - '.dol_trunc($label,$maxlengtharticle).' - ';
 
         $found=0;
 
