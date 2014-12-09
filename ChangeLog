@@ -12,7 +12,10 @@ English Dolibarr ChangeLog
 - Fix: Civility & birthdate wasn't save into adherent module.
 - Fix: webservice Thirdparty parameter lastname for invidual creation is now lastname and not ref
 - Fix: Chars - is no more allowed into value for code for extra fields.
-( Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
+- Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
+- Fix: [ bug #1595 ] Selected boolean extrafield in intervention creation page, does not save state
+- Fix: Show sender Country on PDF docs when sender Country <> receiver Country
+- Fix: [ bug #1624 ] Use lowest buying price for margin when selling with POS
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
@@ -150,6 +153,14 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973
+Fix: Can't update phone_pro from web service
+Fix: Some security holes.
+Fix: copy extrafields when creating order from proposal.
+Fix: report on action was not filtering by environment.
+Fix: Avoid missing class error.
+Fix: Add function dolEscapeXML.
+Fix: Bad days and month reported by function.
+Fix: Bad margin calculation.
 
 ***** ChangeLog for 3.5.5 compared to 3.5.4 *****
 Fix: Holiday module was broken. Initializaion of amount of holidays failed.

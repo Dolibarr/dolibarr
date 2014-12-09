@@ -324,12 +324,16 @@ else
     		print '<td class="liste_titre" align="left">';
     		print '<input class="flat" type="text" name="snom" size="12" value="'.$snom.'">';
     		print '</td>';
+			
+			// Barcode
     		if (! empty($conf->barcode->enabled))
     		{
     			print '<td class="liste_titre">';
     			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.$sbarcode.'">';
     			print '</td>';
     		}
+			
+			// Date modification
     		print '<td class="liste_titre">';
     		print '&nbsp;';
     		print '</td>';
@@ -363,16 +367,7 @@ else
     			print '<td class="liste_titre">';
     			print '&nbsp;';
     			print '</td>';
-    			//desiredstock
-    			print '<td class="liste_titre">';
-    			print '&nbsp;';
-    			print '</td>';
-    		}
-    		else
-    		{
-    			print '<td class="liste_titre">';
-    			print '&nbsp;';
-    			print '</td>';
+    			// Desired stock
     			print '<td class="liste_titre">';
     			print '&nbsp;';
     			print '</td>';
@@ -500,15 +495,6 @@ else
                         if ($product_static->stock_reel < $objp->seuil_stock_alerte) print img_warning($langs->trans("StockTooLow")).' ';
         				print $product_static->stock_reel;
     					print '</td>';
-    				}
-    				else
-    				{
-		    			print '<td>';
-		    			print '&nbsp;';
-		    			print '</td>';
-		    			print '<td>';
-		    			print '&nbsp;';
-		    			print '</td>';
     				}
     			}
 
