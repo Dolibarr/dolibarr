@@ -131,8 +131,8 @@ class printing_printipp extends PrintingDriver
     {
         global $bc, $conf, $langs;
         $var=true;
-        $html = '<table width="100%" class="noborder">';
-        $html.= '<tr class="liste_titre">';
+
+        $html = '<tr class="liste_titre">';
         $html.= '<td>'.$langs->trans('IPP_Uri').'</td>';
         $html.= '<td>'.$langs->trans('IPP_Name').'</td>';
         $html.= '<td>'.$langs->trans('IPP_State').'</td>';

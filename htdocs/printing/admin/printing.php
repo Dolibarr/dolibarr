@@ -208,7 +208,7 @@ if ($mode == 'test' && $user->admin)
 
     print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
     
-    print '<table class="nobordernopadding" width="100%">';
+    print '<table class="noborder" width="100%">';
     if (! empty($driver)) {
         require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
         $classname = 'printing_'.$driver;

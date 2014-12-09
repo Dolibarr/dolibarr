@@ -72,8 +72,8 @@ class printing_printgcp extends PrintingDriver
         global $bc, $conf, $langs;
         $langs->load('printgcp');
         $var=true;
-        $html = '<table width="100%" class="noborder">';
-        $html.= '<tr class="liste_titre">';
+
+        $html = '<tr class="liste_titre">';
         $html.= '<td>'.$langs->trans('GCP_Name').'</td>';
         $html.= '<td>'.$langs->trans('GCP_displayName').'</td>';
         $html.= '<td>'.$langs->trans('GCP_Id').'</td>';
