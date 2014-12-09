@@ -727,11 +727,11 @@ class ExtraFields
 					if (strpos($InfoFieldList[4], 'extra')!==false)
 					{
 						$sql.= ' as main, '.MAIN_DB_PREFIX .$InfoFieldList[0].'_extrafields as extra';
-						$sqlwhere.= ' AND extra.fk_object=main.'.$InfoFieldList[2]. ' AND '.$InfoFieldList[4];
+						$sqlwhere.= ' WHERE extra.fk_object=main.'.$InfoFieldList[2]. ' AND '.$InfoFieldList[4];
 					}
 					else
 					{
-						$sqlwhere.= ' AND '.$InfoFieldList[4];
+						$sqlwhere.= ' WHERE '.$InfoFieldList[4];
 					}
 				}
 				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
