@@ -73,13 +73,13 @@ if ($action == 'add' && $user->rights->stock->creer)
 	$object->town        = GETPOST("town");
 	$object->country_id  = GETPOST("country_id");
 
-	if (! empty($object->libelle)) 
+	if (! empty($object->libelle))
 	{
 		$id = $object->create($user);
 		if ($id > 0)
 		{
 			setEventMessage($langs->trans("RecordSaved"));
-			
+
 			if (! empty($backtopage))
 			{
 				header("Location: ".$backtopage);
@@ -180,9 +180,9 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	
+
 	dol_fiche_head();
-	
+
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -225,7 +225,7 @@ if ($action == 'create')
 	print '</table>';
 
 	dol_fiche_end();
-	
+
 	print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 
 	print '</form>';
@@ -445,10 +445,10 @@ else
 					$totalunit+=$objp->value;
 
                     // Price buy PMP
-					print '<td align="right">'.price(price2num($objp->pmp,'MU')).'</td>';
+					print '<td align="right">'.price(price2num($objp->ppmp,'MU')).'</td>';
                     // Total PMP
-					print '<td align="right">'.price(price2num($objp->pmp*$objp->value,'MT')).'</td>';
-					$totalvalue+=price2num($objp->pmp*$objp->value,'MT');
+					print '<td align="right">'.price(price2num($objp->ppmp*$objp->value,'MT')).'</td>';
+					$totalvalue+=price2num($objp->ppmp*$objp->value,'MT');
 
                     // Price sell min
                     if (empty($conf->global->PRODUIT_MULTIPRICES))
