@@ -1789,7 +1789,8 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 	global $conf;
 
 	if ($size==0 || ! empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
-
+	// reduce for small screen
+    if ($conf->dol_optimize_smallscreen==1) $size = round($size/3);
 	// We go always here
 	if ($trunc == 'right')
 	{
