@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  *
@@ -185,6 +185,7 @@ if ($action == 'confirm_delete' && $_GET['confirm'] == 'yes')
     }
 }
 
+
 /*
  *	View
  */
@@ -317,8 +318,13 @@ if ($socid && $action != 'edit' && $action != "create")
 		print '<div class="warning">'.$langs->trans("RIBControlError").'</div>';
 	}
 
-    print "<br />";
+    print "<br>";
 
+    
+    /*
+     * List of bank accounts
+     */
+    
     print_titre($langs->trans("AllRIB"));
 
     $rib_list = $soc->get_all_rib();
@@ -339,7 +345,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
         foreach ($rib_list as $rib)
         {
-            print "<tr $bc[$var]>";
+            print "<tr ".$bc[$var].">";
             // Label
             print '<td>'.$rib->label.'</td>';
             // Bank name
@@ -382,7 +388,7 @@ if ($socid && $action != 'edit' && $action != "create")
         }
 
         if (count($rib_list) == 0) {
-            print '<tr><td colspan="5" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
+            print '<tr '.$bc[0].'><td colspan="7" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
         }
 
         print '</table>';
@@ -458,7 +464,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
 		if ($val == 'AccountNumber')
 		{
-			print '<td>'.$langs->trans("BankAccountNumber").'</td>';
+			print '<td class="fieldrequired">'.$langs->trans("BankAccountNumber").'</td>';
 			print '<td><input size="18" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
 			print '</tr>';
 		}
@@ -475,10 +481,10 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 	}
 
     // IBAN
-    print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
+    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("IBAN").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="iban" value="'.$account->iban.'"></td></tr>';
 
-    print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
+    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("BIC").'</td>';
     print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
