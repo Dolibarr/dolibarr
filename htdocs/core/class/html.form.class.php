@@ -1720,11 +1720,11 @@ class Form
 			else if ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
         }
         $opt.= '>';
-        $opt.= $objp->ref.' - '.dol_trunc($label, 99, 'right', '', 1).' - ';
+        $opt.= $objp->ref.' - '.dol_trunc($label, 99, 'right', 'UTF-8', 0, 1).' - ';
 
         $objRef = $objp->ref;
         if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
-        $outval.=$objRef.' - '.dol_trunc($label, 99, 'right', '', 1).' - ';
+        $outval.=$objRef.' - '.dol_trunc($label, 99, 'right', 'UTF-8', 0, 1).' - ';
 
         $found=0;
 
@@ -2004,8 +2004,8 @@ class Form
                 $outval.=$objRef;
                 if (! empty($objp->idprodfournprice)) $outval.=' ('.$objRefFourn.')';
                 $outval.=' - ';
-                $opt.=dol_trunc($label, 72, 'right', '', 1).' - ';
-                $outval.=dol_trunc($label, 72, 'right', '', 1).' - ';
+                $opt.=dol_trunc($label, 72, 'right', 'UTF-8', 0, 1).' - ';
+                $outval.=dol_trunc($label, 72, 'right', 'UTF-8', 0, 1).' - ';
 
                 if (! empty($objp->idprodfournprice))
                 {
