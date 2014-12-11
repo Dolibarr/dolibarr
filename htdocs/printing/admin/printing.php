@@ -225,6 +225,42 @@ if ($mode == 'test' && $user->admin)
     dol_fiche_end();
 }
 
+if ($mode == 'userconf' && $user->admin)
+{
+    dol_fiche_head($head, $mode, $langs->trans("UserConf"), 0, 'technic');
+
+    print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
+
+    print '<table class="noborder" width="100%">';
+    $var=true;
+    print '<tr class="liste_titre">';
+    print '<th>'.$langs->trans("User").'</th>';
+    print '<th>'.$langs->trans("PrintModule").'</th>';
+    print '<th>'.$langs->trans("PrintDriver").'</th>';
+    print '<th>'.$langs->trans("Printer").'</th>';
+    print '<th>'.$langs->trans("PrinterLocation").'</th>';
+    print '<th>'.$langs->trans("PrinterId").'</th>';
+    print '<th>'.$langs->trans("NumberOfCopy").'</th>';
+    print "</tr>\n";
+    $sql = 'SELECT p.printer_name, p.printer_location, p.printer_id, p.copy, p.module, p.driver, p.userid, u.login FROM '.MAIN_DB_PREFIX.'printing as p, '.MAIN_DB_PREFIX.'user as u WHERE p.userid=u.rowid';
+    $resql = $db->query($sql);
+    while ($row=$db->fetch_array($resql)) {
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td>'.$row['login'].'</td>';
+        print '<td>'.$row['module'].'</td>';
+        print '<td>'.$row['driver'].'</td>';
+        print '<td>'.$row['printer_name'].'</td>';
+        print '<td>'.$row['printer_location'].'</td>';
+        print '<td>'.$row['printer_id'].'</td>';
+        print '<td>'.$row['copy'].'</td>';
+        print "</tr>\n";
+    }
+    print '</table>';
+
+    dol_fiche_end();
+
+}
 
 llxFooter();
 

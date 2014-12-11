@@ -166,7 +166,7 @@ class printing_printgcp extends PrintingDriver
      */
     function print_file($file, $module, $subdir='')
     {
-        global $conf;
+        global $conf, $user, $db;
         if ($this->authtoken=='') {
             $this->GoogleLogin();
         }
@@ -174,8 +174,30 @@ class printing_printgcp extends PrintingDriver
         $fileprint=$conf->{$module}->dir_output;
         if ($subdir!='') $fileprint.='/'.$subdir;
         $fileprint.='/'.$file;
+        // select printer uri for module order, propal,...
+        $sql = 'SELECT rowid, printer_id, copy FROM '.MAIN_DB_PREFIX.'printing WHERE module="'.$module.'" AND driver="printgcp" AND userid='.$user->id;
+        $result = $db->query($sql);
+        if ($result)
+        {
+            $obj = $this->db->fetch_object($result);
+            if ($obj)
+            {
+                $printer_id=$obj->printer_id;
+            }
+            else
+            {
+                if (! empty($conf->global->PRINTIPP_GCP_DEFAULT))
+                {
+                    $printer_id=$conf->global->PRINTIPP_GCP_DEFAULT;
+                }
+                else
+                {
+                    return 'NoDefaultPrinterDefined';
+                }
+            }
+        }
 
-        $this->sendPrintToPrinter($conf->global->PRINTING_GCP_DEFAULT, $file, $fileprint, 'application/pdf');
+        $this->sendPrintToPrinter($printer_id, $file, $fileprint, 'application/pdf');
     }
 
     /**

@@ -50,6 +50,11 @@ function printingadmin_prepare_head()
     $head[$h][2] = 'test';
     $h++;
 
+    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=userconf";
+    $head[$h][1] = $langs->trans("UserConf");
+    $head[$h][2] = 'userconf';
+    $h++;
+
     //$object=new stdClass();
 
     // Show more tabs from modules

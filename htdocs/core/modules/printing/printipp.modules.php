@@ -76,7 +76,7 @@ class printing_printipp extends PrintingDriver
      */
     function print_file($file, $module, $subdir='')
     {
-        global $conf,$db;
+        global $conf, $user, $db;
 
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
         
@@ -89,7 +89,7 @@ class printing_printipp extends PrintingDriver
         if (! empty($this->user)) $ipp->setAuthentication($this->user,$this->password);
 
         // select printer uri for module order, propal,...
-        $sql = 'SELECT rowid,printer_id,copy FROM '.MAIN_DB_PREFIX.'printing WHERE module="'.$module.'" AND driver="printipp"';
+        $sql = 'SELECT rowid,printer_id,copy FROM '.MAIN_DB_PREFIX.'printing WHERE module="'.$module.'" AND driver="printipp" AND userid='.$user->id;
         $result = $db->query($sql);
         if ($result)
         {
