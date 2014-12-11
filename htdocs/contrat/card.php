@@ -1714,6 +1714,9 @@ else
         if ($user->societe_id == 0)
         {
             print '<div class="tabsAction">';
+            
+            $parameters=array();
+            $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             if ($object->statut == 0 && $nbofservices)
             {
