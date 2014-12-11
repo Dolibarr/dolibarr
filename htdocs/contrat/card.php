@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
@@ -273,7 +273,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	                {
 	                    $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
-						if ($product_type == 1) { //only services	// TODO Exclude also deee
+						if ($product_type == 1 || (! empty($conf->global->CONTRACT_SUPPORT_PRODUCTS) && in_array($product_type, array(0,1)))) { 	// TODO Exclude also deee
 							// service prédéfini
 							if ($lines[$i]->fk_product > 0)
 							{
@@ -1020,13 +1020,18 @@ if ($action == 'create')
 
     print "</table>\n";
 
+    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+
     if (is_object($objectsrc))
     {
         print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
         print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
-	}
 
-    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+        if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))
+        {
+        	print '<br>'.$langs->trans("Note").': '.$langs->trans("OnlyLinesWithTypeServiceAreUsed");
+        }
+	}
 
     print "</form>\n";
 
