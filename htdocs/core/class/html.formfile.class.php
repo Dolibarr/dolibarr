@@ -855,7 +855,7 @@ class FormFile
 			}
 			if ($nboffiles == 0)
 			{
-				print '<tr '.$bc[$var].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
+				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
 				if (empty($textifempty)) print $langs->trans("NoFileFound");
 				else print $textifempty;
 				print '</td></tr>';
@@ -1043,7 +1043,7 @@ class FormFile
 
         if (count($filearray) == 0)
         {
-            print '<tr '.$bc[$var].'><td colspan="4">';
+            print '<tr '.$bc[false].'><td colspan="4">';
             if (empty($textifempty)) print $langs->trans("NoFileFound");
             else print $textifempty;
             print '</td></tr>';
@@ -1210,7 +1210,7 @@ class FormFile
         }
         if ($nboflinks == 0)
         {
-            print '<tr ' . $bc[$var] . '><td colspan="5">';
+            print '<tr ' . $bc[false] . '><td colspan="5">';
             print $langs->trans("NoLinkFound");
             print '</td></tr>';
         }
