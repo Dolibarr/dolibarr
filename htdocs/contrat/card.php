@@ -538,7 +538,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 				}
 
 				$ret = $object->fetch($id); // Reload to get new records
-				
+
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
@@ -847,7 +847,7 @@ $formfile = new FormFile($db);
 $objectlignestatic=new ContratLigne($db);
 
 // Load object modContract
-$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_olive');
+$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_serpis');
 if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
 {
 	$module = substr($module, 0, dol_strlen($module)-4);
@@ -1043,6 +1043,8 @@ else
 
     if ($object->id > 0)
     {
+    	$object->fetch_thirdparty();
+
         $result=$object->fetch_lines();	// This also init $this->nbofserviceswait, $this->nbofservicesopened, $this->nbofservicesexpired=, $this->nbofservicesclosed
         if ($result < 0) dol_print_error($db,$object->error);
 
