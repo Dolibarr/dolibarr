@@ -963,7 +963,7 @@ function check_value($mask,$value)
     $maskcounter=$reg[1];
     $maskraz=-1;
     $maskoffset=0;
-    if (dol_strlen($maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
+    if (dol_strlen($maskcounter) < 3) return $langs->trans('CounterMustHaveMoreThan3Digits');
 
     // Extract value for third party mask counter
     if (preg_match('/\{(c+)(0*)\}/i',$mask,$regClientRef))
@@ -1003,7 +1003,7 @@ function check_value($mask,$value)
     if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))  $maskraz=preg_replace('/^@/','',$reg[3]);
     if ($maskraz >= 0)
     {
-        if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
+        if ($maskraz > 12) return $langs->trans('ErrorBadMaskBadRazMonth');
 
         // Define reg
         if ($maskraz > 1 && ! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
