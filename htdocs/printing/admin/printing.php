@@ -47,6 +47,14 @@ if (!$mode) $mode='config';
 /*
  * Action
  */
+
+if (($mode == 'test' || $mode == 'setup') && empty($driver))
+{
+    setEventMessage($langs->trans('PleaseSelectaDriverfromList'));
+    header("Location: ".$_SERVER['PHP_SELF'].'?mode=config');
+    exit;
+}
+
 if ($action == 'setconst' && $user->admin)
 {
     $error=0;
@@ -241,8 +249,9 @@ if ($mode == 'userconf' && $user->admin)
     print '<th>'.$langs->trans("PrinterLocation").'</th>';
     print '<th>'.$langs->trans("PrinterId").'</th>';
     print '<th>'.$langs->trans("NumberOfCopy").'</th>';
+    print '<th class="center">'.$langs->trans("Delete").'</th>';
     print "</tr>\n";
-    $sql = 'SELECT p.printer_name, p.printer_location, p.printer_id, p.copy, p.module, p.driver, p.userid, u.login FROM '.MAIN_DB_PREFIX.'printing as p, '.MAIN_DB_PREFIX.'user as u WHERE p.userid=u.rowid';
+    $sql = 'SELECT p.rowid, p.printer_name, p.printer_location, p.printer_id, p.copy, p.module, p.driver, p.userid, u.login FROM '.MAIN_DB_PREFIX.'printing as p, '.MAIN_DB_PREFIX.'user as u WHERE p.userid=u.rowid';
     $resql = $db->query($sql);
     while ($row=$db->fetch_array($resql)) {
         $var=!$var;
@@ -254,6 +263,7 @@ if ($mode == 'userconf' && $user->admin)
         print '<td>'.$row['printer_location'].'</td>';
         print '<td>'.$row['printer_id'].'</td>';
         print '<td>'.$row['copy'].'</td>';
+        print '<td class="center">'.img_picto($langs->trans("Delete"), 'delete').'</td>';
         print "</tr>\n";
     }
     print '</table>';
