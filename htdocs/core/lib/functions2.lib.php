@@ -602,7 +602,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     //$date=dol_stringtotime('20130101');
 
     // Extract value for mask counter, mask raz and mask offset
-    if (! preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
+    if (! preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$mask,$reg)) return $langs->trans('ErrorBadMask');
     $masktri=$reg[1].(! empty($reg[2])?$reg[2]:'').(! empty($reg[3])?$reg[3]:'');
     $maskcounter=$reg[1];
     $maskraz=-1;
