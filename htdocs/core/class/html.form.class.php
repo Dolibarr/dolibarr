@@ -1749,7 +1749,7 @@ class Form
         }
 
 		// Price by quantity
-		if (!empty($objp->quantity) && $objp->quantity >= 1 && $conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)
+		if (!empty($objp->quantity) && $objp->quantity >= 1 && ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 		{
 			$found = 1;
 			$outqty=$objp->quantity;
