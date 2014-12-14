@@ -791,7 +791,7 @@ class Task extends CommonObject
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
             $sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
-			$sql.= ", progress = " . $this->progress;
+			if (isset($this->progress)) $sql.= ", progress = " . $this->progress;	// Do not overwrite value if not provided
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
@@ -803,7 +803,7 @@ class Task extends CommonObject
             }
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
-            $sql.= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->timespent_fk_user.")";
+            $sql.= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->timespent_fk_user.")";	// set average hour rate of user
             $sql.= " WHERE rowid = ".$tasktime_id;
 
             dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);

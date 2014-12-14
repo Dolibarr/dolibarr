@@ -2837,6 +2837,8 @@ class Facture extends CommonInvoice
 	 */
 	function demande_prelevement($user)
 	{
+		$error=0;
+		
 		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 
 		if ($this->statut > 0 && $this->paye == 0)
@@ -2882,21 +2884,32 @@ class Facture extends CommonInvoice
                     $sql .= ",'".$bac->cle_rib."')";
 
                     dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
-                    if ($this->db->query($sql))
+                    $resql=$this->db->query($sql);
+                    if (! $resql)
                     {
-                        return 1;
-                    }
-                    else
-                  {
                         $this->error=$this->db->lasterror();
                         dol_syslog(get_class($this).'::demandeprelevement Erreur');
-                        return -1;
+                        $error++;
                     }
+
+        			if (! $error)
+        			{
+        				// Force payment mode of invoice to withdraw
+        				$payment_mode_id = dol_getIdFromCode($this->db, 'PRE', 'c_paiement');
+        				if ($payment_mode_id > 0) 
+        				{
+        					$result=$this->setPaymentMethods($payment_mode_id);
+        				}
+        			}            
+                    
+                    if ($error) return -1;
+                    return 1;
                 }
                 else
                 {
                     $this->error="A request already exists";
                     dol_syslog(get_class($this).'::demandeprelevement Impossible de creer une demande, demande deja en cours');
+                    return 0;
                 }
             }
             else

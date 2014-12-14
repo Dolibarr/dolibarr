@@ -122,10 +122,11 @@ if ($action == "correct_stock" && ! $cancel)
 		if (is_numeric(GETPOST("nbpiece")) && $id)
 		{
 			if (empty($product)) {
-			$product = new Product($db);
-			$result=$product->fetch($id);
+				$product = new Product($db);
+				$result=$product->fetch($id);
 			}
-			if ($product->hasbatch()) {
+			if ($product->hasbatch())
+			{
 				$d_eatby=dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
 				$d_sellby=dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
 				$result=$product->correct_stock_batch(
@@ -139,15 +140,17 @@ if ($action == "correct_stock" && ! $cancel)
 					$d_sellby,
 					GETPOST('batch_number')
 				);		// We do not change value of stock for a correction
-			} else {
-			$result=$product->correct_stock(
-	    		$user,
-	    		GETPOST("id_entrepot"),
-	    		GETPOST("nbpiece"),
-	    		GETPOST("mouvement"),
-	    		GETPOST("label"),
-	    		$priceunit
-			);		// We do not change value of stock for a correction
+			}
+			else
+			{
+				$result=$product->correct_stock(
+		    		$user,
+		    		GETPOST("id_entrepot"),
+		    		GETPOST("nbpiece"),
+		    		GETPOST("mouvement"),
+		    		GETPOST("label"),
+		    		$priceunit
+				);		// We do not change value of stock for a correction
 			}
 
 			if ($result > 0)
@@ -636,9 +639,9 @@ if ($resql)
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
 		// PMP
-		print '<td align="right">'.(price2num($obj->pmp)?price2num($obj->pmp,'MU'):'').'</td>'; // Ditto : Show PMP from movement or from product
+		print '<td align="right">'.(price2num($product->pmp)?price2num($product->pmp,'MU'):'').'</td>'; // Ditto : Show PMP from movement or from product
 		// Value purchase
-		print '<td align="right">'.(price2num($obj->pmp)?price(price2num($obj->pmp*$obj->reel,'MT')):'').'</td>'; // Ditto : Show PMP from movement or from product
+		print '<td align="right">'.(price2num($product->pmp)?price(price2num($product->pmp*$obj->reel,'MT')):'').'</td>'; // Ditto : Show PMP from movement or from product
         // Sell price
 		print '<td align="right">';
         if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price,'MU'),1);
@@ -650,15 +653,15 @@ if ($resql)
         else print $langs->trans("Variable");
 		print '</tr>'; ;
 		$total += $obj->reel;
-		if (price2num($obj->pmp)) $totalwithpmp += $obj->reel;
-		$totalvalue = $totalvalue + price2num($obj->pmp*$obj->reel,'MU'); // Ditto : Show PMP from movement or from product
-        $totalvaluesell = $totalvaluesell + price2num($product->price*$obj->reel,'MU'); // Ditto : Show PMP from movement or from product
+		if (price2num($product->pmp)) $totalwithpmp += $obj->reel;
+		$totalvalue = $totalvalue + ($product->pmp*$obj->reel); // Ditto : Show PMP from movement or from product
+        $totalvaluesell = $totalvaluesell + ($product->price*$obj->reel); // Ditto : Show PMP from movement or from product
 		//Batch Detail
-		if ((! empty($conf->productbatch->enabled)) && $product->hasbatch()) 
+		if ((! empty($conf->productbatch->enabled)) && $product->hasbatch())
 		{
 			$details=Productbatch::findAll($db,$obj->product_stock_id);
 			if ($details<0) dol_print_error($db);
-			foreach ($details as $pdluo) 
+			foreach ($details as $pdluo)
 			{
 				print "\n".'<tr><td></td>';
 				print '<td align="right">'.$pdluo->batch.'</td>';
@@ -673,14 +676,15 @@ if ($resql)
 	}
 }
 else dol_print_error($db);
+
 print '<tr class="liste_total"><td align="right" class="liste_total" colspan="4">'.$langs->trans("Total").':</td>';
 print '<td class="liste_total" align="right">'.$total.'</td>';
 print '<td class="liste_total" align="right">';
-print ($totalwithpmp?price($totalvalue/$totalwithpmp):'&nbsp;');
+print ($totalwithpmp?price(price2num($totalvalue/$totalwithpmp,'MU')):'&nbsp;');	// This value may have rounding errors
 print '</td>';
 // Value purchase
 print '<td class="liste_total" align="right">';
-print price(price2num($totalvalue,'MT'),1);
+print $totalvalue?price(price2num($totalvalue,'MT'),1):'&nbsp;';
 print '</td>';
 print '<td class="liste_total" align="right">';
 if (empty($conf->global->PRODUIT_MULTI_PRICES)) print ($total?price($totalvaluesell/$total,1):'&nbsp;');

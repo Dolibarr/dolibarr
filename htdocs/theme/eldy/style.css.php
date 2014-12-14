@@ -168,6 +168,10 @@ if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($user->conf->
 $colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
 $colorbacktabcard2=join(',',colorStringToArray($colorbacktabcard2));
 
+// Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
+$colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
+$colorbacktabcard2=join(',',colorStringToArray($colorbacktabcard2));
+
 // Set text color to black or white
 $tmppart=explode(',',$colorbackhmenu1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
