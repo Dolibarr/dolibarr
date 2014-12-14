@@ -839,7 +839,7 @@ else
         print '<tr>';
         $tmpcode='';
 		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
-        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
+        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="32" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
         if ($_error)
         {
             print $langs->trans("RefAlreadyExists");
@@ -1083,7 +1083,7 @@ else
             print '<table class="border allwidth">';
 
             // Ref
-            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
+            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="32" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
 
             // Label
             print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
