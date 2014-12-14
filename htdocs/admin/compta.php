@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load('admin');
 $langs->load('compta');
+$langs->load('accountancy');
 
 if (!$user->admin)
 accessforbidden();
@@ -153,7 +154,7 @@ foreach ($list as $key)
 	print '<tr '.$bc[$var].' class="value">';
 
 	// Param
-	$libelle = $langs->trans($key); 
+	$libelle = $langs->trans($key);
 	print '<td><label for="'.$key.'">'.$libelle.'</label></td>';
 
 	// Value
