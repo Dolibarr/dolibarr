@@ -342,7 +342,7 @@ class Task extends CommonObject
 
 
     /**
-     *	Delete object in database
+     *	Delete task from database
      *
      *	@param	User	$user        	User that delete
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
@@ -379,15 +379,32 @@ class Task extends CommonObject
             }
         }
 
-        // Delete rang of line
-        //$this->delRangOfLine($this->id, $this->element);
+        if (! $error)
+        {
+	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
+	        $sql.= " WHERE fk_task=".$this->id;
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
-        $sql.= " WHERE rowid=".$this->id;
+	        $resql = $this->db->query($sql);
+	        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        }
 
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (! $error)
+        {
+	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_extrafields";
+	        $sql.= " WHERE fk_object=".$this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        }
+
+        if (! $error)
+        {
+	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
+	        $sql.= " WHERE rowid=".$this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        }
 
         if (! $error)
         {
@@ -412,7 +429,7 @@ class Task extends CommonObject
             return -1*$error;
         }
         else
-        {
+		{
 			//Delete associated link file
 	        if ($conf->projet->dir_output)
 	        {
