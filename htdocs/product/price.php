@@ -55,11 +55,19 @@ $object = new Product($db);
 
 $error=0;
 
+
 /*
  * Actions
  */
 
-if ($action == 'update_price' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+if ($action == 'update_price' && GETPOST("cancel"))
+{
+
+	$action='';
+}
+
+if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit->creer || $user->rights->service->creer))
+{
 	$result = $object->fetch($id);
 
 	$error=0;
@@ -341,9 +349,9 @@ if ($isphoto) {
 print '</tr>';
 
 // MultiPrix
-if (! empty($conf->global->PRODUIT_MULTIPRICES)) 
+if (! empty($conf->global->PRODUIT_MULTIPRICES))
 {
-	if (! empty($socid)) 
+	if (! empty($socid))
 	{
 		$soc = new Societe($db);
 		$soc->id = $socid;
@@ -366,7 +374,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 
 		// Prix mini
 		print '<tr><td>' . $langs->trans("MinPrice") . '</td><td>';
-		if ($object->multiprices_base_type["$soc->price_level"] == 'TTC') 
+		if ($object->multiprices_base_type["$soc->price_level"] == 'TTC')
 		{
 			print price($object->multiprices_min_ttc["$soc->price_level"]) . ' ' . $langs->trans($object->multiprices_base_type["$soc->price_level"]);
 		} else {
@@ -411,10 +419,10 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 			// Prix mini
 			print '<tr><td>' . $langs->trans("MinPrice") . ' ' . $i . '</td><td>';
 			if (empty($object->multiprices_base_type["$i"])) $object->multiprices_base_type["$i"]="HT";
-			if ($object->multiprices_base_type["$i"] == 'TTC') 
+			if ($object->multiprices_base_type["$i"] == 'TTC')
 			{
 				print price($object->multiprices_min_ttc["$i"]) . ' ' . $langs->trans($object->multiprices_base_type["$i"]);
-			} 
+			}
 			else
 			{
 				print price($object->multiprices_min["$i"]) . ' ' . $langs->trans($object->multiprices_base_type["$i"]);
