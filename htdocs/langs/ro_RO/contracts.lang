@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Zona Contracte
 ListOfContracts=Lista contracte
-LastModifiedContracts=Last %s modified contracts
+LastModifiedContracts=Ultimele %s contracte modificare
 AllContracts=Toate contractele
 ContractCard=Fişă Contract
 ContractStatus=Status Contract
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Lista liniilor contractului in service
 ListOfRunningServices=Lista servicii active
 NotActivatedServices=Servicii  inactive (printre contracte validate  )
 BoardNotActivatedServices=Servicii de activat în contractele validate
-LastContracts=Last % contracts
+LastContracts=Ultimele  %s contracte
 LastActivatedServices=Ultimele %s servicii  activate
 LastModifiedServices=Ultimele %s servicii modificate
 EditServiceLine=Editează  linie serviciu
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Lista  servicii care expiră
 NoteListOfYourExpiredServices=Această listă conține numai serviciile pentru terții la care sunteţi reprezentant de vânzării.
 StandardContractsTemplate=Model standard Contracte
 ContactNameAndSignature=Pentru %s nume şi semnătura:
+OnlyLinesWithTypeServiceAreUsed=Numai liniile cu tipul "Service" va fi clonat.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Reprezentant vanzari de semnare a contractului

@@ -29,6 +29,7 @@ ActionsToDoBy=Akcia priradené
 ActionsDoneBy=Akcie vykonané
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Všetky moje akcie / úlohy
 AllActions= Všetky udalosti / úlohy
 ViewList=Zobrazenie zoznamu

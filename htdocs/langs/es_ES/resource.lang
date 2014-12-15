@@ -31,6 +31,4 @@ ConfirmDeleteResource=¿Está seguro de querer eliminar este recurso?
 RessourceSuccessfullyDeleted=Recurso eliminado correctamente
 DictionaryResourceType=Tipo de recursos
 
-DictionaryEMailTemplates=Modelo de E-Mails
-
 SelectResource=Seleccionar recurso

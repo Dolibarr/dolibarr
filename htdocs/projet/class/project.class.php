@@ -479,48 +479,71 @@ class Project extends CommonObject
             }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
-        $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql)
+        // Delete tasks
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_time";
+	        $sql.= " WHERE fk_task IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
-        $sql.= " WHERE fk_projet=" . $this->id;
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql)
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
+	        $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet";
-        $sql.= " WHERE rowid=" . $this->id;
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql)
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
+	        $sql.= " WHERE fk_projet=" . $this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
-        $sql.= " WHERE fk_object=" . $this->id;
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (! $resql)
+        // Delete project
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet";
+	        $sql.= " WHERE rowid=" . $this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
+        }
+
+        if (! $error)
+        {
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
+	        $sql.= " WHERE fk_object=" . $this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (! $resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
         if (empty($error))

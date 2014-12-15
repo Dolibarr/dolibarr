@@ -18,7 +18,7 @@ CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentr
 CronExplainHowToRunWin=Pe mediul Microsoft(tm) Windows puteţi utiliza instrumentul Scheduled task pentru a rula linia de comanda la fiecare minut
 # Menu
 CronJobs=Joburi programate
-CronListActive=List of active/scheduled jobs
+CronListActive=Lista  activelor/programatelor joburi
 CronListInactive=Lista joburilor dezactivate
 # Page list
 CronDateLastRun=Ultima rulare

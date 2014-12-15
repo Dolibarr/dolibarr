@@ -79,10 +79,11 @@ CreditDate=Abonada el
 WithdrawalFileNotCapable=No es posible generar el fichero bancario de domiciliación para el país %s (El país no está soportado)
 ShowWithdraw=Ver domiciliación
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Sin embargo, si la factura tiene pendiente algún pago por domiciliación, no será cerrada para permitir la gestión de la domiciliación.
-DoStandingOrdersBeforePayments=Esta pestaña le permite realizar una petición de domiciliación. Una vez terminada, puede ingresar el pago en la factura para proceder a su cierre.
+DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once donee, go into menu Bank->Withdrawal to manage the standing order. When standing order is closed, payment on invoice will be automatically recorded, and invoice closed if remainder to pay is null.
 WithdrawalFile=Archivo de la domiciliación
 SetToStatusSent=Clasificar como "Archivo enviado"
 ThisWillAlsoAddPaymentOnInvoice=Se crearán los pagos de las facturas y las clasificará como pagadas
+StatisticsByLineStatus=Statistics by status of lines
 
 ### Notifications
 InfoCreditSubject=Abono de domiciliación %s por el banco

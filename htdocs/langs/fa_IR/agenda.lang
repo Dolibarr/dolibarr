@@ -29,6 +29,7 @@ ActionsToDoBy=رویدادهای اختصاص یافته به
 ActionsDoneBy=رویدادهای انجام شده توسط
 ActionsForUser=رویدادهای ها برای کاربر
 ActionsForUsersGroup=رویدادها برای همه کاربران گروه
+ActionAssignedTo=Event assigned to
 AllMyActions= همه رویدادها من / وظایف
 AllActions= همه رویدادها / وظایف
 ViewList=مشاهده لیست

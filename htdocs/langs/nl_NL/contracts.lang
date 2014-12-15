@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Lijst van de lopende contractregels
 ListOfRunningServices=Lijst van lppende diensten
 NotActivatedServices=Inactieve diensten (onder gevalideerde contracten)
 BoardNotActivatedServices=Diensten te activeren onder gevalideerde contracten
-LastContracts=Last % contracts
+LastContracts=Last %s contracts
 LastActivatedServices=Laatste %s geactiveerd diensten
 LastModifiedServices=Laatste %s bewerkte diensten
 EditServiceLine=Bewerk dienstenregel
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Lijst van Diensten te vervallen
 NoteListOfYourExpiredServices=Deze lijst bevat alleen de diensten van contracten voor relatiesdie zijn gekoppeld aan een vertegenwoordiger.
 StandardContractsTemplate=Standaard contracten sjabloon
 ContactNameAndSignature=Voor %s, naam en handtekening:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertegenwoordiger ondertekening contract

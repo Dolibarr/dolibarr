@@ -18,7 +18,7 @@ CronExplainHowToRunUnix=På Unix-miljö bör du använda crontab för att köra 
 CronExplainHowToRunWin=På Microsoft (tm) Windows environement kan du använda schemalagd aktivitet verktyg för att köra kommandoraden varje minuter
 # Menu
 CronJobs=Schemalagda jobb
-CronListActive=List of active/scheduled jobs
+CronListActive=Lista över aktiva / schemalagda jobb
 CronListInactive=Lista över handikappade jobb
 # Page list
 CronDateLastRun=Senaste körning

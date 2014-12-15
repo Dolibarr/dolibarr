@@ -837,7 +837,7 @@ class Form
 	        			});
 	        		    </script>';
 					}
-										
+
 					if (count($events))		// Add management of event
 					{
 						$out.='<script type="text/javascript">
@@ -1355,7 +1355,7 @@ class Form
                 $out.= '<option value="">'.$langs->trans("None").'</option>';
             }
             $out.= '</select>';
-            
+
            	$out.= '<script type="text/javascript">
 						$(document).ready(function() {
 
@@ -1701,6 +1701,8 @@ class Form
 		$outqty=1;
 		$outdiscount=0;
 
+		$maxlengtharticle=(empty($conf->global->PRODUCT_MAX_LENGTH_COMBO)?48:$conf->global->PRODUCT_MAX_LENGTH_COMBO);
+
         $label=$objp->label;
         if (! empty($objp->label_translated)) $label=$objp->label_translated;
         if (! empty($filterkey) && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
@@ -1720,11 +1722,11 @@ class Form
 			else if ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
         }
         $opt.= '>';
-        $opt.= $objp->ref.' - '.dol_trunc($label,32).' - ';
+        $opt.= $objp->ref.' - '.dol_trunc($label,$maxlengtharticle).' - ';
 
         $objRef = $objp->ref;
         if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
-        $outval.=$objRef.' - '.dol_trunc($label,32).' - ';
+        $outval.=$objRef.' - '.dol_trunc($label,$maxlengtharticle).' - ';
 
         $found=0;
 
@@ -1770,7 +1772,7 @@ class Form
         }
 
 		// Price by quantity
-		if (!empty($objp->quantity) && $objp->quantity >= 1 && $conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)
+		if (!empty($objp->quantity) && $objp->quantity >= 1 && ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 		{
 			$found = 1;
 			$outqty=$objp->quantity;
@@ -1896,7 +1898,7 @@ class Form
             // mode=2 means suppliers products
             $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished;
             print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
-            print ($hidelabel?'':$langs->trans("RefOrLabel").' : ').'<input type="text" size="16" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
+            print ($hidelabel?'':$langs->trans("RefOrLabel").' : ').'<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
         }
         else
         {
@@ -2004,8 +2006,8 @@ class Form
                 $outval.=$objRef;
                 if (! empty($objp->idprodfournprice)) $outval.=' ('.$objRefFourn.')';
                 $outval.=' - ';
-                $opt.=dol_trunc($objp->label,18).' - ';
-                $outval.=dol_trunc($label,18).' - ';
+                $opt.=dol_trunc($label, 72).' - ';
+                $outval.=dol_trunc($label, 72).' - ';
 
                 if (! empty($objp->idprodfournprice))
                 {

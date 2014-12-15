@@ -79,10 +79,11 @@ CreditDate=Crédito em
 WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country %s (Your country is not supported)
 ShowWithdraw=Mostrar levantamento
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=No entanto, se não tiver factura, pelo menos, um pagamento levantamento ainda processado, que não irá ser definido como pago para permitir o levantamento antes de administrar.
-DoStandingOrdersBeforePayments=Estas abas permitem a você pedir uma ordem permanente. Uma vez que ele será terminado, você pode digitar o pagamento para fechar a fatura.
+DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once donee, go into menu Bank->Withdrawal to manage the standing order. When standing order is closed, payment on invoice will be automatically recorded, and invoice closed if remainder to pay is null.
 WithdrawalFile=arquivo retirado
 SetToStatusSent=Definir o estado como "arquivo enviado"
 ThisWillAlsoAddPaymentOnInvoice=Isso também irá criar pagamentos em facturas e classificá-los para pagar
+StatisticsByLineStatus=Statistics by status of lines
 
 ### Notifications
 InfoCreditSubject=Pagamento de %s ordem permanente pelo banco

@@ -1142,7 +1142,7 @@ class ActionComm extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
+        global $user,$langs,$conf,$user;
 
         $now=dol_now();
 
@@ -1166,6 +1166,9 @@ class ActionComm extends CommonObject
         $this->transparency=1;	// 1 means opaque
         $this->priority=1;
         $this->note = 'Note';
+
+        $this->userownerid=$user->id;
+        $this->userassigned[$user->id]=array('id'=>$user->id, 'transparency'=> 1);
     }
 
 }

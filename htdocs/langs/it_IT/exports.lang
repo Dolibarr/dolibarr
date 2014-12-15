@@ -22,7 +22,7 @@ ImportableFields=Campi importabili
 ImportedFields=Campi importati
 DatasetToExport=Dati da esportare
 DatasetToImport=Dataset da importare
-NoDiscardedFields=N. campi in file di origine vengono scartate
+NoDiscardedFields=Nessun campo del file sorgente sarà scartato
 Dataset=Dataset
 ChooseFieldsOrdersAndTitle=Scegli l'ordine dei campi
 FieldsOrder=Ordine campi
@@ -66,7 +66,7 @@ SourceFileFormat=Fonte formato di file
 FieldsInSourceFile=Campi nel file sorgente
 FieldsInTargetDatabase=Campi di destinazione nel database di Dolibarr (grassetto=obbligatorio)
 Field=Campo
-NoFields=N. campi
+NoFields=Nessun campo
 MoveField=Spostare campo %s numero di colonna
 ExampleOfImportFile=Example_of_import_file
 SaveImportProfile=Salva questo profilo di importazione
@@ -125,7 +125,7 @@ BankAccountNumber=Num. conto
 BankAccountNumberKey=Chiave
 SpecialCode=Codice speciale
 ExportStringFilter=%% permette di sostituire uno o più caratteri nel testo
-ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD : filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD : filters on all previous years/months/days
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filtra per un anno/mese/giorno<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filtra con un intervallo di anni/mesi/giorni<br> > YYYY, > YYYYMM, > YYYYMMDD : filtra sui seguenti anni/mesi/giorni<br> < YYYY, < YYYYMM, < YYYYMMDD : filtra su tutti i precedenti anni/mesi/giorni
 ExportNumericFilter='NNNNN' filtra per un solo valore<br>'NNNNN+NNNNN' filtra su un range di valori<br>'&gt;NNNNN' filtra per valori inferiori<br>'&gt;NNNNN' filtra per valori superiori
 ## filters
 SelectFilterFields=Se vuoi filtrare su qualche valore, inserisci qui il valore.

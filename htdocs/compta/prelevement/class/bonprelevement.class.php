@@ -56,7 +56,9 @@ class BonPrelevement extends CommonObject
     var $statut;    // 0-Wait, 1-Trans, 2-Done
     var $labelstatut=array();
 
+    var $invoice_in_error=array();
 
+    
     /**
      *	Constructor
      *
@@ -835,7 +837,7 @@ class BonPrelevement extends CommonObject
                             else
 							{
 								dol_syslog("Error on default bank number RIB/IBAN for thirdparty reported by verif() ".$fact->socid." ".$soc->name, LOG_ERR);
-                                $facture_errors[$fac[0]]="Error on default bank number RIB/IBAN for thirdparty reported by function verif() ".$fact->socid." ".$soc->name;
+                                $this->invoice_in_error[$fac[0]]="Error on default bank number RIB/IBAN for invoice ".$fact->getNomUrl(0)." for thirdparty (reported by function verif) ".$soc->name;
                             }
                         }
                         else
@@ -1814,21 +1816,21 @@ class BonPrelevement extends CommonObject
 
         if ($mode == 1)
         {
-            if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut0').' '.$langs->trans($this->labelstatut[$statut]);
-            if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1').' '.$langs->trans($this->labelstatut[$statut]);
+            if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1').' '.$langs->trans($this->labelstatut[$statut]);
+            if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut3').' '.$langs->trans($this->labelstatut[$statut]);
             if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6').' '.$langs->trans($this->labelstatut[$statut]);
         }
         if ($mode == 2)
         {
-            if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut0');
-            if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
+            if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
+            if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut3');
             if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
         }
 
         if ($mode == 3)
         {
-            if ($statut==0) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut0');
-            if ($statut==1) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
+            if ($statut==0) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
+            if ($statut==1) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut3');
             if ($statut==2) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
         }
     }

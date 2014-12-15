@@ -560,13 +560,13 @@ class FormOther
      *
      *		@param	string		$set_color		Pre-selected color
      *		@param	string		$prefix			Name of HTML field
-     *		@param	string		$form_name		Name of form
+     *		@param	string		$form_name		Deprecated. Not used.
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@return	void
      * 		@deprecated
      */
-    function select_color($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
+    function select_color($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='')
     {
     	print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
     }
@@ -576,13 +576,13 @@ class FormOther
      *
      *		@param	string		$set_color		Pre-selected color
      *		@param	string		$prefix			Name of HTML field
-     *		@param	string		$form_name		Name of form
+     *		@param	string		$form_name		Deprecated. Not used.
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@param	string		$morecss		Add css style into input field
      * 		@return	void
      */
-    function selectColor($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='', $morecss='')
+    function selectColor($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='', $morecss='')
     {
         global $langs,$conf;
 

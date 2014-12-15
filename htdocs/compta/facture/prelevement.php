@@ -58,6 +58,7 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
+
 /*
  * Actions
  */
@@ -69,14 +70,14 @@ if ($action == "new")
         $result = $object->demande_prelevement($user);
         if ($result > 0)
         {
-            header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-            exit;
+            setEventMessage($langs->trans("RecordSaved"));
         }
         else
         {
         	setEventMessage($object->error, 'errors');
         }
     }
+    $action='';
 }
 
 if ($action == "delete")
@@ -307,6 +308,31 @@ if ($object->id > 0)
 	print '</td>';
 	print '</tr>';
 
+	// Conditions de reglement
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('PaymentConditionsShort');
+	print '</td>';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE)
+	{
+		if ($action == 'editconditions')
+		{
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
+		}
+		else
+		{
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
+		}
+	}
+	else
+	{
+		print '&nbsp;';
+	}
+	print '</td></tr>';
+
 	// Date payment term
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -333,32 +359,7 @@ if ($object->id > 0)
 	}
 	print '</td></tr>';
 
-	// Conditions de reglement
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('PaymentConditionsShort');
-	print '</td>';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE)
-	{
-		if ($action == 'editconditions')
-		{
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
-		}
-		else
-		{
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
-		}
-	}
-	else
-	{
-		print '&nbsp;';
-	}
-	print '</td></tr>';
-
-	// Mode de reglement
+	// Payment mode
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
@@ -376,6 +377,26 @@ if ($object->id > 0)
 	}
 	print '</td></tr>';
 
+	// Bank Account
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	print $langs->trans('BankAccount');
+	print '<td>';
+	if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
+	    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($action == 'editbankaccount')
+	{
+	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+	}
+	else
+	{
+	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+	}
+	print "</td>";
+	print '</tr>';
+	
 	// Montants
 	print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 	print '<td align="right" colspan="2" nowrap>'.price($object->total_ht).'</td>';

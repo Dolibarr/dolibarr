@@ -29,6 +29,7 @@ ActionsToDoBy=Events assigned to
 ActionsDoneBy=Events done by
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= All my events/tasks
 AllActions= All events/tasks
 ViewList=List view

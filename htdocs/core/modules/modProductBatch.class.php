@@ -49,7 +49,7 @@ class modProductBatch extends DolibarrModules
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Batch number, eat-by and sell-by date management module";
 
-		$this->rights_class = 'stock';
+		$this->rights_class = 'productbatch';
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'experimental';
 		// Key used in llx_const table to save module status enabled/disabled (where dluo is value of property name of module in uppercase)

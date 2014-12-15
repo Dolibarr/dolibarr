@@ -1,7 +1,7 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
 
-Accounting=Accounting
+Accounting=Računovodstvo
 Globalparameters=Global parameters
 Chartofaccounts=Chart of accounts
 Fiscalyear=Fiscal years
