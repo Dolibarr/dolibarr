@@ -29,6 +29,7 @@ ActionsToDoBy=Ενέργειες που ανατέθηκαν σε
 ActionsDoneBy=Ενέργειες που ολοκληρώθηκαν από
 ActionsForUser=Γεγονότα για τον χρήστη
 ActionsForUsersGroup=Γεγονότα όλων των χρηστών της ομάδας
+ActionAssignedTo=Event assigned to
 AllMyActions= Όλες οι ενέργειες/εργασίες μου
 AllActions= Όλες οι ενέργειες/εργασίες
 ViewList=Εμφάνιση Λίστας
@@ -44,7 +45,7 @@ AgendaExtSitesDesc=Αυτή η σελίδα σας επιτρέπει να ρυ�
 ActionsEvents=Γεγονότα για τα οποία θα δημιουργήσουν εγγραφή στο ημερολόγιο, αυτόματα
 PropalValidatedInDolibarr=Η πρόταση %s επικυρώθηκε
 InvoiceValidatedInDolibarr=Το τιμολόγιο %s επικυρώθηκε
-InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
+InvoiceValidatedInDolibarrFromPos=Το τιμολόγιο επικυρώθηκε από το  POS
 InvoiceBackToDraftInDolibarr=Τιμολόγιο %s θα επιστρέψει στην κατάσταση του σχεδίου
 InvoiceDeleteDolibarr=Τιμολόγιο %s διαγράφεται
 OrderValidatedInDolibarr= Η παραγγελία %s επικυρώθηκε
@@ -68,9 +69,9 @@ DateActionStart= Ημερομηνία έναρξης
 DateActionEnd= Ημερομηνία λήξης
 AgendaUrlOptions1=Μπορείτε ακόμη να προσθέσετε τις ακόλουθες παραμέτρους για να φιλτράρετε τα αποτέλεσμα:
 AgendaUrlOptions2=<b>login=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που δημιουργήθηκαν και έγιναν από τον χρήστη <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> να περιορίσει την παραγωγή ενεργειών που ανήκουν στον χρήστη <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που αφορούν τον χρήστη<b>%s</b>.
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> να περιορίσει την παραγωγή της σε ενέργειες που σχετίζονται με το έργο <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Εμφάνιση γενεθλίων των προσώπων επικοινωνίας
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των προσώπων επικοινωνίας
 Busy=Απασχολ.
@@ -87,5 +88,5 @@ ExtSiteUrlAgenda=URL για να αποκτήσετε πρόσβαση στο .i
 ExtSiteNoLabel=Χωρίς Περιγραφή
 WorkingTimeRange=Εύρος χρόνου εργασίας
 WorkingDaysRange=Εύρος ημερών εργασίας
-AddEvent=Create event
+AddEvent=Δημιουργία συμβάντος
 MyAvailability=Η διαθεσιμότητα μου

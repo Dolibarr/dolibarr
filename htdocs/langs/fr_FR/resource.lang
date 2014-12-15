@@ -22,15 +22,13 @@ GotoDate=Aller à un date
 
 ResourceElementPage=Ressources
 ResourceCreatedWithSuccess=Ressource créée avec succès
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
+RessourceLineSuccessfullyDeleted=Ligne de ressource supprimée
+RessourceLineSuccessfullyUpdated=Ligne de ressource mise à jour avec succès
 ResourceLinkedWithSuccess=Ressource liée avec succès
 
 TitleResourceCard=Fiche ressource
 ConfirmDeleteResource=Confirmer la suppression de cette ressource ?
 RessourceSuccessfullyDeleted=Ressource supprimée avec succès
 DictionaryResourceType=Type de ressource
-
-DictionaryEMailTemplates=Modèles d'emails
 
 SelectResource=Sélectionner ressource

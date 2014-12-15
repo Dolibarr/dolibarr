@@ -155,6 +155,6 @@ BankDashboard=Sinteză  conturi bancare
 DefaultRIB=IBAN Implicit
 AllRIB=Tot BAN
 LabelRIB=Etichetă BAN
-NoBANRecord=Nici o înregistrare BAN
+NoBANRecord=Nicio înregistrare BAN
 DeleteARib=Ștergeți înregistrarea BAN
 ConfirmDeleteRib=Sigur doriţi să ştergeţi  această înregistrare BAN ?

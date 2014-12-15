@@ -18,7 +18,7 @@ CronExplainHowToRunUnix=Σχετικά με το περιβάλλον Unix θα 
 CronExplainHowToRunWin=Στο Microsoft (tm) των Windows environement, μπορείτε να χρησιμοποιήσετε τα εργαλεία Προγραμματισμένη εργασία ώστε να εκτελεστεί μια γραμμή εντολών κάθε λιγα λεπτά
 # Menu
 CronJobs=Προγραμματισμένες εργασίες
-CronListActive=List of active/scheduled jobs
+CronListActive=Λίστα ενεργών/προγραμματισμένων εργασιών
 CronListInactive=Λίστα με τις απενεργοποιημένες εργασίες
 # Page list
 CronDateLastRun=Τελευταία εκτέλεση

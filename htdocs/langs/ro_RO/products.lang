@@ -242,3 +242,8 @@ ForceUpdateChildPriceSoc=Setează acelasi preţ pe subsidiarele clientuli
 PriceByCustomerLog=Log Preţ pe client
 MinimumPriceLimit=Preţul minim nu poate fi mai mic decat %s
 MinimumRecommendedPrice=Preţul minim recomandat este: %s
+PriceExpressionEditor=Editor expresie preț
+PriceExpressionSelected=Expresie preț selectatată
+PriceExpressionEditorHelp="preț = 2 + 2" sau "2 + 2" pentru stabilirea prețului <br> Extra câmpurile sunt variabile, cum ar fi ""#options_myextrafieldkey# * 2"<br> Există variabile speciale, cum ar fi#quantity# and #tva_tx#<br> Folosiți ; pentru a separa expresiile
+PriceMode=Mod  preț
+PriceNumeric=Număr

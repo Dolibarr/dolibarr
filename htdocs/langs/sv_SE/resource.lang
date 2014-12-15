@@ -1,36 +1,34 @@
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Resurser
+MenuResourceAdd=Ny resurs
+MenuResourcePlanning=Resursplanering
+DeleteResource=Radera resurs
+ConfirmDeleteResourceElement=Bekräfta radera resurs för detta element
+NoResourceInDatabase=Ingen resurs i databasen.
+NoResourceLinked=Ingen resurs kopplad
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=Listan över resurser
+ResourceSingular=Resurs
+ResourceCard=Resurs kort
+AddResource=Skapa en resurs
+ResourceFormLabel_ref=Resursnamn
+ResourceType=Resurs typ
+ResourceFormLabel_description=Resursbeskrivning
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=Resurser kopplade till elementet
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ShowResourcePlanning=Visa resursplanering
+GotoDate=Gå till datum
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=Element resurser
+ResourceCreatedWithSuccess=Resursen har skapats
+RessourceLineSuccessfullyDeleted=Resurslinje har tagits bort
+RessourceLineSuccessfullyUpdated=Resurs linje har uppdaterats
+ResourceLinkedWithSuccess=Resurs kopplat med framgång
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+TitleResourceCard=Resurs kort
+ConfirmDeleteResource=Bekräfta radera denna resurs
+RessourceSuccessfullyDeleted=Resurs tagits bort
+DictionaryResourceType=Typ av resurser
 
-DictionaryEMailTemplates=Modèles d'Emails
-
-SelectResource=Select resource
+SelectResource=Välj resurs

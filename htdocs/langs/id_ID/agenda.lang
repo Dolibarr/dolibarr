@@ -29,6 +29,7 @@ ActionsToDoBy=Acara ditugaskan untuk
 ActionsDoneBy=Acara yang dilakukan oleh
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Semua acara saya / tugas
 AllActions= Semua acara / tugas
 ViewList=Tampilan daftar

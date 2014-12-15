@@ -109,4 +109,4 @@ CategoriesSetup=Nastavitve kategorij
 CategorieRecursiv=Avtomatsko poveži z nadrejeno kategorijo
 CategorieRecursivHelp=Če je aktivirano, bo proizvod po dodajanju v podkategorijo povezan tudi z nadrejeno kategorijo
 AddProductServiceIntoCategory=Dodaj sledeči produkt/storitev
-ShowCategory=Show category
+ShowCategory=Prikaži kategorijo

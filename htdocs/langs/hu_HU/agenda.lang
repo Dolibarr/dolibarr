@@ -29,6 +29,7 @@ ActionsToDoBy=Eseményeket befolyásolhatja
 ActionsDoneBy=Actions done by
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Az én cselekvéseim/feladataim
 AllActions= Az összes cselekvés/feladat
 ViewList=Lista megtekintése

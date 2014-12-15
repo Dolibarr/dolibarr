@@ -47,7 +47,7 @@ RefusedData=Data respingerii
 RefusedReason=Motivul respingerii
 RefusedInvoicing=Facturare respingerea
 NoInvoiceRefused=Nu încărcaţi respingerea
-InvoiceRefused=Invoice refused (Charge the rejection to customer)
+InvoiceRefused=Factura refuzată (Încărcați  refuzul la client)
 Status=Status
 StatusUnknown=Necunoscut
 StatusWaiting=Aşteptare
@@ -79,10 +79,11 @@ CreditDate=Credit pe
 WithdrawalFileNotCapable=Imposibil de a genera fișierul chitanţă de retragere pentru țara dvs %s (Țara dvs. nu este acceptată)
 ShowWithdraw=Arată Retragere
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Cu toate acestea, dacă factura are cel puțin o plată de retragere  încă neprelucrată, aceasta nu va fi setată ca plătită permite în  prealabil gestionarea retragerii.
-DoStandingOrdersBeforePayments=Acest tab vă permite să solicitaţi un ordin de plată. Odată ce este complet, puteți introduce plata pentru a închide factura.
+DoStandingOrdersBeforePayments=Acest tab vă permite să solicitaţi un ordin de plată.   Odată ce este dat intră în  meniul Bancă> Retragerea de a gestiona ordinul de plată. Când ordinul de plată este închis, plata pe factura va fi înregistrată în mod automat, iar factura închisă dacă restul de plata este nul.
 WithdrawalFile=Fişier Retragere
 SetToStatusSent=Setează statusul "Fişier Trimis"
 ThisWillAlsoAddPaymentOnInvoice=Aceasta se va aplica, de asemenea, plății facturilor și vor  fi clasificate ca "Plătit"
+StatisticsByLineStatus=Statistici după starea  liniilor
 
 ### Notifications
 InfoCreditSubject=Plata %s comandă în picioare de către bancă

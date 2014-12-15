@@ -47,7 +47,7 @@ RefusedData=Ablehnungsdatum
 RefusedReason=Ablehnungsgrund
 RefusedInvoicing=Ablehnung in Rechnung stellen
 NoInvoiceRefused=Ablehnung nicht in Rechnung stellen
-InvoiceRefused=Invoice refused (Charge the rejection to customer)
+InvoiceRefused=Rechnung abgelehnt (Abweisung dem Kunden berechnen)
 Status=Status
 StatusUnknown=Unbekannt
 StatusWaiting=Wartend
@@ -79,10 +79,11 @@ CreditDate=Am
 WithdrawalFileNotCapable=Abbuchungsformular für Ihr Land %s konnte nicht erstellt werden (Dieses Land wird nicht unterstützt).
 ShowWithdraw=Zeige Abbuchung
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Wenn eine Rechnung mindestens eine noch zu bearbeitende Verbuchung vorweist, kann diese nicht als bezahlt markiert werden.
-DoStandingOrdersBeforePayments=Dies erlaubt Ihnen, einen Dauerauftrag anzulegen. Sobald dieser vollständig ist, können Sie den Zahlbetrag eingeben, um die Rechnung abzuschließen.
+DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once donee, go into menu Bank->Withdrawal to manage the standing order. When standing order is closed, payment on invoice will be automatically recorded, and invoice closed if remainder to pay is null.
 WithdrawalFile=Datei abbuchen
 SetToStatusSent=Setze in Status "Datei versandt"
 ThisWillAlsoAddPaymentOnInvoice=Dies wird auch Zahlungen auf Rechnungen erstellen und diese als bezahlt markieren
+StatisticsByLineStatus=Statistics by status of lines
 
 ### Notifications
 InfoCreditSubject=Zahlung des Dauerauftrags %s

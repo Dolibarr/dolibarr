@@ -29,6 +29,7 @@ ActionsToDoBy=События назначенные
 ActionsDoneBy=Действия, проделанную
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Все мои действия / задачи
 AllActions= Все ле действия / задачи
 ViewList=Посмотреть список

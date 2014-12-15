@@ -18,7 +18,7 @@ CronExplainHowToRunUnix=In Unix-Umgebungen sollte man crontab benutzen um die Ko
 CronExplainHowToRunWin=In Microsoft(tm) Windows kannst Du die Aufgabenplanung benutzen um die Kommandozeile jede Minute aufzurufen
 # Menu
 CronJobs=Geplante Jobs
-CronListActive=List of active/scheduled jobs
+CronListActive=Liste der aktiven/geplanten Jobs
 CronListInactive=Liste der deaktivierten Jobs
 # Page list
 CronDateLastRun=Letzte Ausführung

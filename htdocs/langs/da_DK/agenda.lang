@@ -29,6 +29,7 @@ ActionsToDoBy=Aktioner påvirkes i
 ActionsDoneBy=Aktioner udført af
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Alle mine handlinger / opgaver
 AllActions= Alle les handlinger / opgaver
 ViewList=Vis liste

@@ -79,10 +79,11 @@ CreditDate=Kredīts
 WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country %s (Your country is not supported)
 ShowWithdraw=Rādīt izņemšana
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Tomēr, ja rēķins satur vismaz vienu maksājums, kas nav apstrādāts, to nevar noteikt kā apmaksātu.
-DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once it is complete, you can type the payment to close the invoice.
+DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once donee, go into menu Bank->Withdrawal to manage the standing order. When standing order is closed, payment on invoice will be automatically recorded, and invoice closed if remainder to pay is null.
 WithdrawalFile=Izstāšanās fails
 SetToStatusSent=Nomainīt uz statusu "Fails nosūtīts"
 ThisWillAlsoAddPaymentOnInvoice=This tab allows you to request a standing order. Once it is complete, you can type the payment to close the invoice.
+StatisticsByLineStatus=Statistics by status of lines
 
 ### Notifications
 InfoCreditSubject=Maksājumu pastāvīgā rīkojuma %s banka
