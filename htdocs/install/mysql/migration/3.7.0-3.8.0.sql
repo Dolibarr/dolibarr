@@ -27,3 +27,6 @@ create table llx_c_price_expression
 )ENGINE=innodb;
 
 ALTER TABLE llx_product_fournisseur_price ADD fk_price_expression integer DEFAULT NULL;
+
+-- Taiwan VAT Rates
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213, '5', '0', 'VAT 5%', 1);
