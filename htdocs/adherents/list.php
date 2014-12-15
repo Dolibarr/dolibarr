@@ -263,8 +263,7 @@ if ($resql)
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 
-	print "</tr>\n";
-	print '</form>';
+	print "</tr>\n";	
 
 	$var=True;
 	while ($i < $num && $i < $conf->liste_limit)
@@ -366,6 +365,7 @@ if ($resql)
 	}
 
 	print "</table>\n";
+	print '</form>';
 
 	if ($num > $conf->liste_limit)
 	{
