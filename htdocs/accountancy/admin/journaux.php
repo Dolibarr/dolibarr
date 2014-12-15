@@ -163,7 +163,6 @@ $db->free($resql);
 
 print "</table>\n";
 
-print '</table>';
 print '</div>';
 
 print '<br>';
