@@ -118,7 +118,7 @@ MultiPricesAbility=Plusieurs niveaux de prix par produit/service
 MultiPricesNumPrices=Nombre de prix
 MultiPriceLevelsName=Catégorie de prix
 AssociatedProductsAbility=Prise en charge des produits virtuels/packs
-AssociatedProducts=Produit virtual/package
+AssociatedProducts=Produit virtuel/package
 AssociatedProductsNumber=Nbre de sous-produits constituant ce produit virtuel/package
 ParentProductsNumber=Nbre de produits virtuels/packages parent
 IfZeroItIsNotAVirtualProduct=Si 0, ce produit n'est pas un produit virtuel/package
@@ -242,3 +242,8 @@ ForceUpdateChildPriceSoc=Définir le même prix sur les filiales des clients
 PriceByCustomerLog=Trace des prix par clients
 MinimumPriceLimit=Le prix minimum ne peut être inférieur à %s
 MinimumRecommendedPrice=Prix minimum recommandé : %s
+PriceExpressionEditor=Éditeur d'expression de prix
+PriceExpressionSelected=Expression de prix sélectionnée
+PriceExpressionEditorHelp=« price = 2 + 2 » ou « 2 + 2 » afin de positionner le prix<br>Les champs personnalisés sont des variables de la forme « #options_macléchampperso# * 2 »<br>Il y a des variables spéciales telles que « #quantity# » et « #tva_tx# »<br>Utiliser « ; » pour séparer les expressions.
+PriceMode=Mode de tarification
+PriceNumeric=Nombre

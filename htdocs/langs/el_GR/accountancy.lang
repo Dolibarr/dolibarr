@@ -66,7 +66,7 @@ Lineofinvoice=Γραμμή τιμολογίου
 VentilatedinAccount=Ventilated successfully in the accounting account
 NotVentilatedinAccount=Not ventilated in the accounting account
 
-ACCOUNTING_SEPARATORCSV=Separator CSV
+ACCOUNTING_SEPARATORCSV=Διαχωριστικό CSV
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
@@ -77,9 +77,9 @@ AccountLengthDesc=Λειτουργία που επιτρέπει να υποκρ
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
+ACCOUNTING_SELL_JOURNAL=Ημερολόγιο πωλήσεων
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
+ACCOUNTING_BANK_JOURNAL=Τραπεζικό ημερολόγιο
 ACCOUNTING_CASH_JOURNAL=Cash journal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
@@ -130,15 +130,15 @@ ErrorDebitCredit=Χρεωστικές και Πιστωτικές δεν μπο�
 ReportThirdParty=Λίστα λογαριασμού Πελ./Προμ.
 DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
 
-ListAccounts=List of the accounting accounts
+ListAccounts=Λίστα των λογιστικών λογαριασμών
 
-Pcgversion=Version of the plan
+Pcgversion=Έκδοση του σχεδίου
 Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account
 Active=Statement
 
-NewFiscalYear=New fiscal year
+NewFiscalYear=Νέα οικονομική χρονιά
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover HT
@@ -151,7 +151,7 @@ DescVentilSupplier=Consult here the annual breakdown accounting of your invoices
 DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
 DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
 
-ValidateHistory=Validate Automatically
+ValidateHistory=Αυτόματη επικύρωση
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 

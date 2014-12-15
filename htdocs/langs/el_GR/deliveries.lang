@@ -23,4 +23,6 @@ GoodStatusDeclaration=Παραδόθηκαν τα παραπάνω σε καλή
 Deliverer=Διανομέας :
 Sender=Αποστολέας
 Recipient=Παραλήπτης
-# ErrorStockIsNotEnough=There's not enough stock
+ErrorStockIsNotEnough=Δεν υπάρχει αρκετό απόθεμα
+Shippable=Για Αποστολή
+NonShippable=Δεν αποστέλλονται

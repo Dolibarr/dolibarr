@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Elenco delle righe di contratto in esecuzione
 ListOfRunningServices=Elenco dei servizi in esecuzione
 NotActivatedServices=Servizi non attivati (con contratti convalidati)
 BoardNotActivatedServices=Servizi da attivare con contratti convalidati
-LastContracts=Last % contracts
+LastContracts=Last %s contracts
 LastActivatedServices=Ultimi %s servizi attivati
 LastModifiedServices=Ultimi %s servizi modificati
 EditServiceLine=Modifica riga del servizio
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Lista dei servizi in scadenza
 NoteListOfYourExpiredServices=Questa lista contiene i servizi relativi a contratti di terze parti per le quali siete collegati come rappresentanti commerciali.
 StandardContractsTemplate=Template standard per i contratti
 ContactNameAndSignature=Per %s, Nome e firma:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Contatto interno per la firma del contratto

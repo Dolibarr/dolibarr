@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Списък на линиите на движени
 ListOfRunningServices=Списък на стартираните услуги
 NotActivatedServices=Неактивни услуги (сред валидирани договори)
 BoardNotActivatedServices=Услуги за да активирате сред утвърдени договори
-LastContracts=Last % contracts
+LastContracts=Last %s contracts
 LastActivatedServices=Последните %s активирани услуги
 LastModifiedServices=Последните %s променени услуги
 EditServiceLine=Редактиране на сервизна линия
@@ -91,6 +91,7 @@ ListOfServicesToExpire=List of Services to expire
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Търговски представител подписване на договора
