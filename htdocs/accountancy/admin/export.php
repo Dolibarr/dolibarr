@@ -156,9 +156,9 @@ foreach ( $list as $key ) {
 }
 
 print "</table>\n";
-print '</form>';
 
 print '<br /><div style="text-align:center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
+print '</form>';
 
 llxFooter();
 $db->close();
