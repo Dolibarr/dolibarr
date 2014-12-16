@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2011-2013      Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2014      Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -509,7 +509,6 @@ print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnContracts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 print '<textarea name="CONTRACT_FREE_TEXT" class="flat" cols="120">'.$conf->global->CONTRACT_FREE_TEXT.'</textarea>';
 print '</td></tr>'."\n";
-print '</form>';
 
 //Use draft Watermark
 $var=!$var;
