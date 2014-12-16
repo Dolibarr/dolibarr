@@ -255,19 +255,44 @@ class pdf_soleil extends ModelePDFFicheinter
 						$txt='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration),1,$outputlangs->charset_output).'</strong>';
 						$desc=dol_htmlentitiesbr($objectligne->desc,1);
 
-						$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt,$desc), 0, 1, 0);
-
+						$pdf->startTransaction();
+						$pdf->writeHTMLCell(0, 0, $curX, $curY, $txt.'<br>'.$desc, LR, 1, 0);
+						$pageposafter=$pdf->getPage();
+						if ($pageposafter > $pageposbefore)	// There is a pagebreak
+						{
+							$pdf->rollbackTransaction(true);
+							$pageposafter=$pageposbefore;
+							//print $pageposafter.'-'.$pageposbefore;exit;
+							$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+							$pdf->writeHTMLCell(0, 0, $curX, $curY, $txt.'<br>'.$desc, LR, 1, 0);
+							$pageposafter=$pdf->getPage();
+							$posyafter=$pdf->GetY();
+							//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
+							if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+							{
+								if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
+								{
+									$pdf->AddPage('','',true);
+									$pdf->setPage($pageposafter+1);
+								}
+							}
+						}
+						else	// No pagebreak
+						{
+							$pdf->commitTransaction();
+						}
+	
 						$nexY = $pdf->GetY();
 						$pageposafter=$pdf->getPage();
 						$pdf->setPage($pageposbefore);
 						$pdf->setTopMargin($this->marge_haute);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
-
+	
 						// We suppose that a too long description is moved completely on next page
 						if ($pageposafter > $pageposbefore) {
 							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 						}
-
+						
 						$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
 						// Detect if some page were added automatically and output _tableau for past pages
