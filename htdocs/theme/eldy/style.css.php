@@ -854,7 +854,7 @@ form#login {
 	vertical-align: middle;
 }
 .login_table_title {
-	max-width: 560px;
+	max-width: 530px;
 	color: #888888;
 	text-shadow: 1px 1px 1px #FFF;
 }
@@ -866,7 +866,7 @@ form#login {
 	margin-right: 10px;
 	padding-left:6px;
 	padding-right:6px;
-	padding-top:12px;
+	padding-top:16px;
 	padding-bottom:12px;
 	max-width: 560px;
 
@@ -978,10 +978,11 @@ img.login, img.printer, img.entity {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
 	background-repeat: no-repeat;
 }
+/*
 .span-icon-user input, .span-icon-password input {
 	margin-right: 30px;
-	width: 98%;
 }
+*/
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
