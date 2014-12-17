@@ -1,0 +1,20 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Parti/seri yönetimi
+ProductStatusOnBatch=Yapıldı
+ProductStatusNotOnBatch=Yapılmadı
+ProductStatusOnBatchShort=Yapıldı
+ProductStatusNotOnBatchShort=Yapılmadı
+Batch=Parti/Seri
+atleast1batchfield=Son yenme tarihi ya da Son satış tarihi ya da Parti numarası
+batch_number=Parti/Seri numarası
+l_eatby=Son yenme tarihi
+l_sellby=Son satış tarihi
+DetailBatchNumber=Parti/Seri ayrıntıları
+DetailBatchFormat=Parti/Seri: %s - Y: %s - S: %s (Mik : %d)
+printBatch=Parti: %s
+printEatby=Son Yenme: %s
+printSellby=Son satış: %s
+printQty=Mik: %d
+AddDispatchBatchLine=Dağıtımda bir Raf Ömrü satırı ekle
+BatchDefaultNumber=Tanımlanmamış
+WhenProductBatchModuleOnOptionAreForced=Parti/Seri devredeyken, stok arttırma/eksiltme modu son seçime zorlanır ve düzenlenemez. Diğer seçenekler istediğiniz gibi yapılandırılabilir.

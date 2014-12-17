@@ -95,7 +95,7 @@ if (! empty($conf->productbatch->enabled))
 	if (! (GETPOST('entrepot_id','int') > 0))
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans("WarhouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
+		setEventMessage($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
 		header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$id);
 		exit;
 	}

@@ -1,0 +1,20 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Charge/Seriennr. verwalten
+ProductStatusOnBatch=Verwaltet
+ProductStatusNotOnBatch=Nicht Verwaltet
+ProductStatusOnBatchShort=Verwaltet
+ProductStatusNotOnBatchShort=Nicht verwaltet
+Batch=Charge/Seriennr
+atleast1batchfield=Verzehren-bis-, verkaufen-bis-Datum oder Chargennr
+batch_number=Charge/Seriennr
+l_eatby=Verzehren-bis-Datum
+l_sellby=Verkaufen-bis-Datum
+DetailBatchNumber=Chargen-/Seriennummern-Details
+DetailBatchFormat=Charge/Seriennr: %s - E: %s - S: %s (Menge: %d)
+printBatch=Charge: %s
+printEatby=Verzehren bis: %s
+printSellby=Verkaufen bis: %s
+printQty=Menge: %d
+AddDispatchBatchLine=Add a line for Shelf Life dispatching
+BatchDefaultNumber=Nicht definiert
+WhenProductBatchModuleOnOptionAreForced=Wenn das Modul Chargen/Seriennr eingeschaltet ist, wird der Modus für Lagerbestands-Erhöhungen / -Senkungen auf die letzte Auswahl festgelegt und kann nicht geändert werden. Andere Optionen können nach Wunsch eingestellt werden.
