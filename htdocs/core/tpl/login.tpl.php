@@ -125,7 +125,7 @@ if (! empty($hookmanager->resArray['options'])) {
 	<tr>
 	<td valign="top" class="nowrap none center">
 
-	<table class="login_table_securitycode"><tr>
+	<table class="login_table_securitycode centpercent"><tr>
 	<td>
 	<span class="span-icon-security">
 	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security" type="text" size="12" maxlength="5" name="code" tabindex="3" />
