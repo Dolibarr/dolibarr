@@ -24,6 +24,10 @@
 		
 	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
  
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedIF">
+		<severity>0</severity>
+	</rule>
+	
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowed">
 		<severity>0</severity>
 	</rule>
