@@ -1486,7 +1486,9 @@ else if ($id > 0 || ! empty($ref))
 
 					// Duration
 					print '<td align="right">';
-					$form->select_duration('duration',$objp->duree);
+					$selectmode='select';
+					if (! empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) $selectmode='text';
+					$form->select_duration('duration',$objp->duree, $selectmode);
 					print '</td>';
 
 					print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
