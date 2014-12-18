@@ -2220,10 +2220,10 @@ abstract class CommonObject
             			$this->array_options[$key] = price2num($this->array_options[$key]);
             			break;
             		case 'date':
-            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
+            			if (is_numeric($this->array_options[$key])) $this->array_options[$key]=$this->db->idate($this->array_options[$key]);
             			break;
             		case 'datetime':
-            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
+            			if (is_numeric($this->array_options[$key])) $this->array_options[$key]=$this->db->idate($this->array_options[$key]);
             			break;
                	}
             }
