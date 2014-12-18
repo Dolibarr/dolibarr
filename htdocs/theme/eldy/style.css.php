@@ -100,12 +100,12 @@ $colorbacktitle2=($colred-15).','.($colgreen-15).','.($colblue-15);
 $colorbacktabcard1=($colred+15).','.($colgreen+16).','.($colblue+17);  // card
 $colorbacktabcard2=($colred-15).','.($colgreen-15).','.($colblue-15);
 $colorbacktabactive=($colred-15).','.($colgreen-15).','.($colblue-15);
-$colorbacklineimpair1='255,255,255';    // line pair
-$colorbacklineimpair2='255,255,255';    // line pair
-$colorbacklineimpairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));
-$colorbacklinepair1=(244+round($isred/3)).','.(244+round($isgreen/3)).','.(244+round($isblue/3));    // line impair
-$colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+round($isblue/3));    // line impair
-$colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line impair
+$colorbacklineimpair1='255,255,255';    // line impair
+$colorbacklineimpair2='255,255,255';    // line impair
+$colorbacklineimpairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));	// line impair
+$colorbacklinepair1=(244+round($isred/3)).','.(244+round($isgreen/3)).','.(244+round($isblue/3));    // line pair
+$colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+round($isblue/3));    // line pair
+$colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line pair
 $colorbackbody='#f9f9f9';
 $colortext='40,40,40';
 $fontsize='12';
@@ -439,6 +439,8 @@ th .button {
 /* ============================================================================== */
 
 .hideobject { display: none; }
+.minwidth100 { min-width: 100px; }
+.minwidth200 { min-width: 200px; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
@@ -1858,7 +1860,7 @@ table.liste td {
 }
 */
 
-.impair:hover {
+.impair:hover, td.nohover {
 <?php if ($colorbacklineimpairhover) { if ($usecss3) { ?>
 	background: rgb(<?php echo $colorbacklineimpairhover; ?>);
 <?php } else { ?>
@@ -1884,7 +1886,7 @@ table.liste td {
 	min-height: 18px; /* seems to not be used */
 }
 
-td.nohover, .pair:hover {
+.pair:hover {
 <?php if ($colorbacklinepairhover) { if ($usecss3) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>);
 <?php } else { ?>
@@ -2953,6 +2955,13 @@ div.dolEventError h1, div.dolEventError h2 {
 a span.select2-chosen
 {
 	font-weight: normal !important;
+}
+.select2-container .select2-choice {
+	background-image: none;
+}
+.select2-results .select2-no-results, .select2-results .select2-searching, .select2-results .select2-ajax-error, .select2-results .select2-selection-limit
+{
+	background: #FFFFFF;
 }
 
 

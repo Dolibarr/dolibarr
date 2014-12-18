@@ -90,17 +90,19 @@ $hookmanager->initHooks(array('expeditioncard','globalcard'));
  */
 
 $warehousecanbeselectedlater=1;
-if (! empty($conf->productbatch->enabled))
+if (($action == 'create') || ($action == 'add'))
 {
-	if (! (GETPOST('entrepot_id','int') > 0))
+	if (! empty($conf->productbatch->enabled))
 	{
-		$langs->load("errors");
-		setEventMessage($langs->trans("WarhouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
-		header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$id);
-		exit;
+		if (! (GETPOST('entrepot_id','int') > 0))
+		{
+			$langs->load("errors");
+			setEventMessage($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
+			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$id);
+			exit;
+		}
 	}
 }
-
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks

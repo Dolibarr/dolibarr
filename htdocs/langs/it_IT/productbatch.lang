@@ -1,0 +1,20 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Manage batch/serial
+ProductStatusOnBatch=Gestito
+ProductStatusNotOnBatch=Non gestito
+ProductStatusOnBatchShort=Gestito
+ProductStatusNotOnBatchShort=Non gestito
+Batch=Batch/Serial
+atleast1batchfield=Eat-by date or Sell-by date or Batch number
+batch_number=Batch/Serial number
+l_eatby=Eat-by date
+l_sellby=Sell-by date
+DetailBatchNumber=Batch/Serial details
+DetailBatchFormat=Batch/Serial: %s - E:%s - S: %s (Qty : %d)
+printBatch=Batch: %s
+printEatby=Eat-by: %s
+printSellby=Sell-by: %s
+printQty=Quantità: %d
+AddDispatchBatchLine=Add a line for Shelf Life dispatching
+BatchDefaultNumber=Non definito
+WhenProductBatchModuleOnOptionAreForced=When module Batch/Serial is on, increase/decrease stock mode is forced to last choice and can't be edited. Other options can be defined as you want.
