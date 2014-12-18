@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Samningar area
 ListOfContracts=Listi yfir samninga
-LastContracts=Last %s  breytt samninga
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Allir samningar
 ContractCard=Samningur kort
 ContractStatus=Samningur stöðu
@@ -27,7 +27,7 @@ MenuRunningServices=Running þjónusta
 MenuExpiredServices=Útrunninn þjónusta
 MenuClosedServices=Lokað þjónusta
 NewContract=Nýr samningur
-AddContract=Bæta við samning
+AddContract=Create contract
 SearchAContract=Leita samning
 DeleteAContract=Eyða samning
 CloseAContract=Loka samning
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Listi yfir gangi samningur línur
 ListOfRunningServices=Listi af hlaupandi þjónusta
 NotActivatedServices=Óvirkur þjónustu (meðal gildi samninga)
 BoardNotActivatedServices=Þjónusta til virkja meðal gildi samninga
-LastContracts=Last %s  breytt samninga
+LastContracts=Last %s contracts
 LastActivatedServices=Last %s  virkt þjónusta
 LastModifiedServices=Last %s  breytt þjónusta
 EditServiceLine=Breyta þjónustu línu
@@ -91,6 +91,7 @@ ListOfServicesToExpire=List of Services to expire
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sölufulltrúi undirrita samning

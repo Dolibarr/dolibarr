@@ -75,11 +75,11 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
 		}
 		else
 		{
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -155,7 +155,7 @@ if ($id > 0 || ! empty($ref))
 	if ($object->fetch($id) > 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = dol_clone($projectstatic);
 
@@ -179,7 +179,7 @@ if ($id > 0 || ! empty($ref))
     		// Define a complementary filter for search of next/prev ref.
     		if (! $user->rights->projet->all->lire)
     		{
-    		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
+    		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
     		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
     		}
     		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
@@ -188,7 +188,7 @@ if ($id > 0 || ! empty($ref))
     		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
     		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
+    		if (! empty($projectstatic->thirdparty->id)) print $projectstatic->thirdparty->getNomUrl(1);
     		else print '&nbsp;';
     		print '</td>';
     		print '</tr>';
@@ -223,8 +223,6 @@ if ($id > 0 || ! empty($ref))
 		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
 		//$arrayofuseridoftask=$object->getListContactId('internal');
 
-		dol_htmloutput_mesg($mesg);
-
 		$head = task_prepare_head($object);
 		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), 0, 'projecttask');
 
@@ -241,11 +239,11 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
-		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	    print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 		print '</td></tr>';
 
 		// Label
@@ -261,7 +259,7 @@ if ($id > 0 || ! empty($ref))
     		// Customer
     		print "<tr><td>".$langs->trans("ThirdParty")."</td>";
     		print '<td colspan="3">';
-    		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
+    		if ($projectstatic->thirdparty->id > 0) print $projectstatic->thirdparty->getNomUrl(1);
     		else print '&nbsp;';
     		print '</td></tr>';
 		}

@@ -58,7 +58,7 @@ if ($action == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"
 {
 	$db->begin();
 
-	$res=$fuser->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	$res=$fuser->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$adh->error.'</div>';
@@ -89,7 +89,7 @@ if ($id)
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
-	print "<form method=\"post\" action=\"note.php\">";
+	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
     print '<table class="border" width="100%">';
@@ -120,7 +120,7 @@ if ($id)
 		print "<input type=\"hidden\" name=\"id\" value=\"".$fuser->id."\">";
 	    // Editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
+		$doleditor=new DolEditor('note_private',$fuser->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
 		$doleditor->Create();
 	}
 	else

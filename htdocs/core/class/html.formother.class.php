@@ -164,12 +164,12 @@ class FormOther
         global $langs;
 
         $sql = "SELECT e.rowid, e.code, e.libelle, e.price, e.organization,";
-        $sql.= " p.libelle as pays";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_pays as p";
-        $sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
-        $sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
+        $sql.= " c.label as country";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_country as c";
+        $sql.= " WHERE e.active = 1 AND e.fk_pays = c.rowid";
+        $sql.= " ORDER BY country, e.organization ASC, e.code ASC";
 
-    	dol_syslog(get_class($this).'::select_ecotaxes sql='.$sql);
+    	dol_syslog(get_class($this).'::select_ecotaxes', LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -223,11 +223,11 @@ class FormOther
     	$out='';
 
     	$sql = "SELECT r.taux";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_pays as p";
-    	$sql.= " WHERE r.active = 1 AND r.fk_pays = p.rowid";
-    	$sql.= " AND p.code = '".$country_code."'";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
+    	$sql.= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
+    	$sql.= " AND c.code = '".$country_code."'";
 
-    	dol_syslog(get_class($this).'::select_revenue_stamp sql='.$sql);
+    	dol_syslog(get_class($this).'::select_revenue_stamp', LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
@@ -307,6 +307,7 @@ class FormOther
      * @param  string	$htmlname      	Name of combo list
      * @param	int		$nocateg		Show also an entry "Not categorized"
      * @return string		        	Html combo list code
+     * @see	select_all_categories
      */
     function select_categories($type,$selected=0,$htmlname='search_categ',$nocateg=0)
     {
@@ -318,7 +319,7 @@ class FormOther
         $tab_categs = $static_categs->get_full_arbo($type);
 
         // Print a select with each of them
-        $moreforfilter ='<select class="flat" name="'.$htmlname.'">';
+        $moreforfilter ='<select class="flat" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
         $moreforfilter.='<option value="">&nbsp;</option>';	// Should use -1 to say nothing
 
         if (is_array($tab_categs))
@@ -491,7 +492,7 @@ class FormOther
                 {
                     if ($lines[$i]->fk_project != $lastprojectid)	// Break found on project
                     {
-                        if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="disabled">----------</option>';
+                        if ($i > 0) print '<option value="0" disabled="disabled">----------</option>';
                         print '<option value="'.$lines[$i]->fk_project.'_0"';
                         if ($selectedproject == $lines[$i]->fk_project) print ' selected="selected"';
                         print '>';	// Project -> Task
@@ -559,13 +560,13 @@ class FormOther
      *
      *		@param	string		$set_color		Pre-selected color
      *		@param	string		$prefix			Name of HTML field
-     *		@param	string		$form_name		Name of form
+     *		@param	string		$form_name		Deprecated. Not used.
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@return	void
      * 		@deprecated
      */
-    function select_color($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
+    function select_color($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='')
     {
     	print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
     }
@@ -575,13 +576,13 @@ class FormOther
      *
      *		@param	string		$set_color		Pre-selected color
      *		@param	string		$prefix			Name of HTML field
-     *		@param	string		$form_name		Name of form
+     *		@param	string		$form_name		Deprecated. Not used.
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@param	string		$morecss		Add css style into input field
      * 		@return	void
      */
-    function selectColor($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='', $morecss='')
+    function selectColor($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='', $morecss='')
     {
         global $langs,$conf;
 
@@ -760,7 +761,7 @@ class FormOther
 
         $montharray = monthArray($langs);	// Get array
 
-        $select_month = '<select class="flat" name="'.$htmlname.'">';
+        $select_month = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
         if ($useempty)
         {
             $select_month .= '<option value="0">&nbsp;</option>';
@@ -1139,7 +1140,7 @@ class FormOther
         $sql.= " FROM ".MAIN_DB_PREFIX.$dictionarytable;
         $sql.= " ORDER BY ".$labelfield;
 
-        dol_syslog(get_class($this)."::select_dictionary sql=".$sql);
+        dol_syslog(get_class($this)."::select_dictionary", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {

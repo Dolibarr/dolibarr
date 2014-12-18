@@ -111,6 +111,23 @@ class { 'rabbitmq':
 }
 ```
 
+**NOTE:** If you are using a version of RabbitMQ less than 3.0,
+you still need to use `x-ha-policy: all` in your client
+applications for any particular queue to take advantage of H/A via
+mirrored queues.
+
+If you are using a version of RabbitMQ >= 3.0 You should set the
+'config_mirrored_queues' parameter if you plan
+on using RabbitMQ Mirrored Queues within your cluster:
+
+```puppet
+class { 'rabbitmq':
+  config_cluster         => true,
+  config_mirrored_queues => true,
+  cluster_nodes          => ['rabbit1', 'rabbit2'],
+}
+```
+
 ##Reference
 
 ##Classes
@@ -234,6 +251,15 @@ Determines if the service is managed.
 
 The name of the service to manage.
 
+####`ssl`
+
+Configures the service for using SSL.
+
+####`ssl_only`
+
+Configures the service to only use SSL.  No cleartext TCP listeners will be created.
+Requires that ssl => true also.
+
 ####`stomp_port`
 
 The port to use for Stomp.
@@ -262,6 +288,16 @@ rabbitmq_user { 'dan':
   password => 'bar',
 }
 ```
+Optional parameter tags will set further rabbitmq tags like monitoring, policymaker, etc.
+To set the administrator tag use admin-flag.
+```puppet
+rabbitmq_user { 'dan':
+  admin    => true,
+  password => 'bar',
+  tags     => ['monitoring', 'tag1'],
+}
+```
+
 
 ### rabbitmq\_vhost
 
@@ -317,8 +353,8 @@ The module has been tested on:
 
 Testing on other platforms has been light and cannot be guaranteed.
 
-### RedHat module dependencies
-To have a suitable erlang version installed on RedHat systems,
+### Module dependencies
+To have a suitable erlang version installed on RedHat and Debian systems,
 you have to install another puppet module from http://forge.puppetlabs.com/garethr/erlang with:
 
     puppet module install garethr-erlang
@@ -326,8 +362,17 @@ you have to install another puppet module from http://forge.puppetlabs.com/garet
 This module handles the packages for erlang.
 To use the module, add the following snippet to your site.pp or an appropriate profile class:
 
+For RedHat systems:
+
     include 'erlang'
     class { 'erlang': epel_enable => true}
+
+For Debian systems:
+
+    include 'erlang'
+    package { 'erlang-base':
+      ensure => 'latest',
+    }
 
 ##Development
 

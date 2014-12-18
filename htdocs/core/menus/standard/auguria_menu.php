@@ -211,7 +211,6 @@ class MenuManager
 						// We add sub entry
 						print str_pad('',1).'<li data-role="list-dividerxxx" class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
-						print str_pad('',12,'&nbsp;');
 						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") print $langs->trans("Access");	// No translation
 						else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
 						print '</a>';
@@ -228,7 +227,6 @@ class MenuManager
         				if ($val2['level']==0) print str_pad('',$val2['level']+1).'<li'.($val2['level']==0?' data-role="list-dividerxxx"':'').' class="lilevel'.($val2['level']+1).' ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
         				else print str_pad('',$val2['level']+1).'<li class="lilevel'.($val2['level']+1).'">';	 // ui-btn to highlight on clic
         				if ($relurl2) print '<a href="'.$relurl2.'">';
-        				print str_pad('',($val2['level']+1)*12,'&nbsp;');
         				print $val2['titre'];
         				if ($relurl2) print '</a>';
         				print '</li>'."\n";

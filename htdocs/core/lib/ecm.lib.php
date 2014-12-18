@@ -27,7 +27,7 @@
  * Prepare array with list of different ecm main dashboard
  *
  * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function ecm_prepare_dasboard_head($object)
 {
@@ -64,7 +64,7 @@ function ecm_prepare_dasboard_head($object)
  * Prepare array with list of tabs
  *
  * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function ecm_prepare_head($object)
 {
@@ -84,7 +84,7 @@ function ecm_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function ecm_file_prepare_head($object)
 {
@@ -104,7 +104,7 @@ function ecm_file_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function ecm_prepare_head_fm($object)
 {

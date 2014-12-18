@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function shipping_prepare_head($object)
 {
@@ -41,7 +41,7 @@ function shipping_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/expedition/card.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("SendingCard");
 	$head[$h][2] = 'shipping';
 	$h++;
@@ -52,7 +52,7 @@ function shipping_prepare_head($object)
 		$object->fetchObjectLinked($object->id,$object->element);
 		if (! empty($object->linkedObjectsIds['delivery'][0]))		// If there is a delivery
 		{
-			$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$object->linkedObjectsIds['delivery'][0];
+			$head[$h][0] = DOL_URL_ROOT."/livraison/card.php?id=".$object->linkedObjectsIds['delivery'][0];
 			$head[$h][1] = $langs->trans("DeliveryCard");
 			$head[$h][2] = 'delivery';
 			$h++;
@@ -85,7 +85,7 @@ function shipping_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function delivery_prepare_head($object)
 {
@@ -99,13 +99,13 @@ function delivery_prepare_head($object)
 
 	if ($conf->expedition_bon->enabled && $user->rights->expedition->lire)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$object->origin_id;
+		$head[$h][0] = DOL_URL_ROOT."/expedition/card.php?id=".$object->origin_id;
 		$head[$h][1] = $langs->trans("SendingCard");
 		$head[$h][2] = 'shipping';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/livraison/card.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("DeliveryCard");
 	$head[$h][2] = 'delivery';
 	$h++;
@@ -171,7 +171,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 
 	$sql.= " ORDER BY obj.fk_product";
 
-	dol_syslog("show_list_sending_receive sql=".$sql, LOG_DEBUG);
+	dol_syslog("show_list_sending_receive", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -207,7 +207,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				print "<tr ".$bc[$var].">";
 
 				// Sending id
-				print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->exp_ref.'<a></td>';
+				print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->exp_ref.'<a></td>';
 
 				// Description
 				if ($objp->fk_product > 0)
@@ -310,7 +310,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 						// Ref
 						print '<td>';
 						print $receiving->getNomUrl($db);
-						//print '<a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
+						//print '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
 						print '</td>';
 						// Qty received
 						//print '<td align="center">';

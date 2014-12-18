@@ -61,6 +61,7 @@ class rabbitmq::params {
   $cluster_nodes              = []
   $config                     = 'rabbitmq/rabbitmq.config.erb'
   $config_cluster             = false
+  $config_mirrored_queues     = false
   $config_path                = '/etc/rabbitmq/rabbitmq.config'
   $config_stomp               = false
   $default_user               = 'guest'
@@ -73,6 +74,7 @@ class rabbitmq::params {
   $plugin_dir                 = "/usr/lib/rabbitmq/lib/rabbitmq_server-${version}/plugins"
   $port                       = '5672'
   $ssl                        = false
+  $ssl_only                   = false
   $ssl_cacert                 = 'UNSET'
   $ssl_cert                   = 'UNSET'
   $ssl_key                    = 'UNSET'

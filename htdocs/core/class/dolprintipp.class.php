@@ -83,19 +83,22 @@ class dolprintIPP
      * @param   string      $file       file
      * @param   string      $module     module
      *
-     *  @return void
+     * @return 	string					'' if OK, Error message if KO
      */
-    function print_file($file,$module)
+    function print_file($file, $module)
     {
         global $conf,$db;
+
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
+        
         $ipp = new CupsPrintIPP();
-        $ipp->setLog(DOL_DATA_ROOT.'/printipp.log','file',3); // logging very verbose
+        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
         $ipp->setHost($this->host);
         $ipp->setPort($this->port);
         $ipp->setJobName($file,true);
         $ipp->setUserName($this->userid);
         if (! empty($this->user)) $ipp->setAuthentication($this->user,$this->password);
+
         // select printer uri for module order, propal,...
         $sql = 'SELECT rowid,printer_uri,copy FROM '.MAIN_DB_PREFIX.'printer_ipp WHERE module="'.$module.'"';
         $result = $this->db->query($sql);
@@ -108,13 +111,23 @@ class dolprintIPP
             }
             else
             {
-                $ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
+            	if (! empty($conf->global->PRINTIPP_URI_DEFAULT))
+            	{
+                	$ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
+            	}
+            	else
+            	{
+            		return 'NoDefaultPrinterDefined';
+            	}
             }
         }
+        
         // Set number of copy
         $ipp->setCopies($obj->copy);
         $ipp->setData(DOL_DATA_ROOT.'/'.$module.'/'.$file);
         $ipp->printJob();
+        
+        return '';
     }
 
     /**

@@ -16,6 +16,7 @@
 // | Authors: Jesus M. Castagnetto <jmcastagnetto@php.net>                |
 // +----------------------------------------------------------------------+
 //
+// $Id: Stats.php,v 1.15 2003/06/01 11:40:30 jmcastagnetto Exp $
 //
 
 include_once 'PEAR.php';

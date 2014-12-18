@@ -63,8 +63,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 	$account->number          = trim($_POST["number"]);
 	$account->cle_rib         = trim($_POST["cle_rib"]);
 	$account->bic             = trim($_POST["bic"]);
-	$account->iban            = trim($_POST["iban_prefix"]);
-	$account->iban_prefix     = trim($_POST["iban_prefix"]);	// deprecated
+	$account->iban            = trim($_POST["iban"]);
 	$account->domiciliation   = trim($_POST["domiciliation"]);
 	$account->proprio 	      = trim($_POST["proprio"]);
 	$account->owner_address   = trim($_POST["owner_address"]);
@@ -80,7 +79,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 		}
 		else
 		{
-			$message='<div class="error">'.$account->error.'</div>';
+			setEventMessage($account->error, 'errors');
 			$action='edit';     // Force chargement page edition
 		}
 	}
@@ -246,7 +245,7 @@ if (($_GET["id"] || $_GET["ref"]) && $action != 'edit')
 		if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 		print '<tr><td valign="top">'.$langs->trans($ibankey).'</td>';
-		print '<td colspan="3">'.$account->iban_prefix.'</td></tr>';
+		print '<td colspan="3">'.$account->iban.'</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans($bickey).'</td>';
 		print '<td colspan="3">'.$account->bic.'</td></tr>';
@@ -305,8 +304,6 @@ if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 
 	print_fiche_titre($langs->trans("EditFinancialAccount"));
 	print "<br>";
-
-	dol_htmloutput_mesg($message);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$account->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -425,7 +422,7 @@ if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 
 		// IBAN
 		print '<tr><td valign="top">'.$langs->trans($ibankey).'</td>';
-		print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
+		print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.$account->iban.'"></td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans($bickey).'</td>';
 		print '<td colspan="3"><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';

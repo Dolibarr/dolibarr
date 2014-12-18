@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=عقود منطقة
 ListOfContracts=قائمة العقود
-LastContracts=آخر تعديل العقود ق ٪
+LastModifiedContracts=Last %s modified contracts
 AllContracts=جميع العقود
 ContractCard=عقد بطاقة
 ContractStatus=عقد مركز
@@ -27,7 +27,7 @@ MenuRunningServices=ادارة الخدمات
 MenuExpiredServices=انتهت الخدمات
 MenuClosedServices=أغلقت الخدمات
 NewContract=العقد الجديد
-AddContract=إضافة العقد
+AddContract=Create contract
 SearchAContract=بحث عقد
 DeleteAContract=الغاء العقد
 CloseAContract=وثيقة العقد
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=قائمة تشغيل خطوط العقد
 ListOfRunningServices=لائحة ادارة الخدمات
 NotActivatedServices=لا تنشيط الخدمات) بين مصدق العقود)
 BoardNotActivatedServices=خدمات لتفعيل العقود بين مصدق
-LastContracts=آخر تعديل العقود ق ٪
+LastContracts=Last %s contracts
 LastActivatedServices=ق الماضي ٪ تنشيط الخدمات
 LastModifiedServices=آخر تعديل ٪ ق الخدمات
 EditServiceLine=تعديل خط الخدمات
@@ -91,6 +91,7 @@ ListOfServicesToExpire=List of Services to expire
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=ممثل مبيعات توقيع العقد

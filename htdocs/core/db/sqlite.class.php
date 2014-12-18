@@ -34,9 +34,9 @@ class DoliDBSqlite extends DoliDB
     //! Database type
     public $type='sqlite';
     //! Database label
-    static $label='PDO Sqlite';
+    const LABEL='PDO Sqlite';
     //! Version min database
-    static $versionmin=array(3,0,0);
+    const VERSIONMIN='3.0.0';
 	//! Resultset of last query
 	private $_results;
 
@@ -61,6 +61,8 @@ class DoliDBSqlite extends DoliDB
         if (! empty($conf->db->dolibarr_main_db_collation)) $this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
         $this->database_user=$user;
+        $this->database_host=$host;
+        $this->database_port=$port;
 
         $this->transaction_opened=0;
 
@@ -389,7 +391,9 @@ class DoliDBSqlite extends DoliDB
 		$query=$this->convertSQLFromMysql($query,$type);
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
-		// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
+	    dol_syslog('sql='.$query, LOG_DEBUG);
+
+	    // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
         try {
             //$ret = $this->db->exec($query);
             $ret = $this->db->query($query);        // $ret is a PDO object
@@ -407,8 +411,16 @@ class DoliDBSqlite extends DoliDB
                 $this->lastqueryerror = $query;
                 $this->lasterror = $this->error();
                 $this->lasterrno = $this->errno();
-                if (preg_match('/[0-9]/',$this->lasterrno)) dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno." ".$this->lasterror, LOG_WARNING);
-                else dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+
+	            dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+
+	            $errormsg = get_class($this)."::query SQL Error message: ".$this->lasterror;
+
+				if (preg_match('/[0-9]/',$this->lasterrno)) {
+                    $errormsg .= ' ('.$this->lasterrno.')';
+                }
+
+	            dol_syslog($errormsg, LOG_ERR);
             }
             $this->lastquery=$query;
             $this->_results = $ret;
@@ -727,8 +739,8 @@ class DoliDBSqlite extends DoliDB
 	 *  List tables into a database
 	 *
 	 *  @param	string		$database	Name of database
-	 *  @param	string		$table		Nmae of table filter ('xxx%')
-	 *  @return	resource				Resource
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
      */
     function DDLListTables($database, $table='')
     {
@@ -970,7 +982,6 @@ class DoliDBSqlite extends DoliDB
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 
@@ -979,21 +990,19 @@ class DoliDBSqlite extends DoliDB
         $sql.= " VALUES ('".$this->escape($dolibarr_main_db_host)."','".$this->escape($dolibarr_main_db_name)."','".addslashes($dolibarr_main_db_user)."'";
         $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
-        dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql);
+        dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 
         $sql="FLUSH Privileges";
 
-        dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql);
+        dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 

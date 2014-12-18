@@ -50,11 +50,13 @@ class ExtraFields
 	var $attribute_param;
 	// Int to store position of attribute
 	var $attribute_pos;
+	// Int to store if attribute is editable regardless of the document status
+	var $attribute_alwayseditable;
 
 	var $error;
 	var $errno;
 
-	static $type2label=array(
+	public static $type2label=array(
 	'varchar'=>'String',
 	'text'=>'TextLong',
 	'int'=>'Int',
@@ -103,9 +105,10 @@ class ExtraFields
 	 *  @param	int		$required			Is field required or not
 	 *  @param	string	$default_value		Defaulted value
 	 *  @param  array	$param				Params for field
+	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @return int      					<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0,$default_value='', $param=0)
+	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param=0, $alwayseditable=0)
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -119,7 +122,7 @@ class ExtraFields
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required, $param);
+			$result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required, $param, $alwayseditable);
 			$err2=$this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
@@ -217,9 +220,10 @@ class ExtraFields
 	 *  @param	int				$unique			Is field unique or not
 	 *  @param	int				$required		Is field required or not
 	 *  @param  array||string	$param			Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='')
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0)
 	{
 		global $conf;
 
@@ -241,7 +245,7 @@ class ExtraFields
 				$params='';
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired, param)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired, param, alwayseditable)";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
@@ -251,10 +255,11 @@ class ExtraFields
 			$sql.= " '".$elementtype."',";
 			$sql.= " '".$unique."',";
 			$sql.= " '".$required."',";
-			$sql.= " '".$params."'";
+			$sql.= " '".$params."',";
+			$sql.= " '".$alwayseditable."'";
 			$sql.=')';
 
-			dol_syslog(get_class($this)."::create_label sql=".$sql);
+			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				return 1;
@@ -285,7 +290,6 @@ class ExtraFields
 			if ($result < 0)
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			}
 
 			$result=$this->delete_label($attrname,$elementtype);
@@ -317,7 +321,7 @@ class ExtraFields
 			$sql.= " AND entity IN  (0,".$conf->entity.')';
 			$sql.= " AND elementtype = '".$elementtype."'";
 
-			dol_syslog(get_class($this)."::delete_label sql=".$sql);
+			dol_syslog(get_class($this)."::delete_label", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -348,9 +352,10 @@ class ExtraFields
 	 *  @param	int		$required			Is field required or not
 	 *  @param	int		$pos				Position of attribute
 	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='')
+	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0)
 	{
 		$table=$elementtype.'_extrafields';
 
@@ -385,7 +390,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable);
 				}
 				if ($result > 0)
 				{
@@ -398,7 +403,7 @@ class ExtraFields
 					{
 						$sql="ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
 					}
-					dol_syslog(get_class($this).'::update sql='.$sql);
+					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql=$this->db->query($sql,1,'dml');
 					return 1;
 				}
@@ -433,9 +438,10 @@ class ExtraFields
 	 *  @param	int		$required			Is field required or not
 	 *  @param	int		$pos				Position of attribute
 	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='')
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0)
 	{
 		global $conf;
 		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required);
@@ -453,7 +459,7 @@ class ExtraFields
 			$sql_del.= " WHERE name = '".$attrname."'";
 			$sql_del.= " AND entity = ".$conf->entity;
 			$sql_del.= " AND elementtype = '".$elementtype."'";
-			dol_syslog(get_class($this)."::update_label sql=".$sql_del);
+			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
 			$resql1=$this->db->query($sql_del);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
@@ -466,6 +472,7 @@ class ExtraFields
 			$sql.= " fieldunique,";
 			$sql.= " fieldrequired,";
 			$sql.= " pos,";
+			$sql.= " alwayseditable,";
 			$sql.= " param";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
@@ -477,9 +484,10 @@ class ExtraFields
 			$sql.= " '".$unique."',";
 			$sql.= " '".$required."',";
 			$sql.= " '".$pos."',";
+			$sql.= " '".$alwayseditable."',";
 			$sql.= " '".$param."'";
 			$sql.= ")";
-			dol_syslog(get_class($this)."::update_label sql=".$sql);
+			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
 			$resql2=$this->db->query($sql);
 
 			if ($resql1 && $resql2)
@@ -503,40 +511,28 @@ class ExtraFields
 
 
 	/**
-	 *  Load array of labels
-	 *
-	 *  @return	void
-	 */
-	function fetch_optionals()
-	{
-		$this->fetch_name_optionals_label();
-	}
-
-
-	/**
-	 * 	Load array this->attribute_label
+	 * 	Load array this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
 	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', societe', 'facture', 'propal', 'product', ...)
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
 	 * 	@return	array							Array of attributes for all extra fields
 	 */
-	function fetch_name_optionals_label($elementtype='adherent',$forceload=false)
+	function fetch_name_optionals_label($elementtype,$forceload=false)
 	{
 		global $conf;
 
 		$array_name_label=array();
 
 		// For avoid conflicts with external modules
-		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
-			return $array_name_label;
+		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
 		$sql.= " ORDER BY pos";
 
-		dol_syslog(get_class($this)."::fetch_name_optionals_label sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_name_optionals_label", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -558,15 +554,16 @@ class ExtraFields
 					$this->attribute_required[$tab->name]=$tab->fieldrequired;
 					$this->attribute_param[$tab->name]=unserialize($tab->param);
 					$this->attribute_pos[$tab->name]=$tab->pos;
+					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
 				}
 			}
-
-			return $array_name_label;
 		}
 		else
 		{
 			print dol_print_error($this->db);
 		}
+
+		return $array_name_label;
 	}
 
 
@@ -673,7 +670,7 @@ class ExtraFields
 		elseif ($type == 'select')
 		{
 			$out = '';
-			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
+			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out.= ajax_combobox('options_'.$key.$keyprefix, array(), $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
@@ -756,7 +753,7 @@ class ExtraFields
 				//$sql.=preg_replace('/^ AND /','',$sqlwhere);
 				//print $sql;
 
-				dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
+				dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -966,7 +963,7 @@ class ExtraFields
 			$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
 			//$sql.= ' AND entity = '.$conf->entity;
 
-			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
+			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{

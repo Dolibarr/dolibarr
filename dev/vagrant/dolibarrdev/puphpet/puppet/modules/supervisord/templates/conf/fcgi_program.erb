@@ -37,8 +37,8 @@ exitcodes=<%= @exitcodes %>
 <% if @stopsignal -%>
 stopsignal=<%= @stopsignal %>
 <% end -%>
-<% if @stopwaitsec -%>
-stopwaitsec=<%= @stopwaitsec %>
+<% if @stopwaitsecs -%>
+stopwaitsecs=<%= @stopwaitsecs %>
 <% end -%>
 <% if @stopasgroup -%>
 stopasgroup=<%= @stopasgroup %>
@@ -53,7 +53,7 @@ user=<%= @user %>
 redirect_stderr=<%= @redirect_stderr %>
 <% end -%>
 <% if @stdout_logfile -%>
-stdout_logfile=<%= @stdout_logfile %>
+stdout_logfile=<%= scope.lookupvar('supervisord::log_path') %>/<%= @stdout_logfile %>
 <% end -%>
 <% if @stdout_logfile_maxbytes -%>
 stdout_logfile_maxbytes=<%= @stdout_logfile_maxbytes %>
@@ -68,7 +68,7 @@ stdout_capture_maxbytes=<%= @stdout_capture_maxbytes %>
 stdout_events_enabled=<%= @stdout_events_enabled %>
 <% end -%>
 <% if @stderr_logfile -%>
-stderr_logfile=<%= @stderr_logfile %>
+stderr_logfile=<%= scope.lookupvar('supervisord::log_path') %>/<%= @stderr_logfile %>
 <% end -%>
 <% if @stderr_logfile_maxbytes -%>
 stderr_logfile_maxbytes=<%= @stderr_logfile_maxbytes %>

@@ -233,7 +233,7 @@ if (empty($user->entity) && $debug) {} // to force for superadmin
 elseif ($user->entity || empty($conf->multicompany->enabled)) $sql.= " AND visible = 1";
 $sql.= " ORDER BY entity, name ASC";
 
-dol_syslog("Const::listConstant sql=".$sql);
+dol_syslog("Const::listConstant", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -260,7 +260,7 @@ if ($result)
 
 		// Note
 		print '<td>';
-		print '<input type="text" id="note_'.$i.'"class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'">';
+		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'">';
 		print '</td>';
 
 		// Entity limit to superadmin

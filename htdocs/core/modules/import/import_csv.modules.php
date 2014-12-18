@@ -256,15 +256,7 @@ class ImportCsv extends ModeleImports
 	{
 		global $conf;
 
-		$arrayres=array();
-		if (version_compare(phpversion(), '5.3') < 0)
-		{
-			$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure);
-		}
-		else
-		{
-			$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure,$this->escape);
-		}
+		$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure,$this->escape);
 
 		// End of file
 		if ($arrayres === false) return false;
@@ -621,7 +613,7 @@ class ImportCsv extends ModeleImports
 						}
 						if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$user->id;
 						$sql.=')';
-						dol_syslog("import_csv.modules sql=".$sql);
+						dol_syslog("import_csv.modules", LOG_DEBUG);
 
 						//print '> '.join(',',$arrayrecord);
 						//print 'sql='.$sql;

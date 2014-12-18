@@ -9,7 +9,10 @@
     {cluster_nodes, {[<%= @r_cluster_nodes.map { |n| "\'rabbit@#{n}\'" }.join(', ') %>], <%= @cluster_node_type %>}},
     {cluster_partition_handling, <%= @cluster_partition_handling %>},
 <% end -%>
-<%- if @ssl %>
+<%- if @ssl_only -%>
+    {tcp_listeners, []},
+<%- end -%>
+<%- if @ssl -%>
     {ssl_listeners, [<%= @ssl_management_port %>]},
     {ssl_options, [{cacertfile,"<%= @ssl_cacert %>"},
                     {certfile,"<%= @ssl_cert %>"},
@@ -37,6 +40,7 @@
     {ssl_listeners, [<%= @ssl_stomp_port %>]}
   <%- end -%>
   ]}
+<% end -%>
 <%- if @ldap_auth -%>,
 % Configure the LDAP authentication plugin
   {rabbitmq_auth_backend_ldap, [
@@ -47,7 +51,6 @@
     {port, <%= @ldap_port %>},
     {log, <%= @ldap_log %>}
   ]}
-<% end -%>
 <%- end -%>
 ].
 % EOF

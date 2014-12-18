@@ -214,7 +214,7 @@ class box_activity extends ModeleBoxes
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
 					'text' => $objp->nb,
-					'url' => DOL_URL_ROOT."/commande/liste.php?mainmenu=commercial&leftmenu=orders&viewstatut=".$objp->fk_statut
+					'url' => DOL_URL_ROOT."/commande/list.php?mainmenu=commercial&leftmenu=orders&viewstatut=".$objp->fk_statut
 					);
 					$totalnb += $objp->nb;
 
@@ -283,7 +283,7 @@ class box_activity extends ModeleBoxes
 
 		// Add the sum in the bottom of the boxes
 		$this->info_box_contents[$i][1] = array('td' => 'align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => price($totalnb,1,$langs,0,0,-1,$conf->currency));
+		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => $totalnb);
 		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => price($totalMnt,1,$langs,0,0,-1,$conf->currency));
 		$this->info_box_contents[$i][4] = array('td' => 'align="right" ', 'text' => "");
 		$this->info_box_contents[$i][5] = array('td' => 'align="right"', 'text' => "");

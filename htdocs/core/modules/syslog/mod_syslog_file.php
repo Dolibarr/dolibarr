@@ -49,7 +49,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 */
 	public function isActive()
 	{
-		return 1;
+		return true;
 	}
 
 	/**

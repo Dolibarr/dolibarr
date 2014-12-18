@@ -87,15 +87,14 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 	}
 	else
 	{
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+		} else {
+			$mesg = $objectsrc->error;
 		}
-		else
-		{
-			$mesg = '<div class="error">'.$objectsrc->error.'</div>';
-		}
+
+		setEventMessage($mesg, 'errors');
 	}
 }
 
@@ -146,7 +145,6 @@ $userstatic=new User($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-dol_htmloutput_mesg($mesg);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -161,7 +159,7 @@ if ($id > 0 || ! empty($ref))
 	*/
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/liste.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="18%">'.$langs->trans("Ref").'</td><td colspan="3">';

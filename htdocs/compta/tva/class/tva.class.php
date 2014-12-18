@@ -115,37 +115,35 @@ class Tva extends CommonObject
 
 		$sql.= ")";
 
-	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");
 
-            // Start triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('TVA_CREATE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // End triggers
+            // Call trigger
+            $result=$this->call_trigger('TVA_CREATE',$user);
+            if ($result < 0) $error++;
+            // End call triggers
 
+            //FIXME: Add rollback if trigger fail
             return $this->id;
         }
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
 
     /**
      * Update database
-     * 
+     *
      * @param   User	$user        	User that modify
      * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
      * @return  int         			<0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
     	global $conf, $langs;
 
@@ -178,23 +176,22 @@ class Tva extends CommonObject
 
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
             return -1;
         }
 
 		if (! $notrigger)
 		{
-            // Start triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('TVA_MODIFY',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // End triggers
+            // Call trigger
+            $result=$this->call_trigger('TVA_MODIFY',$user);
+            if ($result < 0) $error++;
+            // End call triggers
+
+            //FIXME: Add rollback if trigger fail
     	}
 
         return 1;
@@ -203,12 +200,12 @@ class Tva extends CommonObject
 
     /**
      *  Load object in memory from database
-     *  
+     *
      *  @param	int		$id         id object
      *  @param  User	$user       User that load
      *  @return int         		<0 if KO, >0 if OK
      */
-    function fetch($id, $user=0)
+    function fetch($id, $user=null)
     {
     	global $langs;
         $sql = "SELECT";
@@ -233,7 +230,7 @@ class Tva extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
         $sql.= " WHERE t.rowid = ".$id;
 
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -265,7 +262,6 @@ class Tva extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -273,7 +269,7 @@ class Tva extends CommonObject
 
  	/**
 	 *  Delete object in database
-	 *  
+	 *
      *	@param	User	$user       User that delete
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
@@ -283,24 +279,22 @@ class Tva extends CommonObject
 
 		$error=0;
 
+		// Call trigger
+		$result=$this->call_trigger('TVA_DELETE',$user);
+		if ($result < 0) return -1;
+		// End call triggers
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
 		$sql.= " WHERE rowid=".$this->id;
 
-	   	dol_syslog(get_class($this)."::delete sql=".$sql);
+	   	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 
-        // Start triggers
-        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-        $interface=new Interfaces($this->db);
-        $result=$interface->run_triggers('TVA_DELETE',$this,$user,$langs,$conf);
-        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-        // End triggers
 
 		return 1;
 	}
@@ -331,7 +325,7 @@ class Tva extends CommonObject
 
     /**
      *  Balance of VAT
-     *  
+     *
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
@@ -350,7 +344,7 @@ class Tva extends CommonObject
 
     /**
      * 	Total of the VAT from invoices emitted by the society.
-     * 
+     *
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
@@ -359,32 +353,30 @@ class Tva extends CommonObject
 
         $sql = "SELECT sum(f.tva) as amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
-
         if ($year)
         {
             $sql .= " AND f.datef >= '".$year."-01-01' AND f.datef <= '".$year."-12-31' ";
         }
 
         $result = $this->db->query($sql);
-
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
-                return $obj->amount;
+				$ret = $obj->amount;
+                $this->db->free($result);
+                return $ret;
             }
             else
-            {
-                return 0;
+			{
+                $this->db->free($result);
+				return 0;
             }
-
-            $this->db->free($result);
-
         }
         else
         {
-            print $this->db->error();
+            print $this->db->lasterror();
             return -1;
         }
     }
@@ -400,31 +392,30 @@ class Tva extends CommonObject
 
         $sql = "SELECT sum(f.total_tva) as total_tva";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-
         if ($year)
         {
             $sql .= " WHERE f.datef >= '".$year."-01-01' AND f.datef <= '".$year."-12-31' ";
         }
-        $result = $this->db->query($sql);
 
+        $result = $this->db->query($sql);
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
-                return $obj->total_tva;
+                $ret = $obj->total_tva;
+            	$this->db->free($result);
+                return $ret;
             }
             else
-            {
-                return 0;
+			{
+            	$this->db->free($result);
+				return 0;
             }
-
-            $this->db->free();
-
         }
         else
         {
-            print $this->db->error();
+            print $this->db->lasterror();
             return -1;
         }
     }
@@ -448,25 +439,24 @@ class Tva extends CommonObject
         }
 
         $result = $this->db->query($sql);
-
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
-                return $obj->amount;
+                $ret = $obj->amount;
+            	$this->db->free($result);
+                return $ret;
             }
             else
-            {
-                return 0;
+			{
+            	$this->db->free($result);
+				return 0;
             }
-
-            $this->db->free();
-
         }
         else
         {
-            print $this->db->error();
+            print $this->db->lasterror();
             return -1;
         }
     }
@@ -491,7 +481,7 @@ class Tva extends CommonObject
 		$this->fk_bank=trim($this->fk_bank);
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
-		
+
         // Check parameters
 		if (! $this->label)
 		{
@@ -539,18 +529,21 @@ class Tva extends CommonObject
 		$sql.= ", ".$conf->entity;
         $sql.= ")";
 
-		dol_syslog(get_class($this)."::addPayment sql=".$sql);
+		dol_syslog(get_class($this)."::addPayment", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");    // TODO should be called paiementtva
 
-            // Start triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('TVA_ADDPAYMENT',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // End triggers
+            // Call trigger
+            //XXX: Should be done just befor commit no ?
+            $result=$this->call_trigger('TVA_ADDPAYMENT',$user);
+            if ($result < 0)
+            {
+            	$this->id = 0;
+            	$ok = 0;
+            }
+            // End call triggers
 
             if ($this->id > 0)
             {
@@ -578,7 +571,7 @@ class Tva extends CommonObject
 					}
 
                     // Update links
-                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/compta/tva/fiche.php?id=', "(VATPayment)", "payment_vat");
+                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/compta/tva/card.php?id=', "(VATPayment)", "payment_vat");
                     if ($result < 0)
                     {
                     	$this->error=$acc->error;
@@ -599,7 +592,6 @@ class Tva extends CommonObject
             }
             else
             {
-                $this->error=$this->db->error();
                 $this->db->rollback();
                 return -2;
             }
@@ -647,7 +639,7 @@ class Tva extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/tva/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='payment';

@@ -40,3 +40,5 @@ AddSupplierInvoice=Создать поставщику счет-фактуру
 ListOfSupplierProductForSupplier=Перечень продукции и цен для <b>поставщиков %s</b>
 NoneOrBatchFileNeverRan=Ни одна партия <b>или% не</b> побежал в последнее время
 SentToSuppliers=Отправлено поставщикам
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

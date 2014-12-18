@@ -119,7 +119,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 		}
 		else
 		{
-			dol_syslog("mod_commande_marbre::getNextValue sql=".$sql);
+			dol_syslog("mod_commande_marbre::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 

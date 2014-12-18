@@ -19,3 +19,4 @@ TF_TRIP=Déplacement
 ListTripsAndExpenses=Liste des notes de frais
 ExpensesArea=Espace notes de frais
 SearchATripAndExpense=Rechercher une note de frais
+ClassifyRefunded=Classer 'Remboursé'

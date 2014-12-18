@@ -121,9 +121,9 @@ interface Database
 	/**
 	 *  List tables into a database
 	 *
-	 * @param    string $database Name of database
-	 * @param    string $table Nmae of table filter ('xxx%')
-	 * @return    resource                Resource
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
 	 */
 	function DDLListTables($database, $table = '');
 
@@ -386,9 +386,9 @@ interface Database
      * 	19700101020000 -> 3600 with TZ+1 and gmt=0
      * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
      *
-     * 	@param	string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	int		$gm			1=Input informations are GMT values, otherwise local to server TZ
-     *	@return	date				Date TMS
+	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	@param	int					$gm			1=Input informations are GMT values, otherwise local to server TZ
+	 *	@return	timestamp|string				Date TMS
      */
     function jdate($string, $gm=false);
 

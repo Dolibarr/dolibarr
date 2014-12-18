@@ -1,14 +1,12 @@
 #
 # Converts the array to a csv string
 #
-#
 # $array = [ 'string1', 'string2', 'string3' ]
 #
 # becomes:
 #
 # $string = "string1,string2,string3"
 #
-
 module Puppet::Parser::Functions
   newfunction(:array2csv, :type => :rvalue, :doc => <<-'EOS'
     Returns a sorted csv formatted string from an array in the form

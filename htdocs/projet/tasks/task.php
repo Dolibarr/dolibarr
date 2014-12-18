@@ -50,7 +50,7 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 if (! $user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('projecttaskcard'));
+$hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
 $object = new Task($db);
 $extrafields = new ExtraFields($db);
@@ -58,9 +58,11 @@ $projectstatic = new Project($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
+
 /*
  * Actions
-*/
+ */
 
 if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 {
@@ -69,7 +71,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 	if (empty($_POST["label"]))
 	{
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
 	}
 	if (! $error)
 	{
@@ -91,6 +93,11 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 		$result=$object->update($user);
+
+		if ($result < 0)
+		{
+		    setEventMessages($object->error,$object->errors,'errors');
+		}
 	}
 	else
 	{
@@ -110,13 +117,12 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 
 		if ($object->delete($user) > 0)
 		{
-			header("Location: index.php");
+			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id);
 			exit;
 		}
 		else
 		{
-			$langs->load("errors");
-			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+		    setEventMessages($object->error,$object->errors,'errors');
 			$action='';
 		}
 	}
@@ -153,7 +159,7 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang(GETPOST('lang_id'));
 	}
-	$result=task_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+	$result= $object->generateDocument($object->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -196,7 +202,7 @@ if ($id > 0 || ! empty($ref))
 		$res=$object->fetch_optionals($object->id,$extralabels);
 
 		$result=$projectstatic->fetch($object->fk_project);
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = dol_clone($projectstatic);
 
@@ -229,7 +235,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
 			print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-			if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
+			if (! empty($projectstatic->thirdparty->id)) print $projectstatic->thirdparty->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td>';
 			print '</tr>';
@@ -288,12 +294,7 @@ if ($id > 0 || ! empty($ref))
 		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
 		//$arrayofuseridoftask=$object->getListContactId('internal');
 
-		dol_htmloutput_mesg($mesg);
-
 		$head=task_prepare_head($object);
-		dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
-
-
 
 		if ($action == 'edit' && $user->rights->projet->creer)
 		{
@@ -303,6 +304,8 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
+			
 			print '<table class="border" width="100%">';
 
 			// Ref
@@ -347,7 +350,7 @@ if ($id > 0 || ! empty($ref))
 			print $form->select_duration('planned_workload',$object->planned_workload,0,'text');
 			print '</td></tr>';
 
-			// Progress
+			// Progress declared
 			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 			print $formother->select_percent($object->progress,'progress');
 			print '</td></tr>';
@@ -368,10 +371,12 @@ if ($id > 0 || ! empty($ref))
 
 			print '</table>';
 
-			print '<center><br>';
+			dol_fiche_end();
+			
+			print '<div align="center">';
 			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '<center>';
+			print '<div>';
 
 			print '</form>';
 		}
@@ -379,10 +384,12 @@ if ($id > 0 || ! empty($ref))
 		{
 			/*
 			 * Fiche tache en mode visu
-			*/
+			 */
 			$param=($withproject?'&withproject=1':'');
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
+			
 			if ($action == 'delete')
 			{
 				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
@@ -436,14 +443,19 @@ if ($id > 0 || ! empty($ref))
 			print convertSecondToTime($object->planned_workload,'allhourmin');
 			print '</td></tr>';
 
-			// Declared progress
+			// Progress declared
 			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 			print $object->progress.' %';
 			print '</td></tr>';
 
-			// Calculated progress
+			// Progress calculated
 			print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
-			if ($object->planned_workload) print round(100 * $object->duration_effective / $object->planned_workload,2).' %';
+			if ($object->planned_workload)
+			{
+				$tmparray=$object->getSummaryOfTimeSpent();
+				if ($tmparray['total_duration'] > 0) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
+				else print '0 %';
+			}
 			else print '';
 			print '</td></tr>';
 
@@ -462,12 +474,11 @@ if ($id > 0 || ! empty($ref))
 
 			print '</table>';
 
+			dol_fiche_end();
 		}
 
-		dol_fiche_end();
 
-
-		if ($_GET["action"] != 'edit')
+		if ($action != 'edit')
 		{
 			/*
 			 * Actions
@@ -501,7 +512,7 @@ if ($id > 0 || ! empty($ref))
 
 			/*
 			 * Documents generes
-			*/
+			 */
 			$filename=dol_sanitizeFileName($projectstatic->ref). "/". dol_sanitizeFileName($object->ref);
 			$filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref). "/" .dol_sanitizeFileName($object->ref);
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;

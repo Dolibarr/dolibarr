@@ -35,3 +35,6 @@ MessageKO=Ziņa par atcelto maksājumu atgriešanās lapā
 NewPayboxPaymentReceived=Jauns Paybox maksājums saņemts
 NewPayboxPaymentFailed=Jauns Paybox maksājums mēģināju, bet neizdevās
 PAYBOX_PAYONLINE_SENDEMAIL=E-pastu, lai brīdinātu pēc maksājuma (veiksme vai nav)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID

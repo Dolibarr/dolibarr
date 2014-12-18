@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 
@@ -63,9 +64,28 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="fac.datef,fac.rowid";
 
-$month    = GETPOST('month','int');
-$year     = GETPOST('year','int');
+$search_ref = GETPOST("search_ref","int");
+$search_ref_supplier = GETPOST("search_ref_supplier","alpha");
+$search_label = GETPOST("search_label","alpha");
+$search_company = GETPOST("search_company","alpha");
+$search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
+$search_amount_all_tax = GETPOST("search_amount_all_tax","alpha");
+$month = GETPOST("month","int");
+$year = GETPOST("year","int");
+$filter = GETPOST("filtre");
 
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
+{
+	$search_ref="";
+	$search_ref_supplier="";
+	$search_label="";
+	$search_company="";
+	$search_amount_no_tax="";
+	$search_amount_all_tax="";
+	$year="";
+	$month="";
+	$filter="";
+}
 
 /*
  * Actions
@@ -92,9 +112,6 @@ if ($mode == 'search')
 	}
 }
 
-
-
-
 /*
  * View
  */
@@ -106,11 +123,13 @@ $formfile = new FormFile($db);
 
 llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
-$sql = "SELECT s.rowid as socid, s.nom, ";
+$sql = "SELECT s.rowid as socid, s.nom as name, ";
 $sql.= " fac.rowid as facid, fac.ref, fac.ref_supplier, fac.datef, fac.date_lim_reglement as date_echeance,";
 $sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle";
+if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) $sql.=", p.rowid as project_id, p.ref as project_ref";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
+if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = fac.fk_projet";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE fac.entity = ".$conf->entity;
 $sql.= " AND fac.fk_soc = s.rowid";
@@ -119,9 +138,9 @@ if ($socid)
 {
 	$sql .= " AND s.rowid = ".$socid;
 }
-if (GETPOST('filtre') && GETPOST('filtre') != -1)		// GETPOST('filtre') may be a string
+if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
 {
-	$filtrearr = explode(",", GETPOST('filtre'));
+	$filtrearr = explode(",", $filter);
 	foreach ($filtrearr as $fil)
 	{
 		$filt = explode(":", $fil);
@@ -129,14 +148,14 @@ if (GETPOST('filtre') && GETPOST('filtre') != -1)		// GETPOST('filtre') may be a
 	}
 }
 
-if (GETPOST("search_ref"))
+if ($search_ref)
 {
-	if (is_numeric(GETPOST("search_ref"))) $sql .= natural_search(array('fac.rowid', 'fac.ref'), GETPOST('search_ref'));// For backward compatibility
-	else $sql .= natural_search('fac.ref', GETPOST("search_ref"));
+	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.rowid', 'fac.ref'), $search_ref);// For backward compatibility
+	else $sql .= natural_search('fac.ref', $search_ref);
 }
-if (GETPOST("search_ref_supplier"))
+if (search_ref_supplier)
 {
-	$sql .= natural_search('fac.ref_supplier', GETPOST('search_ref_supplier'));
+	$sql .= natural_search('fac.ref_supplier', $search_ref_supplier);
 }
 if ($month > 0)
 {
@@ -149,24 +168,24 @@ else if ($year > 0)
 {
 	$sql.= " AND fac.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if (GETPOST("search_libelle"))
+if ($search_label)
 {
-    $sql .= natural_search('fac.libelle', GETPOST('search_libelle'));
+    $sql .= natural_search('fac.libelle', $search_label);
 }
 
-if (GETPOST("search_societe"))
+if ($search_company)
 {
-    $sql .= natural_search('s.nom', GETPOST('search_societe'));
+    $sql .= natural_search('s.nom', $search_company);
 }
 
-if (GETPOST("search_montant_ht"))
+if ($search_amount_no_tax)
 {
-	$sql .= " AND fac.total_ht = '".$db->escape(price2num(GETPOST("search_montant_ht")))."'";
+	$sql .= " AND fac.total_ht = '".$db->escape(price2num($search_amount_no_tax))."'";
 }
 
-if (GETPOST("search_montant_ttc"))
+if ($search_amount_all_tax)
 {
-	$sql .= " AND fac.total_ttc = '".$db->escape(price2num(GETPOST("search_montant_ttc")))."'";
+	$sql .= " AND fac.total_ttc = '".$db->escape(price2num($search_amount_all_tax))."'";
 }
 
 $nbtotalofrecords = 0;
@@ -192,17 +211,17 @@ if ($resql)
 	}
 
 	$param='&socid='.$socid;
-	if ($month) $param.='&month='.urlencode($month);
-	if ($year)  $param.='&year=' .urlencode($year);
-	if (GETPOST("search_ref"))          $param.='&search_ref='.urlencode(GETPOST("search_ref"));
-	if (GETPOST("search_ref_supplier")) $param.='&search_ref_supplier'.urlencode(GETPOST("search_ref_supplier"));
-	if (GETPOST("search_libelle"))      $param.='&search_libelle='.urlencode(GETPOST("search_libelle"));
-	if (GETPOST("search_societe"))      $param.='&search_societe='.urlencode(GETPOST("search_societe"));
-	if (GETPOST("search_montant_ht"))   $param.='&search_montant_ht='.urlencode(GETPOST("search_montant_ht"));
-	if (GETPOST("search_montant_ttc"))  $param.='&search_montant_ttc='.urlencode(GETPOST("search_montant_ttc"));
-	if (GETPOST("filtre") && GETPOST('filtre') != -1) $param.='&filtre='.urlencode(GETPOST("filtre"));
+	if ($month) 				$param.='&month='.urlencode($month);
+	if ($year)  				$param.='&year=' .urlencode($year);
+	if ($search_ref)          	$param.='&search_ref='.urlencode($search_ref);
+	if ($search_ref_supplier) 	$param.='&search_ref_supplier'.urlencode($search_ref_supplier);
+	if ($search_label)      	$param.='&search_label='.urlencode($search_label);
+	if ($search_company)      	$param.='&search_company='.urlencode($search_company);
+	if ($search_amount_no_tax)	$param.='&search_amount_no_tax='.urlencode($search_amount_no_tax);
+	if ($search_amount_all_tax)	$param.='&search_amount_all_tax='.urlencode($search_amount_all_tax);
+	if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
@@ -212,19 +231,21 @@ if ($resql)
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"fac.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"fac.libelle","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+	if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"fac.total_ht","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"fac.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye","",$param,'align="right"',$sortfield,$sortorder);
+	print '<td class="liste_titre">&nbsp;</td>';
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" size="6" type="text" name="search_ref" value="'.GETPOST("search_ref").'">';
+	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" size="6" type="text" name="search_ref_supplier" value="'.GETPOST("search_ref_supplier").'">';
+	print '<input class="flat" size="6" type="text" name="search_ref_supplier" value="'.$search_ref_supplier.'">';
 	print '</td>';
 	print '<td class="liste_titre" colspan="1" align="center">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
@@ -235,23 +256,32 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" size="16" type="text" name="search_libelle" value="'.GETPOST("search_libelle").'">';
+	print '<input class="flat" size="16" type="text" name="search_label" value="'.$search_label.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="8" name="search_societe" value="'.GETPOST("search_societe").'">';
+	print '<input class="flat" type="text" size="8" name="search_company" value="'.$search_company.'">';
+	print '</td>';
+	if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS))
+	{
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
+	print '<td class="liste_titre" align="right">';
+	print '<input class="flat" type="text" size="8" name="search_amount_no_tax" value="'.$search_amount_no_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.GETPOST("search_montant_ht").'">';
+	print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.GETPOST("search_montant_ttc").'">';
-	print '</td><td class="liste_titre" align="center">';
-	$liststatus=array('paye:0'=>$langs->trans("Unpayed"), 'paye:1'=>$langs->trans("Payed"));
-	print $form->selectarray('filtre', $liststatus, GETPOST('filtre'), 1);
-	print '<input type="image" class="liste_titre" align="right" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	$liststatus=array('paye:0'=>$langs->trans("Unpaid"), 'paye:1'=>$langs->trans("Paid"));
+	print $form->selectarray('filtre', $liststatus, $filter, 1);
+	print '</td><td class="liste_titre" align="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 	print "</tr>\n";
 
 	$facturestatic=new FactureFournisseur($db);
 	$supplierstatic=new Fournisseur($db);
+	$projectstatic=new Project($db);
 
 	$var=true;
 	$total=0;
@@ -279,8 +309,17 @@ if ($resql)
 		print '<td>'.dol_trunc($obj->libelle,36).'</td>';
 		print '<td>';
 		$supplierstatic->id=$obj->socid;
-		$supplierstatic->nom=$obj->nom;
+		$supplierstatic->name=$obj->name;
 		print $supplierstatic->getNomUrl(1,'',12);
+		print '</td>';
+		if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS))
+		{
+			$projectstatic->id=$obj->project_id;
+			$projectstatic->ref=$obj->project_ref;
+			print '<td>';
+			if ($obj->project_id > 0) print $projectstatic->getNomUrl(1);
+			print '</td>';
+		}
 		print '<td align="right">'.price($obj->total_ht).'</td>';
 		print '<td align="right">'.price($obj->total_ttc).'</td>';
 		$total+=$obj->total_ht;
@@ -293,6 +332,8 @@ if ($resql)
 		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5);
 		print '</td>';
 
+		print '<td align="center">&nbsp;</td>';
+
 		print "</tr>\n";
 		$i++;
 
@@ -301,8 +342,10 @@ if ($resql)
 			// Print total
 			print '<tr class="liste_total">';
 			print '<td class="liste_total" colspan="6" align="left">'.$langs->trans("Total").'</td>';
+			if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) print '<td></td>';
 			print '<td class="liste_total" align="right">'.price($total).'</td>';
 			print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
+			print '<td class="liste_total" align="center">&nbsp;</td>';
 			print '<td class="liste_total" align="center">&nbsp;</td>';
 			print "</tr>\n";
 		}

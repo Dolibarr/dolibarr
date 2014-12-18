@@ -1,9 +1,9 @@
 [supervisord]
-logfile=<%= @log_file %>
-pidfile=<%= @pid_file %>
+logfile=<%= @log_path %>/<%= @log_file %>
+pidfile=<%= @run_path %>/<%= @pid_file %>
 nodaemon=<%= @nodaemon %>
 minfds=<%= @minfds %>
-minfds=<%= @minprocs %>
+minprocs=<%= @minprocs %>
 umask=<%= @umask %>
 <% if @strip_ansi -%>
 strip_ansi=<%= @strip_ansi %>
@@ -12,7 +12,7 @@ strip_ansi=<%= @strip_ansi %>
 user=<%= @user %>
 <% end -%>
 <% if @identifier -%>
-indentifier=<%= @identifier %>
+identifier=<%= @identifier %>
 <% end -%>
 <% if @directory -%>
 directory=<%= @directory %>
@@ -31,4 +31,4 @@ environment=<%= @env_string %>
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
 [include]
-files=<%= @config_include %>/*.conf
+files=<%= @config_include_string %>

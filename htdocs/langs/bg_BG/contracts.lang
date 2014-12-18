@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Договори област
 ListOfContracts=Списък на договорите
-LastContracts=Последните %s променени договори
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Всички договори
 ContractCard=Карта на договор
 ContractStatus=Договор статус
@@ -27,7 +27,7 @@ MenuRunningServices=Текущи услуги
 MenuExpiredServices=Изтекли услуги
 MenuClosedServices=Затворени услуги
 NewContract=Нов договор
-AddContract=Добави договор
+AddContract=Create contract
 SearchAContract=Търсене на договора
 DeleteAContract=Изтриване на договора
 CloseAContract=Затваряне на договора
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Списък на линиите на движени
 ListOfRunningServices=Списък на стартираните услуги
 NotActivatedServices=Неактивни услуги (сред валидирани договори)
 BoardNotActivatedServices=Услуги за да активирате сред утвърдени договори
-LastContracts=Последните %s променени договори
+LastContracts=Last %s contracts
 LastActivatedServices=Последните %s активирани услуги
 LastModifiedServices=Последните %s променени услуги
 EditServiceLine=Редактиране на сервизна линия
@@ -91,6 +91,7 @@ ListOfServicesToExpire=List of Services to expire
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Търговски представител подписване на договора

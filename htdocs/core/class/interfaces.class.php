@@ -23,14 +23,16 @@
  *   \brief			Fichier de la classe de gestion des triggers
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
  *   Class to manage triggers
  */
-
 class Interfaces
 {
-    var $dir;				// Directory with all core and external triggers files
+    var $db;
+	var $dir;				// Directory with all core and external triggers files
     var $errors	= array();	// Array for errors
 
     /**
@@ -59,7 +61,9 @@ class Interfaces
         // Check parameters
         if (! is_object($object) || ! is_object($conf))	// Error
         {
-            dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERR);
+        	$this->error='function run_triggers called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf);
+            dol_syslog(get_class($this).'::run_triggers '.$this->error, LOG_ERR);
+        	$this->errors[]=$this->error;
             return -1;
         }
         if (! is_object($user) || ! is_object($langs))	// Warning
@@ -148,9 +152,23 @@ class Interfaces
             $objMod = new $modName($this->db);
             if ($objMod)
             {
-                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch triggers for file '".$files[$key]."'", LOG_INFO);
+            	$result=0;
 
-                $result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
+				if (method_exists($objMod, 'runTrigger'))	// New method to implement
+				{
+	                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_INFO);
+	                $result=$objMod->runTrigger($action,$object,$user,$langs,$conf);
+				}
+				elseif (method_exists($objMod, 'run_trigger'))	// Deprecated method
+				{
+	                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch run_trigger for file '".$files[$key]."'", LOG_INFO);
+					$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
+				}
+				else
+				{
+	                dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
+				}
+
                 if ($result > 0)
                 {
                     // Action OK
@@ -172,7 +190,7 @@ class Interfaces
                 }
             }
             else
-            {
+			{
                 dol_syslog(get_class($this)."::run_triggers action=".$action." Failed to instantiate trigger for file '".$files[$key]."'", LOG_ERR);
             }
         }

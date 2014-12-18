@@ -847,6 +847,7 @@ class Ldap
 	 */
 	function getAttributeValues($filterrecord,$attribute)
 	{
+		$attributes=array();
 		$attributes[0] = $attribute;
 
 		// We need to search for this user in order to get their entry.
@@ -1075,9 +1076,9 @@ class Ldap
 		$subcount = hexdec(substr($hex_sid,2,2));    // Get count of sub-auth entries
 		$auth = hexdec(substr($hex_sid,4,12));      // SECURITY_NT_AUTHORITY
 		$result = "$rev-$auth";
-		for ($x=0;$x < $subcount; $x++) {
-			$subauth[$x] = hexdec($this->littleEndian(substr($hex_sid,16+($x*8),8)));  // get all SECURITY_NT_AUTHORITY
-			$result .= "-".$subauth[$x];
+		for ($x=0;$x < $subcount; $x++)
+		{
+			$result .= "-".hexdec($this->littleEndian(substr($hex_sid,16+($x*8),8)));  // get all SECURITY_NT_AUTHORITY
 		}
 		return $result;
 	}
@@ -1090,9 +1091,9 @@ class Ldap
 	 *	car conflit majuscule-minuscule. A n'utiliser que pour les pages
 	 *	'Fiche LDAP' qui affiche champ lisibles par defaut.
 	 *
-	 * 	@param	string	$checkDn		DN de recherche (Ex: ou=users,cn=my-domain,cn=com)
-	 * 	@param 	string	$filter			Filtre de recherche (ex: (sn=nom_personne) )
-	 *	@return	array					Tableau des reponses (cle en minuscule-valeur)
+	 * 	@param	string		$checkDn		DN de recherche (Ex: ou=users,cn=my-domain,cn=com)
+	 * 	@param 	string		$filter			Search filter (ex: (sn=nom_personne) )
+	 *	@return	array|int					Array with answers (key lowercased - value)
 	 */
 	function search($checkDn, $filter)
 	{

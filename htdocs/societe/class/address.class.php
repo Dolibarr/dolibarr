@@ -112,12 +112,9 @@ class Address
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 
-					$this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
+					$this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);
 				}
-				else
-				{
-					dol_syslog(get_class($this)."::create echec insert sql=$sql");
-				}
+
 				$this->db->rollback();
 				return -2;
 			}
@@ -179,7 +176,7 @@ class Address
 		$this->fax			= preg_replace("/\./","",$this->fax);
 		$this->note			= trim($this->note);
 
-		$result = $this->verify();		// Verifie que nom et label obligatoire
+		$result = $this->verify();		// Verifie que name et label obligatoire
 
 		if ($result >= 0)
 		{
@@ -200,7 +197,7 @@ class Address
 			if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
 			$sql .= " WHERE fk_soc = '" . $socid ."' AND rowid = '" . $this->db->escape($id) ."'";
 
-			dol_syslog(get_class($this)."::Update sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::Update", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -219,7 +216,6 @@ class Address
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::Update error sql=".$sql, LOG_ERR);
 					$result=-2;
 				}
 				$this->db->rollback();
@@ -236,11 +232,11 @@ class Address
 	 *  @param  User	$user        Objet de l'utilisateur
 	 *  @return int 			     >0 si ok, <0 si ko
 	 */
-	function fetch_lines($socid, $user=0)
+	function fetch_lines($socid, $user=null)
 	{
 		global $langs, $conf;
 
-		$sql = 'SELECT rowid, nom, client, fournisseur';
+		$sql = 'SELECT rowid, nom as name, client, fournisseur';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe';
 		$sql .= ' WHERE rowid = '.$socid;
 
@@ -251,7 +247,7 @@ class Address
 			{
 				$obj = $this->db->fetch_object($resqlsoc);
 
-				$this->socname 		= $obj->nom;
+				$this->socname 		= $obj->name;
 				$this->socid		= $obj->rowid;
 				$this->id			= $obj->rowid;
 				$this->client		= $obj->client;
@@ -267,9 +263,9 @@ class Address
 			{
 				$sql = 'SELECT a.rowid as id, a.label, a.name, a.address, a.datec as date_creation, a.tms as date_modification, a.fk_soc';
 				$sql .= ', a.zip, a.town, a.note, a.fk_pays as country_id, a.phone, a.fax';
-				$sql .= ', p.code as country_code, p.libelle as country';
+				$sql .= ', c.code as country_code, c.label as country';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
-				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
+				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON a.fk_pays = c.rowid';
 				$sql .= ' WHERE a.fk_soc = '.$this->socid;
 
 				$resql=$this->db->query($sql);
@@ -318,7 +314,6 @@ class Address
 		}
 		else
 		{
-			dol_syslog(get_class($this).'::Fetch '.$this->db->error(), LOG_ERR);
 			$this->error=$this->db->error();
 		}
 	}
@@ -330,16 +325,16 @@ class Address
 	 *  @param  User	$user       Objet de l'utilisateur
 	 *  @return int 				>0 si ok, <0 si ko
 	 */
-	function fetch_address($id, $user=0)
+	function fetch_address($id, $user=null)
 	{
 		global $langs;
 		global $conf;
 
 		$sql = 'SELECT a.rowid, a.fk_soc, a.label, a.name, a.address, a.datec as date_creation, a.tms as date_modification';
 		$sql .= ', a.zip, a.town, a.note, a.fk_pays as country_id, a.phone, a.fax';
-		$sql .= ', p.code as country_code, p.libelle as country';
+		$sql .= ', c.code as country_code, c.label as country';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON a.fk_pays = c.rowid';
 		$sql .= ' WHERE a.rowid = '.$id;
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -381,7 +376,7 @@ class Address
 		}
 		else
 		{
-			dol_syslog('Erreur Societe::Fetch echec sql='.$sql);
+			dol_syslog('Erreur Societe::Fetch echec', LOG_DEBUG);
 			dol_syslog('Erreur Societe::Fetch '.$this->db->error());
 			$this->error=$this->db->error();
 			$result = -3;
@@ -445,7 +440,7 @@ class Address
 	 */
 	function info($id)
 	{
-		$sql = "SELECT s.rowid, s.nom, datec as date_creation, tms as date_modification,";
+		$sql = "SELECT s.rowid, s.nom as name, datec as date_creation, tms as date_modification,";
 		$sql.= " fk_user_creat, fk_user_modif";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.rowid = ".$id;
@@ -470,7 +465,7 @@ class Address
 					$muser->fetch($obj->fk_user_modif);
 					$this->user_modification = $muser;
 				}
-				$this->ref			     = $obj->nom;
+				$this->ref			     = $obj->name;
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 			}

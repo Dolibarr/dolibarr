@@ -40,3 +40,5 @@ AddSupplierInvoice=Stwórz fakturę dostawcy
 ListOfSupplierProductForSupplier=Wykaz produktów i cen dostawcy <b>%s</b>
 NoneOrBatchFileNeverRan=Brak lub partii <b> %s</b> nie prowadził niedawno
 SentToSuppliers=Wysyłane do dostawców
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

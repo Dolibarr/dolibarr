@@ -26,6 +26,7 @@
 require('../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
@@ -33,6 +34,12 @@ if ($user->societe_id > 0) accessforbidden();
 // Si l'utilisateur n'a pas le droit de lire cette page
 if(!$user->rights->holiday->view_log) accessforbidden();
 
+$year=GETPOST('year');
+if (empty($year))
+{
+	$tmpdate=dol_getdate(dol_now());
+	$year=$tmpdate['year'];
+}
 
 
 /*
@@ -41,14 +48,14 @@ if(!$user->rights->holiday->view_log) accessforbidden();
 
 $langs->load('users');
 
-llxHeader(array(),$langs->trans('CPTitreMenu'));
+llxHeader(array(),$langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.')');
 
 
 $cp = new Holiday($db);
 // Recent changes are more important than old changes
-$log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC','');
+$log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC', " AND date_action BETWEEN '".$db->idate(dol_get_first_day($year,1,1))."' AND '".$db->idate(dol_get_last_day($year,12,1))."'");	// Load $cp->logs
 
-print_fiche_titre($langs->trans('LogCP'));
+print_fiche_titre($langs->trans('LogCP'),'<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'">'.img_previous().'</a> '.$langs->trans("Year").':'.$year.' <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'">'.img_next().'</a>');
 
 print '<table class="noborder" width="100%">';
 print '<tbody>';

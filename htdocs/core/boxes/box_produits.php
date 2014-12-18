@@ -101,11 +101,11 @@ class box_produits extends ModeleBoxes
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
-                    'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
+                    'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->label,
-                    'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
+                    'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
 
 					if ($objp->price_base_type == 'HT')
 					{

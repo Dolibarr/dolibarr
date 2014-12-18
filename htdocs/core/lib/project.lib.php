@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function project_prepare_head($object)
 {
@@ -38,7 +38,7 @@ function project_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Project");
 	$head[$h][2] = 'project';
 	$h++;
@@ -71,7 +71,7 @@ function project_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'notes';
 		$h++;
     }
@@ -81,7 +81,7 @@ function project_prepare_head($object)
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'document';
 	$h++;
 
@@ -113,7 +113,7 @@ function project_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function task_prepare_head($object)
 {
@@ -149,7 +149,7 @@ function task_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
 		$head[$h][1] = $langs->trans('Notes');
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'task_notes';
 		$h++;
     }
@@ -170,7 +170,7 @@ function task_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function project_admin_prepare_head()
 {
@@ -357,7 +357,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 
 				// Planned Workload (in working hours)
-				print '<td align="center">';
+				print '<td align="right">';
 				$fullhour=convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
 				$workingdelay=convertSecondToTime($lines[$i]->planned_workload,'all',86400,7);	// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
 				if ($lines[$i]->planned_workload)
@@ -422,7 +422,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
-		print '<td align="center" class="nowrap liste_total">';
+		print '<td align="right" class="nowrap liste_total">';
 		print convertSecondToTime($total_projectlinesa_planned, 'allhourmin');
 		print '</td>';
 		print '<td></td>';
@@ -445,7 +445,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  *
  * @param	string	   	$inc					?
  * @param   string		$parent					?
- * @param   Object		$lines					?
+ * @param   Task[]		$lines					?
  * @param   int			$level					?
  * @param   string		$projectsrole			?
  * @param   string		$tasksrole				?
@@ -455,8 +455,14 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  */
 function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
 {
-	global $user, $bc, $langs;
-	global $form, $projectstatic, $taskstatic;
+	global $db, $user, $bc, $langs;
+	global $form, $formother, $projectstatic, $taskstatic;
+
+	if (! is_object($formother))
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($db);
+	}
 
 	$lastprojectid=0;
 
@@ -526,7 +532,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 
 				// Progress declared %
 				print '<td align="right">';
-				print $lines[$i]->progress.' %';
+				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
 				print '</td>';
 
 				// Time spent
@@ -629,9 +635,10 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * @param   int		$socid				Id thirdparty
  * @param   int		$projectsListId     Id of project i have permission on
  * @param   int		$mytasks            Limited to task i am contact to
+ * @param	int		$statut				-1=No filter on statut, 0 or 1 = Filter on status
  * @return	void
  */
-function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
+function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $statut=-1)
 {
 	global $langs,$conf,$user,$bc;
 
@@ -641,10 +648,15 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 
 	$sortfield='';
 	$sortorder='';
+	$project_year_filter=0;
+
+	$title=$langs->trans("Project");
+	if ($statut == 0) $title=$langs->trans("ProjectDraft");
+	if ($statut == 1) $title=$langs->trans("Project").' ('.$langs->trans("Validated").')';
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Project"),"index.php","","","","",$sortfield,$sortorder);
+	print_liste_field_titre($title,"index.php","","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
@@ -671,6 +683,21 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 		$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
 		$sql.= " AND ctc.element = 'project_task'";
 		$sql.= " AND ec.fk_socpeople = ".$user->id;
+	}
+	if ($statut >= 0)
+	{
+		$sql.= " AND p.fk_statut = ".$statut;
+	}
+	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE)) {
+		$project_year_filter = GETPOST("project_year_filter");
+		//Check if empty or invalid year. Wildcard ignores the sql check
+		if ($project_year_filter != "*") {
+			if (empty($project_year_filter) || !ctype_digit($project_year_filter)) { //
+				$project_year_filter = date("Y");
+			}
+			$sql.= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day($project_year_filter,12,false)).")";
+			$sql.= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day($project_year_filter,1,false)).")";
+		}
 	}
 	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut";
 	$sql.= " ORDER BY p.title, p.ref";
@@ -715,6 +742,19 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 	{
 		dol_print_error($db);
 	}
+
 	print "</table>";
+
+	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE)) {
+		//Add the year filter input
+		print '<table width="100%">';
+		print '<tr>';
+		print '<td>'.$langs->trans("Year").'</td>';
+		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<td style="text-align:right"><input type="text" size="4" class="flat" name="project_year_filter" value="'.$project_year_filter.'"/>';
+		print '</form>';
+		print "</tr>\n";
+		print '</table>';
+	}
 }
 

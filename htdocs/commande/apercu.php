@@ -167,7 +167,7 @@ if ($id > 0 || ! empty($ref))
         // Client
         print "<tr><td>".$langs->trans("Customer")."</td>";
         print '<td colspan="2">';
-        print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a>';
+        print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$soc->id.'">'.$soc->getNomUrl(1).'</a>';
         print '</td>';
         print '</tr>';
 
@@ -206,7 +206,7 @@ if ($id > 0 || ! empty($ref))
 // Si fichier png PDF d'1 page trouve
 if (file_exists($fileimage))
 {
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($relativepathimage).'">';
+	print '<img style="background: #FFF" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($relativepathimage).'">';
 }
 // Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
@@ -219,13 +219,12 @@ elseif (file_exists($fileimagebis))
 
 		if (file_exists($dir_output.$preview))
 		{
-			print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($preview).'"><p>';
+			print '<img style="background: #FFF" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($preview).'"><p>';
 		}
 	}
 }
 
-print '</div>';
-
-$db->close();
 
 llxFooter();
+
+$db->close();

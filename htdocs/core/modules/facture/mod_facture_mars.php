@@ -144,7 +144,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
-		dol_syslog(get_class($this)."::getNextValue sql=".$sql);
+		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 		if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
@@ -153,7 +153,6 @@ class mod_facture_mars extends ModeleNumRefFactures
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::getNextValue sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
@@ -168,7 +167,7 @@ class mod_facture_mars extends ModeleNumRefFactures
             $sql.= " WHERE facnumber LIKE '".$prefix."____-".$num."'";
             $sql.= " AND entity = ".$conf->entity;
 
-            dol_syslog(get_class($this)."::getNextValue sql=".$sql);
+            dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             $resql=$db->query($sql);
             if ($resql)
             {

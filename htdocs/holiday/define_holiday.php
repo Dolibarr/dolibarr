@@ -84,13 +84,10 @@ if ($action == 'update' && isset($_POST['update_cp']))
     $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
     $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
     $sql.= " WHERE name = 'lastUpdate' and value IS NULL";	// Add value IS NULL to be sure to update only at init.
-    dol_syslog('define_holiday update lastUpdate entry sql='.$sql);
+    dol_syslog('define_holiday update lastUpdate entry', LOG_DEBUG);
     $result = $db->query($sql);
 
-    $mesg='<div class="ok">'.$langs->trans('UpdateConfCPOK').'</div>';
-
-    dol_htmloutput_mesg($mesg);
-
+	setEventMessage($langs->trans('UpdateConfCPOK'));
 }
 elseif($action == 'add_event')
 {
@@ -108,7 +105,7 @@ elseif($action == 'add_event')
 
     if ($error)
     {
-        $message = '<div class="error">'.$langs->trans('ErrorAddEventToUserCP').'</div>';
+	    setEventMessage($langs->trans('ErrorAddEventToUserCP'), 'errors');
     }
     else
 	{
@@ -121,10 +118,8 @@ elseif($action == 'add_event')
 
         $holiday->updateSoldeCP($userCP,$new_holiday);
 
-        $message = $langs->trans('AddEventToUserOkCP');
+		setEventMessage($langs->trans('AddEventToUserOkCP'));
     }
-
-    dol_htmloutput_mesg($message);
 }
 
 $langs->load('users');
@@ -149,17 +144,14 @@ if($cp_events == 1)
 	print '</form><br>';
 }
 
-dol_fiche_head();
-
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<input type="hidden" name="action" value="update" />';
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
-print '<td width="5%">'.$langs->trans('ID').'</td>';
-print '<td width="50%">'.$langs->trans('Employee').'</td>';
+print '<td width="55%">'.$langs->trans('Employee').'</td>';
 print '<td width="20%" style="text-align:center">'.$langs->trans('Available').'</td>';
 print '<td width="20%" style="text-align:center">'.$langs->trans('Note').'</td>';
-print '<td style="text-align:center">'.$langs->trans('UpdateButtonCP').'</td>';
+print '<td></td>';
 print '</tr>';
 
 foreach($listUsers as $users)
@@ -168,7 +160,6 @@ foreach($listUsers as $users)
     $var=!$var;
 
     print '<tr '.$bc[$var].' style="height: 20px;">';
-    print '<td>'.$users['rowid'].'</td>';
     print '<td>';
     $userstatic->id=$users['rowid'];
     $userstatic->lastname=$users['name'];
@@ -188,10 +179,6 @@ foreach($listUsers as $users)
 print '</table>';
 print '</form>';
 
-dol_fiche_end();
-
-
 llxFooter();
 
 $db->close();
-

@@ -18,9 +18,8 @@ CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser 'crontab'
 CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tâche pour lancer une commande toute les minutes
 # Menu
 CronJobs=Travaux programmés
-CronListActive= Liste des travaux actifs
-CronListInactive= Liste des travaux inactifs
-CronListActive= Liste des travaux actifs
+CronListActive=Liste des travaux actifs/programmés
+CronListInactive=Liste des travaux inactifs
 # Page list
 CronDateLastRun=Dernier lancement
 CronLastOutput=Sortie du dernier lancement

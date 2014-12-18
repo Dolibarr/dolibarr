@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
 
 
 /**
- * \class      mod_propale_saphir
- * \brief      Class of file that contains the numbering module rules Saphir
+ * Class of file that contains the numbering module rules Saphir
  */
 class mod_propale_saphir extends ModeleNumRefPropales
 {

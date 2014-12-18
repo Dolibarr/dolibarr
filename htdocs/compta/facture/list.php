@@ -108,9 +108,10 @@ $now=dol_now();
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_categ='';
     $search_user='';
@@ -143,7 +144,7 @@ else $sql = 'SELECT DISTINCT';
 $sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
-$sql.= ' s.nom, s.rowid as socid, s.code_client, s.client ';
+$sql.= ' s.nom as name, s.rowid as socid, s.code_client, s.client ';
 if (! $sall) $sql.= ', SUM(pf.amount) as am';   // To be able to sort on status
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
@@ -264,7 +265,7 @@ if ($resql)
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
     if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
     if ($search_montant_ttc) $param.='&search_montant_ttc='.$search_montant_ttc;
-    print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+    print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
     $i = 0;
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -327,11 +328,12 @@ if ($resql)
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
     print '<td class="liste_titre" align="right">&nbsp;</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print "</td></tr>\n";
 
     if ($num > 0)
     {
-        $var=True;
+        $var=true;
         $total_ht=0;
         $total_tva=0;
         $total_ttc=0;
@@ -398,7 +400,7 @@ if ($resql)
             print '<td>';
             $thirdparty=new Societe($db);
             $thirdparty->id=$objp->socid;
-            $thirdparty->nom=$objp->nom;
+            $thirdparty->name=$objp->name;
             $thirdparty->client=$objp->client;
             $thirdparty->code_client=$objp->code_client;
             print $thirdparty->getNomUrl(1,'customer');

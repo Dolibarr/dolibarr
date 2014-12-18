@@ -68,7 +68,7 @@ $sql.= " AND d.entity IN (".getEntity().")";
 $sql.= " WHERE t.entity IN (".getEntity().")";
 $sql.= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
 
-dol_syslog("index.php::select nb of members by type sql=".$sql, LOG_DEBUG);
+dol_syslog("index.php::select nb of members by type", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -106,7 +106,7 @@ $sql.= " AND d.statut = 1 AND d.datefin >= '".$db->idate($now)."'";
 $sql.= " AND t.rowid = d.fk_adherent_type";
 $sql.= " GROUP BY d.fk_adherent_type";
 
-dol_syslog("index.php::select nb of uptodate members by type sql=".$sql, LOG_DEBUG);
+dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -127,7 +127,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Formulaire recherche adherent
-print '<form action="liste.php" method="post">';
+print '<form action="list.php" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="search">';
 print '<table class="noborder nohover" width="100%">';
@@ -137,15 +137,15 @@ print "</tr>\n";
 $var=false;
 print "<tr ".$bc[$var].">";
 print '<td>';
-print $langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="16">';
+print '<label for="search_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="16">';
 print '</td><td rowspan="3"><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
 print "<tr ".$bc[$var].">";
 print '<td>';
-print $langs->trans("Name").':</td><td><input type="text" name="search_lastname" class="flat" size="16">';
+print '<label for="search_lastname">'.$langs->trans("Name").'</label>:</td><td><input type="text" name="search_lastname" id="search_lastname" class="flat" size="16">';
 print '</td></tr>';
 print "<tr ".$bc[$var].">";
 print '<td>';
-print $langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="16">';
+print '<label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="16">';
 print '</td></tr>';
 print "</table></form>";
 
@@ -159,7 +159,7 @@ if ($conf->use_javascript_ajax)
     print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-    print '<tr><td align="center">';
+    print '<tr '.$bc[0].'><td align="center" colspan="2">';
 
     $SommeA=0;
     $SommeB=0;

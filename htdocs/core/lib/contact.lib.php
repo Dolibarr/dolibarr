@@ -26,7 +26,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function contact_prepare_head($object)
 {
@@ -35,7 +35,7 @@ function contact_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/contact/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;

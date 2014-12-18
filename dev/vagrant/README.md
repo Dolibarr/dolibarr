@@ -23,7 +23,7 @@ Usage
 
 `cd` into the vagrant box directory and simply type `vagrant up`.
 
-That's all you need to do. It will build a brand new VirtalBox machine for you with everything you need to develop on Dolibarr.
+That's all you need to do. It will build a brand new VirtualBox machine for you with everything you need to develop on Dolibarr.
 
 ### Name resolution
 For easy access to the VM you need to setup name resolution to the machines IP.
@@ -45,9 +45,16 @@ Somewhat bleeding edge vagrant box for develop branch related work.
 
 - IP: 192.168.42.101
 - Vhost: dev.dolibarr.org
-- OS: Debian Wheezy 7.5
+- OS: Debian Wheezy 7.5 x64
 - Webserver: Apache 2.2.22
-- PHP: mod_php 5.5.13-1~dotdeb.1
+- PHP: mod_php 5.5.14-1~dotdeb.1
+  Installed modules:
+    - cli
+    - curl
+    - gd
+    - imagick
+    - intl
+    - mcrypt
 - Database: MySQL 5.5
     - Root user: root
     - Root password: root
@@ -55,7 +62,13 @@ Somewhat bleeding edge vagrant box for develop branch related work.
     - Database user: user
     - Database password: user
     - Initial data: dev/initdata/mysqldump_dolibarr-3.5.0.sql
+- Database: PostgreSQL 9.3
+- Adminer: lightweight database management. Access through http://192.168.42.101/adminer
 - Debugger: XDebug
-- Profiler: Xhprof
+- Profiler: Xhprof. Access through http://192.168.42.101/xhprof/xhprof_html
 
 You can access MailCatcher to read all outgoing emails at http://192.168.42.101:1080
+
+To access the machine you must use the following private keys:
+- User root: located at puphpet/files/dot/ssh/root_rsa
+- User vagrant: located at puphpet/files/dot/ssh/id_rsa

@@ -33,11 +33,12 @@ class mod_project_universal extends ModeleNumRefProjects
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 	var $nom = 'Universal';
+	var $name = 'Universal';
 
 
     /**
      *  Renvoi la description du modele de numerotation
-     * 
+     *
      *  @return     string      Texte descripif
      */
 	function info()
@@ -78,7 +79,7 @@ class mod_project_universal extends ModeleNumRefProjects
 
     /**
      *  Renvoi un exemple de numerotation
-     * 
+     *
      *  @return     string      Example
      */
     function getExample()
@@ -99,7 +100,7 @@ class mod_project_universal extends ModeleNumRefProjects
 
    /**
 	*  Return next value
-	* 
+	*
 	*  @param	Societe		$objsoc		Object third party
 	*  @param   Project		$project	Object project
 	*  @return  string					Value if OK, 0 if KO
@@ -126,9 +127,9 @@ class mod_project_universal extends ModeleNumRefProjects
 	}
 
 
-    /**   
+    /**
      *  Return next reference not yet used as a reference
-     * 
+     *
      *  @param	Societe		$objsoc     Object third party
      *  @param  Project		$project	Object project
      *  @return string      			Next not used reference

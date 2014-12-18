@@ -1,0 +1,10 @@
+HOSTS:
+  centos-65-x64:
+    roles:
+      - master
+    platform: el-6-x86_64
+    box : centos-65-x64-virtualbox-nocm
+    box_url : http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box
+    hypervisor : vagrant
+CONFIG:
+  type: foss

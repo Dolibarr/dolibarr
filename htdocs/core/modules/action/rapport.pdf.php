@@ -27,6 +27,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 /**
  *	Class to generate event report
@@ -59,6 +61,7 @@ class CommActionRapport
 	{
 		global $conf,$langs;
 		$langs->load("commercial");
+		$langs->load("projects");
 
 		$this->db = $db;
 		$this->description = "";
@@ -91,7 +94,7 @@ class CommActionRapport
 	 */
 	function write_file($socid = 0, $catid = 0, $outputlangs='')
 	{
-		global $user,$conf,$langs;
+		global $user,$conf,$langs,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -117,6 +120,17 @@ class CommActionRapport
 
 		if (file_exists($dir))
 		{
+			// Add pdfgeneration hook
+			if (! is_object($hookmanager))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager=new HookManager($this->db);
+			}
+			$hookmanager->initHooks(array('pdfgeneration'));
+			$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+			global $action;
+			$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
             $pdf=pdf_getInstance($this->format);
             $heightforinfotot = 50;	// Height reserved to output the info and total part
             $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
@@ -149,6 +163,18 @@ class CommActionRapport
 			$pdf->Close();
 
 			$pdf->Output($file,'F');
+
+			// Add pdfgeneration hook
+			if (! is_object($hookmanager))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager=new HookManager($this->db);
+			}
+			$hookmanager->initHooks(array('pdfgeneration'));
+			$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+			global $action;
+			$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 			if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -174,9 +200,9 @@ class CommActionRapport
 		$y++;
 		$pdf->SetFont('','',8);
 
-		$sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
+		$sql = "SELECT s.nom as thirdparty, s.rowid as socid, s.client,";
 		$sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
-		$sql.= " a.fk_contact, a.note, a.percent as percent, a.label,";
+		$sql.= " a.fk_contact, a.note, a.percent as percent, a.label, a.fk_project,";
 		$sql.= " c.code, c.libelle,";
 		$sql.= " u.login";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
@@ -187,7 +213,10 @@ class CommActionRapport
 		$sql.= " AND a.entity = ".$conf->entity;
 		$sql.= " ORDER BY a.datep DESC";
 
-		dol_syslog(get_class($this)."::_page sql=".$sql);
+		$eventstatic=new ActionComm($this->db);
+		$projectstatic=new Project($this->db);
+
+		dol_syslog(get_class($this)."::_page", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -199,6 +228,11 @@ class CommActionRapport
 			{
 				$obj = $this->db->fetch_object($resql);
 
+				$eventstatic->id=$obj->id;
+				$eventstatic->percentage=$obj->percentage;
+				$eventstatic->fulldayevent=$obj->fulldayevent;
+				$eventstatic->punctual=$obj->punctual;
+
 				$y = max($y, $pdf->GetY(), $y0, $y1, $y2, $y3);
 
 				// Calculate height of text
@@ -206,6 +240,16 @@ class CommActionRapport
 				if (! preg_match('/^'.preg_quote($obj->label).'/',$obj->note)) $text=$obj->label."\n";
 				$text.=$obj->note;
 				$text=dol_trunc(dol_htmlentitiesbr_decode($text),150);
+				// Add status to text
+				$text.="\n";
+				$status=dol_htmlentitiesbr_decode($eventstatic->getLibStatut(1,1));
+				$text.=$status;
+				if ($obj->fk_project > 0)
+				{
+					$projectstatic->fetch($obj->fk_project);
+					$text.=($status?' - ':'').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode($projectstatic->getNomUrl(0, 'nolink'));
+				}
+
 				//print 'd'.$text; exit;
 				$nboflines=dol_nboflines($text);
 				$heightlinemax=max(2*$height,$nboflines*$height);
@@ -227,7 +271,7 @@ class CommActionRapport
 
 				// Third party
 				$pdf->SetXY(26, $y);
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->societe),32), 0, 'L', 0);
+				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->thirdparty),32), 0, 'L', 0);
 				$y1 = $pdf->GetY();
 
 				// Action code

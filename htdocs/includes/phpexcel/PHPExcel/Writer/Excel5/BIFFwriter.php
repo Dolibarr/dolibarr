@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel5
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.7.6, 2011-02-27
+ * @version    1.7.8, 2012-10-12
  */
 
 // Original file header of PEAR::Spreadsheet_Excel_Writer_BIFFwriter (used as the base for this class):
@@ -65,16 +65,10 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel5
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Writer_Excel5_BIFFwriter
 {
-	/**
-	 * The BIFF/Excel version (5).
-	 * @var integer
-	 */
-	public $_BIFF_version = 0x0500;
-
 	/**
 	 * The byte order of this architecture. 0 => little endian, 1 => big endian
 	 * @var integer
@@ -98,7 +92,7 @@ class PHPExcel_Writer_Excel5_BIFFwriter
 	 * @var integer
 	 * @see _addContinue()
 	 */
-	public $_limit;
+	public $_limit	= 8224;
 
 	/**
 	 * Constructor
@@ -107,7 +101,7 @@ class PHPExcel_Writer_Excel5_BIFFwriter
 	{
 		$this->_data       = '';
 		$this->_datasize   = 0;
-		$this->_limit      = 2080;
+//		$this->_limit      = 8224;
 	}
 
 	/**
@@ -128,8 +122,7 @@ class PHPExcel_Writer_Excel5_BIFFwriter
 				$byte_order = 1;    // Big Endian
 			} else {
 				// Give up. I'll fix this in a later version.
-				throw new Exception("Required floating point format ".
-										 "not supported on this platform.");
+				throw new Exception("Required floating point format not supported on this platform.");
 			}
 			self::$_byte_order = $byte_order;
 		}
@@ -178,25 +171,16 @@ class PHPExcel_Writer_Excel5_BIFFwriter
 	 */
 	function _storeBof($type)
 	{
-		$record  = 0x0809;        // Record identifier
+		$record  = 0x0809;			// Record identifier	(BIFF5-BIFF8)
+		$length  = 0x0010;
 
-		// According to the SDK $build and $year should be set to zero.
-		// However, this throws a warning in Excel 5. So, use magic numbers.
-		if ($this->_BIFF_version == 0x0500) {
-			$length  = 0x0008;
-			$unknown = '';
-			$build   = 0x096C;
-			$year    = 0x07C9;
-		} elseif ($this->_BIFF_version == 0x0600) {
-			$length  = 0x0010;
+		// by inspection of real files, MS Office Excel 2007 writes the following
+		$unknown = pack("VV", 0x000100D1, 0x00000406);
 
-			// by inspection of real files, MS Office Excel 2007 writes the following
-			$unknown = pack("VV", 0x000100D1, 0x00000406);
+		$build   = 0x0DBB;			//	Excel 97
+		$year    = 0x07CC;			//	Excel 97
 
-			$build   = 0x0DBB;
-			$year    = 0x07CC;
-		}
-		$version = $this->_BIFF_version;
+		$version = 0x0600;			//	BIFF8
 
 		$header  = pack("vv",   $record, $length);
 		$data    = pack("vvvv", $version, $type, $build, $year);
@@ -212,6 +196,7 @@ class PHPExcel_Writer_Excel5_BIFFwriter
 	{
 		$record    = 0x000A;   // Record identifier
 		$length    = 0x0000;   // Number of bytes to follow
+
 		$header    = pack("vv", $record, $length);
 		$this->_append($header);
 	}

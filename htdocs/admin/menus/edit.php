@@ -39,7 +39,6 @@ $dirsmartphone = "/core/menus/smartphone";
 $dirmenu = array($dirstandard,$dirsmartphone);
 
 $action=GETPOST('action');
-$mesg=GETPOST('mesg');
 
 $menu_handler_top=$conf->global->MAIN_MENU_STANDARD;
 $menu_handler_smartphone=$conf->global->MAIN_MENU_SMARTPHONE;
@@ -79,16 +78,16 @@ if ($action == 'update')
             $result=$menu->update($user);
             if ($result > 0)
             {
-                $mesg='<div class="ok">'.$langs->trans("RecordModifiedSuccessfully").'</div>';
+	            setEventMessage($langs->trans("RecordModifiedSuccessfully"));
             }
             else
             {
-                $mesg='<div class="error">'.$menu->error.'</div>';
+	            setEventMessage($menu->error, 'errors');
             }
         }
         else
         {
-            $mesg='<div class="error">'.$menu->error.'</div>';
+	        setEventMessage($menu->error, 'errors');
         }
         $_GET["menuId"] = $_POST['menuId'];
         $action = "edit";
@@ -136,37 +135,37 @@ if ($action == 'add')
     $error=0;
     if (! $error && ! $_POST['menu_handler'])
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("MenuHandler")).'</div>';
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("MenuHandler")), 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['type'])
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")).'</div>';
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")), 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['url'])
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Url")).'</div>';
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Url")), 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['titre'])
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Title")).'</div>';
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Title")), 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && $_POST['menuId'] && $_POST['type'] == 'top')
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorTopMenuMustHaveAParentWithId0").'</div>';
+	    setEventMessage($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && empty($_POST['menuId']) && $_POST['type'] == 'left')
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorLeftMenuMustHaveAParentId").'</div>';
+	    setEventMessage($langs->trans("ErrorLeftMenuMustHaveAParentId"), 'errors');
         $action = 'create';
         $error++;
     }
@@ -205,7 +204,7 @@ if ($action == 'add')
         else
         {
             $action = 'create';
-            $mesg='<div class="error">'.$menu->error.'</div>';
+	        setEventMessage($menu->error, 'errors');
         }
     }
 }
@@ -223,7 +222,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
         $this->db->commit();
 
         llxHeader();
-        print '<div class="ok">'.$langs->trans("MenuDeleted").'</div>';
+	    setEventMessage($langs->trans("MenuDeleted"));
         llxFooter();
         exit ;
     }
@@ -375,8 +374,6 @@ if ($action == 'create')
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
     print '</form>';
-
-    dol_htmloutput_mesg($mesg);
 }
 elseif ($action == 'edit')
 {
@@ -463,8 +460,6 @@ elseif ($action == 'edit')
     print '</form>';
 
     print '<br>';
-
-    dol_htmloutput_mesg($mesg);
 }
 
 

@@ -89,16 +89,16 @@ if (isset($type))
 	if ($type == 1) $title = $langs->trans("ListServiceByPopularity");
 }
 
-print_barre_liste($title, $page, "popuprop.php",$param,"","","",$num);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$param,"","","",$num);
 
 
 print '<table class="noborder" width="100%">';
 
 print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans('Ref'), 'popuprop.php', 'p.ref', '', '', '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Type'), 'popuprop.php', 'p.type', '', '', '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Label'), 'popuprop.php', 'p.label', '', '', '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('NbOfProposals'), 'popuprop.php', 'c', '', '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], 'p.ref', '', '', '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], 'p.type', '', '', '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label', '', '', '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('NbOfProposals'), $_SERVER["PHP_SELF"], 'c', '', '', 'align="right"', $sortfield, $sortorder);
 print "</tr>\n";
 
 $sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, count(*) as c";
@@ -141,7 +141,7 @@ if ($result)
 
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
-		print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$objp->rowid.'">';
+		print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$objp->rowid.'">';
 		if ($objp->type==1) print img_object($langs->trans("ShowService"),"service");
 		else print img_object($langs->trans("ShowProduct"),"product");
 		print " ";
