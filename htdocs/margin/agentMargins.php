@@ -119,6 +119,7 @@ $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND sc.fk_soc = f.fk_soc";
+$sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
 if (! empty($conf->global->AGENT_CONTACT_TYPE))
 	$sql.= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = u.rowid) OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = u.rowid))";
 else
