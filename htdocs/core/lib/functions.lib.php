@@ -1029,7 +1029,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 function dol_getdate($timestamp,$fast=false)
 {
 	global $conf;
-	
+
 	$usealternatemethod=false;
 	if ($timestamp <= 0) $usealternatemethod=true;				// <= 1970
 	if ($timestamp >= 2145913200) $usealternatemethod=true;		// >= 2038
@@ -1041,7 +1041,7 @@ function dol_getdate($timestamp,$fast=false)
 	else
 	{
 		$arrayinfo=getdate($timestamp);
-		
+
 		$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
 		if($startday==1)
 		{
@@ -1116,11 +1116,11 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 				$default_timezone=@date_default_timezone_get();
 			}
 		}
-		
+
 		if (empty($localtz)) {
 			$localtz = new DateTimeZone('UTC');
 		}
-		
+
 		$dt = new DateTime(null,$localtz);
 		$dt->setDate($year,$month,$day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);
@@ -1787,6 +1787,8 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodot=0)
 {
 	global $conf;
+
+	if (empty($stringencoding)) $stringencoding='UTF-8';
 
 	if ($size==0 || ! empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
 
