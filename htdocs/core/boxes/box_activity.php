@@ -114,7 +114,7 @@ class box_activity extends ModeleBoxes
 					$billurl="viewstatut=2&paye=1&year=".$objp->annee;
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => $objp->nb, 'url' => DOL_URL_ROOT."/compta/facture/liste.php?".$billurl."&mainmenu=accountancy&leftmenu=customers_bills"
+					'text' => $objp->nb, 'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&mainmenu=accountancy&leftmenu=customers_bills"
 					);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
