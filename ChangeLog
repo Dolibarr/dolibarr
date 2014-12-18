@@ -18,6 +18,7 @@ Fix: Paypal link were broken dur to SSL v3 closed.
 - Fix: [ bug #1595 ] Selected boolean extrafield in intervention creation page, does not save state
 - Fix: Show sender Country on PDF docs when sender Country <> receiver Country
 - Fix: [ bug #1624 ] Use lowest buying price for margin when selling with POS
+- Fix: [ bug #1749 ] Undefined $mailchimp
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
