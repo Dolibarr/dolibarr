@@ -36,7 +36,10 @@
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedELSE">
 		<severity>0</severity>
 	</rule>
-
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedELSEIF">
+		<severity>0</severity>
+	</rule>
+	
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowed">
 		<severity>0</severity>
 	</rule>
