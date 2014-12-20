@@ -22,7 +22,7 @@ if [ -f "$1.odt" ]
   nbprocess=$(pgrep -c soffice)
   if [ $nbprocess -ne 1 ]
    then
-    soffice --invisible --accept="socket,host=127.0.0.1,port=8100;urp;" --nofirststartwizard --headless&
+    soffice --invisible --accept="socket,host=127.0.0.1,port=8100;urp;" --nofirststartwizard --headless &
     retcode=$?
     if [ $retcode -ne 0 ]
      then
