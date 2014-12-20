@@ -113,7 +113,7 @@ class Expedition extends CommonObject
 	/**
 	 *	Return next contract ref
 	 *
-	 *	@param	Societe		$soc	Objet society
+	 *	@param	Societe		$soc	Thirdparty object
 	 *	@return string				Free reference for contract
 	 */
 	function getNextNumRef($soc)

@@ -88,7 +88,7 @@ class Contrat extends CommonObject
 	/**
 	 *	Return next contract ref
 	 *
-	 *	@param	Societe		$soc		objet society
+	 *	@param	Societe		$soc		Thirdparty object
 	 *	@return string					free reference for contract
 	 */
 	function getNextNumRef($soc)
