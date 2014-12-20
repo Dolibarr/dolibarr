@@ -714,11 +714,12 @@ function dol_bc($var,$moreclass='')
  *      @param  Object		$object         A company or contact object
  * 	    @param	int			$withcountry	1=Add country into address string
  *      @param	string		$sep			Separator to use to build string
+ *      @param	Tranlsate	$outputlangs	Object lang that contains language for text translation.
  *      @return string          			Formated string
  */
-function dol_format_address($object,$withcountry=0,$sep="\n")
+function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 {
-	global $conf;
+	global $conf,$langs;
 
 	$ret='';
 	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
@@ -763,8 +764,8 @@ function dol_format_address($object,$withcountry=0,$sep="\n")
 			$ret.=", ".$object->state;
 		}
 	}
-
-	if ($withcountry) $ret.=($object->country?$sep.$object->country:'');
+	if (! is_object($outputlangs)) $outputlangs=$langs;
+	if ($withcountry) $ret.=($object->country_code?$sep.$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->country_code)):'');
 
 	return $ret;
 }
@@ -1048,7 +1049,11 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 				$default_timezone=@date_default_timezone_get();
 			}
 		}
-		else $localtz = new DateTimeZone('UTC');
+		
+		if (empty($localtz)) {
+			$localtz = new DateTimeZone('UTC');
+		}
+		
 		$dt = new DateTime(null,$localtz);
 		$dt->setDate($year,$month,$day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);

@@ -151,6 +151,11 @@ else if ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->fich
 
 else if ($action == 'add' && $user->rights->ficheinter->creer)
 {
+	// Fill array 'array_options' with data from add form
+	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	if ($ret < 0) $error ++;
+
     $object->socid			= $socid;
     $object->duree			= GETPOST('duree','int');
     $object->fk_project		= GETPOST('projectid','int');
