@@ -1343,7 +1343,7 @@ class Form
             }
             $out.= '</select>';
             
-       		if (! empty($conf->use_javascript_ajax))
+       		if (! empty($conf->use_javascript_ajax) && ! $show_empty)	// ajaxcombo works only on list with no empty value because of &nbsp;
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out.= ajax_combobox($htmlname);
@@ -4573,12 +4573,12 @@ class Form
             else
             {
                 $out.= '<select class="flat" name="'.$htmlname.'"'.($show_empty?'':' disabled="disabled"').'>';
-                if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+                if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'></option>'."\n";
                 $out.= '<option value="" disabled="disabled">'.$langs->trans("NoUserGroupDefined").'</option>';
             }
             $out.= '</select>';
 
-            if (! empty($conf->use_javascript_ajax))
+            if (! empty($conf->use_javascript_ajax) && ! $show_empty)	// ajax combo works only when no empty value
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out.= ajax_combobox($htmlname);
