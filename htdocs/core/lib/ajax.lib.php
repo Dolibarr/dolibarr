@@ -321,8 +321,10 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 	global $conf;
 
 	if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
+	if (! empty($conf->dol_use_jmobile)) return '';	// combobox with jmobile (does not works)
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
-
+	if (empty($conf->use_javascript_ajax)) return ''; 
+	
 	/* Some properties for combobox:
 	minLengthToAutocomplete: 2,
 	comboboxContainerClass: "comboboxContainer",
