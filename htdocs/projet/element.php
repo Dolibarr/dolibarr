@@ -212,7 +212,7 @@ if ($action=="addelement")
 	$elementselectid = GETPOST("elementselect");
 	$result=$project->update_element($tablename, $elementselectid);
 	if ($result<0) {
-		setEventMessage($mailchimp->error,'errors');
+		setEventMessage($project->error,'errors');
 	}
 }
 
