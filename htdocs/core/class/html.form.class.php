@@ -1356,15 +1356,17 @@ class Form
             }
             $out.= '</select>';
 
-           	$out.= '<script type="text/javascript">
-						$(document).ready(function() {
-
+            if (! empty($conf->use_javascript_ajax))
+            {
+           		$out.= '<script type="text/javascript">
+					$(document).ready(function() {
 						$(\'#'.$htmlname.'\').select2({
 							width: \'resolve\',
 							minimumInputLength: 0
 						});
            			})
            		   </script>';
+            }
         }
         else
         {
