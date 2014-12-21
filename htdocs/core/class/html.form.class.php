@@ -3800,7 +3800,7 @@ class Form
      *	@param	string		$prefix			Prefix for fields name
      *	@param	int			$h				1=Show also hours
      *	@param	int			$m				1=Show also minutes
-     *	@param	int			$empty			0=Fields required, 1=Empty input is allowed
+     *	@param	int			$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
      *	@param	string		$form_name 		Not used
      *	@param	int			$d				1=Show days, month, years
      * 	@param	int			$addnowbutton	Add a button "Now"
@@ -3819,9 +3819,13 @@ class Form
         if($prefix=='') $prefix='re';
         if($h == '') $h=0;
         if($m == '') $m=0;
-        if($empty == '') $empty=0;
+        $emptydate=0;
+        $emptyhours=0;
+    	if ($empty == 1) { $emptydate=1; $emptyhours=1; }
+    	if ($empty == 2) { $emptydate=0; $emptyhours=1; }
+		$orig_set_time=$set_time;
 
-        if ($set_time === '' && $empty == 0)
+        if ($set_time === '' && $emptydate == 0)
         {
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         	$set_time = dol_now('tzuser')-(getServerTimeZoneInt('now')*3600); // set_time must be relative to PHP server timezone
@@ -3843,8 +3847,11 @@ class Form
             $syear = dol_print_date($set_time, "%Y");
             $smonth = dol_print_date($set_time, "%m");
             $sday = dol_print_date($set_time, "%d");
-            $shour = dol_print_date($set_time, "%H");
-            $smin = dol_print_date($set_time, "%M");
+            if ($orig_set_time != '')
+            {
+            	$shour = dol_print_date($set_time, "%H");
+            	$smin = dol_print_date($set_time, "%M");
+            }
         }
         else
         {
@@ -3906,7 +3913,7 @@ class Form
                 // Day
                 $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat" name="'.$prefix.'day">';
 
-                if ($empty || $set_time == -1)
+                if ($emptydate || $set_time == -1)
                 {
                     $retstring.='<option value="0" selected="selected">&nbsp;</option>';
                 }
@@ -3919,7 +3926,7 @@ class Form
                 $retstring.="</select>";
 
                 $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat" name="'.$prefix.'month">';
-                if ($empty || $set_time == -1)
+                if ($emptydate || $set_time == -1)
                 {
                     $retstring.='<option value="0" selected="selected">&nbsp;</option>';
                 }
@@ -3934,7 +3941,7 @@ class Form
                 $retstring.="</select>";
 
                 // Year
-                if ($empty || $set_time == -1)
+                if ($emptydate || $set_time == -1)
                 {
                     $retstring.='<input'.($disabled?' disabled="disabled"':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
                 }
@@ -3957,7 +3964,7 @@ class Form
         {
             // Show hour
             $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat '.($fullday?$fullday.'hour':'').'" name="'.$prefix.'hour">';
-            if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
+            if ($emptyhours) $retstring.='<option value="-1">&nbsp;</option>';
             for ($hour = 0; $hour < 24; $hour++)
             {
                 if (strlen($hour) < 2) $hour = "0" . $hour;
@@ -3971,7 +3978,7 @@ class Form
         {
             // Show minutes
             $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat '.($fullday?$fullday.'min':'').'" name="'.$prefix.'min">';
-            if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
+            if ($emptyhours) $retstring.='<option value="-1">&nbsp;</option>';
             for ($min = 0; $min < 60 ; $min++)
             {
                 if (strlen($min) < 2) $min = "0" . $min;
@@ -4030,18 +4037,22 @@ class Form
     /**
      *	Function to show a form to select a duration on a page
      *
-     *	@param	string	$prefix   		Prefix
+     *	@param	string	$prefix   		Prefix for input fields
      *	@param  int		$iSecond  		Default preselected duration (number of seconds)
      * 	@param	int		$disabled		Disable the combo box
      * 	@param	string	$typehour		If 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
      *  @param	string	$minunderhours	If 1, show minutes selection under the hours
+     * 	@param	int		$nooutput		Do not output html string but return it
      *  @return	void
      */
-    function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select', $minunderhours=0)
+    function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select', $minunderhours=0, $nooutput=0)
     {
     	global $langs;
 
+    	$retstring='';
+
     	$hourSelected=0; $minSelected=0;
+
         if ($iSecond)
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -4052,36 +4063,51 @@ class Form
 
         if ($typehour=='select')
         {
-	        print '<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').'>';
+	        $retstring.='<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').'>';
 	        for ($hour = 0; $hour < 25; $hour++)	// For a duration, we allow 24 hours
 	        {
-	            print '<option value="'.$hour.'"';
+	            $retstring.='<option value="'.$hour.'"';
 	            if ($hourSelected == $hour)
 	            {
-	                print " selected=\"true\"";
+	                $retstring.=" selected=\"true\"";
 	            }
-	            print ">".$hour."</option>";
+	            $retstring.=">".$hour."</option>";
 	        }
-	        print "</select>";
+	        $retstring.="</select>";
         }
         elseif ($typehour=='text')
         {
-        	print '<input type="text" size="3" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').' class="flat" value="'.((int) $hourSelected).'">';
+        	$retstring.='<input type="text" size="2" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').' class="flat" value="'.($hourSelected?((int) $hourSelected):'').'">';
         }
-        print ' '.$langs->trans('HourShort');
+        else return 'BadValueForParameterTypeHour';
 
-        if ($minunderhours) print '<br>';
-        else print "&nbsp;";
+        $retstring.=' '.$langs->trans('HourShort');
 
-        print '<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').'>';
-        for ($min = 0; $min <= 55; $min=$min+5)
+        if ($minunderhours) $retstring.='<br>';
+        else $retstring.="&nbsp;";
+
+        if ($typehour=='select')
         {
-            print '<option value="'.$min.'"';
-            if ($minSelected == $min) print ' selected="selected"';
-            print '>'.$min.'</option>';
+	        $retstring.='<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').'>';
+	        for ($min = 0; $min <= 55; $min=$min+5)
+	        {
+	            $retstring.='<option value="'.$min.'"';
+	            if ($minSelected == $min) $retstring.=' selected="selected"';
+	            $retstring.='>'.$min.'</option>';
+	        }
+	        $retstring.="</select>";
         }
-        print "</select>";
-        print ' '.$langs->trans('MinuteShort'). "&nbsp;";
+        elseif ($typehour=='text')
+        {
+        	$retstring.='<input type="text" size="2" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').' class="flat" value="'.($minSelected?((int) $minSelected):'').'">';
+        }
+        $retstring.=' '.$langs->trans('MinuteShort');
+        $retstring.="&nbsp;";
+
+        if (! empty($nooutput)) return $retstring;
+
+        print $retstring;
+        return;
     }
 
 

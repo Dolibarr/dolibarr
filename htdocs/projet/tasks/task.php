@@ -262,8 +262,6 @@ if ($id > 0 || ! empty($ref))
 			print '</table>';
 
 			dol_fiche_end();
-
-			print '<br>';
 		}
 
 		/*
@@ -305,7 +303,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
-			
+
 			print '<table class="border" width="100%">';
 
 			// Ref
@@ -372,7 +370,7 @@ if ($id > 0 || ! empty($ref))
 			print '</table>';
 
 			dol_fiche_end();
-			
+
 			print '<div align="center">';
 			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -389,7 +387,7 @@ if ($id > 0 || ! empty($ref))
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
 			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
-			
+
 			if ($action == 'delete')
 			{
 				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");

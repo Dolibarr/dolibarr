@@ -161,8 +161,6 @@ if ($object->id > 0)
 		print '</table>';
 
 		dol_fiche_end();
-
-		print '<br>';
 	}
 
 	$head = task_prepare_head($object);
