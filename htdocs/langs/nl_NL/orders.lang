@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - orders
-OrdersArea=Afnemersopdrachtenoverzicht
-SuppliersOrdersArea=Leveranciersopdrachtenoverzicht
+OrdersArea=Klantenorders overzicht
+SuppliersOrdersArea=Leverancierorders overzicht
 OrderCard=Opdrachtenkaart
 OrderId=Ordernr
-Order=Opdracht
-Orders=Opdrachten
-OrderLine=Opdrachtregel
+Order=Order
+Orders=Orders
+OrderLine=Orderregel
 OrderFollow=Opvolging
 OrderDate=Opdrachtdatum
 OrderToProcess=Te verwerken opdracht

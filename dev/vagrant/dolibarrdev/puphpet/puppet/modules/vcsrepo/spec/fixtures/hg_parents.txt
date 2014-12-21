@@ -1,6 +1,0 @@
-changeset:   3:34e6012c783a
-parent:      2:21ea4598c962
-parent:      1:9d0ff0028458
-user:        Test User <test.user@example.com>
-date:        Fri Aug 07 13:13:02 2009 -0400
-summary:     merge

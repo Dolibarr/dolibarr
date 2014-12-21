@@ -79,10 +79,11 @@ CreditDate=Kredit na
 WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country %s (Your country is not supported)
 ShowWithdraw=Zobrazit Natáhněte
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=However, if invoice has at least one withdrawal payment not yet processed, it won't be set as paid to allow prior withdrawal management.
-DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once it is complete, you can type the payment to close the invoice.
+DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once donee, go into menu Bank->Withdrawal to manage the standing order. When standing order is closed, payment on invoice will be automatically recorded, and invoice closed if remainder to pay is null.
 WithdrawalFile=Odstoupení soubor
 SetToStatusSent=Nastavte na stav &quot;odeslaný soubor&quot;
 ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+StatisticsByLineStatus=Statistics by status of lines
 
 ### Notifications
 InfoCreditSubject=Platba %s trvalého příkazu bankou

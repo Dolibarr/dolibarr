@@ -70,6 +70,10 @@ if ($action == 'create')
     if ($result == 0)
     {
         $mesg='<div class="error">'.$langs->trans("NoInvoiceCouldBeWithdrawed").'</div>';
+        foreach($bprev->invoice_in_error as $key => $val)
+        {
+        	$mesg.=$val."<br>\n";
+        }
     }
 }
 
@@ -179,6 +183,7 @@ if ($resql)
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Invoice").'</td>';
     print '<td>'.$langs->trans("ThirdParty").'</td>';
+    print '<td>'.$langs->trans("RIB").'</td>';
     print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
     print '<td align="right">'.$langs->trans("DateRequest").'</td>';
     print '</tr>';
@@ -190,16 +195,22 @@ if ($resql)
         {
             $obj = $db->fetch_object($resql);
             $var=!$var;
-            print '<tr '.$bc[$var].'><td>';
+            print '<tr '.$bc[$var].'>';
+            print '<td>';
             $invoicestatic->id=$obj->rowid;
             $invoicestatic->ref=$obj->facnumber;
             print $invoicestatic->getNomUrl(1,'withdraw');
             print '</td>';
+            // Thirdparty
             print '<td>';
-            $thirdpartystatic->id=$obj->socid;
-            $thirdpartystatic->name=$obj->name;
-            print $thirdpartystatic->getNomUrl(1,'customer');
+            $thirdpartystatic->fetch($obj->socid);
+            print $thirdpartystatic->getNomUrl(1,'card');
             print '</td>';
+            // RIB
+            print '<td>';
+            print $thirdpartystatic->display_rib();
+            print '</td>';
+            // Amount
             print '<td align="right">';
             print price($obj->total_ttc,0,$langs,0,0,-1,$conf->currency);
             print '</td>';
@@ -211,7 +222,7 @@ if ($resql)
             $i++;
         }
     }
-    else print '<tr><td colspan="4">'.$langs->trans("None").'</td></tr>';
+    else print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
     print "</table>";
     print "<br>\n";
 }

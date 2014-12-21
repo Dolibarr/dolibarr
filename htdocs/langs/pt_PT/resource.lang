@@ -1,36 +1,34 @@
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
+MenuResourceIndex=Recursos
+MenuResourceAdd=Novo recurso
 MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+DeleteResource=Apagar recurso
+ConfirmDeleteResourceElement=Confirme apagar o recurso para este elemento
+NoResourceInDatabase=Nenhum recurso na base de dados
+NoResourceLinked=Nenhum recurso interligado
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=Lista de recursos
+ResourceSingular=Recurso
+ResourceCard=Cartão de recurso
+AddResource=Crie um recurso
+ResourceFormLabel_ref=Nome do recurso
+ResourceType=Tipo de recurso
+ResourceFormLabel_description=Descrição do recurso
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=Recursos interligados ao elemento
 
 ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+GotoDate=Ir para a data
 
-ResourceElementPage=Element resources
+ResourceElementPage=Recursos do elemento
 ResourceCreatedWithSuccess=Resource successfully created
 RessourceLineSuccessfullyDeleted=Resource line successfully deleted
 RessourceLineSuccessfullyUpdated=Resource line successfully updated
 ResourceLinkedWithSuccess=Resource linked with success
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+TitleResourceCard=Cartão de recurso
+ConfirmDeleteResource=Confirme para apagar este recurso
+RessourceSuccessfullyDeleted=Recurso apagado com sucesso
+DictionaryResourceType=Tipo de recursos
 
-DictionaryEMailTemplates=Modèles d'Emails
-
-SelectResource=Select resource
+SelectResource=Selecione o recurso

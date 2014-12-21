@@ -20,17 +20,15 @@ ResourcesLinkedToElement=mit Element verknüpfte Ressourcen
 ShowResourcePlanning=Ressourcen-Planung zeigen
 GotoDate=Gehe zu Datum
 
-ResourceElementPage=Element resources
+ResourceElementPage=Element-Ressourcen
 ResourceCreatedWithSuccess=Ressource erfolgreich erstellt
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
+RessourceLineSuccessfullyDeleted=Ressourcen-Zeile erfolgreich gelöscht
+RessourceLineSuccessfullyUpdated=Ressourcen-Zeile erfolgreich aktualisiert
 ResourceLinkedWithSuccess=Ressource erfolgreich verknüpft
 
 TitleResourceCard=Ressourcen-Karte
 ConfirmDeleteResource=Ressource wirklich löschen?
 RessourceSuccessfullyDeleted=Ressource erfolgreich gelöscht
 DictionaryResourceType=Ressourcen-Typ
-
-DictionaryEMailTemplates=Modèles d'Emails
 
 SelectResource=Ressource wählen

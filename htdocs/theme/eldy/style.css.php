@@ -100,12 +100,12 @@ $colorbacktitle2=($colred-15).','.($colgreen-15).','.($colblue-15);
 $colorbacktabcard1=($colred+15).','.($colgreen+16).','.($colblue+17);  // card
 $colorbacktabcard2=($colred-15).','.($colgreen-15).','.($colblue-15);
 $colorbacktabactive=($colred-15).','.($colgreen-15).','.($colblue-15);
-$colorbacklineimpair1=(244+round($isred/3)).','.(244+round($isgreen/3)).','.(244+round($isblue/3));    // line impair
-$colorbacklineimpair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+round($isblue/3));    // line impair
-$colorbacklineimpairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line impair
-$colorbacklinepair1='255,255,255';    // line pair
-$colorbacklinepair2='255,255,255';    // line pair
-$colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));
+$colorbacklineimpair1='255,255,255';    // line impair
+$colorbacklineimpair2='255,255,255';    // line impair
+$colorbacklineimpairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));	// line impair
+$colorbacklinepair1=(244+round($isred/3)).','.(244+round($isgreen/3)).','.(244+round($isblue/3));    // line pair
+$colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+round($isblue/3));    // line pair
+$colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line pair
 $colorbackbody='#f9f9f9';
 $colortext='40,40,40';
 $fontsize='12';
@@ -125,12 +125,12 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABCARD1='234,234,234';
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
     $conf->global->THEME_ELDY_BACKBODY='#f9f9f9;';
-    $conf->global->THEME_ELDY_LINEPAIR1='242,242,242';
-    $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
-    $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_LINEIMPAIR1='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
+    $conf->global->THEME_ELDY_LINEPAIR1='242,242,242';
+    $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
+    $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='50,50,130';
     $conf->global->THEME_ELDY_FONT_SIZE1='12';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
@@ -163,6 +163,10 @@ if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($user->conf->
 	$colorbacklineimpairhover='';
 	$colorbacklinepairhover='';
 }
+
+// Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
+$colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
+$colorbacktabcard2=join(',',colorStringToArray($colorbacktabcard2));
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
 $colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
@@ -435,6 +439,8 @@ th .button {
 /* ============================================================================== */
 
 .hideobject { display: none; }
+.minwidth100 { min-width: 100px; }
+.minwidth200 { min-width: 200px; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
@@ -850,7 +856,7 @@ form#login {
 	vertical-align: middle;
 }
 .login_table_title {
-	max-width: 560px;
+	max-width: 530px;
 	color: #888888;
 	text-shadow: 1px 1px 1px #FFF;
 }
@@ -862,7 +868,7 @@ form#login {
 	margin-right: 10px;
 	padding-left:6px;
 	padding-right:6px;
-	padding-top:12px;
+	padding-top:16px;
 	padding-bottom:12px;
 	max-width: 560px;
 
@@ -974,10 +980,11 @@ img.login, img.printer, img.entity {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
 	background-repeat: no-repeat;
 }
+/*
 .span-icon-user input, .span-icon-password input {
 	margin-right: 30px;
-	width: 98%;
 }
+*/
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
@@ -1853,7 +1860,7 @@ table.liste td {
 }
 */
 
-.impair:hover {
+.impair:hover, td.nohover {
 <?php if ($colorbacklineimpairhover) { if ($usecss3) { ?>
 	background: rgb(<?php echo $colorbacklineimpairhover; ?>);
 <?php } else { ?>
@@ -1879,7 +1886,7 @@ table.liste td {
 	min-height: 18px; /* seems to not be used */
 }
 
-td.nohover, .pair:hover {
+.pair:hover {
 <?php if ($colorbacklinepairhover) { if ($usecss3) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>);
 <?php } else { ?>
@@ -2948,6 +2955,13 @@ div.dolEventError h1, div.dolEventError h2 {
 a span.select2-chosen
 {
 	font-weight: normal !important;
+}
+.select2-container .select2-choice {
+	background-image: none;
+}
+.select2-results .select2-no-results, .select2-results .select2-searching, .select2-results .select2-ajax-error, .select2-results .select2-selection-limit
+{
+	background: #FFFFFF;
 }
 
 

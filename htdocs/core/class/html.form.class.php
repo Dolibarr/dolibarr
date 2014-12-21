@@ -816,84 +816,15 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if (! empty($conf->use_javascript_ajax))
+           	if ($conf->use_javascript_ajax && ! $forcecombo)
             {
-            	if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
-	            {
-					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-	            	$out.= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
-	            }
-	            else
-				{
-					if (! $forcecombo)
-					{
-						$out.='
-						<script type="text/javascript">
-	        				$(document).ready(function () {
-	        					$(\'#'.$htmlname.'\').select2({
-	        						width: \'resolve\',
-	        						minimumInputLength: 0,
-	        				});
-	        			});
-	        		    </script>';
-					}
-										
-					if (count($events))		// Add management of event
-					{
-						$out.='<script type="text/javascript">
-								$(document).ready(function() {
-									jQuery("#'.$htmlname.'").change(function () {
-										var obj = '.json_encode($events).';
-							   			$.each(obj, function(key,values) {
-						    				if (values.method.length) {
-						    					runJsCodeForEvent'.$htmlname.'(values);
-						    				}
-										});
-									});
-
-								function runJsCodeForEvent'.$htmlname.'(obj) {
-									var id = $("#'.$htmlname.'").val();
-									var method = obj.method;
-									var url = obj.url;
-									var htmlname = obj.htmlname;
-									var showempty = obj.showempty;
-						    		$.getJSON(url,
-											{
-												action: method,
-												id: id,
-												htmlname: htmlname,
-												showempty: showempty
-											},
-											function(response) {
-												$.each(obj.params, function(key,action) {
-													if (key.length) {
-														var num = response.num;
-														if (num > 0) {
-															$("#" + key).removeAttr(action);
-														} else {
-															$("#" + key).attr(action, action);
-														}
-													}
-												});
-												$("select#" + htmlname).html(response.value);
-												if (response.num) {
-													var selecthtml_str = response.value;
-													var selecthtml_dom=$.parseHTML(selecthtml_str);
-													$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
-												} else {
-													$("#inputautocomplete"+htmlname).val("");
-												}
-												$("select#" + htmlname).change();	/* Trigger event change */
-											});
-								}
-							})
-							</script>';
-					}
-	            }
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            	$out.= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+            	$nodatarole=' data-role="none"';
             }
 
             // Construct $out and $outarray
-            $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">'."\n";
+            $out.= '<select id="'.$htmlname.'" class="flat minwidth100" name="'.$htmlname.'"'.$nodatarole.'>'."\n";
 
             $textifempty='';
             // Do not use textempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
@@ -1094,9 +1025,10 @@ class Form
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
             	$out.= ajax_combobox($htmlname, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+            	$nodatarole=' data-role="none"';
             }
 
-            if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
+            if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
             if ($showempty == 1) $out.= '<option value="0"'.($selected=='0'?' selected="selected"':'').'></option>';
             if ($showempty == 2) $out.= '<option value="0"'.($selected=='0'?' selected="selected"':'').'>'.$langs->trans("Internal").'</option>';
             $num = $this->db->num_rows($resql);
@@ -1280,7 +1212,15 @@ class Form
             $i = 0;
             if ($num)
             {
-                $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
+           		// Enhance with select2
+		        if ($conf->use_javascript_ajax)
+		        {
+					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+		           	$out.= ajax_combobox($htmlname);
+	            	$nodatarole=' data-role="none"';
+	            }
+            	
+                $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
                 if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected="selected"':'').'>&nbsp;</option>'."\n";
 
                 $userstatic=new User($this->db);
@@ -1355,16 +1295,6 @@ class Form
                 $out.= '<option value="">'.$langs->trans("None").'</option>';
             }
             $out.= '</select>';
-            
-           	$out.= '<script type="text/javascript">
-						$(document).ready(function() {
-
-						$(\'#'.$htmlname.'\').select2({
-							width: \'resolve\',
-							minimumInputLength: 0
-						});
-           			})
-           		   </script>';
         }
         else
         {
@@ -1701,6 +1631,8 @@ class Form
 		$outqty=1;
 		$outdiscount=0;
 
+		$maxlengtharticle=(empty($conf->global->PRODUCT_MAX_LENGTH_COMBO)?48:$conf->global->PRODUCT_MAX_LENGTH_COMBO);
+
         $label=$objp->label;
         if (! empty($objp->label_translated)) $label=$objp->label_translated;
         if (! empty($filterkey) && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
@@ -1720,11 +1652,11 @@ class Form
 			else if ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
         }
         $opt.= '>';
-        $opt.= $objp->ref.' - '.dol_trunc($label,32).' - ';
+        $opt.= $objp->ref.' - '.dol_trunc($label,$maxlengtharticle).' - ';
 
         $objRef = $objp->ref;
         if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
-        $outval.=$objRef.' - '.dol_trunc($label,32).' - ';
+        $outval.=$objRef.' - '.dol_trunc($label,$maxlengtharticle).' - ';
 
         $found=0;
 
@@ -1770,7 +1702,7 @@ class Form
         }
 
 		// Price by quantity
-		if (!empty($objp->quantity) && $objp->quantity >= 1 && $conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)
+		if (!empty($objp->quantity) && $objp->quantity >= 1 && ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 		{
 			$found = 1;
 			$outqty=$objp->quantity;
@@ -1896,7 +1828,7 @@ class Form
             // mode=2 means suppliers products
             $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished;
             print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
-            print ($hidelabel?'':$langs->trans("RefOrLabel").' : ').'<input type="text" size="16" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
+            print ($hidelabel?'':$langs->trans("RefOrLabel").' : ').'<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
         }
         else
         {
@@ -2004,8 +1936,8 @@ class Form
                 $outval.=$objRef;
                 if (! empty($objp->idprodfournprice)) $outval.=' ('.$objRefFourn.')';
                 $outval.=' - ';
-                $opt.=dol_trunc($objp->label,18).' - ';
-                $outval.=dol_trunc($label,18).' - ';
+                $opt.=dol_trunc($label, 72).' - ';
+                $outval.=dol_trunc($label, 72).' - ';
 
                 if (! empty($objp->idprodfournprice))
                 {
@@ -4583,11 +4515,20 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $num = $this->db->num_rows($resql);
+    		// Enhance with select2
+	        if ($conf->use_javascript_ajax)
+	        {
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	           	$out.= ajax_combobox($htmlname);
+            	$nodatarole=' data-role="none"';
+            }
+
+            $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
+            
+        	$num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
             {
-                $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
                 if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
 
                 while ($i < $num)
@@ -4616,8 +4557,8 @@ class Form
             }
             else
             {
-                $out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
-                $out.= '<option value="">'.$langs->trans("None").'</option>';
+                if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'></option>'."\n";
+                $out.= '<option value="" disabled="disabled">'.$langs->trans("NoUserGroupDefined").'</option>';
             }
             $out.= '</select>';
         }

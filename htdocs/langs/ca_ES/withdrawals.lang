@@ -79,10 +79,11 @@ CreditDate=Abonada el
 WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country %s (Your country is not supported)
 ShowWithdraw=Veure domiciliació
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=No obstant això, si la factura té pendent algun pagament per domiciliació, no serà tancada per a permetre la gestió de la domiciliació.
-DoStandingOrdersBeforePayments=Aquesta pestanya us permet realitzar una petició de domiciliació. Un cop, podeu ingressar el pagament a la factura per procedir al seu tancament.
+DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once donee, go into menu Bank->Withdrawal to manage the standing order. When standing order is closed, payment on invoice will be automatically recorded, and invoice closed if remainder to pay is null.
 WithdrawalFile=Arxiu de la domiciliació
 SetToStatusSent=Classificar com "Arxiu enviat"
 ThisWillAlsoAddPaymentOnInvoice=Es crearan els pagaments de les factures i les classificarà com pagades
+StatisticsByLineStatus=Statistics by status of lines
 
 ### Notifications
 InfoCreditSubject=Abonament de domiciliació %s pel banc

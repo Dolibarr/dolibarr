@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Listi yfir gangi samningur línur
 ListOfRunningServices=Listi af hlaupandi þjónusta
 NotActivatedServices=Óvirkur þjónustu (meðal gildi samninga)
 BoardNotActivatedServices=Þjónusta til virkja meðal gildi samninga
-LastContracts=Last % contracts
+LastContracts=Last %s contracts
 LastActivatedServices=Last %s  virkt þjónusta
 LastModifiedServices=Last %s  breytt þjónusta
 EditServiceLine=Breyta þjónustu línu
@@ -91,6 +91,7 @@ ListOfServicesToExpire=List of Services to expire
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sölufulltrúi undirrita samning

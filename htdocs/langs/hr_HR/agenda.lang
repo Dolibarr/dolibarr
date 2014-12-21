@@ -29,6 +29,7 @@ ActionsToDoBy=Događaj dodjeljen
 ActionsDoneBy=Događaji završeni od strane korisnika
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Svi moji događaji/zadaci
 AllActions= Svi događaji/zadaci
 ViewList=Lista

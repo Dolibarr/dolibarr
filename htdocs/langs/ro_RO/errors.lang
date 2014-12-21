@@ -138,6 +138,24 @@ ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Eroare, acest membru nu este �
 ErrorThereIsSomeDeliveries=Eroare, există unele livrări legate de acest transport. Ștergere refuzată.
 ErrorCantDeletePaymentReconciliated=Nu se poate șterge o plată care a generat o tranzacție bancară care a fost conciliată
 ErrorCantDeletePaymentSharedWithPayedInvoice=Nu se poate șterge o plată partajată de cel puțin un factură cu statutul platită
+ErrorPriceExpression1=Nu se poate atribui la constanta '%s'
+ErrorPriceExpression2=Nu se poate redefini  funcția built-in  '%s'
+ErrorPriceExpression3=Variabila nedefinita '%s'  în definiția funcției
+ErrorPriceExpression4=Caracter ilegal '%s'
+ErrorPriceExpression5=Neașteptat '%s'
+ErrorPriceExpression6=Număr greșit de argumente (%s dat, %s așteptat)
+ErrorPriceExpression8=Operator neașteptat '%s'
+ErrorPriceExpression9=A apărut o eroare neașteptată
+ErrorPriceExpression10=Iperator '%s' lipsă operand
+ErrorPriceExpression11=Asteptam '%s'
+ErrorPriceExpression14=Împărţirea la zero,
+ErrorPriceExpression17=Variabila  '%s' nedefinită
+ErrorPriceExpression19=Expresia nu a fost găsită
+ErrorPriceExpression20=Expresie goală
+ErrorPriceExpression21=Rezultat gol '%s'
+ErrorPriceExpression22=Rezultat negativ '%s'
+ErrorPriceExpressionInternal=Eroare internă '%s'
+ErrorPriceExpressionUnknown=Eroare Necunoscută '%s'
 
 # Warnings
 WarningMandatorySetupNotComplete=Parametri de setare obligatorii nu sunt încă definiţi

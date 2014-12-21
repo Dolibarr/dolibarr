@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - printipp
+PrintIPPSetup=Configurarea modulului Imprimare directă
+PrintIPPDesc=Acest modul adauga un buton de imprimare pentru a trimite documentele direct la o imprimantă. Este nevoie de un sistem Linux cu CUPS instalat.
+PRINTIPP_ENABLED=Afișare pictogramă "Print Direct" în listele de documente
+PRINTIPP_HOST=Server print
+PRINTIPP_PORT=Port
+PRINTIPP_USER=Login
+PRINTIPP_PASSWORD=Parolă
+NoPrinterFound=Nu există imprimante (verificați setarea CUPS)
+FileWasSentToPrinter=Fișierul %s a fost trimis la imprimantă
+NoDefaultPrinterDefined=Nicio imprimantă implicită definită
+DefaultPrinter=Imprimantă implicită
+Printer=Imprimanta
+CupsServer=Server CUPS

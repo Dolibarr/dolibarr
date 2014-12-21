@@ -252,8 +252,7 @@ CivilityMME=Sra.
 CivilityMR=Sr.
 CivilityMLE=Dr.
 CivilityMTRE=Eng.
-# CivilityDR=Doctor
-
+CivilityDR=Doutor
 ##### Currencies #####
 Currencyeuros=Euros
 CurrencyAUD=Dólar UA
@@ -290,10 +289,10 @@ CurrencyXOF=Francos CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=PCP Francos
 CurrencySingXPF=Franco CFP
-
-# CurrencyCentSingEUR=cent
-# CurrencyThousandthSingTND=thousandth
-
+CurrencyCentSingEUR=Cêntimos 
+CurrencyCentINR=paisa
+CurrencyCentSingINR=paisa
+CurrencyThousandthSingTND=milésimo
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Campanha de mala direta
@@ -302,11 +301,10 @@ DemandReasonTypeSRC_CAMP_PHO=Campanha de telefone
 DemandReasonTypeSRC_CAMP_FAX=Campanha Fax
 DemandReasonTypeSRC_COMM=Contato comercial
 DemandReasonTypeSRC_SHOP=Loja contato
-# DemandReasonTypeSRC_WOM=Word of mouth
+DemandReasonTypeSRC_WOM=Palavra de boca
 DemandReasonTypeSRC_PARTNER=Parceiro
 DemandReasonTypeSRC_EMPLOYEE=Empregado
 DemandReasonTypeSRC_SPONSORING=Patrocínio
-
 #### Paper formats ####
 PaperFormatEU4A0=Formato 4A0
 PaperFormatEU2A0=Formato 2A0

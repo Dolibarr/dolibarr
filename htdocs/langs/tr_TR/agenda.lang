@@ -29,6 +29,7 @@ ActionsToDoBy=Etkinlikten etkilenen
 ActionsDoneBy=Etkinliği yapan
 ActionsForUser=Kullanıcı etkinlikleri
 ActionsForUsersGroup=Grupun tüm üyelerine ait etkinlikler
+ActionAssignedTo=Event assigned to
 AllMyActions= Tüm etkinliklerim/görevlerim
 AllActions= Tüm etkinlikler/görevler
 ViewList=Liste görünümü
@@ -44,7 +45,7 @@ AgendaExtSitesDesc=Bu sayfa takvimlerin dış kaynaklarında Dolibarr gündemind
 ActionsEvents=Dolibarr'ın otomatik olarak gündemde bir etkinlik oluşturacağı eylemler
 PropalValidatedInDolibarr=%s Teklifi doğrulandı
 InvoiceValidatedInDolibarr=%s Faturası doğrulandı
-InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
+InvoiceValidatedInDolibarrFromPos=POS tan doğrulanan fatura %s
 InvoiceBackToDraftInDolibarr=%s Faturasını taslak durumuna geri götür
 InvoiceDeleteDolibarr=%s faturası silindi
 OrderValidatedInDolibarr= %s Siparişi doğrulandı
@@ -67,8 +68,8 @@ DateActionDoneEnd= Gerçek bitiş tarihi
 DateActionStart= Başlama tarihi
 DateActionEnd= Bitiş tarihi
 AgendaUrlOptions1=Süzgeç çıktısına ayrıca aşağıdaki parametreleri ekleyebilirsiniz:
-AgendaUrlOptions2=Eylem çıktılarını eylem, oluşturan, eylemden etkilenen ya da eylemi yapan kullanıcı <b>login=%s</b> sınırlayacak kullanıcı <b>%s</b>.
-AgendaUrlOptions3=<b>kullanıcı=%s</b>,  bir <b>%s</b> kullanıcısına ait eylemlerin çıkışlarını sınırlamak içindir.
+AgendaUrlOptions2=Eylem çıktılarını eylem, oluşturan, eylemden etkilenen ya da eylemi yapan kullanıcı <b>kullanıcı girişi=%s</b> sınırlayacak kullanıcı <b>%s</b>.
+AgendaUrlOptions3=<b>kullanıcı girişi=%s</b>,  bir <b>%s</b> kullanıcısına ait eylemlerin çıkışlarını sınırlamak içindir.
 AgendaUrlOptions4=Çıktıyı kullanıcı <b>%s</b> tarafından etkilenen etkinliklerle sınırlamak için<b>logint=%s</b>.
 AgendaUrlOptionsProject=<b>proje=PROJECT_ID</b>, bu <b>PROJECT_ID</b> projesi ile ilişkilendirilmiş eylemlerin çıkışını çıkışını sınırlamak içindir.
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
@@ -78,7 +79,7 @@ ExportDataset_event1=Gündem etkinlikleri listesi
 DefaultWorkingDays=Varsayılan haftalık çalışma günleri aralığı (Örnek: 1-5, 1-6)
 DefaultWorkingHours=Varsayılan günlük çalışma saatleri (Örnek: 9-18)
 # External Sites ical
-ExportCal=Takvim ver
+ExportCal=Takvim dışaaktar
 ExtSites=Dış takvimleri içeaktar
 ExtSitesEnableThisTool=Gündemde dış takvimleri (genel ayarlarda tanımlanan) göster. Kullanıcılar tarafından tanımlanan dış takvimleri etkilemez.
 ExtSitesNbOfAgenda=Takvimlerin sayısı

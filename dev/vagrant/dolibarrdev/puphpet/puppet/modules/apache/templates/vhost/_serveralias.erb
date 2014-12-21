@@ -1,7 +1,0 @@
-<% if @serveraliases and ! @serveraliases.empty? -%>
-
-  ## Server aliases
-<% Array(@serveraliases).each do |serveralias| -%>
-  ServerAlias <%= serveralias %>
-<% end -%>
-<% end -%>

@@ -1,5 +1,0 @@
-revision-id: menesis@pov.lt-20100309191856-4wmfqzc803fj300x
-date: 2010-03-09 21:18:56 +0200
-build-date: 2010-03-14 00:42:43 -0800
-revno: 2634
-branch-nick: mytest

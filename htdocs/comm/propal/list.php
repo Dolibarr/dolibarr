@@ -435,14 +435,14 @@ if ($result)
 				if($num<$limit){
 					$var=!$var;
 					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHT").'</td>';
-					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '<td colspan="6" align="right">'.price($total).'</td><td colspan="3"></td>';
 					print '</tr>';
 				}
 				else
 				{
 					$var=!$var;
 					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHTforthispage").'</td>';
-					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '<td colspan="6" align="right">'.price($total).'</td><td colspan="3"></td>';
 					print '</tr>';
 				}
 

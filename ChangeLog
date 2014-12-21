@@ -5,14 +5,15 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.8 compared to 3.7.* *****
 For users:
-- New:
+- New: Use new combobox.
 
 For translators:
 - Update language files.
 - New: When a translation is not available we always jump to en_US and only en_US.
 
 For developers:
-- New: Function yn can show a visual checkbox
+- New: Function yn can show a visual checkbox.
+- New: Introduced select2 jquery plugin.
 
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
@@ -193,6 +194,7 @@ Dolibarr better:
 - Fix: [ bug #1595 ] Selected boolean extrafield in intervention creation page, does not save state
 - Fix: Show sender Country on PDF docs when sender Country <> receiver Country
 - Fix: [ bug #1624 ] Use lowest buying price for margin when selling with POS
+- Fix: [ bug #1749 ] Undefined $mailchimp
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
@@ -332,6 +334,9 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Properties "civilite_id" were renamed into "civility_id".
 - Remove add_photo_web() that is ot used anymore by core code.
 
+
+***** ChangeLog for 3.5.7 compared to 3.5.6 *****
+Fix: Paypal link were broken dur to SSL v3 closed.
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

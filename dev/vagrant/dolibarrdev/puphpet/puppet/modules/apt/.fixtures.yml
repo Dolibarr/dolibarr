@@ -1,7 +1,0 @@
-fixtures:
-  repositories:
-    "stdlib":
-      "repo": "git://github.com/puppetlabs/puppetlabs-stdlib.git"
-      "ref": "v2.2.1"
-  symlinks:
-    "apt": "#{source_dir}"
