@@ -1256,7 +1256,7 @@ class Form
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
         if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut <> 0";
-        if (! empty($morefilter)) $sql.=$morefilter;
+        if (! empty($morefilter)) $sql.=" ".$morefilter;
         $sql.= " ORDER BY u.lastname ASC";
 
         dol_syslog(get_class($this)."::select_dolusers", LOG_DEBUG);
@@ -1342,7 +1342,7 @@ class Form
                 $out.= '<option value="">'.$langs->trans("None").'</option>';
             }
             $out.= '</select>';
-            
+
        		if (! empty($conf->use_javascript_ajax) && ! $show_empty)	// ajaxcombo works only on list with no empty value because of &nbsp;
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
