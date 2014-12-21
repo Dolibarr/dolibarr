@@ -1312,7 +1312,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Bank Account
-    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->module->banque->enabled) {
+    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled) {
         print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
         $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';
