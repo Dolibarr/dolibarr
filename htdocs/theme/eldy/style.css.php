@@ -679,7 +679,7 @@ div.mainmenu {
 	position : relative;
 	background-repeat:no-repeat;
 	background-position:center top;
-	height: <?php echo ($heightmenu-19); ?>px;
+	height: <?php echo ($heightmenu-17); ?>px;
 	margin-left: 0px;
 	min-width: 40px;
 }
