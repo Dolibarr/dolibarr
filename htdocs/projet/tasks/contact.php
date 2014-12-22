@@ -215,8 +215,6 @@ if ($id > 0 || ! empty($ref))
     		print '</table>';
 
     		dol_fiche_end();
-
-    		print '<br>';
 		}
 
 		// To verify role of users

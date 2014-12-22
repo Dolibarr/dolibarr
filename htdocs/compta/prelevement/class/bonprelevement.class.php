@@ -58,7 +58,7 @@ class BonPrelevement extends CommonObject
 
     var $invoice_in_error=array();
 
-    
+
     /**
      *	Constructor
      *
@@ -1634,7 +1634,7 @@ class BonPrelevement extends CommonObject
      *	@param	int		$nombre			0 or 1
      *	@param	float	$total			Total
      *	@param	string	$CrLf			End of line character
-     *	@return	SEPA
+     *	@return	string					String with SEAP Sender
      */
     function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf='\n')
     {	// SEPA INITIALISATION

@@ -32,6 +32,8 @@
 function ecm_prepare_dasboard_head($object)
 {
 	global $langs, $conf, $user, $form;
+	global $helptext1, $helptext2;
+
 	$h = 0;
 	$head = array();
     $helptext =$langs->trans("ECMAreaDesc").'<br>';

@@ -561,7 +561,7 @@ class Fichinter extends CommonObject
 	 *	Returns the next non used reference of intervention
 	 *	depending on the module numbering assets within FICHEINTER_ADDON
 	 *
-	 *	@param	    Societe		$soc		Object society
+	 *	@param	    Societe		$soc		Thirdparty object
 	 *	@return     string					Free reference for intervention
 	 */
 	function getNextNumRef($soc)
