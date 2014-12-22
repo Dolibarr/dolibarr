@@ -57,7 +57,7 @@ $projectstatic = new Project($db);
 // Add new contact
 if ($action == 'addcontact' && $user->rights->projet->creer)
 {
-	$result = $object->fetch($id);
+	$result = $object->fetch($id, $ref);
 
     if ($result > 0 && $id > 0)
     {
@@ -87,7 +87,7 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 // bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
-	if ($object->fetch($id))
+	if ($object->fetch($id, $ref))
 	{
 	    $result=$object->swapContactStatus(GETPOST('ligne'));
 	}
@@ -100,7 +100,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer)
 // Efface un contact
 if ($action == 'deleteline' && $user->rights->projet->creer)
 {
-	$object->fetch($id);
+	$object->fetch($id, $ref);
 	$result = $object->delete_contact($_GET["lineid"]);
 
 	if ($result >= 0)
@@ -152,7 +152,7 @@ $userstatic = new User($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($object->fetch($id) > 0)
+	if ($object->fetch($id, $ref) > 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
@@ -245,7 +245,7 @@ if ($id > 0 || ! empty($ref))
 		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	    print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+	    print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 		print '</td></tr>';
 
 		// Label

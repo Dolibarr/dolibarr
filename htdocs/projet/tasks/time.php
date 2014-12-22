@@ -72,7 +72,7 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 
 	if (! $error)
 	{
-		$object->fetch($id);
+		$object->fetch($id, $ref);
 
 		$object->timespent_note = $_POST["timespent_note"];
 		$object->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
@@ -109,7 +109,7 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 
 	if (! $error)
 	{
-		$object->fetch($id);
+		$object->fetch($id, $ref);
 
 		$object->timespent_id = $_POST["lineid"];
 		$object->timespent_note = $_POST["timespent_note_line"];
@@ -183,7 +183,7 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Fiche projet en mode visu
 	*/
-	if ($object->fetch($id) >= 0)
+	if ($object->fetch($id, $ref) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
@@ -277,7 +277,7 @@ if ($id > 0 || ! empty($ref))
 			$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-		print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 		print '</td></tr>';
 
 		// Label
