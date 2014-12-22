@@ -32,6 +32,8 @@
 function ecm_prepare_dasboard_head($object)
 {
 	global $langs, $conf, $user;
+	global $helptext1, $helptext2;
+
 	$h = 0;
 	$head = array();
 
