@@ -1851,7 +1851,7 @@ abstract class CommonObject
             }
         }
         else
-        {
+		{
             $sql.= "(fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
             $sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
         }
