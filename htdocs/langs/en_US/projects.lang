@@ -3,6 +3,7 @@ RefProject=Ref. project
 ProjectId=Project Id
 Project=Project
 Projects=Projects
+ProjectStatus=Project status
 SharedProject=Everybody
 PrivateProject=Contacts of project
 MyProjectsDesc=This view is limited to projects you are a contact for (whatever is the type).
