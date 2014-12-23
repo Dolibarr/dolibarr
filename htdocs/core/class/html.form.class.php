@@ -2504,7 +2504,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-        if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        if ($user->admin && ! $noadmininfo) print $this->textwithpicto('', $langs->transnoentities("YouCanChangeValuesForThisListFromDictionarySetup"),  1, 'info', '', 0, 3);
     }
 
 
@@ -2601,7 +2601,7 @@ class Form
                     $i++;
                 }
                 print "</select>";
-                if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+                if ($user->admin) print $this->textwithpicto('', $langs->transnoentities("YouCanChangeValuesForThisListFromDictionarySetup"),  1, 'info', '', 0, 3);
             } else {
                 print $langs->trans("NoShippingMethodDefined");
             }
@@ -3557,7 +3557,7 @@ class Form
         	$out.= '</option>';
         }
         $out.= '</select>';
-        if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        if ($user->admin) $out.= $this->textwithpicto('', $langs->transnoentities("YouCanChangeValuesForThisListFromDictionarySetup"),  1, 'info', '', 0, 3);
         return $out;
     }
 
