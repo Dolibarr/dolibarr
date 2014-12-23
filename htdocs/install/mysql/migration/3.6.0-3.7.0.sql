@@ -1136,6 +1136,8 @@ ALTER TABLE llx_facture_fourn MODIFY COLUMN ref VARCHAR(255);
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_ext VARCHAR(255);
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_supplier VARCHAR(255);
 
+UPDATE llx_facture_fourn SET ref = rowid WHERE ref IS NULL or ref = '';
+
 ALTER TABLE llx_facture_rec ADD COLUMN revenuestamp double(24,8) DEFAULT 0;
 ALTER TABLE llx_facturedet_rec MODIFY COLUMN tva_tx double(6,3);
 ALTER TABLE llx_facturedet_rec ADD COLUMN fk_contract_line integer NULL;
