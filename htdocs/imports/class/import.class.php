@@ -22,8 +22,7 @@
  */
 
 /**
- *	\class 		Import
- *	\brief 		Class to manage imports
+ *	Class to manage imports
  */
 class Import
 {
@@ -313,10 +312,12 @@ class Import
 		{
 			if (! $notrigger)
 			{
+				/* Not used. This is not a business object. To convert it we must herit from CommonObject
                 // Call trigger
                 $result=$this->call_trigger('IMPORT_DELETE',$user);
-                if ($result < 0) $error++;          
+                if ($result < 0) $error++;
                 // End call triggers
+                 */
 			}
 		}
 
