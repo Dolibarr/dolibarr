@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.5.7 compared to 3.5.6 *****
 Fix: Paypal link were broken dur to SSL v3 closed.
+Fix: [ bug #1752 ] Date filter of margins module, filters since 12H instead of 00H
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973
