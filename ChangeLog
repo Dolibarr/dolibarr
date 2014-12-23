@@ -2,9 +2,6 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 3.5.7 compared to 3.5.6 *****
-Fix: Paypal link were broken dur to SSL v3 closed.
-
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
 - Fix: bug 1588 : relative discount.
@@ -153,6 +150,9 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Properties "civilite_id" were renamed into "civility_id".
 - Remove add_photo_web() that is ot used anymore by core code.
 
+
+***** ChangeLog for 3.5.7 compared to 3.5.6 *****
+Fix: Paypal link were broken dur to SSL v3 closed.
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973
