@@ -2109,12 +2109,14 @@ if ($action == 'create')
 
 				// Create an invoice and classify billed
 				if ($object->statut == 2) {
-					if (! empty($conf->facture->enabled) && $user->rights->facture->creer) {
+					if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
+					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddBill") . '</a></div>';
 					}
 
-					$arraypropal = $object->getInvoiceArrayList();
-					if (is_array($arraypropal) && count($arraypropal) > 0) {
+					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
+					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || ! empty($conf->global->WORKFLOW_PROPAL_CAN_CLASSIFIED_BILLED_WITHOUT_INVOICES))
+					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=classifybilled&amp;socid=' . $object->socid . '">' . $langs->trans("ClassifyBilled") . '</a></div>';
 					}
 				}

@@ -1987,16 +1987,19 @@ class Propal extends CommonObject
                 {
                     $linkedInvoices[] = $objectid[$i];
                 }
-                // Cas des factures liees via la commande
+                // Cas des factures liees par un autre objet (ex: commande)
                 else
-                {
+				{
                     $this->fetchObjectLinked($objectid[$i],$objecttype);
                     foreach($this->linkedObjectsIds as $subobjecttype => $subobjectid)
                     {
                         $numj=count($subobjectid);
                         for ($j=0;$j<$numj;$j++)
                         {
-                            $linkedInvoices[] = $subobjectid[$j];
+                        	if ($subobjecttype == 'facture')
+                        	{
+                            	$linkedInvoices[] = $subobjectid[$j];
+                        	}
                         }
                     }
                 }
