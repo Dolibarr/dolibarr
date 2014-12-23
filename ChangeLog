@@ -100,6 +100,7 @@ For users:
 - Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
+- Fix: [ bug #1533 ] Links triggers do not show trigger error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 - Fix: [ bug #1535 ] Supplier invoice Extrafields are not shown
 - Fix: datepicker first day of week can be monday by setting into display setup
