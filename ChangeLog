@@ -6,6 +6,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.8 compared to 3.7.* *****
 For users:
 - New: Use new combobox.
+- New: Add hidden option MAXTABS_IN_CARD.
 
 For translators:
 - Update language files.
