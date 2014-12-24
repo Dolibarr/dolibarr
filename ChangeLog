@@ -16,6 +16,7 @@ English Dolibarr ChangeLog
 - Fix: Show sender Country on PDF docs when sender Country <> receiver Country
 - Fix: [ bug #1624 ] Use lowest buying price for margin when selling with POS
 - Fix: [ bug #1749 ] Undefined $mailchimp
+- Fix: [ bug #1736 ] Failing supplier Elephant numeration module with some masks
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
