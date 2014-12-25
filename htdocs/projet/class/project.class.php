@@ -568,16 +568,9 @@ class Project extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('PROJECT_DELETE',$user);
-                if ($result < 0)
-                {
+
+                if ($result < 0) {
                     $error++;
-                    if (! empty($interface->errors))
-                    {
-                		foreach ($interface->errors as $errmsg ) {
-                			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-                			$this->errors[] =$errmsg;
-                		}
-                    }
                 }
                 // End call triggers
             }
