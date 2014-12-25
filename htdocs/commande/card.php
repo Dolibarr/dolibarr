@@ -922,8 +922,8 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model=$object->modelpdf;
-				if (empty($model)) { $tmp=getListOfModels($db, 'order'); $keys=array_keys($tmp); $model=$keys[0]; }
 				$ret = $object->fetch($id); // Reload to get new records
+
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
@@ -971,8 +971,8 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model=$object->modelpdf;
-				if (empty($model)) { $tmp=getListOfModels($db, 'order'); $keys=array_keys($tmp); $model=$keys[0]; }
 				$ret = $object->fetch($id); // Reload to get new records
+
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
