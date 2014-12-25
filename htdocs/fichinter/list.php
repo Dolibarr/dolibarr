@@ -121,7 +121,13 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 
-	$urlparam="&amp;socid=$socid";
+	$urlparam='';
+	if ($socid) $urlparam.="&socid=".$socid;
+	if ($search_ref) $urlparam.="&search_ref=".urlencode($search_ref);
+	if ($search_company) $urlparam.="&search_company=".urlencode($search_company);
+	if ($search_desc) $urlparam.="&search_desc=".urlencode($search_desc);
+	if ($search_status != '' && $search_status > -1) $urlparam.="&search_status=".urlencode($search_status);
+
 	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -193,7 +199,7 @@ if ($result)
 			print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
 		}
 		print '<td align="right">'.$interventionstatic->LibStatut($objp->fk_statut,5).'</td>';
-		
+
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 
@@ -207,7 +213,7 @@ if ($result)
 		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td><td>&nbsp;</td>';
 		print '</tr>';
 	}
-	
+
 	print '</table>';
 	print "</form>\n";
 	$db->free($result);
