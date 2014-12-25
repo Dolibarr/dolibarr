@@ -149,6 +149,7 @@ For developers:
 - Qual: Renamed all files & links "fiche.php" into "card.php".
 - Qual: Replace all constants COMPTA_* by ACCOUNTING_*.
 - Qual: Replace all constants ACCOUNTINGEX_* by ACCOUNTING_* to simplify migration of the module
+- Fix: [ bug #1724 ] Can't add a submenu to projects
 
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
