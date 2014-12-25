@@ -12,7 +12,7 @@
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2014 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
- * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2014 Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2013      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014      Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  *
