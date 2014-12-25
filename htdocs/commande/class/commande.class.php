@@ -44,6 +44,11 @@ class Commande extends CommonOrder
     public $fk_element = 'fk_commande';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
+
     var $id;
 
     var $socid;		// Id client

@@ -54,6 +54,12 @@ abstract class CommonObject
 
     // No constructor as it is an abstract class
 
+    /**
+     * Column name of the ref field.
+     * @var string
+     */
+    protected $table_ref_field = '';
+
 
     /**
      * Check an object id/ref exists
@@ -630,6 +636,32 @@ abstract class CommonObject
         return $result;
     }
 
+
+    /**
+     * Looks for an object with ref matching the wildcard provided
+     * It does only work when $this->table_ref_field is set
+     *
+     * @param string $ref Wildcard
+     * @return int >1 = OK, 0 = Not found or table_ref_field not defined, <0 = KO
+     */
+    public function fetchOneLike($ref)
+    {
+        if (!$this->table_ref_field) {
+            return 0;
+        }
+
+        $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE '.$this->table_ref_field.' LIKE "'.$this->db->escape($ref).'" LIMIT 1';
+
+        $query = $this->db->query($sql);
+
+        if (!$this->db->num_rows($query)) {
+            return 0;
+        }
+
+        $result = $this->db->fetch_object($query);
+
+        return $this->fetch($result->rowid);
+    }
 
     /**
      *	Load data for barcode into properties ->barcode_type*
