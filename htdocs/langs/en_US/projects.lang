@@ -11,7 +11,6 @@ ProjectsDesc=This view presents all projects (your user permissions grant you pe
 MyTasksDesc=This view is limited to projects or tasks you are a contact for (whatever is the type).
 TasksPublicDesc=This view presents all projects and tasks you are allowed to read.
 TasksDesc=This view presents all projects and tasks (your user permissions grant you permission to view everything).
-Myprojects=My projects
 ProjectsArea=Projects area
 NewProject=New project
 AddProject=Create project
