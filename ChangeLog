@@ -103,6 +103,7 @@ For users:
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 - Fix: [ bug #1535 ] Supplier invoice Extrafields are not shown
 - Fix: datepicker first day of week can be monday by setting into display setup
+- Fix: [ bug #575 ] GED doesn't works if there is "/" in a mask
 
 For users, new experimental module (need to set feature level of instance to experimental to see them):
 - New: Module Accounting Expert to manage accountancy
