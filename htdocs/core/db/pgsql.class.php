@@ -402,7 +402,7 @@ class DoliDBPgsql extends DoliDB
 		if ((! empty($host) && $host == "socket") && ! defined('NOLOCALSOCKETPGCONNECT'))
 		{
 			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";    // $name may be empty
-			$this->db = pg_connect($con_string);
+			$this->db = @pg_connect($con_string);
 		}
 
 		// if local connection failed or not requested, use TCP/IP
@@ -412,7 +412,7 @@ class DoliDBPgsql extends DoliDB
 			if (! $port) $port = 5432;
 
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
-			$this->db = pg_connect($con_string);
+			$this->db = @pg_connect($con_string);
 		}
 
 		// now we test if at least one connect method was a success
