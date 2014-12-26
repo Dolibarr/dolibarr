@@ -62,7 +62,7 @@ class pdf_proforma extends ModelePDFCommandes
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	function __construct(DoliDB $db)
 	{
 		global $conf,$langs,$mysoc;
 

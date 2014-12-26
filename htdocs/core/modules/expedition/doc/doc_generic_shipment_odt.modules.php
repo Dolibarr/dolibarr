@@ -48,7 +48,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	function __construct(DoliDB $db)
 	{
 		global $conf,$langs,$mysoc;
 

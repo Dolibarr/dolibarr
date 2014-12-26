@@ -27,6 +27,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 abstract class PdfDocumentModel extends CommonDocGenerator {
 
 	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
+	 */
+	public abstract function __construct(DoliDB $db);
+
+	/**
 	 * Return a string with full address formated
 	 *
 	 * @param Translate $outputlangs Output langs object
