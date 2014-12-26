@@ -115,9 +115,11 @@ For users:
 - Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
+- Fix: [ bug #1533 ] Links triggers do not show trigger error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 - Fix: [ bug #1535 ] Supplier invoice Extrafields are not shown
 - Fix: datepicker first day of week can be monday by setting into display setup
+- Fix: [ bug #575 ] GED doesn't works if there is "/" in a mask
 
 For users, new experimental module (need to set feature level of instance to experimental to see them):
 - New: Module Accounting Expert to manage accountancy
@@ -164,6 +166,7 @@ For developers:
 - Qual: Renamed all files & links "fiche.php" into "card.php".
 - Qual: Replace all constants COMPTA_* by ACCOUNTING_*.
 - Qual: Replace all constants ACCOUNTINGEX_* by ACCOUNTING_* to simplify migration of the module
+- Fix: [ bug #1724 ] Can't add a submenu to projects
 
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -197,6 +200,9 @@ Dolibarr better:
 - Fix: [ bug #1624 ] Use lowest buying price for margin when selling with POS
 - Fix: [ bug #1749 ] Undefined $mailchimp
 - Fix: [ bug #1736 ] Failing supplier Elephant numeration module with some masks
+- Fix: [ bug #1649 ] Cancel button of several thirdparty actions, does the same thing as modify
+- Fix: [ bug #1736 ] Failing supplier Elephant numeration module with some masks
+- Fix: [ bug #1731 ] Can't use quick navigation on project tasks secondary tabs
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
@@ -339,6 +345,9 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 
 ***** ChangeLog for 3.5.7 compared to 3.5.6 *****
 Fix: Paypal link were broken dur to SSL v3 closed.
+Fix: [ bug #1769 ] Error when installing to a PostgreSQL DB that contains numbers
+Fix: [ bug #1752 ] Date filter of margins module, filters since 12H instead of 00H
+Fix: [ bug #1757 ] Sorting breaks product/service statistics
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

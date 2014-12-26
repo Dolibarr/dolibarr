@@ -357,10 +357,8 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     			$outputlangs->setDefaultLang($newlang);
     		}
     		$model=$object->modelpdf;
-    		if (empty($model)) {
-    			$tmp=getListOfModels($db, 'order_supplier'); $keys=array_keys($tmp); $model=$keys[0];
-    		}
     		$ret = $object->fetch($id); // Reload to get new records
+
     		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		if ($result < 0) dol_print_error($db,$result);
     	}
@@ -462,10 +460,8 @@ else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer
     			$outputlangs->setDefaultLang($newlang);
     		}
     		$model=$object->modelpdf;
-    		if (empty($model)) {
-    			$tmp=getListOfModels($db, 'order_supplier'); $keys=array_keys($tmp); $model=$keys[0];
-    		}
     		$ret = $object->fetch($id); // Reload to get new records
+
     		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		if ($result < 0) dol_print_error($db,$result);
     	}
@@ -526,10 +522,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
     			$outputlangs->setDefaultLang($newlang);
     		}
     		$model=$object->modelpdf;
-    		if (empty($model)) {
-    			$tmp=getListOfModels($db, 'order_supplier'); $keys=array_keys($tmp); $model=$keys[0];
-    		}
     		$ret = $object->fetch($id); // Reload to get new records
+
     		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		if ($result < 0) dol_print_error($db,$result);
     	}

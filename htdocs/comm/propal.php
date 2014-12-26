@@ -189,8 +189,8 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model=$object->modelpdf;
-				if (empty($model)) { $tmp=getListOfModels($db, 'propal'); $keys=array_keys($tmp); $model=$keys[0]; }
 				$ret = $object->fetch($id); // Reload to get new records
+
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
@@ -499,9 +499,6 @@ else if ($action == 'add' && $user->rights->propal->creer)
 			    			$outputlangs->setDefaultLang($newlang);
 			    		}
 			    		$model=$object->modelpdf;
-			    		if (empty($model)) {
-			    			$tmp=getListOfModels($db, 'propal'); $keys=array_keys($tmp); $model=$keys[0];
-			    		}
 
 			    		$ret = $object->fetch($id); // Reload to get new records
 			    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1314,7 +1311,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Bank Account
-    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->module->banque->enabled) {
+    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled) {
         print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
         $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';

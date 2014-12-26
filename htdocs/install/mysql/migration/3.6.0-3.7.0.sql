@@ -220,8 +220,8 @@ create table llx_accounting_fiscalyear
 	fk_user_modif	integer NULL
 )ENGINE=innodb;
 
-ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref;
-ALTER TABLE llx_contrat ADD COLUMN ref_supplier varchar(30) after ref_ext;
+ALTER TABLE llx_contrat ADD COLUMN ref_supplier varchar(30) after ref;
+ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref_supplier;
 
 ALTER TABLE llx_propal ADD COLUMN fk_shipping_method integer AFTER date_livraison;
 ALTER TABLE llx_commande ADD COLUMN fk_shipping_method integer AFTER date_livraison;
