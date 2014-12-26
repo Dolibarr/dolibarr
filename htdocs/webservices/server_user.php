@@ -299,7 +299,7 @@ $server->register(
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
- * @param	ref_ext		$ref_ext			Ref external of object
+ * @param	string		$ref_ext			Ref external of object
  * @return	mixed
  */
 function getUser($authentication,$id,$ref='',$ref_ext='')
@@ -540,7 +540,7 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 					$langs->load("dict");
 
 					$sql = "SELECT rowid";
-					$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+					$sql.= " FROM ".MAIN_DB_PREFIX."c_country";
 					$sql.= " WHERE active = 1";
 					$sql.= " AND code='".$thirdparty->country_code."'";
 
@@ -753,7 +753,5 @@ function setUserPassword($authentication,$shortuser) {
 	return $objectresp;
 }
 
-
 // Return the results.
-$server->service($HTTP_RAW_POST_DATA);
-
+$server->service(file_get_contents("php://input"));

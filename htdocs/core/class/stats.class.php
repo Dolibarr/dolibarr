@@ -81,7 +81,7 @@ abstract class Stats
 		if ($foundintocache)    // Cache file found and is not too old
 		{
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
-			$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		}
 		else
 		{
@@ -112,7 +112,7 @@ abstract class Stats
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, dol_json_encode($data));
+			fwrite($fp, json_encode($data));
 			fclose($fp);
 			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
 			@chmod($newpathofdestfile, octdec($newmask));
@@ -172,7 +172,7 @@ abstract class Stats
         if ($foundintocache)    // Cache file found and is not too old
         {
         	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
-        	$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+        	$data = json_decode(file_get_contents($newpathofdestfile), true);
         }
         else
 		{
@@ -203,7 +203,7 @@ abstract class Stats
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, dol_json_encode($data));
+			fwrite($fp, json_encode($data));
 			fclose($fp);
 			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
 			@chmod($newpathofdestfile, octdec($newmask));
@@ -295,7 +295,7 @@ abstract class Stats
         if ($foundintocache)    // Cache file found and is not too old
         {
         	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
-        	$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+        	$data = json_decode(file_get_contents($newpathofdestfile), true);
         }
         else
 		{
@@ -309,7 +309,7 @@ abstract class Stats
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, dol_json_encode($data));
+			fwrite($fp, json_encode($data));
 			fclose($fp);
 			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
 			@chmod($newpathofdestfile, octdec($newmask));
@@ -334,7 +334,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -364,7 +364,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -400,7 +400,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -451,7 +451,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -499,7 +499,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -548,7 +548,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

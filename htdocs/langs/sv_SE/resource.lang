@@ -1,0 +1,34 @@
+
+MenuResourceIndex=Resurser
+MenuResourceAdd=Ny resurs
+MenuResourcePlanning=Resursplanering
+DeleteResource=Radera resurs
+ConfirmDeleteResourceElement=Bekräfta radera resurs för detta element
+NoResourceInDatabase=Ingen resurs i databasen.
+NoResourceLinked=Ingen resurs kopplad
+
+ResourcePageIndex=Listan över resurser
+ResourceSingular=Resurs
+ResourceCard=Resurs kort
+AddResource=Skapa en resurs
+ResourceFormLabel_ref=Resursnamn
+ResourceType=Resurs typ
+ResourceFormLabel_description=Resursbeskrivning
+
+ResourcesLinkedToElement=Resurser kopplade till elementet
+
+ShowResourcePlanning=Visa resursplanering
+GotoDate=Gå till datum
+
+ResourceElementPage=Element resurser
+ResourceCreatedWithSuccess=Resursen har skapats
+RessourceLineSuccessfullyDeleted=Resurslinje har tagits bort
+RessourceLineSuccessfullyUpdated=Resurs linje har uppdaterats
+ResourceLinkedWithSuccess=Resurs kopplat med framgång
+
+TitleResourceCard=Resurs kort
+ConfirmDeleteResource=Bekräfta radera denna resurs
+RessourceSuccessfullyDeleted=Resurs tagits bort
+DictionaryResourceType=Typ av resurser
+
+SelectResource=Välj resurs

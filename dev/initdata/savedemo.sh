@@ -193,13 +193,15 @@ export list="
 	--ignore-table=$base.llx_cabinetmed_societe
 	--ignore-table=$base.llx_fournisseur_ca
 	--ignore-table=$base.llx_google_maps
+	--ignore-table=$base.llx_notes
 	--ignore-table=$base.llx_pos_paiement_ticket
 	--ignore-table=$base.llx_pos_places
 	--ignore-table=$base.llx_pos_ticket
 	--ignore-table=$base.llx_publi_c_contact_list 
 	--ignore-table=$base.llx_publi_c_dnd_list
 	--ignore-table=$base.llx_publi_c_method_list
-	--ignore-table=$base.llx_ultimatepdf 
+	--ignore-table=$base.llx_ultimatepdf
+	--ignore-table=$base.llx_ventilation_achat
 	" 
 echo "mysqldump -P$port -u$admin -p***** $list $base > $mydir/$dumpfile"
 mysqldump -P$port -u$admin $passwd $list $base > $mydir/$dumpfile

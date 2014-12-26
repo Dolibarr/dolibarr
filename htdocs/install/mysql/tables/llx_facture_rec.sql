@@ -1,8 +1,8 @@
 -- ===========================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2009 Regis Houssin        <regis.houssin@capnetworks.com>
--- Copyright (C) 2010 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2012-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,17 +31,21 @@ create table llx_facture_rec
   remise             real     DEFAULT 0,
   remise_percent     real     DEFAULT 0,
   remise_absolue     real     DEFAULT 0,
+  
   tva                double(24,8)     DEFAULT 0,
   localtax1			 double(24,8)     DEFAULT 0,           -- amount localtax1
   localtax2          double(24,8)     DEFAULT 0,           -- amount localtax2
+  revenuestamp       double(24,8)     DEFAULT 0,			 -- amount total revenuestamp
   total              double(24,8)     DEFAULT 0,
   total_ttc          double(24,8)     DEFAULT 0,
 
   fk_user_author     integer,             -- createur
+  
   fk_projet          integer,             -- projet auquel est associe la facture
-  fk_cond_reglement  integer DEFAULT 0,   -- condition de reglement
+  
+  fk_cond_reglement  integer DEFAULT 0,  -- condition de reglement
   fk_mode_reglement  integer DEFAULT 0,  -- mode de reglement (Virement, Prelevement)
-  date_lim_reglement date,               -- date limite de reglement
+  date_lim_reglement date,				   -- date limite de reglement
 
   note_private       text,
   note_public        text,
@@ -49,8 +53,9 @@ create table llx_facture_rec
   usenewprice        integer DEFAULT 0,
   frequency          integer,
   unit_frequency     varchar(2) DEFAULT 'd',
+  
   date_when          datetime DEFAULT NULL,		-- date for next gen (when an invoice is generated, this field must be updated with next date)
   date_last_gen      datetime DEFAULT NULL,		-- date for last gen (date with last successfull generation of invoice)
   nb_gen_done        integer DEFAULT NULL,		-- nb of generation done (when an invoice is generated, this field must incremented)
-  nb_gen_max         integer DEFAULT NULL		-- maximum number of generation
+  nb_gen_max         integer DEFAULT NULL		    -- maximum number of generation
 )ENGINE=innodb;

@@ -4,6 +4,7 @@
  * Copyright (c) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2014	   Alexis Algoud		<alexis@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@ class UserGroup extends CommonObject
 	var $id;			// Group id
 	var $entity;		// Entity of group
 	var $nom;			// Name of group
+	var $name;			// Name of group	// deprecated
 	var $globalgroup;	// Global group
 	var $note;			// Note on group
 	var $datec;			// Creation date of group
@@ -68,7 +70,7 @@ class UserGroup extends CommonObject
 	 *	Charge un objet group avec toutes ces caracteristiques (excpet ->members array)
 	 *
 	 *	@param      int		$id			id du groupe a charger
-	 *	@param      string	$groupname	nom du groupe a charger
+	 *	@param      string	$groupname	name du groupe a charger
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
 	function fetch($id='', $groupname='')
@@ -86,7 +88,7 @@ class UserGroup extends CommonObject
 			$sql.= " WHERE g.rowid = ".$id;
 		}
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -98,12 +100,21 @@ class UserGroup extends CommonObject
 				$this->ref = $obj->rowid;
 				$this->entity = $obj->entity;
 				$this->name = $obj->name;
-				$this->nom = $obj->name; //Deprecated
+				$this->nom = $obj->name; // Deprecated
 				$this->note = $obj->note;
 				$this->datec = $obj->datec;
 				$this->datem = $obj->datem;
 
 				$this->members=$this->listUsersForGroup();
+
+
+				// Retreive all extrafield for group
+				// fetch optionals attributes and labels
+				dol_include_once('/core/class/extrafields.class.php');
+				$extrafields=new ExtraFields($this->db);
+				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+				$this->fetch_optionals($this->id,$extralabels);
+
 
 				// Sav current LDAP Current DN
 				//$this->ldap_dn = $this->_load_ldap_dn($this->_load_ldap_info(),0);
@@ -114,7 +125,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -147,7 +157,7 @@ class UserGroup extends CommonObject
 		}
 		$sql.= " ORDER BY g.nom";
 
-		dol_syslog(get_class($this)."::listGroupsForUser sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::listGroupsForUser", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -170,13 +180,12 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::listGroupsForUser ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
 
 	/**
-	 * 	Return array of users id for group this->id (or all if this->id not defined)
+	 * 	Return array of User objects for group this->id (or all if this->id not defined)
 	 *
 	 * 	@param	string	$excludefilter		Filter to exclude
 	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
@@ -205,7 +214,7 @@ class UserGroup extends CommonObject
 		}
 		if (! empty($excludefilter)) $sql.=' AND ('.$excludefilter.')';
 
-		dol_syslog(get_class($this)."::listUsersForGroup sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -234,7 +243,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::listUsersForGroup ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -472,7 +480,7 @@ class UserGroup extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getrights sql='.$sql, LOG_DEBUG);
+		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -542,17 +550,26 @@ class UserGroup extends CommonObject
 		$sql .= " WHERE fk_usergroup = ".$this->id;
 		$this->db->query($sql);
 
+		// Remove extrafields
+		if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+        {
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
+			{
+           		$error++;
+           		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+           	}
+        }
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup";
 		$sql .= " WHERE rowid = ".$this->id;
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('GROUP_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('GROUP_DELETE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+            // End call triggers
 
 			$this->db->commit();
 			return 1;
@@ -573,7 +590,7 @@ class UserGroup extends CommonObject
 	 */
 	function create($notrigger=0)
 	{
-		global $user, $conf, $langs;
+		global $user, $conf, $langs, $hookmanager;
 
 		$error=0;
 		$now=dol_now();
@@ -582,6 +599,8 @@ class UserGroup extends CommonObject
 
 		$entity=$this->entity;
 		if (! empty($conf->multicompany->enabled) && $conf->entity == 1) $entity=$this->entity;
+
+		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (";
 		$sql.= "datec";
@@ -593,7 +612,7 @@ class UserGroup extends CommonObject
 		$sql.= ",".$this->db->escape($entity);
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -601,22 +620,43 @@ class UserGroup extends CommonObject
 
 			if ($this->update(1) < 0) return -2;
 
-			if (! $notrigger)
+			$action='create';
+
+			// Actions on extra fields (by external module or standard code)
+            // FIXME le hook fait double emploi avec le trigger !!
+			$hookmanager->initHooks(array('groupdao'));
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('GROUP_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
 			}
+			else if ($reshook < 0) $error++;
+
+			if (! $error && ! $notrigger)
+			{
+                // Call trigger
+                $result=$this->call_trigger('GROUP_CREATE',$user);
+                if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+                // End call triggers
+			}
+
+			if ($error > 0) { $error++; $this->db->rollback(); return -1; }
+			else $this->db->commit();
 
 			return $this->id;
 		}
 		else
 		{
+		    $this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
 			return -1;
 		}
 	}
@@ -629,7 +669,7 @@ class UserGroup extends CommonObject
 	 */
 	function update($notrigger=0)
 	{
-		global $user, $conf, $langs;
+		global $user, $conf, $langs, $hookmanager;
 
 		$error=0;
 
@@ -639,31 +679,60 @@ class UserGroup extends CommonObject
 			$entity=$this->entity;
 		}
 
+		$this->db->begin();
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
-		$sql.= " nom = '" . $this->db->escape($this->nom) . "'";
+		$sql.= " nom = '" . $this->db->escape($this->name) . "'";
 		$sql.= ", entity = " . $this->db->escape($entity);
 		$sql.= ", note = '" . $this->db->escape($this->note) . "'";
 		$sql.= " WHERE rowid = " . $this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if (! $notrigger)
+			$action='update';
+
+			// Actions on extra fields (by external module or standard code)
+            // FIXME le hook fait double emploi avec le trigger !!
+			$hookmanager->initHooks(array('groupdao'));
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('GROUP_MODIFY',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+			}
+			else if ($reshook < 0) $error++;
+
+			if (! $error && ! $notrigger)
+			{
+                // Call trigger
+                $result=$this->call_trigger('GROUP_MODIFY',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
 			}
 
-			if (! $error) return 1;
-			else return -$error;
+			if (! $error)
+			{
+			    $this->db->commit();
+			    return 1;
+			}
+			else
+			{
+			    $this->db->rollback();
+			    return -$error;
+			}
 		}
 		else
 		{
+		    $this->db->rollback();
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -704,8 +773,8 @@ class UserGroup extends CommonObject
 		$info["objectclass"]=explode(',',$conf->global->LDAP_GROUP_OBJECT_CLASS);
 
 		// Champs
-		if ($this->nom && ! empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->nom;
-		//if ($this->nom && ! empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->nom;
+		if ($this->name && ! empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
+		//if ($this->name && ! empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
 		if ($this->note && ! empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = $this->note;
 		if (! empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS))
 		{
@@ -742,7 +811,7 @@ class UserGroup extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 
-		$this->nom='DOLIBARR GROUP SPECIMEN';
+		$this->name='DOLIBARR GROUP SPECIMEN';
 		$this->note='This is a note';
 		$this->datec=time();
 		$this->datem=time();

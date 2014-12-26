@@ -153,7 +153,7 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_categ='';
     $search_sale='';
@@ -284,7 +284,7 @@ if ($resql)
     // Show delete result message
     if (GETPOST('delsoc'))
     {
-        dol_htmloutput_mesg($langs->trans("CompanyDeleted",GETPOST('delsoc')),'','ok');
+	    setEventMessage($langs->trans("CompanyDeleted",GETPOST('delsoc')));
     }
 
 	$langs->load("other");

@@ -40,3 +40,5 @@ AddSupplierInvoice=Voeg leveranciersfactuur toe
 ListOfSupplierProductForSupplier=Lijst van producten en de prijzen van de leverancier <b>%s</b>
 NoneOrBatchFileNeverRan=Geen of bundel (batch) <b>%s</b> niet recentelijk gedraaid
 SentToSuppliers=Stuur naar leveranciers
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

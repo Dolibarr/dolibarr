@@ -47,6 +47,31 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+
+$search_ref = GETPOST('search_ref','alpha');
+$search_ref_supplier = GETPOST('search_ref_supplier','alpha');
+$search_company = GETPOST('search_company','alpha');
+$search_amount_no_tax = GETPOST('search_amount_no_tax','alpha');
+$search_amount_all_tax = GETPOST('search_amount_all_tax','alpha');
+
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield="f.date_lim_reglement";
+if (! $sortorder) $sortorder="ASC";
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_ref="";
+	$search_ref_supplier="";
+	$search_company="";
+	$search_amount_no_tax="";
+	$search_amount_all_tax="";
+}
 
 /*
  * View
@@ -61,34 +86,9 @@ $title=$langs->trans("BillsSuppliersUnpaid");
 $facturestatic=new FactureFournisseur($db);
 $companystatic=new Societe($db);
 
-
-/***************************************************************************
-*                                                                         *
-*                      Mode Liste                                         *
-*                                                                         *
-***************************************************************************/
-
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-
-$search_ref = GETPOST('search_ref','alpha');
-$search_ref_supplier = GETPOST('search_ref_supplier','alpha');
-$search_societe = GETPOST('search_societe','alpha');
-$search_montant_ht = GETPOST('search_montant_ht','int');
-$search_montant_ttc = GETPOST('search_montant_ttc','int');
-
-
-$page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-if (! $sortfield) $sortfield="f.date_lim_reglement";
-if (! $sortorder) $sortorder="ASC";
-
 if ($user->rights->fournisseur->facture->lire)
 {
-	$sql = "SELECT s.rowid as socid, s.nom,";
+	$sql = "SELECT s.rowid as socid, s.nom as name,";
 	$sql.= " f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc,";
 	$sql.= " f.datef as df, f.date_lim_reglement as datelimite, ";
 	$sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
@@ -117,26 +117,26 @@ if ($user->rights->fournisseur->facture->lire)
 
 	if ($search_ref)
 	{
-		$sql .= " AND f.rowid LIKE '%".$search_ref."%'";
+		$sql .= " AND f.ref LIKE '%".$search_ref."%'";
 	}
 	if ($search_ref_supplier)
 	{
 		$sql .= " AND f.ref_supplier LIKE '%".$search_ref_supplier."%'";
 	}
 
-	if ($search_societe)
+	if ($search_company)
 	{
-		$sql .= " AND s.nom LIKE '%".$search_societe."%'";
+		$sql .= " AND s.nom LIKE '%".$search_company."%'";
 	}
 
-	if ($search_montant_ht)
+	if ($search_amount_no_tax)
 	{
-		$sql .= " AND f.total_ht = '".$search_montant_ht."'";
+		$sql .= " AND f.total_ht = '".$search_amount_no_tax."'";
 	}
 
-	if ($search_montant_ttc)
+	if ($search_amount_all_tax)
 	{
-		$sql .= " AND f.total_ttc = '".$search_montant_ttc."'";
+		$sql .= " AND f.total_ttc = '".$search_amount_all_tax."'";
 	}
 
 	if (dol_strlen(GETPOST('sf_re')) > 0)
@@ -144,7 +144,7 @@ if ($user->rights->fournisseur->facture->lire)
 		$sql .= " AND f.ref_supplier LIKE '%".GETPOST('sf_re')."%'";
 	}
 
-	$sql.= " GROUP BY s.rowid, s.nom, f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, s.rowid, s.nom";
+	$sql.= " GROUP BY s.rowid, s.nom, f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql.=$db->order($sortfield,$sortorder);
 	if (! in_array("f.ref_supplier",explode(',',$sortfield))) $sql.= ", f.ref_supplier DESC";
@@ -165,15 +165,15 @@ if ($user->rights->fournisseur->facture->lire)
 
 		if ($search_ref)         	$param.='&amp;search_ref='.urlencode($search_ref);
 		if ($search_ref_supplier)	$param.='&amp;search_ref_supplier='.urlencode($search_ref_supplier);
-		if ($search_societe)     	$param.='&amp;search_societe='.urlencode($search_societe);
-		if ($search_montant_ht)  	$param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
-		if ($search_montant_ttc) 	$param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
+		if ($search_company)     	$param.='&amp;search_company='.urlencode($search_company);
+		if ($search_amount_no_tax)	$param.='&amp;search_amount_no_tax='.urlencode($search_amount_no_tax);
+		if ($search_amount_all_tax) $param.='&amp;search_amount_all_tax='.urlencode($search_amount_all_tax);
 
 		$param.=($option?"&option=".$option:"");
 		if (! empty($late)) $param.='&late='.urlencode($late);
 		$urlsource=str_replace('&amp;','&',$param);
 
-		$titre=($socid?$langs->trans("BillsSuppliersUnpaidForCompany",$soc->nom):$langs->trans("BillsSuppliersUnpaid"));
+		$titre=($socid?$langs->trans("BillsSuppliersUnpaidForCompany",$soc->name):$langs->trans("BillsSuppliersUnpaid"));
 
 		if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
 	    else $titre.=' ('.$langs->trans("All").')';
@@ -209,15 +209,15 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="6" name="search_societe" value="'.$search_societe.'">';
+		print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
 		print '</td><td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.$search_montant_ht.'">';
+		print '<input class="flat" type="text" size="8" name="search_amount_no_tax" value="'.$search_amount_no_tax.'">';
 		print '</td><td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
+		print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 		print '</td><td class="liste_titre" colspan="2" align="right">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		print '</td>';
-		print "</tr>\n";
+		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		print "</td></tr>\n";
 
 		if ($num > 0)
 		{
@@ -241,7 +241,7 @@ if ($user->rights->fournisseur->facture->lire)
 				print $facturestatic->getNomUrl(1);
 				print "</td>\n";
 
-				print '<td class="nowrap">'.dol_trunc($objp->ref_supplier,12)."</td>\n";
+				print '<td class="nowrap">'.dol_trunc($objp->ref_supplier,12).'</td>';
 
 				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day');
@@ -250,7 +250,7 @@ if ($user->rights->fournisseur->facture->lire)
 
 				print '<td>';
 				$companystatic->id=$objp->socid;
-				$companystatic->nom=$objp->nom;
+				$companystatic->name=$objp->name;
 				print $companystatic->getNomUrl(1,'supplier',32);
 				print '</td>';
 
@@ -258,7 +258,7 @@ if ($user->rights->fournisseur->facture->lire)
 				print "<td align=\"right\">".price($objp->total_ttc)."</td>";
 				print "<td align=\"right\">".price($objp->am)."</td>";
 
-				// Affiche statut de la facture
+				// Show invoice status
 				print '<td align="right" class="nowrap">';
 				print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
 				print '</td>';

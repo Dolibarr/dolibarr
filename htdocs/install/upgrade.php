@@ -50,6 +50,7 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
+
 $setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
 $langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
@@ -74,6 +75,22 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
  * View
  */
 
+if (! $versionfrom && ! $versionto)
+{
+	print 'Error: Parameter versionfrom or versionto missing.'."\n";
+	print 'Upgrade must be ran from cmmand line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
+	// Test if batch mode
+	$sapi_type = php_sapi_name();
+	$script_file = basename(__FILE__);
+	$path=dirname(__FILE__).'/';
+	if (substr($sapi_type, 0, 3) == 'cli') 
+	{
+		print 'Syntax from command line: '.$script_file." x.y.z a.b.c\n";
+	}
+	exit;
+}
+
+
 pHeader('',"upgrade2",GETPOST('action'),'versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 $actiondone=0;
@@ -84,12 +101,6 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     $actiondone=1;
 
     print '<h3>'.$langs->trans("DatabaseMigration").'</h3>';
-
-    if (! $versionfrom && ! $versionto)
-    {
-        print '<div class="error">Parameter versionfrom or versionto missing. Upgrade is launched from page install/index.php (like a first install) instead of install/upgrade.php</div>';
-        exit;
-    }
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
     $error=0;
@@ -168,7 +179,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerVersion")." : $version");
 
         // Test database version
-        $versionmindb=getStaticMember(get_class($db),'versionmin');
+        $versionmindb=$db::VERSIONMIN;
         //print join('.',$versionarray).' - '.join('.',$versionmindb);
         if (count($versionmindb) && count($versionarray)
         	&& versioncompare($versionarray,$versionmindb) < 0)
@@ -203,7 +214,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			    $filles=array();
 			    $sql = "SELECT fk_categorie_mere, fk_categorie_fille";
 			    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
-			    dolibarr_install_syslog("upgrade: search duplicate sql=".$sql);
+			    dolibarr_install_syslog("upgrade: search duplicate", LOG_DEBUG);
 			    $resql = $db->query($sql);
 			    if ($resql)
 			    {
@@ -231,7 +242,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
 			            // We delete all
 			            $sql="DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
-			            dolibarr_install_syslog("upgrade: delete association sql=".$sql);
+			            dolibarr_install_syslog("upgrade: delete association", LOG_DEBUG);
 			            $resqld=$db->query($sql);
 			            if ($resqld)
 			            {
@@ -240,7 +251,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			                {
 			                    $sql ="INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
 			                    $sql.=" VALUES(".$val['mere'].", ".$val['fille'].")";
-			                    dolibarr_install_syslog("upgrade: insert association sql=".$sql);
+			                    dolibarr_install_syslog("upgrade: insert association", LOG_DEBUG);
 			                    $resqli=$db->query($sql);
 			                    if (! $resqli) $error++;
 			                }

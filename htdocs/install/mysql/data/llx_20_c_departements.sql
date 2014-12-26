@@ -32,7 +32,7 @@
 -- Departements/Cantons/Provinces
 --
 
-insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,'0','0',0,'-','-');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 0, '0',    '0',0,'-','-');
 
 -- Departements France (id country=1)
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',5,'AIN','Ain');

@@ -26,8 +26,12 @@
  *  Parent class for class inheritance lines of business objects
  *  This class is useless for the moment so no inherit are done on it
  */
-abstract class CommonObjectLine
+abstract class CommonObjectLine extends CommonObject
 {
+	// TODO
 
+	// Currently we need function at end of file CommonObject for all object lines. Should find a way to avoid duplicate code.
+
+	// For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.
 }
 

@@ -166,6 +166,8 @@ if ($action=='selectfield')
         }
 	    //print_r($array_selected);
 	    $_SESSION["export_selected_fields"]=$array_selected;
+
+	    setEventMessage($warnings, 'warnings');
     }
 
 }
@@ -488,9 +490,6 @@ if ($step == 2 && $datatoexport)
     print '</table>';
     print '<br>';
 
-
-    if ($warnings) dol_htmloutput_mesg('',$warnings,'warning');
-
     // Combo list of export models
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -733,7 +732,7 @@ if ($step == 3 && $datatoexport)
 
 		// Filter value
 		print '<td>';
-		if (! empty($Typefieldsarray[$code]))	// Example: Text, List:c_pays:libelle:rowid, Number, Boolean
+		if (! empty($Typefieldsarray[$code]))	// Example: Text, List:c_country:label:rowid, Number, Boolean
 		{
 			$szInfoFiltre=$objexport->genDocFilter($Typefieldsarray[$code]);
 			if ($szInfoFiltre)	// Is there an info help for this filter ?

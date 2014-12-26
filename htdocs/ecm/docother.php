@@ -104,8 +104,6 @@ print_fiche_titre($langs->trans("ECMAutoOrg"));
 //$head = societe_prepare_head($societe);
 
 
-//dol_fiche_head($head, 'document', $societe->nom);
-
 
 /*
  * Confirmation de la suppression d'une ligne produit
@@ -113,7 +111,7 @@ print_fiche_titre($langs->trans("ECMAutoOrg"));
 if ($_GET['action'] == 'delete_file')
 {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
-	
+
 }
 
 // Construit liste des fichiers

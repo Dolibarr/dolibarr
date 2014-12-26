@@ -48,7 +48,6 @@ $search_state       = GETPOST("search_state");
 $search_datec       = GETPOST("search_datec");
 $search_categ       = GETPOST("search_categ",'int');
 $search_status		= GETPOST("search_status",'int');
-if ($search_status=='') $search_status=1; // always display activ customer first
 $catid              = GETPOST("catid",'int');
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -154,6 +153,21 @@ $sts = array(-1,0,1,2,3);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('prospectlist'));
 
+// Do we click on purge search criteria ?
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $socname="";
+	$stcomm="";
+	$search_nom="";
+	$search_zipcode="";
+	$search_town="";
+	$search_state="";
+	$search_datec="";
+	$search_categ="";
+	$search_status="";
+}
+
+if ($search_status=='') $search_status=1; // always display active customer first
 
 /*
  * Actions
@@ -161,6 +175,7 @@ $hookmanager->initHooks(array('prospectlist'));
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if ($action == 'cstc')
 {
@@ -177,7 +192,7 @@ if ($action == 'cstc')
 $formother=new FormOther($db);
 $form=new Form($db);
 
-$sql = "SELECT s.rowid, s.nom, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
+$sql = "SELECT s.rowid, s.nom as name, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -233,7 +248,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= " ORDER BY $sortfield $sortorder, s.nom ASC";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-dol_syslog('comm/prospect/list.php sql='.$sql,LOG_DEBUG);
+dol_syslog('comm/prospect/list.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -242,7 +257,7 @@ if ($resql)
 	if ($num == 1 && $socname)
 	{
 		$obj = $db->fetch_object($resql);
-		header("Location: fiche.php?socid=".$obj->rowid);
+		header("Location: card.php?socid=".$obj->rowid);
 		exit;
 	}
 	else
@@ -360,7 +375,7 @@ if ($resql)
  	// Print these two select
  	print $langs->trans("From").' <select class="flat" name="search_level_from">'.$options_from.'</select>';
  	print ' ';
- 	print $langs->trans("To").' <select class="flat" name="search_level_to">'.$options_to.'</select>';
+ 	print $langs->trans("to").' <select class="flat" name="search_level_to">'.$options_to.'</select>';
 
     print '</td>';
 
@@ -377,9 +392,9 @@ if ($resql)
     print '</td>';
 
     // Print the search button
-    print '<td class="liste_titre" align="right">';
-	print '<input class="liste_titre" name="button_search" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print "</td></tr>\n";
 
 	$parameters=array();
 	$formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -401,7 +416,7 @@ if ($resql)
 		print '<tr '.$bc[$var].'>';
 		print '<td>';
 		$prospectstatic->id=$obj->rowid;
-		$prospectstatic->nom=$obj->nom;
+		$prospectstatic->name=$obj->name;
         $prospectstatic->status=$obj->status;
         $prospectstatic->code_client=$obj->code_client;
         $prospectstatic->client=$obj->client;

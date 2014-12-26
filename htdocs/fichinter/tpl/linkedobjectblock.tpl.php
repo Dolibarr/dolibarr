@@ -42,7 +42,7 @@ foreach($linkedObjectBlock as $object)
 	$var=!$var;
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/fichinter/fiche.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowIntervention"),"intervention").' '.$object->ref; ?></a></td>
+	<a href="<?php echo DOL_URL_ROOT.'/fichinter/card.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowIntervention"),"intervention").' '.$object->ref; ?></a></td>
 	<td align="center"><?php echo dol_print_date($object->datev,'day'); ?></td>
 	<td align="right"><?php echo $object->getLibStatut(3); ?></td>
 </tr>

@@ -44,6 +44,8 @@ $object = new Adherent($db);
 $result=$object->fetch($id);
 if ($result > 0)
 {
+	$object->fetch_thirdparty();
+
     $adht = new AdherentType($db);
     $result=$adht->fetch($object->typeid);
 }
@@ -84,7 +86,7 @@ if ($object->id > 0)
 
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
 
 	// Reference
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
@@ -139,14 +141,30 @@ if ($object->id > 0)
 
     if (! empty($conf->agenda->enabled))
     {
-        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create">'.$langs->trans("AddAction").'</a></div>';
+        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create">'.$langs->trans("AddAction").'</a></div>';
     }
 
     print '</div>';
 
     print '<br>';
 
-    print load_fiche_titre($langs->trans("ActionsOnMember"),'','');
+    $out='';
+
+    /*$objthirdparty=$object->thirdparty;
+    $objcon=new stdClass();
+
+    $permok=$user->rights->agenda->myactions->create;
+    if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
+    {
+        $out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
+        if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
+        $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
+    	$out.=$langs->trans("AddAnAction").' ';
+    	$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+    	$out.="</a>";
+	}*/
+
+    print load_fiche_titre($langs->trans("ActionsOnMember"),$out,'');
 
     // List of todo actions
     show_actions_todo($conf,$langs,$db,$object);

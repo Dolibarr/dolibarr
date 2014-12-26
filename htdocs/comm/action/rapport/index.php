@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,9 +37,6 @@ $action=GETPOST('action','alpha');
 $month=GETPOST('month');
 $year=GETPOST('year');
 
-$mesg='';
-$mesgs=array();
-
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -58,13 +55,14 @@ $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 /*
  * Actions
  */
+
 if ($action == 'builddoc')
 {
 	$cat = new CommActionRapport($db, $month, $year);
 	$result=$cat->write_file(GETPOST('id','int'));
 	if ($result < 0)
 	{
-		$mesg=$cat->error;
+		setEventMessage($cat->error, 'errors');
 	}
 }
 
@@ -82,22 +80,20 @@ $sql.= " date_format(a.datep, '%Y') as year";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE a.fk_user_author = u.rowid";
-$sql.= " AND a.entity = ".$conf->entity;
+$sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
 //$sql.= " AND percent = 100";
 $sql.= " GROUP BY year, month, df";
 $sql.= " ORDER BY year DESC, month DESC, df DESC";
 $sql.= $db->plimit($limit+1,$offset);
 
 //print $sql;
-dol_syslog("select sql=".$sql);
+dol_syslog("select", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-	print_barre_liste($langs->trans("Actions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
-
-	dol_htmloutput_mesg($mesg,$mesgs);
+	print_barre_liste($langs->trans("Actions"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
 
 	$i = 0;
 	print '<table class="noborder" width="100%">';

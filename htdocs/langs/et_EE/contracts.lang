@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Lepingute ala
 ListOfContracts=Lepingute nimekiri
-LastContracts=Viimased %s muudetud lepingut
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Kõik lepingud
 ContractCard=Lepingu kaart
 ContractStatus=Lepingu olek
@@ -27,7 +27,7 @@ MenuRunningServices=Aktiivsed teenused
 MenuExpiredServices=Aegunud teenused
 MenuClosedServices=Suletud teenused
 NewContract=Uus leping
-AddContract=Lisa leping
+AddContract=Create contract
 SearchAContract=Otsi lepingut
 DeleteAContract=Kustuta leping
 CloseAContract=Sulge leping
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Aktiivsete lepinguridade nimekiri
 ListOfRunningServices=Aktiivsete teenuste nimekiri
 NotActivatedServices=Mitteaktiivsed teenused (kinnitatud lepingutel)
 BoardNotActivatedServices=Teenused, mida aktiveerida kinnitatud lepingutel
-LastContracts=Viimased %s muudetud lepingut
+LastContracts=Last %s contracts
 LastActivatedServices=Viimased %s aktiveeritud teenust
 LastModifiedServices=Viimased %s muudetud teenust
 EditServiceLine=Muuda teenuse rida
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Aeguvate teenuste nimekiri
 NoteListOfYourExpiredServices=See nimekiri sisaldab vaid nende lepingute teenuseid, millega seotud kolmandate isikute kohta oled märgitud müügiesindajaks
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Lepingu allkirjastanud müügiesindaja

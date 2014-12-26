@@ -19,3 +19,4 @@ TF_TRIP=رحلة
 ListTripsAndExpenses=قائمة الرحلات والمصاريف
 ExpensesArea=رحلات ومنطقة النفقات
 SearchATripAndExpense=بحث عن رحلة والنفقات
+ClassifyRefunded=Classify 'Refunded'

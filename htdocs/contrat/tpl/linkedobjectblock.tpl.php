@@ -43,7 +43,7 @@ foreach($linkedObjectBlock as $object)
 	$var=!$var;
 ?>
 <tr <?php echo $bc[$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/contrat/fiche.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowContract"),"contract").' '.$object->ref; ?></a></td>
+	<a href="<?php echo DOL_URL_ROOT.'/contrat/card.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowContract"),"contract").' '.$object->ref; ?></a></td>
 	<td align="center"><?php echo dol_print_date($object->date_contrat,'day'); ?></td>
 	<td align="right">&nbsp;</td>
 	<td align="right"><?php echo $object->getLibStatut(6); ?></td>

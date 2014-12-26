@@ -56,7 +56,7 @@ $forcecommit=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 // List of fields to get from LDAP
@@ -70,16 +70,19 @@ $required_fields = array(
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
-if ($argv[2]) $conf->global->LDAP_SERVER_HOST=$argv[2];
 
 if (! isset($argv[1])) {
 	//print "Usage:  $script_file (nocommitiferror|commitiferror) [id_group]\n";
-	print "Usage:  $script_file (nocommitiferror|commitiferror) [ldapserverhost]\n";
+	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...]\n";
 	exit(-1);
 }
-$groupid=$argv[3];
-if ($argv[1] == 'commitiferror') $forcecommit=1;
 
+foreach($argv as $key => $val)
+{
+	if ($val == 'commitiferror') $forcecommit=1;
+	if (preg_match('/--server=([^\s]+)$/',$val,$reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
+	if (preg_match('/--excludeuser=([^\s]+)$/',$val,$reg)) $excludeuser=explode(',',$reg[1]);
+}
 
 print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;	// On bloque les mails
@@ -133,19 +136,20 @@ if ($result >= 0)
 		{
 			$group = new UserGroup($db);
 			$group->fetch('', $ldapgroup[$conf->global->LDAP_KEY_GROUPS]);
-			$group->nom = $ldapgroup[$conf->global->LDAP_GROUP_FIELD_FULLNAME];
+			$group->name = $ldapgroup[$conf->global->LDAP_GROUP_FIELD_FULLNAME];
+			$group->nom = $group->name;		// For backward compatibility
 			$group->note = $ldapgroup[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION];
 			$group->entity = $conf->entity;
 
 			//print_r($ldapgroup);
 
 			if($group->id > 0) { // Group update
-				print $langs->transnoentities("GroupUpdate").' # '.$key.': name='.$group->nom;
+				print $langs->transnoentities("GroupUpdate").' # '.$key.': name='.$group->name;
 				$res=$group->update();
 
 				if ($res > 0)
 				{
-					print ' --> Updated group id='.$group->id.' name='.$group->nom;
+					print ' --> Updated group id='.$group->id.' name='.$group->name;
 				}
 				else
 				{
@@ -154,12 +158,12 @@ if ($result >= 0)
 				}
 				print "\n";
 			} else { // Group creation
-				print $langs->transnoentities("GroupCreate").' # '.$key.': name='.$group->nom;
+				print $langs->transnoentities("GroupCreate").' # '.$key.': name='.$group->name;
 				$res=$group->create();
 
 				if ($res > 0)
 				{
-					print ' --> Created group id='.$group->id.' name='.$group->nom;
+					print ' --> Created group id='.$group->id.' name='.$group->name;
 				}
 				else
 				{

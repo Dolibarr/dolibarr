@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=合同区
 ListOfContracts=合约名单
-LastContracts=最后%s的修改过的合同
+LastModifiedContracts=Last %s modified contracts
 AllContracts=所有合同
 ContractCard=合同卡
 ContractStatus=合同地位
@@ -27,7 +27,7 @@ MenuRunningServices=正在运行的服务
 MenuExpiredServices=过期服务
 MenuClosedServices=休息服务
 NewContract=新合同
-AddContract=新增合同
+AddContract=Create contract
 SearchAContract=搜索合同
 DeleteAContract=删除合同
 CloseAContract=关闭的合同
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=名单合同线运行
 ListOfRunningServices=运行服务的列表
 NotActivatedServices=不活跃的服务（除验证合同）
 BoardNotActivatedServices=服务激活验证合同之间
-LastContracts=最后%s的修改过的合同
+LastContracts=Last %s contracts
 LastActivatedServices=上次%s的激活服务
 LastModifiedServices=最后%S修饰服务
 EditServiceLine=编辑服务项目
@@ -91,6 +91,7 @@ ListOfServicesToExpire=服务到期列表
 NoteListOfYourExpiredServices=此列表只包含你作为一个销售代表与第三方的服务合同 。
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=销售代表签订合同

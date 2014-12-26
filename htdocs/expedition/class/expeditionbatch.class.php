@@ -69,7 +69,7 @@ class ExpeditionLigneBatch extends CommonObject
         $sql.= MAIN_DB_PREFIX."product_stock as e on t.fk_product_stock=e.rowid ";
         $sql.= " WHERE t.rowid = ".(int) $id_stockdluo;
 
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -91,7 +91,6 @@ class ExpeditionLigneBatch extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(__METHOD__ .$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -123,7 +122,7 @@ class ExpeditionLigneBatch extends CommonObject
 		$sql.= " ".(! isset($this->fk_origin_stock)?'NULL':$this->fk_origin_stock);
 		$sql.= ")";
 
-		dol_syslog(__METHOD__ ." sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ ."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
@@ -157,7 +156,7 @@ class ExpeditionLigneBatch extends CommonObject
 		$sql="DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element;
 		$sql.=" WHERE fk_expeditiondet in (SELECT rowid FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition=".$id_expedition.")";
 		
-		dol_syslog(__METHOD__ ." sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ ."", LOG_DEBUG);
 		if ( $db->query($sql) )
 		{
 			return 1;
@@ -185,7 +184,7 @@ class ExpeditionLigneBatch extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element;
 		$sql.= " WHERE fk_expeditiondet=".(int) $id_line_expdet;
 
-		dol_syslog(__METHOD__ ." sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__ ."", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {

@@ -110,8 +110,6 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
-				//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-				//print_r($_FILES);
 				$result=$ecmdir->changeNbOfFiles('+');
 			}
 			else
@@ -134,7 +132,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		else
 		{
 			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
+			setEventMessage($langs->trans("ErrorFailToCreateDir",$upload_dir), 'errors');
 		}
 	}
 }
@@ -156,7 +154,8 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	}
 	else
 	{
-		$mesg='<div class="error">Error '.$langs->trans($ecmdir->error).'</div>';
+		//TODO: Translate
+		setEventMessage('Error '.$langs->trans($ecmdir->error), 'errors');
 		$action = "create";
 	}
 
@@ -198,7 +197,7 @@ if ($action == 'confirm_deletefile')
 if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 {
 	$result=$ecmdir->delete($user);
-	$mesg = '<div class="ok">'.$langs->trans("ECMSectionWasRemoved", $ecmdir->label).'</div>';
+	setEventMessage($langs->trans("ECMSectionWasRemoved", $ecmdir->label));
 
     clearstatcache();
 }
@@ -324,7 +323,6 @@ if ($action == 'refreshmanual')
     	$dirtotest=$conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
 		if (! dol_is_dir($dirtotest))
 		{
-			$mesg.=$dirtotest." not found onto disk. We delete from database dir with id=".$dirdesc['id']."<br>\n";
 			$ecmdirtmp->id=$dirdesc['id'];
 			$ecmdirtmp->delete($user,'databaseonly');
 			//exit;
@@ -411,6 +409,9 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	if (! empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"),   'desc'=>$langs->trans("ECMDocsByInvoices")); }
 	if (! empty($conf->tax->enabled))         { $langs->load("compta"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'tax', 'test'=>$conf->tax->enabled, 'label'=>$langs->trans("SocialContributions"),     'desc'=>$langs->trans("ECMDocsBySocialContributions")); }
 	if (! empty($conf->projet->enabled))      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'project', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Projects"),     'desc'=>$langs->trans("ECMDocsByProjects")); }
+	if (! empty($conf->ficheinter->enabled))      { $langs->load("interventions"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"),     'desc'=>$langs->trans("ECMDocsByInterventions")); }
+	$rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'user', 'test'=>1, 'label'=>$langs->trans("Users"),     'desc'=>$langs->trans("ECMDocsByUsers"));
+	
 }
 
 print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
@@ -435,9 +436,6 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 
 }
-
-dol_htmloutput_mesg($mesg);
-
 
 if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
 else $classviewhide='visible';

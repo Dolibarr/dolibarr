@@ -129,4 +129,5 @@ else
 }
 
 llxFooter();
+
 $db->close();

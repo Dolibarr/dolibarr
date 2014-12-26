@@ -25,7 +25,7 @@ create table llx_product_stock
   fk_product      integer NOT NULL,
   fk_entrepot     integer NOT NULL,
   reel            real,           					-- physical stock
-  pmp             double(24,8) default 0 NOT NULL,	-- PMP value for product in this warehouse
+  pmp             double(24,8) default 0 NOT NULL,	-- PMP value for product in this warehouse (deprecated. no sens for warehouse)
   import_key      varchar(14)                  -- Import key
 )ENGINE=innodb;
 

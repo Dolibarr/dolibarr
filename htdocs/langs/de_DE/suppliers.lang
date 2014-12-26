@@ -40,3 +40,5 @@ AddSupplierInvoice=Lieferantenrechnung erstellen
 ListOfSupplierProductForSupplier=Produkt- und Preisliste für Anbieter <b>%s</b>
 NoneOrBatchFileNeverRan=Keiner oder Batch-Job <b>%s</b> wurde nie ausgeführt
 SentToSuppliers=An Lieferanten geschickt
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

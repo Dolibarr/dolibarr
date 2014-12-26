@@ -254,11 +254,11 @@ foreach($property as $key => $prop)
 		$varprop.="\t\t\$sql.= \" ";
 		if ($prop['istime'])
 		{
-			$varprop.='".(! isset($this->'.$prop['field'].') || dol_strlen($this->'.$prop['field'].')==0?\'NULL\':$this->db->idate(';
+			$varprop.='".(! isset($this->'.$prop['field'].') || dol_strlen($this->'.$prop['field'].')==0?\'NULL\':"\'".$this->db->idate(';
 			$varprop.="\$this->".$prop['field']."";
-			$varprop.='))."';
+			$varprop.=')."\'")."';
 			if ($i < count($property)) $varprop.=",";
-			$varprop.="\";";
+			$varprop.='";';
 		}
 		elseif ($prop['ischar'])
 		{

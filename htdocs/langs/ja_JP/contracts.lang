@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=契約面積
 ListOfContracts=契約のリスト
-LastContracts=最後%sは、契約を変更
+LastModifiedContracts=Last %s modified contracts
 AllContracts=すべての契約
 ContractCard=契約のカード
 ContractStatus=契約の状況
@@ -27,7 +27,7 @@ MenuRunningServices=実行中のサービス
 MenuExpiredServices=期限切れのサービス
 MenuClosedServices=閉じたサービス
 NewContract=新規契約
-AddContract=契約を追加します。
+AddContract=Create contract
 SearchAContract=契約を検索
 DeleteAContract=契約を削除する
 CloseAContract=契約を閉じます
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=実行中の契約品目のリスト
 ListOfRunningServices=実行中のサービスのリスト
 NotActivatedServices=非アクティブなサービス（検証済みの契約の中で）
 BoardNotActivatedServices=検証済みの契約の中でアクティブにするサービス
-LastContracts=最後%sは、契約を変更
+LastContracts=Last %s contracts
 LastActivatedServices=最後%s活性化サービス
 LastModifiedServices=最後%sは、サービスを変更
 EditServiceLine=編集サービスライン
@@ -91,6 +91,7 @@ ListOfServicesToExpire=List of Services to expire
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=営業担当者の署名の契約

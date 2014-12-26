@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->load('bills');
 $langs->load('compta');
-$langs->load('products');
 
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
@@ -219,15 +218,18 @@ if ($action == 'create')
 			if ($num)
 			{
 				print '<tr class="liste_titre">';
-				print '<td width="54%">'.$langs->trans("Description").'</td>';
-				print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
-				print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
-				print '<td width="8%" align="right">'.$langs->trans("ReductionShort").'</td>';
-				print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
-				if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td width="12%" align="right">'.$langs->trans("CurrentProductPrice").'</td>';
+				print '<td>'.$langs->trans("Description").'</td>';
+				print '<td align="center">'.$langs->trans("VAT").'</td>';
+				print '<td align="center">'.$langs->trans("Qty").'</td>';
+				print '<td>'.$langs->trans("ReductionShort").'</td>';
+				print '<td align="right">'.$langs->trans("TotalHT").'</td>';
+				print '<td align="right">'.$langs->trans("TotalVAT").'</td>';
+				print '<td align="right">'.$langs->trans("TotalTTC").'</td>';
+				print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
+				if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td align="right">'.$langs->trans("CurrentProductPrice").'</td>';
 				print "</tr>\n";
 			}
-			$var=True;
+			$var=true;
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($result);
@@ -290,9 +292,13 @@ if ($action == 'create')
 					print "</td>\n";
 				}
 
-
+				// Vat rate
 				print '<td align="center">'.vatrate($objp->tva_tx).'%</td>';
+
+				// Qty
 				print '<td align="center">'.$objp->qty.'</td>';
+
+				// Percent
 				if ($objp->remise_percent > 0)
 				{
 					print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -302,9 +308,19 @@ if ($action == 'create')
 					print '<td>&nbsp;</td>';
 				}
 
+				// Total HT
+				print '<td align="right">'.price($objp->total_ht)."</td>\n";
+
+				// Total VAT
+				print '<td align="right">'.price($objp->total_vat)."</td>\n";
+
+				// Total TTC
+				print '<td align="right">'.price($objp->total_ttc)."</td>\n";
+
+				// Total Unit price
 				print '<td align="right">'.price($objp->subprice)."</td>\n";
 
-				// Price of product
+				// Current price of product
 				if (empty($conf->global->PRODUIT_MULTIPRICES))
 				{
 					if ($objp->fk_product > 0)
@@ -432,7 +448,7 @@ else
 
 			$num = count($object->lines);
 			$i = 0;
-			$var=True;
+			$var=true;
 			while ($i < $num)
 			{
 				$var=!$var;
@@ -507,9 +523,14 @@ else
 			 */
 			print '<div class="tabsAction">';
 
+			if ($object->statut == 0 && $user->rights->facture->creer)
+			{
+			    	echo '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+			}
+
 			if ($object->statut == 0 && $user->rights->facture->supprimer)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 			}
 
 			print '</div>';
@@ -524,7 +545,7 @@ else
 		/*
 		 *  List mode
 		 */
-		$sql = "SELECT s.nom, s.rowid as socid, f.titre, f.total, f.rowid as facid";
+		$sql = "SELECT s.nom as name, s.rowid as socid, f.titre, f.total, f.rowid as facid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		$sql.= " WHERE f.fk_soc = s.rowid";
 		$sql.= " AND f.entity = ".$conf->entity;
@@ -552,7 +573,7 @@ else
 
 			if ($num > 0)
 			{
-				$var=True;
+				$var=true;
 				while ($i < min($num,$limit))
 				{
 					$objp = $db->fetch_object($resql);
@@ -564,28 +585,23 @@ else
 					print "</a></td>\n";
 
 					$companystatic->id=$objp->socid;
-					$companystatic->name=$objp->nom;
+					$companystatic->name=$objp->name;
 					print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
 
 					print '<td align="right">'.price($objp->total).'</td>'."\n";
 
-					if (! $objp->paye)
+					echo '<td align="center">';
+
+					if ($user->rights->facture->creer)
 					{
-						if ($objp->fk_statut == 0)
-						{
-							print '<td align="right">'.$langs->trans("Draft").'</td>';
-						}
-						else
-						{
-							print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/list.php?filtre=paye:0,fk_statut:1">'.$langs->trans("Validated").'</a></td>';
-						}
+                        echo '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
+                        echo  $langs->trans("CreateBill"),'</a>';
 					}
 					else
 					{
-						print '<td>&nbsp;</td>';
+					    echo "&nbsp;";
 					}
-
-					print "</tr>\n";
+					echo "</td></tr>\n";
 					$i++;
 				}
 			}

@@ -45,7 +45,7 @@ class DeplacementStats extends Stats
 	 *
 	 * @param 	DoliDB		$db		   Database handler
 	 * @param 	int			$socid	   Id third party
-     * @param   int			$userid    Id user for filter
+     * @param   mixed		$userid    Id user for filter or array of user ids
 	 * @return 	void
 	 */
 	function __construct($db, $socid=0, $userid=0)
@@ -66,7 +66,8 @@ class DeplacementStats extends Stats
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
 		}
-        if ($this->userid > 0) $this->where.=' AND fk_user = '.$this->userid;
+		if (is_array($this->userid) && count($this->userid) > 0) $this->where.=' AND fk_user IN ('.join(',',$this->userid).')';
+        else if ($this->userid > 0) $this->where.=' AND fk_user = '.$this->userid;
 	}
 
 
@@ -77,7 +78,7 @@ class DeplacementStats extends Stats
 	 */
 	function getNbByYear()
 	{
-		$sql = "SELECT YEAR(datef) as dm, count(*)";
+		$sql = "SELECT YEAR(dated) as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		$sql.= " GROUP BY dm DESC";
 		$sql.= " WHERE ".$this->where;

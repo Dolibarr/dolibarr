@@ -138,11 +138,11 @@ if ($action == 'builddoc')
 	$result=$objimport->build_file($user, GETPOST('model','alpha'), $datatoimport, $array_match_file_to_database);
 	if ($result < 0)
 	{
-		$mesg='<div class="error">'.$objimport->error.'</div>';
+		setEventMessage($objimport->error, 'errors');
 	}
 	else
 	{
-		$mesg='<div class="ok">'.$langs->trans("FileSuccessfullyBuilt").'</div>';
+		setEventMessage($langs->trans("FileSuccessfullyBuilt"));
 	}
 }
 
@@ -175,21 +175,23 @@ if ($action == 'add_import_model')
 		$result = $objimport->create($user);
 		if ($result >= 0)
 		{
-			$mesg='<div class="ok">'.$langs->trans("ImportModelSaved",$objimport->model_name).'</div>';
+			setEventMessage($langs->trans("ImportModelSaved",$objimport->model_name));
 		}
 		else
 		{
 			$langs->load("errors");
 			if ($objimport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
-				$mesg='<div class="error">'.$langs->trans("ErrorImportDuplicateProfil").'</div>';
+				setEventMessage($langs->trans("ErrorImportDuplicateProfil"), 'errors');
 			}
-			else $mesg='<div class="error">'.$objimport->error.'</div>';
+			else {
+				setEventMessage($objimport->error, 'errors');
+			}
 		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("ImportModelName")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("ImportModelName")), 'errors');
 	}
 }
 
@@ -385,8 +387,6 @@ if ($step == 1 || ! $datatoimport)
 
     dol_fiche_end();
 
-	if ($mesg) print $mesg;
-
 }
 
 
@@ -461,7 +461,6 @@ if ($step == 2 && $datatoimport)
 
     dol_fiche_end();
 
-	if ($mesg) print $mesg;
 }
 
 
@@ -597,10 +596,7 @@ if ($step == 3 && $datatoimport)
 
 	print '</table></form>';
 
-
     dol_fiche_end();
-
-	if ($mesg) print $mesg;
 }
 
 
@@ -1009,9 +1005,6 @@ if ($step == 4 && $datatoimport)
         print '}'."\n";
         print '</script>'."\n";
 	}
-
-
-	if ($mesg) print $mesg;
 
 	/*
 	 * Barre d'action
@@ -1438,8 +1431,6 @@ if ($step == 5 && $datatoimport)
         }
         print '</center>';
     }
-
-    if ($mesg) print $mesg;
 }
 
 
@@ -1679,8 +1670,6 @@ if ($step == 6 && $datatoimport)
 	print $langs->trans("FileWasImported",$importid).'<br>';
 	print $langs->trans("YouCanUseImportIdToFindRecord",$importid).'<br>';
 	print '</center>';
-
-	if ($mesg) print $mesg;
 }
 
 

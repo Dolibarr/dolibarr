@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 $langs->load("bills");
 $langs->load("companies");
 
+$id=GETPOST('id');
+
 
 /*
  * View
@@ -39,8 +41,8 @@ $langs->load("companies");
 llxHeader();
 
 $paiement = new Paiement($db);
-$paiement->fetch($_GET["id"], $user);
-$paiement->info($_GET["id"]);
+$paiement->fetch($id);
+$paiement->info($id);
 
 $head = payment_prepare_head($paiement);
 

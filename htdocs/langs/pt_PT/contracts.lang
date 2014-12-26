@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Área contractos
 ListOfContracts=Lista de contractos
-LastContracts=Os Ultimos %s Contractos Modificados
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Todos os contractos
 ContractCard=Ficha contrato
 ContractStatus=Estado do contrato
@@ -27,7 +27,7 @@ MenuRunningServices=Serviços Activos
 MenuExpiredServices=Serviços Expirados
 MenuClosedServices=Serviços Fechados
 NewContract=Novo Contrato
-AddContract=Criar Contrato
+AddContract=Create contract
 SearchAContract=Procurar um Contrato
 DeleteAContract=Eliminar um Contrato
 CloseAContract=Fechar um Contrato
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Lista de linhas de contractos em serviço
 ListOfRunningServices=Lista de serviços activos
 NotActivatedServices=Serviços não activados (com os contractos validados)
 BoardNotActivatedServices=Serviços a activar com os contractos validados
-LastContracts=Os Ultimos %s Contractos Modificados
+LastContracts=Last %s contracts
 LastActivatedServices=Os %s últimos serviços activados
 LastModifiedServices=Os %s últimos sevicios modificados
 EditServiceLine=Edição linha do serviço
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Lista de Serviços para expirar
 NoteListOfYourExpiredServices=Esta lista contém apenas os serviços de contratos de terceiros aos quais está ligado como representante de vendas.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial assinante do contrato

@@ -35,6 +35,7 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $mode = GETPOST('mode','alpha');
+$value = GETPOST('value','alpha');
 
 if (!$mode) $mode='config';
 
@@ -68,6 +69,17 @@ if ($action == 'setvalue' && $user->admin)
     }
 }
 
+// Set default model
+else if ($action == 'setprinteruri')
+{
+	if (dolibarr_set_const($db, "PRINTIPP_URI_DEFAULT",$value,'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->PRINTIPP_URI_DEFAULT = $value;
+	}
+}
+
 
 /*
  * View
@@ -82,11 +94,6 @@ print_fiche_titre($langs->trans("PrintIPPSetup"),$linkback,'setup');
 
 $head=printippadmin_prepare_head();
 
-dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"));
-
-print $langs->trans("PrintIPPDesc")."<br>\n";
-
-print '<br>';
 
 if ($mode == 'config' && $user->admin)
 {
@@ -94,8 +101,11 @@ if ($mode == 'config' && $user->admin)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="setvalue">';
 
+	dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
 
-    print '<table class="nobordernopadding" width="100%">';
+	print $langs->trans("PrintIPPDesc")."<br><br>\n";
+    
+    print '<table class="noborder" width="100%">';
 
     $var=true;
     print '<tr class="liste_titre">';
@@ -103,8 +113,9 @@ if ($mode == 'config' && $user->admin)
     print '<td>'.$langs->trans("Value").'</td>';
     print "</tr>\n";
 
+    /*
     $var=!$var;
-    print '<tr '.$bc[$var].'><td class="fieldrequired">';
+    print '<tr '.$bc[$var].'><td>';
     print $langs->trans("PRINTIPP_ENABLED").'</td><td colspan="2" align="left">';
 
     if (! empty($conf->use_javascript_ajax))
@@ -123,7 +134,8 @@ if ($mode == 'config' && $user->admin)
          }
     }
     print '</td></tr>';
-
+	*/
+    
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">';
     print $langs->trans("PRINTIPP_HOST").'</td><td>';
@@ -139,13 +151,13 @@ if ($mode == 'config' && $user->admin)
     print '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td class="fieldrequired">';
+    print '<tr '.$bc[$var].'><td>';
     print $langs->trans("PRINTIPP_USER").'</td><td>';
     print '<input size="32" type="text" name="PRINTIPP_USER" value="'.$conf->global->PRINTIPP_USER.'">';
     print '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td class="fieldrequired">';
+    print '<tr '.$bc[$var].'><td>';
     print $langs->trans("PRINTIPP_PASSWORD").'</td><td>';
     print '<input size="32" type="text" name="PRINTIPP_PASSWORD" value="'.$conf->global->PRINTIPP_PASSWORD.'">';
     print '</td></tr>';
@@ -156,16 +168,22 @@ if ($mode == 'config' && $user->admin)
     //print '<td>'.$langs->trans("Value").'</td>';
     //print "</tr>\n";
 
-    print '<tr><td colspan="2" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
-
     print '</table>';
 
+    dol_fiche_end();
+    
+    print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></center>';
+    
     print '</form>';
 }
 
 if ($mode == 'test' && $user->admin)
 {
-    print '<table class="nobordernopadding" width="100%">';
+	dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
+
+	print $langs->trans("PrintIPPDesc")."<br><br>\n";
+	
+	print '<table class="nobordernopadding" width="100%">';
     $printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
     $var=true;
     print '<table width="100%" class="noborder">';
@@ -180,6 +198,7 @@ if ($mode == 'test' && $user->admin)
     //print '<td>Device</td>';
     print '<td>Media</td>';
     print '<td>Supported</td>';
+    print '<td>'.$langs->trans("Select").'</td>';
     print "</tr>\n";
 
     $list = $printer->getlist_available_printers();
@@ -200,14 +219,26 @@ if ($mode == 'test' && $user->admin)
         //print '<td>'.$printer_det->device_uri->_value0.'</td>';
         print '<td>'.$printer_det->media_default->_value0.'</td>';
         print '<td>'.$printer_det->media_type_supported->_value1.'</td>';
+        // Defaut
+        print "<td align=\"center\">";
+        if ($conf->global->PRINTIPP_URI_DEFAULT == "$value")
+        {
+        	print img_picto($langs->trans("Default"),'on');
+        }
+        else
+        {
+        	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setprinteruri&mode=test&value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+        }
+        print '</td>';
         print "</tr>\n";
     }
     print '</table>';
 
     if (count($list) == 0) print $langs->trans("NoPrinterFound");
+
+	dol_fiche_end();
 }
 
-dol_fiche_end();
 
 
 llxFooter();

@@ -102,6 +102,7 @@ $server->wsdl->addComplexType(
     	'total' => array('name'=>'total','type'=>'xsd:double'),
         'date_start' => array('name'=>'date_start','type'=>'xsd:date'),
         'date_end' => array('name'=>'date_end','type'=>'xsd:date'),
+        'payment_mode_id' => array('name'=>'payment_mode_id','type'=>'xsd:string'),
         // From product
         'product_id' => array('name'=>'product_id','type'=>'xsd:int'),
         'product_ref' => array('name'=>'product_ref','type'=>'xsd:string'),
@@ -135,7 +136,9 @@ $server->wsdl->addComplexType(
             'minOccurs' => '0',
             'maxOccurs' => 'unbounded'
         )
-    )
+    ),
+    null,
+    'tns:line'
 );
 
 
@@ -196,7 +199,9 @@ $server->wsdl->addComplexType(
             'minOccurs' => '0',
             'maxOccurs' => 'unbounded'
         )
-    )
+    ),
+    null,
+    'tns:invoice'
 );
 
 
@@ -329,6 +334,7 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
 			        	'status'=> $invoice->statut,
 			        	'close_code' => $invoice->close_code?$invoice->close_code:'',
 			        	'close_note' => $invoice->close_note?$invoice->close_note:'',
+			        	'payment_mode_id' => $invoice->mode_reglement_id?$invoice->mode_reglement_id:'',
 			        	'lines' => $linesresp
 			        ));
 			}
@@ -454,6 +460,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 			    		'status'=> $invoice->statut,
 			    		'close_code' => $invoice->close_code?$invoice->close_code:'',
 			    		'close_note' => $invoice->close_note?$invoice->close_note:'',
+					'payment_mode_id' => $invoice->mode_reglement_id?$invoice->mode_reglement_id:'',
 			    		'lines' => $linesresp
 			    	);
 			    }
@@ -518,6 +525,15 @@ function createInvoice($authentication,$invoice)
         $newobject->statut=0;	// We start with status draft
         $newobject->fk_project=$invoice['project_id'];
         $newobject->date_creation=$now;
+        
+	//take mode_reglement and cond_reglement from thirdparty
+        $soc = new Societe($db);
+        $res=$soc->fetch($newobject->socid);
+        if ($res > 0) {
+    	    $newobject->mode_reglement_id = ! empty($invoice['payment_mode_id'])?$invoice['payment_mode_id']:$soc->mode_reglement_id;
+            $newobject->cond_reglement_id  = $soc->cond_reglement_id; 
+        }
+        else $newobject->mode_reglement_id = $invoice['payment_mode_id'];
 
         // Trick because nusoap does not store data with same structure if there is one or several lines
         $arrayoflines=array();
@@ -585,7 +601,5 @@ function createInvoice($authentication,$invoice)
     return $objectresp;
 }
 
-
 // Return the results.
-$server->service((isset($HTTP_RAW_POST_DATA)?$HTTP_RAW_POST_DATA:''));
-
+$server->service(file_get_contents("php://input"));

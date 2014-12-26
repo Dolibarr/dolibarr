@@ -123,14 +123,21 @@ class AllTests
         require_once dirname(__FILE__).'/DiscountTest.php';
         $suite->addTestSuite('DiscountTest');
 
+        require_once dirname(__FILE__).'/ContratTest.php';
+        $suite->addTestSuite('ContratTest');
+
+        require_once dirname(__FILE__).'/FichinterTest.php';
+        $suite->addTestSuite('FichinterTest');
+
+        require_once dirname(__FILE__).'/PropalTest.php';
+        $suite->addTestSuite('PropalTest');
+
         require_once dirname(__FILE__).'/CommandeTest.php';
         $suite->addTestSuite('CommandeTest');
 
         require_once dirname(__FILE__).'/CommandeFournisseurTest.php';
         $suite->addTestSuite('CommandeFournisseurTest');
 
-        require_once dirname(__FILE__).'/ContratTest.php';
-        $suite->addTestSuite('ContratTest');
         require_once dirname(__FILE__).'/FactureTest.php';
         $suite->addTestSuite('FactureTest');
         require_once dirname(__FILE__).'/FactureRecTest.php';
@@ -139,8 +146,7 @@ class AllTests
         $suite->addTestSuite('FactureTestRounding');
         require_once dirname(__FILE__).'/FactureFournisseurTest.php';
         $suite->addTestSuite('FactureFournisseurTest');
-        require_once dirname(__FILE__).'/PropalTest.php';
-        $suite->addTestSuite('PropalTest');
+
 		require_once dirname(__FILE__).'/UserTest.php';
         $suite->addTestSuite('UserTest');
 		require_once dirname(__FILE__).'/UserGroupTest.php';

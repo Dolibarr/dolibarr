@@ -1,37 +1,34 @@
 
 MenuResourceIndex=Ressources
 MenuResourceAdd=Nouvelle ressource
-MenuResourcePlanning=Planning des Ressources
+MenuResourcePlanning=Resources
 DeleteResource=Effacer ressource
-ConfirmDeleteResourceElement=Confirmer la suppression de la ressource pour cet élément
-NoResourceInDatabase=Aucune ressource en base de données.
+ConfirmDeleteResourceElement=Confirmer la suppression de cette ressource ?
+NoResourceInDatabase=Pas de ressource en base
 NoResourceLinked=Aucune ressource liée
 
-ResourcePageIndex=Liste des Ressources
-ResourceSingular=Ressource
-ResourceCard=Fiche ressource
-AddResource=Ajouter une ressource
+ResourcePageIndex=Liste des ressources
+ResourceSingular=Resource
+ResourceCard=Fiche
+AddResource=Créer une ressource
 ResourceFormLabel_ref=Nom de la ressource
-ResourceType=Type de la ressource
+ResourceType=Type de ressource
 ResourceFormLabel_description=Description de la ressource
 
-ResourcesLinkedToElement=Ressources liées à l'élément
-RessourceLineSuccessfullyUpdated=Ressource mise à jour
-RessourceLineSuccessfullyDeleted=Ressource supprimée
+ResourcesLinkedToElement=Ressource lié au document
 
-ShowResourcePlanning=Montrer le planning des ressources
-PlanningOfAffectedResources=Planning des ressources affectées aux évènements
-GotoDate=Afficher la date
+ShowResourcePlanning=Afficher ressource
+GotoDate=Aller à un date
 
-ResourceElementPage=Ressources de l'élément
-ResourceCreatedWithSuccess=Ressource créee avec succès
-RessourceLineSuccessfullyDeleted=Ressource supprimée avec succès
-RessourceLineSuccessfullyUpdated=Ressource mise à jour
+ResourceElementPage=Ressources
+ResourceCreatedWithSuccess=Ressource créée avec succès
+RessourceLineSuccessfullyDeleted=Ligne de ressource supprimée
+RessourceLineSuccessfullyUpdated=Ligne de ressource mise à jour avec succès
 ResourceLinkedWithSuccess=Ressource liée avec succès
 
 TitleResourceCard=Fiche ressource
-ConfirmDeleteResource=Confirmer la suppression de cette ressource?
-RessourceSuccessfullyDeleted=Ressource effacée avec succès
-DictionaryResourceType=Type de ressources
+ConfirmDeleteResource=Confirmer la suppression de cette ressource ?
+RessourceSuccessfullyDeleted=Ressource supprimée avec succès
+DictionaryResourceType=Type de ressource
 
-SelectResource=Sélectionner la ressource
+SelectResource=Sélectionner ressource

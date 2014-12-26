@@ -55,8 +55,6 @@ NoOpenedPropals=Sin presupuestos abiertos
 NoOtherOpenedPropals=Ningún otro presupuesto abierto
 RefProposal=Ref. presupuesto
 SendPropalByMail=Enviar presupuesto por e-mail
-FileNotUploaded=No se ha subido el archivo
-FileUploaded=El archivo se ha subido correctamente
 AssociatedDocuments=Documentos asociados al presupuesto:
 ErrorCantOpenDir=Imposible abrir el directorio
 DatePropal=Fecha presupuesto
@@ -83,7 +81,7 @@ ProposalsAndProposalsLines=Presupuestos a clientes y líneas de presupuestos
 ProposalLine=Línea de presupuesto
 AvailabilityPeriod=Tiempo de entrega
 SetAvailability=Definir el tiempo de entrega
-AfterOrder=despues del pedido
+AfterOrder=desde la firma
 ##### Availability #####
 AvailabilityTypeAV_NOW=Inmediata
 AvailabilityTypeAV_1W=1 semana

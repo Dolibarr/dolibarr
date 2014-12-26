@@ -2,6 +2,175 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 3.7 compared to 3.6.* *****
+For users:
+- New: Match other auth system: Login can be done entering login or user 
+       email (this open the road for SSO).
+- New: Agenda export by project #1967.
+- New: Increase length of thirdparty to 128 chars.
+- New: "Is Order shippable" icon #1975.
+- New: statistics on supplier orders and invoices on home page.
+- New: Add permissions to read all trips and expenses.
+- New: Can filter on date into tab "Referring object" of a project.
+- New: Module notification has been enhanced:
+       EMail use now language of target contact.
+       Can also define a fixed email for notifications.
+- New: Feature to link manually an order to an invoice does not disappear once
+       link has been done.
+- New: Can set a color on user card (visible into agenda view).
+- New: extrafields for projects and tasks are exported to ODT documents.
+- New: Add number of active notification into tab title (like we do for notes and documents)
+- New: Can add product into category from category card.
+- New: PDF event report show project and status of event.
+- New: Can filter on status on interventions.
+- New: Add help info of field type into dictionary of payment types.
+- New: Add proposals into referer page of thirdparty.
+- New: On contact list can set filter on both active and not active (no more exclusive select). 
+- New: Intervention documents are now available in ECM module.
+- New: Can attach supplier order to a customer order.
+- New: Supervisor is now visible into user list. 
+- New: Add user of creation and validation on invoice export.
+- New: Add info page about browser.
+- New: Enable feature developed for 3.6 we forgot to enabled: Adding prefix
+       on uploaded file names. 
+- New: No more dependency between contract and service module.
+- New: [ task #867 ] Remove ESAEB external module code from core.
+- New: Can create proposal from an intervention.
+- New: An event can be assigned to several users.
+- New: Can filter events on a group of users.
+- New: Can filter events of a thirdparty.
+- New: Onto event summary of elements, end date and status are visible.
+- New: Split Agenda view (month, week, day) into different tabs.
+- New: Add a view "per user" of agenda events (with different colors according to type of event).
+- New: Each user can include its own external ics calendar into dolibarr agenda view.
+- New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
+       create an automatic event into agenda.
+- New: Add new type of event (when type of events are used, not by default).
+- New: Can disable predefined type of events.
+- New: Form to add a photo is immediatly available on photo page if
+       permissions are ok (save one click per photo to add).
+- New: Add option PRODUCT_MAX_VISIBLE_PHOTO to limit number of photos
+       shown on main product card.
+- New: Add country into table of thirdparties type. This will allow to provide
+       a list of thirdparty types specific to a country (like argentina that
+       need type A or B).
+- New: Can force a specific bank account onto an invoice/order.
+- New: Home page of project area shows list of draft project (like other main page).
+- New: Can search on project ref or string from project main page (like other main page).
+- New: First change to match accessibility rules: http://www.w3.org/TR/WCAG10-HTML-TECHS/
+       Differentiate text and img.
+       Use label into quick search form.
+       Use accesskey on form search.
+- New: Intervention documents are now available in ECM module.
+- New: Add attachments on user card + in ECM module.
+- New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.    
+- New: [ task #1204 ] add Numering contrat module free (like leopard in product module).
+- New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice.
+- New: Enable supplier price log table.
+- New: [ task #1204 ] add a supplier reference to contract.
+- New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
+- New: Optimize size of image static resources.
+- New: Add hourly and daily amount on user card. Add weekly working hours and salary on user card.
+- New: Content of predefined email come firstly from table llx_c_email_template, then translation key. 
+- New: Add option MAIN_GENERATE_INVOICES_WITH_PICTURE to show picture 
+       onto PDF like MAIN_GENERATE_PROPOSALS_WITH_PICTURE dir for proposals.
+- New: Add more search field in list of cheque deposits.
+- New: Add feature to order to invoice on supplier part.
+- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export.
+- New: Direct invoice creation from predefined invoice.
+- New: Add dunning into accountancy report.
+- New: Add favorite button into country dictionary to put value on top select list
+- Upgrade phpexcel lib to 1.7.8
+- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export.
+- New : Option on extrafields to have them always editable regardless of the document status.
+- New : New module PrintIPP to print without opening document is available as stable.
+- Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
+- Fix: [ bug #1470, #1472, #1473] User trigger problem
+- Fix: [ bug #1489, #1491 ] Intervention trigger problem
+- Fix: [ bug #1492, #1493 ] Member trigger problem
+- Fix: [ bug #1474, #1475 ] Contract trigger problem
+- Fix: [ bug #1496 ] ACTION_DELETE trigger does not show trigger error
+- Fix: [ bug #1494 ] CATEGORY_CREATE and CATEGORY_MODIFY triggers do not intercept trigger action
+- Fix: [ bug #1502 ] DON_CREATE trigger does not intercept trigger action
+- Fix: [ bug #1505, #1504] Project trigger problem
+- Fix: [ bug #1463, #1464 ] Proposal triggers problem
+- Fix: [ bug #1498, #1499 ] Shipment/Delivery triggers problem
+- Fix: [ bug #1465, #1466 ] Product triggers problem
+- Fix: [ bug #1508 ] STOCK_MOVEMENT does not show trigger error message
+- Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
+- Fix: [ bug #1506, #1507 ] ECM trigger error problem
+- Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
+- Fix: [ bug #1533 ] Links triggers do not show trigger error message
+- Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
+- Fix: [ bug #1535 ] Supplier invoice Extrafields are not shown
+- Fix: datepicker first day of week can be monday by setting into display setup
+- Fix: [ bug #575 ] GED doesn't works if there is "/" in a mask
+
+For users, new experimental module (need to set feature level of instance to experimental to see them):
+- New: Module Accounting Expert to manage accountancy
+		Special Thanks to developpers :
+			Olivier Geffroy
+			Alexandre Spangaro
+			Ari Elbaz
+			Florian Henry
+			Juanjo Menent
+		And to the contributors :
+			Jeff Info				2000 euros
+			Nord Anim		 		 120 euros
+			Hydroflex		 		 120 euros
+			Asysteo			 		 120 euros
+			Fournisseur médical		 120 euros
+- Removed: unmaintained OScommerce module
+
+For translators:
+- Update language files.
+- New: When a translation is not available we always jump to en_US and only en_US.
+
+For developers:
+- New: Add a css style "cursorpointer".
+- New: Select list of users can return user into hierarchy.
+- New: getBrowserInfo can return type of layout of browser (classic/phone/tablet)
+- New: Add hook "searchAgendaFrom" and "beforePDFCreation".
+- New: Add trigger DON_UPDATE, DON_DELETE
+- New: Add country iso code on 3 chars into table of countries.
+- Qual: Removed hard coded rowid into data init of table llx_c_action_trigger.
+- LINEBILL_DELETE, LINK_DELETE, ORDER_SUPPLIER_DELETE, RESOURCE_DELETE trigger called before SQL delete
+- New: [ Task #1481 ] Add trigger BILL_SUPPLIER_UPDATE.
+- New: [ Task #1495 ] Add trigger LINECONTRACT_CREATE.
+- New: Added hook "formConfirm" and "doActions" for supplier invoice card.
+- New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card.
+- New: renamed table llx_c_pays to llx_c_country & libelle field to label.
+- New: Added hook "formConfirm" and "doActions" for fichinter card
+- New: Can search list of thirdparties from web service on part of name.
+- New: Function getCurrencyAmount is marked as deprecated. Use function price to output a price
+       including currency symbol.
+- Qual: Renamed table llx_c_civilite into llx_c_civility,
+		field civilite into label in the same table,
+		and field civilite into civility in other table.
+- Qual: Renamed all files & links "liste.php" into "list.php".
+- Qual: Renamed all files & links "fiche.php" into "card.php".
+- Qual: Replace all constants COMPTA_* by ACCOUNTING_*.
+- Qual: Replace all constants ACCOUNTINGEX_* by ACCOUNTING_* to simplify migration of the module
+- Fix: [ bug #1724 ] Can't add a submenu to projects
+
+WARNING: Following changes may create regression for some external modules, but was necessary to make
+Dolibarr better:
+
+- If you can't see trips and expenses records, check that you have the new permission "read all
+  trips and expenses".
+- Deprecated module "oscommerce" were removed.
+- Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
+- Some field into database were renamed from "libelle" to "label".
+- Table llx_c_pays were renamed into llx_c_country.  
+- Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
+  creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
+- A lot of pages called fiche.php were renamed into card.php
+- A lot of pages called liste.php were renamed into list.php
+- If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
+  warehouse module and your Point Of Sale module if you use one.
+
+
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
 - Fix: bug 1588 : relative discount.
@@ -16,6 +185,7 @@ English Dolibarr ChangeLog
 - Fix: Show sender Country on PDF docs when sender Country <> receiver Country
 - Fix: [ bug #1624 ] Use lowest buying price for margin when selling with POS
 - Fix: [ bug #1749 ] Undefined $mailchimp
+- Fix: [ bug #1736 ] Failing supplier Elephant numeration module with some masks
 - Fix: [ bug #1649 ] Cancel button of several thirdparty actions, does the same thing as modify
 - Fix: [ bug #1736 ] Failing supplier Elephant numeration module with some masks
 - Fix: [ bug #1731 ] Can't use quick navigation on project tasks secondary tabs
@@ -110,6 +280,9 @@ For users:
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity.
 - Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers.
+- Fix: [ bug #1439 ] impossible to remove a a translation (multilanguage-feature) 
+- New: If multilangue is enabled, mail (from propal, invoice, etc...) message is pre-defaulted in Customer language
+- Fix: [ bug #1459 ] _ADD_CONTACT and _DEL_CONTACT triggers do not intercept insertion when reported an error
 - Fix: [ bug #1478 ] BILL_PAYED trigger action does not intercept failure under some circumstances
 - Fix: [ bug #1479 ] Several customer invoice triggers do not intercept trigger action
 - Fix: [ bug #1477 ] Several customer invoice triggers do not show trigger error messages
@@ -137,6 +310,8 @@ For developers:
 - New: A module can disable a standard ECM view.
 - New: Add multilang support into product webservice.
 - New: Add hooks on project card page.
+- New: Add call_trigger method on CommonObject class. So new trigger call within object is just : 
+$result = $this->call_trigger($trigger_name, $user) 
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -144,11 +319,11 @@ Dolibarr better:
 - The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
 removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
 - Remove the javascript function ac_delay() that is not used anymore by core code.
-- Properties "dictionnaries" into module descriptor files has been renamed into "dictionaries".
+- Properties "dictionnaries" into module descriptor files have been renamed into "dictionaries".
 - Method form->select_currency() has been removed. Use instead print form->selectCurrency().
 - Method form->select_methodes_commande() has been renamed into english name selectInputMethod().
 - The following hooks are now 'addreplace' hooks: "formCreateThirdpartyOptions" 
-  So check that return value is 0 to keep default standard behaviour after hook or 1 to disable
+  So check that return value is 0 to keep default standard behaviour after hook, or 1 to disable
   default standard behaviour.
 - Properties "civilite_id" were renamed into "civility_id".
 - Remove add_photo_web() that is ot used anymore by core code.

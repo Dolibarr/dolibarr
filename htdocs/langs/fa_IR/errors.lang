@@ -37,7 +37,7 @@ ErrorSupplierCodeRequired=کد تامین کننده مورد نیاز
 ErrorSupplierCodeAlreadyUsed=کد تامین کننده در حال حاضر استفاده می شود
 ErrorBadParameters=پارامترهای بد
 ErrorBadValueForParameter=ارزش اشتباه '٪ s' را برای پارامتر نادرست '٪ s' را
-ErrorBadImageFormat=فایل تصویر است نه یک فرمت پشتیبانی
+ErrorBadImageFormat=Image file has not a supported format (Your PHP does not support functions to convert images of this format)
 ErrorBadDateFormat=مقدار «٪ s 'است قالب تاریخ اشتباه
 ErrorWrongDate=تاریخ صحیح نمی باشد!
 ErrorFailedToWriteInDir=برای نوشتن در پوشه٪ s شکست خورد
@@ -114,6 +114,7 @@ ErrorLoginDoesNotExists=کاربر با ورود <b>به٪ s را</b> می تو�
 ErrorLoginHasNoEmail=این کاربر هیچ آدرس ایمیل. فرآیند سقط شده.
 ErrorBadValueForCode=ارزش بد برای کد امنیتی. دوباره سعی کنید با ارزش جدید ...
 ErrorBothFieldCantBeNegative=زمینه های٪ s و٪ s نمی تواند هر دو منفی
+ErrorQtyForCustomerInvoiceCantBeNegative=Quantity for line into customer invoices can't be negative
 ErrorWebServerUserHasNotPermission=حساب <b>کاربری٪ s را</b> برای اجرای وب سرور بدون اجازه که
 ErrorNoActivatedBarcode=بدون بارکد از نوع فعال
 ErrUnzipFails=برای جدا کردن٪ s با ZipArchive ناموفق
@@ -133,9 +134,28 @@ ErrorPHPNeedModule=خطا، PHP شما باید <b>بخش٪ s</b> نصب کرد�
 ErrorOpenIDSetupNotComplete=شما راه اندازی Dolibarr فایل پیکربندی اجازه می دهد تا احراز هویت ایجاد حساب کاربری، اما URL خدمات ایجاد حساب کاربری به٪ ثابت تعریف نشده
 ErrorWarehouseMustDiffers=منبع و هدف انبارها باید متفاوت
 ErrorBadFormat=فرمت بد!
-ErrorPaymentDateLowerThanInvoiceDate=تاریخ پرداخت (٪ بازدید کنندگان) نمی باشد قبل از تاریخ فاکتور (٪ s) برای فاکتور٪ است.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=خطا، این عضو هنوز رتبهدهی نشده است به هر thirdparty مرتبط است. عضو لینک به یک شخص ثالث موجود یا ایجاد یک thirdparty جدید قبل از ایجاد اشتراک با فاکتور.
 ErrorThereIsSomeDeliveries=خطا، برخی از زایمان مرتبط با این حمل و نقل وجود دارد. حذف خودداری کرد.
+ErrorCantDeletePaymentReconciliated=Can't delete a payment that had generated a bank transaction that was conciliated
+ErrorCantDeletePaymentSharedWithPayedInvoice=Can't delete a payment shared by at least one invoice with status Payed
+ErrorPriceExpression1=Cannot assign to constant '%s'
+ErrorPriceExpression2=Cannot redefine built-in function '%s'
+ErrorPriceExpression3=Undefined variable '%s' in function definition
+ErrorPriceExpression4=Illegal character '%s'
+ErrorPriceExpression5=Unexpected '%s'
+ErrorPriceExpression6=Wrong number of arguments (%s given, %s expected)
+ErrorPriceExpression8=Unexpected operator '%s'
+ErrorPriceExpression9=An unexpected error occured
+ErrorPriceExpression10=Iperator '%s' lacks operand
+ErrorPriceExpression11=Expecting '%s'
+ErrorPriceExpression14=Division by zero
+ErrorPriceExpression17=Undefined variable '%s'
+ErrorPriceExpression19=Expression not found
+ErrorPriceExpression20=Empty expression
+ErrorPriceExpression21=Empty result '%s'
+ErrorPriceExpression22=Negative result '%s'
+ErrorPriceExpressionInternal=Internal error '%s'
+ErrorPriceExpressionUnknown=Unknown error '%s'
 
 # Warnings
 WarningMandatorySetupNotComplete=پارامترهای راه اندازی اجباری هنوز تعریف نشده
@@ -154,3 +174,5 @@ WarningUsingThisBoxSlowDown=اخطار، با استفاده از این جعب�
 WarningClickToDialUserSetupNotComplete=راه اندازی از اطلاعات ClickToDial برای کاربر شما کامل نیست (ClickToDial زبانه دیدن بر روی کارت کاربر خود را).
 WarningNotRelevant=عملیات بی ربط برای این مجموعه داده
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=قابلیت غیر فعال زمانی که راه اندازی صفحه نمایش برای فرد نابینا یا از مرورگرهای متن بهینه شده است.
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
+WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters

@@ -73,13 +73,13 @@ class FormSocialContrib
         else
         {
             $sql = "SELECT c.id, c.libelle as type";
-            $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."c_pays as p";
-            $sql.= " WHERE c.active = 1 AND c.fk_pays = p.rowid";
-            $sql.= " AND p.code = '".$mysoc->country_code."'";
+            $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."c_country as co";
+            $sql.= " WHERE c.active = 1 AND c.fk_pays = co.rowid";
+            $sql.= " AND co.code = '".$mysoc->country_code."'";
             $sql.= " ORDER BY c.libelle ASC";
         }
 
-        dol_syslog("Form::select_type_socialcontrib sql=".$sql, LOG_DEBUG);
+        dol_syslog("Form::select_type_socialcontrib", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {

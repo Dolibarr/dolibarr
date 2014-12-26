@@ -277,7 +277,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 				// Make substitution
 				$substitutionarray=array(
-				'__FROM_NAME__' => $this->emetteur->nom,
+				'__FROM_NAME__' => $this->emetteur->name,
 				'__FROM_EMAIL__' => $this->emetteur->email,
 				'__TOTAL_TTC__' => $object->total_ttc,
 				'__TOTAL_HT__' => $object->total_ht,
@@ -329,73 +329,19 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				{
 				}
 
-				// Make substitutions into odt of user info
-				$tmparray=$this->get_substitutionarray_user($user,$outputlangs);
-				//var_dump($tmparray); exit;
-				foreach($tmparray as $key=>$value)
-				{
-					try {
-						if (preg_match('/logo$/',$key)) // Image
-						{
-							//var_dump($value);exit;
-							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else    // Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					}
-					catch(OdfException $e)
-					{
-					}
-				}
-				// Make substitutions into odt of mysoc
-				$tmparray=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
-				//var_dump($tmparray); exit;
-				foreach($tmparray as $key=>$value)
-				{
-					try {
-						if (preg_match('/logo$/',$key))	// Image
-						{
-							//var_dump($value);exit;
-							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else	// Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					}
-					catch(OdfException $e)
-					{
-					}
-				}
-				// Make substitutions into odt of thirdparty
-				$tmparray=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
-				foreach($tmparray as $key=>$value)
-				{
-					try {
-						if (preg_match('/logo$/',$key))	// Image
-						{
-							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else	// Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					}
-					catch(OdfException $e)
-					{
-					}
-				}
-				// Replace tags of object + external modules
-				$tmparray=$this->get_substitutionarray_object($object,$outputlangs);
+				// Make substitutions into odt
+				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
+				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
+				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
+				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
+				$array_other=$this->get_substitutionarray_other($outputlangs);
+
+				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				foreach($tmparray as $key=>$value)
 				{
 					try {
@@ -481,6 +427,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
 						return -1;
 					}
 				}
+
+				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

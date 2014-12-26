@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
--- Copyright (C) 2009		Laurent Destailleur		<eldy@users.sourceforge.net>
+-- Copyright (C) 2009-2014  Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
 -- Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
 --
@@ -28,23 +28,23 @@ create table llx_facturedet_rec
   product_type		integer DEFAULT 0,
   label				varchar(255) DEFAULT NULL,
   description		text,
-  tva_tx			double(6,3) DEFAULT 19.6,		-- taux tva
+  tva_tx			double(6,3),	             	-- taux tva
   localtax1_tx      double(6,3) DEFAULT 0,    		-- localtax1 rate
-  localtax1_type	varchar(10)	NULL, 				-- localtax1 type
+  localtax1_type	varchar(10) NULL, 				-- localtax1 type
   localtax2_tx      double(6,3) DEFAULT 0,    		-- localtax2 rate
-  localtax2_type	varchar(10)	NULL, 				-- localtax2 type
+  localtax2_type	varchar(10)	 NULL, 				-- localtax2 type
   qty				real,							-- quantity
-  remise_percent	real DEFAULT 0,					-- pourcentage de remise
-  remise			real DEFAULT 0,					-- montant de la remise
+  remise_percent	real DEFAULT 0,				-- pourcentage de remise
+  remise			real DEFAULT 0,				-- montant de la remise
   subprice			double(24,8),					-- prix avant remise
   price				double(24,8),					-- prix final
   total_ht			double(24,8),					-- Total HT de la ligne toute quantity et incluant remise ligne et globale
   total_tva			double(24,8),					-- Total TVA de la ligne toute quantity et incluant remise ligne et globale
-  total_localtax1	double(24,8) DEFAULT 0,			-- Total LocalTax1 for total quantity of line
-  total_localtax2	double(24,8) DEFAULT 0,			-- total LocalTax2 for total quantity of line
+  total_localtax1	double(24,8) DEFAULT 0,		-- Total LocalTax1 for total quantity of line
+  total_localtax2	double(24,8) DEFAULT 0,		-- total LocalTax2 for total quantity of line
   total_ttc			double(24,8),					-- Total TTC de la ligne toute quantity et incluant remise ligne et globale
-  info_bits			integer    DEFAULT 0,			-- TVA NPR ou non
-  special_code		integer UNSIGNED DEFAULT 0,		-- code pour les lignes speciales
-  rang				integer    DEFAULT 0			-- ordre d'affichage
-  
+  info_bits			integer DEFAULT 0,				-- TVA NPR ou non
+  special_code		integer UNSIGNED DEFAULT 0,	-- code pour les lignes speciales
+  rang				integer DEFAULT 0,				-- ordre d'affichage
+  fk_contract_line  integer NULL					-- id of contract line when predefined invoice comes from contract lines 
 )ENGINE=innodb;

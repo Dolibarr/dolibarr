@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013      Cédric Salvador    	<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2014 Laurent Destaileur	<ely@users.sourceforge.net>
+/* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2014	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,9 @@ $type = GETPOST('type','int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
 $mode = GETPOST('mode','alpha');
+
+$fourn_id = GETPOST('fourn_id','int');
+$texte = '';
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -130,7 +134,6 @@ if ($action == 'order' && isset($_POST['valid']))
 				{
                     $error=$db->lasterror();
                     dol_print_error($db);
-                    dol_syslog('replenish.php: '.$error, LOG_ERR);
                 }
                 $db->free($resql);
                 unset($_POST['fourn' . $i]);
@@ -198,7 +201,7 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global
 $usevirtualstock=-1;
 if ($virtualdiffersfromphysical)
 {
-	$usevirtualstock=($conf->global->STOCK_USE_VIRTUAL_STOCK?1:0);
+	$usevirtualstock=(! empty($conf->global->STOCK_USE_VIRTUAL_STOCK)?1:0);
 	if ($mode=='virtual') $usevirtualstock=1;
 	if ($mode=='physical') $usevirtualstock=0;
 }
@@ -258,7 +261,7 @@ if ($usevirtualstock)
 	$sqlCommandesCli.= " WHERE c.entity = ".$conf->entity;
 	$sqlCommandesCli.= " AND cd.fk_product = p.rowid";
 	$sqlCommandesCli.= " AND c.fk_statut IN (1,2))";
-	
+
 	$sqlExpeditionsCli = "(SELECT ".$db->ifsql("SUM(ed.qty) IS NULL", "0", "SUM(ed.qty)")." as qty";
 	$sqlExpeditionsCli.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 	$sqlExpeditionsCli.= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON (ed.fk_expedition = e.rowid)";
@@ -267,7 +270,7 @@ if ($usevirtualstock)
 	$sqlExpeditionsCli.= " WHERE e.entity = ".$conf->entity;
 	$sqlExpeditionsCli.= " AND cd.fk_product = p.rowid";
 	$sqlExpeditionsCli.= " AND c.fk_statut IN (1,2))";
-		
+
 	$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd.qty) IS NULL", "0", "SUM(cd.qty)")." as qty";
 	$sqlCommandesFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd";
 	$sqlCommandesFourn.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -275,19 +278,19 @@ if ($usevirtualstock)
 	$sqlCommandesFourn.= " AND c.entity = ".$conf->entity;
 	$sqlCommandesFourn.= " AND cd.fk_product = p.rowid";
 	$sqlCommandesFourn.= " AND c.fk_statut IN (3,4))";
-	
+
 	$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd.qty) IS NULL", "0", "SUM(fd.qty)")." as qty";
 	$sqlReceptionFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 	$sqlReceptionFourn.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd ON (fd.fk_commande = cf.rowid)";
 	$sqlReceptionFourn.= " WHERE cf.entity = ".$conf->entity;
 	$sqlReceptionFourn.= " AND fd.fk_product = p.rowid";
 	$sqlReceptionFourn.= " AND cf.fk_statut IN (3,4))";
-	
+
 	$sql.= ' HAVING ((('.$db->ifsql("p.desiredstock IS NULL", "0", "p.desiredstock").' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 	$sql.= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')))';
 	$sql.= ' OR (p.seuil_stock_alerte >= 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 	$sql.= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.'))))';
-	
+
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
 		$sql.= ' AND (p.seuil_stock_alerte > 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
@@ -297,7 +300,7 @@ if ($usevirtualstock)
 } else {
 	$sql.= ' HAVING ((p.desiredstock > 0 AND (p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
 	$sql.= ' OR (p.seuil_stock_alerte > 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))))';
-	
+
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
 		$sql.= ' AND (p.seuil_stock_alerte > 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
@@ -309,7 +312,6 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit, $offset);
 
 //print $sql;
-dol_syslog('Execute request sql='.$sql);
 $resql = $db->query($sql);
 if (empty($resql))
 {
@@ -428,7 +430,7 @@ print '<tr class="liste_titre">'.
 if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
-	'<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . $alertchecked . '></td>'.
+	'<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
 	'<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">'.
@@ -448,7 +450,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	{
 		$prod->fetch($objp->rowid);
 		$prod->load_stock();
-		
+
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
@@ -477,9 +479,9 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		{
 			$stock = $prod->stock_reel;
 		}
-		
+
 		$ordered = $prod->stats_commande_fournisseur['qty']-$prod->stats_reception['qty'];
-		
+
 		$warning='';
 		if ($objp->alertstock && ($stock < $objp->alertstock))
 		{

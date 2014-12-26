@@ -19,3 +19,4 @@ TF_TRIP=Výlet
 ListTripsAndExpenses=Seznam cest a nákladů
 ExpensesArea=Výlety a náklady oblast
 SearchATripAndExpense=Hledat na výlet a náklady
+ClassifyRefunded=Classify 'Refunded'

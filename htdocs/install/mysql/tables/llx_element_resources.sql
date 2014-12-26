@@ -13,16 +13,19 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- ============================================================================
+-- Table used to link an element actioncomm with a resource or user (llx_resource or llx_user)
+-- ============================================================================
 
 CREATE TABLE llx_element_resources
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  resource_id     integer,
-  resource_type	  varchar(64),
   element_id	  integer,
   element_type    varchar(64),
+  resource_id     integer,			-- id of resource or id of user
+  resource_type	  varchar(64),		-- resource or user
   busy			  integer,
   mandatory		  integer,
-  fk_user_create   integer,
+  fk_user_create  integer,
   tms             timestamp
 )ENGINE=innodb;

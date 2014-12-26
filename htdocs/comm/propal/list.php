@@ -56,6 +56,8 @@ $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_author=GETPOST('search_author','alpha');
 $search_town=GETPOST('search_town','alpha');
+$viewstatut=$db->escape(GETPOST('viewstatut'));
+$object_statut=$db->escape(GETPOST('propal_statut'));
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -78,6 +80,26 @@ if (! empty($socid))
 }
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
+if (GETPOST("button_removefilter") || GETPOST("button_removefilter_x"))	// Both tests are required to be compatible with all browsers
+{
+    $search_categ='';
+    $search_user='';
+    $search_sale='';
+    $search_ref='';
+    $search_refcustomer='';
+    $search_societe='';
+    $search_montant_ht='';
+    $search_author='';
+    $search_town='';
+    $year='';
+    $month='';
+	$viewstatut='';
+	$object_statut='';
+}
+
+if($object_statut != '')
+$viewstatut=$object_statut;
+
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('propallist'));
@@ -91,22 +113,8 @@ $hookmanager->initHooks(array('propallist'));
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-// Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
-{
-    $search_categ='';
-    $search_user='';
-    $search_sale='';
-    $search_ref='';
-    $search_refcustomer='';
-    $search_societe='';
-    $search_montant_ht='';
-    $search_author='';
-    $search_town='';
-    $year='';
-    $month='';
-}
 
 
 /*
@@ -131,17 +139,12 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$viewstatut=$db->escape(GETPOST('viewstatut'));
-$object_statut = $db->escape(GETPOST('propal_statut'));
-if($object_statut != '')
-$viewstatut=$object_statut;
-
 if (! $sortfield) $sortfield='p.datep';
 if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
 
-$sql = 'SELECT s.rowid, s.nom, s.town, s.client, s.code_client,';
+$sql = 'SELECT s.rowid, s.nom as name, s.town, s.client, s.code_client,';
 $sql.= ' p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
@@ -245,7 +248,7 @@ if ($result)
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
 	if ($search_town)		 $param.='&search_town='.$search_town;
-	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->nom:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -321,8 +324,12 @@ if ($result)
 	print '<td class="liste_titre" align="right">';
 	$formpropal->selectProposalStatus($viewstatut,1);
 	print '</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+
+	print '<td class="liste_titre" align="right">';
+	print '<input type="image" name="button_search" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" name="button_removefilter" class="liste_titre" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
+
 	print "</tr>\n";
 
 	$var=true;
@@ -370,11 +377,11 @@ if ($result)
 		print $objp->ref_client;
 		print '</td>';
 
-		$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
+		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$objp->rowid;
 
 		// Company
 		$companystatic->id=$objp->rowid;
-		$companystatic->nom=$objp->nom;
+		$companystatic->name=$objp->name;
 		$companystatic->client=$objp->client;
 		$companystatic->code_client=$objp->code_client;
 		print '<td>';
@@ -388,7 +395,7 @@ if ($result)
 
 		// Date proposal
 		print '<td align="center">';
-		print dol_print_date($db->jdate($obj->dp), 'day');
+		print dol_print_date($db->jdate($objp->dp), 'day');
 		print "</td>\n";
 
 		// Date end validity

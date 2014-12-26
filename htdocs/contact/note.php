@@ -98,12 +98,12 @@ if ($id > 0)
     		$objsoc = new Societe($db);
     		$objsoc->fetch($object->socid);
 
-    		print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
     	}
 
     	else
     	{
-    		print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
     		print $langs->trans("ContactNotLinkedToCompany");
     		print '</td></tr>';
     	}

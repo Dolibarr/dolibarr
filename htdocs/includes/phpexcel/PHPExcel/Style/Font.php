@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package	PHPExcel_Style
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license	http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version	1.7.6, 2011-02-27
+ * @version	1.7.8, 2012-10-12
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category   PHPExcel
  * @package	PHPExcel_Style
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Style_Font implements PHPExcel_IComparable
 {
@@ -89,7 +89,7 @@ class PHPExcel_Style_Font implements PHPExcel_IComparable
 	 *
 	 * @var string
 	 */
-	private $_underline		= PHPExcel_Style_Font::UNDERLINE_NONE;
+	private $_underline		= self::UNDERLINE_NONE;
 
 	/**
 	 * Strikethrough
@@ -128,15 +128,33 @@ class PHPExcel_Style_Font implements PHPExcel_IComparable
 
 	/**
 	 * Create a new PHPExcel_Style_Font
+	 *
+	 * @param	boolean	$isSupervisor	Flag indicating if this is a supervisor or not
+	 *									Leave this value at default unless you understand exactly what
+	 *										its ramifications are
+	 * @param	boolean	$isConditional	Flag indicating if this is a conditional style or not
+	 *									Leave this value at default unless you understand exactly what
+	 *										its ramifications are
 	 */
-	public function __construct($isSupervisor = false)
+	public function __construct($isSupervisor = false, $isConditional = false)
 	{
 		// Supervisor?
 		$this->_isSupervisor = $isSupervisor;
 
 		// Initialise values
-		$this->_color				= new PHPExcel_Style_Color(PHPExcel_Style_Color::COLOR_BLACK, $isSupervisor);
-
+		if ($isConditional) {
+			$this->_name			= NULL;
+			$this->_size			= NULL;
+			$this->_bold			= NULL;
+			$this->_italic			= NULL;
+			$this->_superScript		= NULL;
+			$this->_subScript		= NULL;
+			$this->_underline		= NULL;
+			$this->_strikethrough	= NULL;
+			$this->_color			= new PHPExcel_Style_Color(PHPExcel_Style_Color::COLOR_BLACK, $isSupervisor, $isConditional);
+		} else {
+			$this->_color	= new PHPExcel_Style_Color(PHPExcel_Style_Color::COLOR_BLACK, $isSupervisor);
+		}
 		// bind parent if we are a supervisor
 		if ($isSupervisor) {
 			$this->_color->bindParent($this, '_color');
@@ -482,12 +500,16 @@ class PHPExcel_Style_Font implements PHPExcel_IComparable
 	/**
 	 * Set Underline
 	 *
-	 * @param string $pValue	PHPExcel_Style_Font underline type
+	 * @param string|boolean $pValue	PHPExcel_Style_Font underline type
+	 *									If a boolean is passed, then true equates to UNDERLINE_SINGLE,
+	 *										false equates to UNDERLINE_NONE
 	 * @return PHPExcel_Style_Font
 	 */
-	public function setUnderline($pValue = PHPExcel_Style_Font::UNDERLINE_NONE) {
-		if ($pValue == '') {
-			$pValue = PHPExcel_Style_Font::UNDERLINE_NONE;
+	public function setUnderline($pValue = self::UNDERLINE_NONE) {
+		if (is_bool($pValue)) {
+			$pValue = ($pValue) ? self::UNDERLINE_SINGLE : self::UNDERLINE_NONE;
+		} elseif ($pValue == '') {
+			$pValue = self::UNDERLINE_NONE;
 		}
 		if ($this->_isSupervisor) {
 			$styleArray = $this->getStyleArray(array('underline' => $pValue));
