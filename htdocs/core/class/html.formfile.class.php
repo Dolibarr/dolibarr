@@ -997,7 +997,6 @@ class FormFile
                 if ($modulepart == 'user')             { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
 
                 if (! $id && ! $ref) continue;
-
                 $found=0;
                 if (! empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref]))
                 {
@@ -1006,7 +1005,19 @@ class FormFile
                 else
                 {
                     //print 'Fetch '.$id." - ".$ref.'<br>';
-                    $result=$object_instance->fetch($id,$ref);
+
+                    if ($id) {
+                        $result = $object_instance->fetch($id);
+                    } else {
+                        //fetchOneLike looks for objects with wildcards in its reference.
+                        //It is useful for those masks who get underscores instead of their actual symbols
+                        //fetchOneLike requires some info in the object. If it doesn't have it, then 0 is returned
+                        //that's why we look only look fetchOneLike when fetch returns 0
+                        if (!$result = $object_instance->fetch('', $ref)) {
+                            $result = $object_instance->fetchOneLike($ref);
+                        }
+                    }
+
                     if ($result > 0)  { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance); }    // Save object into a cache
                     if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; unset($filearray[$key]); }
                 }

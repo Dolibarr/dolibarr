@@ -12,7 +12,7 @@
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2014 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
- * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2014 Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2013      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014      Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  *
@@ -400,14 +400,26 @@ class Form
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
         $s="";
         if (empty($notabs))	$s.='<table class="nobordernopadding" summary=""><tr>';
-        if ($direction < 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
+        if ($direction < 0)	{
+            $s.='<'.$tag.$paramfortooltipimg;
+            if ($tag == 'td') {
+                $s .= 'valign="top" ';
+            }
+            $s.= 'width="14">'.$img.'</'.$tag.'>';
+        }
         // Use another method to help avoid having a space in value in order to use this value with jquery
         // TODO add this in css
         //if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
         $paramfortooltiptd.= (($direction < 0)?' style="padding-left: 3px !important;"':'');
         $paramfortooltiptd.= (($direction > 0)?' style="padding-right: 3px !important;"':'');
         if ((string) $text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
-        if ($direction > 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
+        if ($direction > 0)	{
+            $s.='<'.$tag.$paramfortooltipimg;
+            if ($tag == 'td') {
+                $s .= 'valign="top" ';
+            }
+            $s.= 'width="14">'.$img.'</'.$tag.'>';
+        }
         if (empty($notabs))	$s.='</tr></table>';
 
         return $s;

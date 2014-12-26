@@ -573,7 +573,7 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
 /**
  * Return last or next value for a mask (according to area we should not reset)
  *
- * @param   DoliDB		$db			Database handler
+ * @param   DoliDB		$db				Database handler
  * @param   string		$mask			Mask to use
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
@@ -581,8 +581,8 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  * @param   Societe		$objsoc			The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode			'next' for next value or 'last' for last value
- * @param   bool		$bentityon		activate the entity filterdefault is true (for modules not compatible with multicompany)
- * @return 	string					New value (numeric) or error message
+ * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
+ * @return 	string						New value (numeric) or error message
  */
 function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true)
 {
@@ -787,7 +787,6 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 	$sql.= " AND ".$field." NOT LIKE '(PROV%)'";
     if ($bentityon) // only if entity enable
     	$sql.= " AND entity IN (".getEntity($table, 1).")";
-
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 

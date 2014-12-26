@@ -149,7 +149,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (! empty($conf->browser->phone)) print '</div>';
 	else print '</td>';
 
-	if (! empty($conf->browser->phone)) print '<div class="fichehalfright" valign="middle">';
+	if (! empty($conf->browser->phone)) print '<div class="fichehalfright">';
 	else print '<td align="center" valign="middle" class="nowrap">';
 
 	print '<table><tr><td align="center">';

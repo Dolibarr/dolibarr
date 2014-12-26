@@ -187,7 +187,7 @@ class Link extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('LINK_MODIFY',$user);
-                if ($result < 0) $error++;            
+                if ($result < 0) $error++;
                 // End call triggers
             }
 
@@ -197,6 +197,7 @@ class Link extends CommonObject
                 $this->db->commit();
                 return 1;
             } else {
+                setEventMessages('', $this->errors, 'errors');
                 $this->db->rollback();
                 return -1;
             }

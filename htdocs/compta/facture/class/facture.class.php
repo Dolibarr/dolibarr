@@ -50,6 +50,11 @@ class Facture extends CommonInvoice
 	public $fk_element = 'fk_facture';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'facnumber';
+
 	var $id;
 	//! Id client
 	var $socid;
@@ -832,7 +837,6 @@ class Facture extends CommonInvoice
 		if ($withpicto != 2) $result.=$linkstart.($max?dol_trunc($this->ref,$max):$this->ref).$linkend;
 		return $result;
 	}
-
 
 	/**
 	 *	Get object and lines from database

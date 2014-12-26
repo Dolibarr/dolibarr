@@ -73,7 +73,7 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 
 	if (! $error)
 	{
-		$object->fetch($id);
+		$object->fetch($id, $ref);
 		$object->fetch_projet();
 
 		if (empty($object->projet->statut))
@@ -119,7 +119,7 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 
 	if (! $error)
 	{
-		$object->fetch($id);
+		$object->fetch($id, $ref);
 
 		$object->timespent_id = $_POST["lineid"];
 		$object->timespent_note = $_POST["timespent_note_line"];
@@ -194,7 +194,7 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Fiche projet en mode visu
  	 */
-	if ($object->fetch($id) >= 0)
+	if ($object->fetch($id, $ref) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();

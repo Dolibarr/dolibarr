@@ -80,15 +80,20 @@ $parameters = array('socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+//Some actions show a "cancel" input submit button with name="cancel"
+$cancelbutton = GETPOST('cancel');
 
 if ($action == 'setcustomeraccountancycode')
 {
-	$result=$object->fetch($id);
-	$object->code_compta=$_POST["customeraccountancycode"];
-	$result=$object->update($object->id,$user,1,1,0);
-	if ($result < 0)
+	if (! $cancelbutton) 
 	{
-		setEventMessage($object->errors, 'errors');
+		$result=$object->fetch($id);
+		$object->code_compta=$_POST["customeraccountancycode"];
+		$result=$object->update($object->id,$user,1,1,0);
+		if ($result < 0)
+		{
+			setEventMessage($object->errors, 'errors');
+		}
 	}
 	$action="";
 }
@@ -140,10 +145,13 @@ if ($action == 'cstc')
 // Update communication level
 if ($action == 'setOutstandingBill')
 {
-	$object->fetch($id);
-	$object->outstanding_limit=GETPOST('OutstandingBill');
-	$result=$object->set_OutstandingBill($user);
-	if ($result < 0) setEventMessage($object->error,'errors');
+	if (!$cancelbutton) 
+	{
+		$object->fetch($id);
+		$object->outstanding_limit=GETPOST('OutstandingBill');
+		$result=$object->set_OutstandingBill($user);
+		if ($result < 0) setEventMessage($object->error,'errors');
+	}
 }
 
 
@@ -289,24 +297,15 @@ if ($id > 0)
 	print '</tr>';
 
 	// Local Taxes
-	if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+	if ($mysoc->useLocalTax(1))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
-		print yn($object->localtax1_assuj);
-		print '</td></tr>';
-		print '<tr><td class="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
-		print yn($object->localtax2_assuj);
-		print '</td></tr>';
-	}
-	elseif($mysoc->localtax1_assuj=="1")
-	{
-		print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
 		print yn($object->localtax1_assuj);
 		print '</td></tr>';
 	}
-	elseif($mysoc->localtax2_assuj=="1")
+	if ($mysoc->useLocalTax(2))
 	{
-		print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
 		print yn($object->localtax2_assuj);
 		print '</td></tr>';
 	}

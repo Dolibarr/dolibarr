@@ -2607,10 +2607,11 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 }
 
 /**
- *	Show a title (deprecated. use print_fiche_titre instead)
+ *	Show a title.
  *
  *	@param	string	$title			Title to show
  *	@return	string					Title to show
+ *  @deprecated						Use print_fiche_titre instead
  */
 function print_titre($title)
 {
