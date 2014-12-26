@@ -324,17 +324,15 @@ foreach ($dirmodels as $reldir)
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$nextval=$module->getNextValue($mysoc,$expedition);
-						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+                        if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured') $nextval = $langs->trans($nextval);
+						$htmltooltip.=''.$langs->trans("NextValue").': ';
+						if ($nextval)
 						{
-							$htmltooltip.=''.$langs->trans("NextValue").': ';
-							if ($nextval)
-							{
-								$htmltooltip.=$nextval.'<br>';
-							}
-							else
-							{
-								$htmltooltip.=$langs->trans($module->error).'<br>';
-							}
+							$htmltooltip.=$nextval.'<br>';
+						}
+						else
+						{
+							$htmltooltip.=$langs->trans($module->error).'<br>';
 						}
 
 						print '<td align="center">';
