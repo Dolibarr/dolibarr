@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
+ * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -45,7 +46,7 @@ class box_project extends ModeleBoxes
 		$langs->load("boxes");
 		$langs->load("projects");
 
-		$this->boxlabel="Projet";
+		$this->boxlabel="Projects";
 	}
 
 	/**
@@ -63,13 +64,8 @@ class box_project extends ModeleBoxes
 		$totalMnt = 0;
 		$totalnb = 0;
 		$totalnbTask=0;
-		include_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-		require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
-		$projectstatic=new Project($db);
 
-
-
-		$textHead = $langs->trans("Projet");
+		$textHead = $langs->trans("Projects");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
 		// list the summary of the orders
@@ -91,14 +87,15 @@ class box_project extends ModeleBoxes
 				$i = 0;
 				while ($i < $num)
 				{
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"','logo' => 'object_projectpub');
-
 					$objp = $db->fetch_object($result);
-					$projectstatic->fetch($objp->rowid);
+
+					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
+						'logo' => 'object_project',
+						'url' => DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-					'text' =>$projectstatic->getNomUrl(1)
-					);
+						'text' => $objp->ref,
+						'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
 					'text' => $objp->title

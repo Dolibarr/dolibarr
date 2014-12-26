@@ -37,6 +37,11 @@ class Fichinter extends CommonObject
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'ref';
+
 	var $id;
 
 	var $socid;		// Id client

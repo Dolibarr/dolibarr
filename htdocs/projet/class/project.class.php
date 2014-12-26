@@ -38,6 +38,11 @@ class Project extends CommonObject
     public $fk_element = 'fk_projet';
     protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
+
     var $id;
     var $ref;
     var $description;
@@ -568,16 +573,9 @@ class Project extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('PROJECT_DELETE',$user);
-                if ($result < 0)
-                {
+
+                if ($result < 0) {
                     $error++;
-                    if (! empty($interface->errors))
-                    {
-                		foreach ($interface->errors as $errmsg ) {
-                			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-                			$this->errors[] =$errmsg;
-                		}
-                    }
                 }
                 // End call triggers
             }
