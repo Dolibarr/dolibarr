@@ -29,12 +29,13 @@
  *  \brief      File that contains parent class for sending receipts models
  *              and parent class for sending receipts numbering models
  */
- require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/PdfDocumentModel.class.php';
 
 /**
  *	Parent class of sending receipts models
  */
-abstract class ModelePdfExpedition extends CommonDocGenerator
+abstract class ModelePdfExpedition extends PdfDocumentModel
 {
     var $error='';
 

@@ -27,7 +27,7 @@
  * 				et la classe mere de numerotation des factures
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/PdfDocumentModel.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requis car utilise dans les classes qui heritent
 
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
 /**
  *	Parent class of invoice document generators
  */
-abstract class ModelePDFFactures extends CommonDocGenerator
+abstract class ModelePDFFactures extends PdfDocumentModel
 {
 	var $error='';
 

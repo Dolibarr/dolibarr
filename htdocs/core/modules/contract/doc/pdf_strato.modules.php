@@ -555,7 +555,7 @@ class pdf_strato extends ModelePDFContract
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 			}
 
-			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client);
+			$carac_emetteur .= $this->buildAddress($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posy=42;
@@ -606,7 +606,7 @@ class pdf_strato extends ModelePDFContract
 				$this->recipient->name = $outputlangs->convToOutputCharset($object->client->name);
 			}
 
-			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->client, (isset($object->contact)?$object->contact:''), $usecontact, 'target');
+			$carac_client= $this->buildAddress($outputlangs, $this->emetteur, $object->client, (isset($object->contact)?$object->contact:''), $usecontact, 'target');
 
 			// Show recipient
 			$widthrecbox=100;

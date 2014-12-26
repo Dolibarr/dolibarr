@@ -28,13 +28,13 @@
  *				et la classe mere de numerotation des bons de livraisons
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/PdfDocumentModel.class.php';
 
 
 /**
  *	Classe mere des modeles de bon de livraison
  */
-abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
+abstract class ModelePDFDeliveryOrder extends PdfDocumentModel
 {
 	var $error='';
 
