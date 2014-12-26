@@ -44,7 +44,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db=0)
+	function __construct(DoliDB $db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -539,7 +539,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,0);
 
 		// Sender properties
-		$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->client);
+		$carac_emetteur = $this->buildAddress($outputlangs, $this->emetteur, $object->client);
 
 		$pdf->SetFont('','', $default_font_size - 3);
 		$pdf->SetXY($blSocX,$blSocY+4);
@@ -625,7 +625,7 @@ class pdf_merou extends ModelePdfExpedition
 			$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 		}
 
-		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,((!empty($object->contact))?$object->contact:null),$usecontact,'targetwithdetails');
+		$carac_client=$this->buildAddress($outputlangs,$this->emetteur,$object->client,((!empty($object->contact))?$object->contact:null),$usecontact,'targetwithdetails');
 
 		$blDestX=$blExpX+55;
 		$blW=50;

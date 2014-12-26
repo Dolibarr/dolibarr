@@ -62,7 +62,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *
 	 *  @param	DoliDB		$db      	Database handler
 	 */
-	function __construct($db)
+	function __construct(DoliDB $db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -1022,7 +1022,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->client);
+			$carac_emetteur = $this->buildAddress($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posy=42;
@@ -1075,7 +1075,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
+			$carac_client=$this->buildAddress($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
 
 			// Show recipient
 			$widthrecbox=100;

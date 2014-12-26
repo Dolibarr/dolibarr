@@ -29,7 +29,7 @@
  *  				et la classe mere de numerotation des commandes
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/PdfDocumentModel.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requis car utilise par les classes qui heritent
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 /**
  *	Classe mere des modeles de commandes
  */
-abstract class ModelePDFCommandes extends CommonDocGenerator
+abstract class ModelePDFCommandes extends PdfDocumentModel
 {
 	var $error='';
 

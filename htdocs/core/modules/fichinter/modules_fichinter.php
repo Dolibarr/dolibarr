@@ -26,13 +26,13 @@
  *   			et la classe mere de numerotation des fiches interventions
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/PdfDocumentModel.class.php';
 
 
 /**
  *	Parent class to manage intervention document templates
  */
-abstract class ModelePDFFicheinter extends CommonDocGenerator
+abstract class ModelePDFFicheinter extends PdfDocumentModel
 {
 	var $error='';
 

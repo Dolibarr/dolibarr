@@ -28,14 +28,14 @@
  *      \brief      File that contains parent class for supplier orders models
  *                  and parent class for supplier orders numbering models
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/PdfDocumentModel.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requis car utilise par les classes qui heritent
 
 
 /**
  *	Parent class for supplier orders models
  */
-abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
+abstract class ModelePDFSuppliersOrders extends PdfDocumentModel
 {
 	var $error='';
 

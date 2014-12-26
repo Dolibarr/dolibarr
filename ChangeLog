@@ -15,6 +15,7 @@ For translators:
 For developers:
 - New: Function yn can show a visual checkbox.
 - New: Introduced select2 jquery plugin.
+- Qual: pdf_build_address is now deprecated and you must use buildAddress function of the class
 
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****

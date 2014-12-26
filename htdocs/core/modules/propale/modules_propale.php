@@ -27,14 +27,14 @@
  *  			et la classe mere de numerotation des propales
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/PdfDocumentModel.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requis car utilise dans les classes qui heritent
 
 
 /**
  *	Classe mere des modeles de propale
  */
-abstract class ModelePDFPropales extends CommonDocGenerator
+abstract class ModelePDFPropales extends PdfDocumentModel
 {
 	var $error='';
 

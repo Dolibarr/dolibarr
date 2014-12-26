@@ -295,6 +295,7 @@ function pdf_getHeightForLogo($logo, $url = false)
  * 		@param	int			$usecontact			Use contact instead of company
  * 		@param	int			$mode				Address type ('source', 'target', 'targetwithdetails')
  * 		@return	string							String with full address
+ * @deprecated use buildAddress function of PdfDocumentModel
  */
 function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$targetcontact='',$usecontact=0,$mode='source')
 {
