@@ -900,7 +900,7 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$al
 
 			if (! empty($linkedobject["date_title"]) && ! empty($linkedobject["date_value"]))
 			{
-				$posy+=7;
+				$posy+=3;
 				$pdf->SetXY($posx,$posy);
 				$pdf->MultiCell($w, $h, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', $align);
 			}
