@@ -2848,10 +2848,10 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Check if thirdparty may using localtax or not
+     *  Check if we must use localtax feature or not according to country (country of $mysocin most cases).
      *
      *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
-     *  @return		array					array(0=>boolean, 1=>boolean)
+     *  @return		boolean					true or false
      */
     function useLocalTax($localTaxNum=0)
     {
@@ -2873,9 +2873,9 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Check if thirdparty is from a country using revenue stamps
+     *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
      *
-     *  @return		boolean			Yes or no
+     *  @return		boolean			true or false
      */
     function useRevenueStamp()
     {
