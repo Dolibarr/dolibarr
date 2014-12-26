@@ -119,7 +119,7 @@ if (! empty($conf->global->CLICKTODIAL_URL))
 
 	if ($setupcomplete)
 	{
-		print $langs->trans("LinkToTest",$user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL');
+		print $langs->trans("LinkToTest",$user->login).' : '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL');
 	}
 	else
 	{

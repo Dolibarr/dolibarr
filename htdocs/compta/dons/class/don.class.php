@@ -717,7 +717,7 @@ class Don extends CommonObject
 
         $picto='generic';
 
-        $label=$langs->trans("ShowDonation").': '.$this->id;
+        $label=$langs->trans("ShowDonation").' : '.$this->id;
 
         if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';

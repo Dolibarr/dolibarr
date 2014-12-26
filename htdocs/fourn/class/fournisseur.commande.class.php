@@ -536,7 +536,7 @@ class CommandeFournisseur extends CommonOrder
         $lienfin='</a>';
 
         $picto='order';
-        $label=$langs->trans("ShowOrder").': '.$this->ref;
+        $label=$langs->trans("ShowOrder").' : '.$this->ref;
 
         if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';

@@ -2761,7 +2761,7 @@ class Commande extends CommonOrder
         $linkend='</a>';
 
         $picto='order';
-        $label=$langs->trans("ShowOrder").': '.$this->ref;
+        $label=$langs->trans("ShowOrder").' : '.$this->ref;
 
         if ($withpicto) $result.=($linkstart.img_object($label,$picto).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';

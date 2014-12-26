@@ -363,7 +363,7 @@ class Deplacement extends CommonObject
 
 		$picto='trip';
 
-		$label=$langs->trans("Show").': '.$this->ref;
+		$label=$langs->trans("Show").' : '.$this->ref;
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';

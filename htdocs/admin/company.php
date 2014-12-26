@@ -562,7 +562,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
-    print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+    print "<tr><td><i>".$langs->trans("Example").' : '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
     print "</table>";
     print "</td></tr>\n";
 
@@ -571,7 +571,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td><label for=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
-    print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+    print "<tr><td><i>".$langs->trans("Example").' : '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
     print "</table>";
     print "</td></tr>\n";
 
@@ -597,7 +597,7 @@ if ($action == 'edit' || $action == 'updateedit')
         print "<table>";
         print "<tr><td><label for=\"lt1\">".$langs->transcountry("LocalTax1IsUsedDesc",$mysoc->country_code)."</label></td></tr>";
         $example=$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code);
-        print ($example!="LocalTax1IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        print ($example!="LocalTax1IsUsedExample"?"<tr><td><i>".$langs->trans("Example").' : '.$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
         if(! isOnlyOneLocalTax(1))
         {
 	        print '<tr><td align="left"><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
@@ -605,7 +605,7 @@ if ($action == 'edit' || $action == 'updateedit')
         }
         print '</td></tr>';
 
-        print '<tr><td align="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
+        print '<tr><td align="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label> : ';
         $opcions=array($langs->transcountry("CalcLocaltax1",$mysoc->country_code),$langs->transcountry("CalcLocaltax2",$mysoc->country_code),$langs->transcountry("CalcLocaltax3",$mysoc->country_code));
         print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
         print '</td></tr>';
@@ -618,7 +618,7 @@ if ($action == 'edit' || $action == 'updateedit')
         print "<table>";
         print "<tr><td><label for=\"nolt1\">".$langs->transcountry("LocalTax1IsNotUsedDesc",$mysoc->country_code)."</label></td></tr>";
         $example=$langs->transcountry("LocalTax1IsNotUsedExample",$mysoc->country_code);
-        print ($example!="LocalTax1IsNotUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsNotUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        print ($example!="LocalTax1IsNotUsedExample"?"<tr><td><i>".$langs->trans("Example").' : '.$langs->transcountry("LocalTax1IsNotUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
         print "</table>";
         print "</td></tr>\n";
         print "</table>";
@@ -641,8 +641,8 @@ if ($action == 'edit' || $action == 'updateedit')
         print "<table>";
         print "<tr><td><label for=\"lt2\">".$langs->transcountry("LocalTax2IsUsedDesc",$mysoc->country_code)."</label></td></tr>";
         $example=$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code);
-        print ($example!="LocalTax2IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
-        print '<tr><td align="left"><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
+        print ($example!="LocalTax2IsUsedExample"?"<tr><td><i>".$langs->trans("Example").' : '.$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        print '<tr><td align="left"><label for="lt2">'.$langs->trans("LTRate").'</label> : ';
         if(! isOnlyOneLocalTax(2))
         {
 	        $formcompany->select_localtax(2,$conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
@@ -661,7 +661,7 @@ if ($action == 'edit' || $action == 'updateedit')
         print "<table>";
         print "<tr><td><label for=\"nolt2\">".$langs->transcountry("LocalTax2IsNotUsedDesc",$mysoc->country_code)."</label></td></tr>";
         $example=$langs->transcountry("LocalTax2IsNotUsedExample",$mysoc->country_code);
-        print ($example!="LocalTax2IsNotUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsNotUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        print ($example!="LocalTax2IsNotUsedExample"?"<tr><td><i>".$langs->trans("Example").' : '.$langs->transcountry("LocalTax2IsNotUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
         print "</table>";
         print "</td></tr>\n";
         print "</table>";
@@ -966,7 +966,7 @@ else
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
-    print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+    print "<tr><td><i>".$langs->trans("Example").' : '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
     print "</table>";
     print "</td></tr>\n";
 
@@ -975,7 +975,7 @@ else
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td><label=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
-    print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+    print "<tr><td><i>".$langs->trans("Example").' : '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
     print "</table>";
     print "</td></tr>\n";
 
@@ -1002,12 +1002,12 @@ else
         print "<table>";
         print "<tr><td></label for=\"lt1\">".$langs->transcountry("LocalTax1IsUsedDesc",$mysoc->country_code)."</label></td></tr>";
         $example=$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code);
-        print ($example!="LocalTax1IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        print ($example!="LocalTax1IsUsedExample"?"<tr><td><i>".$langs->trans("Example").' : '.$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
         if($conf->global->MAIN_INFO_VALUE_LOCALTAX1!=0)
         {
-	        print '<tr><td>'.$langs->trans("LTRate").': '. $conf->global->MAIN_INFO_VALUE_LOCALTAX1 .'</td></tr>';
+	        print '<tr><td>'.$langs->trans("LTRate").' : '. $conf->global->MAIN_INFO_VALUE_LOCALTAX1 .'</td></tr>';
 	    }
-        print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
+        print '<tr><td align="left">'.$langs->trans("CalcLocaltax").' : ';
         if($conf->global->MAIN_INFO_LOCALTAX_CALC1==0)
         {
         	print $langs->transcountry("CalcLocaltax1",$mysoc->country_code);
@@ -1030,7 +1030,7 @@ else
         print "<table>";
         print "<tr><td><label for=\"no_lt1\">".$langs->transcountry("LocalTax1IsNotUsedDesc",$mysoc->country_code)."</label></td></tr>";
         $example=$langs->transcountry("LocalTax1IsNotUsedExample",$mysoc->country_code);
-        print ($example!="LocalTax1IsNotUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsNotUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        print ($example!="LocalTax1IsNotUsedExample"?"<tr><td><i>".$langs->trans("Example").' : '.$langs->transcountry("LocalTax1IsNotUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
         print "</table>";
         print "</td></tr>\n";
 
@@ -1053,12 +1053,12 @@ else
         print "<table>";
         print "<tr><td><label for=\"lt2\">".$langs->transcountry("LocalTax2IsUsedDesc",$mysoc->country_code)."</label></td></tr>";
         $example=$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code);
-        print ($example!="LocalTax2IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        print ($example!="LocalTax2IsUsedExample"?"<tr><td><i>".$langs->trans("Example").' : '.$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
         if($conf->global->MAIN_INFO_VALUE_LOCALTAX2!=0)
         {
-	        print '<tr><td>'.$langs->trans("LTRate").': '. $conf->global->MAIN_INFO_VALUE_LOCALTAX2 .'</td></tr>';
+	        print '<tr><td>'.$langs->trans("LTRate").' : '. $conf->global->MAIN_INFO_VALUE_LOCALTAX2 .'</td></tr>';
 	    }
-        print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
+        print '<tr><td align="left">'.$langs->trans("CalcLocaltax").' : ';
         if($conf->global->MAIN_INFO_LOCALTAX_CALC2==0)
         {
         	print $langs->transcountry("CalcLocaltax1",$mysoc->country_code);
@@ -1082,7 +1082,7 @@ else
         print "<table>";
         print "<tr><td><label for=\"nolt2\">".$langs->transcountry("LocalTax2IsNotUsedDesc",$mysoc->country_code)."</label></td></tr>";
         $example=$langs->transcountry("LocalTax2IsNotUsedExample",$mysoc->country_code);
-        print ($example!="LocalTax2IsNotUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsNotUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        print ($example!="LocalTax2IsNotUsedExample"?"<tr><td><i>".$langs->trans("Example").' : '.$langs->transcountry("LocalTax2IsNotUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
         print "</table>";
         print "</td></tr>\n";
 
