@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,9 @@ llxHeader('','',$helpurl);
 $sql = "SELECT count(*) as c";
 $sql.= " FROM ".MAIN_DB_PREFIX."product";
 $sql.= ' WHERE entity IN ('.getEntity('product', 1).')';
-if (isset($type)) $sql.= " AND fk_product_type = ".$type;
+if ($type !== '') {
+	$sql.= " AND fk_product_type = ".$type;
+}
 
 $result=$db->query($sql);
 if ($result)
@@ -82,11 +85,14 @@ if ($result)
 
 $param = '';
 $title = $langs->trans("ListProductServiceByPopularity");
-if (isset($type))
-{
+if ($type !== '') {
 	$param = '&amp;type='.$type;
-	$title = $langs->trans("ListProductByPopularity");
-	if ($type == 1) $title = $langs->trans("ListServiceByPopularity");
+
+	if ($type == 1) {
+		$title = $langs->trans("ListServiceByPopularity");
+	} else {
+		$title = $langs->trans("ListProductByPopularity");
+	}
 }
 
 print_barre_liste($title, $page, "popuprop.php",$param,"","","",$num);
@@ -106,7 +112,9 @@ $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
 $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 $sql.= " AND p.rowid = pd.fk_product";
-if (isset($type)) $sql.= " AND fk_product_type = ".$type;
+if ($type !== '') {
+	$sql.= " AND fk_product_type = ".$type;
+}
 $sql.= " GROUP BY (p.rowid)";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit, $offset);
