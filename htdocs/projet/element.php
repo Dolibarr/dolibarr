@@ -373,8 +373,10 @@ foreach ($listofreferent as $key => $value)
 	}
 }
 
+$langs->load('margins');
+
 // Margin display of the project
-print_titre("Margin");
+print_titre($langs->trans("Margins"));
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td align="left" width="200">'.$langs->trans("Element").'</td>';

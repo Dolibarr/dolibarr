@@ -97,7 +97,7 @@ print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
-print '<td>'.$langs->trans("Status").'</td>';
+print '<td>'.$langs->trans("ProjectStatus").'</td>';
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="center">'.$langs->trans("DateStart").'</td>';

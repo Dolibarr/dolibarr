@@ -60,14 +60,18 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 
 if ($action == 'setsupplieraccountancycode')
 {
-    $result=$object->fetch($id);
-    $object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
-    $result=$object->update($object->id,$user,1,0,1);
-    if ($result < 0)
-    {
-        $mesg=join(',',$object->errors);
-    }
-    $action="";
+	$cancelbutton = GETPOST('cancel');
+
+	if (!$cancelbutton) {
+
+		$result = $object->fetch($id);
+		$object->code_compta_fournisseur = $_POST["supplieraccountancycode"];
+		$result = $object->update($object->id, $user, 1, 0, 1);
+		if ($result < 0) {
+			$mesg = join(',', $object->errors);
+		}
+		$action = "";
+	}
 }
 // conditions de reglement
 if ($action == 'setconditions' && $user->rights->societe->creer)
