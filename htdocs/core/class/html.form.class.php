@@ -1197,7 +1197,7 @@ class Form
             else $sql.= " WHERE u.entity IS NOT NULL";
         }
         else
-        {
+       {
         	if (! empty($conf->multicompany->transverse_mode))
         	{
         		$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
@@ -1291,7 +1291,7 @@ class Form
                         }
                         else
                      {
-                        	$out.=($moreinfo?' - ':' (').$obj->label;
+                        	$out.=($moreinfo?' - ':' (').($obj->label?$obj->label:$langs->trans("EntityNameNotDefined"));
                         	$moreinfo++;
                      	}
                     }
