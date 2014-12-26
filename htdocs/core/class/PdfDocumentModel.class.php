@@ -24,7 +24,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  *
  * Every ModelePDF* class must extend from it
  */
-abstract class PdfDocumentModel extends CommonDocGenerator {
+abstract class PdfDocumentModel extends CommonDocGenerator
+{
 
 	/**
 	 * Constructor
