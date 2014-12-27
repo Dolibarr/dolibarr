@@ -399,28 +399,28 @@ class Form
         if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
         $s="";
-        if (empty($notabs))	$s.='<table class="nobordernopadding" summary=""><tr>';
-        if ($direction < 0)	{
+        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
+        if ($direction < 0) {
             $s.='<'.$tag.$paramfortooltipimg;
             if ($tag == 'td') {
-                $s .= 'valign="top" ';
+                $s .= ' valign="top" width="14"';
             }
-            $s.= 'width="14">'.$img.'</'.$tag.'>';
+            $s.= '>'.$img.'</'.$tag.'>';
         }
         // Use another method to help avoid having a space in value in order to use this value with jquery
         // TODO add this in css
-        //if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
+        //if ($text != '') $s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
         $paramfortooltiptd.= (($direction < 0)?' style="padding-left: 3px !important;"':'');
         $paramfortooltiptd.= (($direction > 0)?' style="padding-right: 3px !important;"':'');
-        if ((string) $text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
-        if ($direction > 0)	{
+        if ((string) $text != '') $s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
+        if ($direction > 0) {
             $s.='<'.$tag.$paramfortooltipimg;
             if ($tag == 'td') {
-                $s .= 'valign="top" ';
+                $s .= ' valign="top" width="14"';
             }
-            $s.= 'width="14">'.$img.'</'.$tag.'>';
+            $s.= '>'.$img.'</'.$tag.'>';
         }
-        if (empty($notabs))	$s.='</tr></table>';
+        if (empty($notabs)) $s.='</tr></table>';
 
         return $s;
     }
