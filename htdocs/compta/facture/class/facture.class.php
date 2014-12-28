@@ -50,6 +50,11 @@ class Facture extends CommonInvoice
 	public $fk_element = 'fk_facture';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'facnumber';
+
 	var $id;
 	//! Id client
 	var $socid;
@@ -832,7 +837,6 @@ class Facture extends CommonInvoice
 		if ($withpicto != 2) $result.=$linkstart.($max?dol_trunc($this->ref,$max):$this->ref).$linkend;
 		return $result;
 	}
-
 
 	/**
 	 *	Get object and lines from database
@@ -2479,7 +2483,7 @@ class Facture extends CommonInvoice
 	 *      Return next reference of customer invoice not already used (or last reference)
 	 *      according to numbering module defined into constant FACTURE_ADDON
 	 *
-	 *      @param	   Society		$soc		object company
+	 *      @param	   Societe		$soc		object company
 	 *      @param     string		$mode		'next' for next value or 'last' for last value
 	 *      @return    string					free ref or last ref
 	 */
@@ -2838,7 +2842,7 @@ class Facture extends CommonInvoice
 	function demande_prelevement($user)
 	{
 		$error=0;
-		
+
 		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 
 		if ($this->statut > 0 && $this->paye == 0)
@@ -2896,12 +2900,12 @@ class Facture extends CommonInvoice
         			{
         				// Force payment mode of invoice to withdraw
         				$payment_mode_id = dol_getIdFromCode($this->db, 'PRE', 'c_paiement');
-        				if ($payment_mode_id > 0) 
+        				if ($payment_mode_id > 0)
         				{
         					$result=$this->setPaymentMethods($payment_mode_id);
         				}
-        			}            
-                    
+        			}
+
                     if ($error) return -1;
                     return 1;
                 }
@@ -3519,7 +3523,7 @@ class FactureLigne extends CommonInvoiceLine
 				return -1;
 			}
 		}
-		
+
 		// POS or by external module, take lowest buying price
 		if (!empty($this->fk_product) && empty($this->fk_fournprice) && empty($this->pa_ht)) {
 		    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';

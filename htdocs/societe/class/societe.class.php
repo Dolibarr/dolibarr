@@ -2382,7 +2382,7 @@ class Societe extends CommonObject
      *
      *    @param	int		$idprof		1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
      *    @param	string	$value		Value of profid
-     *    @param	int		$socid		Id of society if update
+     *    @param	int		$socid		Id of thirdparty if update
      *    @return   boolean				true if exists, false if not
      */
     function id_prof_exists($idprof,$value,$socid=0)

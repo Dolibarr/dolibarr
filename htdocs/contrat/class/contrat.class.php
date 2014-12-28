@@ -44,6 +44,11 @@ class Contrat extends CommonObject
 	public $fk_element='fk_contrat';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'ref';
+
 	var $id;
 	var $ref;
 	var $ref_ext;
@@ -54,11 +59,11 @@ class Contrat extends CommonObject
 	var $product;
 
 	var $user_author;
-	var $date_creation;
-	var $date_validation;
+	var $date_creation;		// date of creation
+	var $date_validation;	// date of last update
 
-	var $date_contrat;
-	var $date_cloture;
+	var $date_contrat;  // date when contract was signed
+	var $date_cloture;	// deprecated (we close contract lines, not a contract)
 
 	var $commercial_signature_id;
 	var $commercial_suivi_id;
@@ -88,7 +93,7 @@ class Contrat extends CommonObject
 	/**
 	 *	Return next contract ref
 	 *
-	 *	@param	Societe		$soc		objet society
+	 *	@param	Societe		$soc		Thirdparty object
 	 *	@return string					free reference for contract
 	 */
 	function getNextNumRef($soc)

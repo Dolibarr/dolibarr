@@ -37,6 +37,11 @@ class Fichinter extends CommonObject
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'ref';
+
 	var $id;
 
 	var $socid;		// Id client
@@ -561,7 +566,7 @@ class Fichinter extends CommonObject
 	 *	Returns the next non used reference of intervention
 	 *	depending on the module numbering assets within FICHEINTER_ADDON
 	 *
-	 *	@param	    Societe		$soc		Object society
+	 *	@param	    Societe		$soc		Thirdparty object
 	 *	@return     string					Free reference for intervention
 	 */
 	function getNextNumRef($soc)

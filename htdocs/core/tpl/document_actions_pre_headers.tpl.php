@@ -72,11 +72,16 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
             $link->id = $linkid;
             $link->fetch();
             $res = $link->delete($user);
+
             $langs->load('link');
-            if ($res) {
+            if ($res > 0) {
                 setEventMessage($langs->trans("LinkRemoved", $link->label));
             } else {
-                setEventMessage($langs->trans("ErrorFailedToDeleteLink", $link->label), 'errors');
+                if (count($link->errors)) {
+                    setEventMessages('', $link->errors, 'errors');
+                } else {
+                    setEventMessage($langs->trans("ErrorFailedToDeleteLink", $link->label), 'errors');
+                }
             }
         }
         header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id.(!empty($withproject)?'&withproject=1':''));

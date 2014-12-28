@@ -1157,6 +1157,7 @@ ValidOrderAfterPropalClosed=To validate the order after proposal closer, makes i
 FreeLegalTextOnOrders=Free text on orders
 WatermarkOnDraftOrders=Watermark on draft orders (none if empty)
 ShippableOrderIconInList=Add an icon in Orders list which indicate if order is shippable
+BANK_ASK_PAYMENT_BANK_DURING_ORDER=Ask for bank account destination of order
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
 ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with your clicktodial login (defined on your user card)<br><b>__PASS__</b> that will be replaced with your clicktodial password (defined on your user card).

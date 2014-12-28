@@ -900,7 +900,7 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$al
 
 			if (! empty($linkedobject["date_title"]) && ! empty($linkedobject["date_value"]))
 			{
-				$posy+=7;
+				$posy+=3;
 				$pdf->SetXY($posx,$posy);
 				$pdf->MultiCell($w, $h, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', $align);
 			}
@@ -1273,7 +1273,7 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
  *
  *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
- *  @param  Tranlate	$outputlangs		Object langs for output
+ *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide value (0 = no,	1 = yes, 2 = just special lines)
  *  @return	void
  */

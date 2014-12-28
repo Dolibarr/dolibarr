@@ -113,7 +113,7 @@ class Expedition extends CommonObject
 	/**
 	 *	Return next contract ref
 	 *
-	 *	@param	Societe		$soc	Objet society
+	 *	@param	Societe		$soc	Thirdparty object
 	 *	@return string				Free reference for contract
 	 */
 	function getNextNumRef($soc)
@@ -604,9 +604,11 @@ class Expedition extends CommonObject
 
 					if (! empty($conf->productbatch->enabled)) {
 						$details=ExpeditionLigneBatch::FetchAll($this->db,$obj->rowid);
-						foreach ($details as $dbatch) {
-							$result=$mouvS->livraison_batch($dbatch->fk_origin_stock,$dbatch->dluo_qty);
-							if ($result < 0) { $error++; $this->errors[]=$mouvS->$error; break 2; }
+						if (! empty($details)) {
+							foreach ($details as $dbatch) {
+								$result=$mouvS->livraison_batch($dbatch->fk_origin_stock,$dbatch->dluo_qty);
+								if ($result < 0) { $error++; $this->errors[]=$mouvS->$error; break 2; }
+							}
 						}
 					}
 				}

@@ -1045,7 +1045,7 @@ class Adherent extends CommonObject
      *	@param	int		$rowid      Id of object to load
      * 	@param	string	$ref		To load member from its ref
      * 	@param	int		$fk_soc		To load member from its link to third party
-     * 	@param	int		$ref_ext	External reference
+     * 	@param	string	$ref_ext	External reference
      *	@return int         		>0 if OK, 0 if not found, <0 if KO
      */
     function fetch($rowid,$ref='',$fk_soc='',$ref_ext='')
