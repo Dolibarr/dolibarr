@@ -1229,8 +1229,10 @@ else
         /*
          * Lines of contracts
          */
-        $productstatic=new Product($db);
 
+	    if ($conf->product->enabled) {
+			$productstatic=new Product($db);
+	    }
 
         $usemargins=0;
 		if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
