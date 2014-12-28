@@ -49,31 +49,103 @@ class Contrat extends CommonObject
 	 */
 	protected $table_ref_field = 'ref';
 
+	/**
+	 * Id of the contract
+	 * @var int
+	 */
 	var $id;
+
+	/**
+	 * Reference of the contract
+	 * @var string
+	 */
 	var $ref;
+
+	/**
+	 * External reference of the contract.
+	 * Used by 3rd party services
+	 * @var string
+	 */
 	var $ref_ext;
+
+	/**
+	 * Supplier reference of the contract
+	 * @var string
+	 */
 	var $ref_supplier;
+
+	/**
+	 * Client id linked to the contract
+	 * @var int
+	 */
 	var $socid;
 	var $societe;		// Objet societe
+
+	/**
+	 * Status of the contract
+	 * @var int
+	 */
 	var $statut=0;		// 0=Draft,
 	var $product;
 
+	/**
+	 * Author of the contract
+	 * @var
+	 */
 	var $user_author;
+
+	/**
+	 * Date of creation
+	 * @var int
+	 */
 	var $date_creation;
+
+	/**
+	 * Date of last update
+	 * @var int
+	 */
 	var $date_validation;
 
+	/**
+	 * Date when contract was signed
+	 * @var int
+	 */
 	var $date_contrat;
+
+	/**
+	 * Date of contract closure
+	 * @var int
+	 * @deprecated we close contract lines, not a contract
+	 */
 	var $date_cloture;
 
 	var $commercial_signature_id;
 	var $commercial_suivi_id;
 
-	var $note;			// deprecated
+	/**
+	 * @deprecated Use note_private or note_public instead
+	 */
+	var $note;
+
+	/**
+	 * Private note
+	 * @var string
+	 */
 	var $note_private;
+
+	/**
+	 * Public note
+	 * @var string
+	 */
 	var $note_public;
 	var $modelpdf;
 
+	/**
+	 * @deprecated Use fk_project instead
+	 */
 	var $fk_projet;
+
+	public $fk_project;
 
 	var $extraparams=array();
 
@@ -441,7 +513,9 @@ class Contrat extends CommonObject
 				$this->ref_ext					= $result["ref_ext"];
 				$this->statut					= $result["statut"];
 				$this->mise_en_service			= $this->db->jdate($result["datemise"]);
+
 				$this->date_contrat				= $this->db->jdate($result["datecontrat"]);
+				$this->date_creation				= $this->db->jdate($result["datecontrat"]);
 
 				$this->user_author_id			= $result["fk_user_author"];
 
@@ -470,6 +544,18 @@ class Contrat extends CommonObject
 				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
 				$this->fetch_optionals($this->id,$extralabels);
 
+				/*
+				 * Lines
+				*/
+
+				$this->lines  = array();
+
+				$result=$this->fetch_lines();
+				if ($result < 0)
+				{
+					$this->error=$this->db->error();
+					return -3;
+				}
 
 				return $this->id;
 			}
