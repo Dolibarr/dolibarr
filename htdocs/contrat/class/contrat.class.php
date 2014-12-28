@@ -89,10 +89,37 @@ class Contrat extends CommonObject
 	var $product;
 
 	/**
+	 * TODO: Which is the correct one?
 	 * Author of the contract
 	 * @var
 	 */
 	var $user_author;
+
+	/**
+	 * TODO: Which is the correct one?
+	 * Author of the contract
+	 * @var User
+	 */
+	public $user_creation;
+
+	/**
+	 * TODO: Which is the correct one?
+	 * Author of the contract
+	 * @var int
+	 */
+	public $fk_user_author;
+
+	/**
+	 * TODO: Which is the correct one?
+	 * Author of the contract
+	 * @var int
+	 */
+	public $user_author_id;
+
+	/**
+	 * @var User
+	 */
+	public $user_cloture;
 
 	/**
 	 * Date of creation
@@ -101,7 +128,14 @@ class Contrat extends CommonObject
 	var $date_creation;
 
 	/**
-	 * Date of last update
+	 * Date of last modification
+	 * Not filled until you call ->info()
+	 * @var int
+	 */
+	public $date_modification;
+
+	/**
+	 * Date of validation
 	 * @var int
 	 */
 	var $date_validation;
@@ -1952,7 +1986,6 @@ class Contrat extends CommonObject
 		while ($xnbp < $nbp)
 		{
 			$line=new ContratLigne($this->db);
-			$line->desc=$langs->trans("Description")." ".$xnbp;
 			$line->qty=1;
 			$line->subprice=100;
 			$line->price=100;
@@ -2421,7 +2454,7 @@ class ContratLigne extends CommonObject
 		$sql.= ",total_localtax1=".price2num($this->total_localtax1,'MT')."";
 		$sql.= ",total_localtax2=".price2num($this->total_localtax2,'MT')."";
 		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
-		$sql.= " WHERE rowid = ".$this->rowid;
+		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
 
