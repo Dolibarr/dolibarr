@@ -149,6 +149,10 @@ class Contrat extends CommonObject
 
 	var $extraparams=array();
 
+	/**
+	 * Contract lines
+	 * @var ContratLigne[]
+	 */
 	var $lines=array();
 
 
@@ -215,8 +219,8 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User		$user       Objet User qui active le contrat
 	 *  @param  int			$line_id    Id de la ligne de detail a activer
-	 *  @param  timestamp	$date       Date d'ouverture
-	 *  @param  timestamp	$date_end   Date fin prevue
+	 *  @param  int			$date       Date d'ouverture
+	 *  @param  int|string	$date_end   Date fin prevue
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
@@ -262,7 +266,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User		$user       Objet User qui active le contrat
 	 *  @param  int			$line_id    Id de la ligne de detail a activer
-	 *  @param  timestamp	$date_end	Date fin
+	 *  @param  int			$date_end	Date fin
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
@@ -578,7 +582,7 @@ class Contrat extends CommonObject
 	/**
 	 *  Load lignes array into this->lines
 	 *
-	 *  @return    Array   Return array of contract lines
+	 *  @return ContratLigne[]   Return array of contract lines
 	 */
 	function fetch_lines()
 	{
@@ -1183,16 +1187,16 @@ class Contrat extends CommonObject
 	 *  @param  float		$txlocaltax2        Local tax 2 rate
 	 *  @param  int			$fk_product      	Id produit
 	 *  @param  float		$remise_percent  	Pourcentage de remise de la ligne
-	 *  @param  timestamp	$date_start      	Date de debut prevue
-	 *  @param  timestamp	$date_end        	Date de fin prevue
-	 *	@param	float		$price_base_type	HT or TTC
+	 *  @param  int			$date_start      	Date de debut prevue
+	 *  @param  int			$date_end        	Date de fin prevue
+	 *	@param	string		$price_base_type	HT or TTC
 	 * 	@param  float		$pu_ttc             Prix unitaire TTC
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @return int             				<0 si erreur, >0 si ok
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
 	{
 		global $user, $langs, $conf, $mysoc;
 
@@ -1340,20 +1344,20 @@ class Contrat extends CommonObject
 	 *  @param  float		$pu               	Prix unitaire
 	 *  @param  int			$qty              	Quantite
 	 *  @param  float		$remise_percent   	Pourcentage de remise de la ligne
-	 *  @param  timestamp	$date_start       	Date de debut prevue
-	 *  @param  timestamp	$date_end         	Date de fin prevue
+	 *  @param  int			$date_start       	Date de debut prevue
+	 *  @param  int			$date_end         	Date de fin prevue
 	 *  @param  float		$tvatx            	Taux TVA
 	 *  @param  float		$localtax1tx      	Local tax 1 rate
 	 *  @param  float		$localtax2tx      	Local tax 2 rate
-	 *  @param  timestamp	$date_debut_reel  	Date de debut reelle
-	 *  @param  timestamp	$date_fin_reel    	Date de fin reelle
-	 *	@param	float		$price_base_type	HT or TTC
+	 *  @param  int|string	$date_debut_reel  	Date de debut reelle
+	 *  @param  int|string	$date_fin_reel    	Date de fin reelle
+	 *	@param	string		$price_base_type	HT or TTC
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @return int              				< 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0.0, $localtax2tx=0.0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
 	{
 		global $user, $conf, $langs, $mysoc;
 
