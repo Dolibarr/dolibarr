@@ -140,7 +140,12 @@ class Contrat extends CommonObject
 	var $note_public;
 	var $modelpdf;
 
+	/**
+	 * @deprecated Use fk_project instead
+	 */
 	var $fk_projet;
+
+	public $fk_project;
 
 	var $extraparams=array();
 
@@ -508,7 +513,9 @@ class Contrat extends CommonObject
 				$this->ref_ext					= $result["ref_ext"];
 				$this->statut					= $result["statut"];
 				$this->mise_en_service			= $this->db->jdate($result["datemise"]);
+
 				$this->date_contrat				= $this->db->jdate($result["datecontrat"]);
+				$this->date_creation				= $this->db->jdate($result["datecontrat"]);
 
 				$this->user_author_id			= $result["fk_user_author"];
 
