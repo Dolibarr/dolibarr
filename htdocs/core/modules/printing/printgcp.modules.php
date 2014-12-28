@@ -186,9 +186,9 @@ class printing_printgcp extends PrintingDriver
             }
             else
             {
-                if (! empty($conf->global->PRINTIPP_GCP_DEFAULT))
+                if (! empty($conf->global->PRINTING_GCP_DEFAULT))
                 {
-                    $printer_id=$conf->global->PRINTIPP_GCP_DEFAULT;
+                    $printer_id=$conf->global->PRINTING_GCP_DEFAULT;
                 }
                 else
                 {
