@@ -1674,7 +1674,7 @@ else
         }
 
 		// Form to add new line
-        if ($user->rights->contrat->creer && ($object->statut >= 0))
+        if ($user->rights->contrat->creer && ($object->statut == 0))
         {
         	$dateSelector=1;
 
