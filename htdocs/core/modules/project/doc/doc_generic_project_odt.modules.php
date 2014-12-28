@@ -138,7 +138,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
 			$object->fetch_optionals($object->id,$extralabels);
 
-			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
 		}
 
 		return $resarray;

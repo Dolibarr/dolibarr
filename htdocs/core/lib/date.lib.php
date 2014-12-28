@@ -169,7 +169,7 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
  *    	@param      string	$format		    Output format (all: total delay days hour:min like "2 days 12:30"", allhourmin: total delay hours:min like "60:30", allhour: total delay hours without min/sec like "60:30", fullhour: total delay hour decimal like "60.5" for 60:30, hour: only hours part "12", min: only minutes part "30", sec: only seconds part, month: only month part, year: only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
- *    	@return     sTime		 		 	Formated text of duration
+ *    	@return     string		 		 	Formated text of duration
  * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  */
 function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengthOfWeek=7)

@@ -422,7 +422,6 @@ class Paiement extends CommonObject
 
             $totalamount=$this->amount;
             if (empty($totalamount)) $totalamount=$this->total; // For backward compatibility
-            if ($mode == 'payment') $totalamount=$totalamount;
             if ($mode == 'payment_supplier') $totalamount=-$totalamount;
 
             // Insert payment into llx_bank
