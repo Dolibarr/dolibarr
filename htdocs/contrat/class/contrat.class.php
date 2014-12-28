@@ -1403,19 +1403,19 @@ class Contrat extends CommonObject
 		// TODO A virer
 		// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 		$remise = 0;
-		$price = price2num(round($pu_ht, 2));
+		$price = price2num(round($pu, 2));
 		if (dol_strlen($remise_percent) > 0)
 		{
-		    $remise = round(($pu_ht * $remise_percent / 100), 2);
-		    $price = $pu_ht - $remise;
+		    $remise = round(($pu * $remise_percent / 100), 2);
+		    $price = $pu - $remise;
 		}
 
 	    if (empty($pa_ht)) $pa_ht=0;
 
 		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
 		if ($pa_ht == 0) {
-			if ($pu_ht > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
-				$pa_ht = $pu_ht * (1 - $remise_percent / 100);
+			if ($pu > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
+				$pa_ht = $pu * (1 - $remise_percent / 100);
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".$this->db->escape($desc)."'";
