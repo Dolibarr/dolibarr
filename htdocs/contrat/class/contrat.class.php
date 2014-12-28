@@ -49,27 +49,94 @@ class Contrat extends CommonObject
 	 */
 	protected $table_ref_field = 'ref';
 
+	/**
+	 * Id of the contract
+	 * @var int
+	 */
 	var $id;
+
+	/**
+	 * Reference of the contract
+	 * @var string
+	 */
 	var $ref;
+
+	/**
+	 * External reference of the contract.
+	 * Used by 3rd party services
+	 * @var string
+	 */
 	var $ref_ext;
+
+	/**
+	 * Supplier reference of the contract
+	 * @var string
+	 */
 	var $ref_supplier;
+
+	/**
+	 * Client id linked to the contract
+	 * @var int
+	 */
 	var $socid;
 	var $societe;		// Objet societe
+
+	/**
+	 * Status of the contract
+	 * @var int
+	 */
 	var $statut=0;		// 0=Draft,
 	var $product;
 
+	/**
+	 * Author of the contract
+	 * @var
+	 */
 	var $user_author;
-	var $date_creation;		// date of creation
-	var $date_validation;	// date of last update
 
-	var $date_contrat;  // date when contract was signed
-	var $date_cloture;	// deprecated (we close contract lines, not a contract)
+	/**
+	 * Date of creation
+	 * @var int
+	 */
+	var $date_creation;
+
+	/**
+	 * Date of last update
+	 * @var int
+	 */
+	var $date_validation;
+
+	/**
+	 * Date when contract was signed
+	 * @var int
+	 */
+	var $date_contrat;
+
+	/**
+	 * Date of contract closure
+	 * @var int
+	 * @deprecated we close contract lines, not a contract
+	 */
+	var $date_cloture;
 
 	var $commercial_signature_id;
 	var $commercial_suivi_id;
 
-	var $note;			// deprecated
+	/**
+	 * @deprecated Use note_private or note_public instead
+	 */
+	var $note;
+
+	/**
+	 * Private note
+	 * @var string
+	 */
 	var $note_private;
+
+	/**
+	 * Public note
+	 * @var string
+	 */
 	var $note_public;
 	var $modelpdf;
 
