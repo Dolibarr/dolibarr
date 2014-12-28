@@ -2055,6 +2055,13 @@ class ContratLigne extends CommonObject
 	var $fk_product;
 	var $statut;					// 0 inactive, 4 active, 5 closed
 	var $label;
+
+	/**
+	 * @var string
+	 * @deprecated Use $label instead
+	 */
+	public $libelle;
+
 	var $description;
 	var $date_commande;
 	var $date_ouverture_prevue;		// date start planned
@@ -2072,6 +2079,13 @@ class ContratLigne extends CommonObject
 	var $fk_remise_except;
 
 	var $subprice;					// Unit price HT
+
+	/**
+	 * @var float
+	 * @deprecated Use $price_ht instead
+	 */
+	public $price;
+
 	var $price_ht;
 
 	var $total_ht;
