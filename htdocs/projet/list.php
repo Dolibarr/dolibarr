@@ -27,6 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load('projects');
 
@@ -61,6 +62,7 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
+$search_year=GETPOST("search_year");
 $search_all=GETPOST("search_all");
 
 // Purge criteria
@@ -69,6 +71,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_ref="";
 	$search_label="";
 	$search_societe="";
+	$search_year="";
 	$search_all=0;
 }
 
@@ -105,6 +108,10 @@ if ($search_label)
 if ($search_societe)
 {
 	$sql .= natural_search('s.nom', $search_societe);
+}
+if ($search_year) {
+	$sql .= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day($search_year,12,false)).")";
+	$sql .= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day($search_year,1,false)).")";
 }
 if ($search_all)
 {
