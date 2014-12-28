@@ -1,5 +1,0 @@
-fixtures:
-  repositories:
-    git: "git://github.com/puppetlabs/puppetlabs-git"
-  symlinks:
-    composer: "#{source_dir}"

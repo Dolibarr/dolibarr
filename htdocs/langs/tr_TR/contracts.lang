@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Sözleşmeler alanı
 ListOfContracts=Sözleşme Listesi
-LastModifiedContracts=Last %s modified contracts
+LastModifiedContracts=Değiştirilen son %s sözleşme
 AllContracts=Bütün sözleşmeler
 ContractCard=Sözleşme kartı
 ContractStatus=Sözleşme durumu
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Yürürlükte olan hizmet kalemleri
 ListOfRunningServices=Yürürlükteki hizmetler listesi
 NotActivatedServices=Etkin olmayan hizmetler (doğrulanmış sözleşmeler arasından)
 BoardNotActivatedServices=Doğrulanmış sözleşmelerden etkinleştirilecek hizmetler
-LastContracts=Last % contracts
+LastContracts=Son %s sözleşme
 LastActivatedServices=Etkinleştirilen son %s hizmet
 LastModifiedServices=Değiştirilen son %s hizmet
 EditServiceLine=Hizmet kalemi düzenle
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Süresi dolacak Hizmetler Listesi
 NoteListOfYourExpiredServices=Bu listede yalnızca satış temsilcisi olarak atandığınız üçüncü partilere ait hizmet sözleşmeleri bulunur.
 StandardContractsTemplate=Standart sözleşme kalıbı
 ContactNameAndSignature=%s için, ad ve imza
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sözleşmeyi imzalalayacak satış temsilcisi

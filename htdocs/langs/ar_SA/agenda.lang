@@ -29,6 +29,7 @@ ActionsToDoBy=أحداث عينت لـ
 ActionsDoneBy=أحداث انهيت بواسطة
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= كل أحداثي/ مهامي
 AllActions= جميع الأحداث / المهام
 ViewList=عرض قائمة

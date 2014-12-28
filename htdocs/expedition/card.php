@@ -90,17 +90,19 @@ $hookmanager->initHooks(array('expeditioncard','globalcard'));
  */
 
 $warehousecanbeselectedlater=1;
-if (! empty($conf->productbatch->enabled))
+if (($action == 'create') || ($action == 'add'))
 {
-	if (! (GETPOST('entrepot_id','int') > 0))
+	if (! empty($conf->productbatch->enabled))
 	{
-		$langs->load("errors");
-		setEventMessage($langs->trans("WarhouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
-		header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$id);
-		exit;
+		if (! (GETPOST('entrepot_id','int') > 0))
+		{
+			$langs->load("errors");
+			setEventMessage($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
+			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$id);
+			exit;
+		}
 	}
 }
-
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -277,10 +279,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
     			$outputlangs->setDefaultLang($newlang);
     		}
     		$model=$object->modelpdf;
-    		if (empty($model)) {
-    			$tmp=getListOfModels($db, 'shipping'); $keys=array_keys($tmp); $model=$keys[0];
-    		}
     		$ret = $object->fetch($id); // Reload to get new records
+
     		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		if ($result < 0) dol_print_error($db,$result);
     	}
@@ -679,7 +679,8 @@ if ($action == 'create')
             print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
             print '<td colspan="3">';
             //print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
-            print $form->select_date($object->date_livraison?$object->date_livraison:-1,'date_delivery',1,1);
+            $date_delivery = ($date_delivery?$date_delivery:$object->date_livraison); // $date_delivery comes from GETPOST
+            print $form->select_date($date_delivery?$date_delivery:-1,'date_delivery',1,1);
             print "</td>\n";
             print '</tr>';
 

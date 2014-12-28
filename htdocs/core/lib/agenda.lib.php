@@ -70,35 +70,12 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		print '<tr>';
 		print '<td class="nowrap">';
-		//print $langs->trans("ActionsAskedBy");
-		//print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
-		//print $form->select_dolusers($filtera, 'userasked', 1, '', ! $canedit);
-		//print ' &nbsp; '.$langs->trans("or") . ' ';
 		print $langs->trans("ActionsOwnedBy").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone">';
-		//print $langs->trans("User");
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
-		if (! empty($conf->use_javascript_ajax))
-		{
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-			print ajax_combobox('usertodo');
-		}
-		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' ';
-		else print '<br>';
-		print $langs->trans("Group").' &nbsp; ';
+		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("Group").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
-		if (! empty($conf->use_javascript_ajax))
-		{
-			print ajax_combobox('usergroup');
-		}
 		print '</td></tr>';
-
-		/*print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("or") . ' ' . $langs->trans("ActionsDoneBy");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
-		print $form->select_dolusers($filterd, 'userdone', 1, '', ! $canedit);
-		print '</td></tr>';*/
 
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
@@ -147,16 +124,18 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap">'.$langs->trans("WorkingTimeRange").'</td>';
 		print "<td class='nowrap maxwidthonsmartphone'>";
-		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23"> - ';
+		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
+		if (empty($conf->dol_use_jmobile)) print ' - ';
 		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
-		print ' '.$langs->trans("H");
+		if (empty($conf->dol_use_jmobile)) print ' '.$langs->trans("H");
 		print '</td></tr>';
 
 		// Filter on days
 		print '<tr>';
 		print '<td class="nowrap">'.$langs->trans("WorkingDaysRange").'</td>';
 		print "<td class='nowrap maxwidthonsmartphone'>";
-		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7"> - ';
+		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
+		if (empty($conf->dol_use_jmobile)) print ' - ';
 		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
 		print '</td></tr>';
 	}
@@ -170,7 +149,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (! empty($conf->browser->phone)) print '</div>';
 	else print '</td>';
 
-	if (! empty($conf->browser->phone)) print '<div class="fichehalfright" valign="middle">';
+	if (! empty($conf->browser->phone)) print '<div class="fichehalfright">';
 	else print '<td align="center" valign="middle" class="nowrap">';
 
 	print '<table><tr><td align="center">';

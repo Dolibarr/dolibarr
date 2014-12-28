@@ -343,7 +343,7 @@ class Tva extends CommonObject
     }
 
     /**
-     * 	Total of the VAT from invoices emitted by the society.
+     * 	Total of the VAT from invoices emitted by the thirdparty.
      *
      *	@param	int		$year		Year
      *	@return	double				Amount

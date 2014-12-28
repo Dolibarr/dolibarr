@@ -47,7 +47,7 @@ RefusedData=Ret Tarihi
 RefusedReason=Ret nedeni
 RefusedInvoicing=Rettin faturalandırılması
 NoInvoiceRefused=Reddi borç yazmayın
-InvoiceRefused=Invoice refused (Charge the rejection to customer)
+InvoiceRefused=Fatura reddedildi (Reddedileni müşterinin hesabına yaz)
 Status=Durum
 StatusUnknown=Bilinmeyen
 StatusWaiting=Bekliyor
@@ -79,10 +79,11 @@ CreditDate=Alacak tarihi
 WithdrawalFileNotCapable=Ülkeniz %s için para çekme makbuzu oluşturulamıyor (Ülkeniz desteklenmiyor)
 ShowWithdraw=Para çekme göster
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Faturaya henüz enaz bir ödeme tahsilatı işlenmemişse, para çekme yönetimine izin vermek için ödendi olarak ayarlanamaz.
-DoStandingOrdersBeforePayments=Bu sekmeler ödeme talimatı istemenizi sağlar. Bitirildiğinde, faturayı kapatmak için ödemeyi yazabilirsiniz.
+DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once donee, go into menu Bank->Withdrawal to manage the standing order. When standing order is closed, payment on invoice will be automatically recorded, and invoice closed if remainder to pay is null.
 WithdrawalFile=Para çekme dosyası
 SetToStatusSent="Dosya Gönderildi" durumuna ayarla
 ThisWillAlsoAddPaymentOnInvoice=Bu aynı zamanda faturalara ödeme oluşturur ve onları "ödendi" olarak sınıflandırır
+StatisticsByLineStatus=Statistics by status of lines
 
 ### Notifications
 InfoCreditSubject=Banka tarafından ödenen %s ödeme talimatı

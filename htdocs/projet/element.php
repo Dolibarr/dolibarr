@@ -247,7 +247,7 @@ if ($action=="addelement")
 	$elementselectid = GETPOST("elementselect");
 	$result=$project->update_element($tablename, $elementselectid);
 	if ($result<0) {
-		setEventMessage($mailchimp->error,'errors');
+		setEventMessage($project->error,'errors');
 	}
 }elseif ($action == "unlink") {
 
@@ -460,8 +460,8 @@ $langs->load("suppliers");
 $langs->load("bills");
 $langs->load("orders");
 $langs->load("proposals");
-$langs->load("margin");
-print_titre($langs->trans("Profit"));
+$langs->load("margins");
+print_fiche_titre($langs->trans("Profit"),'','');
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td align="left" width="200">'.$langs->trans("Element").'</td>';

@@ -150,7 +150,7 @@ if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
 
 if ($search_ref)
 {
-	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.rowid', 'fac.ref'), $search_ref);// For backward compatibility
+	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.ref'), $search_ref);
 	else $sql .= natural_search('fac.ref', $search_ref);
 }
 if (search_ref_supplier)

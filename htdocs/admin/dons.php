@@ -186,6 +186,9 @@ print_fiche_titre($langs->trans("DonationsSetup"),$linkback,'setup');
  */
 print_titre($langs->trans("Options"));
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -194,9 +197,7 @@ print "</tr>\n";
 $var=true;
 
 $var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
+
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("FreeTextOnDonations").'<br>';
 print '<textarea name="DONATION_MESSAGE" class="flat" cols="120">'.$conf->global->DONATION_MESSAGE.'</textarea>';

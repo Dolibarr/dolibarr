@@ -33,13 +33,13 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		if ($action == 'edit_extras')
 		{
-			$value = (isset($_POST ["options_" . $key]) ? $_POST ["options_" . $key] : $object->array_options ["options_" . $key]);
+			$value = (isset($_POST["options_" . $key]) ? $_POST["options_" . $key] : $object->array_options["options_" . $key]);
 		}
 		else
 		{
-			$value = $object->array_options ["options_" . $key];
+			$value = $object->array_options["options_" . $key];
 		}
-		if ($extrafields->attribute_type [$key] == 'separate')
+		if ($extrafields->attribute_type[$key] == 'separate')
 		{
 			print $extrafields->showSeparator($key);
 		}
@@ -47,7 +47,8 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td';
-			if (! empty($extrafields->attribute_required [$key])) print ' class="fieldrequired"';
+			//var_dump($action);exit;
+			if ((! empty($action) && $action != 'view') && ! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
 			print '>' . $label . '</td>';
 
 			//TODO Improve element and rights detection
@@ -67,8 +68,8 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 			print '<td colspan="5">';
 
 			// Convert date into timestamp format
-			if (in_array($extrafields->attribute_type [$key], array('date','datetime'))) {
-				$value = isset($_POST ["options_" . $key]) ? dol_mktime($_POST ["options_" . $key . "hour"], $_POST ["options_" . $key . "min"], 0, $_POST ["options_" . $key . "month"], $_POST ["options_" . $key . "day"], $_POST ["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
+			if (in_array($extrafields->attribute_type[$key], array('date','datetime'))) {
+				$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $db->jdate($object->array_options['options_' . $key]);
 			}
 
 			//TODO Improve element and rights detection
@@ -77,7 +78,7 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 				print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';
 				print '<input type="hidden" name="attribute" value="' . $key . '">';
-				print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+				print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 				print '<input type="hidden" name="id" value="' . $object->id . '">';
 
 				print $extrafields->showInputField($key, $value);

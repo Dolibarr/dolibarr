@@ -38,6 +38,11 @@ class Project extends CommonObject
     public $fk_element = 'fk_projet';
     protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
+
     var $id;
     var $ref;
     var $description;
@@ -479,48 +484,71 @@ class Project extends CommonObject
             }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
-        $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql)
+        // Delete tasks
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_time";
+	        $sql.= " WHERE fk_task IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
-        $sql.= " WHERE fk_projet=" . $this->id;
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql)
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
+	        $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet";
-        $sql.= " WHERE rowid=" . $this->id;
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql)
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
+	        $sql.= " WHERE fk_projet=" . $this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
-        $sql.= " WHERE fk_object=" . $this->id;
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (! $resql)
+        // Delete project
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet";
+	        $sql.= " WHERE rowid=" . $this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
+        }
+
+        if (! $error)
+        {
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
+	        $sql.= " WHERE fk_object=" . $this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (! $resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
         if (empty($error))
@@ -545,16 +573,9 @@ class Project extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('PROJECT_DELETE',$user);
-                if ($result < 0)
-                {
+
+                if ($result < 0) {
                     $error++;
-                    if (! empty($interface->errors))
-                    {
-                		foreach ($interface->errors as $errmsg ) {
-                			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-                			$this->errors[] =$errmsg;
-                		}
-                    }
                 }
                 // End call triggers
             }

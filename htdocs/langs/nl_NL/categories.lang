@@ -109,4 +109,4 @@ CategoriesSetup=Opzetten categorieën
 CategorieRecursiv=Automatisch linken met bovenliggende categorie
 CategorieRecursivHelp=Indien geactiveerd zal het product ook gelinkt worden met de bovenliggende categorie wanneer een subcategorie toegevoegd wordt.
 AddProductServiceIntoCategory=Voeg het volgende product/dienst toe
-ShowCategory=Show category
+ShowCategory=Laat categorie zien

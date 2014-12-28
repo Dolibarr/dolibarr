@@ -29,6 +29,7 @@ ActionsToDoBy=Pasākums piešķirts
 ActionsDoneBy=Pasākumi, ko veikuši
 ActionsForUser=Lietotāja notikumi
 ActionsForUsersGroup=Notikumi visiem grupas lietotājiem
+ActionAssignedTo=Event assigned to
 AllMyActions= Visi mani notikumi/uzdevumi
 AllActions= Visi notikumi/uzdevumi
 ViewList=Saraksta skats

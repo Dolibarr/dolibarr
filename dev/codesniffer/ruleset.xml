@@ -9,8 +9,8 @@
 	<exclude-pattern>*/dev/vagrant/*</exclude-pattern>
 	<exclude-pattern>*/custom/*</exclude-pattern>
 	<exclude-pattern>*/nltechno*</exclude-pattern>
-		
-	<!-- List of all tests -->
+
+		<!-- List of all tests -->
 
 	
 	<!-- Rules from Internal Standard -->
@@ -23,7 +23,23 @@
 	<!-- Rules from Generic Standard -->
 		
 	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
- 
+
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedCATCH">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedFOREACH">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedIF">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedELSE">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedELSEIF">
+		<severity>0</severity>
+	</rule>
+	
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowed">
 		<severity>0</severity>
 	</rule>
@@ -204,7 +220,75 @@
     <rule ref="PEAR.Commenting.FunctionComment.Missing">
         <severity>0</severity>
     </rule>
-    
+    <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@categoryTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@licenseTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@linkTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
+        <severity>0</severity>
+    </rule>
+    <!-- TODO Remove this and fix reported errors -->
+    <rule ref="PEAR.Commenting.ClassComment.Missing">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.Missing">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@categoryTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@licenseTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@linkTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
+        <severity>0</severity>
+    </rule>
+    <!-- TODO Remove this and fix reported errors -->
+    <rule ref="PEAR.Commenting.ClassComment.Missing">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.Missing">
+        <severity>0</severity>
+    </rule>
+        
     <!-- 
     <rule ref="PEAR.Commenting.FileComment" />
     <rule ref="PEAR.Commenting.FileComment.WrongStyle">

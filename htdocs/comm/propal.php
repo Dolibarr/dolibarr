@@ -189,8 +189,8 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model=$object->modelpdf;
-				if (empty($model)) { $tmp=getListOfModels($db, 'propal'); $keys=array_keys($tmp); $model=$keys[0]; }
 				$ret = $object->fetch($id); // Reload to get new records
+
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
@@ -499,9 +499,6 @@ else if ($action == 'add' && $user->rights->propal->creer)
 			    			$outputlangs->setDefaultLang($newlang);
 			    		}
 			    		$model=$object->modelpdf;
-			    		if (empty($model)) {
-			    			$tmp=getListOfModels($db, 'propal'); $keys=array_keys($tmp); $model=$keys[0];
-			    		}
 
 			    		$ret = $object->fetch($id); // Reload to get new records
 			    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1314,7 +1311,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Bank Account
-    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->module->banque->enabled) {
+    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled) {
         print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
         $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';
@@ -2110,12 +2107,14 @@ if ($action == 'create')
 
 				// Create an invoice and classify billed
 				if ($object->statut == 2) {
-					if (! empty($conf->facture->enabled) && $user->rights->facture->creer) {
+					if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
+					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddBill") . '</a></div>';
 					}
 
-					$arraypropal = $object->getInvoiceArrayList();
-					if (is_array($arraypropal) && count($arraypropal) > 0) {
+					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
+					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || ! empty($conf->global->WORKFLOW_PROPAL_CAN_CLASSIFIED_BILLED_WITHOUT_INVOICES))
+					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=classifybilled&amp;socid=' . $object->socid . '">' . $langs->trans("ClassifyBilled") . '</a></div>';
 					}
 				}

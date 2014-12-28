@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - marges
 
-Margin=Margin
-Margins=Margins
-TotalMargin=Total Margin
-MarginOnProducts=Margin / Products
-MarginOnServices=Margin / Services
+Margin=Kate
+Margins=Katteet
+TotalMargin=Kate yhteensä
+MarginOnProducts=Kate / Tuotteet
+MarginOnServices=Kate / Palvelut
 MarginRate=Margin rate
 MarkRate=Mark rate
 DisplayMarginRates=Display margin rates
@@ -17,8 +17,8 @@ ProductMargins=Product margins
 CustomerMargins=Customer margins
 SalesRepresentativeMargins=Sales representative margins
 ProductService=Tuote tai palvelu
-AllProducts=All products and services
-ChooseProduct/Service=Choose product or service
+AllProducts=Kaikki tuotteet ja palvelut
+ChooseProduct/Service=Valitse tuote tai palvelu
 StartDate=Aloituspäivämäärä
 EndDate=Lopetuspäivä
 Launch=Alku

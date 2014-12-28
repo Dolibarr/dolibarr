@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2009 		Laurent Destailleur            <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2013  Juanjo Menent			       <jmenent@2byte.es>
- * Copyright (C) 2013       Philippe Grand                 <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2014  Philippe Grand                 <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +88,9 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("BankSetupModule"),$linkback,'setup');
 print '<br>';
 
-
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_BANK_CHEQUERECEIPT_FREE_TEXT">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
@@ -98,9 +100,7 @@ print "</tr>\n";
 $var=true;
 
 $var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_BANK_CHEQUERECEIPT_FREE_TEXT">';
+
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnChequeReceipts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 print '<textarea name="BANK_CHEQUERECEIPT_FREE_TEXT" class="flat" cols="120">'.$conf->global->BANK_CHEQUERECEIPT_FREE_TEXT.'</textarea>';
@@ -183,7 +183,7 @@ while ($i < $nbofbank)
 }
 
 print '</table>'."\n";
-
+print '</form>';
 $db->close();
 
 llxFooter();

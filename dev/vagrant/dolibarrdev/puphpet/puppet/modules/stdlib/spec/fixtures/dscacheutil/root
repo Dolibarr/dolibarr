@@ -1,8 +1,0 @@
-name: root
-password: *
-uid: 0
-gid: 0
-dir: /var/root
-shell: /bin/bash
-gecos: rawr Root
-
