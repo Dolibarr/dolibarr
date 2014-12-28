@@ -106,7 +106,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
     $npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
     $tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
     $tva_tx = price2num($tva_tx);
-    $price_expression = GETPOST('eid', 'int') == 0 ? 'NULL' : GETPOST('eid', 'int'); //Discard expression if not in expression mode
+    $price_expression = empty(GETPOST('eid', 'int')) ? 0 : GETPOST('eid', 'int'); //0 discards expression
 
     if ($tva_tx == '')
     {
@@ -130,7 +130,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 	}
 	if ($_POST["price"] < 0 || $_POST["price"] == '')
 	{
-		if ($price_expression == 'NULL') { //This is not because of using expression instead of numeric price
+		if ($price_expression == 0) { //This is not because of using expression instead of numeric price
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")), 'errors');
 		}
@@ -186,7 +186,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 			} 
 			else 
 			{
-				if ($price_expression != 'NULL') {
+				if ($price_expression != 0) {
 					//Check the expression validity by parsing it
 	                $priceparser = new PriceParser($db);
 	                $price_result = $priceparser->parseProductSupplier($id, $price_expression, $quantity, $tva_tx);
@@ -196,7 +196,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 					}
 				}
 				if (! $error && ! empty($conf->dynamicprices->enabled)) {
-					$ret=$product->setPriceExpression($price_expression);
+					$ret=$product->setSupplierPriceExpression($price_expression);
 					if ($ret < 0)
 					{
 						$error++;
@@ -398,7 +398,8 @@ if ($id || $ref)
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):'')).'">';
 				print '</td></tr>';
 
-				if (! empty($conf->dynamicprices->enabled)) { //Only show price mode and expression selector if module is enabled
+				//Only show price mode and expression selector if module is enabled
+				if (! empty($conf->dynamicprices->enabled)) {
 					// Price mode selector
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceMode").'</td><td>';
 					$price_expression = new PriceExpression($db);
@@ -406,7 +407,7 @@ if ($id || $ref)
 					foreach ($price_expression->list_price_expression() as $entry) {
 						$price_expression_list[$entry->id] = $entry->title;
 					}
-					$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($product->fk_price_expression ? $product->fk_price_expression : '0');
+					$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($product->fk_supplier_price_expression ? $product->fk_supplier_price_expression : '0');
 					print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
 					print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
 					print '</td></tr>';
@@ -432,7 +433,7 @@ if ($id || $ref)
 				}
 
 				// Price qty min
-				print '<tr id="price_numeric"><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
+				print '<trº><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 				print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price')?price(GETPOST('price')):(isset($product->fourn_price)?price($product->fourn_price):'')).'">';
 				print '&nbsp;';
 				print $form->select_PriceBaseType((GETPOST('price_base_type')?GETPOST('price_base_type'):$product->price_base_type), "price_base_type");

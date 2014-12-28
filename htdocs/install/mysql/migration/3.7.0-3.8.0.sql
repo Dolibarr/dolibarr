@@ -26,4 +26,6 @@ create table llx_c_price_expression
   expression    varchar(80) NOT NULL
 )ENGINE=innodb;
 
-ALTER TABLE llx_product_fournisseur_price ADD fk_price_expression integer DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price ADD fk_supplier_price_expression integer DEFAULT NULL;
+ALTER TABLE llx_product ADD fk_price_expression integer DEFAULT NULL;
+ALTER TABLE llx_product_price ADD fk_price_expression integer DEFAULT NULL;

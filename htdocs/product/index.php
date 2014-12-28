@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
 
 $type=GETPOST("type",'int');
 if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only
@@ -232,7 +233,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * Last modified products
  */
 $max=15;
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy,";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.fk_price_expression,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
@@ -298,9 +299,17 @@ if ($result)
 			// Sell price
 			if (empty($conf->global->PRODUIT_MULTIPRICES))
 			{
+                if (!empty($objp->fk_price_expression)) {
+                	$product = new Product($db);
+                	$product->fetch($objp->rowid);
+                    $priceparser = new PriceParser($db);
+                    $price_result = $priceparser->parseProduct($product);
+                    if ($price_result >= 0) {
+                        $objp->price = $price_result;
+                    }
+                }
 				print '<td align="right">';
-    			if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-    			else print price($objp->price).' '.$langs->trans("HT");
+    			print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
 			print '<td align="right" class="nowrap">';
@@ -313,7 +322,7 @@ if ($result)
 			$i++;
 		}
 
-		$db->free();
+		$db->free($result);
 
 		print "</table>";
 	}

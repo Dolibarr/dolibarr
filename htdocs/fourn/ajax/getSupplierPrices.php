@@ -48,7 +48,7 @@ if (! empty($idprod))
 	$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
 	$sql.= " pfp.ref_fourn,";
 	$sql.= " pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.remise_percent, pfp.quantity, pfp.unitprice, pfp.charges, pfp.unitcharges,";
-	$sql.= " pfp.fk_price_expression, pfp.tva_tx, s.nom as name";
+	$sql.= " pfp.fk_supplier_price_expression, pfp.tva_tx, s.nom as name";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pfp.fk_soc";
@@ -72,9 +72,9 @@ if (! empty($idprod))
 			{
 				$objp = $db->fetch_object($result);
 
-                if (!empty($objp->fk_price_expression)) {
+                if (!empty($objp->fk_supplier_price_expression)) {
                     $priceparser = new PriceParser($db);
-                    $price_result = $priceparser->parseProductSupplier($idprod, $objp->fk_price_expression, $objp->quantity, $objp->tva_tx);
+                    $price_result = $priceparser->parseProductSupplier($idprod, $objp->fk_supplier_price_expression, $objp->quantity, $objp->tva_tx);
                     if ($price_result >= 0) {
                         $objp->fprice = $price_result;
                         if ($objp->quantity >= 1)

@@ -22,6 +22,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/includes/evalmath/evalmath.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/priceexpression.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
@@ -121,12 +122,33 @@ class PriceParser
 	/**
 	 *	Calculates price based on expression
 	 *
-	 *	@param	array  	$values     	Strings to replaces
+	 *	@param	Product	$product    	The Product object to get information
 	 *	@param	String 	$expression     The expression to parse
-     *  @return int 					> 0 if OK, < 1 if KO
+	 *	@param	array  	$values     	Strings to replaces
+	 *  @return int 					> 0 if OK, < 1 if KO
 	 */
-	public function parseExpression($values, $expression)
+	public function parseExpression($product, $expression, $values)
 	{
+		//Accessible product values by expressions
+		$values = array_merge($values, array(
+			"tva_tx" => $product->tva_tx,
+			"localtax1_tx" => $product->localtax1_tx,
+			"localtax2_tx" => $product->localtax2_tx,
+			"weight" => $product->weight,
+			"length" => $product->length,
+			"surface" => $product->surface,
+			"price_min" => $product->price_min,
+		));
+
+		//Retreive all extrafield for product and add it to values
+		$extrafields = new ExtraFields($this->db);
+		$extralabels = $extrafields->fetch_name_optionals_label('product', true);
+		$product->fetch_optionals($product->id, $extralabels);
+		foreach ($extrafields->attribute_label as $key=>$label)
+		{
+			$values['options_'.$key] = $product->array_options['options_'.$key];
+		}
+
 		//Check if empty
 		$expression = trim($expression);
 		if (empty($expression))
@@ -183,36 +205,78 @@ class PriceParser
 	}
 
 	/**
+	 *	Calculates product price based on product id and string expression
+	 *
+	 *	@param	Product				$product    	The Product object to get information
+	 *	@param	string 				$expression     The expression to parse
+	 *	@param	array 				$extra_values   Any aditional values for expression
+     *  @return int 				> 0 if OK, < 1 if KO
+	 */
+	public function parseProductExpression($product, $expression, $extra_values = array())
+	{
+		//Get the supplier min
+        $productFournisseur = new ProductFournisseur($this->db);
+        $supplier_min_price = $productFournisseur->find_min_price_product_fournisseur($product->id);
+
+		//Accessible values by expressions
+		$extra_values = array_merge($extra_values, array(
+			"supplier_min_price" => $supplier_min_price,
+		));
+
+		//Parse the expression and return the price, if not error occurred check if price is higher than min
+		$result = $this->parseExpression($product, $expression, $extra_values);
+		if (empty($this->error)) {
+			if ($result < $product->price_min) {
+				$result = $product->price_min;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 *	Calculates product price based on product id and expression id
+	 *
+	 *	@param	Product				$product    	The Product object to get information
+	 *	@param	int 				$expression_id  The expression to parse
+	 *	@param	array 				$extra_values   Any aditional values for expression
+     *  @return int 				> 0 if OK, < 1 if KO
+	 */
+	public function parseProduct($product, $extra_values = array())
+	{
+		//Get the expression from db
+		$price_expression = new PriceExpression($this->db);
+		$res = $price_expression->fetch($product->fk_price_expression);
+		if ($res < 1) {
+			$this->error = array(19, null);
+			return -1;
+		}
+
+		//Parse the expression and return the price
+		return $this->parseProductExpression($product, $price_expression->expression, $extra_values);
+	}
+
+	/**
 	 *	Calculates supplier product price based on product id and string expression
 	 *
 	 *	@param	int					$product_id    	The Product id to get information
 	 *	@param	string 				$expression     The expression to parse
-	 *	@param	int					$quantity     	Min quantity
-	 *	@param	int					$tva_tx     	VAT rate
+	 *	@param	int					$quantity     	Supplier Min quantity
+	 *	@param	int					$tva_tx     	Supplier VAT rate
 	 *	@param	array 				$extra_values   Any aditional values for expression
      *  @return int 				> 0 if OK, < 1 if KO
 	 */
 	public function parseProductSupplierExpression($product_id, $expression, $quantity = null, $tva_tx = null, $extra_values = array())
 	{
-		//Accessible values by expressions
-		$expression_values = array(
-			"quantity" => $quantity,
-			"tva_tx" => $tva_tx,
-		);
-		$expression_values = array_merge($expression_values, $extra_values);
-
-		//Retreive all extrafield for product and add it to expression_values
-		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label('product', true);
+		//Get the product data
 		$product = new Product($this->db);
-		$product->fetch_optionals($product_id, $extralabels);
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			$expression_values['options_'.$key] = $product->array_options['options_'.$key];
-		}
+		$product->fetch($product_id, '', '', 1);
 
-		//Parse the expression and return the price
-		return $this->parseExpression($expression_values, $expression);
+		//Accessible values by expressions
+		$extra_values = array_merge($extra_values, array(
+			"supplier_quantity" => $quantity,
+			"supplier_tva_tx" => $tva_tx,
+		));
+		return $this->parseExpression($product, $expression, $extra_values);
 	}
 
 	/**
@@ -227,9 +291,10 @@ class PriceParser
 	 */
 	public function parseProductSupplier($product_id, $expression_id, $quantity = null, $tva_tx = null, $extra_values = array())
 	{
+		//Get the expression from db
 		$price_expression = new PriceExpression($this->db);
 		$res = $price_expression->fetch($expression_id);
-		if ($res > 1) {
+		if ($res < 1) {
 			$this->error = array(19, null);
 			return -1;
 		}

@@ -1522,7 +1522,7 @@ class Form
         $outarray=array();
 
         $sql = "SELECT ";
-        $sql.= " p.rowid, p.label, p.ref, p.description, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.stock";
+        $sql.= " p.rowid, p.label, p.ref, p.description, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.stock, p.fk_price_expression";
 
         //Price by customer
         if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
@@ -1601,6 +1601,8 @@ class Form
         $result=$this->db->query($sql);
         if ($result)
         {
+            require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+            require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
             $num = $this->db->num_rows($result);
 
             $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -1650,6 +1652,19 @@ class Form
 				}
 				else
 				{
+                    if (!empty($objp->fk_price_expression)) {
+                        $price_product = new Product($this->db);
+                        $price_product->fetch($objp->rowid, '', '', 1);
+                        $priceparser = new PriceParser($this->db);
+                        $price_result = $priceparser->parseProduct($price_product);
+                        if ($price_result >= 0) {
+                            $objp->price = $price_result;
+                            $objp->unitprice = $price_result;
+                            //Calculate the VAT
+                            $objp->price_ttc = price2num($objp->price) * (1 + ($objp->tva_tx / 100));
+                            $objp->price_ttc = price2num($objp->price_ttc,'MU');
+                        }
+                    }
 					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
@@ -1929,7 +1944,7 @@ class Form
 
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
         $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
-        $sql.= " pfp.fk_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
+        $sql.= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
@@ -2011,9 +2026,9 @@ class Form
                 {
                     $outqty=$objp->quantity;
 					$outdiscount=$objp->remise_percent;
-                    if (!empty($objp->fk_price_expression)) {
+                    if (!empty($objp->fk_supplier_price_expression)) {
                         $priceparser = new PriceParser($this->db);
-                        $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_price_expression, $objp->quantity, $objp->tva_tx);
+                        $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_supplier_price_expression, $objp->quantity, $objp->tva_tx);
                         if ($price_result >= 0) {
                             $objp->fprice = $price_result;
                             if ($objp->quantity >= 1)
@@ -2110,7 +2125,7 @@ class Form
 
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
         $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
-        $sql.= " pfp.fk_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
+        $sql.= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
@@ -2150,9 +2165,9 @@ class Form
                     }
                     $opt.= '>'.$objp->name.' - '.$objp->ref_fourn.' - ';
 
-                    if (!empty($objp->fk_price_expression)) {
+                    if (!empty($objp->fk_supplier_price_expression)) {
                         $priceparser = new PriceParser($this->db);
-                        $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_price_expression, $objp->quantity, $objp->tva_tx);
+                        $price_result = $priceparser->parseProductSupplier($objp->fk_product, $objp->fk_supplier_price_expression, $objp->quantity, $objp->tva_tx);
                         if ($price_result >= 0) {
                             $objp->fprice = $price_result;
                             if ($objp->quantity >= 1)
