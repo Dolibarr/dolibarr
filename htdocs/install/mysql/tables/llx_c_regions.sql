@@ -1,6 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2014           Marcos García        <marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 create table llx_c_regions
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  code_region integer NOT NULL,
+  code_region integer NOT NULL UNIQUE,
   fk_pays     integer NOT NULL,
   cheflieu    varchar(50),
   tncc        integer,
