@@ -33,6 +33,12 @@ $phone = $_GET['phone'];
 include '../master.inc.php';
 
 
+// Security check
+if (empty($conf->clicktodial->enabled)) {
+    print "Error: Module Click to dial not active\n";
+    exit;
+}
+
 // Check parameters
 if (empty($phone))
 {
