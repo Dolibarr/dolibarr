@@ -28,9 +28,10 @@
  *
  */
 
-$phone = $_GET['phone'];
 
 include '../master.inc.php';
+
+$phone = GETPOST('phone');
 
 
 // Security check
