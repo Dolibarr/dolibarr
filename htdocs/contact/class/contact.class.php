@@ -560,7 +560,7 @@ class Contact extends CommonObject
 
 				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-        $this->skype			= $obj->skype;
+        		$this->skype			= $obj->skype;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 

@@ -374,6 +374,7 @@ else
     /*
      * Onglets
      */
+    $head=array();
     if ($id > 0)
     {
         // Si edition contact deja existant
@@ -386,9 +387,6 @@ else
         $head = contact_prepare_head($object);
 
         $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-        dol_fiche_head($head, 'card', $title, 0, 'contact');
-
-        dol_htmloutput_events();
     }
 
     if ($user->rights->societe->contact->creer)
@@ -438,12 +436,15 @@ else
 				print '</script>'."\n";
             }
 
-            print '<br>';
             print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+
+            dol_fiche_head($head, 'card', '', 0, '');
+
             print '<table class="border" width="100%">';
+
 
             // Name
             print '<tr><td width="20%" class="fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
@@ -611,8 +612,9 @@ else
             }
             print '</tr>';
 
-            print "</table><br><br>";
+            print "</table>";
 
+            print dol_fiche_end();
 
             print '<div class="center">';
             print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
@@ -673,6 +675,8 @@ else
             print '<input type="hidden" name="old_lastname" value="'.$object->lastname.'">';
             print '<input type="hidden" name="old_firstname" value="'.$object->firstname.'">';
             if (! empty($backtopage)) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+
+            dol_fiche_head($head, 'card', $title, 0, 'contact');
 
             print '<table class="border" width="100%">';
 
@@ -856,7 +860,9 @@ else
             else print $langs->trans("NoDolibarrAccess");
             print '</td></tr>';
 
-            print '</table><br>';
+            print '</table>';
+
+            print dol_fiche_end();
 
             print '<div class="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -877,6 +883,8 @@ else
          */
 
         dol_htmloutput_errors($error,$errors);
+
+        dol_fiche_head($head, 'card', $title, 0, 'contact');
 
         if ($action == 'create_user')
         {
@@ -1078,7 +1086,7 @@ else
 
         print "</table>";
 
-        print "</div>";
+        print dol_fiche_end();
 
         // Barre d'actions
         print '<div class="tabsAction">';
@@ -1113,7 +1121,8 @@ else
             }
         }
 
-        print "</div><br>";
+        print "</div>";
+        print "<br>";
 
 		if (! empty($conf->agenda->enabled))
 		{
