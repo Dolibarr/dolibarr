@@ -185,11 +185,11 @@ function displayBox($selectedDate,$month,$year)
 	</tr>
 	<tr class="dpDayNames">
 	<?php
-	$first_day_of_week = isset($conf->global->MAIN_START_WEEK) ? (int)$conf->global->MAIN_START_WEEK : 0;
+	$first_day_of_week = isset($conf->global->MAIN_START_WEEK) ? (int) $conf->global->MAIN_START_WEEK : 0;
 	$day_names = array('ShortSunday', 'ShortMonday', 'ShortTuesday', 'ShortWednesday', 'ShortThursday', 'ShortFriday', 'ShortSaturday');
 	for( $i=0; $i < 7; $i++ )
 	{
-		echo '<td width="', (int)(($i+1)*100/7) - (int)($i*100/7), '%">', $langs->trans($day_names[($i + $first_day_of_week) % 7]), '</td>', "\n";
+		echo '<td width="', (int) (($i+1)*100/7) - (int) ($i*100/7), '%">', $langs->trans($day_names[($i + $first_day_of_week) % 7]), '</td>', "\n";
 	}
 	?>
 	</tr>
