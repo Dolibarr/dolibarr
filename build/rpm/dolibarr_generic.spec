@@ -571,9 +571,4 @@ fi
 * Wed Oct 29 2014 Laurent Destailleur 3.7.0-0.3
 - Upstream release
 
-* Wed Sep 24 2014 Laurent Destailleur 3.6.1-0.3
-- Upstream release
-
-* Wed Jul 15 2014 Laurent Destailleur 3.6.0-0.3
-- Upstream release
 
