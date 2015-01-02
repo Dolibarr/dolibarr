@@ -348,6 +348,7 @@ ChequeNumber=Check N°
 ChequeOrTransferNumber=Check/Transfer N°
 ChequeMaker=Check transmitter
 ChequeBank=Bank of Check
+CheckBank=Check
 NetToBePaid=Net to be paid
 PhoneNumber=Tel
 FullPhoneNumber=Telephone
