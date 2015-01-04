@@ -1445,6 +1445,7 @@ class Contrat extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *	@return int     			<0 if KO, >0 if OK
+	 *  @deprecated					This function will never be used. Status of a contract is status of its lines.
 	 */
 	function update_statut($user)
 	{
