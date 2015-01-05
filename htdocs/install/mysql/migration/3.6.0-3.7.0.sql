@@ -1145,5 +1145,5 @@ ALTER TABLE llx_facturedet_rec ADD COLUMN fk_contract_line integer NULL;
 ALTER TABLE llx_resource MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
 
 -- This request make mysql drop (mysql bug, so we add it at end):
---ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
 
