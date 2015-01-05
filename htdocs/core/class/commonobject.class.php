@@ -47,6 +47,9 @@ abstract class CommonObject
 
     public $array_options=array();
 
+    /**
+     * @var Societe
+     */
     public $thirdparty;
 
     public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked

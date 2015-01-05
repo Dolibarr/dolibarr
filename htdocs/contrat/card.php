@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Ferran Marcet		  	<fmarcet@2byte.es>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -718,19 +719,25 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		setEventMessage($object->error,'errors');
 	}
 } elseif ($action=='setref_supplier') {
-	$result = $object->fetch($id);
-	if ($result < 0) {
-		setEventMessage($object->errors,'errors');
-	}
-	$object->ref_supplier=GETPOST('ref_supplier','alpha');
 
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessage($object->errors,'errors');
-		$action='editref_supplier';
-	} else {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
+	$cancelbutton = GETPOST('cancel');
+
+	if (!$cancelbutton) {
+
+		$result = $object->fetch($id);
+		if ($result < 0) {
+			setEventMessage($object->errors, 'errors');
+		}
+		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
+
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessage($object->errors, 'errors');
+			$action = 'editref_supplier';
+		} else {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
 	}
 } elseif ($action=='setref') {
 	$object->ref=GETPOST('ref','alpha');
@@ -1229,8 +1236,10 @@ else
         /*
          * Lines of contracts
          */
-        $productstatic=new Product($db);
 
+	    if ($conf->product->enabled) {
+			$productstatic=new Product($db);
+	    }
 
         $usemargins=0;
 		if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
@@ -1672,7 +1681,7 @@ else
         }
 
 		// Form to add new line
-        if ($user->rights->contrat->creer && ($object->statut >= 0))
+        if ($user->rights->contrat->creer && ($object->statut == 0))
         {
         	$dateSelector=1;
 
