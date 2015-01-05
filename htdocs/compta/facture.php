@@ -1064,16 +1064,15 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 	// Set if we used free entry or predefined product
 	$predef='';
 	$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+	$price_ht = GETPOST('price_ht');
 	if (GETPOST('prod_entry_mode') == 'free')
 	{
 		$idprod=0;
-		$price_ht = GETPOST('price_ht');
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 	}
 	else
 	{
 		$idprod=GETPOST('idprod', 'int');
-		$price_ht = '';
 		$tva_tx = '';
 	}
 
@@ -1884,8 +1883,10 @@ if ($action == 'create')
 			$projectid = (! empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
 			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 			$ref_int = (! empty($objectsrc->ref_int) ? $objectsrc->ref_int : '');
-
-			$soc = $objectsrc->thirdparty;
+	
+			// only if socid not filled else it's allready done upper
+			if (empty($socid))
+				$soc = $objectsrc->thirdparty;
 
 			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
