@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
  * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2014      Cédric Gross         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2014-2015 Cédric Gross         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -239,7 +239,45 @@ if ($action == "transfert_stock" && ! $cancel)
 	}
 }
 
+if ($action == 'updateline' && GETPOST('save') == $langs->trans('Save'))
+{
 
+    $pdluo = new Productbatch($db);
+    $result=$pdluo->fetch(GETPOST('pdluoid','int'));
+
+    if ($result>0)
+    {
+        if ($pdluo->id)
+        {
+            if ((! GETPOST("sellby")) && (! GETPOST("eatby")) && (! GETPOST("batch_number"))) {
+                setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("atleast1batchfield")), 'errors');
+            }
+            else
+            {
+                $d_eatby=dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
+                $d_sellby=dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+                $pdluo->batch=GETPOST("batch_number",'san_alpha');
+                $pdluo->eatby=$d_eatby;
+                $pdluo->sellby=$d_sellby;
+                $result=$pdluo->update($user);
+                if ($result<0)
+                {
+                    setEventMessages($pdluo->error,$pdluo->errors, 'errors');
+                }
+            }
+        }
+        else
+        {
+            setEventMessages($langs->trans('BatchInformationNotfound'),null, 'errors');
+        }
+    }
+    else
+    {
+        setEventMessages($pdluo->error,null, 'errors');
+    }
+    header("Location: product.php?id=".$id);
+    exit;
+}
 /*
  * View
  */
@@ -663,12 +701,33 @@ if ($resql)
 			if ($details<0) dol_print_error($db);
 			foreach ($details as $pdluo)
 			{
-				print "\n".'<tr><td></td>';
-				print '<td align="right">'.$pdluo->batch.'</td>';
-				print '<td align="right">'. dol_print_date($pdluo->eatby,'day') .'</td>';
-				print '<td align="right">'. dol_print_date($pdluo->sellby,'day') .'</td>';
-				print '<td align="right">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
-				print '<td colspan="4"></td></tr>';
+			    if ( $action == 'editline' && GETPOST('lineid',int)==$pdluo->id )
+			    { //Current line edit
+			        print "\n".'<tr><td colspan="9">';
+			        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';
+			        print '<td align="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
+			        print '<td align="right" width="10%">';
+			        $form->select_date($pdluo->eatby,'eatby','','',1,"");
+			        print '</td>';
+			        print '<td align="right" width="10%">';
+			        $form->select_date($pdluo->sellby,'sellby','','',1,"");
+			        print '</td>';
+			        print '<td align="right" width="10%">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
+			        print '<td colspan="4"><input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
+		            print '<input type="submit" class="button" id="cancellinebutton" name="Cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+			        print '</table></form>';
+			    }
+			    else
+			    {
+                    print "\n".'<tr><td align="right">';
+                    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
+                    print img_edit().'</a></td>';
+                    print '<td align="right">'.$pdluo->batch.'</td>';
+                    print '<td align="right">'. dol_print_date($pdluo->eatby,'day') .'</td>';
+                    print '<td align="right">'. dol_print_date($pdluo->sellby,'day') .'</td>';
+                    print '<td align="right">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
+                    print '<td colspan="4"></td></tr>';
+			    }
 			}
 		}
 		$i++;
