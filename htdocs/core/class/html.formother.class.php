@@ -311,15 +311,25 @@ class FormOther
      */
     function select_categories($type,$selected=0,$htmlname='search_categ',$nocateg=0)
     {
-        global $langs;
+        global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
         // Load list of "categories"
         $static_categs = new Categorie($this->db);
         $tab_categs = $static_categs->get_full_arbo($type);
 
+        $moreforfilter = '';
+        $nodatarole = '';
+        // Enhance with select2
+        if ($conf->use_javascript_ajax)
+        {
+            include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            $moreforfilter.= ajax_combobox('select_categ_'.$htmlname);
+            $nodatarole=' data-role="none"';
+        }
+
         // Print a select with each of them
-        $moreforfilter ='<select class="flat" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
+        $moreforfilter.='<select class="flat" id="select_categ_'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
         $moreforfilter.='<option value="">&nbsp;</option>';	// Should use -1 to say nothing
 
         if (is_array($tab_categs))
