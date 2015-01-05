@@ -7,6 +7,8 @@ English Dolibarr ChangeLog
 For users:
 - New: Use new combobox.
 - New: Add hidden option MAXTABS_IN_CARD.
+- Fix / Improve : [ bug #1747 ] Remove creation of batch 'Undefined'
+
 
 For translators:
 - Update language files.
