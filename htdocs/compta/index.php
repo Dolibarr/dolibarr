@@ -587,7 +587,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Total").'</td>';
 				print '<td align="right">'.price($tot_ttc).'</td>';
 				print '<td align="right"></td>';
-				print '<td align="right">&nbsp</td>';
+				print '<td align="right">&nbsp;</td>';
 				print '</tr>';
 			}
 			else
