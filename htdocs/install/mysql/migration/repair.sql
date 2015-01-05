@@ -115,7 +115,7 @@ ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseu
 -- Fix: deprecated tag to new one
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
-
+update llx_opensurvey_sondage set tms = now();
 
 -- ALTER TABLE llx_facture_fourn ALTER COLUMN fk_cond_reglement DROP NOT NULL;
 
