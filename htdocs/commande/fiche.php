@@ -511,16 +511,15 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 	// Set if we used free entry or predefined product
 	$predef='';
 	$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+	$price_ht = GETPOST('price_ht');
 	if (GETPOST('prod_entry_mode') == 'free')
 	{
 		$idprod=0;
-		$price_ht = GETPOST('price_ht');
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 	}
 	else
 	{
 		$idprod=GETPOST('idprod', 'int');
-		$price_ht = '';
 		$tva_tx = '';
 	}
 
