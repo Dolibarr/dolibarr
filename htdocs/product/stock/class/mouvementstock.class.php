@@ -495,7 +495,14 @@ class MouvementStock extends CommonObject
 		}
 
 	}
-	
+
+    /**
+     * Get origin
+     *
+     * @param   variant $fk_origin  id of origin
+     * @param   int $origintype     origin type
+     * @return  string              name url
+     */
 	function get_origin($fk_origin, $origintype) {
 		switch ($origintype) {
 			case 'commande':
