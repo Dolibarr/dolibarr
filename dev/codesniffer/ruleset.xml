@@ -310,9 +310,7 @@
     </rule>
     
     <rule ref="PEAR.Commenting.FunctionComment" />
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingBeforeParamType">
-        <severity>0</severity>
-    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingBeforeParamType" />
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterLongType">
         <severity>0</severity>
     </rule>
