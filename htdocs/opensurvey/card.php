@@ -373,7 +373,7 @@ print '<br>';
 if ($object->allow_comments) {
 	print $langs->trans("AddACommentForPoll") . '<br>';
 	print '<textarea name="comment" rows="2" cols="80"></textarea><br>'."\n";
-	print $langs->trans("Name") .': <input type="text" name="commentuser" value="'.$user->getFullName($langs).'"><br>'."\n";
+	print $langs->trans("Name") .': <input type="text" size="50" name="commentuser" value="'.$user->getFullName($langs).'"><br>'."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	if (isset($erreur_commentaire_vide) && $erreur_commentaire_vide=="yes") {
 		print "<font color=#FF0000>" . $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")) . "</font>";
