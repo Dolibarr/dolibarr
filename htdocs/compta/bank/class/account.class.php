@@ -890,7 +890,7 @@ class Account extends CommonObject
             $lienfin='</a>';
         }
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAccount"),'account').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAccount").': '.$this->label, 'account', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.$this->label.$lienfin;
         return $result;
     }
@@ -1430,7 +1430,7 @@ class AccountLine extends CommonObject
         $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTransaction"),'account').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTransaction"), 'account', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.$this->rowid.$lienfin;
 
         if ($option == 'showall' || $option == 'showconciliated') $result.=' (';
