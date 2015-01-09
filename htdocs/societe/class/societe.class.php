@@ -1752,7 +1752,7 @@ class Societe extends CommonObject
         $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name,'company').$lienfin);
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name, 'company', 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($name,$maxlen):$name).$lienfin;
 

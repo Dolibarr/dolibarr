@@ -809,7 +809,7 @@ class Project extends CommonObject
 
         $label = $langs->trans("ShowProject") . ': ' . $this->ref . ($this->title ? ' - ' . $this->title : '');
 
-        if ($withpicto) $result.=($lien . img_object($label, $picto) . $lienfin);
+        if ($withpicto) $result.=($lien . img_object($label, $picto, 'class="classfortooltip"') . $lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$lien . $this->ref . $lienfin . (($addlabel && $this->title) ? ' - ' . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;

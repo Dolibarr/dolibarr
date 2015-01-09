@@ -277,7 +277,7 @@ class AdherentType extends CommonObject
         $picto='group';
         $label=$langs->trans("ShowTypeCard",$this->libelle);
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($this->libelle,$maxlen):$this->libelle).$lienfin;
         return $result;

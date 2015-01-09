@@ -1134,7 +1134,7 @@ class BonPrelevement extends CommonObject
             $lienfin='</a>';
         }
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowWithdraw"),'payment').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowWithdraw"), 'payment', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.$this->ref.$lienfin;
         return $result;
     }
