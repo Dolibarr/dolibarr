@@ -798,16 +798,20 @@ class Resource extends CommonObject
 	    return $resources;
     }
 
+    /*
+     *  Return an int number of resources linked to the element
+     *
+     *  @return     int
+     */
     function fetchElementResources($element,$element_id)
     {
-    	$resources = $this->getElementResources($element,$element_id);
-    	$i=0;
-    	foreach($resources as $nb => $resource)
-    	{
-    		$this->lines[$i] = fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
-    		$i++;
-    	}
-    	return $i;
+        $resources = $this->getElementResources($element,$element_id);
+        $i=0;
+        foreach($resources as $nb => $resource) {
+            $this->lines[$i] = fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
+            $i++;
+        }
+        return $i;
 
     }
 
