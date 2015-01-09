@@ -658,18 +658,19 @@ class Commande extends CommonOrder
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
-        $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_client, ref_int";
+        $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_ext, ref_client, ref_int";
         $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
         $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
-        $sql.= ", ".($this->fk_project?$this->fk_project:"null");
+        $sql.= ", ".($this->fk_project>0?$this->fk_project:"null");
         $sql.= ", '".$this->db->idate($date)."'";
         $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
-        $sql.= ", '".$this->db->escape($this->ref_client)."'";
+        $sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
+        $sql.= ", ".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
         $sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
         $sql.= ", '".$this->modelpdf."'";
         $sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
@@ -904,7 +905,7 @@ class Commande extends CommonOrder
         $modCommande = new $obj;
         $this->ref = $modCommande->getNextValue($objsoc,$this);
 
-        
+
         // Create clone
         $result=$this->create($user);
         if ($result < 0) $error++;

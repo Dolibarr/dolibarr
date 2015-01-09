@@ -2,6 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.6.3 compared to 3.6.2 *****
+- Fix: ref_ext was not saved when recording a customer order from web service
+
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
 - Fix: bug 1588 : relative discount.
