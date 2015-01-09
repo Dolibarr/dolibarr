@@ -4351,7 +4351,7 @@ class Form
      *    @param   string	$morehtmlref  	Code html supplementaire a afficher apres ref
      *    @param   string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
-     * 	  @return  tring    				Portion HTML avec ref + boutons nav
+     * 	  @return  string    				Portion HTML avec ref + boutons nav
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0)
     {

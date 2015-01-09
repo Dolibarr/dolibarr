@@ -57,6 +57,9 @@ abstract class CommonObject
 
     public $array_options=array();
 
+    /**
+     * @var Societe
+     */
     public $thirdparty;
 
     public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
@@ -2119,24 +2122,23 @@ abstract class CommonObject
         dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
         if ($this->db->query($sql))
         {
-        	if (! $error)
-			{
-				$trigkey='';
-				if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
-				if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
+            $error = 0;
 
-				if ($trigkey)
-				{
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers($trigkey,$this,$user,$langs,$conf);
-		 			if ($result < 0) {
-		 				$error++; $this->errors=$interface->errors;
-		 			}
-					// Fin appel triggers
-				}
-			}
+            $trigkey='';
+            if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
+            if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
+
+            if ($trigkey)
+            {
+                // Appel des triggers
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers($trigkey,$this,$user,$langs,$conf);
+                if ($result < 0) {
+                    $error++; $this->errors=$interface->errors;
+                }
+                // Fin appel triggers
+            }
 
 			if (! $error)
 			{

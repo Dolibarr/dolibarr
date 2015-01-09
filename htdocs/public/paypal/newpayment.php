@@ -870,7 +870,12 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	// Amount
 	$var=!$var;
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
-	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
+	if (empty($amount))
+	{
+		print ' ('.$langs->trans("ToComplete");
+		if (! empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank">'.$langs->trans("SeeHere").'</a>';
+		print ')';
+	}
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
 	if (empty($amount) || ! is_numeric($amount))
 	{

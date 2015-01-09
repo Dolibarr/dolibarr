@@ -1,19 +1,15 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2014 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
-<<<<<<< HEAD
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
-=======
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
->>>>>>> refs/remotes/origin/3.7
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

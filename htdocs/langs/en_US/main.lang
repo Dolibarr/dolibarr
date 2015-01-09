@@ -61,6 +61,7 @@ ErrorFailedToSaveFile=Error, failed to save file.
 SetDate=Set date
 SelectDate=Select a date
 SeeAlso=See also %s
+SeeHere=See here
 BackgroundColorByDefault=Default background color
 FileNotUploaded=The file was not uploaded
 FileUploaded=The file was successfully uploaded

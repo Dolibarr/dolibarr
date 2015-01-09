@@ -1662,7 +1662,7 @@ class User extends CommonObject
 	/**
 	 *  Add user into a group
 	 *
-	 *  @param	Group	$group      Id of group
+	 *  @param	int	$group      Id of group
 	 *  @param  int		$entity     Entity
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				<0 if KO, >0 if OK
@@ -1721,7 +1721,7 @@ class User extends CommonObject
 	/**
 	 *  Remove a user from a group
 	 *
-	 *  @param	Group   $group       Id of group
+	 *  @param	int   $group       Id of group
 	 *  @param  int		$entity      Entity
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     <0 if KO, >0 if OK

@@ -186,6 +186,8 @@ Dolibarr better:
 - If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
   warehouse module and your Point Of Sale module if you use one.
 
+***** ChangeLog for 3.6.3 compared to 3.6.2 *****
+- Fix: ref_ext was not saved when recording a customer order from web service
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.

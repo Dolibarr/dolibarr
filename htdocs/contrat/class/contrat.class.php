@@ -49,34 +49,144 @@ class Contrat extends CommonObject
 	 */
 	protected $table_ref_field = 'ref';
 
+	/**
+	 * Id of the contract
+	 * @var int
+	 */
 	var $id;
+
+	/**
+	 * Reference of the contract
+	 * @var string
+	 */
 	var $ref;
+
+	/**
+	 * External reference of the contract.
+	 * Used by 3rd party services
+	 * @var string
+	 */
 	var $ref_ext;
+
+	/**
+	 * Supplier reference of the contract
+	 * @var string
+	 */
 	var $ref_supplier;
+
+	/**
+	 * Client id linked to the contract
+	 * @var int
+	 */
 	var $socid;
 	var $societe;		// Objet societe
+
+	/**
+	 * Status of the contract
+	 * @var int
+	 */
 	var $statut=0;		// 0=Draft,
 	var $product;
 
+	/**
+	 * TODO: Which is the correct one?
+	 * Author of the contract
+	 * @var
+	 */
 	var $user_author;
-	var $date_creation;		// date of creation
-	var $date_validation;	// date of last update
 
-	var $date_contrat;  // date when contract was signed
-	var $date_cloture;	// deprecated (we close contract lines, not a contract)
+	/**
+	 * TODO: Which is the correct one?
+	 * Author of the contract
+	 * @var User
+	 */
+	public $user_creation;
+
+	/**
+	 * TODO: Which is the correct one?
+	 * Author of the contract
+	 * @var int
+	 */
+	public $fk_user_author;
+
+	/**
+	 * TODO: Which is the correct one?
+	 * Author of the contract
+	 * @var int
+	 */
+	public $user_author_id;
+
+	/**
+	 * @var User
+	 */
+	public $user_cloture;
+
+	/**
+	 * Date of creation
+	 * @var int
+	 */
+	var $date_creation;
+
+	/**
+	 * Date of last modification
+	 * Not filled until you call ->info()
+	 * @var int
+	 */
+	public $date_modification;
+
+	/**
+	 * Date of validation
+	 * @var int
+	 */
+	var $date_validation;
+
+	/**
+	 * Date when contract was signed
+	 * @var int
+	 */
+	var $date_contrat;
+
+	/**
+	 * Date of contract closure
+	 * @var int
+	 * @deprecated we close contract lines, not a contract
+	 */
+	var $date_cloture;
 
 	var $commercial_signature_id;
 	var $commercial_suivi_id;
 
-	var $note;			// deprecated
+	/**
+	 * @deprecated Use note_private or note_public instead
+	 */
+	var $note;
+
+	/**
+	 * Private note
+	 * @var string
+	 */
 	var $note_private;
+
+	/**
+	 * Public note
+	 * @var string
+	 */
 	var $note_public;
 	var $modelpdf;
 
+	/**
+	 * @deprecated Use fk_project instead
+	 */
 	var $fk_projet;
+
+	public $fk_project;
 
 	var $extraparams=array();
 
+	/**
+	 * Contract lines
+	 * @var ContratLigne[]
+	 */
 	var $lines=array();
 
 
@@ -143,8 +253,8 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User		$user       Objet User qui active le contrat
 	 *  @param  int			$line_id    Id de la ligne de detail a activer
-	 *  @param  timestamp	$date       Date d'ouverture
-	 *  @param  timestamp	$date_end   Date fin prevue
+	 *  @param  int			$date       Date d'ouverture
+	 *  @param  int|string	$date_end   Date fin prevue
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
@@ -190,7 +300,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User		$user       Objet User qui active le contrat
 	 *  @param  int			$line_id    Id de la ligne de detail a activer
-	 *  @param  timestamp	$date_end	Date fin
+	 *  @param  int			$date_end	Date fin
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
@@ -441,7 +551,9 @@ class Contrat extends CommonObject
 				$this->ref_ext					= $result["ref_ext"];
 				$this->statut					= $result["statut"];
 				$this->mise_en_service			= $this->db->jdate($result["datemise"]);
+
 				$this->date_contrat				= $this->db->jdate($result["datecontrat"]);
+				$this->date_creation				= $this->db->jdate($result["datecontrat"]);
 
 				$this->user_author_id			= $result["fk_user_author"];
 
@@ -470,6 +582,18 @@ class Contrat extends CommonObject
 				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
 				$this->fetch_optionals($this->id,$extralabels);
 
+				/*
+				 * Lines
+				*/
+
+				$this->lines  = array();
+
+				$result=$this->fetch_lines();
+				if ($result < 0)
+				{
+					$this->error=$this->db->error();
+					return -3;
+				}
 
 				return $this->id;
 			}
@@ -492,7 +616,7 @@ class Contrat extends CommonObject
 	/**
 	 *  Load lignes array into this->lines
 	 *
-	 *  @return    Array   Return array of contract lines
+	 *  @return ContratLigne[]   Return array of contract lines
 	 */
 	function fetch_lines()
 	{
@@ -1097,16 +1221,16 @@ class Contrat extends CommonObject
 	 *  @param  float		$txlocaltax2        Local tax 2 rate
 	 *  @param  int			$fk_product      	Id produit
 	 *  @param  float		$remise_percent  	Pourcentage de remise de la ligne
-	 *  @param  timestamp	$date_start      	Date de debut prevue
-	 *  @param  timestamp	$date_end        	Date de fin prevue
-	 *	@param	float		$price_base_type	HT or TTC
+	 *  @param  int			$date_start      	Date de debut prevue
+	 *  @param  int			$date_end        	Date de fin prevue
+	 *	@param	string		$price_base_type	HT or TTC
 	 * 	@param  float		$pu_ttc             Prix unitaire TTC
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @return int             				<0 si erreur, >0 si ok
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
 	{
 		global $user, $langs, $conf, $mysoc;
 
@@ -1254,20 +1378,20 @@ class Contrat extends CommonObject
 	 *  @param  float		$pu               	Prix unitaire
 	 *  @param  int			$qty              	Quantite
 	 *  @param  float		$remise_percent   	Pourcentage de remise de la ligne
-	 *  @param  timestamp	$date_start       	Date de debut prevue
-	 *  @param  timestamp	$date_end         	Date de fin prevue
+	 *  @param  int			$date_start       	Date de debut prevue
+	 *  @param  int			$date_end         	Date de fin prevue
 	 *  @param  float		$tvatx            	Taux TVA
 	 *  @param  float		$localtax1tx      	Local tax 1 rate
 	 *  @param  float		$localtax2tx      	Local tax 2 rate
-	 *  @param  timestamp	$date_debut_reel  	Date de debut reelle
-	 *  @param  timestamp	$date_fin_reel    	Date de fin reelle
-	 *	@param	float		$price_base_type	HT or TTC
+	 *  @param  int|string	$date_debut_reel  	Date de debut reelle
+	 *  @param  int|string	$date_fin_reel    	Date de fin reelle
+	 *	@param	string		$price_base_type	HT or TTC
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @return int              				< 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0.0, $localtax2tx=0.0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
 	{
 		global $user, $conf, $langs, $mysoc;
 
@@ -1304,7 +1428,7 @@ class Contrat extends CommonObject
 
 		$localtaxes_type=getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 
-		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtaxtx1, $txlocaltaxtx2, 0, $price_base_type, $info_bits, 1, '', $localtaxes_type);
+		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtax1tx, $localtax2tx, 0, $price_base_type, $info_bits, 1, '', $localtaxes_type);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
@@ -1317,19 +1441,19 @@ class Contrat extends CommonObject
 		// TODO A virer
 		// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 		$remise = 0;
-		$price = price2num(round($pu_ht, 2));
+		$price = price2num(round($pu, 2));
 		if (dol_strlen($remise_percent) > 0)
 		{
-		    $remise = round(($pu_ht * $remise_percent / 100), 2);
-		    $price = $pu_ht - $remise;
+		    $remise = round(($pu * $remise_percent / 100), 2);
+		    $price = $pu - $remise;
 		}
 
 	    if (empty($pa_ht)) $pa_ht=0;
 
 		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
 		if ($pa_ht == 0) {
-			if ($pu_ht > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
-				$pa_ht = $pu_ht * (1 - $remise_percent / 100);
+			if ($pu > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
+				$pa_ht = $pu * (1 - $remise_percent / 100);
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".$this->db->escape($desc)."'";
@@ -1445,6 +1569,7 @@ class Contrat extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *	@return int     			<0 if KO, >0 if OK
+	 *  @deprecated					This function will never be used. Status of a contract is status of its lines.
 	 */
 	function update_statut($user)
 	{
@@ -1862,7 +1987,6 @@ class Contrat extends CommonObject
 		while ($xnbp < $nbp)
 		{
 			$line=new ContratLigne($this->db);
-			$line->desc=$langs->trans("Description")." ".$xnbp;
 			$line->qty=1;
 			$line->subprice=100;
 			$line->price=100;
@@ -1932,6 +2056,13 @@ class ContratLigne extends CommonObject
 	var $fk_product;
 	var $statut;					// 0 inactive, 4 active, 5 closed
 	var $label;
+
+	/**
+	 * @var string
+	 * @deprecated Use $label instead
+	 */
+	public $libelle;
+
 	var $description;
 	var $date_commande;
 	var $date_ouverture_prevue;		// date start planned
@@ -1949,6 +2080,13 @@ class ContratLigne extends CommonObject
 	var $fk_remise_except;
 
 	var $subprice;					// Unit price HT
+
+	/**
+	 * @var float
+	 * @deprecated Use $price_ht instead
+	 */
+	public $price;
+
 	var $price_ht;
 
 	var $total_ht;
@@ -2331,7 +2469,7 @@ class ContratLigne extends CommonObject
 		$sql.= ",total_localtax1=".price2num($this->total_localtax1,'MT')."";
 		$sql.= ",total_localtax2=".price2num($this->total_localtax2,'MT')."";
 		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
-		$sql.= " WHERE rowid = ".$this->rowid;
+		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
 
