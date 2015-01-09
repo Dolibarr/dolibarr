@@ -1,8 +1,8 @@
-LinkANewFile=Link a new file/document
-LinkedFiles=Linked files and documents
-NoLinkFound=No registered links
-LinkComplete=The file has been linked successfully
-ErrorFileNotLinked=The file could not be linked
-LinkRemoved=The link %s has been removed
-ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
-ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
+LinkANewFile=Link a novao ficheiro/documento
+LinkedFiles=Ficheiros e documento ligados
+NoLinkFound=sem reigisto de ligações
+LinkComplete=Os ficheiros foram ligados com sucesso
+ErrorFileNotLinked=Os ficheiros não puderam ser ligados
+LinkRemoved=A ligação %s foi removida
+ErrorFailedToDeleteLink= falhou a remoção da ligação '<b>%s</b>'
+ErrorFailedToUpdateLink= Falha na atualização de ligação '<b>%s</b>'

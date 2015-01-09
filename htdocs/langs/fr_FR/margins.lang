@@ -10,24 +10,18 @@ MarkRate=Taux de marque
 DisplayMarginRates=Afficher les taux de marge
 DisplayMarkRates=Afficher les taux de marque
 InputPrice=Saisir un prix
-
 margin=Gestion des marges
 margesSetup=Paramétrage de la gestion des marges
-
 MarginDetails=Détails des marges réalisées
-
 ProductMargins=Marges par produit
 CustomerMargins=Marges par client
 SalesRepresentativeMargins=Marges commerciaux
-
 ProductService=Produit ou Service
 AllProducts=Tous les produits et services
 ChooseProduct/Service=Choisissez le produit ou le service
-
 StartDate=Date de début
 EndDate=Date de fin
 Launch=Démarrer
-
 ForceBuyingPriceIfNull=Forcer le prix d'achat si non renseigné
 ForceBuyingPriceIfNullDetails=Si "ON", la ligne sera prise en compte avec une marge nulle (on forcera le prix d'achat avec le prix de vente) , sinon ("OFF") la marge sera égale au prix de vente pour cette ligne (prix d'achat à zéro).
 MARGIN_METHODE_FOR_DISCOUNT=Méthode de gestion des remises globales
@@ -35,16 +29,16 @@ UseDiscountAsProduct=Comme un produit
 UseDiscountAsService=Comme un service
 UseDiscountOnTotal=Sur le total
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Définit si une remise globale est prise en compte comme un produit, comme un service ou uniquement sur le total lors du calcul des marges.
-
 MARGIN_TYPE=Type de marge gérée
 MargeBrute=Marge brute
 MargeNette=Marge nette
 MARGIN_TYPE_DETAILS=Marge brute : Prix de vente HT - Prix d'achat HT<br/>Marge nette : Prix de vente HT - Coût de revient
-
 CostPrice=Prix de revient
 BuyingCost=Coût de revient
 UnitCharges=Charge unitaire
 Charges=Charges
-
 AgentContactType=Type de contact agent commercial
-AgentContactTypeDetails=Permet de définir le type de contact associé aux factures qui sera utilisé pour le rapport de marges par agent commercial
+AgentContactTypeDetails=Définissez quel type de contact (lié aux factures) sera utiliser pour le reporting des marges par commercial
+rateMustBeNumeric=Le taux doit être une valeure numérique
+markRateShouldBeLesserThan100=Le taux de marque doit être inférieur à 100
+ShowMarginInfos=Afficher les infos de marges

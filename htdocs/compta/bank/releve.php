@@ -189,7 +189,7 @@ else
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve DESC";
 
-		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -211,7 +211,7 @@ else
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve ASC";
 
-		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -277,7 +277,6 @@ else
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 
-	dol_syslog("sql=".$sql);
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -350,7 +349,7 @@ else
 				}
 				elseif ($links[$key]['type']=='payment_sc')
 				{
-					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
 					print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
 					print $langs->trans("SocialContributionPayment");
 					print '</a>';
@@ -399,7 +398,7 @@ else
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='member') {
-					print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('ShowMember'),'user').' ';
 					print $links[$key]['label'];
 					print '</a>';

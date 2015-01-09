@@ -60,8 +60,6 @@ if (! $result)
 
 if ($action == 'dolibarr2ldap')
 {
-	$message="";
-
 	$db->begin();
 
 	$ldap=new Ldap();
@@ -75,12 +73,12 @@ if ($action == 'dolibarr2ldap')
 
 	if ($result >= 0)
 	{
-		$message.='<div class="ok">'.$langs->trans("MemberSynchronized").'</div>';
+		setEventMessage($langs->trans("MemberSynchronized"));
 		$db->commit();
 	}
 	else
 	{
-		$message.='<div class="error">'.$ldap->error.'</div>';
+		setEventMessage($ldap->error, 'errors');
 		$db->rollback();
 	}
 }
@@ -156,10 +154,6 @@ print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'
 print '</table>';
 
 print '</div>';
-
-
-dol_htmloutput_mesg($message);
-
 
 /*
  * Barre d'actions

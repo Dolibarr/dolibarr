@@ -32,6 +32,7 @@ $langs->load("other");
 $langs->load("orders");
 $langs->load("propal");
 $langs->load("bills");
+$langs->load("errors");
 
 // Security check
 if (!$user->admin)
@@ -39,19 +40,32 @@ if (!$user->admin)
 
 $action = GETPOST("action");
 
+
 /*
  * Actions
  */
 
 if ($action == 'setvalue' && $user->admin)
 {
-	$result=dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM",$_POST["email_from"],'chaine',0,'',$conf->entity);
-  	if ($result >= 0)
+	$result=dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", $_POST["email_from"], 'chaine', 0, '', $conf->entity);
+    if ($result < 0) $error++;
+
+    if (! $error)
+    {
+	    foreach($_POST as $key => $val)
+	    {
+	    	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_/',$key)) continue;
+	    	//print $key.' - '.$val.'<br>';
+			$result=dolibarr_set_const($db, $key, $val, 'chaine', 0, '', $conf->entity);
+	    }
+    }
+
+  	if (! $error)
     {
         setEventMessage($langs->trans("SetupSaved"));
     }
     else
-    {
+	{
         setEventMessage($langs->trans("Error"),'errors');
     }
 }
@@ -67,7 +81,7 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'setup');
 
-print $langs->trans("NotificationsDesc").'<br><br>';	
+print $langs->trans("NotificationsDesc").'<br><br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -83,18 +97,12 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("NotificationEMailFrom").'</td><td>';
-print '<input size="32" type="text" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
-if (! empty($conf->global->NOTIFICATION_EMAIL_FROM) && ! isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) print ' '.img_warning($langs->trans("BadEMail"));
+print '<input size="32" type="email" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
+if (! empty($conf->global->NOTIFICATION_EMAIL_FROM) && ! isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) print ' '.img_warning($langs->trans("ErrorBadEMail"));
 print '</td></tr>';
 print '</table>';
 
 print '<br>';
-
-print '<center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
-
-print '</form>';
-print '<br>';
-
 
 print_fiche_titre($langs->trans("ListOfAvailableNotifications"),'','');
 
@@ -103,6 +111,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("Code").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
+print '<td>'.$langs->trans("FixedEmailTarget").'</td>';
 print "</tr>\n";
 
 // Load array of available notifications
@@ -123,10 +132,21 @@ foreach($listofnotifiedevents as $notifiedevent)
     print '<td>'.$elementLabel.'</td>';
     print '<td>'.$notifiedevent['code'].'</td>';
     print '<td>'.$label.'</td>';
+    $param='NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'];
+    print '<td><input type="email" size="32" name="'.$param.'" value="'.dol_escape_htmltag(GETPOST($param)?GETPOST($param,'alpha'):$conf->global->$param).'">';
+	if (! empty($conf->global->$param) && ! isValidEmail($conf->global->$param)) print ' '.img_warning($langs->trans("ErrorBadEMail"));
+    print '</td>';
     print '</tr>';
 }
 print '</table>';
 
-$db->close();
+print '<br>';
+
+print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+
+print '</form>';
+
 
 llxFooter();
+
+$db->close();

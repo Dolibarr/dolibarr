@@ -43,7 +43,6 @@ foreach($dirmenus as $dirmenu)
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
-$mesg=GETPOST('mesg');
 
 $menu_handler_top=$conf->global->MAIN_MENU_STANDARD;
 $menu_handler_smartphone=$conf->global->MAIN_MENU_SMARTPHONE;
@@ -187,7 +186,9 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 	{
 		$db->commit();
 
-		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler.'&mesg='.urlencode($langs->trans("MenuDeleted")));
+		setEventMessage($langs->trans("MenuDeleted"));
+
+		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler);
 		exit ;
 	}
 	else
@@ -214,9 +215,6 @@ llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs,$arrayofcss);
 
 
 print_fiche_titre($langs->trans("Menus"),'','setup');
-
-
-dol_htmloutput_mesg($mesg);
 
 
 $h = 0;
@@ -304,7 +302,6 @@ if ($conf->use_javascript_ajax)
 	$sql.= " AND fk_menu >= 0";
 	$sql.= " ORDER BY m.position, m.rowid";		// Order is position then rowid (because we need a sort criteria when position is same)
 
-	dol_syslog("sql=".$sql);
 	$res  = $db->query($sql);
 	if ($res)
 	{
@@ -327,8 +324,9 @@ if ($conf->use_javascript_ajax)
 						'<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>'.
 						'</td><td align="right">'.
 						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> '.
-						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default',0,'class="menuNew" id="new'.$menu['rowid'].'"').'</a> '.
-						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default',0,'class="menuDel" id="del'.$menu['rowid'].'"').'</a> '.
+						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> '.
+						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> '.
+						'&nbsp; &nbsp; &nbsp;'.
 						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Descendre","1downarrow").'</a>'.
 						'</td></tr></table>'
 			);
@@ -361,7 +359,7 @@ if ($conf->use_javascript_ajax)
 else
 {
 	$langs->load("errors");
-	print '<div class="error">'.$langs->trans("ErrorFeatureNeedJavascript").'</div>';
+	setEventMessage($langs->trans("ErrorFeatureNeedJavascript"), 'errors');
 }
 
 print '<br>';

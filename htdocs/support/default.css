@@ -18,7 +18,7 @@
 body {
 font-size:12px;
 font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
-background: #f9f9f9 url(headbg.jpg) 0 0 no-repeat;
+background: #f9f9f9;
 /* background-color: #F4F4F4; */
 margin: 5px 10px;
 }
@@ -147,4 +147,12 @@ background: #DDDFDD;
 }
 
 table { font-size: 12px; }
-table.login {  border: 1px solid #C0C0C0; background: #F0F0F0 url(background.png) repeat-x; font-size: 12px; }
+table.login {  border: 1px solid #C0C0C0; background: #F0F0F0; font-size: 12px; }
+
+.inline-block
+{
+	display:inline-block;
+	vertical-align: top;
+	margin: 12px;
+	min-width: 400px;
+}

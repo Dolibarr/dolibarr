@@ -86,6 +86,13 @@ print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 print $langs->trans("ProxyDesc")."<br>\n";
 print "<br>\n";
 
+
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_proxy">';
+
+
 $head=security_prepare_head();
 
 dol_fiche_head($head, 'proxy', $langs->trans("Security"));
@@ -117,10 +124,6 @@ if ($conf->use_javascript_ajax)
 
 // Timeout
 $var=true;
-
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_proxy">';
 
 print '<table width="100%" class="noborder">';
 
@@ -196,14 +199,13 @@ print '</tr>';
 
 print '</table>';
 
-print '<br><center>';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</center>';
-
-print '</form>';
-
 dol_fiche_end();
 
+print '<div class="center">';
+print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
+print '</div>';
+
+print '</form>';
 
 $db->close();
 

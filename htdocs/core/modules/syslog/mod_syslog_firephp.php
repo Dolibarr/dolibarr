@@ -53,7 +53,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 		    restore_include_path();
 		    if ($res)
 		    {
-		        return 1;
+		        return true;
 		    }
 		}
 		catch(Exception $e)
@@ -61,7 +61,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 		    print '<!-- FirePHP not available into PHP -->'."\n";
 		}
 
-		return -1;
+		return false;
 	}
 
 	///**

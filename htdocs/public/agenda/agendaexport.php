@@ -65,6 +65,7 @@ if (! empty($_GET["year"])) 	$filters['year']=$_GET["year"];
 if (! empty($_GET["id"]))       $filters['id']=$_GET["id"];
 if (! empty($_GET["idfrom"]))   $filters['idfrom']=$_GET["idfrom"];
 if (! empty($_GET["idto"]))     $filters['idto']=$_GET["idto"];
+if (! empty($_GET["project"]))  $filters['project']=$_GET["project"];
 if (! empty($_GET["login"]))    $filters['login']=$_GET["login"];
 if (! empty($_GET["logina"]))   $filters['logina']=$_GET["logina"];
 if (! empty($_GET["logint"]))   $filters['logint']=$_GET["logint"];
@@ -107,6 +108,7 @@ foreach ($filters as $key => $value)
     if ($key == 'id')              $filename.='-id'.$value;
     if ($key == 'idfrom')          $filename.='-idfrom'.$value;
     if ($key == 'idto')            $filename.='-idto'.$value;
+    if ($key == 'project')         $filename.='-project'.$value;
     if ($key == 'login')	       $filename.='-login'.$value;
 	if ($key == 'logina')	       $filename.='-logina'.$value;	// Author
 	if ($key == 'logind')	       $filename.='-logind'.$value;	// Affected to

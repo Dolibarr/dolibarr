@@ -106,7 +106,7 @@ if ($prev_id)
 		print '</td></tr></table>';
 
 		dol_fiche_end();
-		
+
 	}
 	else
 	{
@@ -124,11 +124,9 @@ $pagenext = $page + 1;
 
 /*
  * Liste des lignes de prelevement
- *
- *
  */
 $sql = "SELECT pl.rowid, pl.statut, pl.amount";
-$sql.= ", s.rowid as socid, s.nom";
+$sql.= ", s.rowid as socid, s.nom as name";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -149,13 +147,13 @@ if ($result)
 
 	$urladd = "&amp;id=".$prev_id;
 
-	print_barre_liste("", $page, "lignes.php", $urladd, $sortfield, $sortorder, '', $num);
+	print_barre_liste("", $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Lines"),"lignes.php","pl.rowid",'',$urladd);
-	print_liste_field_titre($langs->trans("ThirdParty"),"lignes.php","s.nom",'',$urladd);
-	print_liste_field_titre($langs->trans("Amount"),"lignes.php","pl.amount","",$urladd,'align="center"');
+	print_liste_field_titre($langs->trans("Lines"),$_SERVER["PHP_SELF"],"pl.rowid",'',$urladd);
+	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
+	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"pl.amount","",$urladd,'align="center"');
 	print '<td colspan="2">&nbsp;</td></tr>';
 
 	$var=false;
@@ -175,7 +173,11 @@ if ($result)
 		print substr('000000'.$obj->rowid, -6);
 		print '</a></td>';
 
-		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
+		$thirdparty=new Societe($db);
+		$thirdparty->fetch($obj->socid);
+		print '<td>';
+		print $thirdparty->getNomUrl(1);
+		print "</td>\n";
 
 		print '<td align="center">'.price($obj->amount)."</td>\n";
 

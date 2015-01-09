@@ -1,22 +1,14 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
-#
 About = Info
 CronAbout = Info su Cron
 CronAboutPage = Pagina informativa su Cron
-
-#
 # Right
-#
 Permission23101 = Leggi compito programmato
 Permission23102 = Crea/aggiorna compito programmato
 Permission23103 = Cancella compito programmato
 Permission23104 = Esegui compito programmato
-
-#
 # Admin
-#
 CronSetup= Impostazione delle azioni pianificate
 URLToLaunchCronJobs=URL che lancia i job di cron
 OrToLaunchASpecificJob=O per lanciare un job specifico
@@ -24,20 +16,11 @@ KeyForCronAccess=Chiave di sicurezza per l'URL che lancia i job di cron
 FileToLaunchCronJobs=Comando per lanciare i job di cron
 CronExplainHowToRunUnix=In ambienti Unix dovresti usare crontab per lanciare il comando ogni minuto
 CronExplainHowToRunWin=In ambienti Microsoft(tm) Windows dovresti usare Operazioni Pianificate per lanciare il comando ogni minuto
-
-
-#
 # Menu
-#
 CronJobs=Azioni pianificate
-CronListActive= Lista dei job attivi
-CronListInactive= Lista dei job disabilitati
-CronListActive= Lista dei job attivi
-
-
-#
+CronListActive=List of active/scheduled jobs
+CronListInactive=Lista dei job disabilitati
 # Page list
-#
 CronDateLastRun=Ultimo avvio
 CronLastOutput=Output dell'ultimo avvio
 CronLastResult=Codice del risultato dell'ultima esecuzione
@@ -70,10 +53,7 @@ CronLabel=Descrizione
 CronNbRun=Num. lancio
 CronEach=Ogni
 JobFinished=Azione eseguita e completata
-
-#
 #Page card
-#
 CronAdd= Aggiungi job
 CronHourStart= Ora e data di inizio del compito
 CronEvery= Ed esegui il compito ogni
@@ -95,20 +75,12 @@ CronObjectHelp=Nome dell'oggetto da caricare. <BR>Per esempio per ottenere il me
 CronMethodHelp=Nome del metodo dell'oggetto da eseguire. <BR>Per esempio per ottenere il metodo dell'oggetto /htdocs/product/class/product.class.php, il valore da inserire è <i>fetch</i>
 CronArgsHelp=Argomenti del metodo.<br/> Per esempio per ottenere il metodo corretto dell'oggetto /htdocs/product/class/<u>product.class.php</u>, il valore dei parametri può essere <i>0, ProductRef</i>
 CronCommandHelp=Il comando da eseguire sul sistema
-
-#
 # Info
-#
 CronInfoPage=Informazioni
-
-
-#
 # Common
-#
 CronType=Tipo di compito
 CronType_method=Metodo di chiamata di una classe Dolibarr
 CronType_command=Comando da shell
 CronMenu=Cron
 CronCannotLoadClass=Non posso caricare la classe %s o l'oggetto %s
-
 UseMenuModuleToolsToAddCronJobs=Andare nel menu "Home - Modules tools - Job list" per vedere e modificare le azioni pianificate.

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=منطقه قرارداد
 ListOfContracts=فهرست قرارداد
-LastContracts=تاریخ و زمان آخرین٪ s در قرارداد اصلاح شده
+LastModifiedContracts=Last %s modified contracts
 AllContracts=همه قراردادها
 ContractCard=کارت قرارداد
 ContractStatus=وضعیت قرارداد
@@ -27,7 +27,7 @@ MenuRunningServices=در حال اجرا خدمات
 MenuExpiredServices=خدمات منقضی شده
 MenuClosedServices=خدمات بسته شده
 NewContract=قرارداد جدید
-AddContract=اضافه کردن قرارداد
+AddContract=Create contract
 SearchAContract=جستجوی یک قرارداد
 DeleteAContract=حذف یک قرارداد
 CloseAContract=بستن یک قرارداد
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=فهرست در حال اجرا خطوط قرارد�
 ListOfRunningServices=لیست خدمات در حال اجرا
 NotActivatedServices=خدمات غیر فعال (در قرارداد اعتبار)
 BoardNotActivatedServices=خدمات برای فعال سازی در قرارداد اعتبار
-LastContracts=تاریخ و زمان آخرین٪ s در قرارداد اصلاح شده
+LastContracts=Last %s contracts
 LastActivatedServices=تاریخ و زمان آخرین٪ s به خدمات فعال
 LastModifiedServices=تاریخ و زمان آخرین٪ بازدید کنندگان خدمات اصلاح شده
 EditServiceLine=خط ویرایش خدمات
@@ -91,6 +91,7 @@ ListOfServicesToExpire=فهرست خدمات دات کام
 NoteListOfYourExpiredServices=این لیست فقط شامل خدمات قرارداد برای اشخاص ثالث به شما به عنوان یک نماینده فروش مرتبط است.
 StandardContractsTemplate=قراردادهای استاندارد قالب
 ContactNameAndSignature=برای٪ s، نام و امضا:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=نمایندگی فروش امضای قرارداد

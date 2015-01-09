@@ -100,8 +100,6 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
-			//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-			//print_r($_FILES);
 			$result=$ecmdir->changeNbOfFiles('+');
 		}
 		else {
@@ -124,7 +122,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		// Echec transfert (fichier depassant la limite ?)
 		$langs->load("errors");
-		$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
+		setEventMessage($langs->trans("ErrorFailToCreateDir",$upload_dir), 'errors');
 	}
 }
 
@@ -143,7 +141,8 @@ if ($_POST["action"] == 'add' && $user->rights->ftp->setup)
 	}
 	else
 	{
-		$mesg='<div class="error">Error '.$langs->trans($ecmdir->error).'</div>';
+		//TODO: Translate
+		setEventMessage('Error '.$langs->trans($ecmdir->error));
 		$_GET["action"] = "create";
 	}
 }
@@ -175,12 +174,12 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
 		$result=@ftp_delete($conn_id, $newremotefileiso);
 		if ($result)
 		{
-			$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",$file).'</div>';
+			setEventMessage($langs->trans("FileWasRemoved",$file));
 		}
 		else
 		{
 			dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
-			$mesg = '<div class="error">'.$langs->trans("FTPFailedToRemoveFile",$file).'</div>';
+			setEventMessage($langs->trans("FTPFailedToRemoveFile",$file), 'errors');
 		}
 
 		//ftp_close($conn_id);	Close later
@@ -225,12 +224,12 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 				$result=@ftp_delete($conn_id, $newremotefileiso);
 				if ($result)
 				{
-					$mesg .= '<div class="ok">'.$langs->trans("FileWasRemoved",$file).'</div>';
+					setEventMessage($langs->trans("FileWasRemoved",$file));
 				}
 				else
 				{
 					dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
-					$mesg .= '<div class="error">'.$langs->trans("FTPFailedToRemoveFile",$file).'</div>';
+					setEventMessage($langs->trans("FTPFailedToRemoveFile",$file), 'errors');
 				}
 
 				//ftp_close($conn_id);	Close later
@@ -269,11 +268,11 @@ if ($_REQUEST['action'] == 'confirm_deletesection' && $_REQUEST['confirm'] == 'y
 		$result=@ftp_rmdir($conn_id, $newremotefileiso);
 		if ($result)
 		{
-			$mesg = '<div class="ok">'.$langs->trans("DirWasRemoved",$file).'</div>';
+			setEventMessage($langs->trans("DirWasRemoved",$file));
 		}
 		else
 		{
-			$mesg = '<div class="error">'.$langs->trans("FTPFailedToRemoveDir",$file).'</div>';
+			setEventMessage($langs->trans("FTPFailedToRemoveDir",$file), 'errors');
 		}
 
 		//ftp_close($conn_id);	Close later
@@ -340,7 +339,8 @@ if ($_REQUEST['action'] == 'download')
 		}
 		else
 		{
-			$mesg='<div class="error">Failed to get file '.$remotefile.'</div>';
+			//TODO: Translate
+			setEventMessage('Failed to get file '.$remotefile, 'errors');
 		}
 
 	}
@@ -443,9 +443,6 @@ else
 		}
 		print '<br>';
 		print "<br>\n";
-
-		if ($mesg) { print $mesg."<br>"; }
-
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';
@@ -595,9 +592,6 @@ else
 
 
 		print "</table>";
-
-
-		if (! $ok && $mesg) print $mesg;
 
 		// Actions
 		/*

@@ -28,7 +28,7 @@
 /**
  *	Class to manage stock movements
  */
-class MouvementStock
+class MouvementStock extends CommonObject
 {
     var $error;
     var $db;
@@ -112,7 +112,7 @@ class MouvementStock
 			$sql.= " '".$origintype."'";
 			$sql.= ")";
 
-			dol_syslog(get_class($this)."::_create sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -121,7 +121,6 @@ class MouvementStock
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog(get_class($this)."::_create ".$this->error, LOG_ERR);
 				$error = -1;
 			}
 
@@ -138,7 +137,7 @@ class MouvementStock
 				$sql = "SELECT rowid, reel, pmp FROM ".MAIN_DB_PREFIX."product_stock";
 				$sql.= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
 
-				dol_syslog(get_class($this)."::_create sql=".$sql);
+				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -155,7 +154,6 @@ class MouvementStock
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::_create echec update ".$this->error, LOG_ERR);
 					$error = -2;
 				}
 			}
@@ -165,21 +163,40 @@ class MouvementStock
 			{
 				$newpmp=0;
 				$newpmpwarehouse=0;
-				// Note: PMP is calculated on stock input only (type = 0 or 3). If type == 0 or 3, qty should be > 0.
+				// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
 				// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
 				if (($type == 0 || $type == 3) && $price > 0)
 				{
+					// If we will change PMP for the warehouse we edit and the product, we must first check/clean that PMP is defined
+					// on every stock entry with old value (so global updated value will match recalculated value from product_stock)
+					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".($oldpmp?$oldpmp:'0');
+					$sql.= " WHERE pmp = 0 AND fk_product = ".$fk_product;
+					dol_syslog(get_class($this)."::_create", LOG_DEBUG);
+					$resql=$this->db->query($sql);
+					if (! $resql)
+					{
+						$this->error=$this->db->lasterror();
+						$error = -4;
+					}
+					
 					$oldqtytouse=($oldqty >= 0?$oldqty:0);
 					// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
 					if ($oldpmp > 0) $newpmp=price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
-					else $newpmp=$price;
-					$oldqtywarehousetouse=($oldqtywarehouse >= 0?$oldqtywarehouse:0);
+					else 
+					{
+						$newpmp=$price; // For this product, PMP was not yet set. We will set it later.
+					}
+					$oldqtywarehousetouse=$oldqtywarehouse;
 					if ($oldpmpwarehouse > 0) $newpmpwarehouse=price2num((($oldqtywarehousetouse * $oldpmpwarehouse) + ($qty * $price)) / ($oldqtywarehousetouse + $qty), 'MU');
 					else $newpmpwarehouse=$price;
 
-					//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." oldpmpwarehouse=".$oldpmpwarehouse." ";
-					//print "qty=".$qty." newpmp=".$newpmp." newpmpwarehouse=".$newpmpwarehouse;
-					//exit;
+					/*print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." oldpmpwarehouse=".$oldpmpwarehouse." ";
+					print "qty=".$qty." newpmp=".$newpmp." newpmpwarehouse=".$newpmpwarehouse;
+					exit;*/
+				}
+				else if ($type == 1 || $type == 2)
+				{
+					// After a stock decrease, we don't change value of PMP for product.					
 				}
 				else
 				{
@@ -203,21 +220,23 @@ class MouvementStock
 					$sql.= " (".$newpmpwarehouse.", ".$qty.", ".$entrepot_id.", ".$fk_product.")";
 				}
 
-				dol_syslog(get_class($this)."::_create sql=".$sql);
+				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::_create ".$this->error, LOG_ERR);
 					$error = -3;
-				} else if(empty($fk_product_stock)){
+				} 
+				else if(empty($fk_product_stock))
+				{
 					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
 
-				}
+			}
 
 			// Update detail stock for sell-by date
-			if (($product->hasbatch()) && (! $error) && (! $skip_sellby)){
+			if (($product->hasbatch()) && (! $error) && (! $skip_sellby))
+			{
 				$param_batch=array('fk_product_stock' =>$fk_product_stock, 'eatby'=>$eatby,'sellby'=>$sellby,'batchnumber'=>$batch);
 				$result=$this->_create_batch($param_batch, $qty);
 				if ($result<0) $error++;
@@ -230,12 +249,11 @@ class MouvementStock
 				// May be this request is better:
 				// UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
-				dol_syslog(get_class($this)."::_create sql=".$sql);
+				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::_create ".$this->error, LOG_ERR);
 					$error = -4;
 				}
 			}
@@ -249,17 +267,16 @@ class MouvementStock
 
 		if ($movestock && ! $error)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-
 			$this->product_id = $fk_product;
 			$this->entrepot_id = $entrepot_id;
 			$this->qty = $qty;
 
-			$result=$interface->run_triggers('STOCK_MOVEMENT',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('STOCK_MOVEMENT',$user);
+            if ($result < 0) $error++;          
+            // End call triggers
+            
+            //FIXME: Restore previous value of product_id,  entrepot_id, qty if trigger fail
 		}
 
 		if (! $error)
@@ -298,7 +315,7 @@ class MouvementStock
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere = ".$idProduct;
 
-		dol_syslog(get_class($this)."::_createSubProduct sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::_createSubProduct", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -313,7 +330,6 @@ class MouvementStock
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::_createSubProduct ".$this->error, LOG_ERR);
 			$error = -2;
 		}
 
@@ -412,7 +428,7 @@ class MouvementStock
 		$sql.= ' WHERE fk_product = '.$productidselected;
 		$sql.= " AND datem < '".$this->db->idate($datebefore)."'";
 		
-		dol_syslog(get_class($this).__METHOD__.' sql='.$sql);
+		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

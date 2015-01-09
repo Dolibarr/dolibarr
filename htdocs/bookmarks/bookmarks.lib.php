@@ -48,11 +48,11 @@ function printBookmarksList($aDb, $aLangs)
 	// Menu bookmark
 	$ret.= '<div class="menu_titre">';
 	$ret.= '<table class="nobordernopadding" width="100%" summary="bookmarkstable"><tr><td>';
-	$ret.= '<a class="vmenu" href="'.DOL_URL_ROOT.'/bookmarks/liste.php">'.$langs->trans('Bookmarks').'</a>';
+	$ret.= '<a class="vmenu" href="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</a>';
 	$ret.= '</td><td align="right">';
 	if ($user->rights->bookmark->creer)
 	{
-		$ret.= '<a class="vsmenu" href="'.DOL_URL_ROOT.'/bookmarks/fiche.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
+		$ret.= '<a class="vsmenu" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url).'">';
 		//$ret.=img_picto($langs->trans('AddThisPageToBookmarks'),'edit_add').' ';
 		$ret.=img_object($langs->trans('AddThisPageToBookmarks'),'bookmark');
 		$ret.= '</a>';

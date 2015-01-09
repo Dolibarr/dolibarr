@@ -48,7 +48,7 @@ foreach($linkedObjectBlock as $object)
 	$var=!$var;
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/commande/fiche.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowOrder"),"order").' '.$object->ref; ?></a></td>
+	<a href="<?php echo DOL_URL_ROOT.'/commande/card.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowOrder"),"order").' '.$object->ref; ?></a></td>
 	<td align="center"><?php echo dol_print_date($object->date,'day'); ?></td>
 	<td align="right"><?php
 		if ($user->rights->commande->lire) {

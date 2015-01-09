@@ -154,7 +154,7 @@ function html_print_paypal_footer($fromcompany,$langs)
 
 	print '<br><br><hr>'."\n";
 	print '<center><font style="font-size: 10px;">'."\n";
-	print $fromcompany->nom.'<br>';
+	print $fromcompany->name.'<br>';
 	print $line1.'<br>';
 	print $line2;
 	print '</font></center>'."\n";
@@ -473,6 +473,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	$_SESSION["Payment_Amount"] = $paymentAmount;
     $_SESSION["currencyCodeType"] = $currencyCodeType;
     $_SESSION["PaymentType"] = $paymentType;
+    $_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR '];  // Payer ip
 
     //'---------------------------------------------------------------------------------------------------------------
     //' Make the API call to PayPal
@@ -485,7 +486,6 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
     {
         $token = urldecode($resArray["TOKEN"]);
         $_SESSION['TOKEN']=$token;
-        $_SESSION['ipaddress']=$_SERVER['REMOTE_ADDR '];  // Payer ip
     }
 
     return $resArray;

@@ -154,7 +154,6 @@ OrderByPhone=Teléfono
 CreateInvoiceForThisCustomer=Facturar pedidos
 NoOrdersToInvoice=Sin pedidos facturables
 CloseProcessedOrdersAutomatically=Clasificar automáticamente como "Procesados" los pedidos seleccionados.
-MenuOrdersToBill2=Pedidos facturables
 OrderCreation=Creación pedido
 Ordered=Pedido
 OrderCreated=Sus pedidos han sido creados

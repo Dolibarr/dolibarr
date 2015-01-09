@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  *
@@ -39,6 +39,11 @@ $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
+
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -139,7 +144,7 @@ if ($id > 0 || ! empty($ref))
 		// Client
 		print "<tr><td>".$langs->trans("Customer")."</td>";
 		print '<td colspan="2">';
-		print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$soc->id.'">'.$soc->name.'</a>';
 		print '</td>';
 		print '</tr>';
 
@@ -150,10 +155,12 @@ if ($id > 0 || ! empty($ref))
 
 		// Date
 		print '<tr><td>'.$langs->trans("Date").'</td>';
-		print "<td colspan=\"2\">".dol_print_date($object->date,"daytext")."</td>\n";
+		print "<td colspan=\"2\">".dol_print_date($object->datec,"daytext")."</td>\n";
 		print '</tr>';
 
 		print '</table>';
+
+		dol_fiche_end();
 	}
 	else
 	{
@@ -165,7 +172,7 @@ if ($id > 0 || ! empty($ref))
 // Si fichier png PDF d'1 page trouve
 if (file_exists($fileimage))
 {
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufichinter&file='.urlencode($relativepathimage).'">';
+	print '<img style="background: #FFF" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufichinter&file='.urlencode($relativepathimage).'">';
 }
 // Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
@@ -178,13 +185,12 @@ elseif (file_exists($fileimagebis))
 
 		if (file_exists($dir_output.$preview))
 		{
-			print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufichinter&file='.urlencode($preview).'"><p>';
+			print '<img style="background: #FFF" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufichinter&file='.urlencode($preview).'"><p>';
 		}
 	}
 }
 
-print '</div>';
-
-$db->close();
 
 llxFooter();
+
+$db->close();

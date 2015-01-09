@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2008-2011	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2014      Teddy Andreotti    	<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +28,8 @@ define("NOLOGIN",1);	// This means this output page does not require to be logge
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-if (! empty($conf->ldap->enabled))
-	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 
 $langs->load("errors");
 $langs->load("users");
@@ -48,7 +49,7 @@ $mode=$dolibarr_main_authentication;
 if (! $mode) $mode='http';
 
 $username 		= GETPOST('username');
-$passwordmd5	= GETPOST('passwordmd5');
+$passwordhash	= GETPOST('passwordhash');
 $conf->entity 	= (GETPOST('entity') ? GETPOST('entity') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
@@ -67,7 +68,7 @@ if (GETPOST('dol_use_jmobile') || ! empty($_SESSION['dol_use_jmobile']))        
  */
 
 // Validate new password
-if ($action == 'validatenewpassword' && $username && $passwordmd5)
+if ($action == 'validatenewpassword' && $username && $passwordhash)
 {
     $edituser = new User($db);
     $result=$edituser->fetch('',$_GET["username"]);
@@ -77,7 +78,7 @@ if ($action == 'validatenewpassword' && $username && $passwordmd5)
     }
     else
     {
-        if (dol_hash($edituser->pass_temp) == $passwordmd5)
+        if (dol_hash($edituser->pass_temp) == $passwordhash)
         {
             $newpassword=$edituser->setPassword($user,$edituser->pass_temp,0);
             dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
@@ -130,7 +131,8 @@ if ($action == 'buildnewpassword' && $username)
                     // Success
                     if ($edituser->send_password($user,$newpassword,1) > 0)
                     {
-                        $message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent",$edituser->login,$edituser->email).'</div>';
+
+                        $message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent",$edituser->login,dolObfuscateEmail($edituser->email)).'</div>';
                         //$message.=$newpassword;
                         $username='';
                     }

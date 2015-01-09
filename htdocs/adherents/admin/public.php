@@ -60,11 +60,11 @@ if ($action == 'update')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    setEventMessage($langs->trans("Error"), 'errors');
     }
 }
 
@@ -85,8 +85,6 @@ print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
 $head = member_admin_prepare_head();
 
 dol_fiche_head($head, 'public', $langs->trans("Members"), 0, 'user');
-
-dol_htmloutput_mesg($mesg);
 
 if ($conf->use_javascript_ajax)
 {

@@ -61,22 +61,22 @@ if (empty($reshook))
 {
 	$demoprofiles=array(
 		array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-		'disablemodules'=>'adherent,barcode,boutique,cashdesk,categorie,don,expedition,externalsite,mailmanspip,margin,prelevement,product,stock',
+		'disablemodules'=>'adherent,barcode,cashdesk,categorie,don,expedition,externalsite,mailmanspip,margin,prelevement,product,stock',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
 		array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-		'disablemodules'=>'adherent,boutique,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,product,stock',
+		'disablemodules'=>'adherent,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,product,stock',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 		array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
-		'disablemodules'=>'adherent,boutique,contrat,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,service',
+		'disablemodules'=>'adherent,contrat,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,service',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 		array('default'=>'0', 'key'=>'profdemoall','label'=>'DemoCompanyAll',
-		'disablemodules'=>'adherent,boutique,don,externalsite,mailmanspip',
+		'disablemodules'=>'adherent,don,externalsite,mailmanspip',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
 		array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-		'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+		'disablemodules'=>'banque,barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 		array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-		'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+		'disablemodules'=>'barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png')
 	);
 
@@ -88,7 +88,7 @@ if (empty($reshook))
 									'mailmanspip','notification','syslog','user','webservices',
 	                                // Extended modules
 	                                'memcached','numberwords','zipautofillfr');
-	$alwayshiddenuncheckedmodules=array('boutique','ftp',
+	$alwayshiddenuncheckedmodules=array('ftp',
 	                                // Extended modules
 	                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
 	                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
@@ -259,9 +259,7 @@ color: #444444 !important;
 
 margin: 8px 0px 8px 2px;
 
-border-left: 1px solid #DDD;
-border-right: 1px solid #DDD;
-border-bottom: 1px solid #EEE;
+border: 1px solid #bbb;
 border-radius: 8px;
 -moz-border-radius: 8px;
 
@@ -269,11 +267,7 @@ border-radius: 8px;
 -webkit-box-shadow: 4px 4px 4px #EEE;
 box-shadow: 4px 4px 4px #EEE;
 
-background-image: linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -o-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -moz-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -webkit-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -ms-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
+background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
 
 }
 </style>

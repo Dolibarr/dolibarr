@@ -61,7 +61,7 @@ if (in_array($object->element,array('propal','facture','invoice','commande','ord
 	if (! empty($usemargins))
 	{
 		?>
-		<td align="right">
+		<td align="right" class="margininfos">
 		<?php
 		if ($conf->global->MARGIN_TYPE == "1")
 			echo $langs->trans('BuyingPrice');
@@ -70,8 +70,8 @@ if (in_array($object->element,array('propal','facture','invoice','commande','ord
 		?>
 		</td>
 		<?php
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td align="right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) 	echo '<td align="right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
+		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td align="right" class="margininfos"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
+		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) 	echo '<td align="right" class="margininfos"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
 	}
 	?>
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
@@ -89,41 +89,50 @@ else {
 
 	<?php
 
+	$forceall=1;	// We always force all type for free lines (module product or service means we use predefined product or service)
+	if ($object->element == 'contrat')
+	{
+		if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=-1;	// With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
+		else $forceall=0;
+	}
+
 	// Free line
 	echo '<span>';
 	// Show radio free line
-	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+	if ($forceall >= 0 && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
 	{
+		echo '<label for="prod_entry_mode_free">';
 		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 		//echo (GETPOST('prod_entry_mode')=='free' ? ' checked="true"' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked="true"':'') );
 		echo (GETPOST('prod_entry_mode')=='free' ? ' checked="true"' : '');
 		echo '> ';
-	}
-	else echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
-	// Show type selector
-/*	if (empty($conf->product->enabled) && empty($conf->service->enabled))
-	{
-		// If module product and service disabled, by default this is a product except for contracts it is a service
-		print '<input type="hidden" name="type" value="'.((! empty($object->element) && $object->element == 'contrat')?'1':'0').'">';
-	}
-	else {*/
+		// Show type selector
 		echo $langs->trans("FreeLineOfType");
-		/*
-		if (empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans("Type");
-		else if (! empty($forceall) || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))) echo $langs->trans("FreeLineOfType");
-		else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans("FreeLineOfType").' '.$langs->trans("Service");
-		else if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans("FreeLineOfType").' '.$langs->trans("Product");*/
+		echo '</label>';
 		echo ' ';
-		echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,1,1);
-//	}
+	}
+	else
+	{
+		echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
+		// Show type selector
+		if ($forceall >= 0)
+		{
+			echo $langs->trans("FreeLineOfType");
+			echo ' ';
+		}
+	}
+
+	echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,1,$forceall);
+
 	echo '</span>';
 
 	// Predefined product/service
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	{
-		echo '<br><span>';
+		if ($forceall >= 0) echo '<br>';
+		echo '<span>';
+		echo '<label for="prod_entry_mode_predef">';
 		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked="true"':'').'> ';
-
 		if (empty($senderissupplier))
 		{
 			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
@@ -136,6 +145,7 @@ else {
 			else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToPurchase');
 			else echo $langs->trans('PredefinedProductsAndServicesToPurchase');
 		}
+		echo '</label>';
 		echo ' ';
 
 		$filtertype='';
@@ -152,7 +162,7 @@ else {
 					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
 					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
 			);
-			$form->select_produits_fournisseurs($object->fourn_id, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1);
+			$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1);
 		}
 		echo '</span>';
 	}
@@ -184,7 +194,7 @@ else {
 	<td align="right"><?php
 	if (GETPOST('prod_entry_mode') != 'predef')
 	{
-		if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" value="0">0';
+		if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">0';
 		else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
 	}
 	?>
@@ -201,15 +211,15 @@ else {
 	<?php } ?>
 	</td>
 	<?php } ?>
-	<td align="right"><input type="text" size="2" name="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
+	<td align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
 	</td>
-	<td align="right" class="nowrap"><input type="text" size="1" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_percent); ?>" name="remise_percent"><span class="hideonsmartphone">%</span></td>
+	<td align="right" class="nowrap"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 
 	<?php
 	if (! empty($usemargins))
 	{
 		?>
-		<td align="right">
+		<td align="right" class="margininfos">
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
@@ -224,12 +234,12 @@ else {
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
-				echo '<td align="right" class="nowrap"><input type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
+				echo '<td align="right" class="nowrap margininfos"><input type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 			{
-				echo '<td align="right" class="nowrap"><input type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
+				echo '<td align="right" class="nowrap margininfos"><input type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
@@ -263,7 +273,7 @@ else {
 </tr>
 
 <?php
-if (! empty($conf->service->enabled) && $dateSelector)
+if (! empty($conf->service->enabled) && $dateSelector && GETPOST('type') != '0')
 {
 	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;

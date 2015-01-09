@@ -115,11 +115,11 @@ class box_members extends ModeleBoxes
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/adherents/fiche.php?rowid=".$objp->rowid);
+                    'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $memberstatic->getFullName($langs),
-                    'url' => DOL_URL_ROOT."/adherents/fiche.php?rowid=".$objp->rowid);
+                    'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
 					'text' => dol_print_date($datem, "day"));

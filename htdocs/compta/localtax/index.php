@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011 		Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2011-2014 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("other");
+$localTaxType=GETPOST('localTaxType', 'int');
 
 $year=$_GET["year"];
 if ($year == 0 )
@@ -95,24 +96,41 @@ function pt ($db, $sql, $date)
 
 llxHeader();
 
-$tva = new Tva($db);
+if($localTaxType==1)
+{
+	$LT='LT1';
+	$LTSummary='LT1Summary';
+	$LTPaid='LT1Paid';
+	$LTCustomer='LT1Customer';
+	$LTSupplier='LT1Supplier';
+	$CalcLT= $conf->global->MAIN_INFO_LOCALTAX_CALC1;
+}
+else
+{
+	$LT='LT2';
+	$LTSummary='LT2Summary';
+	$LTPaid='LT2Paid';
+	$LTCustomer='LT2Customer';
+	$LTSupplier='LT2Supplier';
+	$CalcLT= $conf->global->MAIN_INFO_LOCALTAX_CALC2;
+}
 
 
-$textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous()."</a>";
-$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
+$textprevyear="<a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current-1) . "\">".img_previous()."</a>";
+$textnextyear=" <a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current+1) . "\">".img_next()."</a>";
 
-print_fiche_titre($langs->transcountry("LT2",$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
+print_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
 
-print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
-print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
+print $langs->trans("LTReportBuildWithOptionDefinedInModule").'<br>';
+print '('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')<br>';
 print '<br>';
 
 print '<table width="100%" class="nobordernopadding">';
 print '<tr><td>';
-print_titre($langs->transcountry("LT2Summary",$mysoc->country_code));
+print_titre($langs->transcountry($LTSummary,$mysoc->country_code));
 
 print '</td><td width="5">&nbsp;</td><td>';
-print_titre($langs->transcountry("LT2Paid",$mysoc->country_code));
+print_titre($langs->transcountry($LTPaid,$mysoc->country_code));
 print '</td></tr>';
 
 print '<tr><td width="50%" valign="top">';
@@ -120,8 +138,20 @@ print '<tr><td width="50%" valign="top">';
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td width=\"30%\">".$langs->trans("Year")." $y</td>";
-print "<td align=\"right\">".$langs->transcountry("LT2Customer",$mysoc->country_code)."</td>";
-print "<td align=\"right\">".$langs->transcountry("LT2Supplier",$mysoc->country_code)."</td>";
+if($CalcLT==0)
+{
+	print "<td align=\"right\">".$langs->transcountry($LTCustomer,$mysoc->country_code)."</td>";
+	print "<td align=\"right\">".$langs->transcountry($LTSupplier,$mysoc->country_code)."</td>";
+}
+if($CalcLT==1)
+{
+	print "<td align=\"right\">".$langs->transcountry($LTSupplier,$mysoc->country_code)."</td><td></td>";
+}
+if($CalcLT==2)
+{
+	print "<td align=\"right\">".$langs->transcountry($LTCustomer,$mysoc->country_code)."</td><td></td>";
+}
+
 print "<td align=\"right\">".$langs->trans("TotalToPay")."</td>";
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
@@ -160,24 +190,59 @@ for ($m = 1 ; $m < 13 ; $m++ )
     $var=!$var;
     print "<tr ".$bc[$var].">";
     print '<td class="nowrap">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</td>';
-
-    $x_coll = 0;
-    foreach($coll_listsell as $vatrate=>$val)
+    if($CalcLT==0)
     {
-        $x_coll+=$val['localtax2'];
-    }
-    $subtotalcoll = $subtotalcoll + $x_coll;
-    print "<td class=\"nowrap\" align=\"right\">".price($x_coll)."</td>";
+    	$x_coll = 0;
+	    foreach($coll_listsell as $vatrate=>$val)
+	    {
+	        $x_coll+=$val[$localTaxType==1?'localtax1':'localtax2'];
+	    }
+	    $subtotalcoll = $subtotalcoll + $x_coll;
+	    print "<td class=\"nowrap\" align=\"right\">".price($x_coll)."</td>";
 
-    $x_paye = 0;
-    foreach($coll_listbuy as $vatrate=>$val)
+	    $x_paye = 0;
+	    foreach($coll_listbuy as $vatrate=>$val)
+	    {
+	        $x_paye+=$val[$localTaxType==1?'localtax1':'localtax2'];
+	    }
+	    $subtotalpaye = $subtotalpaye + $x_paye;
+	    print "<td class=\"nowrap\" align=\"right\">".price($x_paye)."</td>";
+    }
+    elseif($CalcLT==1)
     {
-        $x_paye+=$val['localtax2'];
+    	$x_paye = 0;
+    	foreach($coll_listbuy as $vatrate=>$val)
+    	{
+    		$x_paye+=$val[$localTaxType==1?'localtax1':'localtax2'];
+    	}
+    	$subtotalpaye = $subtotalpaye + $x_paye;
+    	print "<td class=\"nowrap\" align=\"right\">".price($x_paye)."</td><td></td>";
     }
-    $subtotalpaye = $subtotalpaye + $x_paye;
-    print "<td class=\"nowrap\" align=\"right\">".price($x_paye)."</td>";
-
-    $diff = $x_coll - $x_paye;
+    elseif($CalcLT==2)
+    {
+    	$x_coll = 0;
+    	foreach($coll_listsell as $vatrate=>$val)
+    	{
+    		$x_coll+=$val[$localTaxType==1?'localtax1':'localtax2'];
+    	}
+    	$subtotalcoll = $subtotalcoll + $x_coll;
+    	print "<td class=\"nowrap\" align=\"right\">".price($x_coll)."</td><td></td>";
+    
+    }
+	    
+    if($CalcLT==0)
+    {
+    	$diff= $x_coll - $x_paye;
+    }
+    elseif($CalcLT==1)
+    {
+    	$diff= $x_paye;
+    }
+    elseif($CalcLT==2)
+    {
+    	$diff= $x_coll;
+    }
+    
     $total = $total + $diff;
     $subtotal = $subtotal + $diff;
 
@@ -186,12 +251,26 @@ for ($m = 1 ; $m < 13 ; $m++ )
     print "</tr>\n";
 
     $i++;
-    if ($i > 2) {
+    if ($i > 2)
+    {
         print '<tr class="liste_total">';
         print '<td align="right">'.$langs->trans("SubTotal").':</td>';
-        print '<td class="nowrap" align="right">'.price($subtotalcoll).'</td>';
-        print '<td class="nowrap" align="right">'.price($subtotalpaye).'</td>';
-        print '<td class="nowrap" align="right">'.price($subtotal).'</td>';
+        if($CalcLT==0)
+        {
+        	print '<td class="nowrap" align="right">'.price($subtotalcoll).'</td>';
+        	print '<td class="nowrap" align="right">'.price($subtotalpaye).'</td>';
+        	print '<td class="nowrap" align="right">'.price($subtotal).'</td>';
+        }
+        elseif($CalcLT==1)
+        {
+        	print '<td class="nowrap" align="right">'.price($subtotalpaye).'</td><td></td>';
+        	print '<td class="nowrap" align="right">'.price($subtotal).'</td>';
+        }
+        elseif($CalcLT==2)
+        {
+        	print '<td class="nowrap" align="right">'.price($subtotalcoll).'</td><td></td>';
+        	print '<td class="nowrap" align="right">'.price($subtotal).'</td>';
+        }
         print '<td>&nbsp;</td></tr>';
         $i = 0;
         $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
@@ -214,6 +293,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."localtax as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.datev >= '".$db->idate(dol_get_first_day($y,1,false))."'";
 $sql.= " AND f.datev <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+$sql.= " AND localtaxtype=".$localTaxType;
 $sql.= " GROUP BY dm ASC";
 
 pt($db, $sql,$langs->trans("Year")." $y");

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2014	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -394,12 +395,12 @@ function isValidMailDomain($mail)
  *  <http[s]> :// [user[:pass]@] hostname [port] [/path] [?getquery] [anchor]
  *
  *	@param	string	$url		Url
- *  @param  int		$http		1: verify http, 0: not verify http
- *  @param  int		$pass		1: verify user and pass, 0: not verify user and pass
- *  @param  int		$port		1: verify port, 0: not verify port
- *  @param  int		$path		1: verify path, 0: not verify path
- *  @param  int		$query		1: verify query, 0: not verify query
- *  @param  int		$anchor		1: verify anchor, 0: not verify anchor
+ *  @param  int		$http		1: verify http is provided, 0: not verify http
+ *  @param  int		$pass		1: verify user and pass is provided, 0: not verify user and pass
+ *  @param  int		$port		1: verify port is provided, 0: not verify port
+ *  @param  int		$path		1: verify a path is provided "/" or "/..." or "/.../", 0: not verify path
+ *  @param  int		$query		1: verify query is provided, 0: not verify query
+ *  @param  int		$anchor		1: verify anchor is provided, 0: not verify anchor
  *	@return int					1=Check is OK, 0=Check is KO
  */
 function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
@@ -414,9 +415,9 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
     if ($pass) $urlregex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)";
 
     // HOSTNAME OR IP
-    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*";  // http://x = allowed (ex. http://localhost, http://routerlogin)
-    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)+";  // http://x.x = minimum
-    $urlregex .= "([a-z0-9+\$_-]+\.)*[a-z0-9+\$_-]{2,3}";  // http://x.xx(x) = minimum
+    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*";  // x allowed (ex. http://localhost, http://routerlogin)
+    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)+";  // x.x
+    $urlregex .= "([a-z0-9+\$_\\\:-])+(\.[a-z0-9+\$_-][a-z0-9+\$_-]+)*";  // x ou x.xx (2 x ou plus)
     //use only one of the above
 
     // PORT
@@ -433,7 +434,7 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
     {
         $ValidUrl = 1;
     }
-    //print $urlregex.' - '.$url.' - '.$ValidUrl;exit;
+    //print $urlregex.' - '.$url.' - '.$ValidUrl;
 
     return $ValidUrl;
 }
@@ -477,6 +478,50 @@ function clean_url($url,$http=1)
     }
     else return $url;
 }
+
+
+
+/**
+ * 	Returns an email value with obfuscated parts.
+ *
+ * 	@param 		string		$mail				Email
+ * 	@param 		string		$replace			Replacement character (defaul : *)
+ * 	@param 		int			$nbreplace			Number of replacement character (default : 8)
+ * 	@param 		int			$nbdisplaymail		Number of character unchanged (default: 4)
+ * 	@param 		int			$nbdisplaydomain	Number of character unchanged of domain (default: 3)
+ * 	@param 		bool		$displaytld			Display tld (default: true)
+ * 	@return		string							Return email with hidden parts or '';
+ */
+function dolObfuscateEmail($mail, $replace="*", $nbreplace=8, $nbdisplaymail=4, $nbdisplaydomain=3, $displaytld=true)
+{
+	if(!isValidEmail($mail))return '';
+	$tab = explode('@', $mail);
+	$tab2 = explode('.',$tab[1]);
+	$string_replace = '';
+	$mail_name = $tab[0];
+	$mail_domaine = $tab2[0];
+	$mail_tld = '';
+
+	for($i=1; $i < count($tab2) && $displaytld ;$i++)
+	{
+		$mail_tld .= '.'.$tab2[$i];
+	}
+
+	for($i=0; $i < $nbreplace; $i++){
+		$string_replace .= $replace;
+	}
+
+	if(strlen($mail_name) > $nbdisplaymail){
+		$mail_name = substr($mail_name, 0, $nbdisplaymail);
+	}
+
+	if(strlen($mail_domaine) > $nbdisplaydomain){
+		$mail_domaine = substr($mail_domaine, strlen($mail_domaine)-$nbdisplaydomain);
+	}
+
+	return $mail_name . $string_replace . $mail_domaine . $mail_tld;
+}
+
 
 /**
  * 	Return lines of an html table from an array
@@ -528,17 +573,18 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
 /**
  * Return last or next value for a mask (according to area we should not reset)
  *
- * @param	DoliDB		$db				Database handler
+ * @param   DoliDB		$db				Database handler
  * @param   string		$mask			Mask to use
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
  * @param   string		$where			To add a filter on selection (for exemple to filter on invoice types)
  * @param   Societe		$objsoc			The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
- * @param   string		$mode           'next' for next value or 'last' for last value
- * @return 	string					    New value (numeric) or error message
+ * @param   string		$mode			'next' for next value or 'last' for last value
+ * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
+ * @return 	string						New value (numeric) or error message
  */
-function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next')
+function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true)
 {
     global $conf;
 
@@ -738,13 +784,14 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $sql = "SELECT MAX(".$sqlstring.") as val";
     $sql.= " FROM ".MAIN_DB_PREFIX.$table;
     $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
-    $sql.= " AND ".$field." NOT LIKE '(PROV%)'";
-    $sql.= " AND entity IN (".getEntity($table, 1).")";
+	$sql.= " AND ".$field." NOT LIKE '(PROV%)'";
+    if ($bentityon) // only if entity enable
+    	$sql.= " AND entity IN (".getEntity($table, 1).")";
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
     //print $sql.'<br>';
-    dol_syslog("functions2::get_next_value mode=".$mode." sql=".$sql, LOG_DEBUG);
+    dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -779,11 +826,12 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $sql.= " FROM ".MAIN_DB_PREFIX.$table;
         $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
     	$sql.= " AND ".$field." NOT LIKE '%PROV%'";
-        $sql.= " AND entity IN (".getEntity($table, 1).")";
+    	if ($bentityon) // only if entity enable
+        	$sql.= " AND entity IN (".getEntity($table, 1).")";
         if ($where) $sql.=$where;
         if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
-        dol_syslog("functions2::get_next_value sql=".$sql);
+        dol_syslog("functions2::get_next_value", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -832,12 +880,13 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             $maskrefclient_sql.= " FROM ".MAIN_DB_PREFIX.$table;
             //$sql.= " WHERE ".$field." not like '(%'";
             $maskrefclient_sql.= " WHERE ".$field." LIKE '".$maskrefclient_maskLike."'";
-            $maskrefclient_sql.= " AND entity IN (".getEntity($table, 1).")";
+            if ($bentityon) // only if entity enable
+            	$maskrefclient_sql.= " AND entity IN (".getEntity($table, 1).")";
             if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
             if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
             $maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
 
-            dol_syslog("functions2::get_next_value maskrefclient_sql=".$maskrefclient_sql, LOG_DEBUG);
+            dol_syslog("functions2::get_next_value maskrefclient", LOG_DEBUG);
             $maskrefclient_resql=$db->query($maskrefclient_sql);
             if ($maskrefclient_resql)
             {
@@ -1142,8 +1191,8 @@ function weight_convert($weight,&$from_unit,$to_unit)
  *
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
- *	@param	User	$user      Object user
- *	@param	array	$tab        Tableau (cle=>valeur) des parametres a sauvegarder
+ *	@param	User	$user      	Object user
+ *	@param	array	$tab        Array (key=>value) with all parameters to save
  *	@return int         		<0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const, dolibarr_set_const, dolibarr_del_const
@@ -1168,7 +1217,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
         $i++;
     }
     $sql.= ")";
-    dol_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
+    dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
 
     $resql=$db->query($sql);
     if (! $resql)
@@ -1187,7 +1236,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
             $sql.= " VALUES (".$user->id.",".$conf->entity.",";
             $sql.= " '".$key."','".$db->escape($value)."')";
 
-            dol_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
+            dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
             $result=$db->query($sql);
             if (! $result)
             {
@@ -1292,8 +1341,9 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
     $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
     $sql.= " WHERE type = '".$type."'";
     $sql.= " AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+    $sql.= " ORDER BY description DESC";
 
-    dol_syslog('/core/lib/function2.lib.php::getListOfModels sql='.$sql, LOG_DEBUG);
+    dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -1363,20 +1413,24 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 /**
  * This function evaluates a string that should be a valid IPv4
  *
- * @param	string		$ip			IP Address
- * @return	It returns 0 if $ip is not a valid IPv4
- * 			It returns 1 if $ip is a valid IPv4 and is a public IP
- * 			It returns 2 if $ip is a valid IPv4 and is a private lan IP
+ * @param	string $ip IP Address
+ * @return	int 0 if not valid or reserved range, 1 if valid and public IP, 2 if valid and private range IP
  */
 function is_ip($ip)
 {
-    if (!preg_match("/^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/", $ip)) return 0;
-    if (sprintf("%u",ip2long($ip)) == sprintf("%u",ip2long('255.255.255.255'))) return 0;
-    if (sprintf("%u",ip2long('10.0.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('10.255.255.255'))) return 2;
-    if (sprintf("%u",ip2long('172.16.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('172.31.255.255'))) return 2;
-    if (sprintf("%u",ip2long('192.168.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('192.168.255.255'))) return 2;
-    if (sprintf("%u",ip2long('169.254.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('169.254.255.255'))) return 2;
-    return 1;
+	// First we test if it is a valid IPv4
+	if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+
+		// Then we test if it is a private range
+		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) return 2;
+
+		// Then we test if it is a reserved range
+		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE)) return 0;
+
+		return 1;
+	}
+
+	return 0;
 }
 
 /**
@@ -1582,7 +1636,6 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 		// Check loops on each other
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid";	// So we update only records linked to themself
-		dol_syslog("sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -1623,7 +1676,6 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql.= " SET ".$fieldfkparent." = 0";
 		$sql.= " WHERE rowid IN (".join(',',$listofidtoclean).")";	// So we update only records detected wrong
-		dol_syslog("sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -1643,7 +1695,6 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql.= " SET ".$fieldfkparent." = 0";
 		$sql.= " WHERE ".$fieldfkparent." NOT IN (".join(',',$listofid).")";	// So we update only records linked to a non existing parent
-		dol_syslog("sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -1785,3 +1836,42 @@ function fetchObjectByElement($element_id,$element_type) {
 	}
 	return 0;
 }
+
+
+/**
+ *	Convert an array with RGB value into hex RGB value
+ *
+ *  @param	array	$arraycolor			Array
+ *  @param	string	$colorifnotfound	Color code to return if entry not defined
+ *  @return	string						RGB hex value (without # before). For example: FF00FF
+ *  @see	Make the opposite of colorStringToArray
+ */
+function colorArrayToHex($arraycolor,$colorifnotfound='888888')
+{
+	if (! is_array($arraycolor)) return $colorifnotfound;
+	return dechex($arraycolor[0]).dechex($arraycolor[1]).dechex($arraycolor[2]);
+}
+
+
+/**
+ *	Convert a string RGB value ('FFFFFF', '255,255,255') into an array RGB array(255,255,255)
+ *
+ *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
+ *  @param	string	$colorifnotfound	Color code to return if entry not defined
+ *  @return	string						RGB hex value (without # before). For example: FF00FF
+ *  @see	Make the opposite of colorArrayToHex
+ */
+function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
+{
+	if (is_array($stringcolor)) return $stringcolor;	// If already into correct output format, we return as is
+	$tmp=preg_match('/^([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/',$stringcolor,$reg);
+	if (! $tmp)
+	{
+		$tmp=explode(',',$stringcolor);
+		if (count($tmp) < 3) return $colorifnotfound;
+		return $tmp;
+	}
+	return array(hexdec($reg[1]),hexdec($reg[2]),hexdec($reg[3]));
+}
+
+

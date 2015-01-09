@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - mails
 Mailing=ارسال ایمیل
 EMailing=ارسال ایمیل
-Mailings=EMailings
-EMailings=EMailings
+Mailings=ارسال ایمیل ها
+EMailings=ارسال ایمیل ها
 AllEMailings=همه eMailings
 MailCard=ایمیل کارت
 MailTargets=اهداف
@@ -14,13 +14,13 @@ MailErrorsTo=خطاها به
 MailReply=پاسخ به
 MailTo=گیرنده (ها)
 MailCC=کپی کنید به
-MailCCC=نسخه های cache شده به
+MailCCC=نسخه های کش شده به
 MailTopic=موضوع ایمیل
 MailText=پیام
 MailFile=فایل های پیوست شده
 MailMessage=متن ایمیل
 ShowEMailing=نمایش ایمیل
-ListOfEMailings=فهرست emailings
+ListOfEMailings=فهرست ارسال ایمیل ها
 NewMailing=ایمیل جدید
 EditMailing=ویرایش ایمیل
 ResetMailing=ارسال دوباره ایمیل
@@ -29,7 +29,7 @@ DeleteAMailing=حذف ایمیل
 PreviewMailing=ایمیل پیش
 PrepareMailing=آماده ایمیل
 CreateMailing=ایجاد ایمیل
-MailingDesc=این صفحه به شما اجازه ارسال emailings به یک گروه از مردم.
+MailingDesc=این صفحه به شما اجازه ارسال ایمیل ها به یک گروه از مردم.
 MailingResult=ایمیل ارسال شود
 TestMailing=ایمیل تست
 ValidMailing=معتبر ایمیل
@@ -103,8 +103,8 @@ MailingModuleDescContactsByFunction=تماس / آدرس اشخاص ثالث (م�
 LineInFile=خط٪ در فایل
 RecipientSelectionModules=درخواست تعریف شده برای انتخاب گیرنده
 MailSelectedRecipients=دریافت کنندگان برگزیده
-MailingArea=منطقه EMailings
-LastMailings=تاریخ و زمان آخرین٪ s را emailings
+MailingArea=منطقه ارسال ایمیل ها
+LastMailings=تاریخ و زمان آخرین٪ s را ارسال ایمیل ها
 TargetsStatistics=آمار اهداف
 NbOfCompaniesContacts=تماس با ما منحصر به فرد / آدرس
 MailNoChangePossible=دریافت کنندگان برای ایمیل معتبر نمی تواند تغییر کند
@@ -115,7 +115,7 @@ SentBy=ارسال شده توسط
 MailingNeedCommand=برای دلیل امنیت، با ارسال یک ایمیل بهتر است زمانی که از خط فرمان انجام می شود. اگر شما یکی، مدیر سرور خود بخواهید برای راه اندازی از دستور زیر برای ارسال ایمیل به همه گیرندگان:
 MailingNeedCommand2=با این حال شما می توانید آنها را به صورت آنلاین ارسال شده توسط اضافه کردن MAILING_LIMIT_SENDBYWEB پارامتر با مقدار حداکثر تعداد ایمیل های شما می خواهید به جلسه ارسال کنید. برای این کار، در خانه به - راه اندازی - سایر.
 ConfirmSendingEmailing=اگر نمی توانید و یا ترجیح می دهند از ارسال آنها را با مرورگر وب خود، لطفا تایید شما مطمئن هستید که می خواهید برای ارسال ایمیل با شرکت از مرورگر خود هستند؟
-LimitSendingEmailing=توجه داشته باشید: در خط ارسال از emailings برای امنیت و فاصله دلایل <b>به٪ s</b> دریافت کنندگان با ارسال وارد نمایید محدود شده است.
+LimitSendingEmailing=Note: Sending of emailings from web interface is done in several times for security and timeout reasons, <b>%s</b> recipients at a time for each sending session.
 TargetsReset=لیست پاک کردن
 ToClearAllRecipientsClickHere=برای پاک کردن لیست دریافت کننده این ایمیل اینجا را کلیک کنید
 ToAddRecipientsChooseHere=اضافه کردن گیرندگان با انتخاب از لیست
@@ -133,6 +133,9 @@ Notifications=اطلاعیه ها
 NoNotificationsWillBeSent=بدون اطلاعیه ها ایمیل ها برای این رویداد و شرکت برنامه ریزی
 ANotificationsWillBeSent=1 اطلاع رسانی خواهد شد از طریق ایمیل ارسال می شود
 SomeNotificationsWillBeSent=اطلاعیه٪ خواهد شد از طریق ایمیل ارسال می شود
-AddNewNotification=فعال کردن یک درخواست ارسال ایمیل جدید
-ListOfActiveNotifications=لیست همه درخواست ها ارسال ایمیل فعال
+AddNewNotification=Activate a new email notification target
+ListOfActiveNotifications=List all active email notification targets
 ListOfNotificationsDone=لیست همه اطلاعیه ها ایمیل فرستاده شده
+MailSendSetupIs=Configuration of email sending has been setup to '%s'. This mode can't be used to send mass emailing.
+MailSendSetupIs2=You must first go, with an admin account, into menu %sHome - Setup - EMails%s to change parameter <strong>'%s'</strong> to use mode '%s'. With this mode, you can enter setup of the SMTP server provided by your Internet Service Provider and use Mass emailing feature.
+MailSendSetupIs3=If you have any questions on how to setup your SMTP server, you can ask to %s.

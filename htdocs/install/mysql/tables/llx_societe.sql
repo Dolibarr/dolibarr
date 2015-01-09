@@ -3,6 +3,7 @@
 -- Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
+-- Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 create table llx_societe
 (
   rowid                    integer AUTO_INCREMENT PRIMARY KEY,
-  nom                      varchar(60),                                -- company reference name
+  nom                      varchar(128),                                -- company reference name (should be same length than adherent.societe)
   entity                   integer DEFAULT 1 NOT NULL,               -- multi company id
 
   ref_ext                  varchar(128),                               -- reference into an external system (not used by dolibarr)
@@ -81,7 +82,9 @@ create table llx_societe
   cond_reglement_supplier  tinyint,                             		-- condition de reglement fournisseur
   tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
+  localtax1_value 		   double(6,3),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
+  localtax2_value 		   double(6,3),
   barcode                  varchar(255),                        		-- barcode
   fk_barcode_type          integer NULL   DEFAULT 0,                    -- barcode type
   price_level              integer NULL,                        		-- level of price for multiprices
@@ -89,5 +92,7 @@ create table llx_societe
   default_lang             varchar(6),									-- default language
   logo                     varchar(255),
   canvas				   varchar(32),			                        -- type of canvas if used (null by default)
-  import_key               varchar(14)                          		-- import key
+  import_key               varchar(14),                          		-- import key
+  webservices_url          varchar(255),                            -- supplier webservice url
+  webservices_key          varchar(128)                            -- supplier webservice key
 )ENGINE=innodb;

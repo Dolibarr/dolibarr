@@ -122,7 +122,7 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 	$soc = new Societe($db);
 
 
-	$propal = new Propal($db, $socids[$socid]);
+	$propal = new Propal($db);
 
 	$obj = $conf->global->PROPALE_ADDON;
 	$modPropale = new $obj;
@@ -130,6 +130,7 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 
 	$propal->ref = $numpr;
 	$propal->contactid = $contids[$socids[$socid]][0];
+	$propal->socid = $socids[$socid];
 	$propal->datep = time();
 	$propal->cond_reglement_id = 3;
 	$propal->mode_reglement_id = 3;

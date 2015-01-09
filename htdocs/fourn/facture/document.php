@@ -168,8 +168,12 @@ if ($object->id > 0)
 	print $form->editfieldval("Label",'label',$object->label,$object,0);
 	print '</td>';
 
+	print '</table><br>';
+
+	print '<table class="border" width="100%">';
+
 	// Nb of files
-	print '<tr><td>'.$langs->trans('NbOfAttachedFiles').'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td width="30%" class="nowrap">'.$langs->trans('NbOfAttachedFiles').'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('TotalSizeOfAttachedFiles').'</td><td colspan="3">'.$totalsize.' '.$langs->trans('bytes').'</td></tr>';
 

@@ -52,14 +52,14 @@ if ($_GET["id"])
   //on veut supprimer une cat�gorie
   if ($_REQUEST["cat"])
     {
-      $cat = new Categorie($db,$_REQUEST["cat"]);
+      $cat = new Categorie($db);
       $cat->del_product($product);
     }
 
   //on veut ajouter une cat�gorie
   if (isset($_REQUEST["add_cat"]) && $_REQUEST["add_cat"]>=0)
     {
-      $cat = new Categorie($db,$_REQUEST["add_cat"]);
+      $cat = new Categorie($db);
       $cat->add_product($product);
     }
 
@@ -72,7 +72,7 @@ if ($_GET["id"])
 
       $h=0;
 
-      $head[$h][0] = DOL_URL_ROOT."/fourn/product/fiche.php?id=".$product->id;
+      $head[$h][0] = DOL_URL_ROOT."/fourn/product/card.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Card");
       $h++;
 
@@ -95,7 +95,7 @@ if ($_GET["id"])
       $head[$h][1] = $langs->trans("Photos");
       $h++;
 
-      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+      $head[$h][0] = DOL_URL_ROOT."/product/stats/card.php?id=".$product->id;
       $head[$h][1] = $langs->trans('Statistics');
       $h++;
 

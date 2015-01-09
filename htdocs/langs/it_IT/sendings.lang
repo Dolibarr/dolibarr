@@ -54,23 +54,27 @@ StatsOnShipmentsOnlyValidated=Statistiche calcolate solo sulle spedizioni conval
 DateDeliveryPlanned=Data di consegna prevista
 DateReceived=Data di consegna ricevuto
 SendShippingByEMail=Invia spedizione via EMail
-SendShippingRef=Invia %s spedizione
+SendShippingRef=Invio della spedizione %s
 ActionsOnShipping=Acions sulla spedizione
 LinkToTrackYourPackage=Link a monitorare il tuo pacchetto
 ShipmentCreationIsDoneFromOrder=Per il momento, la creazione di una nuova spedizione viene effettuata dalla scheda dell'ordine.
 RelatedShippings=Spedizioni collegate
 ShipmentLine=Filiera di spedizione
 CarrierList=Elenco dei trasportatori
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Ritiro da parte del Cliente
 SendingMethodTRANS=A cura del mittente
 SendingMethodCOLSUI=Corriere espresso
-
 # ModelDocument
 DocumentModelSirocco=Semplice modello di documento per le ricevute di consegna
 DocumentModelTyphon=Modello più completo di documento per le ricevute di consegna (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER costante non definita
 SumOfProductVolumes=Totale volume prodotti
 SumOfProductWeights=Totale peso prodotti
+
+# warehouse details
+DetailWarehouseNumber= Dettagli magazzino
+DetailWarehouseFormat= Peso:%s (Qtà : %d)

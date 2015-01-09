@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -261,6 +262,24 @@ if ($action == 'setforcedate')
     }
 }
 
+if ($action == 'set_FAC_AUTO_FILLJS')
+{
+	$freetext = GETPOST('FAC_AUTO_FILLJS');	// No alpha here, we want exact string
+
+	$res = dolibarr_set_const($db, "FAC_AUTO_FILLJS",$freetext,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+	if (! $error)
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
+	}
+}
+
 
 /*
  * View
@@ -277,7 +296,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("BillsSetup"),$linkback,'setup');
 print '<br>';
 
-$head = invoice_admin_prepare_head(null);
+$head = invoice_admin_prepare_head();
 dol_fiche_head($head, 'general', $langs->trans("Invoices"), 0, 'invoice');
 
 /*
@@ -760,6 +779,20 @@ print '<input type="hidden" name="action" value="set_FACTURE_DRAFT_WATERMARK" />
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraftBill").'<br>';
 print '<input size="50" class="flat" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.$conf->global->FACTURE_DRAFT_WATERMARK.'" />';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print "</td></tr>\n";
+print '</form>';
+
+// Add js auto fill amount on paiement form
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="set_FAC_AUTO_FILLJS" />';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("JSOnPaimentBill");
+print '</td><td width="60" align="center">';
+print $form->selectyesno("FAC_AUTO_FILLJS",$conf->global->FAC_AUTO_FILLJS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

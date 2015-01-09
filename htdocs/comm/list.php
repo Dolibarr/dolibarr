@@ -48,13 +48,12 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
-$search_nom=GETPOST("search_nom");
+$search_company=GETPOST("search_company");
 $search_zipcode=GETPOST("search_zipcode");
 $search_town=GETPOST("search_town");
 $search_code=GETPOST("search_code");
 $search_compta=GETPOST("search_compta");
 $search_status		= GETPOST("search_status",'int');
-if ($search_status=='') $search_status=1; // always display activ customer first
 
 // Load sale and categ filters
 $search_sale  = GETPOST("search_sale");
@@ -73,25 +72,23 @@ $hookmanager->initHooks(array('customerlist'));
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
-    $search_categ='';
-    $catid='';
-    $search_sale='';
-    $socname="";
-    $search_nom="";
+	$search_sale="";
+	$search_categ="";
+	$catid="";
+    $search_company="";
     $search_zipcode="";
     $search_town="";
-    $search_idprof1='';
-    $search_idprof2='';
-    $search_idprof3='';
-    $search_idprof4='';
-    $seach_status=1;
+    $search_code='';
+    $search_compta='';
+    $search_status='';
 }
 
-
+if ($search_status=='') $search_status=1; // always display activ customer first
 
 /*
  * view
@@ -121,8 +118,8 @@ if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
 if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
-if ($search_nom) {
-	$sql .= natural_search('s.nom', $search_nom);
+if ($search_company) {
+	$sql .= natural_search('s.nom', $search_company);
 }
 if ($search_zipcode) $sql.= " AND s.zip LIKE '".$db->escape($search_zipcode)."%'";
 if ($search_town) {
@@ -149,13 +146,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit +1, $offset);
 
-dol_syslog('comm/list.php: sql='.$sql,LOG_DEBUG);
+dol_syslog('comm/list.php:', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
 	$num = $db->num_rows($result);
 
-	$param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
+	$param = "&amp;search_company=".$search_company."&amp;search_code=".$search_code."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
  	if ($search_sale != '')	$param.='&amp;search_sale='.$search_sale;
  	if ($search_status != '') $param.='&amp;search_status='.$search_status;
@@ -206,7 +203,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_nom" value="'.$search_nom.'" size="10">';
+	print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
 	print '</td>';
 
 	print '<td class="liste_titre">';
@@ -234,7 +231,6 @@ if ($result)
     print '</td>';
 
     print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print '&nbsp; ';
     print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
 
@@ -269,7 +265,7 @@ if ($result)
         print '<td align="center">'.$thirdpartystatic->getLibStatut(3);
         print '</td>';
         print '<td></td>';
-        
+
         $parameters=array('obj' => $obj);
         $formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 

@@ -9,6 +9,7 @@
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -244,8 +245,6 @@ $hookmanager=new HookManager($db);
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 
-// We force feature to help debug
-//$conf->global->MAIN_JS_ON_PAYMENT=0;
 
 // We force FPDF
 if (! empty($dolibarr_pdf_force_fpdf)) $conf->global->MAIN_USE_FPDF=$dolibarr_pdf_force_fpdf;

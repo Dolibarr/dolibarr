@@ -79,7 +79,7 @@ function facture_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
     	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$object->id;
     	$head[$h][1] = $langs->trans('Notes');
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
     	$head[$h][2] = 'note';
     	$h++;
     }
@@ -89,7 +89,7 @@ function facture_prepare_head($object)
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -106,10 +106,9 @@ function facture_prepare_head($object)
 /**
  * Return array head with list of tabs to view object informations.
  *
- * @param Object $object Invoice
  * @return array head array with tabs
  */
-function invoice_admin_prepare_head($object)
+function invoice_admin_prepare_head()
 {
 	global $langs, $conf, $user;
 
@@ -125,7 +124,7 @@ function invoice_admin_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'invoice_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'invoice_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facture_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoices");
@@ -137,7 +136,7 @@ function invoice_admin_prepare_head($object)
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'invoice_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'invoice_admin','remove');
 
 	return $head;
 }

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Περιοχή Συμβολαίων
 ListOfContracts=Λίστα Συμβολαίων
-LastContracts=%s συμβόλαια που τροποποιήθηκαν πρόσφατα
+LastModifiedContracts=Τελευταίες τροποποιημένες συμβάσεις %s
 AllContracts=Όλα τα συμβόλαια
 ContractCard=Κάρτέλα  Συμβολαίου
 ContractStatus=Κατάσταση συμβολαίου
@@ -27,7 +27,7 @@ MenuRunningServices=Ενεργές Υπηρεσίες
 MenuExpiredServices=Ληγμένες Υπηρεσίες
 MenuClosedServices=Τερματισμένες Υπηρεσίες
 NewContract=Νέο Συμβόλαιο
-AddContract=Προσθήκη Συμβολαίου
+AddContract=Δημιουργία σύμβασης
 SearchAContract=Εύρεση Συμβολαίου
 DeleteAContract=Διαγραφή Συμβολαίου
 CloseAContract=Τερματισμός Συμβολαίου
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=List of running contract lines
 ListOfRunningServices=Λίστα τρέχουσων υπηρεσιών
 NotActivatedServices=Inactive services (among validated contracts)
 BoardNotActivatedServices=Υπηρεσίες προς ενεργοποίηση σε επικυρωμένα συμβόλαια
-LastContracts=%s συμβόλαια που τροποποιήθηκαν πρόσφατα
+LastContracts=Τελευταίες συμβάσεις %s
 LastActivatedServices=Last %s activated services
 LastModifiedServices=Last %s modified services
 EditServiceLine=Edit service line
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Κατάλογος Υπηρεσιών προς λήξει
 NoteListOfYourExpiredServices=Αυτή η λίστα περιέχει μόνο τις υπηρεσίες των συμβάσεων για λογαριασμό ΠΕΛ./ΠΡΟΜ. που συνδέονται ως εκπρόσωπος πώληση.
 StandardContractsTemplate=Οι πρότυπες συμβάσεις
 ContactNameAndSignature=Για %s, το όνομα και η υπογραφή:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Σύμβαση πώλησης υπογραφή εκπροσώπου

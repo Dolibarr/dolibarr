@@ -138,6 +138,35 @@ else if ($action == 'specimen')
 	}
 }
 
+// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
+else if ($action == 'setModuleOptions')
+{
+	$post_size=count($_POST);
+
+	$db->begin();
+
+	for($i=0;$i < $post_size;$i++)
+	{
+		if (array_key_exists('param'.$i,$_POST))
+		{
+			$param=GETPOST("param".$i,'alpha');
+			$value=GETPOST("value".$i,'alpha');
+			if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+		}
+	}
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		$db->rollback();
+		setEventMessage($langs->trans("Error"),'errors');
+	}
+}
+
 // Activate a model
 else if ($action == 'set')
 {
@@ -174,14 +203,6 @@ else if ($action == 'setdoc')
 else if ($action == 'setmodel')
 {
 	dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
-}
-else if ($action=='setModuleOptions') {
-	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF_ODT_PATH",GETPOST('value1'),'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->EXPEDITION_ADDON_PDF_ODT_PATH = GETPOST('value1');
-	}
 }
 
 

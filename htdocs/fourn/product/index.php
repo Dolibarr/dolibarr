@@ -43,7 +43,7 @@ print '<tr><td valign="top" width="30%">';
 /*
  * Zone recherche produit/service
  */
-print '<form method="post" action="liste.php">';
+print '<form method="post" action="list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print "<tr class=\"liste_titre\">\n";
@@ -81,13 +81,13 @@ print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</
 if (! empty($conf->product->enabled))
 {
     print "<tr $bc[0]>";
-    print '<td><a href="liste.php?type=0">'.$langs->trans("Products").'</a></td><td>'.round($prodser[0]).'</td>';
+    print '<td><a href="list.php?type=0">'.$langs->trans("Products").'</a></td><td>'.round($prodser[0]).'</td>';
     print "</tr>";
 }
 if (! empty($conf->service->enabled))
 {
     print "<tr $bc[1]>";
-    print '<td><a href="liste.php?type=1">'.$langs->trans("Services").'</a></td><td>'.round($prodser[1]).'</td>';
+    print '<td><a href="list.php?type=1">'.$langs->trans("Services").'</a></td><td>'.round($prodser[1]).'</td>';
     print "</tr>";
 }
 print '</table>';
@@ -125,10 +125,10 @@ if ($resql)
 	  $objp = $db->fetch_object($resql);
 	  $var=!$var;
 	  print "<tr ".$bc[$var].">";
-	  print "<td><a href=\"fiche.php?id=$objp->rowid\">";
+	  print "<td><a href=\"card.php?id=$objp->rowid\">";
 	  if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
 	  else print img_object($langs->trans("ShowProduct"),"product");
-	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
+	  print "</a> <a href=\"card.php?id=$objp->rowid\">$objp->ref</a></td>\n";
 	  print "<td>$objp->label</td>";
 	  print "<td>";
 	  if ($objp->fk_product_type==1) print $langs->trans('ShowService');

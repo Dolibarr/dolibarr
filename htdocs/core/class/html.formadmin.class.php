@@ -53,9 +53,10 @@ class FormAdmin
 	 * 		@param		array		$filter			Array of keys to exclude in list
 	 * 		@param		int			$showempty		Add empty value
 	 *      @param      int			$showwarning    Show a warning if language is not complete
+	 *      @param		int			$disabled		Disable edit of select
 	 *      @return		string						Return HTML select string with list of languages
 	 */
-	function select_language($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0,$showwarning=0)
+	function select_language($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0,$showwarning=0,$disabled=0)
 	{
 		global $langs;
 
@@ -63,7 +64,7 @@ class FormAdmin
 
 		$out='';
 
-		$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+		$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
 		if ($showempty)
 		{
 			$out.= '<option value=""';
@@ -180,7 +181,7 @@ class FormAdmin
 			$newprefix=$tab[0];
 			if ($newprefix=='1' && ($conf->global->MAIN_FEATURES_LEVEL < 1)) continue;
 			if ($newprefix=='2' && ($conf->global->MAIN_FEATURES_LEVEL < 2)) continue;
-			if (! empty($conf->browser->firefox) && $newprefix != $oldprefix)	// Add separators
+			if ($newprefix != $oldprefix)	// Add separators
 			{
 				// Affiche titre
 				print '<option value="-1" disabled="disabled">';

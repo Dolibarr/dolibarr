@@ -18,7 +18,7 @@
  */
 
 /**
- *       \file       htdocs/product/ajax/products.php
+ *       \file       htdocs/product/ajax/company.php
  *       \brief      File to return Ajax response on product list request
  */
 

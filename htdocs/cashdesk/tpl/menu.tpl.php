@@ -72,7 +72,7 @@ print $langs->trans("CashDeskThirdParty").': '.$companyLink.'<br>';
 /*print $langs->trans("CashDeskBankCash").': '.$bankcashLink.'<br>';
 print $langs->trans("CashDeskBankCB").': '.$bankcbLink.'<br>';
 print $langs->trans("CashDeskBankCheque").': '.$bankchequeLink.'<br>';*/
-if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled))
+if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_STOCK))
 {
 	print $langs->trans("CashDeskWarehouse").': '.$warehouseLink;
 }

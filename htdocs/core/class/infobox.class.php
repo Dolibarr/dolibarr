@@ -23,31 +23,38 @@
  */
 
 /**
- *	Class to manage boxes on pages
+ *	Class to manage boxes on pages. This is an utility class (all is static)
  */
 class InfoBox
 {
-	static $listOfPages = array(0=>'Home');       // Nom des positions 0=Home, 1=...
-
+	/**
+	 * Name of positions 0=Home, 1=...
+	 *
+	 * @return	array		Array with list of zones
+	 */
+	static function getListOfPagesForBoxes()
+	{
+		return array(0=>'Home');
+	}
 
     /**
      *  Return array of boxes qualified for area and user
      *
-     *  @param	DoliDB	$db				Database handler
-     *  @param	string	$mode			'available' or 'activated'
-     *  @param	string	$zone			Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
-     *  @param  User    $user	  		Object user to filter
-     *  @param	array	$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
-     *  @return array               	Array of boxes
+     *  @param	DoliDB		$db				Database handler
+     *  @param	string		$mode			'available' or 'activated'
+     *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
+     *  @param  User|null   $user	  		Object user to filter
+     *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
+     *  @return array       	        	Array of boxes
      */
-    static function listBoxes($db, $mode, $zone, $user, $excludelist=array())
+    static function listBoxes($db, $mode, $zone, $user=null, $excludelist=array())
     {
         global $conf;
 
         $boxes=array();
 
         $confuserzone='MAIN_BOXES_'.$zone;
-        if ($mode == 'activated')
+        if ($mode == 'activated')	// activated
         {
             $sql = "SELECT b.rowid, b.position, b.box_order, b.fk_user,";
             $sql.= " d.rowid as box_id, d.file, d.note, d.tms";
@@ -59,21 +66,14 @@ class InfoBox
             else $sql.= " AND b.fk_user = 0";
             $sql.= " ORDER BY b.box_order";
         }
-        else
+        else	// available
 		{
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
-            if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
-            {
-            	$sql.= " WHERE entity IN (1,".$conf->entity.")"; // TODO add method for define another master entity
-            }
-            else
-			{
-            	$sql.= " WHERE entity = ".$conf->entity;
-            }
+           	$sql.= " WHERE d.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
         }
 
-        dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')." sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')."", LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -85,6 +85,7 @@ class InfoBox
 
                 if (! in_array($obj->box_id, $excludelist))
                 {
+
                     if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
                     {
                         $boxname = preg_replace('/\.php$/i','',$regs[1]);
@@ -97,9 +98,11 @@ class InfoBox
                         $relsourcefile = "/core/boxes/".$boxname.".php";
 					}
 
+					//print $obj->box_id.'-'.$boxname.'-'.$relsourcefile.'<br>';
+
 					// TODO PERF Do not make "dol_include_once" here, nor "new" later. This means, we must store a 'depends' field to store modules list, then
                     // the "enabled" condition for modules forbidden for external users and the depends condition can be done.
-                    // Goal is to avoid making a new instance for each boxes returned by select.
+                    // Goal is to avoid making a "new" done for each boxes returned by select.
                     dol_include_once($relsourcefile);
                     if (class_exists($boxname))
                     {
@@ -137,12 +140,12 @@ class InfoBox
                             	$arrayelem=explode('|',$moduleelem);
                             	$tmpenabled=0;	// $tmpenabled is used for the '|' test (OR)
                             	foreach($arrayelem as $module)
-                            	{ 
+                            	{
     	                        	$tmpmodule=preg_replace('/@[^@]+/','',$module);
-    	                        	if (! empty($conf->$tmpmodule->enabled)) $tmpenabled=1; 
+    	                        	if (! empty($conf->$tmpmodule->enabled)) $tmpenabled=1;
                             		//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
                             	}
-                            	if (empty($tmpenabled))	// We found at least one module required that disabled 
+                            	if (empty($tmpenabled))	// We found at least one module required that disabled
         	                    {
         	                    	$enabled=0;
         	                    	break;
@@ -150,20 +153,23 @@ class InfoBox
                             }
                         }
                         //print '=>'.$boxname.'-enabled='.$enabled.'<br>';
-                        
+
                         //print 'xx module='.$module.' enabled='.$enabled;
                         if ($enabled) $boxes[]=$box;
                         else unset($box);
-                        }
+                    }
+                    else
+					{
+                    	dol_syslog("Failed to load box '".$boxname."' into file '".$relsourcefile."'", LOG_WARNING);
+					}
                 }
                 $j++;
             }
         }
         else
-        {
-            //dol_print_error($db);
-            $error=$db->lasterror();
-            dol_syslog(get_class()."::listBoxes Error ".$error, LOG_ERR);
+		{
+			dol_syslog($db->lasterror(),LOG_ERR);
+            return array('error'=>$db->lasterror());
         }
 
         return $boxes;
@@ -196,7 +202,8 @@ class InfoBox
 
         $db->begin();
 
-        // Sauve parametre indiquant que le user a une config dediee
+        // Save parameters to say user has a dedicated setup
+        $tab=array();
         $confuserzone='MAIN_BOXES_'.$zone;
         $tab[$confuserzone]=1;
         if (dol_set_user_param($db, $conf, $user, $tab) < 0)
@@ -212,7 +219,7 @@ class InfoBox
         $sql.= " AND fk_user = ".$userid;
         $sql.= " AND position = ".$zone;
 
-        dol_syslog(get_class()."::saveboxorder sql=".$sql);
+        dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
         $result = $db->query($sql);
         if ($result)
         {
@@ -243,7 +250,7 @@ class InfoBox
                         $sql.= " ".$conf->entity;
                         $sql.= ")";
 
-                        dol_syslog(get_class()."::saveboxorder sql=".$sql);
+                        dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
                         $result = $db->query($sql);
                         if ($result < 0)
                         {

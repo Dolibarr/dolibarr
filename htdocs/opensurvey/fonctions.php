@@ -249,4 +249,3 @@ function ajouter_sondage()
 	header("Location: ".$urlback);
 	exit();
 }
-

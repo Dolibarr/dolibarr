@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category	PHPExcel
  * @package		PHPExcel_Calculation
- * @copyright	Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright	Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license		http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version		1.7.6, 2011-02-27
+ * @version		1.7.8, 2012-10-12
  */
 
 
@@ -45,10 +45,15 @@ define('EULER', 2.71828182845904523536);
  *
  * @category	PHPExcel
  * @package		PHPExcel_Calculation
- * @copyright	Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright	Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Calculation_Engineering {
 
+	/**
+	 * Details of the Units of measure that can be used in CONVERTUOM()
+	 *
+	 * @var mixed[]
+	 */
 	private static $_conversionUnits = array( 'g'		=> array(	'Group'	=> 'Mass',			'Unit Name'	=> 'Gram',						'AllowPrefix'	=> True		),
 											  'sg'		=> array(	'Group'	=> 'Mass',			'Unit Name'	=> 'Slug',						'AllowPrefix'	=> False	),
 											  'lbm'		=> array(	'Group'	=> 'Mass',			'Unit Name'	=> 'Pound mass (avoirdupois)',	'AllowPrefix'	=> False	),
@@ -114,6 +119,11 @@ class PHPExcel_Calculation_Engineering {
 											  'lt'		=> array(	'Group'	=> 'Liquid',		'Unit Name'	=> 'Litre',						'AllowPrefix'	=> True		)
 											);
 
+	/**
+	 * Details of the Multiplier prefixes that can be used with Units of Measure in CONVERTUOM()
+	 *
+	 * @var mixed[]
+	 */
 	private static $_conversionMultipliers = array(	'Y'	=> array(	'multiplier'	=> 1E24,	'name'	=> 'yotta'	),
 													'Z'	=> array(	'multiplier'	=> 1E21,	'name'	=> 'zetta'	),
 													'E'	=> array(	'multiplier'	=> 1E18,	'name'	=> 'exa'	),
@@ -136,6 +146,11 @@ class PHPExcel_Calculation_Engineering {
 													'y'	=> array(	'multiplier'	=> 1E-24,	'name'	=> 'yocto'	)
 												 );
 
+	/**
+	 * Details of the Units of measure conversion factors, organised by group
+	 *
+	 * @var mixed[]
+	 */
 	private static $_unitConversions = array(	'Mass'		=> array(	'g'		=> array(	'g'		=> 1.0,
 																							'sg'	=> 6.85220500053478E-05,
 																							'lbm'	=> 2.20462291469134E-03,
@@ -670,6 +685,14 @@ class PHPExcel_Calculation_Engineering {
 											);
 
 
+	/**
+	 * _parseComplex
+	 *
+	 * Parses a complex number into its real and imaginary parts, and an I or J suffix
+	 *
+	 * @param	string		$complexNumber	The complex number
+	 * @return	string[]	Indexed on "real", "imaginary" and "suffix"
+	 */
 	public static function _parseComplex($complexNumber) {
 		$workString = (string) $complexNumber;
 
@@ -717,6 +740,14 @@ class PHPExcel_Calculation_Engineering {
 	}	//	function _parseComplex()
 
 
+	/**
+	 * _cleanComplex
+	 *
+	 * Cleans the leading characters in a complex number string
+	 *
+	 * @param	string		$complexNumber	The complex number to clean
+	 * @return	string		The "cleaned" complex number
+	 */
 	private static function _cleanComplex($complexNumber) {
 		if ($complexNumber{0} == '+') $complexNumber = substr($complexNumber,1);
 		if ($complexNumber{0} == '0') $complexNumber = substr($complexNumber,1);
@@ -740,88 +771,108 @@ class PHPExcel_Calculation_Engineering {
 
 
 	/**
-	 * BESSELI
+	 *	BESSELI
 	 *
-	 * Returns the modified Bessel function, which is equivalent to the Bessel function evaluated for purely imaginary arguments
+	 *	Returns the modified Bessel function In(x), which is equivalent to the Bessel function evaluated
+	 *		for purely imaginary arguments
 	 *
-	 * @param	float		$x
-	 * @param	float		$n
-	 * @return	int
+	 *	Excel Function:
+	 *		BESSELI(x,ord)
+	 *
+	 *	@access	public
+	 *	@category Engineering Functions
+	 *	@param	float		$x		The value at which to evaluate the function.
+	 *								If x is nonnumeric, BESSELI returns the #VALUE! error value.
+	 *	@param	integer		$ord	The order of the Bessel function.
+	 *								If ord is not an integer, it is truncated.
+	 *								If $ord is nonnumeric, BESSELI returns the #VALUE! error value.
+	 *								If $ord < 0, BESSELI returns the #NUM! error value.
+	 *	@return	float
+	 *
 	 */
-	public static function BESSELI($x, $n) {
+	public static function BESSELI($x, $ord) {
 		$x	= (is_null($x))	? 0.0 :	PHPExcel_Calculation_Functions::flattenSingleValue($x);
-		$n	= (is_null($n))	? 0.0 :	PHPExcel_Calculation_Functions::flattenSingleValue($n);
+		$ord	= (is_null($ord))	? 0.0 :	PHPExcel_Calculation_Functions::flattenSingleValue($ord);
 
-		if ((is_numeric($x)) && (is_numeric($n))) {
-			$n	= floor($n);
-			if ($n < 0) {
+		if ((is_numeric($x)) && (is_numeric($ord))) {
+			$ord	= floor($ord);
+			if ($ord < 0) {
 				return PHPExcel_Calculation_Functions::NaN();
 			}
-			$f_2_PI = 2 * M_PI;
 
 			if (abs($x) <= 30) {
-				$fTerm = pow($x / 2, $n) / PHPExcel_Calculation_MathTrig::FACT($n);
-				$nK = 1;
-				$fResult = $fTerm;
+				$fResult = $fTerm = pow($x / 2, $ord) / PHPExcel_Calculation_MathTrig::FACT($ord);
+				$ordK = 1;
 				$fSqrX = ($x * $x) / 4;
 				do {
 					$fTerm *= $fSqrX;
-					$fTerm /= ($nK * ($nK + $n));
+					$fTerm /= ($ordK * ($ordK + $ord));
 					$fResult += $fTerm;
-				} while ((abs($fTerm) > 1e-10) && (++$nK < 100));
+				} while ((abs($fTerm) > 1e-12) && (++$ordK < 100));
 			} else {
+				$f_2_PI = 2 * M_PI;
+
 				$fXAbs = abs($x);
 				$fResult = exp($fXAbs) / sqrt($f_2_PI * $fXAbs);
-				if (($n && 1) && ($x < 0)) {
+				if (($ord & 1) && ($x < 0)) {
 					$fResult = -$fResult;
 				}
 			}
-			return $fResult;
+			return (is_nan($fResult)) ? PHPExcel_Calculation_Functions::NaN() : $fResult;
 		}
 		return PHPExcel_Calculation_Functions::VALUE();
 	}	//	function BESSELI()
 
 
 	/**
-	 * BESSELJ
+	 *	BESSELJ
 	 *
-	 * Returns the Bessel function
+	 *	Returns the Bessel function
 	 *
-	 * @param	float		$x
-	 * @param	float		$n
-	 * @return	int
+	 *	Excel Function:
+	 *		BESSELJ(x,ord)
+	 *
+	 *	@access	public
+	 *	@category Engineering Functions
+	 *	@param	float		$x		The value at which to evaluate the function.
+	 *								If x is nonnumeric, BESSELJ returns the #VALUE! error value.
+	 *	@param	integer		$ord	The order of the Bessel function. If n is not an integer, it is truncated.
+	 *								If $ord is nonnumeric, BESSELJ returns the #VALUE! error value.
+	 *								If $ord < 0, BESSELJ returns the #NUM! error value.
+	 *	@return	float
+	 *
 	 */
-	public static function BESSELJ($x, $n) {
+	public static function BESSELJ($x, $ord) {
 		$x	= (is_null($x))	? 0.0 :	PHPExcel_Calculation_Functions::flattenSingleValue($x);
-		$n	= (is_null($n))	? 0.0 :	PHPExcel_Calculation_Functions::flattenSingleValue($n);
+		$ord	= (is_null($ord))	? 0.0 :	PHPExcel_Calculation_Functions::flattenSingleValue($ord);
 
-		if ((is_numeric($x)) && (is_numeric($n))) {
-			$n	= floor($n);
-			if ($n < 0) {
+		if ((is_numeric($x)) && (is_numeric($ord))) {
+			$ord	= floor($ord);
+			if ($ord < 0) {
 				return PHPExcel_Calculation_Functions::NaN();
 			}
-			$f_PI_DIV_2 = M_PI / 2;
-			$f_PI_DIV_4 = M_PI / 4;
 
 			$fResult = 0;
 			if (abs($x) <= 30) {
-				$fTerm = pow($x / 2, $n) / PHPExcel_Calculation_MathTrig::FACT($n);
-				$nK = 1;
-				$fResult = $fTerm;
+				$fResult = $fTerm = pow($x / 2, $ord) / PHPExcel_Calculation_MathTrig::FACT($ord);
+				$ordK = 1;
 				$fSqrX = ($x * $x) / -4;
 				do {
 					$fTerm *= $fSqrX;
-					$fTerm /= ($nK * ($nK + $n));
+					$fTerm /= ($ordK * ($ordK + $ord));
 					$fResult += $fTerm;
-				} while ((abs($fTerm) > 1e-10) && (++$nK < 100));
+				} while ((abs($fTerm) > 1e-12) && (++$ordK < 100));
 			} else {
+				$f_PI_DIV_2 = M_PI / 2;
+				$f_PI_DIV_4 = M_PI / 4;
+
 				$fXAbs = abs($x);
-				$fResult = sqrt(M_2DIVPI / $fXAbs) * cos($fXAbs - $n * $f_PI_DIV_2 - $f_PI_DIV_4);
-				if (($n && 1) && ($x < 0)) {
+				$fResult = sqrt(M_2DIVPI / $fXAbs) * cos($fXAbs - $ord * $f_PI_DIV_2 - $f_PI_DIV_4);
+				if (($ord & 1) && ($x < 0)) {
 					$fResult = -$fResult;
 				}
 			}
-			return $fResult;
+			return (is_nan($fResult)) ? PHPExcel_Calculation_Functions::NaN() : $fResult;
 		}
 		return PHPExcel_Calculation_Functions::VALUE();
 	}	//	function BESSELJ()
@@ -862,13 +913,23 @@ class PHPExcel_Calculation_Engineering {
 
 
 	/**
-	 * BESSELK
+	 *	BESSELK
 	 *
-	 * Returns the modified Bessel function, which is equivalent to the Bessel functions evaluated for purely imaginary arguments.
+	 *	Returns the modified Bessel function Kn(x), which is equivalent to the Bessel functions evaluated
+	 *		for purely imaginary arguments.
 	 *
-	 * @param	float		$x
-	 * @param	float		$ord
-	 * @return	float
+	 *	Excel Function:
+	 *		BESSELK(x,ord)
+	 *
+	 *	@access	public
+	 *	@category Engineering Functions
+	 *	@param	float		$x		The value at which to evaluate the function.
+	 *								If x is nonnumeric, BESSELK returns the #VALUE! error value.
+	 *	@param	integer		$ord	The order of the Bessel function. If n is not an integer, it is truncated.
+	 *								If $ord is nonnumeric, BESSELK returns the #VALUE! error value.
+	 *								If $ord < 0, BESSELK returns the #NUM! error value.
+	 *	@return	float
+	 *
 	 */
 	public static function BESSELK($x, $ord) {
 		$x		= (is_null($x))		? 0.0 :	PHPExcel_Calculation_Functions::flattenSingleValue($x);
@@ -893,7 +954,7 @@ class PHPExcel_Calculation_Engineering {
 								$fBk	= $fBkp;
 							}
 			}
-			return $fBk;
+			return (is_nan($fBk)) ? PHPExcel_Calculation_Functions::NaN() : $fBk;
 		}
 		return PHPExcel_Calculation_Functions::VALUE();
 	}	//	function BESSELK()
@@ -904,14 +965,14 @@ class PHPExcel_Calculation_Engineering {
 			$y = ($fNum * $fNum);
 			$f1 = -2957821389.0 + $y * (7062834065.0 + $y * (-512359803.6 + $y * (10879881.29 + $y * (-86327.92757 + $y * 228.4622733))));
 			$f2 = 40076544269.0 + $y * (745249964.8 + $y * (7189466.438 + $y * (47447.26470 + $y * (226.1030244 + $y))));
-			$fRet = $f1 / $f2 + M_2DIVPI * self::BESSELJ($fNum, 0) * log($fNum);
+			$fRet = $f1 / $f2 + 0.636619772 * self::BESSELJ($fNum, 0) * log($fNum);
 		} else {
 			$z = 8.0 / $fNum;
 			$y = ($z * $z);
 			$xx = $fNum - 0.785398164;
 			$f1 = 1 + $y * (-0.1098628627e-2 + $y * (0.2734510407e-4 + $y * (-0.2073370639e-5 + $y * 0.2093887211e-6)));
 			$f2 = -0.1562499995e-1 + $y * (0.1430488765e-3 + $y * (-0.6911147651e-5 + $y * (0.7621095161e-6 + $y * (-0.934945152e-7))));
-			$fRet = sqrt(M_2DIVPI / $fNum) * (sin($xx) * $f1 + $z * cos($xx) * $f2);
+			$fRet = sqrt(0.636619772 / $fNum) * (sin($xx) * $f1 + $z * cos($xx) * $f2);
 		}
 		return $fRet;
 	}	//	function _Bessely0()
@@ -924,29 +985,31 @@ class PHPExcel_Calculation_Engineering {
 				(-0.4237922726e7 + $y * 0.8511937935e4)))));
 			$f2 = 0.2499580570e14 + $y * (0.4244419664e12 + $y * (0.3733650367e10 + $y * (0.2245904002e8 + $y *
 				(0.1020426050e6 + $y * (0.3549632885e3 + $y)))));
-			$fRet = $f1 / $f2 + M_2DIVPI * ( self::BESSELJ($fNum, 1) * log($fNum) - 1 / $fNum);
+			$fRet = $f1 / $f2 + 0.636619772 * ( self::BESSELJ($fNum, 1) * log($fNum) - 1 / $fNum);
 		} else {
-			$z = 8.0 / $fNum;
-			$y = ($z * $z);
-			$xx = $fNum - 2.356194491;
-			$f1 = 1 + $y * (0.183105e-2 + $y * (-0.3516396496e-4 + $y * (0.2457520174e-5 + $y * (-0.240337019e6))));
-			$f2 = 0.04687499995 + $y * (-0.2002690873e-3 + $y * (0.8449199096e-5 + $y * (-0.88228987e-6 + $y * 0.105787412e-6)));
-			$fRet = sqrt(M_2DIVPI / $fNum) * (sin($xx) * $f1 + $z * cos($xx) * $f2);
-			#i12430# ...but this seems to work much better.
-//			$fRet = sqrt(M_2DIVPI / $fNum) * sin($fNum - 2.356194491);
+			$fRet = sqrt(0.636619772 / $fNum) * sin($fNum - 2.356194491);
 		}
 		return $fRet;
 	}	//	function _Bessely1()
 
 
 	/**
-	 * BESSELY
+	 *	BESSELY
 	 *
-	 * Returns the Bessel function, which is also called the Weber function or the Neumann function.
+	 *	Returns the Bessel function, which is also called the Weber function or the Neumann function.
 	 *
-	 * @param	float		$x
-	 * @param	float		$n
-	 * @return	int
+	 *	Excel Function:
+	 *		BESSELY(x,ord)
+	 *
+	 *	@access	public
+	 *	@category Engineering Functions
+	 *	@param	float		$x		The value at which to evaluate the function.
+	 *								If x is nonnumeric, BESSELK returns the #VALUE! error value.
+	 *	@param	integer		$ord	The order of the Bessel function. If n is not an integer, it is truncated.
+	 *								If $ord is nonnumeric, BESSELK returns the #VALUE! error value.
+	 *								If $ord < 0, BESSELK returns the #NUM! error value.
+	 *
+	 *	@return	float
 	 */
 	public static function BESSELY($x, $ord) {
 		$x		= (is_null($x))		? 0.0 :	PHPExcel_Calculation_Functions::flattenSingleValue($x);
@@ -971,7 +1034,7 @@ class PHPExcel_Calculation_Engineering {
 								$fBy	= $fByp;
 							}
 			}
-			return $fBy;
+			return (is_nan($fBy)) ? PHPExcel_Calculation_Functions::NaN() : $fBy;
 		}
 		return PHPExcel_Calculation_Functions::VALUE();
 	}	//	function BESSELY()
@@ -980,9 +1043,19 @@ class PHPExcel_Calculation_Engineering {
 	/**
 	 * BINTODEC
 	 *
-	 * Return a binary value as Decimal.
+	 * Return a binary value as decimal.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		BIN2DEC(x)
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x		The binary number (as a string) that you want to convert. The number
+	 *								cannot contain more than 10 characters (10 bits). The most significant
+	 *								bit of number is the sign bit. The remaining 9 bits are magnitude bits.
+	 *								Negative numbers are represented using two's-complement notation.
+	 *								If number is not a valid binary number, or if number contains more than
+	 *								10 characters (10 bits), BIN2DEC returns the #NUM! error value.
 	 * @return	string
 	 */
 	public static function BINTODEC($x) {
@@ -1016,13 +1089,29 @@ class PHPExcel_Calculation_Engineering {
 	/**
 	 * BINTOHEX
 	 *
-	 * Return a binary value as Hex.
+	 * Return a binary value as hex.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		BIN2HEX(x[,places])
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x		The binary number (as a string) that you want to convert. The number
+	 *								cannot contain more than 10 characters (10 bits). The most significant
+	 *								bit of number is the sign bit. The remaining 9 bits are magnitude bits.
+	 *								Negative numbers are represented using two's-complement notation.
+	 *								If number is not a valid binary number, or if number contains more than
+	 *								10 characters (10 bits), BIN2HEX returns the #NUM! error value.
+	 * @param	integer		$places	The number of characters to use. If places is omitted, BIN2HEX uses the
+	 *								minimum number of characters necessary. Places is useful for padding the
+	 *								return value with leading 0s (zeros).
+	 *								If places is not an integer, it is truncated.
+	 *								If places is nonnumeric, BIN2HEX returns the #VALUE! error value.
+	 *								If places is negative, BIN2HEX returns the #NUM! error value.
 	 * @return	string
 	 */
-	public static function BINTOHEX($x, $places=null) {
-		$x	= floor(PHPExcel_Calculation_Functions::flattenSingleValue($x));
+	public static function BINTOHEX($x, $places=NULL) {
+		$x	= PHPExcel_Calculation_Functions::flattenSingleValue($x);
 		$places	= PHPExcel_Calculation_Functions::flattenSingleValue($places);
 
 		if (is_bool($x)) {
@@ -1054,13 +1143,29 @@ class PHPExcel_Calculation_Engineering {
 	/**
 	 * BINTOOCT
 	 *
-	 * Return a binary value as Octal.
+	 * Return a binary value as octal.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		BIN2OCT(x[,places])
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x		The binary number (as a string) that you want to convert. The number
+	 *								cannot contain more than 10 characters (10 bits). The most significant
+	 *								bit of number is the sign bit. The remaining 9 bits are magnitude bits.
+	 *								Negative numbers are represented using two's-complement notation.
+	 *								If number is not a valid binary number, or if number contains more than
+	 *								10 characters (10 bits), BIN2OCT returns the #NUM! error value.
+	 * @param	integer		$places	The number of characters to use. If places is omitted, BIN2OCT uses the
+	 *								minimum number of characters necessary. Places is useful for padding the
+	 *								return value with leading 0s (zeros).
+	 *								If places is not an integer, it is truncated.
+	 *								If places is nonnumeric, BIN2OCT returns the #VALUE! error value.
+	 *								If places is negative, BIN2OCT returns the #NUM! error value.
 	 * @return	string
 	 */
-	public static function BINTOOCT($x, $places=null) {
-		$x	= floor(PHPExcel_Calculation_Functions::flattenSingleValue($x));
+	public static function BINTOOCT($x, $places=NULL) {
+		$x	= PHPExcel_Calculation_Functions::flattenSingleValue($x);
 		$places	= PHPExcel_Calculation_Functions::flattenSingleValue($places);
 
 		if (is_bool($x)) {
@@ -1092,12 +1197,32 @@ class PHPExcel_Calculation_Engineering {
 	/**
 	 * DECTOBIN
 	 *
-	 * Return an octal value as binary.
+	 * Return a decimal value as binary.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		DEC2BIN(x[,places])
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x		The decimal integer you want to convert. If number is negative,
+	 *								valid place values are ignored and DEC2BIN returns a 10-character
+	 *								(10-bit) binary number in which the most significant bit is the sign
+	 *								bit. The remaining 9 bits are magnitude bits. Negative numbers are
+	 *								represented using two's-complement notation.
+	 *								If number < -512 or if number > 511, DEC2BIN returns the #NUM! error
+	 *								value.
+	 *								If number is nonnumeric, DEC2BIN returns the #VALUE! error value.
+	 *								If DEC2BIN requires more than places characters, it returns the #NUM!
+	 *								error value.
+	 * @param	integer		$places	The number of characters to use. If places is omitted, DEC2BIN uses
+	 *								the minimum number of characters necessary. Places is useful for
+	 *								padding the return value with leading 0s (zeros).
+	 *								If places is not an integer, it is truncated.
+	 *								If places is nonnumeric, DEC2BIN returns the #VALUE! error value.
+	 *								If places is zero or negative, DEC2BIN returns the #NUM! error value.
 	 * @return	string
 	 */
-	public static function DECTOBIN($x, $places=null) {
+	public static function DECTOBIN($x, $places=NULL) {
 		$x	= PHPExcel_Calculation_Functions::flattenSingleValue($x);
 		$places	= PHPExcel_Calculation_Functions::flattenSingleValue($places);
 
@@ -1128,9 +1253,29 @@ class PHPExcel_Calculation_Engineering {
 	/**
 	 * DECTOHEX
 	 *
-	 * Return an octal value as binary.
+	 * Return a decimal value as hex.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		DEC2HEX(x[,places])
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x		The decimal integer you want to convert. If number is negative,
+	 *								places is ignored and DEC2HEX returns a 10-character (40-bit)
+	 *								hexadecimal number in which the most significant bit is the sign
+	 *								bit. The remaining 39 bits are magnitude bits. Negative numbers
+	 *								are represented using two's-complement notation.
+	 *								If number < -549,755,813,888 or if number > 549,755,813,887,
+	 *								DEC2HEX returns the #NUM! error value.
+	 *								If number is nonnumeric, DEC2HEX returns the #VALUE! error value.
+	 *								If DEC2HEX requires more than places characters, it returns the
+	 *								#NUM! error value.
+	 * @param	integer		$places	The number of characters to use. If places is omitted, DEC2HEX uses
+	 *								the minimum number of characters necessary. Places is useful for
+	 *								padding the return value with leading 0s (zeros).
+	 *								If places is not an integer, it is truncated.
+	 *								If places is nonnumeric, DEC2HEX returns the #VALUE! error value.
+	 *								If places is zero or negative, DEC2HEX returns the #NUM! error value.
 	 * @return	string
 	 */
 	public static function DECTOHEX($x, $places=null) {
@@ -1162,9 +1307,29 @@ class PHPExcel_Calculation_Engineering {
 	/**
 	 * DECTOOCT
 	 *
-	 * Return an octal value as binary.
+	 * Return an decimal value as octal.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		DEC2OCT(x[,places])
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x		The decimal integer you want to convert. If number is negative,
+	 *								places is ignored and DEC2OCT returns a 10-character (30-bit)
+	 *								octal number in which the most significant bit is the sign bit.
+	 *								The remaining 29 bits are magnitude bits. Negative numbers are
+	 *								represented using two's-complement notation.
+	 *								If number < -536,870,912 or if number > 536,870,911, DEC2OCT
+	 *								returns the #NUM! error value.
+	 *								If number is nonnumeric, DEC2OCT returns the #VALUE! error value.
+	 *								If DEC2OCT requires more than places characters, it returns the
+	 *								#NUM! error value.
+	 * @param	integer		$places	The number of characters to use. If places is omitted, DEC2OCT uses
+	 *								the minimum number of characters necessary. Places is useful for
+	 *								padding the return value with leading 0s (zeros).
+	 *								If places is not an integer, it is truncated.
+	 *								If places is nonnumeric, DEC2OCT returns the #VALUE! error value.
+	 *								If places is zero or negative, DEC2OCT returns the #NUM! error value.
 	 * @return	string
 	 */
 	public static function DECTOOCT($x, $places=null) {
@@ -1198,7 +1363,30 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Return a hex value as binary.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		HEX2BIN(x[,places])
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x			the hexadecimal number you want to convert. Number cannot
+	 *									contain more than 10 characters. The most significant bit of
+	 *									number is the sign bit (40th bit from the right). The remaining
+	 *									9 bits are magnitude bits. Negative numbers are represented
+	 *									using two's-complement notation.
+	 *									If number is negative, HEX2BIN ignores places and returns a
+	 *									10-character binary number.
+	 *									If number is negative, it cannot be less than FFFFFFFE00, and
+	 *									if number is positive, it cannot be greater than 1FF.
+	 *									If number is not a valid hexadecimal number, HEX2BIN returns
+	 *									the #NUM! error value.
+	 *									If HEX2BIN requires more than places characters, it returns
+	 *									the #NUM! error value.
+	 * @param	integer		$places		The number of characters to use. If places is omitted,
+	 *									HEX2BIN uses the minimum number of characters necessary. Places
+	 *									is useful for padding the return value with leading 0s (zeros).
+	 *									If places is not an integer, it is truncated.
+	 *									If places is nonnumeric, HEX2BIN returns the #VALUE! error value.
+	 *									If places is negative, HEX2BIN returns the #NUM! error value.
 	 * @return	string
 	 */
 	public static function HEXTOBIN($x, $places=null) {
@@ -1221,9 +1409,20 @@ class PHPExcel_Calculation_Engineering {
 	/**
 	 * HEXTODEC
 	 *
-	 * Return a hex value as octal.
+	 * Return a hex value as decimal.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		HEX2DEC(x)
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x		The hexadecimal number you want to convert. This number cannot
+	 *								contain more than 10 characters (40 bits). The most significant
+	 *								bit of number is the sign bit. The remaining 39 bits are magnitude
+	 *								bits. Negative numbers are represented using two's-complement
+	 *								notation.
+	 *								If number is not a valid hexadecimal number, HEX2DEC returns the
+	 *								#NUM! error value.
 	 * @return	string
 	 */
 	public static function HEXTODEC($x) {
@@ -1245,7 +1444,31 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Return a hex value as octal.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		HEX2OCT(x[,places])
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x			The hexadecimal number you want to convert. Number cannot
+	 *									contain more than 10 characters. The most significant bit of
+	 *									number is the sign bit. The remaining 39 bits are magnitude
+	 *									bits. Negative numbers are represented using two's-complement
+	 *									notation.
+	 *									If number is negative, HEX2OCT ignores places and returns a
+	 *									10-character octal number.
+	 *									If number is negative, it cannot be less than FFE0000000, and
+	 *									if number is positive, it cannot be greater than 1FFFFFFF.
+	 *									If number is not a valid hexadecimal number, HEX2OCT returns
+	 *									the #NUM! error value.
+	 *									If HEX2OCT requires more than places characters, it returns
+	 *									the #NUM! error value.
+	 * @param	integer		$places		The number of characters to use. If places is omitted, HEX2OCT
+	 *									uses the minimum number of characters necessary. Places is
+	 *									useful for padding the return value with leading 0s (zeros).
+	 *									If places is not an integer, it is truncated.
+	 *									If places is nonnumeric, HEX2OCT returns the #VALUE! error
+	 *									value.
+	 *									If places is negative, HEX2OCT returns the #NUM! error value.
 	 * @return	string
 	 */
 	public static function HEXTOOCT($x, $places=null) {
@@ -1270,7 +1493,33 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Return an octal value as binary.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		OCT2BIN(x[,places])
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x			The octal number you want to convert. Number may not
+	 *									contain more than 10 characters. The most significant
+	 *									bit of number is the sign bit. The remaining 29 bits
+	 *									are magnitude bits. Negative numbers are represented
+	 *									using two's-complement notation.
+	 *									If number is negative, OCT2BIN ignores places and returns
+	 *									a 10-character binary number.
+	 *									If number is negative, it cannot be less than 7777777000,
+	 *									and if number is positive, it cannot be greater than 777.
+	 *									If number is not a valid octal number, OCT2BIN returns
+	 *									the #NUM! error value.
+	 *									If OCT2BIN requires more than places characters, it
+	 *									returns the #NUM! error value.
+	 * @param	integer		$places		The number of characters to use. If places is omitted,
+	 *									OCT2BIN uses the minimum number of characters necessary.
+	 *									Places is useful for padding the return value with
+	 *									leading 0s (zeros).
+	 *									If places is not an integer, it is truncated.
+	 *									If places is nonnumeric, OCT2BIN returns the #VALUE!
+	 *									error value.
+	 *									If places is negative, OCT2BIN returns the #NUM! error
+	 *									value.
 	 * @return	string
 	 */
 	public static function OCTTOBIN($x, $places=null) {
@@ -1293,9 +1542,20 @@ class PHPExcel_Calculation_Engineering {
 	/**
 	 * OCTTODEC
 	 *
-	 * Return an octal value as binary.
+	 * Return an octal value as decimal.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		OCT2DEC(x)
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x		The octal number you want to convert. Number may not contain
+	 *								more than 10 octal characters (30 bits). The most significant
+	 *								bit of number is the sign bit. The remaining 29 bits are
+	 *								magnitude bits. Negative numbers are represented using
+	 *								two's-complement notation.
+	 *								If number is not a valid octal number, OCT2DEC returns the
+	 *								#NUM! error value.
 	 * @return	string
 	 */
 	public static function OCTTODEC($x) {
@@ -1317,7 +1577,28 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Return an octal value as hex.
 	 *
-	 * @param	string		$x
+	 * Excel Function:
+	 *		OCT2HEX(x[,places])
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$x			The octal number you want to convert. Number may not contain
+	 *									more than 10 octal characters (30 bits). The most significant
+	 *									bit of number is the sign bit. The remaining 29 bits are
+	 *									magnitude bits. Negative numbers are represented using
+	 *									two's-complement notation.
+	 *									If number is negative, OCT2HEX ignores places and returns a
+	 *									10-character hexadecimal number.
+	 *									If number is not a valid octal number, OCT2HEX returns the
+	 *									#NUM! error value.
+	 *									If OCT2HEX requires more than places characters, it returns
+	 *									the #NUM! error value.
+	 * @param	integer		$places		The number of characters to use. If places is omitted, OCT2HEX
+	 *									uses the minimum number of characters necessary. Places is useful
+	 *									for padding the return value with leading 0s (zeros).
+	 *									If places is not an integer, it is truncated.
+	 *									If places is nonnumeric, OCT2HEX returns the #VALUE! error value.
+	 *									If places is negative, OCT2HEX returns the #NUM! error value.
 	 * @return	string
 	 */
 	public static function OCTTOHEX($x, $places=null) {
@@ -1340,20 +1621,29 @@ class PHPExcel_Calculation_Engineering {
 	/**
 	 * COMPLEX
 	 *
-	 * returns a complex number of the form x + yi or x + yj.
+	 * Converts real and imaginary coefficients into a complex number of the form x + yi or x + yj.
 	 *
-	 * @param	float		$realNumber
-	 * @param	float		$imaginary
-	 * @param	string		$suffix
+	 * Excel Function:
+	 *		COMPLEX(realNumber,imaginary[,places])
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	float		$realNumber		The real coefficient of the complex number.
+	 * @param	float		$imaginary		The imaginary coefficient of the complex number.
+	 * @param	string		$suffix			The suffix for the imaginary component of the complex number.
+	 *										If omitted, the suffix is assumed to be "i".
 	 * @return	string
 	 */
 	public static function COMPLEX($realNumber=0.0, $imaginary=0.0, $suffix='i') {
-		$realNumber	= (is_null($realNumber))	? 0.0 :	(float) PHPExcel_Calculation_Functions::flattenSingleValue($realNumber);
-		$imaginary	= (is_null($imaginary))		? 0.0 :	(float) PHPExcel_Calculation_Functions::flattenSingleValue($imaginary);
+		$realNumber	= (is_null($realNumber))	? 0.0 :	PHPExcel_Calculation_Functions::flattenSingleValue($realNumber);
+		$imaginary	= (is_null($imaginary))		? 0.0 :	PHPExcel_Calculation_Functions::flattenSingleValue($imaginary);
 		$suffix		= (is_null($suffix))		? 'i' :	PHPExcel_Calculation_Functions::flattenSingleValue($suffix);
 
 		if (((is_numeric($realNumber)) && (is_numeric($imaginary))) &&
 			(($suffix == 'i') || ($suffix == 'j') || ($suffix == ''))) {
+			$realNumber	= (float) $realNumber;
+			$imaginary	= (float) $imaginary;
+
 			if ($suffix == '') $suffix = 'i';
 			if ($realNumber == 0.0) {
 				if ($imaginary == 0.0) {
@@ -1384,16 +1674,19 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the imaginary coefficient of a complex number in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber
-	 * @return	real
+	 * Excel Function:
+	 *		IMAGINARY(complexNumber)
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$complexNumber	The complex number for which you want the imaginary
+	 * 										coefficient.
+	 * @return	float
 	 */
 	public static function IMAGINARY($complexNumber) {
 		$complexNumber	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
 		return $parsedComplex['imaginary'];
 	}	//	function IMAGINARY()
 
@@ -1403,16 +1696,18 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the real coefficient of a complex number in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber
-	 * @return	real
+	 * Excel Function:
+	 *		IMREAL(complexNumber)
+	 *
+	 * @access	public
+	 * @category Engineering Functions
+	 * @param	string		$complexNumber	The complex number for which you want the real coefficient.
+	 * @return	float
 	 */
 	public static function IMREAL($complexNumber) {
 		$complexNumber	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
 		return $parsedComplex['real'];
 	}	//	function IMREAL()
 
@@ -1422,16 +1717,17 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the absolute value (modulus) of a complex number in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber
-	 * @return	real
+	 * Excel Function:
+	 *		IMABS(complexNumber)
+	 *
+	 * @param	string		$complexNumber	The complex number for which you want the absolute value.
+	 * @return	float
 	 */
 	public static function IMABS($complexNumber) {
 		$complexNumber	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
+
 		return sqrt(($parsedComplex['real'] * $parsedComplex['real']) + ($parsedComplex['imaginary'] * $parsedComplex['imaginary']));
 	}	//	function IMABS()
 
@@ -1439,18 +1735,19 @@ class PHPExcel_Calculation_Engineering {
 	/**
 	 * IMARGUMENT
 	 *
-	 * Returns the argument theta of a complex number, i.e. the angle in radians from the real axis to the representation of the number in polar coordinates.
+	 * Returns the argument theta of a complex number, i.e. the angle in radians from the real
+	 * axis to the representation of the number in polar coordinates.
 	 *
-	 * @param	string		$complexNumber
-	 * @return	string
+	 * Excel Function:
+	 *		IMARGUMENT(complexNumber)
+	 *
+	 * @param	string		$complexNumber	The complex number for which you want the argument theta.
+	 * @return	float
 	 */
 	public static function IMARGUMENT($complexNumber) {
 		$complexNumber	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
 
 		if ($parsedComplex['real'] == 0.0) {
 			if ($parsedComplex['imaginary'] == 0.0) {
@@ -1475,7 +1772,10 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the complex conjugate of a complex number in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber
+	 * Excel Function:
+	 *		IMCONJUGATE(complexNumber)
+	 *
+	 * @param	string		$complexNumber	The complex number for which you want the conjugate.
 	 * @return	string
 	 */
 	public static function IMCONJUGATE($complexNumber) {
@@ -1483,14 +1783,14 @@ class PHPExcel_Calculation_Engineering {
 
 		$parsedComplex = self::_parseComplex($complexNumber);
 
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
-
 		if ($parsedComplex['imaginary'] == 0.0) {
 			return $parsedComplex['real'];
 		} else {
-			return self::_cleanComplex(self::COMPLEX($parsedComplex['real'], 0 - $parsedComplex['imaginary'], $parsedComplex['suffix']));
+			return self::_cleanComplex( self::COMPLEX( $parsedComplex['real'],
+													   0 - $parsedComplex['imaginary'],
+													   $parsedComplex['suffix']
+													 )
+									  );
 		}
 	}	//	function IMCONJUGATE()
 
@@ -1500,16 +1800,16 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the cosine of a complex number in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber
-	 * @return	string
+	 * Excel Function:
+	 *		IMCOS(complexNumber)
+	 *
+	 * @param	string		$complexNumber	The complex number for which you want the cosine.
+	 * @return	string|float
 	 */
 	public static function IMCOS($complexNumber) {
 		$complexNumber	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
 
 		if ($parsedComplex['imaginary'] == 0.0) {
 			return cos($parsedComplex['real']);
@@ -1524,16 +1824,16 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the sine of a complex number in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber
-	 * @return	string
+	 * Excel Function:
+	 *		IMSIN(complexNumber)
+	 *
+	 * @param	string		$complexNumber	The complex number for which you want the sine.
+	 * @return	string|float
 	 */
 	public static function IMSIN($complexNumber) {
 		$complexNumber	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
 
 		if ($parsedComplex['imaginary'] == 0.0) {
 			return sin($parsedComplex['real']);
@@ -1548,16 +1848,16 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the square root of a complex number in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber
+	 * Excel Function:
+	 *		IMSQRT(complexNumber)
+	 *
+	 * @param	string		$complexNumber	The complex number for which you want the square root.
 	 * @return	string
 	 */
 	public static function IMSQRT($complexNumber) {
 		$complexNumber	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
 
 		$theta = self::IMARGUMENT($complexNumber);
 		$d1 = cos($theta / 2);
@@ -1577,16 +1877,16 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the natural logarithm of a complex number in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber
+	 * Excel Function:
+	 *		IMLN(complexNumber)
+	 *
+	 * @param	string		$complexNumber	The complex number for which you want the natural logarithm.
 	 * @return	string
 	 */
 	public static function IMLN($complexNumber) {
 		$complexNumber	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
 
 		if (($parsedComplex['real'] == 0.0) && ($parsedComplex['imaginary'] == 0.0)) {
 			return PHPExcel_Calculation_Functions::NaN();
@@ -1608,16 +1908,16 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the common logarithm (base 10) of a complex number in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber
+	 * Excel Function:
+	 *		IMLOG10(complexNumber)
+	 *
+	 * @param	string		$complexNumber	The complex number for which you want the common logarithm.
 	 * @return	string
 	 */
 	public static function IMLOG10($complexNumber) {
 		$complexNumber	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
 
 		if (($parsedComplex['real'] == 0.0) && ($parsedComplex['imaginary'] == 0.0)) {
 			return PHPExcel_Calculation_Functions::NaN();
@@ -1634,16 +1934,16 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the common logarithm (base 10) of a complex number in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber
+	 * Excel Function:
+	 *		IMLOG2(complexNumber)
+	 *
+	 * @param	string		$complexNumber	The complex number for which you want the base-2 logarithm.
 	 * @return	string
 	 */
 	public static function IMLOG2($complexNumber) {
 		$complexNumber	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
 
 		if (($parsedComplex['real'] == 0.0) && ($parsedComplex['imaginary'] == 0.0)) {
 			return PHPExcel_Calculation_Functions::NaN();
@@ -1660,16 +1960,16 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the exponential of a complex number in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber
+	 * Excel Function:
+	 *		IMEXP(complexNumber)
+	 *
+	 * @param	string		$complexNumber	The complex number for which you want the exponential.
 	 * @return	string
 	 */
 	public static function IMEXP($complexNumber) {
 		$complexNumber	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
 
 		if (($parsedComplex['real'] == 0.0) && ($parsedComplex['imaginary'] == 0.0)) {
 			return '1';
@@ -1692,7 +1992,11 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns a complex number in x + yi or x + yj text format raised to a power.
 	 *
-	 * @param	string		$complexNumber
+	 * Excel Function:
+	 *		IMPOWER(complexNumber,realNumber)
+	 *
+	 * @param	string		$complexNumber	The complex number you want to raise to a power.
+	 * @param	float		$realNumber		The power to which you want to raise the complex number.
 	 * @return	string
 	 */
 	public static function IMPOWER($complexNumber,$realNumber) {
@@ -1704,9 +2008,6 @@ class PHPExcel_Calculation_Engineering {
 		}
 
 		$parsedComplex = self::_parseComplex($complexNumber);
-		if (!is_array($parsedComplex)) {
-			return $parsedComplex;
-		}
 
 		$r = sqrt(($parsedComplex['real'] * $parsedComplex['real']) + ($parsedComplex['imaginary'] * $parsedComplex['imaginary']));
 		$rPower = pow($r,$realNumber);
@@ -1726,23 +2027,19 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the quotient of two complex numbers in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexDividend
-	 * @param	string		$complexDivisor
-	 * @return	real
+	 * Excel Function:
+	 *		IMDIV(complexDividend,complexDivisor)
+	 *
+	 * @param	string		$complexDividend	The complex numerator or dividend.
+	 * @param	string		$complexDivisor		The complex denominator or divisor.
+	 * @return	string
 	 */
 	public static function IMDIV($complexDividend,$complexDivisor) {
 		$complexDividend	= PHPExcel_Calculation_Functions::flattenSingleValue($complexDividend);
 		$complexDivisor	= PHPExcel_Calculation_Functions::flattenSingleValue($complexDivisor);
 
 		$parsedComplexDividend = self::_parseComplex($complexDividend);
-		if (!is_array($parsedComplexDividend)) {
-			return $parsedComplexDividend;
-		}
-
 		$parsedComplexDivisor = self::_parseComplex($complexDivisor);
-		if (!is_array($parsedComplexDivisor)) {
-			return $parsedComplexDividend;
-		}
 
 		if (($parsedComplexDividend['suffix'] != '') && ($parsedComplexDivisor['suffix'] != '') &&
 			($parsedComplexDividend['suffix'] != $parsedComplexDivisor['suffix'])) {
@@ -1774,23 +2071,19 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the difference of two complex numbers in x + yi or x + yj text format.
 	 *
-	 * @param	string		$complexNumber1
-	 * @param	string		$complexNumber2
-	 * @return	real
+	 * Excel Function:
+	 *		IMSUB(complexNumber1,complexNumber2)
+	 *
+	 * @param	string		$complexNumber1		The complex number from which to subtract complexNumber2.
+	 * @param	string		$complexNumber2		The complex number to subtract from complexNumber1.
+	 * @return	string
 	 */
 	public static function IMSUB($complexNumber1,$complexNumber2) {
 		$complexNumber1	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber1);
 		$complexNumber2	= PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber2);
 
 		$parsedComplex1 = self::_parseComplex($complexNumber1);
-		if (!is_array($parsedComplex1)) {
-			return $parsedComplex1;
-		}
-
 		$parsedComplex2 = self::_parseComplex($complexNumber2);
-		if (!is_array($parsedComplex2)) {
-			return $parsedComplex2;
-		}
 
 		if ((($parsedComplex1['suffix'] != '') && ($parsedComplex2['suffix'] != '')) &&
 			($parsedComplex1['suffix'] != $parsedComplex2['suffix'])) {
@@ -1811,8 +2104,11 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the sum of two or more complex numbers in x + yi or x + yj text format.
 	 *
-	 * @param	array of mixed		Data Series
-	 * @return	real
+	 * Excel Function:
+	 *		IMSUM(complexNumber[,complexNumber[,...]])
+	 *
+	 * @param	string		$complexNumber,...	Series of complex numbers to add
+	 * @return	string
 	 */
 	public static function IMSUM() {
 		// Return value
@@ -1823,9 +2119,6 @@ class PHPExcel_Calculation_Engineering {
 		$aArgs = PHPExcel_Calculation_Functions::flattenArray(func_get_args());
 		foreach ($aArgs as $arg) {
 			$parsedComplex = self::_parseComplex($arg);
-			if (!is_array($parsedComplex)) {
-				return $parsedComplex;
-			}
 
 			if ($activeSuffix == '') {
 				$activeSuffix = $parsedComplex['suffix'];
@@ -1847,8 +2140,11 @@ class PHPExcel_Calculation_Engineering {
 	 *
 	 * Returns the product of two or more complex numbers in x + yi or x + yj text format.
 	 *
-	 * @param	array of mixed		Data Series
-	 * @return	real
+	 * Excel Function:
+	 *		IMPRODUCT(complexNumber[,complexNumber[,...]])
+	 *
+	 * @param	string		$complexNumber,...	Series of complex numbers to multiply
+	 * @return	string
 	 */
 	public static function IMPRODUCT() {
 		// Return value
@@ -1859,9 +2155,7 @@ class PHPExcel_Calculation_Engineering {
 		$aArgs = PHPExcel_Calculation_Functions::flattenArray(func_get_args());
 		foreach ($aArgs as $arg) {
 			$parsedComplex = self::_parseComplex($arg);
-			if (!is_array($parsedComplex)) {
-				return $parsedComplex;
-			}
+
 			$workValue = $returnValue;
 			if (($parsedComplex['suffix'] != '') && ($activeSuffix == '')) {
 				$activeSuffix = $parsedComplex['suffix'];
@@ -1878,13 +2172,19 @@ class PHPExcel_Calculation_Engineering {
 
 
 	/**
-	 * DELTA
+	 *	DELTA
 	 *
-	 * Tests whether two values are equal. Returns 1 if number1 = number2; returns 0 otherwise.
+	 *	Tests whether two values are equal. Returns 1 if number1 = number2; returns 0 otherwise.
+	 *	Use this function to filter a set of values. For example, by summing several DELTA
+	 *	functions you calculate the count of equal pairs. This function is also known as the
+	 *	Kronecker Delta function.
 	 *
-	 * @param	float		$a
-	 * @param	float		$b
-	 * @return	int
+	 *	Excel Function:
+	 *		DELTA(a[,b])
+	 *
+	 *	@param	float		$a	The first number.
+	 *	@param	float		$b	The second number. If omitted, b is assumed to be zero.
+	 *	@return	int
 	 */
 	public static function DELTA($a, $b=0) {
 		$a	= PHPExcel_Calculation_Functions::flattenSingleValue($a);
@@ -1895,13 +2195,19 @@ class PHPExcel_Calculation_Engineering {
 
 
 	/**
-	 * GESTEP
+	 *	GESTEP
 	 *
-	 * Returns 1 if number = step; returns 0 (zero) otherwise
+	 *	Excel Function:
+	 *		GESTEP(number[,step])
 	 *
-	 * @param	float		$number
-	 * @param	float		$step
-	 * @return	int
+	 *	Returns 1 if number >= step; returns 0 (zero) otherwise
+	 *	Use this function to filter a set of values. For example, by summing several GESTEP
+	 *	functions you calculate the count of values that exceed a threshold.
+	 *
+	 *	@param	float		$number		The value to test against step.
+	 *	@param	float		$step		The threshold value.
+	 *									If you omit a value for step, GESTEP uses zero.
+	 *	@return	int
 	 */
 	public static function GESTEP($number, $step=0) {
 		$number	= PHPExcel_Calculation_Functions::flattenSingleValue($number);
@@ -1939,30 +2245,32 @@ class PHPExcel_Calculation_Engineering {
 
 
 	/**
-	 * ERF
+	 *	ERF
 	 *
-	 * Returns the error function integrated between lower_limit and upper_limit
+	 *	Returns the error function integrated between the lower and upper bound arguments.
 	 *
-	 * @param	float		$lower	lower bound for integrating ERF
-	 * @param	float		$upper	upper bound for integrating ERF.
+	 *	Note: In Excel 2007 or earlier, if you input a negative value for the upper or lower bound arguments,
+	 *			the function would return a #NUM! error. However, in Excel 2010, the function algorithm was
+	 *			improved, so that it can now calculate the function for both positive and negative ranges.
+	 *			PHPExcel follows Excel 2010 behaviour, and accepts nagative arguments.
+	 *
+	 *	Excel Function:
+	 *		ERF(lower[,upper])
+	 *
+	 *	@param	float		$lower	lower bound for integrating ERF
+	 *	@param	float		$upper	upper bound for integrating ERF.
 	 *								If omitted, ERF integrates between zero and lower_limit
-	 * @return	int
+	 *	@return	float
 	 */
-	public static function ERF($lower, $upper = null) {
+	public static function ERF($lower, $upper = NULL) {
 		$lower	= PHPExcel_Calculation_Functions::flattenSingleValue($lower);
 		$upper	= PHPExcel_Calculation_Functions::flattenSingleValue($upper);
 
 		if (is_numeric($lower)) {
-			if ($lower < 0) {
-				return PHPExcel_Calculation_Functions::NaN();
-			}
 			if (is_null($upper)) {
 				return self::_erfVal($lower);
 			}
 			if (is_numeric($upper)) {
-				if ($upper < 0) {
-					return PHPExcel_Calculation_Functions::NaN();
-				}
 				return self::_erfVal($upper) - self::_erfVal($lower);
 			}
 		}
@@ -2003,20 +2311,25 @@ class PHPExcel_Calculation_Engineering {
 
 
 	/**
-	 * ERFC
+	 *	ERFC
 	 *
-	 * Returns the complementary ERF function integrated between x and infinity
+	 *	Returns the complementary ERF function integrated between x and infinity
 	 *
-	 * @param	float		$x		The lower bound for integrating ERF
-	 * @return	int
+	 *	Note: In Excel 2007 or earlier, if you input a negative value for the lower bound argument,
+	 *		the function would return a #NUM! error. However, in Excel 2010, the function algorithm was
+	 *		improved, so that it can now calculate the function for both positive and negative x values.
+	 *			PHPExcel follows Excel 2010 behaviour, and accepts nagative arguments.
+	 *
+	 *	Excel Function:
+	 *		ERFC(x)
+	 *
+	 *	@param	float	$x	The lower bound for integrating ERFC
+	 *	@return	float
 	 */
 	public static function ERFC($x) {
-		$x	= PHPExcel_Calculation_Functions::flattenSingleValue($x);
+		$x = PHPExcel_Calculation_Functions::flattenSingleValue($x);
 
 		if (is_numeric($x)) {
-			if ($x < 0) {
-				return PHPExcel_Calculation_Functions::NaN();
-			}
 			return self::_erfcVal($x);
 		}
 		return PHPExcel_Calculation_Functions::VALUE();
@@ -2024,9 +2337,10 @@ class PHPExcel_Calculation_Engineering {
 
 
 	/**
-	 * getConversionGroups
+	 *	getConversionGroups
+	 *	Returns a list of the different conversion groups for UOM conversions
 	 *
-	 * @return	array
+	 *	@return	array
 	 */
 	public static function getConversionGroups() {
 		$conversionGroups = array();
@@ -2038,9 +2352,12 @@ class PHPExcel_Calculation_Engineering {
 
 
 	/**
-	 * getConversionGroupUnits
+	 *	getConversionGroupUnits
+	 *	Returns an array of units of measure, for a specified conversion group, or for all groups
 	 *
-	 * @return	array
+	 *	@param	string	$group	The group whose units of measure you want to retrieve
+	 *
+	 *	@return	array
 	 */
 	public static function getConversionGroupUnits($group = NULL) {
 		$conversionGroups = array();
@@ -2054,9 +2371,9 @@ class PHPExcel_Calculation_Engineering {
 
 
 	/**
-	 * getConversionGroupUnitDetails
+	 *	getConversionGroupUnitDetails
 	 *
-	 * @return	array
+	 *	@return	array
 	 */
 	public static function getConversionGroupUnitDetails($group = NULL) {
 		$conversionGroups = array();
@@ -2072,9 +2389,10 @@ class PHPExcel_Calculation_Engineering {
 
 
 	/**
-	 * getConversionGroups
+	 *	getConversionMultipliers
+	 *	Returns an array of the Multiplier prefixes that can be used with Units of Measure in CONVERTUOM()
 	 *
-	 * @return	array
+	 *	@return	array of mixed
 	 */
 	public static function getConversionMultipliers() {
 		return self::$_conversionMultipliers;
@@ -2082,12 +2400,20 @@ class PHPExcel_Calculation_Engineering {
 
 
 	/**
-	 * CONVERTUOM
+	 *	CONVERTUOM
 	 *
-	 * @param	float		$value
-	 * @param	string		$fromUOM
-	 * @param	string		$toUOM
-	 * @return	float
+	 *	Converts a number from one measurement system to another.
+	 *	For example, CONVERT can translate a table of distances in miles to a table of distances
+	 *	in kilometers.
+	 *
+	 *	Excel Function:
+	 *		CONVERT(value,fromUOM,toUOM)
+	 *
+	 *	@param	float		$value		The value in fromUOM to convert.
+	 *	@param	string		$fromUOM	The units for value.
+	 *	@param	string		$toUOM		The units for the result.
+	 *
+	 *	@return	float
 	 */
 	public static function CONVERTUOM($value, $fromUOM, $toUOM) {
 		$value		= PHPExcel_Calculation_Functions::flattenSingleValue($value);
@@ -2097,7 +2423,7 @@ class PHPExcel_Calculation_Engineering {
 		if (!is_numeric($value)) {
 			return PHPExcel_Calculation_Functions::VALUE();
 		}
-		$fromMultiplier = 1;
+		$fromMultiplier = 1.0;
 		if (isset(self::$_conversionUnits[$fromUOM])) {
 			$unitGroup1 = self::$_conversionUnits[$fromUOM]['Group'];
 		} else {
@@ -2116,7 +2442,7 @@ class PHPExcel_Calculation_Engineering {
 		}
 		$value *= $fromMultiplier;
 
-		$toMultiplier = 1;
+		$toMultiplier = 1.0;
 		if (isset(self::$_conversionUnits[$toUOM])) {
 			$unitGroup2 = self::$_conversionUnits[$toUOM]['Group'];
 		} else {
@@ -2137,12 +2463,14 @@ class PHPExcel_Calculation_Engineering {
 			return PHPExcel_Calculation_Functions::NA();
 		}
 
-		if ($fromUOM == $toUOM) {
-			return 1.0;
+		if (($fromUOM == $toUOM) && ($fromMultiplier == $toMultiplier)) {
+			//	We've already factored $fromMultiplier into the value, so we need
+			//		to reverse it again
+			return $value / $fromMultiplier;
 		} elseif ($unitGroup1 == 'Temperature') {
 			if (($fromUOM == 'F') || ($fromUOM == 'fah')) {
 				if (($toUOM == 'F') || ($toUOM == 'fah')) {
-					return 1.0;
+					return $value;
 				} else {
 					$value = (($value - 32) / 1.8);
 					if (($toUOM == 'K') || ($toUOM == 'kel')) {
@@ -2152,10 +2480,10 @@ class PHPExcel_Calculation_Engineering {
 				}
 			} elseif ((($fromUOM == 'K') || ($fromUOM == 'kel')) &&
 					  (($toUOM == 'K') || ($toUOM == 'kel'))) {
-						return 1.0;
+						return $value;
 			} elseif ((($fromUOM == 'C') || ($fromUOM == 'cel')) &&
 					  (($toUOM == 'C') || ($toUOM == 'cel'))) {
-					return 1.0;
+					return $value;
 			}
 			if (($toUOM == 'F') || ($toUOM == 'fah')) {
 				if (($fromUOM == 'K') || ($fromUOM == 'kel')) {

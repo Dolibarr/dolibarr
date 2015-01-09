@@ -1,10 +1,8 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
 About = Sobre
 CronAbout = Sobre Cron
 CronAboutPage = Sobre Cron
-
 # Right
 Permission23101 = Veure les tasques programades
 Permission23102 = Crear/Modificar les tasques programades
@@ -20,9 +18,8 @@ CronExplainHowToRunUnix=En un entorn Unix pot parametritzar crontab per executar
 CronExplainHowToRunWin=En un entorn Microsoft (tm) Windows pot utilitzar el planificador de tasques per llançar aquesta comanda cada minut
 # Menu
 CronJobs=Tasques programades
-CronListActive= Llistat de tasques planificades actives
-CronListInactive= Llistat de tasques planificades inactives
-CronListActive= Llistat de tasques planificades actives
+CronListActive=List of active/scheduled jobs
+CronListInactive=Llistat de tasques planificades inactives
 # Page list
 CronDateLastRun=Últim llançament
 CronLastOutput=Última sortida

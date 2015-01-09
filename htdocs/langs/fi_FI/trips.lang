@@ -19,3 +19,4 @@ TF_TRIP=Matka
 ListTripsAndExpenses=Luettelo matkat ja kulut
 ExpensesArea=Retket ja kulut alue
 SearchATripAndExpense=Etsi matka-ja kulut
+ClassifyRefunded=Classify 'Refunded'

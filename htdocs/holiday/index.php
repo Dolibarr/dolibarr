@@ -64,14 +64,25 @@ $search_employe  = GETPOST('search_employe');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
 
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_ref="";
+	$month_create="";
+	$year_create="";
+    $month_start="";
+	$year_start="";
+	$month_end="";
+	$year_end="";
+	$search_employe="";
+	$search_valideur="";
+	$search_statut="";
+}
 
 /*
  * Actions
  */
 
 // None
-
-
 
 /*
  * View
@@ -257,7 +268,7 @@ print_liste_field_titre($langs->trans("Employe"),$_SERVER["PHP_SELF"],"cp.fk_use
 print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Duration"));
+print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="center"',$sortfield,$sortorder);
 print '<td></td>';
 print "</tr>\n";
@@ -323,7 +334,8 @@ print '</td>';
 
 // ACTION
 print '<td align="right">';
-print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" alt="'.$langs->trans('Search').'">';
+print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 print '</td>';
 
 print "</tr>\n";
@@ -386,7 +398,7 @@ if ($user_id == $user->id)
 {
 	print '<br>';
 	print '<div style="float: right; margin-top: 8px;">';
-	print '<a href="./fiche.php?action=request" class="butAction">'.$langs->trans('AddCP').'</a>';
+	print '<a href="./card.php?action=request" class="butAction">'.$langs->trans('AddCP').'</a>';
 	print '</div>';
 }
 

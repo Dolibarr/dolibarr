@@ -73,12 +73,12 @@ class FormFile
         global $conf,$langs, $hookmanager;
         $hookmanager->initHooks(array('formfile'));
 
-        if (! empty($conf->browser->phone)) return 0;
+        if (! empty($conf->browser->layout) && $conf->browser->layout != 'classic') return 0;
 
 		if ((! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax) || ($useajax==2))
         {
-        	// TODO: Cheeck this works with 2 forms on same page
-        	// TODO: Cheeck this works with GED module, otherwise, force useajax to 0
+        	// TODO: Check this works with 2 forms on same page
+        	// TODO: Check this works with GED module, otherwise, force useajax to 0
         	// TODO: This does not support option savingdocmask
         	// TODO: This break feature to upload links too
         	return $this->_formAjaxFileUpload($object);
@@ -133,9 +133,10 @@ class FormFile
                 if ($perm)
                 {
                 	$langs->load('other');
-                    $out .= ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
-                    $out .= ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
-                    $out .= ')';
+                    //$out .= ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
+                    $out .= ' ';
+                    $out.=info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
+                    //$out .= ')';
                 }
             }
             else
@@ -270,7 +271,13 @@ class FormFile
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
-        $printer = (!empty($user->rights->printipp->read) && !empty($conf->printipp->enabled))?true:false;
+
+        $printer=0;
+        if (in_array($modulepart,array('facture','propal','proposal','order','commande')))	// This feature is implemented only for such elements
+        {
+        	$printer = (!empty($user->rights->printipp->read) && !empty($conf->printipp->enabled))?true:false;
+        }
+
         $hookmanager->initHooks(array('formfile'));
         $forname='builddoc';
         $out='';
@@ -300,6 +307,10 @@ class FormFile
                     include_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
                     $modellist=ModeleThirdPartyDoc::liste_modeles($this->db);
                 }
+            }
+        	else if ($modulepart == 'agenda')
+            {
+               null;
             }
             else if ($modulepart == 'propal')
             {
@@ -354,6 +365,15 @@ class FormFile
                     include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
                     $modellist=ModelePDFFactures::liste_modeles($this->db);
                 }
+            }
+            elseif ($modulepart == 'contract')
+            {
+            	if (is_array($genallowed)) $modellist=$genallowed;
+            	else
+            	{
+            		include_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
+            		$modellist=ModelePDFContract::liste_modeles($this->db);
+            	}
             }
             elseif ($modulepart == 'project')
             {
@@ -465,14 +485,14 @@ class FormFile
             // Model
             if (! empty($modellist))
             {
-                $out.= '<th align="center" class="formdoc liste_titre">';
+                $out.= '<th align="center" class="formdoc liste_titre maxwidthonsmartphone">';
                 $out.= '<span class="hideonsmartphone">'.$langs->trans('Model').' </span>';
                 if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
                 {
                     $arraykeys=array_keys($modellist);
                     $modelselected=$arraykeys[0];
                 }
-                $out.= $form->selectarray('model',$modellist,$modelselected,$showempty,0,0);
+                $out.= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', '');
                 $out.= '</th>';
             }
             else
@@ -483,7 +503,7 @@ class FormFile
             }
 
             // Language code (if multilang)
-            $out.= '<th align="center" class="formdoc liste_titre">';
+            $out.= '<th align="center" class="formdoc liste_titre maxwidthonsmartphone">';
             if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && ! $forcenomultilang && (! empty($modellist) || $showempty))
             {
                 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -499,7 +519,7 @@ class FormFile
 
             // Button
             $addcolumforpicto=($delallowed || $printer || $morepicto);
-            $out.= '<th align="center" colspan="'.($addcolumforpicto?'2':'1').'" class="formdocbutton liste_titre">';
+            $out.= '<th align="center" colspan="'.($addcolumforpicto?'2':'1').'" class="formdocbutton liste_titre maxwidthonsmartphone">';
             $genbutton = '<input class="button" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
             $genbutton.= ' type="submit" value="'.$buttonlabel.'"';
             if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $genbutton.= ' disabled="disabled"';
@@ -620,7 +640,7 @@ class FormFile
 
 			 	if (count($file_list) == 0 && $headershown)
 	            {
-    	        	$out.='<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
+    	        	$out.='<tr '.$bc[0].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
         	    }
 
                 $this->numoffiles++;
@@ -835,7 +855,7 @@ class FormFile
 			}
 			if ($nboffiles == 0)
 			{
-				print '<tr '.$bc[$var].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
+				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
 				if (empty($textifempty)) print $langs->trans("NoFileFound");
 				else print $textifempty;
 				print '</td></tr>';
@@ -936,6 +956,16 @@ class FormFile
         	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
         	$object_instance=new Project($this->db);
         }
+        else if ($modulepart == 'fichinter')
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+        	$object_instance=new Fichinter($this->db);
+        }
+        else if ($modulepart == 'user')
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+        	$object_instance=new User($this->db);
+        }
 
         $var=true;
         foreach($filearray as $key => $file)
@@ -962,10 +992,11 @@ class FormFile
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'product')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'tax')              { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'project')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'project')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'fichinter')        { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'user')             { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
 
                 if (! $id && ! $ref) continue;
-
                 $found=0;
                 if (! empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref]))
                 {
@@ -974,7 +1005,19 @@ class FormFile
                 else
                 {
                     //print 'Fetch '.$id." - ".$ref.'<br>';
-                    $result=$object_instance->fetch($id,$ref);
+
+                    if ($id) {
+                        $result = $object_instance->fetch($id);
+                    } else {
+                        //fetchOneLike looks for objects with wildcards in its reference.
+                        //It is useful for those masks who get underscores instead of their actual symbols
+                        //fetchOneLike requires some info in the object. If it doesn't have it, then 0 is returned
+                        //that's why we look only look fetchOneLike when fetch returns 0
+                        if (!$result = $object_instance->fetch('', $ref)) {
+                            $result = $object_instance->fetchOneLike($ref);
+                        }
+                    }
+
                     if ($result > 0)  { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance); }    // Save object into a cache
                     if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; unset($filearray[$key]); }
                 }
@@ -1011,7 +1054,7 @@ class FormFile
 
         if (count($filearray) == 0)
         {
-            print '<tr '.$bc[$var].'><td colspan="4">';
+            print '<tr '.$bc[false].'><td colspan="4">';
             if (empty($textifempty)) print $langs->trans("NoFileFound");
             else print $textifempty;
             print '</td></tr>';
@@ -1067,6 +1110,8 @@ class FormFile
         global $user, $conf, $langs, $user;
         global $bc;
         global $sortfield, $sortorder;
+
+        $langs->load("link");
 
         require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
         $link = new Link($this->db);
@@ -1176,7 +1221,7 @@ class FormFile
         }
         if ($nboflinks == 0)
         {
-            print '<tr ' . $bc[$var] . '><td colspan="5">';
+            print '<tr ' . $bc[false] . '><td colspan="5">';
             print $langs->trans("NoLinkFound");
             print '</td></tr>';
         }
