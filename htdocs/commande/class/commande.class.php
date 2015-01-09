@@ -676,12 +676,13 @@ class Commande extends CommonOrder
         $sql.= ", entity";
         $sql.= ")";
         $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
-        $sql.= ", ".($this->fk_project?$this->fk_project:"null");
+        $sql.= ", ".($this->fk_project>0?$this->fk_project:"null");
         $sql.= ", '".$this->db->idate($date)."'";
         $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
-        $sql.= ", '".$this->db->escape($this->ref_client)."'";
+        $sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
+        $sql.= ", ".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
         $sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
         $sql.= ", '".$this->modelpdf."'";
         $sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
