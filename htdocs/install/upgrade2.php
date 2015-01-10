@@ -363,7 +363,22 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
         	// Reload modules (this must be always and only into last targeted version)
-        	migrate_reload_modules($db,$langs,$conf);
+			$listofmodule=array(
+				    	'MAIN_MODULE_AGENDA',
+				    	'MAIN_MODULE_SOCIETE',
+				    	'MAIN_MODULE_PRODUIT',
+				    	'MAIN_MODULE_SERVICE',
+				    	'MAIN_MODULE_COMMANDE',
+				    	'MAIN_MODULE_FACTURE',
+				    	'MAIN_MODULE_FOURNISSEUR',
+				    	'MAIN_MODULE_USER',
+				    	'MAIN_MODULE_DEPLACEMENT',
+				    	'MAIN_MODULE_DON',
+				    	'MAIN_MODULE_ECM',
+				    	'MAIN_MODULE_PAYBOX',
+			    		'MAIN_MODULE_OPENSURVEY'
+	    	);
+        	migrate_reload_modules($db,$langs,$conf,$listofmodule);
 
         	// Reload menus (this must be always and only into last targeted version)
         	migrate_reload_menu($db,$langs,$conf,$versionto);
@@ -3666,7 +3681,9 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 
     foreach($listofmodule as $moduletoreload)
     {
-	    if (! empty($conf->global->MAIN_MODULE_AGENDA))
+    	if (empty($moduletoreload) || empty($conf->global->$moduletoreload)) continue;
+
+	    if ($moduletoreload == 'MAIN_MODULE_AGENDA')
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Agenda");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modAgenda.class.php';
@@ -3676,7 +3693,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init('newboxdefonly');
 	        }
 	    }
-	    if (! empty($conf->global->MAIN_MODULE_SOCIETE))
+	    if ($moduletoreload == 'MAIN_MODULE_SOCIETE')
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Societe");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';
@@ -3686,7 +3703,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init('newboxdefonly');
 	        }
 	    }
-	    if (! empty($conf->global->MAIN_MODULE_PRODUIT))    // Permission has changed into 2.7
+	    if ($moduletoreload == 'MAIN_MODULE_PRODUIT')    // Permission has changed into 2.7
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Produit");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modProduct.class.php';
@@ -3696,7 +3713,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init('newboxdefonly');
 	        }
 	    }
-	    if (! empty($conf->global->MAIN_MODULE_SERVICE))    // Permission has changed into 2.7
+	    if ($moduletoreload == 'MAIN_MODULE_SERVICE')    // Permission has changed into 2.7
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Service");
 	        if ($res) {
@@ -3706,7 +3723,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init('newboxdefonly');
 	        }
 	    }
-	    if (! empty($conf->global->MAIN_MODULE_COMMANDE))   // Permission has changed into 2.9
+	    if ($moduletoreload == 'MAIN_MODULE_COMMANDE')   // Permission has changed into 2.9
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Commande");
 	        if ($res) {
@@ -3716,7 +3733,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init('newboxdefonly');
 	        }
 	    }
-	    if (! empty($conf->global->MAIN_MODULE_FACTURE))    // Permission has changed into 2.9
+	    if ($moduletoreload == 'MAIN_MODULE_FACTURE')    // Permission has changed into 2.9
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Facture");
 	        if ($res) {
@@ -3726,7 +3743,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init('newboxdefonly');
 	        }
 	    }
-	    if (! empty($conf->global->MAIN_MODULE_FOURNISSEUR))    // Permission has changed into 2.9
+	    if ($moduletoreload == 'MAIN_MODULE_FOURNISSEUR')    // Permission has changed into 2.9
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Fournisseur");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
@@ -3737,7 +3754,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	        }
 	    }
 
-	    if (! empty($conf->global->MAIN_MODULE_USER))    // Permission has changed into 3.0
+	    if ($moduletoreload == 'MAIN_MODULE_USER')    // Permission has changed into 3.0
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module User");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modUser.class.php';
@@ -3747,7 +3764,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init('newboxdefonly');
 	        }
 	    }
-	    if (! empty($conf->global->MAIN_MODULE_DEPLACEMENT))    // Permission has changed into 3.0
+	    if ($moduletoreload == 'MAIN_MODULE_DEPLACEMENT')    // Permission has changed into 3.0
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Deplacement");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php';
@@ -3757,7 +3774,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init('newboxdefonly');
 	        }
 	    }
-	    if (! empty($conf->global->MAIN_MODULE_DON))    // Permission has changed into 3.0
+	    if ($moduletoreload == 'MAIN_MODULE_DON')    // Permission has changed into 3.0
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Don");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDon.class.php';
@@ -3767,7 +3784,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init('newboxdefonly');
 	        }
 	    }
-	    if (! empty($conf->global->MAIN_MODULE_ECM))    // Permission has changed into 3.0 and 3.1
+	    if ($moduletoreload == 'MAIN_MODULE_ECM')    // Permission has changed into 3.0 and 3.1
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ECM");
 	        if ($res) {
@@ -3777,7 +3794,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init('newboxdefonly');
 	        }
 	    }
-	    if (! empty($conf->global->MAIN_MODULE_PAYBOX))    // Permission has changed into 3.0
+	    if ($moduletoreload == 'MAIN_MODULE_PAYBOX')    // Permission has changed into 3.0
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Paybox");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php';
@@ -3787,7 +3804,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init('newboxdefonly');
 	        }
 	    }
-    	if (! empty($conf->global->MAIN_MODULE_OPENSURVEY))    // Permission has changed into 3.0
+    	if ($moduletoreload == 'MAIN_MODULE_OPENSURVEY')    // Permission has changed into 3.0
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Opensurvey");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modOpenSurvey.class.php';
