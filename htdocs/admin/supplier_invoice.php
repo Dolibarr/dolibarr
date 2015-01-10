@@ -278,18 +278,16 @@ foreach ($dirmodels as $reldir)
                         $htmltooltip='';
                         $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
                         $nextval=$module->getNextValue($mysoc,$invoice);
-                        if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                        {
-                            $htmltooltip.=''.$langs->trans("NextValue").': ';
-                            if ($nextval)
-                            {
-                                $htmltooltip.=$nextval.'<br>';
-                            }
-                            else
-                            {
-                                $htmltooltip.=$langs->trans($module->error).'<br>';
-                            }
-                        }
+                        if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured') $nextval = $langs->trans($nextval);
+						$htmltooltip.=''.$langs->trans("NextValue").': ';
+						if ($nextval)
+						{
+							$htmltooltip.=$nextval.'<br>';
+						}
+						else
+						{
+							$htmltooltip.=$langs->trans($module->error).'<br>';
+						}
 
                         print '<td align="center">';
                         print $form->textwithpicto('',$htmltooltip,1,0);
