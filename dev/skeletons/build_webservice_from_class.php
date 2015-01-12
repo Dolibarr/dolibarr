@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       dev/skeletons/build_webservice_from_class.php
+ *  \file       dev/skeletons/build_webservice_from_class.php
  *  \ingroup    core
  *  \brief      Create a complete webservice file from CRUD functions of a PHP class
  */
@@ -87,12 +87,11 @@ $properties=array_keys($values);
 // Read skeleton_class.class.php file
 $skeletonfile='skeleton_webservice_server.php';
 $sourcecontent=file_get_contents($skeletonfile);
-if (! $sourcecontent)
-{
-	print "\n";
-	print "Error: Failed to read skeleton sample '".$skeletonfile."'\n";
-	print "Try to run script from skeletons directory.\n";
-	exit;
+if (! $sourcecontent) {
+    print "\n";
+    print "Error: Failed to read skeleton sample '".$skeletonfile."'\n";
+    print "Try to run script from skeletons directory.\n";
+    exit;
 }
 
 // Define output variables
@@ -110,15 +109,14 @@ $varprop="\n";
 $cleanparam='';
 $i=0;
 
-while($i<count($properties))
-{
-		$varprop.="'".$properties[$i]."' => array('name'=>'".$properties[$i]."','type'=>'xsd:string')";
-		$i++;
+while($i<count($properties)) {
+    $varprop.="'".$properties[$i]."' => array('name'=>'".$properties[$i]."','type'=>'xsd:string')";
+    $i++;
 
-		if ($i == count($properties))
-			$varprop.="\n";
-		else
-			$varprop.=",\n";
+    if ($i == count($properties))
+        $varprop.="\n";
+    else
+        $varprop.=",\n";
 }
 
 $targetcontent=preg_replace('/\'prop1\'=>\'xxx\',/', $varprop, $targetcontent);
@@ -128,15 +126,14 @@ $varprop="\n";
 $cleanparam='';
 $i=0;
 
-while($i<count($properties))
-{
-		$varprop.="'".$properties[$i]."' => $".$classmin."->".$properties[$i];
+while($i<count($properties)) {
+    $varprop.="'".$properties[$i]."' => $".$classmin."->".$properties[$i];
 
-		$i++;
-		if ($i == count($properties))
-			$varprop.="\n";
-		else
-			$varprop.=",\n";
+    $i++;
+    if ($i == count($properties))
+        $varprop.="\n";
+    else
+        $varprop.=",\n";
 }
 
 $targetcontent=preg_replace('/\'prop1\'=>\$'.$classmin.'->prop1,/', $varprop, $targetcontent);
@@ -147,16 +144,15 @@ $varprop="\n\t\t";
 $cleanparam='';
 $i=0;
 
-while($i<count($properties))
-{
+while($i<count($properties)) {
 
-	$varprop.='$newobject->'.$properties[$i].'=$'.$classmin.'->'.$properties[$i].';';
+    $varprop.='$newobject->'.$properties[$i].'=$'.$classmin.'->'.$properties[$i].';';
 
-	$i++;
-	if ($i == count($properties))
-		$varprop.="\n";
-	else
-		$varprop.="\n\t\t";
+    $i++;
+    if ($i == count($properties))
+        $varprop.="\n";
+    else
+        $varprop.="\n\t\t";
 }
 $targetcontent=preg_replace('/\$newobject->prop1=\$'.$classmin.'->prop1;/', $varprop, $targetcontent);
 $targetcontent=preg_replace('/\$newobject->prop2=\$'.$classmin.'->prop2;/', '', $targetcontent);
@@ -165,13 +161,12 @@ $targetcontent=preg_replace('/\$newobject->prop2=\$'.$classmin.'->prop2;/', '', 
 
 // Build file
 $fp=fopen($outfile,"w");
-if ($fp)
-{
-	fputs($fp, $targetcontent);
-	fclose($fp);
-	print "File '".$outfile."' has been built in current directory.\n";
-}
-else $error++;
+if ($fp) {
+    fputs($fp, $targetcontent);
+    fclose($fp);
+    print "File '".$outfile."' has been built in current directory.\n";
+} else
+    $error++;
 
 // -------------------- END OF BUILD_CLASS_FROM_TABLE SCRIPT --------------------
 

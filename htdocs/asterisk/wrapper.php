@@ -16,16 +16,16 @@
  */
 
 /**
- *	\file       htdocs/asterisk/wrapper.php
+ *  \file       htdocs/asterisk/wrapper.php
  *  \brief      File that is entry point to call an Asterisk server
- *	\remarks	To be used, an Asterisk user must be created by adding this
- * 				in /etc/asterisk/manager.conf
- * 				[dolibarr]
- * 				secret = dolibarr
- * 				deny=0.0.0.0/0.0.0.0
- * 				permit=127.0.0.1/255.255.255.0
- * 				read = system,call,log,verbose,command,agent,user
- * 				write = system,call,log,verbose,command,agent,user
+ *  \remarks    To be used, an Asterisk user must be created by adding this
+ *              in /etc/asterisk/manager.conf
+ *              [dolibarr]
+ *              secret = dolibarr
+ *              deny=0.0.0.0/0.0.0.0
+ *              permit=127.0.0.1/255.255.255.0
+ *              read = system,call,log,verbose,command,agent,user
+ *              write = system,call,log,verbose,command,agent,user
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');
@@ -41,7 +41,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 /**
  * Empty header
  *
- * @return	none
+ * @return none
  */
 function llxHeader()
 {
@@ -50,10 +50,11 @@ function llxHeader()
     print '<title>Asterisk redirection from Dolibarr...</title>'."\n";
     print '</head>'."\n";
 }
+
 /**
  * Empty footer
  *
- * @return	none
+ * @return none
  */
 function llxFooter()
 {
@@ -66,8 +67,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 // Security check
-if (empty($conf->clicktodial->enabled))
-{
+if (empty($conf->clicktodial->enabled)) {
     accessforbidden();
     exit;
 }
@@ -114,16 +114,13 @@ llxHeader();
 
 $number=strtolower($called);
 $pos=strpos($number,"local");
-if (! empty($number))
-{
-    if ($pos===false)
-    {
+if (! empty($number)) {
+    if ($pos===false) {
         $errno=0;
         $errstr=0;
         $strCallerId = "Dolibarr <".strtolower($caller).">";
         $oSocket = @fsockopen($strHost, $port, $errno, $errstr, 10);
-        if (!$oSocket)
-        {
+        if (!$oSocket) {
             print '<body>'."\n";
             $txt="Failed to execute fsockopen($strHost, $port, \$errno, \$errstr, 10)<br>\n";
             print $txt;
@@ -132,9 +129,7 @@ if (! empty($number))
             print $txt;
             dol_syslog($txt,LOG_ERR);
             print '</body>'."\n";
-        }
-        else
-        {
+        } else {
             $txt="Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
             dol_syslog($txt);
             print '<body onload="javascript:history.go(-1);">'."\n";
@@ -156,8 +151,7 @@ if (! empty($number))
             print '</body>'."\n";
         }
     }
-}
-else {
+} else {
     print 'Bad parameters in URL. Must be '.$_SERVER['PHP_SELF'].'?caller=99999&called=99999&login=xxxxx&password=xxxxx';
 }
 

@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/printipp/index.php
- *	\ingroup    printipp
- *	\brief      Printipp
+ *  \file       htdocs/printipp/index.php
+ *  \ingroup    printipp
+ *  \brief      Printipp
  */
 
 require '../main.inc.php';

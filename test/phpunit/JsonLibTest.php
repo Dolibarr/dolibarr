@@ -18,9 +18,9 @@
 
 /**
  *      \file       test/phpunit/JsonLibTest.php
- *		\ingroup    test
+ *      \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
@@ -45,7 +45,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class JsonLibTest extends PHPUnit_Framework_TestCase
 {
@@ -92,11 +92,11 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
         print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return void
+     */
     protected function setUp()
     {
         global $conf,$user,$langs,$db;
@@ -107,11 +107,12 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+
+    /**
+     * End phpunit tests
+     *
+     * @return void
+     */
     protected function tearDown()
     {
         print __METHOD__."\n";
@@ -120,7 +121,7 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
     /**
      * testJsonEncode
      *
-     * @return	void
+     * @return void
      */
     public function testJsonEncode()
     {
@@ -133,8 +134,8 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
 
         // Do a test with an array starting with 0
         $arraytotest=array(0=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
-		$arrayencodedexpected='[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]';
-		
+        $arrayencodedexpected='[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]';
+
         $encoded=json_encode($arraytotest);
         $this->assertEquals($arrayencodedexpected,$encoded);
         $decoded=json_decode($encoded,true);
@@ -145,10 +146,10 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
         $decoded=dol_json_decode($encoded,true);
         $this->assertEquals($arraytotest,$decoded,'test for dol_json_xxx');
 
-		// Same test but array start with 2 instead of 0
+        // Same test but array start with 2 instead of 0
         $arraytotest=array(2=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
-		$arrayencodedexpected='{"2":{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}}';
-		
+        $arrayencodedexpected='{"2":{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}}';
+
         $encoded=json_encode($arraytotest);
         $this->assertEquals($arrayencodedexpected,$encoded);
         $decoded=json_decode($encoded,true);
@@ -158,7 +159,7 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($arrayencodedexpected,$encoded);
         $decoded=dol_json_decode($encoded,true);
         $this->assertEquals($arraytotest,$decoded,'test for dol_json_xxx');
-        
+
         // Test with object
         $now=gmmktime(12,0,0,1,1,1970);
         $objecttotest=new stdClass();

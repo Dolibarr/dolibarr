@@ -6,7 +6,6 @@
 	<exclude-pattern>*/conf.php</exclude-pattern>
 	<exclude-pattern>*/includes/*</exclude-pattern>
 	<exclude-pattern>*/documents/*</exclude-pattern>
-	<exclude-pattern>*/dev/vagrant/*</exclude-pattern>
 	<exclude-pattern>*/custom/*</exclude-pattern>
 	<exclude-pattern>*/nltechno*</exclude-pattern>
 
@@ -147,7 +146,7 @@
     <rule ref="Generic.PHP.DeprecatedFunctions.Deprecated">
         <severity>0</severity>
     </rule>
-	
+
 	<rule ref="Generic.PHP.DisallowShortOpenTag" />
 
     <rule ref="Generic.PHP.ForbiddenFunctions" />
@@ -166,9 +165,44 @@
     
     <rule ref="Generic.VersionControl.SubversionProperties" />
 
-	<!-- Disallow usage of tab -->
-	<!--  <rule ref="Generic.WhiteSpace.DisallowTabIndent" /> -->
-
+    <!-- Disallow usage of tab -->
+    <rule ref="Generic.WhiteSpace.DisallowTabIndent">
+        <exclude-pattern>*/htdocs/accountancy*</exclude-pattern>
+        <exclude-pattern>*/htdocs/adherents*</exclude-pattern>
+        <exclude-pattern>*/htdocs/admin*</exclude-pattern>
+        <exclude-pattern>*/htdocs/cashdesk*</exclude-pattern>
+        <exclude-pattern>*/htdocs/categories*</exclude-pattern>
+        <exclude-pattern>*/htdocs/comm/*</exclude-pattern>
+        <exclude-pattern>*/htdocs/commande/*</exclude-pattern>
+        <exclude-pattern>*/htdocs/compta*</exclude-pattern>
+        <exclude-pattern>*/htdocs/contact*</exclude-pattern>
+        <exclude-pattern>*/htdocs/contrat*</exclude-pattern>
+        <exclude-pattern>*/htdocs/core*</exclude-pattern>
+        <exclude-pattern>*/htdocs/ecm*</exclude-pattern>
+        <exclude-pattern>*/htdocs/expedition*</exclude-pattern>
+        <exclude-pattern>*/htdocs/exports*</exclude-pattern>
+        <exclude-pattern>*/htdocs/externalsite*</exclude-pattern>
+        <exclude-pattern>*/htdocs/fichinter*</exclude-pattern>
+        <exclude-pattern>*/htdocs/fourn*</exclude-pattern>
+        <exclude-pattern>*/htdocs/ftp*</exclude-pattern>
+        <exclude-pattern>*/htdocs/holiday*</exclude-pattern>
+        <exclude-pattern>*/htdocs/imports*</exclude-pattern>
+        <exclude-pattern>*/htdocs/install*</exclude-pattern>
+        <exclude-pattern>*/htdocs/livraison*</exclude-pattern>
+        <exclude-pattern>*/htdocs/margin*</exclude-pattern>
+        <exclude-pattern>*/htdocs/opensurvey*</exclude-pattern>
+        <exclude-pattern>*/htdocs/paybox*</exclude-pattern>
+        <exclude-pattern>*/htdocs/paypal*</exclude-pattern>
+        <exclude-pattern>*/htdocs/product*</exclude-pattern>
+        <exclude-pattern>*/htdocs/projet*</exclude-pattern>
+        <exclude-pattern>*/htdocs/public*</exclude-pattern>
+        <exclude-pattern>*/htdocs/resource*</exclude-pattern>
+        <exclude-pattern>*/htdocs/societe*</exclude-pattern>
+        <exclude-pattern>*/htdocs/theme*</exclude-pattern>
+        <exclude-pattern>*/htdocs/user*</exclude-pattern>
+        <exclude-pattern>*/htdocs/webservices*</exclude-pattern>
+    </rule>
+    
 	<!-- Check indent are done with spaces and wiht correct number -->
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->

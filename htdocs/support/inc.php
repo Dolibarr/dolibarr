@@ -19,13 +19,13 @@
  */
 
 /**
- * 	\file       htdocs/support/inc.php
- * 	\ingroup	core
- *	\brief      File that define environment for support pages
+ *  \file       htdocs/support/inc.php
+ *  \ingroup    core
+ *  \brief      File that define environment for support pages
  */
 
 // Define DOL_DOCUMENT_ROOT
-if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
+if (! defined('DOL_DOCUMENT_ROOT'))     define('DOL_DOCUMENT_ROOT', '..');
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
@@ -34,19 +34,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Avoid warnings with strict mode E_STRICT
 $conf = new stdClass(); // instantiate $conf explicitely
-$conf->global	= new stdClass();
-$conf->file		= new stdClass();
-$conf->db		= new stdClass();
-$conf->syslog	= new stdClass();
+$conf->global   = new stdClass();
+$conf->file     = new stdClass();
+$conf->db       = new stdClass();
+$conf->syslog   = new stdClass();
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"]=1;
 
 // Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
 // et non path absolu.
-if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
-{
-	$_SERVER["PHP_SELF"]=$_SERVER["DOCUMENT_URI"];
+if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"]) {
+    $_SERVER["PHP_SELF"]=$_SERVER["DOCUMENT_URI"];
 }
 
 
@@ -62,59 +61,55 @@ $conffiletoshow = "htdocs/conf/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
 
 
-if (! defined('DONOTLOADCONF') && file_exists($conffile))
-{
-	$result=include_once $conffile;	// Load conf file
-	if ($result)
-	{
+if (! defined('DONOTLOADCONF') && file_exists($conffile)) {
+    $result=include_once $conffile; // Load conf file
+    if ($result) {
 
-		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+        if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';  // For backward compatibility
 
-		// Clean parameters
-		$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';
-		$dolibarr_main_url_root         =isset($dolibarr_main_url_root)?trim($dolibarr_main_url_root):'';
-		$dolibarr_main_url_root_alt     =isset($dolibarr_main_url_root_alt)?trim($dolibarr_main_url_root_alt):'';
-		$dolibarr_main_document_root    =isset($dolibarr_main_document_root)?trim($dolibarr_main_document_root):'';
-		$dolibarr_main_document_root_alt=isset($dolibarr_main_document_root_alt)?trim($dolibarr_main_document_root_alt):'';
+        // Clean parameters
+        $dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';
+        $dolibarr_main_url_root         =isset($dolibarr_main_url_root)?trim($dolibarr_main_url_root):'';
+        $dolibarr_main_url_root_alt     =isset($dolibarr_main_url_root_alt)?trim($dolibarr_main_url_root_alt):'';
+        $dolibarr_main_document_root    =isset($dolibarr_main_document_root)?trim($dolibarr_main_document_root):'';
+        $dolibarr_main_document_root_alt=isset($dolibarr_main_document_root_alt)?trim($dolibarr_main_document_root_alt):'';
 
-		// Remove last / or \ on directories or url value
-		if (! empty($dolibarr_main_document_root) && ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root)) $dolibarr_main_document_root=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
-		if (! empty($dolibarr_main_url_root)      && ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root))      $dolibarr_main_url_root=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root);
-		if (! empty($dolibarr_main_data_root)     && ! preg_match('/^[\\/]+$/',$dolibarr_main_data_root))     $dolibarr_main_data_root=preg_replace('/[\\/]+$/','',$dolibarr_main_data_root);
-		if (! empty($dolibarr_main_document_root_alt)	&& ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root_alt))	$dolibarr_main_document_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root_alt);
-		if (! empty($dolibarr_main_url_root_alt)		&& ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root_alt))		$dolibarr_main_url_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root_alt);
+        // Remove last / or \ on directories or url value
+        if (! empty($dolibarr_main_document_root) && ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root))
+            $dolibarr_main_document_root=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
+        if (! empty($dolibarr_main_url_root) && ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root))
+            $dolibarr_main_url_root=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root);
+        if (! empty($dolibarr_main_data_root) && ! preg_match('/^[\\/]+$/',$dolibarr_main_data_root))
+            $dolibarr_main_data_root=preg_replace('/[\\/]+$/','',$dolibarr_main_data_root);
+        if (! empty($dolibarr_main_document_root_alt) && ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root_alt))
+            $dolibarr_main_document_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root_alt);
+        if (! empty($dolibarr_main_url_root_alt) && ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root_alt))
+            $dolibarr_main_url_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root_alt);
 
-		// Create conf object
-		if (! empty($dolibarr_main_document_root))
-		{
-			$result=conf($dolibarr_main_document_root);
-		}
-		// Load database driver
-		if ($result)
-		{
-			if (! empty($dolibarr_main_document_root) && ! empty($dolibarr_main_db_type))
-			{
-				$result=include_once $dolibarr_main_document_root . "/core/db/".$dolibarr_main_db_type.'.class.php';
-				if (! $result)
-				{
-					$includeconferror='ErrorBadValueForDolibarrMainDBType';
-				}
-			}
-		}
-		else
-		{
-			$includeconferror='ErrorBadValueForDolibarrMainDocumentRoot';
-		}
-	}
-	else
-	{
-		$includeconferror='ErrorBadFormatForConfFile';
-	}
+        // Create conf object
+        if (! empty($dolibarr_main_document_root)) {
+            $result=conf($dolibarr_main_document_root);
+        }
+        // Load database driver
+        if ($result) {
+            if (! empty($dolibarr_main_document_root) && ! empty($dolibarr_main_db_type)) {
+                $result=include_once $dolibarr_main_document_root . "/core/db/".$dolibarr_main_db_type.'.class.php';
+                if (! $result) {
+                    $includeconferror='ErrorBadValueForDolibarrMainDBType';
+                }
+            }
+        } else {
+            $includeconferror='ErrorBadValueForDolibarrMainDocumentRoot';
+        }
+    } else {
+        $includeconferror='ErrorBadFormatForConfFile';
+    }
 }
 $conf->global->MAIN_LOGTOHTML = 1;
 
 // Define prefix
-if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
+if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix)
+    $dolibarr_main_db_prefix='llx_';
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 
 define('DOL_CLASS_PATH', 'class/');                             // Filsystem path to class dir
@@ -122,12 +117,13 @@ define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root
 define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root)?$dolibarr_main_url_root:''));           // URL relative root
 $uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));  // $uri contains url without http*
 $suburi = strstr($uri, '/');       // $suburi contains url without domain
-if ($suburi == '/') $suburi = '';   // If $suburi is /, it is now ''
+if ($suburi == '/')
+    $suburi = '';   // If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);    // URL relative root ('', '/dolibarr', ...)
 
 if (empty($character_set_client)) $character_set_client="UTF-8";
 $conf->file->character_set_client=strtoupper($character_set_client);
-if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($conf->db->type=='mysql'?'latin1':'');		// Old installation
+if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($conf->db->type=='mysql'?'latin1':'');     // Old installation
 $conf->db->character_set=$dolibarr_main_db_character_set;
 if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($conf->db->type=='mysql'?'latin1_swedish_ci':'');  // Old installation
 $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
@@ -136,7 +132,8 @@ $conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
 if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 $conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
-if (empty($conf->db->user)) $conf->db->user='';
+if (empty($conf->db->user))
+    $conf->db->user='';
 
 
 // Defini objet langs
@@ -149,93 +146,93 @@ $bc[true]=' class="bg2"';
 
 
 /**
- *	Load conf file (file must exists)
+ *  Load conf file (file must exists)
  *
- *	@param	string	$dolibarr_main_document_root		Root directory of Dolibarr bin files
- *	@return	int											<0 if KO, >0 if OK
+ *  @param  string  $dolibarr_main_document_root        Root directory of Dolibarr bin files
+ *  @return int                                         <0 if KO, >0 if OK
  */
 function conf($dolibarr_main_document_root)
 {
-	global $conf;
-	global $dolibarr_main_db_type;
-	global $dolibarr_main_db_host;
-	global $dolibarr_main_db_port;
-	global $dolibarr_main_db_name;
-	global $dolibarr_main_db_user;
-	global $dolibarr_main_db_pass;
-	global $character_set_client;
+    global $conf;
+    global $dolibarr_main_db_type;
+    global $dolibarr_main_db_host;
+    global $dolibarr_main_db_port;
+    global $dolibarr_main_db_name;
+    global $dolibarr_main_db_user;
+    global $dolibarr_main_db_pass;
+    global $character_set_client;
 
-	$return=include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
-	if (! $return) return -1;
+    $return=include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+    if (! $return) return -1;
 
-	$conf=new Conf();
-	$conf->db->type = trim($dolibarr_main_db_type);
-	$conf->db->host = trim($dolibarr_main_db_host);
-	$conf->db->port = trim($dolibarr_main_db_port);
-	$conf->db->name = trim($dolibarr_main_db_name);
-	$conf->db->user = trim($dolibarr_main_db_user);
-	$conf->db->pass = trim($dolibarr_main_db_pass);
+    $conf=new Conf();
+    $conf->db->type = trim($dolibarr_main_db_type);
+    $conf->db->host = trim($dolibarr_main_db_host);
+    $conf->db->port = trim($dolibarr_main_db_port);
+    $conf->db->name = trim($dolibarr_main_db_name);
+    $conf->db->user = trim($dolibarr_main_db_user);
+    $conf->db->pass = trim($dolibarr_main_db_pass);
 
-	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='utf8_general_ci';
+    if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='utf8_general_ci';
 
-	return 1;
+    return 1;
 }
 
 
 /**
  * Show HTML header
  *
- * @param	string	$soutitre	Title
- * @param	string	$next		Next
- * @param	string	$action		Action code
- * @return	void
+ * @param   string  $soutitre   Title
+ * @param   string  $next       Next
+ * @param   string  $action     Action code
+ * @return  void
  */
 function pHeader($soutitre,$next,$action='none')
 {
-	global $conf;
-	global $langs;
-	$langs->load("main");
-	$langs->load("admin");
+    global $conf;
+    global $langs;
+    $langs->load("main");
+    $langs->load("admin");
 
-	// On force contenu dans format sortie
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+    // On force contenu dans format sortie
+    header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
-	print '<html manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
-	print '<head>'."\n";
-	print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
-	print '<meta name="robots" content="index,follow">'."\n";
-	print '<meta name="keywords" content="help, center, dolibarr, doliwamp">'."\n";
-	print '<meta name="description" content="Dolibarr help center">'."\n";
-	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
-	print '<title>'.$langs->trans("DolibarrHelpCenter").'</title>'."\n";
-	print '</head>'."\n";
+    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
+    print '<html manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
+    print '<head>'."\n";
+    print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
+    print '<meta name="robots" content="index,follow">'."\n";
+    print '<meta name="keywords" content="help, center, dolibarr, doliwamp">'."\n";
+    print '<meta name="description" content="Dolibarr help center">'."\n";
+    print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
+    print '<title>'.$langs->trans("DolibarrHelpCenter").'</title>'."\n";
+    print '</head>'."\n";
 
-	print '<body>'."\n";
+    print '<body>'."\n";
 
-	print '<table class="noborder" summary="helpcentertitle"><tr valign="middle">';
-	print '<td width="20">';
-	print '<img src="helpcenter.png" alt="logohelpcenter">';
-	print '</td>';
-	print '<td>';
-	print '<span class="titre">'.$soutitre.'</span>'."\n";
-	print '</td></tr></table>';
+    print '<table class="noborder" summary="helpcentertitle"><tr valign="middle">';
+    print '<td width="20">';
+    print '<img src="helpcenter.png" alt="logohelpcenter">';
+    print '</td>';
+    print '<td>';
+    print '<span class="titre">'.$soutitre.'</span>'."\n";
+    print '</td></tr></table>';
 }
 
 /**
  * Print HTML footer
  *
- * @param	string	$nonext			No button "Next step"
- * @param   string	$setuplang		Language code
- * @return	void
+ * @param   string  $nonext         No button "Next step"
+ * @param   string  $setuplang      Language code
+ * @return  void
  */
 function pFooter($nonext=0,$setuplang='')
 {
-	global $langs;
-	$langs->load("main");
-	$langs->load("admin");
+    global $langs;
+    $langs->load("main");
+    $langs->load("admin");
 
-	print '</body>'."\n";
-	print '</html>'."\n";
+    print '</body>'."\n";
+    print '</html>'."\n";
 }
 

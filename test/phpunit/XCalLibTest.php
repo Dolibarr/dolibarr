@@ -107,7 +107,7 @@ class XCalLibTest extends PHPUnit_Framework_TestCase
     /**
      * End phpunit tests
      *
-     * @return	void
+     * @return  void
     */
     protected function tearDown()
     {

@@ -18,9 +18,9 @@
 
 /**
  *      \file       test/phpunit/SecurityTest.php
- *		\ingroup    test
+ *      \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
@@ -41,8 +41,7 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't nee
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
     $user->getrights();
@@ -55,77 +54,77 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class SecurityTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return SecurityTest
-	 */
-	function __construct()
-	{
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	// Static methods
-  	public static function setUpBeforeClass()
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return SecurityTest
+     */
+    function __construct()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-    	print __METHOD__."\n";
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
+
+    // Static methods
+    public static function setUpBeforeClass()
+    {
+        global $conf,$user,$langs,$db;
+        $db->begin();   // This is to have all actions inside a transaction even if test launched without suite.
+
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
@@ -135,16 +134,16 @@ class SecurityTest extends PHPUnit_Framework_TestCase
      */
     public function testGETPOST()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
         $_COOKIE["id"]=111;
-		$_GET["param1"]="222";
+        $_GET["param1"]="222";
         $_POST["param1"]="333";
-		$_GET["param2"]='a/b#e(pr)qq-rr\cc';
+        $_GET["param2"]='a/b#e(pr)qq-rr\cc';
         $_GET["param3"]='"a/b#e(pr)qq-rr\cc';    // Same than param2 + "
         $_GET["param4"]='../dir';
 
@@ -178,7 +177,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     /**
      * testCheckLoginPassEntity
      *
-     * @return	void
+     * @return void
      */
     public function testCheckLoginPassEntity()
     {
@@ -253,17 +252,17 @@ class SecurityTest extends PHPUnit_Framework_TestCase
      */
     public function testRestrictedArea()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		//$dummyuser=new User($db);
-		//$result=restrictedArea($dummyuser,'societe');
+        //$dummyuser=new User($db);
+        //$result=restrictedArea($dummyuser,'societe');
 
-		$result=restrictedArea($user,'societe');
-		$this->assertEquals(1,$result);
+        $result=restrictedArea($user,'societe');
+        $this->assertEquals(1,$result);
     }
 
 }

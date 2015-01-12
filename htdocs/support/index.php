@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2008-2013  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Juanjo Menent       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,10 @@
 // and no database access to do.
 include_once 'inc.php';
 $uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
-$pos = strstr($uri, '/');      // $pos contient alors url sans nom domaine
-if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
+$pos = strstr($uri, '/');           // $pos contient alors url sans nom domaine
+if ($pos == '/') $pos = '';         // si $pos vaut /, on le met a ''
 if (! defined('DOL_URL_ROOT'))
-	define('DOL_URL_ROOT', $pos);	// URL racine relative
+    define('DOL_URL_ROOT', $pos);   // URL racine relative
 
 $langs->load("other");
 $langs->load("help");
@@ -50,10 +50,14 @@ print $langs->trans("HelpCenterDesc2")."<br>\n";
 print '<br>';
 
 $homeurl=DOL_URL_ROOT.'/';
-if (GETPOST('dol_hide_toptmenu'))  $homeurl.=(strpos($homeurl,'?')===false?'?':'&').'dol_hide_toptmenu=1';
-if (GETPOST('dol_hide_leftmenu'))  $homeurl.=(strpos($homeurl,'?')===false?'?':'&').'dol_hide_leftmenu=1';
-if (GETPOST('dol_no_mouse_hover')) $homeurl.=(strpos($homeurl,'?')===false?'?':'&').'dol_no_mouse_hover=1';
-if (GETPOST('dol_use_jmobile'))    $homeurl.=(strpos($homeurl,'?')===false?'?':'&').'dol_use_jmobile=1';
+if (GETPOST('dol_hide_toptmenu'))
+    $homeurl.=(strpos($homeurl,'?')===false?'?':'&').'dol_hide_toptmenu=1';
+if (GETPOST('dol_hide_leftmenu'))
+    $homeurl.=(strpos($homeurl,'?')===false?'?':'&').'dol_hide_leftmenu=1';
+if (GETPOST('dol_no_mouse_hover'))
+    $homeurl.=(strpos($homeurl,'?')===false?'?':'&').'dol_no_mouse_hover=1';
+if (GETPOST('dol_use_jmobile'))
+    $homeurl.=(strpos($homeurl,'?')===false?'?':'&').'dol_use_jmobile=1';
 print $langs->trans("ToGoBackToDolibarr",$homeurl);
 
 print '<br><br>';

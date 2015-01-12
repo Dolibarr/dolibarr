@@ -72,12 +72,11 @@ if ($action == 'setvalue' && $user->admin)
 // Set default model
 else if ($action == 'setprinteruri')
 {
-	if (dolibarr_set_const($db, "PRINTIPP_URI_DEFAULT",$value,'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->PRINTIPP_URI_DEFAULT = $value;
-	}
+    if (dolibarr_set_const($db, "PRINTIPP_URI_DEFAULT",$value,'chaine',0,'',$conf->entity)) {
+        // La constante qui a ete lue en avant du nouveau set
+        // on passe donc par une variable pour avoir un affichage coherent
+        $conf->global->PRINTIPP_URI_DEFAULT = $value;
+    }
 }
 
 
@@ -101,9 +100,9 @@ if ($mode == 'config' && $user->admin)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="setvalue">';
 
-	dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
+    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
 
-	print $langs->trans("PrintIPPDesc")."<br><br>\n";
+    print $langs->trans("PrintIPPDesc")."<br><br>\n";
     
     print '<table class="noborder" width="100%">';
 
@@ -134,7 +133,7 @@ if ($mode == 'config' && $user->admin)
          }
     }
     print '</td></tr>';
-	*/
+    */
     
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">';
@@ -179,11 +178,11 @@ if ($mode == 'config' && $user->admin)
 
 if ($mode == 'test' && $user->admin)
 {
-	dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
+    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
 
-	print $langs->trans("PrintIPPDesc")."<br><br>\n";
-	
-	print '<table class="nobordernopadding" width="100%">';
+    print $langs->trans("PrintIPPDesc")."<br><br>\n";
+
+    print '<table class="nobordernopadding" width="100%">';
     $printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
     $var=true;
     print '<table width="100%" class="noborder">';
@@ -223,11 +222,9 @@ if ($mode == 'test' && $user->admin)
         print "<td align=\"center\">";
         if ($conf->global->PRINTIPP_URI_DEFAULT == "$value")
         {
-        	print img_picto($langs->trans("Default"),'on');
-        }
-        else
-        {
-        	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setprinteruri&mode=test&value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+            print img_picto($langs->trans("Default"),'on');
+        } else {
+            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setprinteruri&mode=test&value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
         }
         print '</td>';
         print "</tr>\n";
@@ -236,7 +233,7 @@ if ($mode == 'test' && $user->admin)
 
     if (count($list) == 0) print $langs->trans("NoPrinterFound");
 
-	dol_fiche_end();
+    dol_fiche_end();
 }
 
 

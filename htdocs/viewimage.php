@@ -19,13 +19,13 @@
  */
 
 /**
- *		\file       htdocs/viewimage.php
- *		\brief      Wrapper to show images into Dolibarr screens
+ *      \file       htdocs/viewimage.php
+ *      \brief      Wrapper to show images into Dolibarr screens
  *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0">'
  */
 
-//if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');    // Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');        // Not disabled cause need to load personalized language
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK','1');
@@ -39,13 +39,13 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'companylogo') && ! de
 /**
  * Header empty
  *
- * @return	void
+ * @return void
  */
 function llxHeader() { }
 /**
  * Footer empty
  *
- * @return	void
+ * @return void
  */
 function llxFooter() { }
 
@@ -163,7 +163,7 @@ if ($modulepart == 'barcode')
         $result=$module->buildBarCode($code,$encoding,$readable);
     }
 }
-else					// Open and return file
+else                // Open and return file
 {
     clearstatcache();
 

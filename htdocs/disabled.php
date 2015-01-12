@@ -17,13 +17,12 @@
  */
 
 /**
- *	\file       htdocs/disabled.php
+ *  \file       htdocs/disabled.php
  *  \brief      Page to use to replace index.php to disable all software
  */
-?>
-<html>
-<body>
-This feature has been disabled on this test server.<br>
-Cette fonctionnalité a été désactivée sur ce serveur de test.<br>
-</body>
-</html>
+print '<html>';
+print '<body>';
+print 'This feature has been disabled on this test server.<br>';
+print 'Cette fonctionnalité a été désactivée sur ce serveur de test.<br>';
+print '</body>';
+print '</html>';

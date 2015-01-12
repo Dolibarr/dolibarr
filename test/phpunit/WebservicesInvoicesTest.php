@@ -94,7 +94,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     /**
      * Init phpunit tests
      *
-     * @return	void
+     * @return  void
      */
     protected function setUp()
     {

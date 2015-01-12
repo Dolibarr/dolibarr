@@ -16,15 +16,15 @@
  */
 
 /**
- *	\file       htdocs/asterisk/cidlookup.php
+ *  \file       htdocs/asterisk/cidlookup.php
  *  \brief      Script to search companies names based on incoming calls
- *	\remarks    To use this script, your Asterisk must be compiled with CURL,
- *	            and your dialplan must be something like this:
+ *  \remarks    To use this script, your Asterisk must be compiled with CURL,
+ *              and your dialplan must be something like this:
  *
  * exten => s,1,Set(CALLERID(name)=${CURL(http://IP-DOLIBARR:80/asterisk/cidlookup.php?phone=${CALLERID(num)})})
  *
- *			Change IP-DOLIBARR to the IP address of your dolibarr
- *			server
+ *          Change IP-DOLIBARR to the IP address of your dolibarr
+ *          server
  *
  */
 
@@ -41,10 +41,9 @@ if (empty($conf->clicktodial->enabled)) {
 }
 
 // Check parameters
-if (empty($phone))
-{
-	print "Error: Url must be called with parameter phone=phone to search\n";
-	exit;
+if (empty($phone)) {
+    print "Error: Url must be called with parameter phone=phone to search\n";
+    exit;
 }
 
 $sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
@@ -58,18 +57,14 @@ $sql.= $db->plimit(1);
 
 dol_syslog('cidlookup search information with phone '.$phone, LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
-	$obj = $db->fetch_object($resql);
-	if ($obj)
-	{
-		$found = $obj->name;
-	}
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db,'Error');
+if ($resql) {
+    $obj = $db->fetch_object($resql);
+    if ($obj) {
+        $found = $obj->name;
+    }
+    $db->free($resql);
+} else {
+    dol_print_error($db,'Error');
 }
 
 echo $found;

@@ -107,7 +107,7 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
     /**
      * End phpunit tests
      *
-     * @return	void
+     * @return void
      */
     protected function tearDown()
     {
@@ -117,7 +117,7 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
     /**
      * testConvertTime2Seconds
      *
-     * @return	void
+     * @return void
      */
     public function testVersionCompare()
     {

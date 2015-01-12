@@ -25,7 +25,7 @@
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once("../master.inc.php");
-require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
+require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
 require_once(DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/skeleton/class/skeleton.class.php");
 
@@ -33,8 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/skeleton/class/skeleton.class.php");
 dol_syslog("Call Skeleton webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
     $langs->load("admin");
     dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
     print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
@@ -60,9 +59,9 @@ $server->wsdl->addComplexType(
     '',
     array(
         'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-    	'login' => array('name'=>'login','type'=>'xsd:string'),
-    	'password' => array('name'=>'password','type'=>'xsd:string'),
+        'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+        'login' => array('name'=>'login','type'=>'xsd:string'),
+        'password' => array('name'=>'password','type'=>'xsd:string'),
         'entity' => array('name'=>'entity','type'=>'xsd:string'),
     )
 );
@@ -88,8 +87,8 @@ $server->wsdl->addComplexType(
     'all',
     '',
     array(
-	    'prop1'=>'xxx',
-		'prop2'=>'xxx',
+        'prop1'=>'xxx',
+        'prop2'=>'xxx',
     //...
     )
 );
@@ -120,16 +119,16 @@ $server->register(
 
 // Register WSDL
 $server->register(
-	'createSkeleton',
-	// Entry values
-	array('authentication'=>'tns:authentication','skeleton'=>'tns:skeleton'),
-	// Exit values
-	array('result'=>'tns:result','id'=>'xsd:string'),
-	$ns,
-	$ns.'#createSkeleton',
-	$styledoc,
-	$styleuse,
-	'WS to create a skeleton'
+    'createSkeleton',
+    // Entry values
+    array('authentication'=>'tns:authentication','skeleton'=>'tns:skeleton'),
+    // Exit values
+    array('result'=>'tns:result','id'=>'xsd:string'),
+    $ns,
+    $ns.'#createSkeleton',
+    $styledoc,
+    $styleuse,
+    'WS to create a skeleton'
 );
 
 
@@ -138,11 +137,11 @@ $server->register(
 /**
  * Get Skeleton
  *
- * @param	array		$authentication		Array of authentication information
- * @param	int			$id					Id of object
- * @param	string		$ref				Ref of object
- * @param	string		$ref_ext			Ref external of object
- * @return	mixed
+ * @param   array       $authentication     Array of authentication information
+ * @param   int         $id                 Id of object
+ * @param   string      $ref                Ref of object
+ * @param   string      $ref_ext            Ref external of object
+ * @return  mixed
  */
 function getSkeleton($authentication,$id,$ref='',$ref_ext='')
 {
@@ -158,14 +157,12 @@ function getSkeleton($authentication,$id,$ref='',$ref_ext='')
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
     // Check parameters
-    if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
-    {
+    if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
         $error++;
         $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
     }
 
-    if (! $error)
-    {
+    if (! $error) {
         $fuser->getrights();
 
         if ($fuser->rights->skeleton->read)
@@ -176,29 +173,24 @@ function getSkeleton($authentication,$id,$ref='',$ref_ext='')
             {
                 // Create
                 $objectresp = array(
-			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			        'skeleton'=>array(
-				    'prop1'=>$skeleton->prop1,
-				    'prop2'=>$skeleton->prop2,
+                    'result'=>array('result_code'=>'OK', 'result_label'=>''),
+                    'skeleton'=>array(
+                    'prop1'=>$skeleton->prop1,
+                    'prop2'=>$skeleton->prop2,
                     //...
                     )
                 );
-            }
-            else
-            {
+            } else {
                 $error++;
                 $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
             }
-        }
-        else
-        {
+        } else {
             $error++;
             $errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
         }
     }
 
-    if ($error)
-    {
+    if ($error) {
         $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
     }
 
@@ -209,63 +201,57 @@ function getSkeleton($authentication,$id,$ref='',$ref_ext='')
 /**
  * Create Skeleton
  *
- * @param	array		$authentication		Array of authentication information
- * @param	Skeleton	$skeleton		    $skeleton
- * @return	array							Array result
+ * @param   array       $authentication     Array of authentication information
+ * @param   Skeleton    $skeleton           $skeleton
+ * @return  array                           Array result
  */
 function createSkeleton($authentication,$skeleton)
 {
-	global $db,$conf,$langs;
+    global $db,$conf,$langs;
 
-	$now=dol_now();
+    $now=dol_now();
 
-	dol_syslog("Function: createSkeleton login=".$authentication['login']);
+    dol_syslog("Function: createSkeleton login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
-	// Check parameters
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    // Check parameters
 
 
-	if (! $error)
-	{
-		$newobject=new Skeleton($db);
-		$newobject->prop1=$skeleton->prop1;
-		$newobject->prop2=$skeleton->prop2;
-		//...
+    if (! $error) {
+        $newobject=new Skeleton($db);
+        $newobject->prop1=$skeleton->prop1;
+        $newobject->prop2=$skeleton->prop2;
+        //...
 
-		$db->begin();
+        $db->begin();
 
-		$result=$newobject->create($fuser);
-		if ($result <= 0)
-		{
-			$error++;
-		}
+        $result=$newobject->create($fuser);
+        if ($result <= 0) {
+            $error++;
+        }
 
-		if (! $error)
-		{
-			$db->commit();
-			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
-		}
-		else
-		{
-			$db->rollback();
-			$error++;
-			$errorcode='KO';
-			$errorlabel=$newobject->error;
-		}
-	}
+        if (! $error) {
+            $db->commit();
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
+        } else {
+            $db->rollback();
+            $error++;
+            $errorcode='KO';
+            $errorlabel=$newobject->error;
+        }
+    }
 
-	if ($error)
-	{
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
+    if ($error) {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
 
-	return $objectresp;
+    return $objectresp;
 }
 
 // Return the results.

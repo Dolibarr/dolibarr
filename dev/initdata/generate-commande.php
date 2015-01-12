@@ -20,8 +20,8 @@
  */
 
 /**
- * 	    \file       htdocs/dev/generate-commande.php
- * 		\brief      Script de generation de donnees aleatoires pour les commandes
+ *      \file       htdocs/dev/generate-commande.php
+ *      \brief      Script de generation de donnees aleatoires pour les commandes
  */
 
 // Test si mode batch
@@ -61,26 +61,26 @@ $user->getrights();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$row = $db->fetch_row($resql);
-		$societesid[$i] = $row[0];
-		$i++;
-	}
+    $num = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num) {
+        $row = $db->fetch_row($resql);
+        $societesid[$i] = $row[0];
+        $i++;
+    }
 }
 else { print "err"; }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$row = $db->fetch_row($resql);
-		$commandesid[$i] = $row[0];
-		$i++;
-	}
+    $num = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num) {
+        $row = $db->fetch_row($resql);
+        $commandesid[$i] = $row[0];
+        $i++;
+    }
 }
 else { print "err"; }
 
@@ -102,59 +102,60 @@ if ($resql)
 }
 
 
-$dates = array (mktime(12,0,0,1,3,2003),
-	  mktime(12,0,0,1,9,2003),
-	  mktime(12,0,0,2,13,2003),
-	  mktime(12,0,0,2,23,2003),
-	  mktime(12,0,0,3,30,2003),
-	  mktime(12,0,0,4,3,2003),
-	  mktime(12,0,0,4,3,2003),
-	  mktime(12,0,0,5,9,2003),
-	  mktime(12,0,0,5,1,2003),
-	  mktime(12,0,0,5,13,2003),
-	  mktime(12,0,0,5,19,2003),
-	  mktime(12,0,0,5,23,2003),
-	  mktime(12,0,0,6,3,2003),
-	  mktime(12,0,0,6,19,2003),
-	  mktime(12,0,0,6,24,2003),
-	  mktime(12,0,0,7,3,2003),
-	  mktime(12,0,0,7,9,2003),
-	  mktime(12,0,0,7,23,2003),
-	  mktime(12,0,0,7,30,2003),
-	  mktime(12,0,0,8,9,2003),
-	  mktime(12,0,0,9,23,2003),
-	  mktime(12,0,0,10,3,2003),
-	  mktime(12,0,0,11,12,2003),
-	  mktime(12,0,0,11,13,2003),
-	  mktime(12,0,0,1,3,2002),
-	  mktime(12,0,0,1,9,2002),
-	  mktime(12,0,0,2,13,2002),
-	  mktime(12,0,0,2,23,2002),
-	  mktime(12,0,0,3,30,2002),
-	  mktime(12,0,0,4,3,2002),
-	  mktime(12,0,0,4,3,2002),
-	  mktime(12,0,0,5,9,2002),
-	  mktime(12,0,0,5,1,2002),
-	  mktime(12,0,0,5,13,2002),
-	  mktime(12,0,0,5,19,2002),
-	  mktime(12,0,0,5,23,2002),
-	  mktime(12,0,0,6,3,2002),
-	  mktime(12,0,0,6,19,2002),
-	  mktime(12,0,0,6,24,2002),
-	  mktime(12,0,0,7,3,2002),
-	  mktime(12,0,0,7,9,2002),
-	  mktime(12,0,0,7,23,2002),
-	  mktime(12,0,0,7,30,2002),
-	  mktime(12,0,0,8,9,2002),
-	  mktime(12,0,0,9,23,2002),
-	  mktime(12,0,0,10,3,2002),
-	  mktime(12,0,0,11,12,2003),
-	  mktime(12,0,0,11,13,2003),
-	  mktime(12,0,0,12,12,2003),
-	  mktime(12,0,0,12,13,2003),
-	  );
+$dates = array (
+    mktime(12,0,0,1,3,2003),
+    mktime(12,0,0,1,9,2003),
+    mktime(12,0,0,2,13,2003),
+    mktime(12,0,0,2,23,2003),
+    mktime(12,0,0,3,30,2003),
+    mktime(12,0,0,4,3,2003),
+    mktime(12,0,0,4,3,2003),
+    mktime(12,0,0,5,9,2003),
+    mktime(12,0,0,5,1,2003),
+    mktime(12,0,0,5,13,2003),
+    mktime(12,0,0,5,19,2003),
+    mktime(12,0,0,5,23,2003),
+    mktime(12,0,0,6,3,2003),
+    mktime(12,0,0,6,19,2003),
+    mktime(12,0,0,6,24,2003),
+    mktime(12,0,0,7,3,2003),
+    mktime(12,0,0,7,9,2003),
+    mktime(12,0,0,7,23,2003),
+    mktime(12,0,0,7,30,2003),
+    mktime(12,0,0,8,9,2003),
+    mktime(12,0,0,9,23,2003),
+    mktime(12,0,0,10,3,2003),
+    mktime(12,0,0,11,12,2003),
+    mktime(12,0,0,11,13,2003),
+    mktime(12,0,0,1,3,2002),
+    mktime(12,0,0,1,9,2002),
+    mktime(12,0,0,2,13,2002),
+    mktime(12,0,0,2,23,2002),
+    mktime(12,0,0,3,30,2002),
+    mktime(12,0,0,4,3,2002),
+    mktime(12,0,0,4,3,2002),
+    mktime(12,0,0,5,9,2002),
+    mktime(12,0,0,5,1,2002),
+    mktime(12,0,0,5,13,2002),
+    mktime(12,0,0,5,19,2002),
+    mktime(12,0,0,5,23,2002),
+    mktime(12,0,0,6,3,2002),
+    mktime(12,0,0,6,19,2002),
+    mktime(12,0,0,6,24,2002),
+    mktime(12,0,0,7,3,2002),
+    mktime(12,0,0,7,9,2002),
+    mktime(12,0,0,7,23,2002),
+    mktime(12,0,0,7,30,2002),
+    mktime(12,0,0,8,9,2002),
+    mktime(12,0,0,9,23,2002),
+    mktime(12,0,0,10,3,2002),
+    mktime(12,0,0,11,12,2003),
+    mktime(12,0,0,11,13,2003),
+    mktime(12,0,0,12,12,2003),
+    mktime(12,0,0,12,13,2003),
+);
 
-require(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+require DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 
 print "Build ".GEN_NUMBER_COMMANDE." orders\n";
@@ -174,11 +175,11 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
     $db->begin();
 
     $result=$com->create($user);
-	if ($result >= 0)
-	{
-		$result=$com->valid($user);
-		if ($result > 0)
-		{
+    if ($result >= 0)
+    {
+        $result=$com->valid($user);
+        if ($result > 0)
+        {
             $nbp = rand(2, 5);
             $xnbp = 0;
             while ($xnbp < $nbp)
@@ -196,19 +197,19 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
 
             $db->commit();
             print " OK with ref ".$com->ref."\n";
-		}
-		else
-		{
+        }
+        else
+        {
             print " KO\n";
-		    $db->rollback();
-		    dol_print_error($db,$com->error);
-		}
-	}
-	else
-	{
+            $db->rollback();
+            dol_print_error($db,$com->error);
+        }
+    }
+    else
+    {
         print " KO\n";
-	    $db->rollback();
-	    dol_print_error($db,$com->error);
-	}
+        $db->rollback();
+        dol_print_error($db,$com->error);
+    }
 }
 

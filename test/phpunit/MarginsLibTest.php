@@ -18,9 +18,9 @@
 
 /**
  *      \file       test/phpunit/MarginLibTest.php
- *		\ingroup    test
+ *      \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
@@ -29,11 +29,10 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/margin/lib/margins.lib.php';
 
-if (empty($user->id))
-{
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+if (empty($user->id)) {
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -43,110 +42,111 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class MarginsLibTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return DateLibTest
-	 */
-	function __construct()
-	{
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	// Static methods
-  	public static function setUpBeforeClass()
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return DateLibTest
+     */
+    function __construct()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-    	print __METHOD__."\n";
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
+
+    // Static methods
+    public static function setUpBeforeClass()
+    {
+        global $conf,$user,$langs,$db;
+        $db->begin();   // This is to have all actions inside a transaction even if test launched without suite.
+
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+
+    /**
+     * End phpunit tests
+     *
+     * @return void
+    */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
      * testGetMarginInfos
      *
-     * @return	void
+     * @return void
      */
     public function testGetMarginInfos()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$result=getMarginInfos(10, 0, 19.6, 0, 0, 0, 8);
-		//var_dump($result);
-		print __METHOD__." result[0]=".$result[0]."\n";
-		$this->assertEquals(8,$result[0]);
-		print __METHOD__." result[1]=".$result[1]."\n";
-		$this->assertEquals(25,$result[1]);
-		print __METHOD__." result[2]=".$result[2]."\n";
-		$this->assertEquals(20,$result[2]);
-		
-		$result=getMarginInfos(10, 10, 19.6, 0, 0, 0, 8);
-		var_dump($result);
-		print __METHOD__." result[0]=".$result[0]."\n";
-		$this->assertEquals(8,$result[0]);
-		print __METHOD__." result[1]=".$result[1]."\n";
-		$this->assertEquals(12.5,$result[1]);
-		print __METHOD__." result[2]=".$result[2]."\n";
-		$this->assertEquals(1/9*100,$result[2]);
-		
-		return 0;
+        $result=getMarginInfos(10, 0, 19.6, 0, 0, 0, 8);
+        //var_dump($result);
+        print __METHOD__." result[0]=".$result[0]."\n";
+        $this->assertEquals(8,$result[0]);
+        print __METHOD__." result[1]=".$result[1]."\n";
+        $this->assertEquals(25,$result[1]);
+        print __METHOD__." result[2]=".$result[2]."\n";
+        $this->assertEquals(20,$result[2]);
+
+        $result=getMarginInfos(10, 10, 19.6, 0, 0, 0, 8);
+        var_dump($result);
+        print __METHOD__." result[0]=".$result[0]."\n";
+        $this->assertEquals(8,$result[0]);
+        print __METHOD__." result[1]=".$result[1]."\n";
+        $this->assertEquals(12.5,$result[1]);
+        print __METHOD__." result[2]=".$result[2]."\n";
+        $this->assertEquals(1/9*100,$result[2]);
+
+        return 0;
     }
 
 }

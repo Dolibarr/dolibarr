@@ -5,8 +5,8 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
+ * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
+ * Copyright (C) 2006      Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,8 @@
  */
 
 /**
- *	\file       htdocs/filefunc.inc.php
- * 	\ingroup	core
+ *  \file       htdocs/filefunc.inc.php
+ *  \ingroup    core
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
@@ -35,21 +35,18 @@ if (! defined('EURO')) define('EURO',chr(128));
 // Define syslog constants
 if (! defined('LOG_DEBUG'))
 {
-    if (function_exists("define_syslog_variables"))
-    {
-    	define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
-    }
-    else
-    {
-    	// Pour PHP sans syslog (comme sous Windows)
-    	define('LOG_EMERG',0);
-    	define('LOG_ALERT',1);
-    	define('LOG_CRIT',2);
-    	define('LOG_ERR',3);
-    	define('LOG_WARNING',4);
-    	define('LOG_NOTICE',5);
-    	define('LOG_INFO',6);
-    	define('LOG_DEBUG',7);
+    if (function_exists("define_syslog_variables")) {
+        define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
+    } else {
+        // Pour PHP sans syslog (comme sous Windows)
+        define('LOG_EMERG',0);
+        define('LOG_ALERT',1);
+        define('LOG_CRIT',2);
+        define('LOG_ERR',3);
+        define('LOG_WARNING',4);
+        define('LOG_NOTICE',5);
+        define('LOG_INFO',6);
+        define('LOG_DEBUG',7);
     }
 }
 
@@ -68,23 +65,19 @@ $conffiletoshow = "htdocs/conf/conf.php";
 
 
 // Include configuration
-$result=@include_once $conffile;	// Keep @ because with some error reporting this break the redirect
+$result=@include_once $conffile;    // Keep @ because with some error reporting this break the redirect
 
-if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
-{
-	header("Location: install/index.php");
-	exit;
+if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"])) {   // If install not done and we are in a web session
+    header("Location: install/index.php");
+    exit;
 }
 
 // Force PHP error_reporting setup (Dolibarr may report warning without this)
-if (! empty($dolibarr_strict_mode))
-{
-	error_reporting(E_ALL | E_STRICT);
-}
-else
-{
-	if (! defined('E_DEPRECATED')) define('E_DEPRECATED',0);	// For PHP < 5.3.0 compatibility
-	error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
+if (! empty($dolibarr_strict_mode)) {
+    error_reporting(E_ALL | E_STRICT);
+} else {
+    if (! defined('E_DEPRECATED')) define('E_DEPRECATED',0);    // For PHP < 5.3.0 compatibility
+    error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
 }
 
 // Disable php display errors
@@ -97,11 +90,11 @@ $dolibarr_main_url_root_alt=(empty($dolibarr_main_url_root_alt)?'':trim($dolibar
 $dolibarr_main_document_root=trim($dolibarr_main_document_root);
 $dolibarr_main_document_root_alt=(empty($dolibarr_main_document_root_alt)?'':trim($dolibarr_main_document_root_alt));
 
-if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
-if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;        // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';  // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_';
-if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($dolibarr_main_db_type=='mysql'?'latin1':'');		// Old installation
-if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysql'?'latin1_swedish_ci':'');	// Old installation
+if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($dolibarr_main_db_type=='mysql'?'latin1':'');      // Old installation
+if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysql'?'latin1_swedish_ci':'');   // Old installation
 if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;
@@ -114,56 +107,51 @@ if (empty($multicompany_force_entity)) $multicompany_force_entity=0; // To force
 // Security: CSRF protection
 // This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
 // when we post forms (we allow GET to allow direct link to access a particular page).
-if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER']))
-{
-	//print 'HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
-	print "Access refused by CSRF protection in main.inc.php.\n";
-	print "If you access your server behind a proxy using url rewriting, you might add the line \$dolibarr_nocsrfcheck=1 into your conf.php file.\n";
-	die;
+if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER'])) {
+    //print 'HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
+    print "Access refused by CSRF protection in main.inc.php.\n";
+    print "If you access your server behind a proxy using url rewriting, you might add the line \$dolibarr_nocsrfcheck=1 into your conf.php file.\n";
+    die;
 }
-if (empty($dolibarr_main_db_host))
-{
-	print '<div align="center">Dolibarr setup is not yet complete.<br><br>'."\n";
-	print '<a href="install/index.php">Click here to finish Dolibarr install process</a> ...</div>'."\n";
-	die;
+if (empty($dolibarr_main_db_host)) {
+    print '<div align="center">Dolibarr setup is not yet complete.<br><br>'."\n";
+    print '<a href="install/index.php">Click here to finish Dolibarr install process</a> ...</div>'."\n";
+    die;
 }
-if (empty($dolibarr_main_url_root))
-{
-	print 'Value for parameter \'dolibarr_main_url_root\' is not defined in your \'htdocs\conf\conf.php\' file.<br>'."\n";
-	print 'You must add this parameter with your full Dolibarr root Url (Example: http://myvirtualdomain/ or http://mydomain/mydolibarrurl/)'."\n";
-	die;
+if (empty($dolibarr_main_url_root)) {
+    print 'Value for parameter \'dolibarr_main_url_root\' is not defined in your \'htdocs\conf\conf.php\' file.<br>'."\n";
+    print 'You must add this parameter with your full Dolibarr root Url (Example: http://myvirtualdomain/ or http://mydomain/mydolibarrurl/)'."\n";
+    die;
 }
-if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
-if (empty($dolibarr_main_data_root))
-{
-	// Si repertoire documents non defini, on utilise celui par defaut
-	$dolibarr_main_data_root=str_replace("/htdocs","",$dolibarr_main_document_root);
-	$dolibarr_main_data_root.="/documents";
+if (empty($dolibarr_main_db_type))
+    $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+if (empty($dolibarr_main_data_root)) {
+    // Si repertoire documents non defini, on utilise celui par defaut
+    $dolibarr_main_data_root=str_replace("/htdocs","",$dolibarr_main_document_root);
+    $dolibarr_main_data_root.="/documents";
 }
 
 // Define some constants
-define('DOL_CLASS_PATH', 'class/');									// Filesystem path to class dir (defined only for some code that want to be compatible with old versions without this parameter)
-define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (documents)
-define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
+define('DOL_CLASS_PATH', 'class/');                             // Filesystem path to class dir (defined only for some code that want to be compatible with old versions without this parameter)
+define('DOL_DATA_ROOT', $dolibarr_main_data_root);              // Filesystem data (documents)
+define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);      // Filesystem core php (htdocs)
 // Try to autodetect DOL_MAIN_URL_ROOT and DOL_URL_ROOT.
 // Note: autodetect works only in case 1, 2, 3 and 4 of phpunit test CoreTest.php. For case 5, 6, only setting value into conf.php will works.
 $tmp='';
 $found=0;
-$real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));	// A) Value found into config file, to say where are store htdocs files. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
-$pathroot=$_SERVER["DOCUMENT_ROOT"];															// B) Value reported by web server setup, to say where is root of web server instance. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
-$paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));								// C) Value reported by web server, to say full path on filesystem of a file. Ex: /dolibarr/htdocs/admin/system/phpinfo.php
+$real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root)); // A) Value found into config file, to say where are store htdocs files. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
+$pathroot=$_SERVER["DOCUMENT_ROOT"];                                                            // B) Value reported by web server setup, to say where is root of web server instance. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
+$paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));                              // C) Value reported by web server, to say full path on filesystem of a file. Ex: /dolibarr/htdocs/admin/system/phpinfo.php
 // Try to detect if $_SERVER["DOCUMENT_ROOT"]+start of $_SERVER["SCRIPT_NAME"] is $dolibarr_main_document_root. If yes, relative url to add before dol files is this start part.
 $concatpath='';
-foreach($paths as $tmppath)	// We check to find (B+start of C)=A
-{
+foreach($paths as $tmppath) {   // We check to find (B+start of C)=A
     if (empty($tmppath)) continue;
     $concatpath.='/'.$tmppath;
     //if ($tmppath) $concatpath.='/'.$tmppath;
     //print $_SERVER["SCRIPT_NAME"].'-'.$pathroot.'-'.$concatpath.'-'.$real_dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
-    if ($real_dolibarr_main_document_root == @realpath($pathroot.$concatpath))    // @ avoid warning when safe_mode is on.
-    {
+    if ($real_dolibarr_main_document_root == @realpath($pathroot.$concatpath)) {   // @ avoid warning when safe_mode is on.
         //print "Found relative url = ".$concatpath;
-    	$tmp3=$concatpath;
+        $tmp3=$concatpath;
         $found=1;
         break;
     }
@@ -173,11 +161,11 @@ if (! $found) $tmp=$dolibarr_main_url_root; // If autodetect fails (Ie: when usi
 else $tmp='http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]!=443))?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80||$_SERVER["SERVER_PORT"]==443)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
 //print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp."\n";
 if (! empty($dolibarr_main_force_https)) $tmp=preg_replace('/^http:/i','https:',$tmp);
-define('DOL_MAIN_URL_ROOT', $tmp);											// URL absolute root (https://sss/dolibarr, ...)
-$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));	// $uri contains url without http*
-$suburi = strstr($uri, '/');												// $suburi contains url without domain:port
-if ($suburi == '/') $suburi = '';											// If $suburi is /, it is now ''
-define('DOL_URL_ROOT', $suburi);											// URL relative root ('', '/dolibarr', ...)
+define('DOL_MAIN_URL_ROOT', $tmp);                                          // URL absolute root (https://sss/dolibarr, ...)
+$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));    // $uri contains url without http*
+$suburi = strstr($uri, '/');                                                // $suburi contains url without domain:port
+if ($suburi == '/') $suburi = '';                                           // If $suburi is /, it is now ''
+define('DOL_URL_ROOT', $suburi);                                            // URL relative root ('', '/dolibarr', ...)
 
 //print DOL_MAIN_URL_ROOT.'-'.DOL_URL_ROOT."\n";
 
@@ -192,7 +180,7 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 // Path to root libraries
 if (! defined('ADODB_PATH'))           { define('ADODB_PATH',           (!isset($dolibarr_lib_ADODB_PATH))?DOL_DOCUMENT_ROOT.'/includes/adodbtime/':(empty($dolibarr_lib_ADODB_PATH)?'':$dolibarr_lib_ADODB_PATH.'/')); }
 if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH',           (empty($dolibarr_lib_TCPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/tcpdf/':$dolibarr_lib_TCPDF_PATH.'/'); }
-if (! defined('FPDF_PATH'))            { define('FPDF_PATH',            (empty($dolibarr_lib_FPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdf/':$dolibarr_lib_FPDF_PATH.'/'); }	// Used only for package that can't include tcpdf
+if (! defined('FPDF_PATH'))            { define('FPDF_PATH',            (empty($dolibarr_lib_FPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdf/':$dolibarr_lib_FPDF_PATH.'/'); }    // Used only for package that can't include tcpdf
 if (! defined('FPDI_PATH'))            { define('FPDI_PATH',            (empty($dolibarr_lib_FPDI_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdfi/':$dolibarr_lib_FPDI_PATH.'/'); }
 if (! defined('NUSOAP_PATH'))          { define('NUSOAP_PATH',          (!isset($dolibarr_lib_NUSOAP_PATH))?DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/':(empty($dolibarr_lib_NUSOAP_PATH)?'':$dolibarr_lib_NUSOAP_PATH.'/')); }
 if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',        (!isset($dolibarr_lib_PHPEXCEL_PATH))?DOL_DOCUMENT_ROOT.'/includes/phpexcel/':(empty($dolibarr_lib_PHPEXCEL_PATH)?'':$dolibarr_lib_PHPEXCEL_PATH.'/')); }
@@ -214,11 +202,10 @@ if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset(
 
 if (! defined('ADODB_DATE_VERSION')) include_once ADODB_PATH.'adodb-time.inc.php';
 
-if (! file_exists(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php"))
-{
-	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
-	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
-	exit;
+if (! file_exists(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php")) {
+    print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
+    print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
+    exit;
 }
 
 
@@ -228,14 +215,12 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/security.lib.php';
 //print memory_get_usage();
 
 // If password is encoded, we decode it
-if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
-{
-	if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
-	{
-		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
-	}
-	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass)) {
+    if (preg_match('/crypted:/i',$dolibarr_main_db_pass)) {
+        $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
+        $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+        $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;  // We need to set this as it is used to know the password was initially crypted
+    } else
+        $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
 

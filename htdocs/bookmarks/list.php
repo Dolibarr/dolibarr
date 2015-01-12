@@ -157,16 +157,13 @@ if ($resql)
 
         // Author
         print '<td align="center">';
-		if ($obj->fk_user)
-		{
-        	$userstatic->id=$obj->fk_user;
-	    	$userstatic->lastname=$obj->login;
-			print $userstatic->getNomUrl(1);
-		}
-		else
-		{
-			print $langs->trans("Public");
-		}
+        if ($obj->fk_user) {
+            $userstatic->id=$obj->fk_user;
+            $userstatic->lastname=$obj->login;
+            print $userstatic->getNomUrl(1);
+        } else {
+            print $langs->trans("Public");
+        }
         print "</td>\n";
 
         // Date creation
@@ -177,12 +174,10 @@ if ($resql)
 
         // Actions
         print '<td align="right" class="nowrap">';
-        if ($user->rights->bookmark->creer)
-        {
-        	print "<a href=\"".DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->bid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
+        if ($user->rights->bookmark->creer) {
+            print "<a href=\"".DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->bid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
         }
-        if ($user->rights->bookmark->supprimer)
-        {
+        if ($user->rights->bookmark->supprimer) {
             print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&bid=$obj->bid\">".img_delete()."</a>";
         }
         else
@@ -195,9 +190,7 @@ if ($resql)
     }
     print "</table>";
     $db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -205,8 +198,7 @@ else
 
 print "<div class=\"tabsAction\">\n";
 
-if ($user->rights->bookmark->creer)
-{
+if ($user->rights->bookmark->creer) {
     print '<a class="butAction" href="card.php?action=create">'.$langs->trans("NewBookmark").'</a>';
 }
 

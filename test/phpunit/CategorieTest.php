@@ -43,7 +43,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CategorieTest extends PHPUnit_Framework_TestCase
 {
@@ -293,7 +293,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
      * @param   int $id     Id of category
      * @return  int
      *
-     * @depends	testCategorieOther
+     * @depends testCategorieOther
      * The depends says test is run only if previous is ok
      */
     public function testCategorieDelete($id)
