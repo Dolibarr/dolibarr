@@ -199,7 +199,8 @@ if ($action == "transfert_stock" && ! $cancel)
 
 				// Define value of products moved
 				$pricesrc=0;
-				if (isset($product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp)) $pricesrc=$product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp;
+				//if (isset($product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp)) $pricesrc=$product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp;
+				if (isset($product->pmp)) $pricesrc=$product->pmp;
 				$pricedest=$pricesrc;
 
 				$pdluoid=GETPOST('pdluoid','int');
