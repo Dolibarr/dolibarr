@@ -31,6 +31,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
@@ -203,26 +204,59 @@ if ($action == "transfert_stock" && ! $cancel)
 
 				//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
 
-				// Remove stock
-				$result1=$product->correct_stock(
-	    			$user,
-	    			GETPOST("id_entrepot_source"),
-	    			GETPOST("nbpiece"),
-	    			1,
-	    			GETPOST("label"),
-	    			$pricesrc
-				);
+							$pdluoid=GETPOST('pdluoid','int');
 
-				// Add stock
-				$result2=$product->correct_stock(
-	    			$user,
-	    			GETPOST("id_entrepot_destination"),
-	    			GETPOST("nbpiece"),
-	    			0,
-	    			GETPOST("label"),
-	    			$pricedest
-				);
+				if ($pdluoid>0)
+				{
+				    $pdluo = new Productbatch($db);
+				    $result=$pdluo->fetch($pdluoid);
 
+				    if ($result>0 && $pdluo->id)
+				    {
+                        // Remove stock
+                        $result1=$product->correct_stock_batch(
+				            $user,
+				            $pdluo->warehouseid,
+				            GETPOST("nbpiece",'int'),
+				            1,
+				            GETPOST("label",'san_alpha'),
+				            $pricesrc,
+				            $pdluo->eatby,$pdluo->sellby,$pdluo->batch
+				        );
+                        // Add stock
+                        $result2=$product->correct_stock_batch(
+                            $user,
+                            GETPOST("id_entrepot_destination",'int'),
+                            GETPOST("nbpiece",'int'),
+                            0,
+                            GETPOST("label",'san_alpha'),
+                            $pricedest,
+                            $pdluo->eatby,$pdluo->sellby,$pdluo->batch
+                        );
+				    }
+				}
+				else
+				{
+                    // Remove stock
+                    $result1=$product->correct_stock(
+                        $user,
+                        GETPOST("id_entrepot_source"),
+                        GETPOST("nbpiece"),
+                        1,
+                        GETPOST("label"),
+                        $pricesrc
+                    );
+
+                    // Add stock
+                    $result2=$product->correct_stock(
+                        $user,
+                        GETPOST("id_entrepot_destination"),
+                        GETPOST("nbpiece"),
+                        0,
+                        GETPOST("label"),
+                        $pricedest
+                    );
+				}
 				if ($result1 >= 0 && $result2 >= 0)
 				{
 					$db->commit();
@@ -238,6 +272,7 @@ if ($action == "transfert_stock" && ! $cancel)
 		}
 	}
 }
+
 
 
 /*
@@ -309,13 +344,50 @@ if ($id > 0 || $ref)
 		print '<td>'.price($product->pmp).' '.$langs->trans("HT").'</td>';
 		print '</tr>';
 
-        // Sell price
-        print '<tr><td>'.$langs->trans("SellPriceMin").'</td>';
-        print '<td>';
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price($product->price).' '.$langs->trans("HT");
-        else print $langs->trans("Variable");
-        print '</td>';
-        print '</tr>';
+		// Minimum Price
+		print '<tr><td>'.$langs->trans("BuyingPriceMin").'</td>';
+		print '<td colspan="2">';
+		$product_fourn = new ProductFournisseur($db);
+		if ($product_fourn->find_min_price_product_fournisseur($product->id) > 0)
+		{
+			if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur();
+			else print $langs->trans("NotDefined");
+		}
+		print '</td></tr>';
+
+		$object = $product;
+		if (empty($conf->global->PRODUIT_MULTIPRICES))
+		{
+			// Price
+			print '<tr><td>' . $langs->trans("SellingPrice") . '</td><td>';
+			if ($object->price_base_type == 'TTC') {
+				print price($object->price_ttc) . ' ' . $langs->trans($object->price_base_type);
+			} else {
+				print price($object->price) . ' ' . $langs->trans($object->price_base_type);
+			}
+			print '</td></tr>';
+
+			// Price minimum
+			print '<tr><td>' . $langs->trans("MinPrice") . '</td><td>';
+			if ($object->price_base_type == 'TTC') {
+				print price($object->price_min_ttc) . ' ' . $langs->trans($object->price_base_type);
+			} else {
+				print price($object->price_min) . ' ' . $langs->trans($object->price_base_type);
+			}
+			print '</td></tr>';
+		}
+		else
+		{
+			// Price
+			print '<tr><td>' . $langs->trans("SellingPrice") . '</td><td>';
+			print $langs->trans("Variable");
+			print '</td></tr>';
+
+			// Price minimum
+			print '<tr><td>' . $langs->trans("MinPrice") . '</td><td>';
+			print $langs->trans("Variable");
+			print '</td></tr>';
+		}
 
         // Stock
         print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer).'</td><td colspan="2">';

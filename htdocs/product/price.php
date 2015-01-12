@@ -351,28 +351,29 @@ print '</tr>';
 // MultiPrix
 if (! empty($conf->global->PRODUIT_MULTIPRICES))
 {
+	// Price and min price are variable (depends on level of company).
 	if (! empty($socid))
 	{
 		$soc = new Societe($db);
 		$soc->id = $socid;
 		$soc->fetch($socid);
 
+		// Selling price
 		print '<tr><td>' . $langs->trans("SellingPrice") . '</td>';
-
+		print '<td>';
 		if ($object->multiprices_base_type["$soc->price_level"] == 'TTC') {
-			print '<td>' . price($object->multiprices_ttc ["$soc->price_level"]);
+			print price($object->multiprices_ttc["$soc->price_level"]);
 		} else {
-			print '<td>' . price($object->multiprices ["$soc->price_level"]);
+			print price($object->multiprices["$soc->price_level"]);
 		}
-
 		if ($object->multiprices_base_type["$soc->price_level"]) {
-			print ' ' . $langs->trans($object->multiprices_base_type ["$soc->price_level"]);
+			print ' ' . $langs->trans($object->multiprices_base_type["$soc->price_level"]);
 		} else {
 			print ' ' . $langs->trans($object->price_base_type);
 		}
 		print '</td></tr>';
 
-		// Prix mini
+		// Price min
 		print '<tr><td>' . $langs->trans("MinPrice") . '</td><td>';
 		if ($object->multiprices_base_type["$soc->price_level"] == 'TTC')
 		{
@@ -390,7 +391,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
 		{
 			// TVA
-			if ($i == 1) 			// We show only price for level 1
+			if ($i == 1) 			// We show only vat for level 1
 			{
 				print '<tr><td>' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->multiprices_tva_tx [1], true) . '</td></tr>';
 			}
