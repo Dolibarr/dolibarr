@@ -41,7 +41,7 @@ List=Λίστα
 Create=Δημιουργία
 UpdateAccount=Τροποποίηση του λογιστικού λογαριασμού
 UpdateMvts=Τροποποίηση μιας κίνησης
-WriteBookKeeping=Εγγραφή λογαριασμών σε γενικό βιβλίο
+WriteBookKeeping=Εγγραφή λογαριασμών στο γενικό καθολικό
 Bookkeeping=Γενικό Καθολικό
 AccountBalanceByMonth=Το υπόλοιπο του λογαριασμού ανά μήνα
 
@@ -51,46 +51,46 @@ AccountingVentilationCustomer=Ανάλυση λογιστικών των πελ�
 Line=Γραμμή
 
 CAHTF=Σύνολο προμηθευτή αγορά ΗΤ
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
+InvoiceLines=Εγγραφές τιμολογίου για ανανέωση
+InvoiceLinesDone=Ανανεωμένες εγγραφές τιμολογίου
 IntoAccount=Στο λογιστικό λογαριασμό
 
-Ventilate=Ventilate
-VentilationAuto=Automatic breakdown
+Ventilate=Ανανέωση
+VentilationAuto=Αυτόματη ανάλυση
 
 Processing=Επεξεργασία
 EndProcessing=Τέλος της επεξεργασίας
-AnyLineVentilate=Any lines to ventilate
+AnyLineVentilate=Εγγραφές προς ανανέωση
 SelectedLines=Επιλεγμένες γραμμές
 Lineofinvoice=Γραμμή τιμολογίου
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+VentilatedinAccount=Ανανεώθηκε επιτυχώς στον λογιστικό λογαριασμό
+NotVentilatedinAccount=Δεν ανανεώθηκε στον λογιστικό λογαριασμό
 
 ACCOUNTING_SEPARATORCSV=Διαχωριστικό CSV
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Αριθμός αντικειμένων για ανάλυση ανά σελίδα (προτείνεται μέγιστο : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ξεκινήστε τη διαλογή της κατανομής των σελίδων "Έχει για κατανομή» από τα πιο πρόσφατα στοιχεία
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ξεκινήστε τη διαλογή της κατανομής των σελίδων "Ανάλυση" με τα πιο πρόσφατα στοιχεία
 
 AccountLength=Μήκος των λογιστικών λογαριασμών που φαίνονται στο Dolibarr
 AccountLengthDesc=Λειτουργία που επιτρέπει να υποκρίνεαι μήκος του λογιστικού λογαριασμού αντικαθιστώντας χώρους από τον αριθμό μηδέν. Η λειτουργία αυτή αγγίζει μόνο την οθόνη, δεν τροποποιούν τους λογιστικούς λογαριασμούς στο Dolibarr. Για την εξαγωγή, αυτή η λειτουργία είναι απαραίτητη για να είναι συμβατή με το συγκεκριμένο λογισμικό.
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+ACCOUNTING_LENGTH_GACCOUNT=Μήκος γενικών λογαριασμών
+ACCOUNTING_LENGTH_AACCOUNT=Μήκος λογαριασμών τρίτων
 
 ACCOUNTING_SELL_JOURNAL=Ημερολόγιο πωλήσεων
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
+ACCOUNTING_PURCHASE_JOURNAL=Ημερολόγιο αγορών
 ACCOUNTING_BANK_JOURNAL=Τραπεζικό ημερολόγιο
-ACCOUNTING_CASH_JOURNAL=Cash journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_CASH_JOURNAL=Ημερολόγιο μετρητών
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Διάφορα ημερολόγια
+ACCOUNTING_SOCIAL_JOURNAL=Κοινωνικό ημερολόγιο
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Λογαριασμός μεταφοράς
+ACCOUNTING_ACCOUNT_SUSPENSE=Λογαριασμός σε αναμονή
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Προεπιλεγμένος λογιστικός λογαριασμός για αγορά προϊόντων (εάν δεν είναι ορισμένος στην καρτέλα προϊόντος)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Προεπιλεγμένος λογιστικός λογαριασμός για πώληση προϊόντων (εάν δεν είναι ορισμένος στην καρτέλα προϊόντος)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Προεπιλεγμένος λογιστικός λογαριασμός για αγορά υπηρεσιών (εάν δεν είναι ορισμένος στην καρτέλα υπηρεσίας)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Προεπιλεγμένος λογιστικός λογαριασμός για πώληση υπηρεσιών (εάν δεν είναι ορισμένος στην καρτέλα υπηρεσίας)
 
 Doctype=Τύπος εγγράφου
 Docdate=Ημερομηνία
@@ -128,31 +128,31 @@ ListeMvts=Λίστα των κινήσεων
 ErrorDebitCredit=Χρεωστικές και Πιστωτικές δεν μπορούν να χουν την ίδια αξία ταυτόχρονα
 
 ReportThirdParty=Λίστα λογαριασμού Πελ./Προμ.
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+DescThirdPartyReport=Συμβουλευτείτε εδώ τη λίστα των πελατών και των προμηθευτών και των λογιστικών τους λογαριασμούς τους
 
 ListAccounts=Λίστα των λογιστικών λογαριασμών
 
 Pcgversion=Έκδοση του σχεδίου
-Pcgtype=Class of account
-Pcgsubtype=Under class of account
-Accountparent=Root of the account
-Active=Statement
+Pcgtype=Τύπος λογαριασμού
+Pcgsubtype=Δευτερεύουσα κατηγορία λογαριασμού
+Accountparent=Ρίζα του λογαριασμού
+Active=Δήλωση
 
 NewFiscalYear=Νέα οικονομική χρονιά
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
-TotalVente=Total turnover HT
-TotalMarge=Total sales margin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilCustomer=Συμβουλευτείτε εδώ την ετήσια κατανομή των λογαριασμών των τιμολογίων των πελατών σας
+TotalVente=Σύνολο κύκλου εργασιών ΗΤ
+TotalMarge=Συνολικό περιθώριο πωλήσεων
+DescVentilDoneCustomer=Συμβουλευτείτε εδώ τη λίστα των γραμμών των τιμολογίων των πελατών και τη λογιστική των λογαριασμών τους
+DescVentilTodoCustomer=Ανανεώστε τις εγγραφές ενός τιμολογίου πελάτη με έναν λογιστικό λογαριασμό
+ChangeAccount=Αλλαγή λογιστικού λογαριασμού για εγγραφές επιλεγμένες από τον λογαριασμό:
 Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Συμβουλευτείτε εδώ την ετήσια κατανομή των λογαριασμών των τιμολογίων των προμηθευτών σας
+DescVentilTodoSupplier=Ανανέωσε τις εγγραφές του τιμολογίου προμηθευτή με έναν λογιστικό λογαριασμό
+DescVentilDoneSupplier=Συμβουλευτείτε εδώ τη λίστα των γραμμών των τιμολογίων του προμηθευτή και τη λογιστική του λογαριασμού τους
 
 ValidateHistory=Αυτόματη επικύρωση
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+ErrorAccountancyCodeIsAlreadyUse=Σφάλμα, δεν μπορείτε να διαγράψετε αυτόν τον λογιστικό λογαριασμό γιατί χρησιμοποιείται
 
-FicheVentilation=Breakdown card
+FicheVentilation=Φόρμα ανάλυσης

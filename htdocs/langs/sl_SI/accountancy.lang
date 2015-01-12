@@ -3,7 +3,7 @@ CHARSET=UTF-8
 
 Accounting=Računovodstvo
 Globalparameters=Globalni parametri
-Chartofaccounts=Kontni
+Chartofaccounts=Kontni plan
 Fiscalyear=Fiskalna leta
 Menuaccount=Računovodski izkazi
 Menuthirdpartyaccount=Thirdparty računi
@@ -17,20 +17,20 @@ Modelcsv=Model izvoza
 Selectmodelcsv=Izberite model izvoza
 Modelcsv_normal=Classic izvoz
 Modelcsv_CEGID=Izvoz v CEGID Expert
-BackToChartofaccounts=Vrni se kontni
+BackToChartofaccounts=Prikaz kontnega plana
 Back=Return
 
-Definechartofaccounts=Določite kontni
-Selectchartofaccounts=Izberite kontni
+Definechartofaccounts=Določite kontni plan
+Selectchartofaccounts=Izberite kontni plan
 Validate=Potrjevanje
 Addanaccount=Dodaj računovodskega račun
 AccountAccounting=Računovodstvo račun
-Ventilation=Breakdown
+Ventilation=Pregled
 ToDispatch=Odpremo
 Dispatched=Odpošlje
 
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
+CustomersVentilation=Pregled kupcev
+SuppliersVentilation=Pregled dobaviteljev
 TradeMargin=Trgovska marža
 Reports=Poročila
 ByCustomerInvoice=Z računov strank,
@@ -45,9 +45,9 @@ WriteBookKeeping=Evidenčnih računov v glavno knjigo
 Bookkeeping=Glavna knjiga
 AccountBalanceByMonth=Stanje na računu po mesecu
 
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
+AccountingVentilation=Pregled računov
+AccountingVentilationSupplier=Pregled računov dobaviteljev
+AccountingVentilationCustomer=Pregled računov kupcev
 Line=Line
 
 CAHTF=Skupaj nakup dobavitelj HT
@@ -56,7 +56,7 @@ InvoiceLinesDone=Prezračevane linije računa
 IntoAccount=Obračunskega računa
 
 Ventilate=Prezračiti
-VentilationAuto=Automatic breakdown
+VentilationAuto=Avtomatski pregled
 
 Processing=Processing
 EndProcessing=Konec obdelave
