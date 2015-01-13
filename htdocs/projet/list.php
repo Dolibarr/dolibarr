@@ -64,6 +64,7 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
+$view_status = GETPOST('viewstatut', 'int');
 $search_year=GETPOST("search_year");
 $search_all=GETPOST("search_all");
 $search_status=GETPOST("search_status",'int');
@@ -144,6 +145,9 @@ if ($search_label)
 if ($search_societe)
 {
 	$sql .= natural_search('s.nom', $search_societe);
+}
+if ($view_status !== "") {
+	$sql .= " AND fk_statut = ".$db->escape($view_status);
 }
 if ($smonth > 0)
 {
