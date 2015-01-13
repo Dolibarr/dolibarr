@@ -17,7 +17,7 @@
 
 /**
  *	\file       /htdocs/fourn/ajax/getSupplierPrices.php
- *	\brief      File to return Ajax response on get supplier prices
+ *	\brief      File to return an Ajax response to get a supplier prices
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
@@ -119,6 +119,11 @@ if (! empty($idprod))
 			$db->free($result);
 		}
 	}
+
+	// Add price for pmp
+	$price=123;
+	$prices[] = array("id" => 'pmpprice', "price" => $price, "label" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency));
+
 }
 
 echo json_encode($prices);
