@@ -242,8 +242,8 @@ ForceUpdateChildPriceSoc=Sätt samma pris på kunds filialer
 PriceByCustomerLog=Pris per kundlogg
 MinimumPriceLimit=Minimipris kan inte vara lägre än %s
 MinimumRecommendedPrice=Minsta rekommenderade priset är : %s
-PriceExpressionEditor=Price expression editor
-PriceExpressionSelected=Selected price expression
-PriceExpressionEditorHelp="price = 2 + 2" or "2 + 2" for setting the price<br>ExtraFields are variables like "#options_myextrafieldkey# * 2"<br>There are special variables like #quantity# and #tva_tx#<br>Use ; to separate expressions
-PriceMode=Price mode
-PriceNumeric=Number
+PriceExpressionEditor=Pris uttryck redigerare
+PriceExpressionSelected=Valda pris uttryck
+PriceExpressionEditorHelp="pris = 2 + 2" eller "2 + 2" för det pris <br> ExtraFields är variabler som "# options_myextrafieldkey # * 2" <br> Det finns speciella variabler som # mängd # och # tva_tx # <br> Använd ; att separera uttryck
+PriceMode=Prisläge
+PriceNumeric=Nummer

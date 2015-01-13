@@ -2,7 +2,7 @@
 WarehouseCard=Fişă Depozit
 Warehouse=Depozit
 Warehouses=Depozite
-NewWarehouse=Depozit  nou
+NewWarehouse=Depozit / Stoc  Nou 
 WarehouseEdit=Modifică depozit
 MenuNewWarehouse=Depozit nou
 WarehouseOpened=Depozit deschis
@@ -23,7 +23,7 @@ ErrorWarehouseLabelRequired=Eticheta Depozit este obligatorie
 CorrectStock=Corectează stoc
 ListOfWarehouses=Lista  depozite
 ListOfStockMovements=Lista mişcări de stoc
-StocksArea=Zona Depozite
+StocksArea=Depozite
 Location=Locație
 LocationSummary=Nume scurt locaţie
 NumberOfDifferentProducts=Numărul de produse diferite

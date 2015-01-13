@@ -3,7 +3,7 @@ HRM=GRH
 Holidays=Congés
 CPTitreMenu=Congés
 MenuReportMonth=État mensuel
-MenuAddCP=Créer une demande de congés
+MenuAddCP=Créer demande de congés
 NotActiveModCP=Vous devez activer le module Congés pour afficher cette page.
 NotConfigModCP=Vous devez configurer le module Congés pour afficher cette page. Pour effectuer cette opération, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">cliquer ici</a>.
 NoCPforUser=Vous n'avez plus de jours disponibles

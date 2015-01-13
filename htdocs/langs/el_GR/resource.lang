@@ -4,8 +4,8 @@ MenuResourceAdd=Νέος πόρος
 MenuResourcePlanning=Προγραμματισμός των πόρων
 DeleteResource=Διαγραφή πόρων
 ConfirmDeleteResourceElement=Επιβεβαιώστε τη διαγραφή των πόρων για αυτό το στοιχείο
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+NoResourceInDatabase=Δεν υπάρχουν πόροι στη βάση δεδομένων.
+NoResourceLinked=Ο πόρος δεν συνδέεται
 
 ResourcePageIndex=Λίστα Πόρων
 ResourceSingular=Πόρος
@@ -17,16 +17,16 @@ ResourceFormLabel_description=Η περιγραφή πόρου
 
 ResourcesLinkedToElement=Πόροι που σχετίζονται με το στοιχείο
 
-ShowResourcePlanning=Show resource planning
+ShowResourcePlanning=Εμφάνιση σχεδιασμού των πόρων
 GotoDate=Μετάβαση στην ημερομηνία
 
-ResourceElementPage=Element resources
+ResourceElementPage=Στοιχείο πόρων
 ResourceCreatedWithSuccess=Ο Πόρος δημιουργήθηκε με επιτυχία
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+RessourceLineSuccessfullyDeleted=Γραμμή πόρου διαγράφηκε με επιτυχία
+RessourceLineSuccessfullyUpdated=Γραμμή πόρου ενημερώθηκε με επιτυχία
+ResourceLinkedWithSuccess=Ο πόρος συνδέεται με επιτυχία
 
-TitleResourceCard=Resource card
+TitleResourceCard=Κάρτα πόρων
 ConfirmDeleteResource=Επιβεβαιώστε την διαγραφή αυτού του πόρου
 RessourceSuccessfullyDeleted=Ο Πόρος διαγράφηκε με επιτυχία
 DictionaryResourceType=Το είδος των πόρων

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - contracts
-ContractsArea=Zona Contracte
+ContractsArea=Contracte
 ListOfContracts=Lista contracte
 LastModifiedContracts=Ultimele %s contracte modificare
 AllContracts=Toate contractele
@@ -7,7 +7,7 @@ ContractCard=Fişă Contract
 ContractStatus=Status Contract
 ContractStatusNotRunning=Fără service
 ContractStatusRunning=În service
-ContractStatusDraft=Nevalidat
+ContractStatusDraft=Schiţă
 ContractStatusValidated=Validat
 ContractStatusClosed=Închis
 ServiceStatusInitial=Inactiv
@@ -73,7 +73,7 @@ ServicesNomberShort=%s serviciu (ii)
 RunningServices=Servicii active
 BoardRunningServices=Servicii active şi expirate ăn contract
 ServiceStatus=Status  serviciu
-DraftContracts=Contracte nevalidate
+DraftContracts=Contracte schiţă
 CloseRefusedBecauseOneServiceActive=Contractul nu poate fi închis după cum există cel puţin un serviciu deschis pe ea
 CloseAllContracts=Închide toateliniile de contracte
 DeleteContractLine=Şterge o linie de contract

@@ -29,8 +29,8 @@ Ventilation=Analiz
 ToDispatch=Gönderilecek
 Dispatched=Gönderilmiş
 
-CustomersVentilation=Müşterilerin analizi
-SuppliersVentilation=Tedarikçilerin analizi
+CustomersVentilation=Müşteri analizi
+SuppliersVentilation=Tedarikç analizi
 TradeMargin=Ticaret oranı
 Reports=Raporlar
 ByCustomerInvoice=Müşteri faturalarına göre
