@@ -253,7 +253,6 @@ CivilityMR=Meneer
 CivilityMLE=Mejuffrouw
 CivilityMTRE=Meester
 CivilityDR=Dokter
-
 ##### Currencies #####
 Currencyeuros=Euro
 CurrencyAUD=Australische Dollars
@@ -290,10 +289,10 @@ CurrencyXOF=Francs CFA BCEAO
 CurrencySingXOF=Franc CFA BCEAO
 CurrencyXPF=Francs CFP
 CurrencySingXPF=Franc CFP
-
 CurrencyCentSingEUR=cent
+CurrencyCentINR=paisa
+CurrencyCentSingINR=paise
 CurrencyThousandthSingTND=duizend
-
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Mailing campagne
@@ -306,7 +305,6 @@ DemandReasonTypeSRC_WOM=Mondeling
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Werknemer
 DemandReasonTypeSRC_SPONSORING=Sponsoring
-
 #### Paper formats ####
 PaperFormatEU4A0=Grootte 4A0
 PaperFormatEU2A0=Grootte 2A0

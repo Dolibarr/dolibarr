@@ -1,34 +1,34 @@
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Resursi
+MenuResourceAdd=Jauni resursi
+MenuResourcePlanning=Resursu plānošana
+DeleteResource=Dzēst resursu
+ConfirmDeleteResourceElement=Apstiprināt resursu dzēšanu šim elementam
+NoResourceInDatabase=Nav datubāzē resursu
+NoResourceLinked=Nav saistītu resursu
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=Resursu saraksts
+ResourceSingular=Resursi
+ResourceCard=Resursu karte
+AddResource=Izveidot resursu
+ResourceFormLabel_ref=Resursu nosaukums
+ResourceType=Resursa veids
+ResourceFormLabel_description=Resursa apraksts
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=Resurss saistīts ar elementu
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ShowResourcePlanning=Rādīt resursu plānošanu
+GotoDate=Iet uz datumu
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=Elementa resursi
+ResourceCreatedWithSuccess=Resurss veiksmīgi izveidots
+RessourceLineSuccessfullyDeleted=Resursu līnija veiksmīgi dzēsta
+RessourceLineSuccessfullyUpdated=Resursa līnija veiksmīgi atjaunota
+ResourceLinkedWithSuccess=Resurs sasaistīts veiksmīgi
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+TitleResourceCard=Resursu karte
+ConfirmDeleteResource=Apstiprināt šī resursa dzēšanu
+RessourceSuccessfullyDeleted=Resurss veiksmīgi dzēsts
+DictionaryResourceType=Resursa veids
 
-SelectResource=Select resource
+SelectResource=Izvēlēties resursu

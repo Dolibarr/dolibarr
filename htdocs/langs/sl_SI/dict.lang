@@ -290,6 +290,8 @@ CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
 CurrencyCentSingEUR=cent
+CurrencyCentINR=paisa
+CurrencyCentSingINR=pais
 CurrencyThousandthSingTND=tisočina
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

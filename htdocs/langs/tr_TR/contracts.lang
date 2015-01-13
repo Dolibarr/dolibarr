@@ -91,7 +91,7 @@ ListOfServicesToExpire=Süresi dolacak Hizmetler Listesi
 NoteListOfYourExpiredServices=Bu listede yalnızca satış temsilcisi olarak atandığınız üçüncü partilere ait hizmet sözleşmeleri bulunur.
 StandardContractsTemplate=Standart sözleşme kalıbı
 ContactNameAndSignature=%s için, ad ve imza
-OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
+OnlyLinesWithTypeServiceAreUsed=Yalnızca "Hizmet" türündeki satırlar klonlanacaktır.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sözleşmeyi imzalalayacak satış temsilcisi
