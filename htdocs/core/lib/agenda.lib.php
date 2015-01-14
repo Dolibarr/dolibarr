@@ -43,7 +43,7 @@
  * @param	string	$actioncode		Preselected value of actioncode for filter on type
  * @return	void
  */
-function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $showextcals=array(), $actioncode='') {
+function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd,$filterg, $pid, $socid, $showextcals=array(), $actioncode='') {
 
 	global $conf, $user, $langs, $db;
 
@@ -76,6 +76,13 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $langs->trans("or") . ' ' . $langs->trans("ActionsToDoBy");
 		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
+		print '</td></tr>';
+
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans("Group");
+		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
+		print $form->select_dolgroups($filterg, 'groupid', 1, '', ! $canedit);
 		print '</td></tr>';
 
 		/*print '<tr>';

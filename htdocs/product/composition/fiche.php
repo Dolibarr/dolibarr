@@ -61,6 +61,12 @@ if ($id > 0 || ! empty($ref))
 	$id=$product->id;
 }
 
+// Initialize technical object to manage hooks of products. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('composedproductcard'));
+
+$parameters=array('id'=>$id, 'ref'=>$ref);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+$error=$hookmanager->error; $errors=$hookmanager->errors;
 
 /*
  * Actions
@@ -351,7 +357,7 @@ if ($id > 0 || ! empty($ref))
 				if ($value['level'] <= 1)
 				{
 					$notdefined=0;
-					$productstatic->ref=$value['fullpath'];
+					$productstatic->ref=$value['ref']." : ".$value['fullpath'];
 					print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].')</td>';
 					print '<td align="right">';
 					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0)
@@ -367,7 +373,7 @@ if ($id > 0 || ! empty($ref))
 					if (! empty($conf->stock->enabled)) print '<td align="right">'.$langs->trans("Stock").': '.$value['stock'].'</td>';	// Real stock
 				}
 				else {
-					$productstatic->ref=$value['label'];
+					$productstatic->ref=$value['ref']." : ".$value['label'];
 					print '<td>';
 					for ($i=0; $i < $value['level']; $i++)
 					{
@@ -406,7 +412,7 @@ if ($id > 0 || ! empty($ref))
 				$idprod= $value["id"];
 				$productstatic->id=$idprod;// $value["id"];
 				$productstatic->type=$value["fk_product_type"];
-				$productstatic->ref=$value['label'];
+				$productstatic->ref=$value['ref']." : ".$value['label'];
 				print '<tr>';
 				print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';;
 				print '</tr>';
@@ -414,7 +420,9 @@ if ($id > 0 || ! empty($ref))
 			print '</table>';
 			print '</td></tr>';
 		}
-
+		$parameters=array('prods_arbo'=>$prods_arbo);
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+		$error=$hookmanager->error; $errors=$hookmanager->errors;
 		print '</table>';
 
 		dol_fiche_end();

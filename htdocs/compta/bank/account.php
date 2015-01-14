@@ -485,6 +485,8 @@ if ($id > 0 || ! empty($ref))
 	}
 	$sql.= " WHERE b.fk_account=".$object->id;
 	$sql.= " AND b.fk_account = ba.rowid";
+	// Si le partage des compte bancaire est activé dans multicompany, on ne limite pas la recherche des comptes à l'entité dans laquelle on se trouve (Ticket 1573)
+	if(!$conf->global->MULTICOMPANY_BANK_ACCOUNT_SHARING_ENABLED)
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= $sql_rech;
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day

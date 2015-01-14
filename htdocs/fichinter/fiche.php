@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcontract.class.php';
 
 if (! empty($conf->projet->enabled))
 {
@@ -414,6 +415,16 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fich
 else if ($action == 'setdescription' && $user->rights->ficheinter->creer)
 {
 	$result=$object->set_description($user,GETPOST('description'));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+else if ($action == 'setnote_public' && $user->rights->ficheinter->creer)
+{
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
+{
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -942,6 +953,8 @@ if ($action == 'create')
 	}
 	else {
 		$projectid = GETPOST('projectid','int');
+		$note_private = '';
+		$note_public = '';
 	}
 
 	if (! $conf->global->FICHEINTER_ADDON)
@@ -998,7 +1011,7 @@ if ($action == 'create')
             $numprojet=$formproject->select_projects($soc->id,GETPOST('projectid','int'),'projectid');
             if ($numprojet==0)
             {
-                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+                print ' &nbsp; <a href="'.dol_buildpath('/projet/fiche.php',1).'?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
             }
             print '</td></tr>';
         }
@@ -1156,13 +1169,6 @@ else if ($id > 0 || ! empty($ref))
 
 	}
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" name="formfichinter">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($action == 'edit_extras') print '<input type="hidden" name="action" value="update_extras">';
-	if ($action == 'contrat')     print '<input type="hidden" name="action" value="setcontrat">';
-
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -1238,6 +1244,9 @@ else if ($id > 0 || ! empty($ref))
 		print '</td><td colspan="3">';
 		if ($action == 'contrat')
 		{
+			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+			print '<input type="hidden" name="action" value="setcontrat">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$htmlcontract= new Formcontract($db);
@@ -1246,7 +1255,7 @@ else if ($id > 0 || ! empty($ref))
 
 			print '</td>';
 			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-			print '</tr></table>';
+			print '</tr></table></form>';
 		}
 		else
 		{
@@ -1297,11 +1306,16 @@ else if ($id > 0 || ! empty($ref))
 				}
 				if ($action == 'edit_extras' && $user->rights->ficheinter->creer && GETPOST('attribute') == $key)
 				{
+					print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formfichinter">';
+					print '<input type="hidden" name="action" value="update_extras">';
 					print '<input type="hidden" name="attribute" value="'.$key.'">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 					print $extrafields->showInputField($key,$value);
 
 					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+					print '</form>';
 				}
 				else
 				{
@@ -1314,7 +1328,6 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print "</table><br>";
-	print '</form>';
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
@@ -1463,7 +1476,9 @@ else if ($id > 0 || ! empty($ref))
 
 		$db->free($resql);
 
-		// Add new line
+		/*
+		 * Add line
+		*/
 		if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline')
 		{
 			if (! $num) print '<br><table class="noborder" width="100%">';
@@ -1732,3 +1747,4 @@ else if ($id > 0 || ! empty($ref))
 llxFooter();
 
 $db->close();
+?>

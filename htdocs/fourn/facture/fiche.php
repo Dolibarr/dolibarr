@@ -86,7 +86,9 @@ $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the inclu
 /*
  * Actions
  */
-
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+ 
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 // Action clone object
