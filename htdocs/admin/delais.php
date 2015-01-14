@@ -97,6 +97,16 @@ $modules=array(
 						'img' => 'user'
 				)
 		),
+	'projet' => array(
+		array(
+			'code' => 'MAIN_DELAY_PROJECTS',
+			'img' => 'project'
+		),
+		array(
+			'code' => 'MAIN_DELAY_TASKS',
+			'img' => 'task'
+		)
+	),
 );
 
 if ($action == 'update')
