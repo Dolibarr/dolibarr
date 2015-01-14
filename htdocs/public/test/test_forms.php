@@ -6,9 +6,9 @@ define('REQUIRE_JQUERY_MULTISELECT','select2');
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-if ($_SERVER['HTTP_HOST'] != 'localhost')
+if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1')
 {
-	print "Page available only with url  http://localhost/...";
+	print "Page available only frome remote address 127.0.0.1";
 	exit;
 }
 
