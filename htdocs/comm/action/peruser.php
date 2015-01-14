@@ -679,7 +679,7 @@ foreach ($usernames as $username)
 {
 	$var = ! $var;
 	echo "<tr>";
-	echo '<td class="cal_current_month"'.($var?' style="background: #F8F8F8"':'').'>' . $username->getNomUrl(1). '</td>';
+	echo '<td class="cal_current_month cal_peruserviewname"'.($var?' style="background: #F8F8F8"':'').'>' . $username->getNomUrl(1). '</td>';
 	$tmpday = $sav;
 
 	// Lopp on each day of week
