@@ -54,6 +54,13 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'expedition',$id,'livraison','livraison');
 
 
+$object = new Livraison($db);
+$object->fetch($id);
+$object->fetch_thirdparty();
+
+$hookmanager->initHooks(array('receptioncard'));
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 /*
  * Actions
@@ -543,7 +550,8 @@ else
 				$order->fetch($expedition->origin_id);
 				print '<td colspan="3">';
 				print $order->getNomUrl(1,'commande');
-				print "</td>\n";
+				print "</td>\n";$parameters=array('colspan' => ' colspan="3"');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$delivery,$action); 
 				print '</tr>';
 			}
 			if ($typeobject == 'propal' && $expedition->origin_id && ! empty($conf->propal->enabled))
@@ -624,8 +632,11 @@ else
 				print '</tr>';
 			}
 
-			print "</table><br>\n";
+			$parameters=array('colspan' => ' colspan="3"');
+			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$delivery,$action); 
 
+			print "</table><br>\n";
+			
 			/*
 			 * Lignes produits
 			 */
