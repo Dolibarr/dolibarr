@@ -4,11 +4,14 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 
 require '../../main.inc.php';
-if ($_SERVER['HTTP_HOST'] != 'localhost')
+
+if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1')
 {
-	print "Page available only with url  http://localhost/...";
+	print "Page available only frome remote address 127.0.0.1";
 	exit;
 }
+
+
 $usedolheader=0;	// 1 = Test inside a dolibarr page, 0 = Use hard coded header
 
 
