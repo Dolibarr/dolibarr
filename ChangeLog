@@ -8,7 +8,8 @@ For users:
 - New: Use new combobox.
 - New: Add hidden option MAXTABS_IN_CARD.
 - Fix / Improve : [ bug #1747 ] Remove creation of batch 'Undefined'
-
+- Add Weighted average price as default price for buying price for margin calculation. Add option 
+  MARGIN_PMP_AS_DEFAULT_BUY_PRICE to replace with first supplier price.
 
 For translators:
 - Update language files.
