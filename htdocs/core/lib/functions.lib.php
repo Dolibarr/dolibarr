@@ -659,7 +659,7 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  */
 function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
-	global $conf;
+	global $conf,$langs;
 
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
@@ -749,8 +749,6 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 		$displaytab=$i;
 	}
 
-	$out.="</div>\n";
-
 	if ($displaytab > $limittoshow)
 	{
 		$out.='<div id="moretabs" class="inline-block tabsElem">';
@@ -763,6 +761,8 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 		$out.="$('#moretabs').mouseleave( function() { $('#moretabsList').css('left','-999em');});";
 		$out.="</script>";
 	}
+
+	$out.="</div>\n";
 
 	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
 
