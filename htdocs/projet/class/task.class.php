@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,8 +59,6 @@ class Task extends CommonObject
     var $timespent_duration;
     var $timespent_old_duration;
     var $timespent_date;
-    var $timespent_datehour;		// More accurate start date (same than timespent_date but includes hours, minutes and seconds)
-    var $timespent_withhour;		// 1 = we entered also start hours for timesheet line
     var $timespent_fk_user;
     var $timespent_note;
 
@@ -126,7 +123,7 @@ class Task extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -136,16 +133,17 @@ class Task extends CommonObject
 
             if (! $notrigger)
             {
-                // Call trigger
-                $result=$this->call_trigger('TASK_CREATE',$user);
-                if ($result < 0) { $error++; }
+                // Call triggers
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('TASK_CREATE',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 // End call triggers
             }
         }
 
-        // Update extrafield
-        if (! $error)
-        {
+        //Update extrafield
+        if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
         		$result=$this->insertExtraFields();
@@ -214,7 +212,7 @@ class Task extends CommonObject
         	$sql.="t.rowid = ".$id;
         }
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -250,6 +248,7 @@ class Task extends CommonObject
         else
         {
             $this->error="Error ".$this->db->lasterror();
+            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -262,7 +261,7 @@ class Task extends CommonObject
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
      *  @return int			         	<0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    function update($user=0, $notrigger=0)
     {
         global $conf, $langs;
         $error=0;
@@ -287,16 +286,16 @@ class Task extends CommonObject
         $sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
         $sql.= " duration_effective=".(isset($this->duration_effective)?$this->duration_effective:"null").",";
-        $sql.= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '')?$this->planned_workload:"null").",";
-        $sql.= " dateo=".($this->date_start!=''?"'".$this->db->idate($this->date_start)."'":'null').",";
-        $sql.= " datee=".($this->date_end!=''?"'".$this->db->idate($this->date_end)."'":'null').",";
+        $sql.= " planned_workload=".(isset($this->planned_workload)?$this->planned_workload:"0").",";
+        $sql.= " dateo=".($this->date_start!=''?$this->db->idate($this->date_start):'null').",";
+        $sql.= " datee=".($this->date_end!=''?$this->db->idate($this->date_end):'null').",";
         $sql.= " progress=".$this->progress.",";
         $sql.= " rang=".((!empty($this->rang))?$this->rang:"0");
         $sql.= " WHERE rowid=".$this->id;
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -304,9 +303,11 @@ class Task extends CommonObject
         {
             if (! $notrigger)
             {
-                // Call trigger
-                $result=$this->call_trigger('TASK_MODIFY',$user);
-                if ($result < 0) { $error++; }
+                // Call triggers
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('TASK_MODIFY',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 // End call triggers
             }
         }
@@ -343,7 +344,7 @@ class Task extends CommonObject
 
 
     /**
-     *	Delete task from database
+     *	Delete object in database
      *
      *	@param	User	$user        	User that delete
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
@@ -380,40 +381,25 @@ class Task extends CommonObject
             }
         }
 
-        if (! $error)
-        {
-	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
-	        $sql.= " WHERE fk_task=".$this->id;
+        // Delete rang of line
+        //$this->delRangOfLine($this->id, $this->element);
 
-	        $resql = $this->db->query($sql);
-	        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-        }
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
+        $sql.= " WHERE rowid=".$this->id;
 
-        if (! $error)
-        {
-	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_extrafields";
-	        $sql.= " WHERE fk_object=".$this->id;
-
-	        $resql = $this->db->query($sql);
-	        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-        }
-
-        if (! $error)
-        {
-	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
-	        $sql.= " WHERE rowid=".$this->id;
-
-	        $resql = $this->db->query($sql);
-	        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-        }
+        dol_syslog(get_class($this)."::delete sql=".$sql);
+        $resql = $this->db->query($sql);
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
         if (! $error)
         {
             if (! $notrigger)
             {
-                // Call trigger
-                $result=$this->call_trigger('TASK_DELETE',$user);
-                if ($result < 0) { $error++; }
+                // Call triggers
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('TASK_DELETE',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 // End call triggers
             }
         }
@@ -430,7 +416,7 @@ class Task extends CommonObject
             return -1*$error;
         }
         else
-		{
+        {
 			//Delete associated link file
 	        if ($conf->projet->dir_output)
 	        {
@@ -472,7 +458,7 @@ class Task extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task";
         $sql.= " WHERE fk_task_parent=".$this->id;
 
-        dol_syslog(get_class($this)."::hasChildren", LOG_DEBUG);
+        dol_syslog(get_class($this)."::hasChildren sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         else
@@ -1443,4 +1429,21 @@ class Task extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
+    /**
+     * Is the task having a delay?
+     *
+     * @return bool
+     */
+    public function hasDelay()
+    {
+        global $conf;
+
+        $now = dol_now();
+
+        if ($this->date_end < ($now - $conf->project->tasks->warning_delay)) {
+            return true;
+        }
+
+        return false;
+    }
 }
