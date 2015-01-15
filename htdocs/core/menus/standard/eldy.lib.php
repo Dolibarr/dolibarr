@@ -1,9 +1,8 @@
 <?php
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012-2015 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1203,16 +1202,24 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (empty($conf->global->PROJECT_HIDE_TASKS))
 				{
 					// Project affected to user
-					$newmenu->add("/projet/activity/index.php?mode=mine", $langs->trans("MyActivities"), 0, $user->rights->projet->lire);
-					$newmenu->add("/projet/tasks.php?action=create&mode=mine", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
-					$newmenu->add("/projet/tasks/index.php?mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
+					$newmenu->add("/projet/activity/index.php?mode=mine&leftmenu=mytasks", $langs->trans("MyActivities"), 0, $user->rights->projet->lire, '', $mainmenu, 'mytasks');
+					$newmenu->add("/projet/tasks.php?action=create&mode=mine&leftmenu=mytasks", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
+					$newmenu->add("/projet/tasks/index.php?mode=mine&leftmenu=mytasks", $langs->trans("List"), 1, $user->rights->projet->lire);
 					$newmenu->add("/projet/activity/perweek.php?mode=mine", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
 
+					if (empty($leftmenu) || $leftmenu == 'mytasks') {
+						$newmenu->add("/projet/tasks/current.php?leftmenu=mytasks&mode=mine", $langs->trans("Current"), 2, $user->rights->projet->lire);
+					}
+
 					// All project i have permission on
-					$newmenu->add("/projet/activity/index.php", $langs->trans("Activities"), 0, $user->rights->projet->lire && $user->rights->projet->lire);
-					$newmenu->add("/projet/tasks.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
-					$newmenu->add("/projet/tasks/index.php", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
+					$newmenu->add("/projet/activity/index.php?leftmenu=tasks", $langs->trans("Activities"), 0, $user->rights->projet->lire, '', $mainmenu, 'tasks');
+					$newmenu->add("/projet/tasks.php?action=create&leftmenu=tasks", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
+					$newmenu->add("/projet/tasks/index.php?leftmenu=tasks", $langs->trans("List"), 1, $user->rights->projet->lire);
 					$newmenu->add("/projet/activity/perweek.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
+
+					if (empty($leftmenu) || $leftmenu == 'tasks') {
+						$newmenu->add("/projet/tasks/current.php?leftmenu=tasks&mode=mine", $langs->trans("Current"), 2, $user->rights->projet->lire);
+					}
 				}
 			}
 		}
