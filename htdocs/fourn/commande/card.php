@@ -479,14 +479,16 @@ else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->r
     $result = $object->deleteline(GETPOST('lineid'));
     if ($result	>= 0)
     {
-        $outputlangs = $langs;
-        if (GETPOST('lang_id'))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang(GETPOST('lang_id'));
-        }
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
+            $outputlangs = $langs;
+            $newlang = '';
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+            if (! empty($newlang)) {
+                $outputlangs = new Translate("", $conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
             $ret=$object->fetch($object->id);    // Reload to get new records
 	        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
@@ -571,6 +573,14 @@ else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fou
         if ($result > 0)
         {
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+                $outputlangs = $langs;
+                $newlang = '';
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+                if (! empty($newlang)) {
+                    $outputlangs = new Translate("", $conf);
+                    $outputlangs->setDefaultLang($newlang);
+                }
 	            $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             }
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
