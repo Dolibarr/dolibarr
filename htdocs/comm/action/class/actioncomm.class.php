@@ -141,6 +141,9 @@ class ActionComm extends CommonObject
         $userownerid=$this->userownerid;
         $userdoneid=$this->userdoneid;
 
+        // Be sure assigned user array is not empty.
+        if (count($this->userassigned) == 0) $this->userassigned = array('id'=>$this->$userownerid);
+
         if (! $this->type_id || ! $this->type_code)
         {
         	$key=empty($this->type_id)?$this->type_code:$this->type_id;
