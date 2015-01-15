@@ -64,7 +64,6 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
-$search_user = GETPOST("search_user", 'int');
 $view_status = GETPOST('viewstatut', 'int');
 $search_year=GETPOST("search_year");
 $search_all=GETPOST("search_all");
@@ -121,14 +120,6 @@ $sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 
-if ($search_user > 0) {
-	$sql.=" LEFT JOIN llx_element_contact AS c
-			ON c.element_id = p.rowid
-			LEFT JOIN llx_c_type_contact AS tc
-			ON c.fk_c_type_contact = tc.rowid
-			AND tc.element = 'project' AND tc.source = 'internal'";
-}
-
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 
 // We'll need this table joined to the select in order to filter by sale
@@ -158,9 +149,6 @@ if ($search_societe)
 }
 if ($view_status !== "") {
 	$sql .= " AND fk_statut = ".$db->escape($view_status);
-}
-if ($search_user > 0) {
-	$sql .= "AND c.fk_socpeople = ".$db->escape($search_user);
 }
 
 if ($smonth > 0)
