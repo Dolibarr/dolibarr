@@ -278,7 +278,7 @@ if ($socid)
 
 	// Address
 	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">';
-    print dol_print_address($soc->address,'gmap','thirdparty',$object->id);
+    print dol_print_address($soc->address,'gmap','thirdparty',$soc->id);
     print '</td></tr>';
 
 	// Zip / Town
