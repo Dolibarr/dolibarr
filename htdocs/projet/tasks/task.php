@@ -37,7 +37,7 @@ $langs->load("projects");
 $langs->load("companies");
 
 $id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
+$ref=$_GET["ref"];
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
