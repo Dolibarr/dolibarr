@@ -165,7 +165,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(1, $result);						// Can be deleted
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertEquals(0, $result, 'Test for {yyyy}-{0000} that is_erasable is 0 for 1st invoice');						// 1 can no more be deleted (2 is more recent
+		$this->assertEquals(0, $result, 'Test for {yyyy}-{0000} that is_erasable is 0 for 1st invoice');						// 1 can no more be deleted (2 is more recent)
 
 		// Now we try with a reset
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}-{0000@1}';
@@ -552,7 +552,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 
     	$localobject=new Facture($this->savdb);
     	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1982);	// we use year 1980 to be sure to not have existing invoice for this year
+    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1982);	// we use year 1982 to be sure to not have existing invoice for this year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($tmpthirdparty, $localobject);
     	$result2=$localobject->create($user,1);

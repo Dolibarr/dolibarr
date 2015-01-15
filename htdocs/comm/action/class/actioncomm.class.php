@@ -142,7 +142,7 @@ class ActionComm extends CommonObject
         $userdoneid=$this->userdoneid;
 
         // Be sure assigned user array is not empty.
-        if (count($this->userassigned) == 0) $this->userassigned = array('id'=>$this->$userownerid);
+        if (count($this->userassigned) == 0) $this->userassigned = array('id'=>$userownerid);
 
         if (! $this->type_id || ! $this->type_code)
         {
