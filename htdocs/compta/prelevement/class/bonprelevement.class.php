@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014 		Ferran Marcet       <fmarcet@2byte.es>
  *
@@ -892,10 +892,11 @@ class BonPrelevement extends CommonObject
             {
                 $ref = "T".substr($year,-2).$month;
 
-                $sql = "SELECT count(*)";
+                $sql = "SELECT CAST(RIGHT(ref,2) AS SIGNED INTEGER)";
                 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
                 $sql.= " WHERE ref LIKE '".$ref."%'";
                 $sql.= " AND entity = ".$conf->entity;
+                $sql.= " ORDER BY ref DESC LIMIT 1";
 
                 dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
                 $resql = $this->db->query($sql);
