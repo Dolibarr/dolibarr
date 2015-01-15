@@ -34,6 +34,7 @@ $langs->load('users');
 
 $id=GETPOST('id','int');
 $search_project=GETPOST('search_project');
+$search_user=GETPOST('search_user', 'int');
 if (! isset($_GET['search_status']) && ! isset($_POST['search_status'])) $search_status=1;
 else $search_status=GETPOST('search_status');
 
@@ -88,18 +89,45 @@ else
 	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
 
-// Get list of project id allowed to user (in a string list separated by coma)
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
+//If searching for user and with enough rights
+if ($search_user !== '' && $user->rights->projet->all->lire) {
+	$fake_user = new User($db);
+	$fake_user->id = $search_user;
+
+	// Get list of project id allowed to user (in a string list separated by coma)
+	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($fake_user,1,1,$socid);
+} else {
+	// Get list of project id allowed to user (in a string list separated by coma)
+	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
+}
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task assigned to a user can have a parent that is not assigned to him and we need such parents).
 $tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status);
-// We load also tasks limited to a particular user
-$tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
+
+//If searching for user and with enough rights
+if ($search_user !== '' && $user->rights->projet->all->lire) {
+	// We load also tasks limited to a particular user
+	$tasksrole= $taskstatic->getUserRolesForProjectsOrTasks(0,$fake_user,$projectstatic->id,0);
+} else {
+	// We load also tasks limited to a particular user
+	$tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
+}
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="mode" value="'.GETPOST('mode').'">';
 print '<table class="noborder" width="100%">';
+
+// If the user can view prospects other than his'
+if ($user->rights->projet->all->lire)
+{
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre" colspan="10">';
+	print $langs->trans('LinkedToSpecificUsers').': ';
+	print $form->select_dolusers($search_user, 'search_user', 1);
+	print '</td></tr>';
+
+}
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
