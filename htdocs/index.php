@@ -413,6 +413,7 @@ if (! empty($conf->projet->enabled) && $user->rights->projet->lire && ! $user->s
     $board->warning_delay=$conf->projet->warning_delay/60/60/24;
     $board->label=$langs->trans("ProjectsToClose");
     $board->url=DOL_URL_ROOT.'/projet/liste.php?viewstatut=1';
+    $board->url_late = DOL_URL_ROOT.'/projet/liste.php?mode=late';
     $board->img=img_object($langs->trans("Project"),"project");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -429,6 +430,7 @@ if (! empty($conf->projet->enabled) && $user->rights->projet->lire && ! $user->s
     $board->warning_delay=$conf->projet->tasks->warning_delay/60/60/24;
     $board->label=$langs->trans("TasksToClose");
     $board->url=DOL_URL_ROOT.'/projet/tasks/index.php';
+    $board->url_late = DOL_URL_ROOT.'/projet/tasks/index.php?mode=late';
     $board->img=img_object($langs->trans("Tasks"),"projecttask");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -453,13 +455,19 @@ foreach($valid_dashboardlines as $board)
 	    $totallate += $board->nbtodolate;
     }
 
+    if (isset($board->late_url)) {
+        $late_url = $board->late_url;
+    } else {
+        $late_url = $board->url;
+    }
+
 	// Show dashboard
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
     print '<td align="right"><a href="'.$board->url.'">'.$board->nbtodo.'</a></td>';
     print '<td align="right">';
-    print '<a href="'.$board->url.'">';
+    print '<a href="'.$board->late_url.'">';
     print $board->nbtodolate;
     print '</a></td>';
     print '<td align="left">';

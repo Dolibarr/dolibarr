@@ -547,9 +547,10 @@ class Task extends CommonObject
      * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
      * @param	string	$filteronprojref	Filter on project ref
      * @param	string	$filteronprojstatus	Filter on project status
+     * @param   int     $filter_delay
      * @return 	array						Array of tasks
      */
-    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1)
+    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $filter_delay = 0)
     {
         global $conf;
 
@@ -580,6 +581,11 @@ class Task extends CommonObject
         }
         if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$filteronprojref."%'";
         if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut = ".$filteronprojstatus;
+        if ($filter_delay) {
+            $range = dol_now() - $conf->projet->tasks->warning_delay;
+
+            $sql .= ' AND '.$this->db->ifsql('t.fk_task_parent = 0', "t.datee < '".$this->db->idate($range)."'", '1=1');
+        }
         $sql.= " ORDER BY p.ref, t.rang, t.dateo";
 
         //print $sql;exit;
@@ -1483,7 +1489,6 @@ class Task extends CommonObject
                 $this->nbtodo++;
 
                 $this->date_end = $obj->datee;
-                $this->statut = $obj->fk_statut;
 
                 if ($this->hasDelay()) {
                     $this->nbtodolate++;
