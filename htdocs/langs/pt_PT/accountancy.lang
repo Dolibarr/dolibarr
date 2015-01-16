@@ -1,21 +1,21 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
 
-Accounting=contabilidade
+Accounting=Contabilista
 Globalparameters=Parâmetros Globais
 Chartofaccounts=Plano de contas
 Fiscalyear=Anos fiscais
-Menuaccount=contas contabilisticas
+Menuaccount=Contas contabilísticas
 Menuthirdpartyaccount=Contas de terceiros
 MenuTools=Ferramentas
 
 ConfigAccountingExpert=A configuração do módulo especialista em contabilidade
 Journaux=Diarios
 JournalFinancial=Diarios financeiros
-Exports=exportados
+Exports=Exportados
 Modelcsv=Modelo de exportação
-Selectmodelcsv=selecionar modelo de exportação
-Modelcsv_normal=exportação classica
+Selectmodelcsv=Selecione um modelo de exportação
+Modelcsv_normal=Exportação classica
 Modelcsv_CEGID=Exportação em direção Especialista CEGID 
 BackToChartofaccounts=Voltar ao plano de contas
 Back=Voltar

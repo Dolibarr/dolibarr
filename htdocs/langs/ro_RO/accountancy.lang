@@ -118,7 +118,7 @@ DescCashJournal=Jurnal Cash inclusiv tipul plaţii numerar
 CashPayment=Plaţi numerar
 
 SupplierInvoicePayment=Plata factura furnizor
-CustomerInvoicePayment=Plata factura client
+CustomerInvoicePayment=Incasare factura client
 
 ThirdPartyAccount=Cont terţi
 
@@ -141,7 +141,7 @@ Active=Extras
 NewFiscalYear=An fiscal nou
 
 DescVentilCustomer=Consultati aici ventilarea contabilă anuală a facturilor de clienților ale dvs.
-TotalVente=Total Cifră de afaceri fără taxe
+TotalVente=Total Cifră de afaceri fără tva
 TotalMarge=Total Marje vânzări
 DescVentilDoneCustomer=Consultati aici lista liniilor de facturi client și conturile lor  contabile
 DescVentilTodoCustomer=Consultati aici lista liniilor de facturi client cu un cont contabil

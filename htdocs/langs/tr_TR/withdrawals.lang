@@ -79,11 +79,11 @@ CreditDate=Alacak tarihi
 WithdrawalFileNotCapable=Ülkeniz %s için para çekme makbuzu oluşturulamıyor (Ülkeniz desteklenmiyor)
 ShowWithdraw=Para çekme göster
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Faturaya henüz enaz bir ödeme tahsilatı işlenmemişse, para çekme yönetimine izin vermek için ödendi olarak ayarlanamaz.
-DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once donee, go into menu Bank->Withdrawal to manage the standing order. When standing order is closed, payment on invoice will be automatically recorded, and invoice closed if remainder to pay is null.
+DoStandingOrdersBeforePayments=Bu sekme bir ödeme talimatı isteği yapmanızı sağlar. Yaptıktan sonra, ödeme talimatı yönetimi için Banka->Para çekme menüsüne gidin. Ödeme talimatı kapatıldıktan sonra, fatura ödemesi otomatik olarak kaydedilecek ve eğer bakiye sıfırsa fatura kapatılacaktır.
 WithdrawalFile=Para çekme dosyası
 SetToStatusSent="Dosya Gönderildi" durumuna ayarla
 ThisWillAlsoAddPaymentOnInvoice=Bu aynı zamanda faturalara ödeme oluşturur ve onları "ödendi" olarak sınıflandırır
-StatisticsByLineStatus=Statistics by status of lines
+StatisticsByLineStatus=Durum satırlarına göre istatistkler
 
 ### Notifications
 InfoCreditSubject=Banka tarafından ödenen %s ödeme talimatı
