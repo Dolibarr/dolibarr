@@ -1432,7 +1432,7 @@ class Task extends CommonObject
 
     /**
      * Is the task having a delay?
-     * Requires: $this->statut and $this->date_end to be defined.
+     * Requires: $this->date_end to be defined.
      * Also it requires $conf->projet->tasks->warning_delay to be set
      *
      * @return bool

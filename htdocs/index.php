@@ -428,7 +428,7 @@ if (! empty($conf->projet->enabled) && $user->rights->projet->lire && ! $user->s
     $board->load_board($user);
     $board->warning_delay=$conf->projet->tasks->warning_delay/60/60/24;
     $board->label=$langs->trans("TasksToClose");
-    $board->url=DOL_URL_ROOT.'/projet/tasks/liste.php?viewstatut=1';
+    $board->url=DOL_URL_ROOT.'/projet/tasks/index.php';
     $board->img=img_object($langs->trans("Tasks"),"projecttask");
     $rowspan++;
     $dashboardlines[]=$board;

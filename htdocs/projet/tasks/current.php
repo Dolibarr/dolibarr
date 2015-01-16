@@ -250,6 +250,7 @@ else
 
 					$taskstatic->id=$lines[$i]->id;
 					$taskstatic->ref=$lines[$i]->ref;
+					$taskstatic->date_end = $lines[$i]->date_end;
 
 					// Ref of task
 					print '<td>';
@@ -262,6 +263,11 @@ else
 						$taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
 						print $taskstatic->getNomUrl(1,'withproject');
 					}
+
+					if ($taskstatic->hasDelay()) {
+						print ' '.img_warning($langs->trans("Late"));
+					}
+
 					print '</td>';
 
 					//Affected users

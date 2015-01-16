@@ -369,6 +369,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Ref of task
 				print '<td>';
+
+				$taskstatic->date_end = $lines[$i]->date_end;
+
 				if ($showlineingray)
 				{
 					print '<i>'.img_object('','projecttask').' '.$lines[$i]->ref.'</i>';
@@ -380,6 +383,11 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
 					print $taskstatic->getNomUrl(1,'withproject');
 				}
+
+				if ($taskstatic->hasDelay()) {
+					print ' '.img_warning($langs->trans("Late"));
+				}
+
 				print '</td>';
 
 				// Title of task
