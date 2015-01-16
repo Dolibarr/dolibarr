@@ -119,7 +119,11 @@ if ($user->rights->projet->all->lire)
 	print '<td class="liste_titre" colspan="8">';
 	print $langs->trans('LinkedToSpecificUsers').': ';
 	print $form->select_dolusers($search_user, 'search_user', 1);
-	print '</td></tr>';
+	print '</td>';
+
+	$hookmanager->executeHooks('printFieldListMiscOption', array());
+
+	print '</tr>';
 
 }
 
@@ -381,7 +385,7 @@ else
 			print '</td>';
 
 			$parameters = array('obj' => $lines[$i]);
-			$hookmanager->executeHooks('printFieldListValue', $parameters);
+			$hookmanager->executeHooks('printFieldListFooter', $parameters);
 
 			print '</tr>';
 		}
