@@ -455,8 +455,8 @@ foreach($valid_dashboardlines as $board)
 	    $totallate += $board->nbtodolate;
     }
 
-    if (isset($board->late_url)) {
-        $late_url = $board->late_url;
+    if (isset($board->url_late)) {
+        $late_url = $board->url_late;
     } else {
         $late_url = $board->url;
     }
@@ -467,7 +467,7 @@ foreach($valid_dashboardlines as $board)
     print '<tr '.$bc[$var].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
     print '<td align="right"><a href="'.$board->url.'">'.$board->nbtodo.'</a></td>';
     print '<td align="right">';
-    print '<a href="'.$board->late_url.'">';
+    print '<a href="'.$late_url.'">';
     print $board->nbtodolate;
     print '</a></td>';
     print '<td align="left">';
