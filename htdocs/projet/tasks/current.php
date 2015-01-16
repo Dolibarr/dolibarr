@@ -152,9 +152,10 @@ print '</td>';
 print '<td class="liste_titre" colspan="6">';
 print '&nbsp;';
 print '</td>';
-print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 
 $hookmanager->executeHooks('printFieldListOption', array());
+
+print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 
 print "</tr>\n";
 
@@ -183,12 +184,13 @@ else
 		$numlines=count($lines);
 
 		// We declare counter as global because we want to edit them into recursive call
-		global $total_projectlinesa_spent,$total_projectlinesa_planned,$total_projectlinesa_spent_if_planned;
+		global $total_projectlinesa_spent,$total_projectlinesa_planned,$total_projectlinesa_spent_if_planned, $total_projectlinesa_progress;
 		if ($level == 0)
 		{
 			$total_projectlinesa_spent=0;
 			$total_projectlinesa_planned=0;
 			$total_projectlinesa_spent_if_planned=0;
+			$total_projectlinesa_progress=0;
 		}
 
 		for ($i = 0 ; $i < $numlines ; $i++)
@@ -358,6 +360,7 @@ else
 					$total_projectlinesa_spent += $lines[$i]->duration;
 					$total_projectlinesa_planned += $lines[$i]->planned_workload;
 					if ($lines[$i]->planned_workload) $total_projectlinesa_spent_if_planned += $lines[$i]->duration;
+					$total_projectlinesa_progress += $lines[$i]->progress;
 				}
 			}
 			else
@@ -370,18 +373,15 @@ else
 		{
 			print '<tr class="liste_total">';
 			print '<td class="liste_total">'.$langs->trans("Total").'</td>';
-			print '<td></td>';
-			print '<td></td>';
-			print '<td></td>';
+			print '<td colspan="4"></td>';
 			print '<td align="center" class="nowrap liste_total">';
 			print convertSecondToTime($total_projectlinesa_planned, 'allhourmin');
 			print '</td>';
-			print '<td></td>';
 			print '<td align="right" class="nowrap liste_total">';
-			print convertSecondToTime($total_projectlinesa_spent, 'allhourmin');
+			print round($total_projectlinesa_progress / $numlines,2).' %';
 			print '</td>';
 			print '<td align="right" class="nowrap liste_total">';
-			if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent_if_planned / $total_projectlinesa_planned,2).' %';
+			print convertSecondToTime($total_projectlinesa_spent, 'allhourmin');
 			print '</td>';
 
 			$parameters = array('obj' => $lines[$i]);
