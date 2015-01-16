@@ -402,6 +402,38 @@ if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $use
     $dashboardlines[] = $board->load_board($user);
 }
 
+// Number of projects
+if (! empty($conf->projet->enabled) && $user->rights->projet->lire && ! $user->societe_id)
+{
+    $langs->load("projects");
+
+    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    $board=new Project($db);
+    $board->load_board($user);
+    $board->warning_delay=$conf->projet->warning_delay/60/60/24;
+    $board->label=$langs->trans("ProjectsToClose");
+    $board->url=DOL_URL_ROOT.'/projet/liste.php?viewstatut=1';
+    $board->img=img_object($langs->trans("Project"),"project");
+    $rowspan++;
+    $dashboardlines[]=$board;
+}
+
+// Number of project tasks
+if (! empty($conf->projet->enabled) && $user->rights->projet->lire && ! $user->societe_id)
+{
+    $langs->load("projects");
+
+    include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+    $board=new Task($db);
+    $board->load_board($user);
+    $board->warning_delay=$conf->projet->tasks->warning_delay/60/60/24;
+    $board->label=$langs->trans("TasksToClose");
+    $board->url=DOL_URL_ROOT.'/projet/tasks/liste.php?viewstatut=1';
+    $board->img=img_object($langs->trans("Tasks"),"projecttask");
+    $rowspan++;
+    $dashboardlines[]=$board;
+}
+
 // Calculate total nb of late
 $totallate=0;
 $var=true;
