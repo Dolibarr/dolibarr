@@ -121,7 +121,7 @@ if ($user->rights->projet->all->lire && !$mine)
 	print $form->select_dolusers($search_user, 'search_user', 1);
 	print '</td>';
 
-	$hookmanager->executeHooks('printFieldListMiscOption', array());
+	print $hookmanager->executeHooks('printFieldListMiscOption', array());
 
 	print '</tr>';
 
@@ -141,7 +141,7 @@ print '</td>';
 print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 
-$hookmanager->executeHooks('printFieldListTitle', array());
+print $hookmanager->executeHooks('printFieldListTitle', array());
 
 print "</tr>\n";
 
@@ -153,7 +153,7 @@ print '<td class="liste_titre" colspan="6">';
 print '&nbsp;';
 print '</td>';
 
-$hookmanager->executeHooks('printFieldListOption', array());
+print $hookmanager->executeHooks('printFieldListOption', array());
 
 print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 
@@ -346,7 +346,7 @@ else
 					print '</td>';
 
 					$parameters = array('obj' => $lines[$i]);
-					$hookmanager->executeHooks('printFieldListValue', $parameters);
+					print $hookmanager->executeHooks('printFieldListValue', $parameters);
 
 					print "</tr>\n";
 
@@ -385,7 +385,7 @@ else
 			print '</td>';
 
 			$parameters = array('obj' => $lines[$i]);
-			$hookmanager->executeHooks('printFieldListFooter', $parameters);
+			print $hookmanager->executeHooks('printFieldListFooter', $parameters);
 
 			print '</tr>';
 		}
