@@ -51,7 +51,8 @@ $page = $page == -1 ? 0 : $page;
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
-
+// Initialize technical object to manage hooks.
+$hookmanager->initHooks(array('projecttaskcard'));
 
 /*
  * View
@@ -135,6 +136,9 @@ print '<td align="center">'.$langs->trans("PlannedWorkload");
 print '</td>';
 print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+
+$hookmanager->executeHooks('printFieldListTitle', array());
+
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
@@ -145,6 +149,9 @@ print '<td class="liste_titre" colspan="6">';
 print '&nbsp;';
 print '</td>';
 print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+
+$hookmanager->executeHooks('printFieldListOption', array());
+
 print "</tr>\n";
 
 if (count($tasksarray) > (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA))
@@ -160,7 +167,7 @@ else
 	// Show all lines in taskarray (recursive function to go down on tree)
 	$j=0; $level=0;
 
-	$custom_projectLinesA = function(DoliDB $db, HookManager $hookManager, &$inc, $parent, &$lines, &$level, $var, &$taskrole, $projectsListId='', &$custom_projectLinesA)
+	$custom_projectLinesA = function(DoliDB $db, HookManager $hookmanager, &$inc, $parent, &$lines, &$level, $var, &$taskrole, $projectsListId='', &$custom_projectLinesA)
 	{
 		global $user, $bc, $langs;
 		global $projectstatic, $taskstatic;
@@ -326,13 +333,16 @@ else
 					else print '</a>';
 					print '</td>';
 
+					$parameters = array('obj' => $lines[$i]);
+					$hookmanager->executeHooks('printFieldListValue', $parameters);
+
 					print "</tr>\n";
 
 					if (! $showlineingray) $inc++;
 
 					$level++;
 					if ($lines[$i]->id) {
-						$custom_projectLinesA($db, $hookManager, $inc, $lines[$i]->id, $lines, $level, $var, $taskrole, $projectsListId, $custom_projectLinesA);
+						$custom_projectLinesA($db, $hookmanager, $inc, $lines[$i]->id, $lines, $level, $var, $taskrole, $projectsListId, $custom_projectLinesA);
 					}
 					$level--;
 					$total_projectlinesa_spent += $lines[$i]->duration;
@@ -363,6 +373,10 @@ else
 			print '<td align="right" class="nowrap liste_total">';
 			if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent_if_planned / $total_projectlinesa_planned,2).' %';
 			print '</td>';
+
+			$parameters = array('obj' => $lines[$i]);
+			$hookmanager->executeHooks('printFieldListValue', $parameters);
+
 			print '</tr>';
 		}
 
