@@ -154,6 +154,11 @@ print '</td></tr>';
 // Date end
 print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 print dol_print_date($object->date_end,'day');
+
+if ($project->hasDelay()) {
+	print ' '.img_warning($langs->trans("Late"));
+}
+
 print '</td></tr>';
 
 print '</table>';

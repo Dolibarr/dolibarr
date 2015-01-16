@@ -156,6 +156,11 @@ if ($object->id > 0)
 		// Date end
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 		print dol_print_date($projectstatic->date_end,'day');
+
+		if ($projectstatic->hasDelay()) {
+			print ' '.img_warning($langs->trans("Late"));
+		}
+
 		print '</td></tr>';
 
 		print '</table>';

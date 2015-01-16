@@ -1513,12 +1513,18 @@ class Project extends CommonObject
 
     /**
      * Is the project having a delay?
+     * Requires: $this->statut and $this->date_end to be defined.
+     * Also it requires $conf->project->warning_delay to be set
      *
      * @return bool
      */
     public function hasDelay()
     {
         global $conf;
+
+        if (!$this->date_end || !$conf->project->warning_delay) {
+            return false;
+        }
 
         $now = dol_now();
 

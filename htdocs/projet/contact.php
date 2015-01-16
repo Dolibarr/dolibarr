@@ -196,6 +196,12 @@ if ($id > 0 || ! empty($ref))
 	print dol_print_date($object->date_end,'day');
 	print '</td></tr>';
 
+	if ($object->hasDelay()) {
+		print ' '.img_warning($langs->trans("Late"));
+	}
+
+	print '</td></tr>';
+
 	print "</table>";
 
 	print '</div>';

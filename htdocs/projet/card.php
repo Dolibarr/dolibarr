@@ -671,6 +671,11 @@ else
         // Date end
         print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
         print dol_print_date($object->date_end,'day');
+
+	    if ($object->hasDelay()) {
+		    print ' '.img_warning($langs->trans("Late"));
+	    }
+
         print '</td></tr>';
 
         // Budget
