@@ -890,31 +890,31 @@ class BonPrelevement extends CommonObject
              */
             if (!$error)
             {
-                $ref = "T".substr($year,-2).$month;
+				$ref = substr($year,-2).$month;
+				
+				$sql = "SELECT substring(ref from char_length(ref) - 1)";
+				$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
+				$sql.= " WHERE ref LIKE '%".$ref."%'";
+				$sql.= " AND entity = ".$conf->entity;
+				$sql.= " ORDER BY ref DESC LIMIT 1";
+				
+				dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
+				$resql = $this->db->query($sql);
 
-                $sql = "SELECT CAST(RIGHT(ref,2) AS SIGNED INTEGER)";
-                $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
-                $sql.= " WHERE ref LIKE '".$ref."%'";
-                $sql.= " AND entity = ".$conf->entity;
-                $sql.= " ORDER BY ref DESC LIMIT 1";
+				if ($resql)
+				{
+					$row = $this->db->fetch_row($resql);
+				}
+				else
+				{
+					$error++;
+					dol_syslog("Erreur recherche reference");
+				}
 
-                dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
-                $resql = $this->db->query($sql);
+				$ref = "T".$ref.str_pad(dol_substr("00".intval($row[0])+1),2,"0",STR_PAD_LEFT);
 
-                if ($resql)
-                {
-                    $row = $this->db->fetch_row($resql);
-                }
-                else
-                {
-                    $error++;
-                    dol_syslog("Erreur recherche reference");
-                }
-
-                $ref = $ref . substr("00".($row[0]+1), -2);
-
-                $filebonprev = $ref;
-
+				$filebonprev = $ref;
+                
                 // Create withdraw receipt in database
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
                 $sql.= " ref, entity, datec";
