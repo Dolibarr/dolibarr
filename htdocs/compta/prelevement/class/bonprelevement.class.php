@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014 		Ferran Marcet       <fmarcet@2byte.es>
  *
@@ -893,30 +893,31 @@ class BonPrelevement extends CommonObject
              */
             if (!$error)
             {
-                $ref = "T".substr($year,-2).$month;
+				$ref = substr($year,-2).$month;
+				
+				$sql = "SELECT substring(ref from char_length(ref) - 1)";
+				$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
+				$sql.= " WHERE ref LIKE '%".$ref."%'";
+				$sql.= " AND entity = ".$conf->entity;
+				$sql.= " ORDER BY ref DESC LIMIT 1";
+				
+				dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
+				$resql = $this->db->query($sql);
 
-                $sql = "SELECT count(*)";
-                $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
-                $sql.= " WHERE ref LIKE '".$ref."%'";
-                $sql.= " AND entity = ".$conf->entity;
+				if ($resql)
+				{
+					$row = $this->db->fetch_row($resql);
+				}
+				else
+				{
+					$error++;
+					dol_syslog("Erreur recherche reference");
+				}
 
-                dol_syslog(get_class($this)."::Create", LOG_DEBUG);
-                $resql = $this->db->query($sql);
+				$ref = "T".$ref.str_pad(dol_substr("00".intval($row[0])+1),2,"0",STR_PAD_LEFT);
 
-                if ($resql)
-                {
-                    $row = $this->db->fetch_row($resql);
-                }
-                else
-                {
-                    $error++;
-                    dol_syslog("Erreur recherche reference");
-                }
-
-                $ref = $ref . substr("00".($row[0]+1), -2);
-
-                $filebonprev = $ref;
-
+				$filebonprev = $ref;
+                
                 // Create withdraw receipt in database
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
                 $sql.= " ref, entity, datec";

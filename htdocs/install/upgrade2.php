@@ -362,6 +362,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $beforeversionarray=explode('.','3.7.9');	// target is before this
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
+       	    migrate_event_assignement($db,$langs,$conf);
+
         	// Reload modules (this must be always and only into last targeted version)
 			$listofmodule=array(
 				    	'MAIN_MODULE_AGENDA',
@@ -390,6 +392,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         // La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
         $db->commit();
         $db->close();
+
 
         // Actions for all version (not in database)
         migrate_delete_old_files($db,$langs,$conf);
@@ -3515,6 +3518,83 @@ function migrate_categorie_association($db,$langs,$conf)
 	{
 		print $langs->trans('AlreadyDone')."<br>\n";
 	}
+
+	print '</td></tr>';
+}
+
+/**
+ * Migrate event assignement to owner
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_event_assignement($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationEvents')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_event_assignement");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT a.id, a.fk_user_action";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+	$sqlSelect.= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element = a.fk_user_action";
+	$sqlSelect.= " WHERE fk_user_action > 0 AND fk_user_action NOT IN (SELECT fk_element FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user')";
+	$sqlSelect.= " ORDER BY a.id";
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sqlUpdate = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element) ";
+				$sqlUpdate.= "VALUES(".$obj->id.", 'user', ".$obj->fk_user_action.")";
+
+				$result=$db->query($sqlUpdate);
+				if (! $result)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
 
 	print '</td></tr>';
 }

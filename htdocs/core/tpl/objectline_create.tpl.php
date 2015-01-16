@@ -483,7 +483,8 @@ jQuery(document).ready(function() {
 		      		}
 	      			if (this.id == 'pmpprice')
 	      			{
-		      			if (this.price > 0 && 1 == 1) { defaultkey = this.id; defaultprice = this.price; }
+		      			var defaultbuyprice = <?php echo (isset($conf->global->MARGIN_PMP_AS_DEFAULT_BUY_PRICE)?int($conf->global->MARGIN_PMP_AS_DEFAULT_BUY_PRICE):1); ?>;
+		      			if (this.price > 0 && 1 == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
 	    	      		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 	      			}
 	      		});
