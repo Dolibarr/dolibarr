@@ -1217,9 +1217,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/projet/tasks/index.php?leftmenu=tasks", $langs->trans("List"), 1, $user->rights->projet->lire);
 					$newmenu->add("/projet/activity/perweek.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
 
-					if (empty($leftmenu) || $leftmenu == 'tasks') {
-						$newmenu->add("/projet/tasks/current.php?leftmenu=tasks&mode=mine", $langs->trans("Current"), 2, $user->rights->projet->lire);
-					}
+				// All project i have permission on
+				$newmenu->add("/projet/activity/index.php?leftmenu=tasks", $langs->trans("Activities"), 0, $user->rights->projet->lire, '', $mainmenu, 'tasks');
+				$newmenu->add("/projet/tasks.php?action=create&leftmenu=tasks", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
+				$newmenu->add("/projet/tasks/index.php?leftmenu=tasks", $langs->trans("List"), 1, $user->rights->projet->lire);
+
+				if (empty($leftmenu) || $leftmenu == 'tasks') {
+					$newmenu->add("/projet/tasks/current.php?leftmenu=tasks", $langs->trans("Current"), 2, $user->rights->projet->lire);
 				}
 			}
 		}

@@ -113,7 +113,7 @@ print '<input type="hidden" name="mode" value="'.GETPOST('mode').'">';
 print '<table class="noborder" width="100%">';
 
 // If the user can view prospects other than his'
-if ($user->rights->projet->all->lire)
+if ($user->rights->projet->all->lire && !$mine)
 {
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" colspan="8">';
