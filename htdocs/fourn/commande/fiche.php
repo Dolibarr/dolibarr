@@ -522,6 +522,13 @@ else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fou
         $result	= $object->approve($user, $idwarehouse);
         if ($result > 0)
         {
+            $outputlangs = $langs;
+            if (GETPOST('lang_id'))
+            {
+                $outputlangs = new Translate("",$conf);
+                $outputlangs->setDefaultLang(GETPOST('lang_id'));
+            }
+            
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
                 supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             }
@@ -554,6 +561,13 @@ else if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fo
     $result	= $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
     if ($result > 0)
     {
+        $outputlangs = $langs;
+        if (GETPOST('lang_id'))
+        {
+            $outputlangs = new Translate("",$conf);
+            $outputlangs->setDefaultLang(GETPOST('lang_id'));
+        }
+        
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
             supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
