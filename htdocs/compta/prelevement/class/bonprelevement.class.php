@@ -995,7 +995,7 @@ class BonPrelevement extends CommonObject
                         if (! $resql)
                         {
                             $error++;
-                            dol_syslog(__METHOD__."::Update Orders::Error=".$this->db->error() ,LOG_ERR);
+                            dol_syslog(__METHOD__."::Update Orders::Error=".$this->db->error(), LOG_ERR);
                         }
 
                     }
