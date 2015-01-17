@@ -603,8 +603,8 @@ class Fichinter extends CommonObject
 		{
 			$mybool = false;
 
-			$file = $conf->global->FICHEINTER_ADDON.".php";
-			$classname = $conf->global->FICHEINTER_ADDON;
+			$file = "mod_".$conf->global->FICHEINTER_ADDON.".php";
+			$classname = "mod_".$conf->global->FICHEINTER_ADDON;
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
