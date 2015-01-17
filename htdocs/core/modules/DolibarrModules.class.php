@@ -192,10 +192,10 @@ abstract class DolibarrModules
 	 * Enables a module.
 	 * Inserts all informations into database
 	 *
-	 * @param   string[]    $array_sql  SQL requests to be executed when enabling module
-	 * @param   string      $options    String with options when disabling module ('newboxdefonly|noboxes')
+	 * @param   string[]|array  $array_sql  SQL requests to be executed when enabling module
+	 * @param   string          $options    String with options when disabling module ('newboxdefonly|noboxes')
 	 *
-	 * @return  int                     1 if OK, 0 if KO
+	 * @return  int                         1 if OK, 0 if KO
 	 */
     function _init($array_sql, $options='')
     {

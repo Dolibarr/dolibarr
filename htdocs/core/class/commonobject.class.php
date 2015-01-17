@@ -2546,7 +2546,7 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf,$langs,$user,$object,$hookmanager;
+		global $conf, $hookmanager, $inputalsopricewithtax, $langs, $user;
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
