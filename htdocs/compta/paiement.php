@@ -4,6 +4,8 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -469,7 +471,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         $sql.= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
         if ($facture->type != 2)
         {
-            $sql .= ' AND type IN (0,1,3)';	// Standard invoice, replacement, deposit
+            $sql .= ' AND type IN (0,1,3,5)';	// Standard invoice, replacement, deposit, situation
         }
         else
         {
