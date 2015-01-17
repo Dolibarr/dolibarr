@@ -50,7 +50,6 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    string	$pass		Mot de passe
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
-	 *	@return	    int					1 if OK, 0 if not
      */
     function __construct($type, $host, $user, $pass, $name='', $port=0)
     {
@@ -61,6 +60,8 @@ class DoliDBMysqli extends DoliDB
         if (! empty($conf->db->dolibarr_main_db_collation)) $this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
         $this->database_user=$user;
+        $this->database_host=$host;
+        $this->database_port=$port;
 
         $this->transaction_opened=0;
 
@@ -355,7 +356,6 @@ class DoliDBMysqli extends DoliDB
      *	@return int		    Nombre de lignes
      *	@see    num_rows
      */
-
     function affected_rows($resultset)
     {
         // If resultset not provided, we take the last used by connexion
@@ -590,7 +590,7 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Nmae of table filter ('xxx%')
-	 *  @return	resource				Resource
+	 *  @return	array					List of tables in an array
      */
     function DDLListTables($database, $table='')
     {

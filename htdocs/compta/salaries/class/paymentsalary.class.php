@@ -73,7 +73,7 @@ class PaymentSalary extends CommonObject
 	 * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
-	function update($user=0, $notrigger=0)
+	function update($user=null, $notrigger=0)
 	{
 		global $conf, $langs;
 
@@ -127,7 +127,7 @@ class PaymentSalary extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('PAYMENT_SALARY_MODIFY',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
 
 			//FIXME: Add rollback if trigger fail
@@ -144,7 +144,7 @@ class PaymentSalary extends CommonObject
 	 *  @param  User	$user       User that load
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id, $user=0)
+	function fetch($id, $user=null)
 	{
 		global $langs;
 		$sql = "SELECT";
@@ -223,12 +223,12 @@ class PaymentSalary extends CommonObject
 		global $conf, $langs;
 
 		$error=0;
-		
+
 		// Call trigger
 		$result=$this->call_trigger('PAYMENT_SALARY_DELETE',$user);
 		if ($result < 0) return -1;
 		// End call triggers
-		
+
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_salary";
 		$sql.= " WHERE rowid=".$this->id;
@@ -279,7 +279,7 @@ class PaymentSalary extends CommonObject
 	function create($user)
 	{
 		global $conf,$langs;
-		
+
 		$error=0;
 
 		// Clean parameters
@@ -395,7 +395,7 @@ class PaymentSalary extends CommonObject
 					if (! $error)
 					{
 						// Add link 'payment_salary' in bank_url between payment and bank transaction
-						$url=DOL_URL_ROOT.'/compta/salaries/fiche.php?id=';
+						$url=DOL_URL_ROOT.'/compta/salaries/card.php?id=';
 
 						$result=$acc->add_url_line($bank_line_id, $this->id, $url, "(SalaryPayment)", "payment_salary");
 						if ($result <= 0)
@@ -412,9 +412,8 @@ class PaymentSalary extends CommonObject
 					$result=$acc->add_url_line(
 						$bank_line_id,
 						$this->fk_user,
-						DOL_URL_ROOT.'/user/fiche.php?id=',
+						DOL_URL_ROOT.'/user/card.php?id=',
 						$langs->trans("SalaryPayment").' '.$fuser->getFullName($langs).' '.dol_print_date($this->datesp,'dayrfc').' '.dol_print_date($this->dateep,'dayrfc'),
-						'(User)',
 						'user'
 					);
 
@@ -427,9 +426,9 @@ class PaymentSalary extends CommonObject
 
 	            // Call trigger
 	            $result=$this->call_trigger('PAYMENT_SALARY_CREATE',$user);
-	            if ($result < 0) $error++;            
+	            if ($result < 0) $error++;
 	            // End call triggers
-	
+
 			}
 			else $error++;
 
@@ -488,13 +487,13 @@ class PaymentSalary extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/salaries/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='payment';
 		$label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;

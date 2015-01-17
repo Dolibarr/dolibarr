@@ -45,7 +45,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td><?php $coldisplay++; ?><div id="<?php echo $line->rowid; ?>"></div>
+	<td><?php $coldisplay++; ?><div id="row-<?php echo $line->id; ?>"></div>
 	<?php if (($line->info_bits & 2) == 2) { ?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
 		<?php
@@ -141,13 +141,13 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
   if (! empty($conf->margin->enabled) && empty($user->societe_id)) {
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   ?>
-  	<td align="right" class="nowrap"><?php $coldisplay++; ?><div class="margininfos"><?php echo price($line->pa_ht); ?></div></td>
+  	<td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {?>
-  	  <td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
+  	  <td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
   	<?php
   }
   if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
-  	  <td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
+  	  <td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
   <?php } } ?>
 
 	<?php if ($line->special_code == 3)	{ ?>
@@ -194,7 +194,8 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 <?php
 //Line extrafield
-if (!empty($extrafieldsline)) {
+if (!empty($extrafieldsline))
+{
 	print $line->showOptionals($extrafieldsline,'view',array('style'=>$bcdd[$var],'colspan'=>$coldisplay));
 }
 ?>

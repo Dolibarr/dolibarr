@@ -87,8 +87,8 @@
 </td>
 <td>
 <table class="nobordernopadding">
-<tr><td width="30%">
-	<textarea name="param" id="param"><?php echo GETPOST('param'); ?></textarea>
+<tr><td>
+	<textarea name="param" id="param" cols="80" rwos="<?php echo ROWS_4 ?>"><?php echo GETPOST('param'); ?></textarea>
 </td><td id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></td>
 <td id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></td></tr>
 </table>
@@ -101,6 +101,8 @@
 <tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique" <?php echo (GETPOST('unique')?' checked="true"':''); ?>></td></tr>
 <!-- Required -->
 <tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo (GETPOST('required')?' checked="true"':''); ?>></td></tr>
+<!-- Always editable -->
+<tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo (GETPOST('alwayseditable')?' checked="true"':''); ?>></td></tr>
 </table>
 
 <div align="center"><br><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp;

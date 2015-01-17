@@ -48,8 +48,9 @@ create table llx_product
   recuperableonly           integer NOT NULL DEFAULT '0',  -- French NPR VAT
   localtax1_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 1 
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 2
-  fk_user_author			integer DEFAULT NULL,
-  tosell					tinyint      DEFAULT 1,	            -- Product you sell
+  fk_user_author			integer DEFAULT NULL,			  -- user making creation
+  fk_user_modif             integer,                         -- user making last change
+  tosell					tinyint      DEFAULT 1,	          -- Product you sell
   tobuy						tinyint      DEFAULT 1,            -- Product you buy
   tobatch					tinyint      DEFAULT 0 NOT NULL,  -- Is it a product that need a batch or eat-by management
   fk_product_type			integer      DEFAULT 0,			-- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)

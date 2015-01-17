@@ -53,9 +53,9 @@ ShippingExist=Μια αποστολή, υπάρχει
 DraftOrWaitingApproved=Draft or approved not yet ordered
 DraftOrWaitingShipped=Draft or validated not yet shipped
 MenuOrdersToBill=Παραγγελίες προς χρέωση
-MenuOrdersToBill2=Παραγγελίες για τιμολόγηση
+MenuOrdersToBill2=Χρεώσιμες παραγγελίες
 SearchOrder=Εύρεση παραγγελίας
-# SearchACustomerOrder=Search a customer order
+SearchACustomerOrder=Αναζητήστε μία παραγγελία πελάτη
 ShipProduct=Ship product
 Discount=Έκπτωση
 CreateOrder=Δημιουργία παραγγελίας
@@ -65,7 +65,7 @@ ValidateOrder=Επικύρωση παραγγελίας
 UnvalidateOrder=Για Unvalidate
 DeleteOrder=Διαγραφή παραγγελίας
 CancelOrder=Ακύρωση παραγγελίας
-AddOrder=Προσθήκη παραγγελίας
+AddOrder=Δημιουργία παραγγελίας
 AddToMyOrders=Προσθήκη στις παραγγελίες μου
 AddToOtherOrders=Προσθήκη στις άλλες παραγγελίες
 AddToDraftOrders=Προσθήκη στο σχέδιο παραγγελιας
@@ -101,7 +101,6 @@ RelatedOrders=Σχετικές παραγγελίες
 OnProcessOrders=Παραγγελίες σε εξέλιξη
 RefOrder=Κωδ. παραγγελίας
 RefCustomerOrder=Κωδ. πελάτη παραγγελίας
-CustomerOrder=Παραγγελία πελάτη
 RefCustomerOrderShort=Ref. cust. order
 SendOrderByMail=Αποστολή παραγγελίας με email
 ActionsOnOrder=Ενέργειες στην παραγγελία
@@ -132,8 +131,6 @@ Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON not defined
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file '%s'
 Error_OrderNotChecked=Δεν υπάρχουν παραγγελίες στο επιλεγμένο τιμολόγιο
-
-
 # Sources
 OrderSource0=Εμπορική πρόταση
 OrderSource1=Internet
@@ -144,7 +141,6 @@ OrderSource5=Commercial
 OrderSource6=Store
 QtyOrdered=Qty ordered
 AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
-
 # Documents models
 PDFEinsteinDescription=Ολοκληρωμένο πρότυπο παραγγελίας (λογότυπο...)
 PDFEdisonDescription=Απλό πρότυπο παραγγελίας
@@ -155,14 +151,12 @@ OrderByFax=Φαξ
 OrderByEMail=EMail
 OrderByWWW=Online
 OrderByPhone=Τηλέφωνο
-
 CreateInvoiceForThisCustomer=Τιμολογημένες παραγγελίες
 NoOrdersToInvoice=Δεν υπάρχουν τιμολογημένες παραγγελίες
 CloseProcessedOrdersAutomatically=Χαρακτηρίστε σε «εξέλιξη» όλες τις επιλεγμένες παραγγελίες.
-MenuOrdersToBill2=Παραγγελίες για τιμολόγηση
 OrderCreation=Δημιουργία Παραγγελίας
 Ordered=Παραγγελια
 OrderCreated=Οι παραγγελίες σας έχουν δημιουργηθεί
 OrderFail=Ένα σφάλμα συνέβη κατά τη διάρκεια την δημιουργία τις παραγγελίες
 CreateOrders=Δημιουργία παραγγελιών
-# ToBillSeveralOrderSelectCustomer=To create an invoice for several orders, click first onto customer, then choose "%s".
+ToBillSeveralOrderSelectCustomer=Για να δημιουργήσετε ένα τιμολόγιο για αρκετές παραγγελίες, κάντε κλικ πρώτα στον πελάτη, στη συνέχεια, επιλέξτε "%s".

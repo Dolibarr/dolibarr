@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2014  Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  * Copyright (C) 2013-2014  Olivier Geffroy       <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry	      <florian.henry@open-concept.pro>
+ * Copyright (C) 2014	    Juanjo Menent		s<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,10 +46,9 @@ $codeventil = GETPOST('codeventil');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->access)
-	accessforbidden();
 
-if ($action == 'ventil' && $user->rights->accounting->access) {
+if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch)
+{
 	$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 	$sql .= " SET fk_code_ventilation = " . $codeventil;
 	$sql .= " WHERE rowid = " . $id;
@@ -102,7 +102,7 @@ if ($_GET["id"]) {
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
 			
-			print_fiche_titre($langs->trans("Ventilation"));
+			print_fiche_titre($langs->trans("SuppliersVentilation"));
 			
 			print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 			

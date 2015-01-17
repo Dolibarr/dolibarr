@@ -135,17 +135,17 @@ class Societe extends CommonObject
     var $barcode_type;
     /**
      * code (loaded by fetch_barcode)
-     * @var
+     * @var string
      */
     var $barcode_type_code;
     /**
      * label (loaded by fetch_barcode)
-     * @var
+     * @var string
      */
     var $barcode_type_label;
     /**
      * coder (loaded by fetch_barcode)
-     * @var
+     * @var string
      */
     var $barcode_type_coder;
 
@@ -333,6 +333,18 @@ class Societe extends CommonObject
      * @var string
      */
     var $import_key;
+
+    /**
+     * Supplier WebServices URL
+     * @var string
+     */
+    var $webservices_url;
+
+    /**
+     * Supplier WebServices Key
+     * @var string
+     */
+    var $webservices_key;
 
     var $logo;
     var $logo_small;
@@ -624,7 +636,7 @@ class Societe extends CommonObject
         // Clean parameters
         $this->id			= $id;
         $this->name			= $this->name?trim($this->name):trim($this->nom);
-        $this->nom			= trim($this->nom);		// TODO obsolete
+        $this->nom			= $this->name;	// For backward compatibility
         $this->ref_ext		= trim($this->ref_ext);
         $this->address		= $this->address?trim($this->address):trim($this->address);
         $this->zip			= $this->zip?trim($this->zip):trim($this->zip);
@@ -715,6 +727,10 @@ class Societe extends CommonObject
         	$supplier=true;
         }
 
+        //Web services
+        $this->webservices_url = $this->webservices_url?clean_url($this->webservices_url,0):'';
+        $this->webservices_key = trim($this->webservices_key);
+
         $this->db->begin();
 
         // Check name is required and codes are ok or unique.
@@ -795,6 +811,9 @@ class Societe extends CommonObject
             $sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->default_lang."'":"null");
             $sql .= ",logo = ".(! empty($this->logo)?"'".$this->logo."'":"null");
 
+            $sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
+            $sql .= ",webservices_key = ".(! empty($this->webservices_key)?"'".$this->db->escape($this->webservices_key)."'":"null");
+
             if ($customer)
             {
                 $sql .= ", code_client = ".(! empty($this->code_client)?"'".$this->db->escape($this->code_client)."'":"null");
@@ -858,6 +877,8 @@ class Societe extends CommonObject
 		            	}
 	            	}
             	}
+
+            	$action='update';
 
                 // Actions on extra fields (by external module or standard code)
                 // FIXME le hook fait double emploi avec le trigger !!
@@ -951,6 +972,7 @@ class Societe extends CommonObject
         $sql .= ', s.fk_typent as typent_id';
         $sql .= ', s.fk_effectif as effectif_id';
         $sql .= ', s.fk_forme_juridique as forme_juridique_code';
+        $sql .= ', s.webservices_url, s.webservices_key';
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
@@ -1085,6 +1107,9 @@ class Societe extends CommonObject
                 $this->note_public = $obj->note_public;
                 $this->default_lang = $obj->default_lang;
                 $this->logo = $obj->logo;
+
+                $this->webservices_url = $obj->webservices_url;
+                $this->webservices_key = $obj->webservices_key;
 
                 $this->outstanding_limit		= $obj->outstanding_limit;
 
@@ -1307,6 +1332,19 @@ class Societe extends CommonObject
             if (! $error)
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
+                $sql.= " WHERE fk_soc = " . $id;
+                dol_syslog(get_class($this)."::Delete", LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                    $this->error = $this->db->lasterror();
+                }
+            }
+
+            // Remove associated users
+            if (! $error)
+            {
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_commerciaux";
                 $sql.= " WHERE fk_soc = " . $id;
                 dol_syslog(get_class($this)."::Delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
@@ -1685,15 +1723,15 @@ class Societe extends CommonObject
 
         if ($option == 'customer' || $option == 'compta')
         {
-           $lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id;
+           $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id;
+            $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'supplier')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$this->id;
+            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
         }
         else if ($option == 'category')
         {
@@ -1714,7 +1752,7 @@ class Societe extends CommonObject
         $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name,'company').$lienfin);
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name, 'company', 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($name,$maxlen):$name).$lienfin;
 
@@ -2344,7 +2382,7 @@ class Societe extends CommonObject
      *
      *    @param	int		$idprof		1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
      *    @param	string	$value		Value of profid
-     *    @param	int		$socid		Id of society if update
+     *    @param	int		$socid		Id of thirdparty if update
      *    @return   boolean				true if exists, false if not
      */
     function id_prof_exists($idprof,$value,$socid=0)
@@ -2775,7 +2813,7 @@ class Societe extends CommonObject
     		}
     		else                    // For backward compatibility
     		{
-    			dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
+    			dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_ERR);
     			include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
     			$country_code=getCountry($country_id,2,$this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
     			$country_label=getCountry($country_id,0,$this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
@@ -2865,10 +2903,10 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Check if thirdparty may using localtax or not
+     *  Check if we must use localtax feature or not according to country (country of $mysocin most cases).
      *
      *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
-     *  @return		array					array(0=>boolean, 1=>boolean)
+     *  @return		boolean					true or false
      */
     function useLocalTax($localTaxNum=0)
     {
@@ -2890,9 +2928,9 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Check if thirdparty is from a country using revenue stamps
+     *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
      *
-     *  @return		boolean			Yes or no
+     *  @return		boolean			true or false
      */
     function useRevenueStamp()
     {

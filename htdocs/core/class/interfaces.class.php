@@ -23,15 +23,16 @@
  *   \brief			Fichier de la classe de gestion des triggers
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/DolibarrTriggers.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
  *   Class to manage triggers
  */
-
 class Interfaces
 {
-    var $dir;				// Directory with all core and external triggers files
+    var $db;
+	var $dir;				// Directory with all core and external triggers files
     var $errors	= array();	// Array for errors
 
     /**
@@ -60,7 +61,9 @@ class Interfaces
         // Check parameters
         if (! is_object($object) || ! is_object($conf))	// Error
         {
-            dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERR);
+        	$this->error='function run_triggers called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf);
+            dol_syslog(get_class($this).'::run_triggers '.$this->error, LOG_ERR);
+        	$this->errors[]=$this->error;
             return -1;
         }
         if (! is_object($user) || ! is_object($langs))	// Warning

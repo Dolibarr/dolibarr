@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
@@ -59,7 +60,20 @@ if ($id > 0 || ! empty($ref))
 
 if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	if ($object->id) $result = $object->add_photo($dir, $_FILES['userfile']);
+	if ($object->id)
+	{
+		if (image_format_supported($_FILES['userfile']['name']) >= 1)
+		{
+			$result = $object->add_photo($dir, $_FILES['userfile']);
+			if ($result > 0) setEventMessage($langs->trans("FileUploaded"));
+			else setEventMessage($langs->trans("FileNotUploaded"), 'errors');
+		}
+		else
+		{
+			$langs->load("errors");
+			setEventMessage($langs->trans("ErrorBadImageFormat"), 'errors');
+		}
+	}
 }
 
 if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))

@@ -93,7 +93,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,$objecttype,$objectid,$dbtablename,'','',$fieldid);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('categorycard'));
+$hookmanager->initHooks(array('categorycard','globalcard'));
 
 
 /*
@@ -102,7 +102,7 @@ $hookmanager->initHooks(array('categorycard'));
 
 $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
@@ -207,8 +207,7 @@ if (empty($reshook))
 			}
 			else
 			{
-				setEventMessage($cat->error,'errors');
-				setEventMessage($cat->errors,'errors');
+				setEventMessages($cat->error,$this->errors,'errors');
 			}
 		}
 	}
@@ -279,7 +278,7 @@ if ($socid)
 
 	// Address
 	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">';
-    print dol_print_address($soc->address,'gmap','thirdparty',$object->id);
+    print dol_print_address($soc->address,'gmap','thirdparty',$soc->id);
     print '</td></tr>';
 
 	// Zip / Town
@@ -396,7 +395,7 @@ else if ($id || $ref)
 		llxHeader("","",$langs->trans("Member"));
 
 
-		$head=member_prepare_head($member, $user);
+		$head=member_prepare_head($member);
 		$titre=$langs->trans("Member");
 		$picto='user';
 		dol_fiche_head($head, 'category', $titre,0,$picto);
@@ -471,7 +470,7 @@ else if ($id || $ref)
 		llxHeader("","",$langs->trans("Contact"));
 
 
-		$head=contact_prepare_head($object, $user);
+		$head=contact_prepare_head($object);
 		$titre=$langs->trans("ContactsAddresses");
 		$picto='contact';
 		dol_fiche_head($head, 'category', $titre,0,$picto);
@@ -551,7 +550,7 @@ else if ($id || $ref)
         {
             $langs->load("mails");
             print '<td class="nowrap">'.$langs->trans("NbOfEMailingsReceived").'</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td>';
         }
         else
         {
@@ -622,32 +621,32 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 	if ($typeid == 3) $title = $langs->trans("MembersCategoriesShort");
 	if ($typeid == 4) $title = $langs->trans("ContactCategoriesShort");
 
+	$linktocreate='';
+	if ($showclassifyform && $user->rights->categorie->creer)
+	{
+		$linktocreate='<a href="'.DOL_URL_ROOT.'/categories/card.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
+		$linktocreate.=$langs->trans("CreateCat").' ';
+		$linktocreate.=img_picto($langs->trans("Create"),'filenew');
+		$linktocreate.="</a>";
+	}
+
 	print '<br>';
-	print_fiche_titre($title,'','');
+	print_fiche_titre($title,$linktocreate,'');
 
 	// Form to add record into a category
 	if ($showclassifyform)
 	{
-		print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php">';
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td width="40%">';
-		print $langs->trans("ClassifyInCategory").' &nbsp;';
+		print '<span class="hideonsmartphone">'.$langs->trans("ClassifyInCategory").' &nbsp;</span>';
 		print $form->select_all_categories($typeid,'auto');
-		print '</td><td>';
-		print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
-		if ($user->rights->categorie->creer)
-		{
-			print '<td align="right">';
-			print '<a href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
-			print $langs->trans("CreateCat").' ';
-			print img_picto($langs->trans("Create"),'filenew');
-			print "</a>";
-			print '</td>';
-		}
+		print '</td>';
+		print '<td><input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
 		print '</tr>';
 		print '</table>';
 		print '</form>';
@@ -680,10 +679,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 				print "<tr ".$bc[$var].">";
 
 				// Categorie
-				print "<td>";
-				//$c->id=;
-				//print $c->getNomUrl(1);
-				print img_object('','category').' '.$way."</td>";
+				print "<td>".img_object('','category').' '.$way."</td>";
 
 				// Link to delete from category
 				print '<td align="right">';

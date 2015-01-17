@@ -50,7 +50,7 @@ print "<br>\n";
 $template_dir = DOL_DOCUMENT_ROOT.'/core/tpl/';
 
 $interfaces = new Interfaces($db);
-$triggers = $interfaces->getTriggersList(0,'priority');
+$triggers = $interfaces->getTriggersList();
 
 print '<table class="noborder">
 <tr class="liste_titre">

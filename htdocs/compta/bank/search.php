@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry    	 <florian.henry@open-cooncept.pro>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 $langs->load("banks");
 $langs->load("categories");
 $langs->load("companies");
+$langs->load("margins");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -72,6 +73,15 @@ $limit = $conf->liste_limit;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='b.dateo';
 
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$description="";
+	$type="";
+	$debit="";
+	$credit="";
+	$account="";
+	$bid="";
+}
 
 /*
  * View
@@ -158,27 +168,28 @@ if ($resql)
 	if (GETPOST("bid"))
 	{
 		$result=$bankcateg->fetch(GETPOST("bid"));
-		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->nom:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 	else
 	{
 		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 
-	print '<form method="post" action="search.php" name="search_form">';
-	
+	print '<form method="post" action="search.php" name="search_form">'."\n";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+
 	$moreforfilter .= $langs->trans('Period') . ' ' . $langs->trans('StartDate') . ': ';
 	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 1, 1);
 	$moreforfilter .= $langs->trans('EndDate') . ':' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 1, 1);
-	
-	
+
+
 	if ($moreforfilter) {
 		print '<div class="liste_titre">';
 		print $moreforfilter;
-		print '</div>';
+		print '</div>'."\n";
 	}
-	
-	print '<table class="liste" width="100%">';
+
+	print '<table class="liste" width="100%">'."\n";
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
@@ -192,13 +203,12 @@ if ($resql)
 	print '<td class="liste_titre" align="left"> &nbsp; '.$langs->trans("Account").'</td>';
 	print "</tr>\n";
 
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="center">';
-    $form->select_types_paiements(empty($_REQUEST["type"])?'':$_REQUEST["type"], 'type', '', 2, 0, 1, 8);
+    $form->select_types_paiements(empty($type)?'':$type, 'type', '', 2, 0, 1, 8);
     print '</td>';
     print '<td class="liste_titre"><input type="text" class="flat" name="req_nb" value="'.GETPOST("req_nb").'" size="2"></td>';
     print '<td class="liste_titre">';
@@ -214,39 +224,42 @@ if ($resql)
 	print '<td class="liste_titre" align="right">';
 	print '<input type="hidden" name="action" value="search">';
 	if (! empty($_REQUEST['bid'])) print '<input type="hidden" name="bid" value="'.$_REQUEST["bid"].'">';
-	print '<input type="image" class="liste_titre" name="submit" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
-	print '</tr>';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print "</td></tr>\n";
 
-	// Loop on each record
-	$total_debit=0;
-	$total_credit=0;
-	while ($i < min($num,$limit))
-	{
-		$objp = $db->fetch_object($resql);
-		$printline=false;
-		//Search Description
-		if ($description) {
-			preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthee on tente recherche de traduction
-			if ($reg[1]) {
-				if ($langs->transnoentities($reg[1])==$description) {
-					$printline=true;
-				}
-			}elseif ($objp->label==$description) {$printline=true;}
-		}else {$printline=true;}
+    // Loop on each record
+    $total_debit=0;
+    $total_credit=0;
+    while ($i < min($num,$limit)) {
+        $objp = $db->fetch_object($resql);
+        $printline=false;
+        //Search Description
+        if ($description) {
+            preg_match('/\((.+)\)/i',$objp->label,$reg); // Si texte entoure de parenthese on tente recherche de traduction
+            if ($reg[1]) {
+                if ($langs->transnoentities($reg[1])==$description) {
+                    $printline=true;
+                }
+            } elseif ($objp->label==$description) {
+                $printline=true;
+            }
+        } else {
+            $printline=true;
+        }
 
-		if ($printline) {
-			$var=!$var;
+        if ($printline) {
+            $var=!$var;
 
-			print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var].">";
 
-			// Ref
-			print '<td align="left" class="nowrap">';
-			print "<a href=\"ligne.php?rowid=".$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid."</a> &nbsp; ";
-			print '</td>';
+            // Ref
+            print '<td align="left" class="nowrap">';
+            print "<a href=\"ligne.php?rowid=".$objp->rowid.'">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'payment', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
+            print '</td>';
 
-			// Date ope
-	        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
+            // Date ope
+            print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
 
 	        // Date value
 	        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
@@ -278,7 +291,7 @@ if ($resql)
 			if ($objp->url_id)
 			{
 				$companystatic->id=$objp->url_id;
-				$companystatic->nom=$objp->labelurl;
+				$companystatic->name=$objp->labelurl;
 				print $companystatic->getNomUrl(1);
 			}
 			else
@@ -320,7 +333,7 @@ if ($resql)
 	}
 
 	print "</table>";
-
+    print '</form>';
 	$db->free($resql);
 }
 else

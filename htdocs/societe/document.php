@@ -147,7 +147,7 @@ if ($object->id)
 
 	print '</table>';
 
-	print '</div>';
+	dol_fiche_end();
 
 	$modulepart = 'societe';
 	$permission = $user->rights->societe->creer;

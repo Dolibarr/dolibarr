@@ -1,9 +1,14 @@
 # Dolibarr language file - Source file is en_US - printipp
-PrintIPPSetup=Configuración del módulo Impresión directa IPP
-PrintIPPDesc=Este módulo permite añadir un botón de impresión directa de sus documentos hacia su impresora. Se requiere un sistema Linux equipado con Cups.
-PRINTIPP_ENABLED=Muestra el logo "Impresión directa" en los listados de documentos
+PrintIPPSetup=Configuración del módulo Impresión Directa
+PrintIPPDesc=Este módulo añade un botón para enviar documentos directamente a una impresora. Es necesario un SO Linux con CUPS instalado.
+PRINTIPP_ENABLED=Mostrar icono "Impresión directa" en los listados de documentos
 PRINTIPP_HOST=Servidor de impresión
 PRINTIPP_PORT=Puerto
-PRINTIPP_USER=Login
+PRINTIPP_USER=Usuario
 PRINTIPP_PASSWORD=Contraseña
-NoPrinterFound=No se ha encontrado ninguna impresora (compruebe su configuración Cups)
+NoPrinterFound=No se han encontrado impresoras (Compruebe la configuración de su CUPS)
+FileWasSentToPrinter=El archivo %s ha sido enviado a la impresora
+NoDefaultPrinterDefined=No hay impresora por defecto definida
+DefaultPrinter=Impresora por defecto
+Printer=Impresora
+CupsServer=Servidor CUPS

@@ -22,11 +22,11 @@
 create table llx_facture_fourn
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
-  ref					varchar(30),
-  ref_supplier			varchar(50) NOT NULL,
+  ref					varchar(255),
+  ref_supplier			varchar(255) NOT NULL,
   entity				integer  DEFAULT 1 NOT NULL,	 -- multi company id
 
-  ref_ext				varchar(30),                  -- reference into an external system (not used by dolibarr)
+  ref_ext				varchar(255),                  -- reference into an external system (not used by dolibarr)
 
   type					smallint DEFAULT 0 NOT NULL,
   fk_soc				integer NOT NULL,
@@ -52,8 +52,9 @@ create table llx_facture_fourn
 
   fk_statut				smallint DEFAULT 0 NOT NULL,
 
-  fk_user_author		integer,                       -- createur de la facture
-  fk_user_valid			integer,                       -- valideur de la facture
+  fk_user_author		integer,                       -- user making creation
+  fk_user_modif         integer,                       -- user making last change
+  fk_user_valid			integer,                       -- user validating
 
   fk_facture_source		integer,                       -- facture origine si facture avoir
   fk_projet				integer,                       -- projet auquel est associee la facture

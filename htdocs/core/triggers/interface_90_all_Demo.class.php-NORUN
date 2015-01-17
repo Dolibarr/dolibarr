@@ -28,6 +28,7 @@
  *              - Le nom de la classe doit etre InterfaceMytrigger
  *              - Le nom de la propriete name doit etre Mytrigger
  */
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 
 /**

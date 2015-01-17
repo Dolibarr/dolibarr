@@ -3,10 +3,10 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,19 @@
  */
 abstract class CommonObject
 {
-    protected $db;
+    public $db;
+
+    /**
+     * @var error 	Error string
+     * @deprecated	Use instead the array of error strings
+     */
     public $error;
+
+    /**
+     * @var errors	Aray of error string
+     */
     public $errors;
+
     public $canvas;                // Contains canvas name if it is
 
     public $name;
@@ -47,12 +57,21 @@ abstract class CommonObject
 
     public $array_options=array();
 
+    /**
+     * @var Societe
+     */
     public $thirdparty;
 
     public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
     public $linkedObjects;		// Loaded by ->fetchObjectLinked
 
     // No constructor as it is an abstract class
+
+    /**
+     * Column name of the ref field.
+     * @var string
+     */
+    protected $table_ref_field = '';
 
 
     /**
@@ -156,7 +175,7 @@ abstract class CommonObject
      *  Add a link between element $this->element and a contact
      *
      *  @param	int		$fk_socpeople       Id of contact to link
-     *  @param 	int		$type_contact 		Type of contact (code or id)
+     *  @param 	int		$type_contact 		Type of contact (code or id). For example: SALESREPFOLL
      *  @param  int		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
      *  @param  int		$notrigger			Disable all triggers
      *  @return int                 		<0 if KO, >0 if OK
@@ -192,9 +211,10 @@ abstract class CommonObject
             // On recherche id type_contact
             $sql = "SELECT tc.rowid";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
-            $sql.= " WHERE element='".$this->element."'";
-            $sql.= " AND source='".$source."'";
-            $sql.= " AND code='".$type_contact."' AND active=1";
+            $sql.= " WHERE tc.element='".$this->element."'";
+            $sql.= " AND tc.source='".$source."'";
+            $sql.= " AND tc.code='".$type_contact."' AND tc.active=1";
+			//print $sql;
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -337,12 +357,14 @@ abstract class CommonObject
     /**
      *    Delete all links between an object $this and all its contacts
      *
-     *    @return     int	>0 if OK, <0 if KO
+     *	  @param	string	$source		'' or 'internal' or 'external'
+     *	  @param	string	$code		Type of contact (code or id)
+     *    @return   int					>0 if OK, <0 if KO
      */
-    function delete_linked_contact()
+    function delete_linked_contact($source='',$code='')
     {
         $temp = array();
-        $typeContact = $this->liste_type_contact('');
+        $typeContact = $this->liste_type_contact($source,'',0,0,$code);
 
         foreach($typeContact as $key => $value)
         {
@@ -351,7 +373,7 @@ abstract class CommonObject
         $listId = implode(",", $temp);
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
-        $sql.= " WHERE element_id =".$this->id;
+        $sql.= " WHERE element_id = ".$this->id;
         $sql.= " AND fk_c_type_contact IN (".$listId.")";
 
         dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
@@ -360,7 +382,7 @@ abstract class CommonObject
             return 1;
         }
         else
-        {
+		{
             $this->error=$this->db->lasterror();
             return -1;
         }
@@ -478,21 +500,23 @@ abstract class CommonObject
      *      @param	string	$source     'internal', 'external' or 'all'
      *      @param	string	$order		Sort order by : 'code' or 'rowid'
      *      @param  string	$option     0=Return array id->label, 1=Return array code->label
-     *      @param  string	$activeonly    0=all type of contact, 1=only the active
+     *      @param  string	$activeonly 0=all status of contact, 1=only the active
+     *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
      *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
      */
-    function liste_type_contact($source='internal', $order='code', $option=0, $activeonly=0)
+    function liste_type_contact($source='internal', $order='', $option=0, $activeonly=0, $code='')
     {
         global $langs;
+
+        if (empty($order)) $order='code';
 
         $tab = array();
         $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE tc.element='".$this->element."'";
-        if ($activeonly == 1)
-        	$sql.= " AND tc.active=1"; // only the active type
-
-        if (! empty($source)) $sql.= " AND tc.source='".$source."'";
+        if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active type
+        if (! empty($source) && $source != 'all') $sql.= " AND tc.source='".$source."'";
+        if (! empty($code)) $sql.= " AND tc.code='".$code."'";
         $sql.= " ORDER by tc.".$order;
 
         //print "sql=".$sql;
@@ -577,11 +601,15 @@ abstract class CommonObject
     /**
      *		Charge le contact d'id $id dans this->contact
      *
-     *		@param	int		$contactid      Id du contact
+     *		@param	int		$contactid      Id du contact. Use this->contactid if empty.
      *		@return	int						<0 if KO, >0 if OK
      */
-    function fetch_contact($contactid)
+    function fetch_contact($contactid='')
     {
+    	if (empty($contactid)) $contactid=$this->contactid;
+
+    	if (empty($contactid)) return 0;
+
         require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
         $contact = new Contact($this->db);
         $result=$contact->fetch($contactid);
@@ -592,16 +620,22 @@ abstract class CommonObject
     /**
      *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdparty
      *
-     *		@return		int					<0 if KO, >0 if OK
+     *		@param		int		$force_thirdparty_id	Force thirdparty id
+     *		@return		int								<0 if KO, >0 if OK
      */
-    function fetch_thirdparty()
+    function fetch_thirdparty($force_thirdparty_id=0)
     {
         global $conf;
 
-        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty)) return 0;
+        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id)) return 0;
+
+	    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+	    $idtofetch=isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty);
+		if ($force_thirdparty_id) $idtofetch=$force_thirdparty_id;
 
         $thirdparty = new Societe($this->db);
-        $result=$thirdparty->fetch(isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty));
+        $result=$thirdparty->fetch($idtofetch);
         $this->client = $thirdparty;  // deprecated
         $this->thirdparty = $thirdparty;
 
@@ -617,8 +651,34 @@ abstract class CommonObject
 
 
     /**
+     * Looks for an object with ref matching the wildcard provided
+     * It does only work when $this->table_ref_field is set
+     *
+     * @param string $ref Wildcard
+     * @return int >1 = OK, 0 = Not found or table_ref_field not defined, <0 = KO
+     */
+    public function fetchOneLike($ref)
+    {
+        if (!$this->table_ref_field) {
+            return 0;
+        }
+
+        $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE '.$this->table_ref_field.' LIKE "'.$this->db->escape($ref).'" LIMIT 1';
+
+        $query = $this->db->query($sql);
+
+        if (!$this->db->num_rows($query)) {
+            return 0;
+        }
+
+        $result = $this->db->fetch_object($query);
+
+        return $this->fetch($result->rowid);
+    }
+
+    /**
      *	Load data for barcode into properties ->barcode_type*
-     *	Properties ->barcode_type that is id of barcode type is used to find other properties, but
+     *	Properties ->barcode_type that is id of barcode. Type is used to find other properties, but
      *  if it is not defined, ->element must be defined to know default barcode type.
      *
      *	@return		int			<0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
@@ -1738,6 +1798,7 @@ abstract class CommonObject
      *	@param		string	$origin		Linked element type
      *	@param		int		$origin_id	Linked element id
      *	@return		int					<=0 if KO, >0 if OK
+     *	@see		fetchObjectLinked, updateObjectLinked, deleteObjectLinked
      */
     function add_object_linked($origin=null, $origin_id=null)
     {
@@ -1781,6 +1842,7 @@ abstract class CommonObject
      *	@param  string	$targettype		Object target type
      *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
      *	@return	void
+     *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
      */
 	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
     {
@@ -1810,6 +1872,12 @@ abstract class CommonObject
         $sourcetype = (! empty($sourcetype) ? $sourcetype : $this->element);
         $targettype = (! empty($targettype) ? $targettype : $this->element);
 
+        if (empty($sourceid) && empty($targetid))
+        {
+        	dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERROR);
+        	return -1;
+        }
+
         // Links beetween objects are stored in this table
         $sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
@@ -1828,7 +1896,7 @@ abstract class CommonObject
             }
         }
         else
-        {
+		{
             $sql.= "(fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
             $sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
         }
@@ -1935,6 +2003,7 @@ abstract class CommonObject
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
      *	@return							int	>0 if OK, <0 if KO
+     *	@see	add_object_linked, fetObjectLinked, deleteObjectLinked
      */
     function updateObjectLinked($sourceid='', $sourcetype='', $targetid='', $targettype='')
     {
@@ -1980,6 +2049,7 @@ abstract class CommonObject
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
 	 *	@return     int	>0 if OK, <0 if KO
+	 *	@see	add_object_linked, updateObjectLinked, fetchObjectLinked
 	 */
 	function deleteObjectLinked($sourceid='', $sourcetype='', $targetid='', $targettype='')
 	{
@@ -2035,6 +2105,8 @@ abstract class CommonObject
      */
     function setStatut($status,$elementId='',$elementType='')
     {
+    	global $user,$langs,$conf;
+
         $elementId = (!empty($elementId)?$elementId:$this->id);
         $elementTable = (!empty($elementType)?$elementType:$this->table_element);
 
@@ -2050,9 +2122,36 @@ abstract class CommonObject
         dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
         if ($this->db->query($sql))
         {
-        	$this->db->commit();
-        	$this->statut = $status;
-        	return 1;
+            $error = 0;
+
+            $trigkey='';
+            if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
+            if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
+
+            if ($trigkey)
+            {
+                // Appel des triggers
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers($trigkey,$this,$user,$langs,$conf);
+                if ($result < 0) {
+                    $error++; $this->errors=$interface->errors;
+                }
+                // Fin appel triggers
+            }
+
+			if (! $error)
+			{
+				$this->db->commit();
+        		$this->statut = $status;
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				dol_syslog(get_class($this)."::setStatus ".$this->error,LOG_ERR);
+				return -1;
+			}
         }
         else
         {
@@ -2092,7 +2191,6 @@ abstract class CommonObject
             $obj = $this->db->fetch_object($resql);
             if ($obj)
             {
-                $this->id       = $obj->rowid;
                 $this->canvas   = $obj->canvas;
                 return 1;
             }
@@ -2123,326 +2221,6 @@ abstract class CommonObject
             return $row[0];
         }
     }
-
-
-    /**
-     *  Function to get extra fields of a member into $this->array_options
-     *  This method is in most cases called by method fetch of objects but you can call it separately.
-     *
-     *  @param	int		$rowid			Id of line
-     *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label()
-     *  @return	int						<0 if error, 0 if no optionals to find nor found, 1 if a line is found and optional loaded
-     */
-    function fetch_optionals($rowid,$optionsArray='')
-    {
-        if (! is_array($optionsArray))
-        {
-            // optionsArray not already loaded, so we load it
-            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-            $extrafields = new ExtraFields($this->db);
-            $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
-        }
-
-
-        // Request to get complementary values
-        if (count($optionsArray) > 0)
-        {
-            $sql = "SELECT rowid";
-            foreach ($optionsArray as $name => $label)
-            {
-                $sql.= ", ".$name;
-            }
-            $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
-            $sql.= " WHERE fk_object = ".$rowid;
-
-            dol_syslog(get_class($this)."::fetch_optionals", LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-            	$numrows=$this->db->num_rows($resql);
-                if ($numrows)
-                {
-                    $tab = $this->db->fetch_array($resql);
-
-                    foreach ($tab as $key => $value)
-                    {
-                    	// Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
-                        if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
-                        {
-                            // we can add this attribute to adherent object
-                            $this->array_options["options_$key"]=$value;
-                        }
-                    }
-                }
-
-                $this->db->free($resql);
-
-                if ($numrows) return $numrows;
-                else return 0;
-            }
-            else
-            {
-                dol_print_error($this->db);
-                return -1;
-            }
-        }
-        return 0;
-    }
-
-    /**
-     *	Delete all extra fields values for the current object.
-     *
-     *  @return	int		<0 if KO, >0 if OK
-     */
-	function deleteExtraFields()
-	{
-		global $langs;
-
-		$error=0;
-
-		$this->db->begin();
-
-		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
-		dol_syslog(get_class($this)."::deleteExtraFields delete", LOG_DEBUG);
-		$resql=$this->db->query($sql_del);
-		if (! $resql)
-		{
-			$this->error=$this->db->lasterror();
-			$this->db->rollback();
-			return -1;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-	}
-
-    /**
-     *	Add/Update all extra fields values for the current object.
-     *  All data to describe values to insert are stored into $this->array_options=array('keyextrafield'=>'valueextrafieldtoadd')
-     *
-     *  @return int -1=error, O=did nothing, 1=OK
-     */
-    function insertExtraFields()
-    {
-        global $conf,$langs;
-
-		$error=0;
-
-		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
-
-        if (! empty($this->array_options))
-        {
-            // Check parameters
-            $langs->load('admin');
-            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-            $extrafields = new ExtraFields($this->db);
-            $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
-
-            foreach($this->array_options as $key => $value)
-            {
-               	$attributeKey = substr($key,8);   // Remove 'options_' prefix
-               	$attributeType  = $extrafields->attribute_type[$attributeKey];
-               	$attributeSize  = $extrafields->attribute_size[$attributeKey];
-               	$attributeLabel = $extrafields->attribute_label[$attributeKey];
-               	switch ($attributeType)
-               	{
-               		case 'int':
-              			if (!is_numeric($value) && $value!='')
-               			{
-               				$error++; $this->errors[]=$langs->trans("ExtraFieldHasWrongValue",$attributeLabel);
-               				return -1;
-              			}
-               			elseif ($value=='')
-               			{
-               				$this->array_options[$key] = null;
-               			}
-             			break;
-            		case 'price':
-            			$this->array_options[$key] = price2num($this->array_options[$key]);
-            			break;
-            		case 'date':
-            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
-            			break;
-            		case 'datetime':
-            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
-            			break;
-               	}
-            }
-            $this->db->begin();
-
-            $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
-            dol_syslog(get_class($this)."::insertExtraFields delete", LOG_DEBUG);
-            $this->db->query($sql_del);
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
-            foreach($this->array_options as $key => $value)
-            {
-            	$attributeKey = substr($key,8);   // Remove 'options_' prefix
-                // Add field of attribut
-            	if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
-                	$sql.=",".$attributeKey;
-            }
-            $sql .= ") VALUES (".$this->id;
-            foreach($this->array_options as $key => $value)
-            {
-            	$attributeKey = substr($key,8);   // Remove 'options_' prefix
-                // Add field o fattribut
-            	if($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
-            	{
-	                if ($this->array_options[$key] != '')
-	                {
-	                    $sql.=",'".$this->db->escape($this->array_options[$key])."'";
-	                }
-	                else
-	                {
-	                    $sql.=",null";
-	                }
-            	}
-            }
-            $sql.=")";
-
-            dol_syslog(get_class($this)."::insertExtraFields insert", LOG_DEBUG);
-            $resql = $this->db->query($sql);
-            if (! $resql)
-            {
-                $this->error=$this->db->lasterror();
-                $this->db->rollback();
-                return -1;
-            }
-            else
-            {
-                $this->db->commit();
-                return 1;
-            }
-        }
-        else return 0;
-    }
-
-   /**
-     * Function to show lines of extrafields with output datas
-     *
-     * @param	object	$extrafields	Extrafield Object
-     * @param	string	$mode			Show output (view) or input (edit) for extrafield
-	 * @param	array	$params			Optionnal parameters
-	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
-     *
-     * @return string
-     */
-    function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
-    {
-		global $_POST, $conf;
-
-		$out = '';
-
-		if (count($extrafields->attribute_label) > 0)
-		{
-			$out .= "\n";
-			$out .= '<!-- showOptionalsInput --> ';
-			$out .= "\n";
-
-			$e = 0;
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				if (is_array($params) && count($params)>0) {
-					if (array_key_exists('colspan',$params)) {
-						$colspan=$params['colspan'];
-					}
-				}else {
-					$colspan='3';
-				}
-				switch($mode) {
-					case "view":
-						$value=$this->array_options["options_".$key];
-						break;
-					case "edit":
-						$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
-						break;
-				}
-				if ($extrafields->attribute_type[$key] == 'separate')
-				{
-					$out .= $extrafields->showSeparator($key);
-				}
-				else
-				{
-					$csstyle='';
-					if (is_array($params) && count($params)>0) {
-						if (array_key_exists('style',$params)) {
-							$csstyle=$params['style'];
-						}
-					}
-					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
-					{
-						$out .= '<tr '.$csstyle.'>';
-						$colspan='0';
-					}
-					else
-					{
-						$out .= '<tr '.$csstyle.'>';
-					}
-					// Convert date into timestamp format
-					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
-					{
-						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->db->jdate($this->array_options['options_'.$key]);
-					}
-
-					if($extrafields->attribute_required[$key])
-						$label = '<span class="fieldrequired">'.$label.'</span>';
-
-					$out .= '<td>'.$label.'</td>';
-					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
-
-					switch($mode) {
-					case "view":
-						$out .= $extrafields->showOutputField($key,$value);
-						break;
-					case "edit":
-						$out .= $extrafields->showInputField($key,$value,'',$keyprefix);
-						break;
-					}
-
-					$out .= '</td>'."\n";
-
-					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
-					else $out .= '</tr>';
-					$e++;
-				}
-			}
-			$out .= "\n";
-			$out .= '<!-- /showOptionalsInput --> ';
-			$out .= '
-				<script type="text/javascript">
-				    jQuery(document).ready(function() {
-				    	function showOptions(child_list, parent_list)
-				    	{
-				    		var val = $("select[name=\"options_"+parent_list+"\"]").val();
-				    		var parentVal = parent_list + ":" + val;
-							if(val > 0) {
-					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
-					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
-							} else {
-								$("select[name=\""+child_list+"\"] option").show();
-							}
-				    	}
-						function setListDependencies() {
-					    	jQuery("select option[parent]").parent().each(function() {
-					    		var child_list = $(this).attr("name");
-								var parent = $(this).find("option[parent]:first").attr("parent");
-								var infos = parent.split(":");
-								var parent_list = infos[0];
-								$("select[name=\"options_"+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list);
-								});
-					    	});
-						}
-
-						setListDependencies();
-				    });
-				</script>';
-		}
-		return $out;
-	}
-
 
     /**
      *  Function to check if an object is used by others.
@@ -2794,14 +2572,14 @@ abstract class CommonObject
 		if (! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
-				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
+				print '<td align="right" class="margininfos" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
-				print '<td align="right" width="80">'.$langs->trans('CostPrice').'</td>';
+				print '<td align="right" class="margininfos" width="80">'.$langs->trans('CostPrice').'</td>';
 
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
+				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" width="50">'.$langs->trans('MarkRate').'</td>';
+				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarkRate').'</td>';
 		}
 
 		// Total HT
@@ -2837,6 +2615,11 @@ abstract class CommonObject
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
 					$reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				}
+				else
+				{
+					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
+					$reshook=$hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
 			else
@@ -3276,25 +3059,33 @@ abstract class CommonObject
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		if (! empty($conf->global->MARGININFO_HIDE_SHOW))
+		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// FIXME Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
 		{
-			print "<img onclick=\"$('.margininfos').toggle();\" src='".img_picto($langs->trans("Hide")."/".$langs->trans("Show"),'object_margin.png','','',1)."'>";
-			if ($conf->global->MARGININFO_HIDE_SHOW == 2) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';	// hide by default
+			print $langs->trans('ShowMarginInfos').' : ';
+	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
+	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'':'hideobject').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
+	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'hideobject':'').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
+
+    	    print '<script>$(document).ready(function() {
+        	    $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
+        	    $("span#hideMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
+      	        });</script>';
+    	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
 		}
 
-		print '<table class="nobordernopadding margintable" width="100%">';
+		print '<table class="noborder margintable" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td width="30%">'.$langs->trans('Margins').'</td>';
-		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
+		print '<td class="liste_titre">'.$langs->trans('Margins').'</td>';
+		print '<td class="liste_titre" align="right">'.$langs->trans('SellingPrice').'</td>';
 		if ($conf->global->MARGIN_TYPE == "1")
-			print '<td width="20%" align="right">'.$langs->trans('BuyingPrice').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('BuyingPrice').'</td>';
 		else
-			print '<td width="20%" align="right">'.$langs->trans('CostPrice').'</td>';
-		print '<td width="20%" align="right">'.$langs->trans('Margin').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('CostPrice').'</td>';
+		print '<td class="liste_titre" align="right">'.$langs->trans('Margin').'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.$langs->trans('MarginRate').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('MarginRate').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.$langs->trans('MarkRate').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('MarkRate').'</td>';
 		print '</tr>';
 
 		if (! empty($conf->product->enabled))
@@ -3443,6 +3234,105 @@ abstract class CommonObject
         }
     }
 
+	/**
+	 * Common function for all objects extending CommonObject for generating documents
+	 *
+	 * @param string $modelspath Relative folder where models are placed
+	 * @param string $modele Model to use
+	 * @param Translate $outputlangs Language to use
+	 * @param int $hidedetails 1 to hide details. 0 by default
+	 * @param int $hidedesc 1 to hide product description. 0 by default
+	 * @param int $hideref 1 to hide product reference. 0 by default
+	 * @return int 1 if OK -1 if not OK
+	 */
+	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref)
+	{
+		global $conf, $langs;
+
+		$srctemplatepath='';
+
+		// Increase limit for PDF build
+		$err=error_reporting();
+		error_reporting(0);
+		@set_time_limit(120);
+		error_reporting($err);
+
+		// If selected modele is a filename template (then $modele="modelname:filename")
+		$tmp=explode(':',$modele,2);
+		if (! empty($tmp[1]))
+		{
+			$modele=$tmp[0];
+			$srctemplatepath=$tmp[1];
+		}
+
+		// Search template files
+		$file=''; $classname=''; $filefound=0;
+		$dirmodels=array('/');
+		if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+		foreach($dirmodels as $reldir)
+		{
+			foreach(array('doc','pdf') as $prefix)
+			{
+				$file = $prefix."_".$modele.".modules.php";
+
+				// On verifie l'emplacement du modele
+				$file=dol_buildpath($reldir.$modelspath.$file,0);
+				if (file_exists($file))
+				{
+					$filefound=1;
+					$classname=$prefix.'_'.$modele;
+					break;
+				}
+			}
+			if ($filefound) break;
+		}
+
+		// Charge le modele
+		if ($filefound)
+		{
+			require_once $file;
+
+			$obj = new $classname($this->db);
+			//$obj->message = $message;
+
+			// We save charset_output to restore it because write_file can change it if needed for
+			// output format that does not support UTF8.
+			$sav_charset_output=$outputlangs->charset_output;
+			if ($obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
+			{
+				$outputlangs->charset_output=$sav_charset_output;
+
+				// We delete old preview
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				dol_delete_preview($this);
+
+				// Success in building document. We build meta file.
+				dol_meta_create($this);
+
+				return 1;
+			}
+			else
+			{
+				$outputlangs->charset_output=$sav_charset_output;
+				dol_print_error($this->db,"Error generating document for ".__CLASS__.". Error: ".$obj->error);
+				return -1;
+			}
+
+		}
+		else
+		{
+			dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
+			return -1;
+		}
+	}
+
+
+	/* Functions common to commonobject and commonobjectline */
+
+
+	/* For triggers */
+
+
     /**
      * Call trigger based on this instance
      * NB: Error from trigger are stacked in interface->errors
@@ -3474,5 +3364,328 @@ abstract class CommonObject
 
     	return $result;
     }
+
+
+    /* Functions for extrafields */
+
+
+    /**
+     *  Function to get extra fields of a member into $this->array_options
+     *  This method is in most cases called by method fetch of objects but you can call it separately.
+     *
+     *  @param	int		$rowid			Id of line
+     *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label()
+     *  @return	int						<0 if error, 0 if no optionals to find nor found, 1 if a line is found and optional loaded
+     */
+    function fetch_optionals($rowid='',$optionsArray='')
+    {
+    	if (empty($rowid)) $rowid=$this->id;
+
+        if (! is_array($optionsArray))
+        {
+            // optionsArray not already loaded, so we load it
+            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+            $extrafields = new ExtraFields($this->db);
+            $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
+        }
+
+        // Request to get complementary values
+        if (count($optionsArray) > 0)
+        {
+            $sql = "SELECT rowid";
+            foreach ($optionsArray as $name => $label)
+            {
+                $sql.= ", ".$name;
+            }
+            $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
+            $sql.= " WHERE fk_object = ".$rowid;
+
+            dol_syslog(get_class($this)."::fetch_optionals", LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+            	$numrows=$this->db->num_rows($resql);
+                if ($numrows)
+                {
+                    $tab = $this->db->fetch_array($resql);
+
+                    foreach ($tab as $key => $value)
+                    {
+                    	// Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
+                        if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
+                        {
+                            // we can add this attribute to adherent object
+                            $this->array_options["options_".$key]=$value;
+                        }
+                    }
+                }
+
+                $this->db->free($resql);
+
+                if ($numrows) return $numrows;
+                else return 0;
+            }
+            else
+            {
+                dol_print_error($this->db);
+                return -1;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     *	Delete all extra fields values for the current object.
+     *
+     *  @return	int		<0 if KO, >0 if OK
+     */
+	function deleteExtraFields()
+	{
+		global $langs;
+
+		$error=0;
+
+		$this->db->begin();
+
+		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
+		dol_syslog(get_class($this)."::deleteExtraFields delete", LOG_DEBUG);
+		$resql=$this->db->query($sql_del);
+		if (! $resql)
+		{
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+    /**
+     *	Add/Update all extra fields values for the current object.
+     *  All data to describe values to insert are stored into $this->array_options=array('keyextrafield'=>'valueextrafieldtoadd')
+     *
+     *  @return int -1=error, O=did nothing, 1=OK
+     */
+    function insertExtraFields()
+    {
+        global $conf,$langs;
+
+		$error=0;
+
+		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
+
+        if (! empty($this->array_options))
+        {
+            // Check parameters
+            $langs->load('admin');
+            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+            $extrafields = new ExtraFields($this->db);
+            $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
+
+            foreach($this->array_options as $key => $value)
+            {
+               	$attributeKey = substr($key,8);   // Remove 'options_' prefix
+               	$attributeType  = $extrafields->attribute_type[$attributeKey];
+               	$attributeSize  = $extrafields->attribute_size[$attributeKey];
+               	$attributeLabel = $extrafields->attribute_label[$attributeKey];
+               	switch ($attributeType)
+               	{
+               		case 'int':
+              			if (!is_numeric($value) && $value!='')
+               			{
+               				$error++; $this->errors[]=$langs->trans("ExtraFieldHasWrongValue",$attributeLabel);
+               				return -1;
+              			}
+               			elseif ($value=='')
+               			{
+               				$this->array_options[$key] = null;
+               			}
+             			break;
+            		case 'price':
+            			$this->array_options[$key] = price2num($this->array_options[$key]);
+            			break;
+            		case 'date':
+            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
+            			break;
+            		case 'datetime':
+            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
+            			break;
+               	}
+            }
+            $this->db->begin();
+
+            $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
+            dol_syslog(get_class($this)."::insertExtraFields delete", LOG_DEBUG);
+            $this->db->query($sql_del);
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
+            foreach($this->array_options as $key => $value)
+            {
+            	$attributeKey = substr($key,8);   // Remove 'options_' prefix
+                // Add field of attribut
+            	if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
+                	$sql.=",".$attributeKey;
+            }
+            $sql .= ") VALUES (".$this->id;
+            foreach($this->array_options as $key => $value)
+            {
+            	$attributeKey = substr($key,8);   // Remove 'options_' prefix
+                // Add field o fattribut
+            	if($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
+            	{
+	                if ($this->array_options[$key] != '')
+	                {
+	                    $sql.=",'".$this->db->escape($this->array_options[$key])."'";
+	                }
+	                else
+	                {
+	                    $sql.=",null";
+	                }
+            	}
+            }
+            $sql.=")";
+
+            dol_syslog(get_class($this)."::insertExtraFields insert", LOG_DEBUG);
+            $resql = $this->db->query($sql);
+            if (! $resql)
+            {
+                $this->error=$this->db->lasterror();
+                $this->db->rollback();
+                return -1;
+            }
+            else
+            {
+                $this->db->commit();
+                return 1;
+            }
+        }
+        else return 0;
+    }
+
+   /**
+     * Function to show lines of extrafields with output datas
+     *
+     * @param	object	$extrafields	Extrafield Object
+     * @param	string	$mode			Show output (view) or input (edit) for extrafield
+	 * @param	array	$params			Optionnal parameters
+	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+     *
+     * @return string
+     */
+    function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
+    {
+		global $_POST, $conf;
+
+		$out = '';
+
+		if (count($extrafields->attribute_label) > 0)
+		{
+			$out .= "\n";
+			$out .= '<!-- showOptionalsInput --> ';
+			$out .= "\n";
+
+			$e = 0;
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				if (is_array($params) && count($params)>0) {
+					if (array_key_exists('colspan',$params)) {
+						$colspan=$params['colspan'];
+					}
+				}else {
+					$colspan='3';
+				}
+				switch($mode) {
+					case "view":
+						$value=$this->array_options["options_".$key];
+						break;
+					case "edit":
+						$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+						break;
+				}
+				if ($extrafields->attribute_type[$key] == 'separate')
+				{
+					$out .= $extrafields->showSeparator($key);
+				}
+				else
+				{
+					$csstyle='';
+					if (is_array($params) && count($params)>0) {
+						if (array_key_exists('style',$params)) {
+							$csstyle=$params['style'];
+						}
+					}
+					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
+					{
+						$out .= '<tr '.$csstyle.'>';
+						$colspan='0';
+					}
+					else
+					{
+						$out .= '<tr '.$csstyle.'>';
+					}
+					// Convert date into timestamp format
+					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+					{
+						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->db->jdate($this->array_options['options_'.$key]);
+					}
+
+					if($extrafields->attribute_required[$key])
+						$label = '<span class="fieldrequired">'.$label.'</span>';
+
+					$out .= '<td>'.$label.'</td>';
+					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
+
+					switch($mode) {
+					case "view":
+						$out .= $extrafields->showOutputField($key,$value);
+						break;
+					case "edit":
+						$out .= $extrafields->showInputField($key,$value,'',$keyprefix);
+						break;
+					}
+
+					$out .= '</td>';
+
+					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
+					else $out .= '</tr>';
+					$e++;
+				}
+			}
+			$out .= "\n";
+			$out .= '
+				<script type="text/javascript">
+				    jQuery(document).ready(function() {
+				    	function showOptions(child_list, parent_list)
+				    	{
+				    		var val = $("select[name=\"options_"+parent_list+"\"]").val();
+				    		var parentVal = parent_list + ":" + val;
+							if(val > 0) {
+					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
+					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+							} else {
+								$("select[name=\""+child_list+"\"] option").show();
+							}
+				    	}
+						function setListDependencies() {
+					    	jQuery("select option[parent]").parent().each(function() {
+					    		var child_list = $(this).attr("name");
+								var parent = $(this).find("option[parent]:first").attr("parent");
+								var infos = parent.split(":");
+								var parent_list = infos[0];
+								$("select[name=\"options_"+parent_list+"\"]").change(function() {
+									showOptions(child_list, parent_list);
+								});
+					    	});
+						}
+
+						setListDependencies();
+				    });
+				</script>'."\n";
+			$out .= '<!-- /showOptionalsInput --> '."\n";
+		}
+		return $out;
+	}
 
 }

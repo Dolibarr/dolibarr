@@ -287,7 +287,7 @@ if ($conf->product->enabled || $conf->product->service)
 	{
 		print $langs->trans("BarCodeNumberManager").": ";
 		$objproduct=new Product($db);
-		print '<b>'.$modBarCodeProduct->nom.'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
+		print '<b>'.(isset($modBarCodeProduct->name)?$modBarCodeProduct->name:$modBarCodeProduct->nom).'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
 		$disabled=0;
 	}
 	else

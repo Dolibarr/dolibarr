@@ -83,7 +83,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 		$nom=substr(GETPOST("nom"),0,64);
 
 		// Check if vote already exists
-		$sql = 'SELECT id_users, nom';
+		$sql = 'SELECT id_users, nom as name';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
 		$sql.= " WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."'";
 		$sql.= ' ORDER BY id_users';
@@ -283,7 +283,7 @@ for ($i = 0; $i < $nblignes; $i++)
 
 		// Loop on each answer
 		$compteur = 0;
-		$sql ="SELECT id_users, nom, id_sondage, reponses";
+		$sql ="SELECT id_users, nom as name, id_sondage, reponses";
 		$sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
 		$resql=$db->query($sql);
@@ -341,7 +341,7 @@ for ($i = 0; $i < $nbcolonnes; $i++)
 
 		// Clean current answer to remove deleted columns
 		$compteur = 0;
-		$sql ="SELECT id_users, nom, id_sondage, reponses";
+		$sql ="SELECT id_users, nom as name, id_sondage, reponses";
 		$sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
 		dol_syslog('sql='.$sql);
@@ -756,7 +756,7 @@ else
 $sumfor = array();
 $sumagainst = array();
 $compteur = 0;
-$sql ="SELECT id_users, nom, id_sondage, reponses";
+$sql ="SELECT id_users, nom as name, id_sondage, reponses";
 $sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 $sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
 dol_syslog('sql='.$sql);
@@ -780,7 +780,7 @@ while ($compteur < $num)
 	}
 
 	// Name
-	print '</td><td class="nom">'.dol_htmlentities($obj->nom).'</td>'."\n";
+	print '</td><td class="nom">'.dol_htmlentities($obj->name).'</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (! $testligneamodifier)

@@ -118,10 +118,10 @@ class CMailFile
 		$this->mixed_boundary = "multipart_x." . time() . ".x_boundary";
 
 		// On defini related_boundary
-		$this->related_boundary = 'mul_'.dol_hash(uniqid("dolibarr2"));
+		$this->related_boundary = 'mul_'.dol_hash(uniqid("dolibarr2"), 3);	// Force md5 hash (does not contains special chars)
 
 		// On defini alternative_boundary
-		$this->alternative_boundary = 'mul_'.dol_hash(uniqid("dolibarr3"));
+		$this->alternative_boundary = 'mul_'.dol_hash(uniqid("dolibarr3"), 3);	// Force md5 hash (does not contains special chars)
 
 		// If ending method not defined
 		if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
@@ -971,7 +971,7 @@ class CMailFile
 						}
 
 						// cid
-						$this->html_images[$i]["cid"] = dol_hash(uniqid(time()));
+						$this->html_images[$i]["cid"] = dol_hash(uniqid(time()), 3);	// Force md5 hash (does not contains special chars)
 						$this->html = preg_replace("/src=\"$src\"|src='$src'/i", "src=\"cid:".$this->html_images[$i]["cid"]."\"", $this->html);
 					}
 					$i++;

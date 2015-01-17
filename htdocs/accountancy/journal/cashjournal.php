@@ -62,8 +62,6 @@ $date_endyear = GETPOST('date_endyear');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->access)
-	accessforbidden();
 
 $action = GETPOST('action');
 
@@ -121,8 +119,8 @@ if ($result) {
 
 	$num = $db->num_rows($result);
 	// les variables
-	$cptfour = (! empty($conf->global->COMPTA_ACCOUNT_SUPPLIER) ? $conf->global->COMPTA_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
-	$cptcli = (! empty($conf->global->COMPTA_ACCOUNT_CUSTOMER) ? $conf->global->COMPTA_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
+	$cptfour = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
+	$cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
 	$cpttva = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) ? $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE : $langs->trans("CodeNotDef"));
 	$cptsociale = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) ? $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE : $langs->trans("CodeNotDef"));
 
@@ -133,7 +131,8 @@ if ($result) {
 	$tabtype = array ();
 
 	$i = 0;
-	while ( $i < $num ) {
+	while ($i < $num)
+	{
 		$obj = $db->fetch_object($result);
 
 		// controls
@@ -158,9 +157,10 @@ if ($result) {
 		$links = $object->get_url($obj->rowid);
 
 		// get_url may return -1 which is not traversable
-		if (is_array($links)) {
-			foreach ($links as $key => $val) {
-
+		if (is_array($links))
+		{
+			foreach ( $links as $key => $val )
+			{
 				$tabtype[$obj->rowid] = $links[$key]['type'];
 
 				if ($links[$key]['type'] == 'payment') {
@@ -204,21 +204,13 @@ if ($result) {
 						$objmid = $db->fetch_object($resultmid);
 						$tabtp[$obj->rowid][$objmid->accountancy_code] += $obj->amount;
 					}
-				} else if ($links[$key]['type'] == 'payment_vat') {
-
-					$paymentvatstatic->id = $links[$key]['url_id'];
-					$paymentvatstatic->ref = $links[$key]['url_id'];
-					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
-					$tabtp[$obj->rowid][$cpttva] += $obj->amount;
-				} else if ($links[$key]['type'] == 'banktransfert') {
-					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
-					$tabtp[$obj->rowid][$cpttva] += $obj->amount;
+					/*else {
+						$tabtp [$obj->rowid] [$cptsociale] += $obj->amount;
+					}*/
 				}
-				/*else {
-					$tabtp [$obj->rowid] [$cptsociale] += $obj->amount;
-				}*/
 			}
 		}
+
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
 
 		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
@@ -234,11 +226,14 @@ if ($result) {
 */
 
 // write bookkeeping
-if ($action == 'writeBookKeeping') {
+if ($action == 'writeBookKeeping')
+{
 	$error = 0;
-	foreach ( $tabpay as $key => $val ) {
+	foreach ( $tabpay as $key => $val )
+	{
 		// cash
-		foreach ( $tabbq[$key] as $k => $mt ) {
+		foreach ( $tabbq[$key] as $k => $mt )
+		{
 			$bookkeeping = new BookKeeping($db);
 			$bookkeeping->doc_date = $val["date"];
 			$bookkeeping->doc_ref = $val["ref"];
@@ -254,8 +249,8 @@ if ($action == 'writeBookKeeping') {
 			$bookkeeping->credit = ($mt < 0 ? - $mt : 0);
 			$bookkeeping->code_journal = $conf->global->ACCOUNTING_CASH_JOURNAL;
 
-			if ($tabtype[$key] == 'payment') {
-
+			if ($tabtype[$key] == 'payment')
+			{
 				$sqlmid = 'SELECT fac.facnumber';
 				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
@@ -321,7 +316,7 @@ if ($action == 'writeBookKeeping') {
 					$bookkeeping->doc_ref = $objmid->facnumber;
 				}
 				$bookkeeping->code_tiers = $k;
-				$bookkeeping->numero_compte = $conf->global->COMPTA_ACCOUNT_CUSTOMER;
+				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			} else if ($tabtype[$key] == 'payment_supplier') {
 
 				$sqlmid = 'SELECT facf.facnumber';
@@ -336,7 +331,7 @@ if ($action == 'writeBookKeeping') {
 					$bookkeeping->doc_ref = $objmid->facnumber;
 				}
 				$bookkeeping->code_tiers = $k;
-				$bookkeeping->numero_compte = $conf->global->COMPTA_ACCOUNT_SUPPLIER;
+				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 			} else if ($tabtype[$key] == 'company') {
 
 				$sqlmid = 'SELECT fac.facnumber';
@@ -351,11 +346,11 @@ if ($action == 'writeBookKeeping') {
 					$bookkeeping->doc_ref = $objmid->facnumber;
 				}
 				$bookkeeping->code_tiers = $k;
-				$bookkeeping->numero_compte = $conf->global->COMPTA_ACCOUNT_CUSTOMER;
+				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			} else {
 
 				$bookkeeping->doc_ref = $k;
-				$bookkeeping->numero_compte = $conf->global->COMPTA_ACCOUNT_CUSTOMER;
+				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			}
 
 			$result = $bookkeeping->create();
@@ -402,9 +397,9 @@ if ($action == 'export_csv') {
 					print $date . $sep;
 					print $conf->global->ACCOUNTING_CASH_JOURNAL . $sep;
 					if ($obj->label == '(SupplierInvoicePayment)') {
-						print length_accountg($conf->global->COMPTA_ACCOUNT_SUPPLIER) . $sep;
+						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
 					} else {
-						print length_accountg($conf->global->COMPTA_ACCOUNT_CUSTOMER) . $sep;
+						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
 					}
 					print length_accounta(html_entity_decode($k)) . $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
@@ -451,14 +446,14 @@ if ($action == 'export_csv') {
 
 	llxHeader('', $langs->trans("CashJournal"), '');
 
-	$nom = $langs->trans("CashJournal");
+	$name = $langs->trans("CashJournal");
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = time();
 	$description = $langs->trans("DescCashJournal") . '<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
-	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
+	report_header($name, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
 
 	print '<input type="button" class="button" style="float: right;" value="Export CSV" onclick="launch_export();" />';
 

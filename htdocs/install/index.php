@@ -49,7 +49,7 @@ pHeader("", "check");   // Etape suivante = check
 
 
 // Ask installation language
-print '<br><br><center>';
+print '<br><br><div class="center">';
 print '<table>';
 
 print '<tr>';
@@ -58,7 +58,7 @@ print $formadmin->select_language('auto','selectlang',1,0,0,1);
 print '</td>';
 print '</tr>';
 
-print '</table></center>';
+print '</table></div>';
 
 print '<br><br>'.$langs->trans("SomeTranslationAreUncomplete");
 

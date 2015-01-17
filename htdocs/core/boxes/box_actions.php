@@ -63,8 +63,8 @@ class box_actions extends ModeleBoxes
 		if ($user->rights->agenda->myactions->read)
 		{
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage,";
-			$sql.= " ta.code,";
-			$sql.= " s.nom, s.rowid as socid";
+			$sql.= " ta.code, ta.libelle as type_label,";
+			$sql.= " s.nom as name, s.rowid as socid";
 			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
 			$sql.= MAIN_DB_PREFIX."actioncomm AS a)";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -96,23 +96,23 @@ class box_actions extends ModeleBoxes
 					if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite  < ($now - $delay_warning)) $late=img_warning($langs->trans("Late"));
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
-					$label=$objp->label;
+					$label=empty($objp->label)?$objp->type_label:$objp->label;
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 					'logo' => ("action"),
-					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
+					'url' => DOL_URL_ROOT."/comm/action/card.php?id=".$objp->id);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
 					'text' => dol_trunc($label,32),
 					'text2'=> $late,
-					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
+					'url' => DOL_URL_ROOT."/comm/action/card.php?id=".$objp->id);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
                     'logo' => ($objp->socid?'company':''),
                     'url' => ($objp->socid?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid:''));
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-					'text' => dol_trunc($objp->nom,24),
+					'text' => dol_trunc($objp->name,24),
 					'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="left" class="nowrap"',
@@ -155,10 +155,11 @@ class box_actions extends ModeleBoxes
 		global $langs, $conf;
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 				if ($conf->global->SHOW_DIALOG_HOMEPAGE)
-		{		
+		{
 			$actioncejour=false;
 			$contents=$this->info_box_contents;
 			$nblines=count($contents);
+			$bcx=array();
 			$bcx[0] = 'class="box_pair"';
 			$bcx[1] = 'class="box_impair"';
 			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo"))
@@ -170,7 +171,7 @@ class box_actions extends ModeleBoxes
 					if (isset($contents[$i]))
 					{
 						// on affiche que les évènement du jours ou passé
-						// qui ne sont pas à 100% 
+						// qui ne sont pas à 100%
 						$actioncejour=true;
 						$var=!$var;
 						// TR
@@ -193,8 +194,8 @@ class box_actions extends ModeleBoxes
 						print '</tr>';
 					}
 				}
-				print '</table>'; 
-	
+				print '</table>';
+
 			}
 			print '</div>';
 			if ($actioncejour)

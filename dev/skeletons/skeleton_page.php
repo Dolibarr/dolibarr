@@ -114,8 +114,8 @@ if ($action == 'add')
 		}
 		{
 			// Creation KO
-			if (! empty($object->errors)) setEventMessage($object->errors, 'errors');
-			else  setEventMessage($object->error, 'errors');
+			if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+			else  setEventMessages($object->error, null, 'errors');
 			$action='create';
 		}
 	}
@@ -139,7 +139,7 @@ if ($action == 'update' && ! GETPOST('cancel'))
 	if (empty($object->ref))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")),null,'errors');
 	}
 
 	if (! $error)
@@ -152,8 +152,8 @@ if ($action == 'update' && ! GETPOST('cancel'))
 		else
 		{
 			// Creation KO
-			if (! empty($object->errors)) setEventMessage($object->errors, 'errors');
-			else setEventMessage($object->error, 'errors');
+			if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+			else setEventMessages($object->error, null, 'errors');
 			$action='edit';
 		}
 	}
@@ -170,14 +170,14 @@ if ($action == 'confirm_delete')
 	if ($result > 0)
 	{
 		// Delete OK
-		setEventMessage($langs->trans("RecordDeleted"));
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		header("Location: ".dol_buildpath('/buildingmanagement/list.php',1));
 		exit;
 	}
 	else
 	{
-		if (! empty($object->errors)) setEventMessage($object->errors,'errors');
-		else setEventMessage($object->error,'errors');
+		if (! empty($object->errors)) setEventMessages(null,$object->errors,'errors');
+		else setEventMessages($object->error,null,'errors');
 	}
 }
 
@@ -282,7 +282,7 @@ if ($action == 'create')
 
 	print '<br>';
 
-	print '<center><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<div class="center"><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 
 	print '</form>';
 
@@ -304,7 +304,7 @@ if (($id || $ref) && $action == 'edit')
 
 	print '<br>';
 
-	print '<center><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"></center>';
+	print '<div class="center"><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"></div>';
 
 	print '</form>';
 
@@ -327,6 +327,8 @@ if ($id && (empty($action) || $action == 'view'))
 	print '<div class="tabsAction">'."\n";
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 	if (empty($reshook))
 	{
 		if ($user->rights->mymodule->write)

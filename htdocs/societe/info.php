@@ -48,7 +48,7 @@ $hookmanager->initHooks(array('infothirdparty'));
 
 $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
 
@@ -59,21 +59,21 @@ $error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->e
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$soc = new Societe($db);
-$soc->fetch($socid);
-$soc->info($socid);
+$object = new Societe($db);
+$object->fetch($socid);
+$object->info($socid);
 
 /*
  * Affichage onglets
  */
-$head = societe_prepare_head($soc);
+$head = societe_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("ThirdParty"),0,'company');
 
 
 
 print '<table width="100%"><tr><td>';
-dol_print_object_info($soc);
+dol_print_object_info($object);
 print '</td></tr></table>';
 
 

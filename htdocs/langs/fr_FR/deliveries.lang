@@ -24,3 +24,5 @@ Deliverer=Livreur(s) :
 Sender=Expéditeur
 Recipient=Destinataire
 ErrorStockIsNotEnough=Le stock est insuffisant
+Shippable=Expédiable
+NonShippable=Non Expédiable

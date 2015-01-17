@@ -95,9 +95,18 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 	}
 	else
 	{
-		if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
-		else setEventMessage($langs->trans("JobFinished"),'mesgs');
-		$action='';
+		$res = $object->reprogram_jobs($user->login);
+		if ($res > 0)
+		{
+			if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
+			else setEventMessage($langs->trans("JobFinished"),'mesgs');
+			$action='';
+		}
+		else
+		{
+			setEventMessage($object->error,'errors');
+			$action='';
+		}
 	}
 }
 
@@ -463,8 +472,9 @@ if (($action=="create") || ($action=="edit"))
 
 	print '<div align="center"><br>';
 	print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-	print "</center>";
+	print "</div>";
 
 	print "</form>\n";
 

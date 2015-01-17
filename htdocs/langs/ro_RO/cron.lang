@@ -1,22 +1,14 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
-#
 About = Despre
 CronAbout = Despre Cron
 CronAboutPage = Despre pagina cron
-
-#
 # Right
-#
 Permission23101 = Citeste sarcină programată
 Permission23102 = Creare/Modificare sarcină programată
 Permission23103 = Ştergeţi o sarcină programată
 Permission23104 = Execută sarcină programată
-
-#
 # Admin
-#
 CronSetup= Setare Managementul joburilor programate
 URLToLaunchCronJobs=URL-ul pentru a verifica și a lansa joburi cron, dacă este necesar
 OrToLaunchASpecificJob=Sau pentru a verifica și  a lansa un anumit job
@@ -24,20 +16,11 @@ KeyForCronAccess=Cheie de securitate pentru URL de lansare a joburilor cron
 FileToLaunchCronJobs=Linie de comandă pentru lansare joburi cron
 CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentru a rula linia de comanda la fiecare minut
 CronExplainHowToRunWin=Pe mediul Microsoft(tm) Windows puteţi utiliza instrumentul Scheduled task pentru a rula linia de comanda la fiecare minut
-
-
-#
 # Menu
-#
 CronJobs=Joburi programate
-CronListActive= Lista joburilor actice
-CronListInactive= Lista joburilor dezactivate
-CronListActive= Lista joburilor actice
-
-
-#
+CronListActive=Lista  activelor/programatelor joburi
+CronListInactive=Lista joburilor dezactivate
 # Page list
-#
 CronDateLastRun=Ultima rulare
 CronLastOutput=Ieşirea ultimei rulări
 CronLastResult=Codul ultimului rezultat
@@ -70,10 +53,7 @@ CronLabel=Descriere
 CronNbRun=Nr. lansări
 CronEach=Fiecare
 JobFinished=Job lansat şi terminat
-
-#
 #Page card
-#
 CronAdd= Adaugă joburi
 CronHourStart= Data şi Ora de start a sarcinii
 CronEvery= Şi execută sarcina la fiecare
@@ -95,20 +75,12 @@ CronObjectHelp=Numele obiectului de încărcat. <BR> De exemplu să aducă metod
 CronMethodHelp=Metoda obiectului de încărcat. <BR> De exemplu să aducă metoda de obiect Produs Dolibarr  /htdocs/product/class/product.class.php, valoarea metodei  este  <i>fecth</i>
 CronArgsHelp=Argumentele metodei . <BR> De exemplu să aducă metoda  obiect ului Produs Dolibarr  /htdocs/product/class/product.class.php, valoarea parametrilor pot fi este  <i>0, ProductRef</i>
 CronCommandHelp=Linia de comandă de sistem pentru a executa.
-
-#
 # Info
-#
 CronInfoPage=Informatie
-
-
-#
 # Common
-#
 CronType=Tip sarcină
 CronType_method=Apel metodă a Clasei Dolibarr
 CronType_command=Comandă shell
 CronMenu=Cron
 CronCannotLoadClass=Nu pot încărca clasa %s sau  obiectul %s
-
 UseMenuModuleToolsToAddCronJobs=Intrați în meniul ''Acasă - Instrumentele modulelor - Lista de job-uri'' pentru a vedea și edita job-urile programate.

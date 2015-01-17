@@ -43,7 +43,7 @@ function dol_basename($pathfile)
  *  @param	string		$types        	Can be "directories", "files", or "all"
  *  @param	int			$recursive		Determines whether subdirectories are searched
  *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- *  @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
+ *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
  *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
@@ -139,6 +139,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 								$level1name=(isset($reg[1])?$reg[1]:'');
 								$file_list[] = array(
 										"name" => $file,
+										"path" => $path,
 										"level1name" => $level1name,
 										"fullname" => $path.'/'.$file,
 										"date" => $filedate,
@@ -166,6 +167,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 							$level1name=(isset($reg[1])?$reg[1]:'');
 							$file_list[] = array(
 									"name" => $file,
+									"path" => $path,
 									"level1name" => $level1name,
 									"fullname" => $path.'/'.$file,
 									"date" => $filedate,
@@ -954,7 +956,7 @@ function dol_meta_create($object)
 		if (is_dir($dir))
 		{
 			$nblignes = count($object->lines);
-			$client = $object->client->nom . " " . $object->client->address . " " . $object->client->zip . " " . $object->client->town;
+			$client = $object->client->name . " " . $object->client->address . " " . $object->client->zip . " " . $object->client->town;
 			$meta = "REFERENCE=\"" . $object->ref . "\"
 			DATE=\"" . dol_print_date($object->date,'') . "\"
 			NB_ITEMS=\"" . $nblignes . "\"
@@ -1294,7 +1296,7 @@ function dol_uncompress($inputfile,$outputdir)
  *
  * @param 	string		$dir			Directory to scan
  * @param	string		$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- * @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	int			$nohook			Disable all hooks
  * @return	string						Full path to most recent file
  */
@@ -1636,14 +1638,14 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		else $original_file=$conf->facture->dir_output.'/payments/'.$original_file;
 	}
 
-	// Wrapping pour les exports de compta
+	// Wrapping for accounting exports
 	else if ($modulepart == 'export_compta')
 	{
-		if ($fuser->rights->compta->ventilation->creer || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->accounting->ventilation->dispatch || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->compta->dir_output.'/'.$original_file;
+		$original_file=$conf->accounting->dir_output.'/'.$original_file;
 	}
 
 	// Wrapping pour les expedition

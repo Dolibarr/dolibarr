@@ -173,6 +173,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						}
     						$("#search_'.$htmlname.'").trigger("change");	// To tell that input text field was modified
     					}
+    					,delay: 500
 					}).data( "autocomplete" )._renderItem = function( ul, item ) {
 						return $( "<li></li>" )
 						.data( "item.autocomplete", item )
@@ -319,74 +320,71 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 {
 	global $conf;
 
-	if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
+	//if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
+	//if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
-
-	/* Some properties for combobox:
-	minLengthToAutocomplete: 2,
-	comboboxContainerClass: "comboboxContainer",
-	comboboxValueContainerClass: "comboboxValueContainer",
-	comboboxValueContentClass: "comboboxValueContent",
-	comboboxDropDownClass: "comboboxDropDownContainer",
-	comboboxDropDownButtonClass: "comboboxDropDownButton",
-	comboboxDropDownItemClass: "comboboxItem",
-	comboboxDropDownItemHoverClass: "comboboxItemHover",
-	comboboxDropDownGroupItemHeaderClass: "comboboxGroupItemHeader",
-	comboboxDropDownGroupItemContainerClass: "comboboxGroupItemContainer",
-	animationType: "slide",
-	width: "500px" */
-
+	if (empty($conf->use_javascript_ajax)) return ''; 
+	
+	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
+	
 	$msg = '<script type="text/javascript">
-	$(document).ready(function() {
-    	$("#'.$htmlname.'").combobox({
-    		minLengthToAutocomplete : '.$minLengthToAutocomplete.',
-    		selected : function(event,ui) {
-    			var obj = '.json_encode($events).';
-    			$.each(obj, function(key,values) {
-    				if (values.method.length) {
-    					runJsCodeForEvent(values);
-    				}
+		$(document).ready(function() {
+			$(\'#'.$htmlname.'\').select2({
+				width: \'resolve\',
+				minimumInputLength: '.$minLengthToAutocomplete.',
+			});';
+
+	if (count($event))
+	{
+		$msg.= '
+			jQuery("#'.$htmlname.'").change(function () {
+				var obj = '.json_encode($events).';
+		   		$.each(obj, function(key,values) {
+	    			if (values.method.length) {
+	    				runJsCodeForEvent'.$htmlname.'(values);
+	    			}
 				});
-			}
-		});
-
-		function runJsCodeForEvent(obj) {
-			var id = $("#'.$htmlname.'").val();
-			var method = obj.method;
-			var url = obj.url;
-			var htmlname = obj.htmlname;
-			var showempty = obj.showempty;
-    		$.getJSON(url,
-					{
-						action: method,
-						id: id,
-						htmlname: htmlname,
-						showempty: showempty
-					},
-					function(response) {
-						$.each(obj.params, function(key,action) {
-							if (key.length) {
-								var num = response.num;
-								if (num > 0) {
-									$("#" + key).removeAttr(action);
-								} else {
-									$("#" + key).attr(action, action);
+			});
+			
+			function runJsCodeForEvent'.$htmlname.'(obj) {
+				var id = $("#'.$htmlname.'").val();
+				var method = obj.method;
+				var url = obj.url;
+				var htmlname = obj.htmlname;
+				var showempty = obj.showempty;
+	    		$.getJSON(url,
+						{
+							action: method,
+							id: id,
+							htmlname: htmlname,
+							showempty: showempty
+						},
+						function(response) {
+							$.each(obj.params, function(key,action) {
+								if (key.length) {
+									var num = response.num;
+									if (num > 0) {
+										$("#" + key).removeAttr(action);
+									} else {
+										$("#" + key).attr(action, action);
+									}
 								}
+							});
+							$("select#" + htmlname).html(response.value);
+							if (response.num) {
+								var selecthtml_str = response.value;
+								var selecthtml_dom=$.parseHTML(selecthtml_str);
+								$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+							} else {
+								$("#inputautocomplete"+htmlname).val("");
 							}
-						});
-						$("select#" + htmlname).html(response.value);
-						if (response.num) {
-							var selecthtml_str = response.value;
-							var selecthtml_dom=$.parseHTML(selecthtml_str);
-							$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
-						} else {
-							$("#inputautocomplete"+htmlname).val("");
+							$("select#" + htmlname).change();	/* Trigger event change */
 						}
-						$("select#" + htmlname).change();	/* Trigger event change */
-					});
-		}
-
-	});'."\n";
+				);
+			}';
+	}
+	
+	$msg.= '});'."\n";
     $msg.= "</script>\n";
 
     return $msg;
@@ -457,5 +455,91 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
 	}
 
 	return $out;
+}
+
+/**
+ *  On/off button for object
+ *
+ *  @param  int     $object     Id product to set
+ *  @param  string  $code       Name of constant : status or status_buy for product by example
+ *  @param  string  $field      Name of database field : tosell or tobuy for product by example
+ *  @param  string  $text_on    Text if on
+ *  @param  string  $text_off   Text if off
+ *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
+ *  @return void
+ */
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=array())
+{
+    global $langs;
+
+    $out= '<script type="text/javascript">
+        $(function() {
+            var input = '.json_encode($input).';
+
+            // Set constant
+            $("#set_'.$code.'_'.$object->id.'").click(function() {
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
+                    action: \'set\',
+                    field: \''.$field.'\',
+                    value: \'1\',
+                    element: \''.$object->element.'\',
+                    id: \''.$object->id.'\'
+                },
+                function() {
+                    $("#set_'.$code.'_'.$object->id.'").hide();
+                    $("#del_'.$code.'_'.$object->id.'").show();
+                    // Enable another element
+                    if (input.disabled && input.disabled.length > 0) {
+                        $.each(input.disabled, function(key,value) {
+                            $("#" + value).removeAttr("disabled");
+                            if ($("#" + value).hasClass("butActionRefused") == true) {
+                                $("#" + value).removeClass("butActionRefused");
+                                $("#" + value).addClass("butAction");
+                            }
+                        });
+                    // Show another element
+                    } else if (input.showhide && input.showhide.length > 0) {
+                        $.each(input.showhide, function(key,value) {
+                            $("#" + value).show();
+                        });
+                    }
+                });
+            });
+
+            // Del constant
+            $("#del_'.$code.'_'.$object->id.'").click(function() {
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
+                    action: \'set\',
+                    field: \''.$field.'\',
+                    value: \'0\',
+                    element: \''.$object->element.'\',
+                    id: \''.$object->id.'\'
+                },
+                function() {
+                    $("#del_'.$code.'_'.$object->id.'").hide();
+                    $("#set_'.$code.'_'.$object->id.'").show();
+                    // Disable another element
+                    if (input.disabled && input.disabled.length > 0) {
+                        $.each(input.disabled, function(key,value) {
+                            $("#" + value).attr("disabled", true);
+                            if ($("#" + value).hasClass("butAction") == true) {
+                                $("#" + value).removeClass("butAction");
+                                $("#" + value).addClass("butActionRefused");
+                            }
+                        });
+                    // Hide another element
+                    } else if (input.showhide && input.showhide.length > 0) {
+                        $.each(input.showhide, function(key,value) {
+                            $("#" + value).hide();
+                        });
+                    }
+                });
+            });
+        });
+    </script>';
+    $out.= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'hideobject':'').'">'.img_picto($langs->trans($text_off),'switch_off').'</span>';
+    $out.= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'':'hideobject').'">'.img_picto($langs->trans($text_on),'switch_on').'</span>';
+
+    return $out;
 }
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +19,23 @@
  */
 
 /**
- * \file		htdocs/accountancy/class/Accountingaccount.class.php
+ * \file		htdocs/accountancy/class/accountingaccount.class.php
  * \ingroup		Accounting Expert
  * \brief		Fichier de la classe des comptes comptable
  */
 
 /**
- * Classe permettant la gestion des comptes generaux de compta
+ * Class to manage accounting accounts
  */
 class AccountingAccount extends CommonObject
 {
 	var $db;
+	var $error;
+	var $errors;
+
 	var $id;
 	var $rowid;
+
 	var $datec; // Creation date
 	var $fk_pcg_version;
 	var $pcg_type;
@@ -62,8 +67,10 @@ class AccountingAccount extends CommonObject
 	 */
 	function fetch($rowid = null, $account_number = null)
 	{
-		if ($rowid || $account_number) {
-			$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "accountingaccount WHERE ";
+		if ($rowid || $account_number)
+		{
+			$sql = "SELECT rowid, datec, tms, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, fk_user_author, fk_user_modif, active";
+			$sql.= " FROM " . MAIN_DB_PREFIX . "accountingaccount WHERE";
 			if ($rowid) {
 				$sql .= " rowid = '" . $rowid . "'";
 			} elseif ($account_number) {
@@ -72,28 +79,40 @@ class AccountingAccount extends CommonObject
 
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
-			if ($result) {
+			if ($result)
+			{
 				$obj = $this->db->fetch_object($result);
-			} else {
-				return null;
+
+				if ($obj)
+				{
+					$this->id = $obj->rowid;
+					$this->rowid = $obj->rowid;
+					$this->datec = $obj->datec;
+					$this->tms = $obj->tms;
+					$this->fk_pcg_version = $obj->fk_pcg_version;
+					$this->pcg_type = $obj->pcg_type;
+					$this->pcg_subtype = $obj->pcg_subtype;
+					$this->account_number = $obj->account_number;
+					$this->account_parent = $obj->account_parent;
+					$this->label = $obj->label;
+					$this->fk_user_author = $obj->fk_user_author;
+					$this->fk_user_modif = $obj->fk_user_modif;
+					$this->active = $obj->active;
+
+					return $this->id;
+				}
+				else
+				{
+					return 0;
+				}
+			}
+			else
+			{
+				dol_print_error($this->db);
 			}
 		}
 
-		$this->id = $obj->rowid;
-		$this->rowid = $obj->rowid;
-		$this->datec = $obj->datec;
-		$this->tms = $obj->tms;
-		$this->fk_pcg_version = $obj->fk_pcg_version;
-		$this->pcg_type = $obj->pcg_type;
-		$this->pcg_subtype = $obj->pcg_subtype;
-		$this->account_number = $obj->account_number;
-		$this->account_parent = $obj->account_parent;
-		$this->label = $obj->label;
-		$this->fk_user_author = $obj->fk_user_author;
-		$this->fk_user_modif = $obj->fk_user_modif;
-		$this->active = $obj->active;
-
-		return $obj->rowid;
+		return -1;
 	}
 
 	/**
@@ -108,6 +127,8 @@ class AccountingAccount extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 		$now = dol_now();
+
+		$now=dol_now();
 
 		// Clean parameters
 		if (isset($this->fk_pcg_version))

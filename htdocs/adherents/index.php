@@ -127,7 +127,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Formulaire recherche adherent
-print '<form action="liste.php" method="post">';
+print '<form action="list.php" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="search">';
 print '<table class="noborder nohover" width="100%">';
@@ -159,7 +159,7 @@ if ($conf->use_javascript_ajax)
     print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-    print '<tr><td align="center">';
+    print '<tr '.$bc[0].'><td align="center" colspan="2">';
 
     $SommeA=0;
     $SommeB=0;

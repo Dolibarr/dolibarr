@@ -144,7 +144,7 @@ if ($action == 'delete')
 		}
 		else
 		{
-			header("Location: liste.php");
+			header("Location: list.php");
 			exit;
 		}
 	}
@@ -180,7 +180,7 @@ if ($object->fetch($id) >= 0)
 
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
@@ -276,7 +276,8 @@ if ($object->fetch($id) >= 0)
 
 				$obj = new $classname($db);
 
-				$qualified=1;
+				// Check dependencies
+				$qualified=(isset($obj->enabled)?$obj->enabled:1);
 				foreach ($obj->require_module as $key)
 				{
 					if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))

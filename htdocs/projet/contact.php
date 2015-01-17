@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2012 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010      Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ if ($id > 0 || ! empty($ref))
 	*/
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';

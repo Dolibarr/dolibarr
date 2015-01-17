@@ -64,7 +64,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_label='';
 	$status=-1;
@@ -99,6 +99,21 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 	$result = $object->run_jobs($user->login);
 	if ($result < 0) {
 		setEventMessage($object->error,'errors');
+	}
+	else 
+	{
+		$res = $object->reprogram_jobs($user->login);
+		if ($res > 0)
+		{
+			if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
+			else setEventMessage($langs->trans("JobFinished"),'mesgs');
+			$action='';
+		}
+		else
+		{
+			setEventMessage($object->error,'errors');
+			$action='';
+		}
 	}
 
 	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-1');		// Make a call to avoid to run twice job when using back
@@ -150,17 +165,17 @@ print '<input type="hidden" name="status" value="'.$status.'" >';
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
 $arg_url='&page='.$page.'&status='.$status.'&search_label='.$search_label;
-print_liste_field_titre($langs->trans("CronLabel"),$_SERVEUR['PHP_SELF'],"t.label","",$arg_url,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronLabel"),$_SERVER["PHP_SELF"],"t.label","",$arg_url,'',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("CronTask"),'','',"",$arg_url,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtStart"),$_SERVEUR['PHP_SELF'],"t.datestart","",$arg_url,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtEnd"),$_SERVEUR['PHP_SELF'],"t.dateend","",$arg_url,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtLastLaunch"),$_SERVEUR['PHP_SELF'],"t.datelastrun","",$arg_url,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtNextLaunch"),$_SERVEUR['PHP_SELF'],"t.datenextrun","",$arg_url,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronDtStart"),$_SERVER["PHP_SELF"],"t.datestart","",$arg_url,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronDtEnd"),$_SERVER["PHP_SELF"],"t.dateend","",$arg_url,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronDtLastLaunch"),$_SERVER["PHP_SELF"],"t.datelastrun","",$arg_url,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronDtNextLaunch"),$_SERVER["PHP_SELF"],"t.datenextrun","",$arg_url,'',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("CronFrequency"),'',"","",$arg_url,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronNbRun"),$_SERVEUR['PHP_SELF'],"t.nbrun","",$arg_url,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronLastResult"),$_SERVEUR['PHP_SELF'],"t.lastresult","",$arg_url,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronLastOutput"),$_SERVEUR['PHP_SELF'],"t.lastoutput","",$arg_url,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Enabled"),$_SERVEUR['PHP_SELF'],"t.status","",$arg_url,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronNbRun"),$_SERVER["PHP_SELF"],"t.nbrun","",$arg_url,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronLastResult"),$_SERVER["PHP_SELF"],"t.lastresult","",$arg_url,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("CronLastOutput"),$_SERVER["PHP_SELF"],"t.lastoutput","",$arg_url,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Enabled"),$_SERVER["PHP_SELF"],"t.status","",$arg_url,'align="center"',$sortfield,$sortorder);
 print '<td></td>';
 print '</tr>';
 

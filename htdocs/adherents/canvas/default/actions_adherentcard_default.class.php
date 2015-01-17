@@ -76,7 +76,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	/**
 	 *  Assign custom values for canvas
 	 *
-	 *  @param	string		&$action    	Type of action
+	 *  @param	string		$action    	Type of action
 	 *  @param	int			$id				Id
 	 *  @return	void
 	 */

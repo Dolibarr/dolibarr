@@ -54,13 +54,15 @@ StatsOnShipmentsOnlyValidated=Tik patvirtintas siuntas parodanti statistika. Nau
 DateDeliveryPlanned=Suplanuota pristatymo data
 DateReceived=Pristatymo gavimo data
 SendShippingByEMail=Siųsti siuntą e-paštu
-SendShippingRef=Siųsti siuntą %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Siuntų įvykiai
 LinkToTrackYourPackage=Nuoroda sekti Jūsų siuntos kelią
 ShipmentCreationIsDoneFromOrder=Šiuo metu, naujos siuntos sukūrimas atliktas iš užsakymo kortelės.
 RelatedShippings=Susiję siuntos
 ShipmentLine=Siuntimo eilutė
 CarrierList=Vežėjų sąrašas
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Kliento pagautė
@@ -72,3 +74,7 @@ DocumentModelTyphon=Labiau išsamus dokumento modelis pristatymo kvitui (logo. .
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstanta EXPEDITION_ADDON_NUMBER nėra apibrėžta
 SumOfProductVolumes=Produkcijos apimties suma
 SumOfProductWeights=Produktų svorių suma
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

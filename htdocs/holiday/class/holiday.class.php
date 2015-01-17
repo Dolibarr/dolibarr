@@ -470,7 +470,7 @@ class Holiday extends CommonObject
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
      *  @return int         			<0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
         global $conf, $langs;
         $error=0;
@@ -655,21 +655,21 @@ class Holiday extends CommonObject
      */
     function getNomUrl($withpicto=0)
     {
-    	global $langs;
+        global $langs;
 
-    	$result='';
+        $result='';
 
-    	$lien = '<a href="'.DOL_URL_ROOT.'/holiday/fiche.php?id='.$this->id.'">';
-    	$lienfin='</a>';
+        $lien = '<a href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$this->id.'">';
+        $lienfin='</a>';
 
-    	$picto='holiday';
+        $picto='holiday';
 
-    	$label=$langs->trans("Show").': '.$this->ref;
+        $label=$langs->trans("Show").': '.$this->ref;
 
-    	if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
-    	if ($withpicto && $withpicto != 2) $result.=' ';
-    	if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
-    	return $result;
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto && $withpicto != 2) $result.=' ';
+        if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+        return $result;
     }
 
 
@@ -780,7 +780,7 @@ class Holiday extends CommonObject
         $groupe = $objet->value;
 
         // On liste les groupes de Dolibarr
-        $sql = "SELECT u.rowid, u.nom";
+        $sql = "SELECT u.rowid, u.nom as name";
         $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as u";
         $sql.= " ORDER BY u.rowid";
 
@@ -798,9 +798,9 @@ class Holiday extends CommonObject
             while ($obj = $this->db->fetch_object($result))
             {
                 if($groupe==$obj->rowid) {
-                    $selectGroup.= '<option value="'.$obj->rowid.'" selected="selected">'.$obj->nom.'</option>'."\n";
+                    $selectGroup.= '<option value="'.$obj->rowid.'" selected="selected">'.$obj->name.'</option>'."\n";
                 } else {
-                    $selectGroup.= '<option value="'.$obj->rowid.'">'.$obj->nom.'</option>'."\n";
+                    $selectGroup.= '<option value="'.$obj->rowid.'">'.$obj->name.'</option>'."\n";
                 }
             }
             $selectGroup.= '</select>'."\n";
@@ -820,7 +820,7 @@ class Holiday extends CommonObject
     /**
      *  Met à jour une option du module Holiday Payés
      *
-     *  @param	string	$name       nom du paramètre de configuration
+     *  @param	string	$name       name du paramètre de configuration
      *  @param	string	$value      vrai si mise à jour OK sinon faux
      *  @return boolean				ok or ko
      */
@@ -842,7 +842,7 @@ class Holiday extends CommonObject
     /**
      *  Retourne la valeur d'un paramètre de configuration
      *
-     *  @param	string	$name       nom du paramètre de configuration
+     *  @param	string	$name       name du paramètre de configuration
      *  @return string      		retourne la valeur du paramètre
      */
     function getConfCP($name)
@@ -955,7 +955,7 @@ class Holiday extends CommonObject
     /**
      *	Retourne un checked si vrai
      *
-     *  @param	string	$name       nom du paramètre de configuration
+     *  @param	string	$name       name du paramètre de configuration
      *  @return string      		retourne checked si > 0
      */
     function getCheckOption($name) {
@@ -1045,7 +1045,8 @@ class Holiday extends CommonObject
         $result = $this->db->query($sql);
         if($result) {
             $obj = $this->db->fetch_object($result);
-            return number_format($obj->nb_holiday,2);
+            //return number_format($obj->nb_holiday,2);
+			return $obj->nb_holiday;
         } else {
             return '0';
         }

@@ -7,6 +7,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,11 @@ class FactureFournisseur extends CommonInvoice
     public $table_element_line='facture_fourn_det';
     public $fk_element='fk_facture_fourn';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
 
     var $rowid;
     var $ref;
@@ -145,7 +151,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function create($user)
     {
-        global $langs,$conf;
+        global $langs,$conf,$hookmanager;
 
 		$error=0;
         $now=dol_now();
@@ -254,9 +260,28 @@ class FactureFournisseur extends CommonInvoice
             $result=$this->update_price();
             if ($result > 0)
             {
+            	$action='create';
+
+				// Actions on extra fields (by external module or standard code)
+				// FIXME le hook fait double emploi avec le trigger !!
+				$hookmanager->initHooks(array('supplierinvoicedao'));
+				$parameters=array('socid'=>$this->id);
+				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				if (empty($reshook))
+				{
+	            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					{
+						$result=$this->insertExtraFields();
+						if ($result < 0)
+						{
+							$error++;
+						}
+					}
+				}
+				else if ($reshook < 0) $error++;
                 // Call trigger
                 $result=$this->call_trigger('BILL_SUPPLIER_CREATE',$user);
-                if ($result < 0) $error++;            
+                if ($result < 0) $error++;
                 // End call triggers
 
                 if (! $error)
@@ -413,6 +438,15 @@ class FactureFournisseur extends CommonInvoice
                 $this->socid  = $obj->socid;
                 $this->socnom = $obj->socnom;
 
+                // Retreive all extrafield
+                // fetch optionals attributes and labels
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+                $this->fetch_optionals($this->id,$extralabels);
+
+                if ($this->statut == 0) $this->brouillon = 1;
+
                 $result=$this->fetch_lines();
                 if ($result < 0)
                 {
@@ -512,7 +546,7 @@ class FactureFournisseur extends CommonInvoice
      *  @param  int		$notrigger       0=launch triggers after, 1=disable triggers
      *  @return int 			         <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
         global $conf, $langs;
         $error=0;
@@ -601,7 +635,7 @@ class FactureFournisseur extends CommonInvoice
             {
                 // Call trigger
                 $result=$this->call_trigger('BILL_SUPPLIER_UPDATE',$user);
-                if ($result < 0) $error++;            
+                if ($result < 0) $error++;
                 // End call triggers
             }
         }
@@ -672,9 +706,9 @@ class FactureFournisseur extends CommonInvoice
             // Call trigger
             $result=$this->call_trigger('BILL_SUPPLIER_DELETE',$user);
             if ($result < 0)
-            { 
+            {
         		$this->db->rollback();
-        	    return -1;      		
+        	    return -1;
         	}
         	// Fin appel triggers
         }
@@ -766,7 +800,7 @@ class FactureFournisseur extends CommonInvoice
         {
             // Call trigger
             $result=$this->call_trigger('BILL_SUPPLIER_PAYED',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
         }
         else
@@ -814,7 +848,7 @@ class FactureFournisseur extends CommonInvoice
         {
             // Call trigger
             $result=$this->call_trigger('BILL_SUPPLIER_UNPAYED',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
         }
         else
@@ -842,9 +876,10 @@ class FactureFournisseur extends CommonInvoice
      *	@param	User	$user           Object user that validate
      *	@param  string	$force_number   Reference to force on invoice
      *	@param	int		$idwarehouse	Id of warehouse for stock change
+     *  @param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
      *	@return int 			        <0 if KO, =0 if nothing to do, >0 if OK
      */
-    function validate($user, $force_number='', $idwarehouse=0)
+    function validate($user, $force_number='', $idwarehouse=0, $notrigger=0)
     {
         global $conf,$langs;
 
@@ -876,9 +911,10 @@ class FactureFournisseur extends CommonInvoice
             $num = $this->getNextNumRef($this->client);
         }
         else
-        {
+		{
             $num = $this->ref;
         }
+        $this->newref = $num;
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
         $sql.= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id;
@@ -910,31 +946,46 @@ class FactureFournisseur extends CommonInvoice
                 }
             }
 
+            // Triggers call
+            if (! $error && $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('BILL_SUPPLIER_VALIDATE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
+
             if (! $error)
             {
-            	$this->oldref = '';
+	            $this->oldref = $this->ref;
 
             	// Rename directory if dir was a temporary ref
             	if (preg_match('/^[\(]?PROV/i', $this->ref))
             	{
             		// On renomme repertoire facture ($this->ref = ancienne ref, $num = nouvelle ref)
             		// in order not to lose the attached files
-            		$facref = dol_sanitizeFileName($this->ref);
-            		$snumfa = dol_sanitizeFileName($num);
+            		$oldref = dol_sanitizeFileName($this->ref);
+            		$newref = dol_sanitizeFileName($num);
 
-            		$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$facref;
-            		$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$snumfa;
+            		$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$oldref;
+            		$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$newref;
             		if (file_exists($dirsource))
             		{
             			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
 
             			if (@rename($dirsource, $dirdest))
             			{
-            				$this->oldref = $facref;
-
             				dol_syslog("Rename ok");
-            				// Suppression ancien fichier PDF dans nouveau rep
-            				dol_delete_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$snumfa.'/'.$facref.'*.*');
+                            // Rename docs starting with $oldref with $newref
+	                        $listoffiles=dol_dir_list($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        foreach($listoffiles as $fileentry)
+	                        {
+	                        	$dirsource=$fileentry['name'];
+	                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+	                        	$dirsource=$fileentry['path'].'/'.$dirsource;
+	                        	$dirdest=$fileentry['path'].'/'.$dirdest;
+	                        	@rename($dirsource, $dirdest);
+	                        }
             			}
             		}
             	}
@@ -946,15 +997,6 @@ class FactureFournisseur extends CommonInvoice
             	$this->ref = $num;
             	$this->statut=1;
             	//$this->date_validation=$now; this is stored into log table
-            }
-
-            // Triggers call
-            if (! $error)
-            {
-                // Call trigger
-                $result=$this->call_trigger('BILL_SUPPLIER_VALIDATE',$user);
-                if ($result < 0) $error++;            
-                // End call triggers
             }
 
             if (! $error)
@@ -1118,8 +1160,8 @@ class FactureFournisseur extends CommonInvoice
                     global $conf, $langs, $user;
                     // Call trigger
                     $result=$this->call_trigger('LINEBILL_SUPPLIER_CREATE',$user);
-                    if ($result < 0)            
-                    { 
+                    if ($result < 0)
+                    {
                         $this->db->rollback();
                         return -1;
                     }
@@ -1214,7 +1256,7 @@ class FactureFournisseur extends CommonInvoice
         }
 
         $this->db->begin();
-        
+
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
         $sql.= " description ='".$this->db->escape($desc)."'";
         $sql.= ", pu_ht = ".price2num($pu_ht);
@@ -1248,8 +1290,8 @@ class FactureFournisseur extends CommonInvoice
                 global $conf, $langs, $user;
                 // Call trigger
                 $result=$this->call_trigger('LINEBILL_SUPPLIER_UPDATE',$user);
-                if ($result < 0)            
-                { 
+                if ($result < 0)
+                {
                     $this->db->rollback();
                     return -1;
                 }
@@ -1260,7 +1302,7 @@ class FactureFournisseur extends CommonInvoice
             $result=$this->update_price('','auto');
 
             $this->db->commit();
-            
+
             return $result;
         }
         else
@@ -1293,7 +1335,7 @@ class FactureFournisseur extends CommonInvoice
         {
             // Call trigger
             $result=$this->call_trigger('LINEBILL_SUPPLIER_DELETE',$user);
-            if ($result < 0) $error++;           
+            if ($result < 0) $error++;
             // End call triggers
         }
 
@@ -1438,7 +1480,7 @@ class FactureFournisseur extends CommonInvoice
         }
         else
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id.'">';
             $lienfin='</a>';
         }
         $label=$langs->trans("ShowInvoice").': '.$this->ref;
@@ -1447,7 +1489,7 @@ class FactureFournisseur extends CommonInvoice
         $ref=$this->ref;
         if (empty($ref)) $ref=$this->id;
 
-        if ($withpicto) $result.=($lien.img_object($label,'bill').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($label, 'bill', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.($max?dol_trunc($ref,$max):$ref).$lienfin;
         return $result;
     }
@@ -1456,7 +1498,7 @@ class FactureFournisseur extends CommonInvoice
       *      Return next reference of supplier invoice not already used (or last reference)
       *      according to numbering module defined into constant INVOICE_SUPPLIER_ADDON_NUMBER
       *
-      *      @param	   Society		$soc		object company
+      *      @param	   Societe		$soc		Thirdparty object
       *      @param    string		$mode		'next' for next value or 'last' for last value
       *      @return   string					free ref or last ref
       */
@@ -1596,6 +1638,48 @@ class FactureFournisseur extends CommonInvoice
         $this->total_ttc      = $xnbp*119.6;
     }
 
+	/**
+	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 *      @return         int     <0 if KO, >0 if OK
+	 */
+	function load_state_board()
+	{
+		global $conf, $user;
+
+		$this->nb=array();
+
+		$clause = "WHERE";
+
+		$sql = "SELECT count(f.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$clause = "AND";
+		}
+		$sql.= " ".$clause." f.entity = ".$conf->entity;
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["supplier_invoices"]=$obj->nb;
+			}
+            $this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
     /**
      *	Load an object from its id and create a new one in database
      *
@@ -1669,5 +1753,39 @@ class FactureFournisseur extends CommonInvoice
             return -1;
         }
     }
+
+	/**
+	 *	Create a document onto disk according to template model.
+	 *
+	 *	@param	    string		$modele			Force template to use ('' to not force)
+	 *	@param		Translate	$outputlangs	Object lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf, $user, $langs;
+
+		$langs->load("suppliers");
+
+		// Set the model on the model name to use
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF))
+			{
+				$modele = $conf->global->INVOICE_SUPPLIER_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'canelle';
+			}
+		}
+
+		$modelpath = "core/modules/supplier_invoice/pdf/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 
 }

@@ -29,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
+$langs->load("compta");
+$langs->load("bills");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -77,7 +79,7 @@ if ($resql)
   print "<tr ".$bc[$var].">";
   print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
   print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
+  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
   print '</td></tr>';
   print "</table>\n";
 }
@@ -90,6 +92,7 @@ else
 //print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
+$max=10;
 
 $sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.number as ref";
 $sql.= ", bc.statut, bc.nbcheque";
@@ -98,8 +101,8 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE ba.rowid = bc.fk_bank_account";
 $sql.= " AND bc.entity = ".$conf->entity;
-$sql.= " ORDER BY bc.rowid";
-$sql.= " DESC LIMIT 10";
+$sql.= " ORDER BY bc.date_bordereau DESC, rowid DESC";
+$sql.= $db->plimit($max);
 
 $resql = $db->query($sql);
 
@@ -107,7 +110,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("CheckReceiptShort").'</td>';
+	print '<td>'.$langs->trans("LastCheckReceiptShort",$max).'</td>';
 	print '<td>'.$langs->trans("Date")."</td>";
 	print '<td>'.$langs->trans("Account").'</td>';
 	print '<td align="right">'.$langs->trans("NbOfCheques").'</td>';

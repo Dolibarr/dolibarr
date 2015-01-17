@@ -58,32 +58,32 @@ $price_by_qty_rowid = GETPOST('pbq', 'int');
 dol_syslog(join(',', $_GET));
 // print_r($_GET);
 
-if (! empty($action) && $action == 'fetch' && ! empty($id)) {
+if (! empty($action) && $action == 'fetch' && ! empty($id))
+{
 	require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-	
+
 	$outjson = array();
-	
+
 	$object = new Product($db);
 	$ret = $object->fetch($id);
-	if ($ret > 0) {
+	if ($ret > 0)
+	{
 		$outref = $object->ref;
 		$outlabel = $object->label;
 		$outdesc = $object->description;
 		$outtype = $object->type;
 		$outqty = 1;
 		$outdiscount = 0;
-		
+
 		$found = false;
-		
+
 		// Price by qty
-		if (! empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))) 		// If we need a
-		                                                                                                                         // particular price related
-		                                                                                                                         // to qty
+		if (! empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))) 		// If we need a particular price related to qty
 		{
 			$sql = "SELECT price, unitprice, quantity, remise_percent";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "product_price_by_qty ";
 			$sql .= " WHERE rowid=" . $price_by_qty_rowid . "";
-			
+
 			$result = $db->query($sql);
 			if ($result) {
 				$objp = $db->fetch_object($result);
@@ -98,7 +98,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id)) {
 				}
 			}
 		}
-		
+
 		// Multiprice
 		if (! $found && isset($price_level) && $price_level >= 1 && (! empty($conf->global->PRODUIT_MULTIPRICES))) 		// If we need a particular price
 		                                                                                                           // level (from 1 to 6)
@@ -110,7 +110,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id)) {
 			$sql .= " AND price_level=" . $price_level;
 			$sql .= " ORDER BY date_price";
 			$sql .= " DESC LIMIT 1";
-			
+
 			$result = $db->query($sql);
 			if ($result) {
 				$objp = $db->fetch_object($result);
@@ -123,16 +123,16 @@ if (! empty($action) && $action == 'fetch' && ! empty($id)) {
 				}
 			}
 		}
-		
+
 		// Price by customer
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && ! empty($socid)) {
-			
+
 			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
-			
+
 			$prodcustprice = new Productcustomerprice($db);
-			
+
 			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $socid);
-			
+
 			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
@@ -144,48 +144,48 @@ if (! empty($action) && $action == 'fetch' && ! empty($id)) {
 				}
 			}
 		}
-		
+
 		if (! $found) {
 			$outprice_ht = price($object->price);
 			$outprice_ttc = price($object->price_ttc);
 			$outpricebasetype = $object->price_base_type;
 			$outtva_tx = $object->tva_tx;
 		}
-		
+
 		$outjson = array('ref' => $outref,'label' => $outlabel,'desc' => $outdesc,'type' => $outtype,'price_ht' => $outprice_ht,'price_ttc' => $outprice_ttc,'pricebasetype' => $outpricebasetype,'tva_tx' => $outtva_tx,'qty' => $outqty,'discount' => $outdiscount);
 	}
-	
+
 	echo json_encode($outjson);
 } else {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
-	
+
 	$langs->load("products");
 	$langs->load("main");
-	
+
 	top_httphead();
-	
+
 	if (empty($htmlname))
 		return;
-	
+
 	$match = preg_grep('/(' . $htmlname . '[0-9]+)/', array_keys($_GET));
 	sort($match);
 	$idprod = (! empty($match [0]) ? $match [0] : '');
-	
+
 	if (! GETPOST($htmlname) && ! GETPOST($idprod))
 		return;
-		
+
 		// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (GETPOST($idprod) ? GETPOST($idprod) : (GETPOST($htmlname) ? GETPOST($htmlname) : ''));
-	
+
 	$form = new Form($db);
 	if (empty($mode) || $mode == 1) {
 		$arrayresult = $form->select_produits_list("", $htmlname, $type, "", $price_level, $searchkey, $status, 2, $outjson, $socid);
 	} elseif ($mode == 2) {
 		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, $socid);
 	}
-	
+
 	$db->close();
-	
+
 	if ($outjson)
 		print json_encode($arrayresult);
 }

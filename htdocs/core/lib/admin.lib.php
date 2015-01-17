@@ -70,7 +70,7 @@ function versioncompare($versionarray1,$versionarray2)
         if ($operande1 < $operande2) { $ret = -$level; break; }
         if ($operande1 > $operande2) { $ret = $level; break; }
     }
-    //print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret;
+    //print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret.'<br>'."\n";
     return $ret;
 }
 
@@ -516,11 +516,6 @@ function security_prepare_head()
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
-    $head[$h][1] = $langs->trans("ExternalAccess");
-    $head[$h][2] = 'proxy';
-    $h++;
-
     $head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
     $head[$h][1] = $langs->trans("Miscellaneous");
     $head[$h][2] = 'misc';
@@ -529,6 +524,16 @@ function security_prepare_head()
     $head[$h][0] = DOL_URL_ROOT."/admin/security.php";
     $head[$h][1] = $langs->trans("Passwords");
     $head[$h][2] = 'passwords';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
+    $head[$h][1] = $langs->trans("Files");
+    $head[$h][2] = 'file';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
+    $head[$h][1] = $langs->trans("ExternalAccess");
+    $head[$h][2] = 'proxy';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT."/admin/events.php";
@@ -712,7 +717,7 @@ function activateModule($value,$withdeps=1)
     // Test if Dolibarr version ok
     $verdol=versiondolibarrarray();
     $vermin=isset($objMod->need_dolibarr_version)?$objMod->need_dolibarr_version:0;
-    //print 'eee'.versioncompare($verdol,$vermin).join(',',$verdol).' - '.join(',',$vermin);exit;
+    //print 'eee '.versioncompare($verdol,$vermin).' - '.join(',',$verdol).' - '.join(',',$vermin);exit;
     if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
     {
         return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));
@@ -851,18 +856,18 @@ function unActivateModule($value, $requiredby=1)
 /**
  *  Add external modules to list of dictionaries
  *
- * 	@param		array		&$taborder			Taborder
- * 	@param		array		&$tabname			Tabname
- * 	@param		array		&$tablib			Tablib
- * 	@param		array		&$tabsql			Tabsql
- * 	@param		array		&$tabsqlsort		Tabsqlsort
- * 	@param		array		&$tabfield			Tabfield
- * 	@param		array		&$tabfieldvalue		Tabfieldvalue
- * 	@param		array		&$tabfieldinsert	Tabfieldinsert
- * 	@param		array		&$tabrowid			Tabrowid
- * 	@param		array		&$tabcond			Tabcond
- * 	@param		array		&$tabhelp			Tabhelp
- * 	@param		array		&$tabfieldcheck		Tabfieldcheck
+ * 	@param		array		$taborder			Taborder
+ * 	@param		array		$tabname			Tabname
+ * 	@param		array		$tablib				Tablib
+ * 	@param		array		$tabsql				Tabsql
+ * 	@param		array		$tabsqlsort			Tabsqlsort
+ * 	@param		array		$tabfield			Tabfield
+ * 	@param		array		$tabfieldvalue		Tabfieldvalue
+ * 	@param		array		$tabfieldinsert		Tabfieldinsert
+ * 	@param		array		$tabrowid			Tabrowid
+ * 	@param		array		$tabcond			Tabcond
+ * 	@param		array		$tabhelp			Tabhelp
+ *  @param		array		$tabfieldcheck		Tabfieldcheck
  * 	@return		int			1
  */
 function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond,&$tabhelp,&$tabfieldcheck)
@@ -965,6 +970,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                             {
                                 //var_dump($objMod->dictionaries['tabname']);
                                 $taborder[] = 0;
+                                $tabfieldcheck[] = array(); $tabhelp[] = array();
                                 foreach($objMod->dictionaries['tabname'] as $val)
                                 {
                                     $taborder[] = count($tabname)+1;
@@ -978,7 +984,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                                 foreach($objMod->dictionaries['tabfieldinsert'] as $val) $tabfieldinsert[] = $val;
                                 foreach($objMod->dictionaries['tabrowid'] as $val) $tabrowid[] = $val;
                                 foreach($objMod->dictionaries['tabcond'] as $val) $tabcond[] = $val;
-                                foreach($objMod->dictionaries['tabfieldcheck'] as $val) $tabfieldcheck[] = $val;
+                                if (! empty($objMod->dictionaries['tabfieldcheck'])) foreach($objMod->dictionaries['tabfieldcheck'] as $val) $tabfieldcheck[] = $val;
                                 if (! empty($objMod->dictionaries['tabhelp'])) foreach($objMod->dictionaries['tabhelp'] as $val) $tabhelp[] = $val;
                                 //foreach($objMod->dictionaries['tabsqlsort'] as $val) $tablib[] = $val;
                                 //$tabname = array_merge ($tabname, $objMod->dictionaries['tabname']);
@@ -1192,7 +1198,7 @@ function showModulesExludedForExternal($modules)
 			$text .= $langs->trans('Module'.$module->numero.'Name');
 		}
 	}
-	return img_picto($langs->trans('InfoAdmin'), 'star').' '.$text;
+	return $text;
 }
 
 

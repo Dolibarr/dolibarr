@@ -83,6 +83,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
     	foreach($timespent_duration as $key => $val)
     	{
 	        $task->fetch($key);
+		    $task->progress = GETPOST($key . 'progress', 'int');
 	        $task->timespent_duration = $val;
 	        $task->timespent_fk_user = $user->id;
 	        $task->timespent_date = dol_mktime(12,0,0,$_POST["{$key}month"],$_POST["{$key}day"],$_POST["{$key}year"]);
@@ -127,6 +128,9 @@ if ($id)
 $tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0);    // We want to see all task of project i am allowed to see, not only mine. Later only mine will be editable later.
 $projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($user,0,($project->id?$project->id:$projectsListId),0);
 $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$project->id:$projectsListId),0);
+//var_dump($tasksarray);
+//var_dump($projectsrole);
+//var_dump($taskrole);
 
 
 llxHeader("",$title,"");
@@ -175,9 +179,9 @@ print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="center">'.$langs->trans("DateStart").'</td>';
 print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
-print '<td align="right">'.$langs->trans("Progress").'</td>';
+print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
+print '<td colspan="2" align="right">'.$langs->trans("NewTimeSpent").'</td>';
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to

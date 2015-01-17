@@ -26,36 +26,12 @@
  *  Parent class for class inheritance lines of business objects
  *  This class is useless for the moment so no inherit are done on it
  */
-abstract class CommonObjectLine
+abstract class CommonObjectLine extends CommonObject
 {
-    /**
-     * Call trigger based on this instance
-     * NB: Error from trigger are stacked in interface->errors
-     * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
-     *
-     * @param   string    $trigger_name   trigger's name to execute
-     * @param   User      $user           Object user
-     * @return  int                       Result of run_triggers
-     */
-    function call_trigger($trigger_name, $user)
-    {
-    	global $langs,$conf;
+	// TODO
 
-    	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-    	$interface=new Interfaces($this->db);
-    	$result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
-    	if ($result < 0)
-    	{
-    		if (!empty($this->errors))
-    		{
-    			$this->errors=array_merge($this->errors,$interface->errors);
-    		}
-    		else
-    		{
-    			$this->errors=$interface->errors;
-    		}
-    	}
-    	return $result;
-    }
+	// Currently we need function at end of file CommonObject for all object lines. Should find a way to avoid duplicate code.
+
+	// For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.
 }
 

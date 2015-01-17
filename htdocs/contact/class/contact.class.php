@@ -185,7 +185,7 @@ class Contact extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('CONTACT_CREATE',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
             }
 
@@ -220,7 +220,7 @@ class Contact extends CommonObject
 	 *      @param		string	$action			Current action for hookmanager
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($id, $user=0, $notrigger=0, $action='update')
+	function update($id, $user=null, $notrigger=0, $action='update')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -283,6 +283,8 @@ class Contact extends CommonObject
 		    unset($this->state_code);
 		    unset($this->state);
 
+		    $action='update';
+
 		    // Actions on extra fields (by external module or standard code)
 		    $hookmanager->initHooks(array('contactdao'));
 		    $parameters=array('socid'=>$this->id);
@@ -304,7 +306,7 @@ class Contact extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('CONTACT_MODIFY',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
 			}
 
@@ -374,7 +376,7 @@ class Contact extends CommonObject
 			$soc = new Societe($this->db);
 			$soc->fetch($this->socid);
 
-			$info[$conf->global->LDAP_CONTACT_FIELD_COMPANY] = $soc->nom;
+			$info[$conf->global->LDAP_CONTACT_FIELD_COMPANY] = $soc->name;
 			if ($soc->client == 1)      $info["businessCategory"] = "Customers";
 			if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
 			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
@@ -427,7 +429,7 @@ class Contact extends CommonObject
 	 *  @param      User		$user		User asking to change alert or birthday
      *  @return     int         			<0 if KO, >=0 if OK
 	 */
-	function update_perso($id, $user=0)
+	function update_perso($id, $user=null)
 	{
 	    $error=0;
 	    $result=false;
@@ -492,7 +494,7 @@ class Contact extends CommonObject
 	 *  @param      User	$user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
 	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
 	 */
-	function fetch($id, $user=0)
+	function fetch($id, $user=null)
 	{
 		global $langs;
 
@@ -558,7 +560,7 @@ class Contact extends CommonObject
 
 				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-        $this->skype			= $obj->skype;
+        		$this->skype			= $obj->skype;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
@@ -774,7 +776,7 @@ class Contact extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('CONTACT_DELETE',$user);
-            if ($result < 0) { $error++; }            
+            if ($result < 0) { $error++; }
             // End call triggers
 		}
 
@@ -877,24 +879,25 @@ class Contact extends CommonObject
 	 *	@param		int			$withpicto		Include picto with link
 	 *	@param		string		$option			Where the link point to
 	 *	@param		int			$maxlen			Max length of
+	 *  @param		string		$moreparam		Add more param into URL
 	 *	@return		string						String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$maxlen=0)
+	function getNomUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
 	{
 		global $langs;
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'">';
 		$lienfin='</a>';
 
 		if ($option == 'xxx')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$this->id.'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'">';
 			$lienfin='</a>';
 		}
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->getFullName($langs),'contact').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->getFullName($langs), 'contact', 'class="classfortooltip"').$lienfin.' ');
 		$result.=$lien.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$lienfin;
 		return $result;
 	}
@@ -909,7 +912,7 @@ class Contact extends CommonObject
 		global $langs;
 		$langs->load("dict");
 
-		$code=(! empty($this->civility_id)?$this->civility_id:(! empty($this->civility_id)?$this->civility_id:''));
+		$code=(! empty($this->civility_id)?$this->civility_id:(! empty($this->civilite_id)?$this->civilite_id:''));
 		if (empty($code)) return '';
         return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
 	}
@@ -1060,7 +1063,7 @@ class Contact extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('CONTACT_ENABLEDISABLE',$user);
-            if ($result < 0) { $error++; }            
+            if ($result < 0) { $error++; }
             // End call triggers
 		}
 

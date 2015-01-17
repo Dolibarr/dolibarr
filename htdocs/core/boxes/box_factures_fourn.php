@@ -58,13 +58,13 @@ class box_factures_fourn extends ModeleBoxes
 		$facturestatic=new FactureFournisseur($db);
 
 		$this->info_box_head = array(
-				'text' => $langs->trans("BoxTitleLastSupplierBills",$max)
+				'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierBills",$max)
 		);
 
 		if ($user->rights->fournisseur->facture->lire)
 		{
-			$sql = "SELECT s.nom, s.rowid as socid,";
-			$sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.amount,";
+			$sql = "SELECT s.nom as name, s.rowid as socid,";
+			$sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.total_ht,";
 			$sql.= " f.paye, f.fk_statut,";
 			$sql.= ' f.datef as df,';
 			$sql.= ' f.datec as datec,';
@@ -76,7 +76,8 @@ class box_factures_fourn extends ModeleBoxes
 			$sql.= " AND f.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " ORDER BY f.tms DESC";
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.ref DESC ";
+            else $sql.= " ORDER BY f.tms DESC, f.ref DESC ";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -92,34 +93,35 @@ class box_factures_fourn extends ModeleBoxes
 				{
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
-					$datec=$db->jdate($objp->datec);
+					$date=$db->jdate($objp->df);
+					$datem=$db->jdate($objp->tms);
 
 					$late = '';
 					if ($objp->paye == 0 && $datelimite && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
+                    'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => ($objp->ref?$objp->ref:$objp->facid),
                     'text2'=> $late,
-                    'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
+                    'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
                     'text' => $objp->ref_supplier,
-                    'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
+                    'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left" width="16"',
                     'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
+                    'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="left"',
-                    'text' => $objp->nom,
-                    'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
+                    'text' => $objp->name,
+                    'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][5] = array('td' => 'align="right"',
-                    'text' => dol_print_date($datec,'day'));
+                    'text' => dol_print_date($date,'day'));
 
 					$fac = new FactureFournisseur($db);
 					$fac->fetch($objp->facid);

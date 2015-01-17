@@ -49,7 +49,7 @@ class modProductBatch extends DolibarrModules
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Batch number, eat-by and sell-by date management module";
 
-		$this->rights_class = 'stock';
+		$this->rights_class = 'productbatch';
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'experimental';
 		// Key used in llx_const table to save module status enabled/disabled (where dluo is value of property name of module in uppercase)
@@ -67,7 +67,7 @@ class modProductBatch extends DolibarrModules
 		$this->config_page_url = array();
 
 		// Dependencies
-		$this->depends = array("modProduct","modStock");		// List of modules id that must be enabled if this module is enabled
+		$this->depends = array("modProduct","modStock","modExpedition","modSupplier");		// List of modules id that must be enabled if this module is enabled. modExpedition is required to manage batch exit (by manual stock decrease on shipment), modSupplier to manage batch entry (after supplier order).
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module

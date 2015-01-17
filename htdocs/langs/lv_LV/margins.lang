@@ -22,7 +22,7 @@ ChooseProduct/Service=Izvēlies preci vai pakalpojumu
 StartDate=Sākuma datums
 EndDate=Beigu datums
 Launch=Sākt
-ForceBuyingPriceIfNull=Force iepirkuma cena, ja null
+ForceBuyingPriceIfNull=Forsēt iepirkuma cenu, ja nulle
 ForceBuyingPriceIfNullDetails=ja &quot;ON&quot;, starpība būs nulle tiešsaistē (pirkšanas cena = pārdošanas cenu), pretējā gadījumā (&quot;OFF&quot;), Marge būs vienāda ar pārdošanas cenu (pirkšanas cena = 0)
 MARGIN_METHODE_FOR_DISCOUNT=Maržinālā metode pasaules atlaides
 UseDiscountAsProduct=Kā produktu
@@ -38,4 +38,7 @@ BuyingCost=Pašizmaksa
 UnitCharges=Vienības izmaksas
 Charges=Maksas
 AgentContactType=Commercial agent contact type
-AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per sale representative
+rateMustBeNumeric=Rate must be a numeric value
+markRateShouldBeLesserThan100=Mark rate should be lower than 100
+ShowMarginInfos=Show margin infos

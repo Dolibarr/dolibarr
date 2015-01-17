@@ -50,7 +50,6 @@ class DoliDBSqlite extends DoliDB
 	 *	@param	    string	$pass		Mot de passe
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
-	 *	@return	    int					1 if OK, 0 if not
      */
     function __construct($type, $host, $user, $pass, $name='', $port=0)
     {
@@ -61,6 +60,8 @@ class DoliDBSqlite extends DoliDB
         if (! empty($conf->db->dolibarr_main_db_collation)) $this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
         $this->database_user=$user;
+        $this->database_host=$host;
+        $this->database_port=$port;
 
         $this->transaction_opened=0;
 
@@ -534,7 +535,7 @@ class DoliDBSqlite extends DoliDB
     /**
      *	Renvoie le code erreur generique de l'operation precedente.
      *
-     *	@return	string	$error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+     *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
      */
     function errno()
     {
@@ -596,7 +597,7 @@ class DoliDBSqlite extends DoliDB
     /**
      *	Renvoie le texte de l'erreur mysql de l'operation precedente.
      *
-     *	@return	string	$error_text
+     *	@return	string	Error text
      */
     function error()
     {
@@ -737,8 +738,8 @@ class DoliDBSqlite extends DoliDB
 	 *  List tables into a database
 	 *
 	 *  @param	string		$database	Name of database
-	 *  @param	string		$table		Nmae of table filter ('xxx%')
-	 *  @return	resource				Resource
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
      */
     function DDLListTables($database, $table='')
     {

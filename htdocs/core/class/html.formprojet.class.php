@@ -49,11 +49,12 @@ class FormProjets
 	 *	@param  int		$selected   	Id project preselected
 	 *	@param  string	$htmlname   	Nom de la zone html
 	 *	@param	int		$maxlength		Maximum length of label
-	 *	@param	int		$option_only	Option only
+	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
+	 *  @param	int		$discard_closed Discard closed projects
 	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1)
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0)
 	{
 		global $user,$conf,$langs;
 
@@ -104,6 +105,12 @@ class FormProjets
 					}
 					else
 					{
+						if ($discard_closed && $obj->fk_statut == 2)
+						{
+							$i++;
+							continue;
+						}
+
 						$labeltoshow=dol_trunc($obj->ref,18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
@@ -115,12 +122,17 @@ class FormProjets
 						{
 							$disabled=0;
 							$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
-							if (! $obj->fk_statut > 0)
+							if ($obj->fk_statut == 0)
 							{
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("Draft");
 							}
-							if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+							else if ($obj->fk_statut == 2)
+							{
+								$disabled=1;
+								$labeltoshow.=' - '.$langs->trans("Closed");
+							}
+							else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
 							{
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
@@ -162,15 +174,15 @@ class FormProjets
 	}
 
 	/**
-	 *    Build Select List of element associable to a project
+	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
-	 *    @param	string	$table_element		Table of the element to update
-	 *    @param	int		$socid				socid to filter
-	 *    @return	string						The HTML select list of element
+	 *    @param	string		$table_element		Table of the element to update
+	 *    @param	int			$socid				socid to filter
+	 *    @return	string							The HTML select list of element
 	 */
 	function select_element($table_element,$socid=0)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$projectkey="fk_projet";
 		switch ($table_element)
@@ -179,7 +191,10 @@ class FormProjets
 				$sql = "SELECT rowid, facnumber as ref";
 				break;
 			case "facture_fourn":
-				$sql = "SELECT rowid, ref";
+				$sql = "SELECT rowid, ref, ref_supplier";
+				break;
+			case "commande_fourn":
+				$sql = "SELECT rowid, ref, ref_supplier";
 				break;
 			case "facture_rec":
 				$sql = "SELECT rowid, titre as ref";
@@ -214,14 +229,22 @@ class FormProjets
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$sellist .='<option value="'.$obj->rowid.'">'.$obj->ref.'</option>';
+					$ref=$obj->ref?$obj->ref:$obj->rowid;
+					if (! empty($obj->ref_supplier)) $ref.=' ('.$obj->ref_supplier.')';
+					$sellist .='<option value="'.$obj->rowid.'">'.$ref.'</option>';
 					$i++;
 				}
 				$sellist .='</select>';
 			}
-			return $sellist ;
-
+			/*else
+			{
+				$sellist = '<select class="flat" name="elementselect">';
+				$sellist.= '<option value="0" disabled="disabled">'.$langs->trans("None").'</option>';
+				$sellist.= '</select>';
+			}*/
 			$this->db->free($resql);
+
+			return $sellist ;
 		}else {
 			$this->error=$this->db->lasterror();
 			dol_syslog(get_class($this) . "::select_element " . $this->error, LOG_ERR);

@@ -57,7 +57,7 @@ $projectstatic = new Project($db);
 // Add new contact
 if ($action == 'addcontact' && $user->rights->projet->creer)
 {
-	$result = $object->fetch($id);
+	$result = $object->fetch($id, $ref);
 
     if ($result > 0 && $id > 0)
     {
@@ -87,7 +87,7 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 // bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
-	if ($object->fetch($id))
+	if ($object->fetch($id, $ref))
 	{
 	    $result=$object->swapContactStatus(GETPOST('ligne'));
 	}
@@ -100,7 +100,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer)
 // Efface un contact
 if ($action == 'deleteline' && $user->rights->projet->creer)
 {
-	$object->fetch($id);
+	$object->fetch($id, $ref);
 	$result = $object->delete_contact($_GET["lineid"]);
 
 	if ($result >= 0)
@@ -152,10 +152,10 @@ $userstatic = new User($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($object->fetch($id) > 0)
+	if ($object->fetch($id, $ref) > 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = dol_clone($projectstatic);
 
@@ -179,7 +179,7 @@ if ($id > 0 || ! empty($ref))
     		// Define a complementary filter for search of next/prev ref.
     		if (! $user->rights->projet->all->lire)
     		{
-    		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
+    		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
     		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
     		}
     		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
@@ -188,7 +188,7 @@ if ($id > 0 || ! empty($ref))
     		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
     		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
+    		if (! empty($projectstatic->thirdparty->id)) print $projectstatic->thirdparty->getNomUrl(1);
     		else print '&nbsp;';
     		print '</td>';
     		print '</tr>';
@@ -215,8 +215,6 @@ if ($id > 0 || ! empty($ref))
     		print '</table>';
 
     		dol_fiche_end();
-
-    		print '<br>';
 		}
 
 		// To verify role of users
@@ -239,7 +237,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
-		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
@@ -259,7 +257,7 @@ if ($id > 0 || ! empty($ref))
     		// Customer
     		print "<tr><td>".$langs->trans("ThirdParty")."</td>";
     		print '<td colspan="3">';
-    		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
+    		if ($projectstatic->thirdparty->id > 0) print $projectstatic->thirdparty->getNomUrl(1);
     		else print '&nbsp;';
     		print '</td></tr>';
 		}
@@ -348,12 +346,9 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				print '<td colspan="1">';
-				$events=array();
-				$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-
 				$thirdpartyofproject=$projectstatic->getListContactId('thirdparty');
 				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->societe->id;
-				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, $events, '&withproject='.$withproject);
+				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, '&withproject='.$withproject);
 				print '</td>';
 
 				print '<td colspan="1">';

@@ -62,7 +62,7 @@ print_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicVi
 
 
 
-// Charge tableau des categories
+// Load hierarchy of users
 $user_arbo = $userstatic->get_full_tree();
 
 // Define fulltree array

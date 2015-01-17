@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -38,7 +38,7 @@ function project_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Project");
 	$head[$h][2] = 'project';
 	$h++;
@@ -71,7 +71,7 @@ function project_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'notes';
 		$h++;
     }
@@ -81,7 +81,7 @@ function project_prepare_head($object)
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'document';
 	$h++;
 
@@ -149,7 +149,7 @@ function task_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
 		$head[$h][1] = $langs->trans('Notes');
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'task_notes';
 		$h++;
     }
@@ -206,13 +206,13 @@ function project_admin_prepare_head()
 /**
  * Show task lines with a particular parent
  *
- * @param	string	 	&$inc				Counter that count number of lines legitimate to show (for return)
+ * @param	string	 	$inc				Counter that count number of lines legitimate to show (for return)
  * @param 	int			$parent				Id of parent task to start
- * @param 	array		&$lines				Array of all tasks
- * @param 	int			&$level				Level of task
+ * @param 	array		$lines				Array of all tasks
+ * @param 	int			$level				Level of task
  * @param 	string		$var				Color
  * @param 	int			$showproject		Show project columns
- * @param	int			&$taskrole			Array of roles of user for each tasks
+ * @param	int			$taskrole			Array of roles of user for each tasks
  * @param	int			$projectsListId		List of id of project allowed to user (string separated with comma)
  * @param	int			$addordertick		Add a tick to move task
  * @return	void
@@ -357,7 +357,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 
 				// Planned Workload (in working hours)
-				print '<td align="center">';
+				print '<td align="right">';
 				$fullhour=convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
 				$workingdelay=convertSecondToTime($lines[$i]->planned_workload,'all',86400,7);	// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
 				if ($lines[$i]->planned_workload)
@@ -384,10 +384,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				else print '</a>';
 				print '</td>';
 
-				// Progress calculated
-				// Note: ->duration is in fact time spent i think
+				// Progress calculated (Note: ->duration is time spent)
 				print '<td align="right">';
-				if ($lines[$i]->planned_workload) print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload,2).' %';
+				if ($lines[$i]->planned_workload || $lines[$i]->duration)
+				{
+					if ($lines[$i]->planned_workload) print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload,2).' %';
+					else print $langs->trans('WorkloadNotDefined');
+				}
 				print '</td>';
 
 				// Tick to drag and drop
@@ -422,7 +425,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
-		print '<td align="center" class="nowrap liste_total">';
+		print '<td align="right" class="nowrap liste_total">';
 		print convertSecondToTime($total_projectlinesa_planned, 'allhourmin');
 		print '</td>';
 		print '<td></td>';
@@ -430,7 +433,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print convertSecondToTime($total_projectlinesa_spent, 'allhourmin');
 		print '</td>';
 		print '<td align="right" class="nowrap liste_total">';
-		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent_if_planned / $total_projectlinesa_planned,2).' %';
+		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned,2).' %';
 		print '</td>';
 		if ($addordertick) print '<td class="hideonsmartphone"></td>';
 		print '</tr>';
@@ -443,20 +446,26 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 /**
  * Output a task line
  *
- * @param	string	   	&$inc					?
+ * @param	string	   	$inc					?
  * @param   string		$parent					?
- * @param   Object		$lines					?
- * @param   int			&$level					?
- * @param   string		&$projectsrole			?
- * @param   string		&$tasksrole				?
+ * @param   Task[]		$lines					?
+ * @param   int			$level					?
+ * @param   string		$projectsrole			?
+ * @param   string		$tasksrole				?
  * @param	string		$mine					Show only task lines I am assigned to
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @return  $inc
  */
 function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
 {
-	global $user, $bc, $langs;
-	global $form, $projectstatic, $taskstatic;
+	global $db, $user, $bc, $langs;
+	global $form, $formother, $projectstatic, $taskstatic;
+
+	if (! is_object($formother))
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($db);
+	}
 
 	$lastprojectid=0;
 
@@ -526,7 +535,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 
 				// Progress declared %
 				print '<td align="right">';
-				print $lines[$i]->progress.' %';
+				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
 				print '</td>';
 
 				// Time spent
@@ -556,13 +565,16 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 					$disabledtask=1;
 				}
 
-				print '<td class="nowrap">';
-				$s =$form->select_date('',$lines[$i]->id,'','','',"addtime",1,0,1,$disabledtask);
+				// Form to add new time
+				print '<td class="nowrap" align="right">';
+				$s='';
+				$s.=$form->select_date('',$lines[$i]->id,0,0,2,"addtime",1,0,1,$disabledtask);
 				$s.='&nbsp;&nbsp;&nbsp;';
-				$s.=$form->select_duration($lines[$i]->id,'',$disabledtask,'text');
+				$s.=$form->select_duration($lines[$i]->id,'',$disabledtask,'text',0,1);
 				$s.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
 				print $s;
 				print '</td>';
+
 				print '<td align="right">';
 				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("YouAreNotContactOfProject"));
 				else if ($disabledtask) print $form->textwithpicto('',$langs->trans("TaskIsNotAffectedToYou"));
@@ -589,10 +601,10 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 /**
  * Search in task lines with a particular parent if there is a task for a particular user (in taskrole)
  *
- * @param 	string	&$inc				Counter that count number of lines legitimate to show (for return)
+ * @param 	string	$inc				Counter that count number of lines legitimate to show (for return)
  * @param 	int		$parent				Id of parent task to start
- * @param 	array	&$lines				Array of all tasks
- * @param	string	&$taskrole			Array of task filtered on a particular user
+ * @param 	array	$lines				Array of all tasks
+ * @param	string	$taskrole			Array of task filtered on a particular user
  * @return	int							1 if there is
  */
 function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)

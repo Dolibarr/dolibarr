@@ -94,7 +94,7 @@ abstract class ActionsAdherentCardCommon
     /**
      *  Load data control
      *
-	 *  @param	string	&$action    Type of action
+	 *  @param	string	$action    Type of action
 	 *  @param	int		$id			Id of object
      *	@return	void
      */
@@ -130,7 +130,7 @@ abstract class ActionsAdherentCardCommon
                 }
                 else
                 {
-                    $this->errors=$nuser->error;
+                    $this->errors[]=$nuser->error;
 
                     $this->db->rollback();
                 }
@@ -228,7 +228,7 @@ abstract class ActionsAdherentCardCommon
 	/**
      *  Set content of ->tpl array, to use into template
      *
-     *  @param	string		&$action    Type of action
+     *  @param	string		$action    Type of action
      *  @param	int			$id			Id
      *  @return	string					HTML output
      */

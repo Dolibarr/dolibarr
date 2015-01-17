@@ -52,7 +52,6 @@ if (empty($font_loc)) die('DOL_DEFAULT_TTF_BOLD must de defined with full path t
 
 if (defined('PHP-BARCODE_PATH_COMMAND')) $genbarcode_loc=constant('PHP-BARCODE_PATH_COMMAND');
 else $genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
-//dol_syslog("genbarcode_loc=".$genbarcode_loc." - env_windows=".$_SERVER['WINDIR']);
 
 
 

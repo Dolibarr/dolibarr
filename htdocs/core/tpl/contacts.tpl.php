@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2012      Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,8 @@
  * $withproject (if we are on task contact)
  */
 
-if (! class_exists('Contact')) {
-	require DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-}
-if (! class_exists('FormCompany')) {
-	require DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $module = $object->element;
 
@@ -60,9 +56,13 @@ $userstatic=new User($db);
 		<div class="tagtd">&nbsp;</div>
 	</form>
 
-	<?php $var=false; ?>
+	<?php
 
-
+	$var=true;
+	if (empty($hideaddcontactforuser))
+	{
+		$var=!$var;
+	?>
 	<form class="tagtr impair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
@@ -77,7 +77,13 @@ $userstatic=new User($db);
 		<div class="tagtd" align="right"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
 
-	<?php $var=!$var; ?>
+	<?php
+	}
+
+	if (empty($hideaddcontactforthirdparty))
+	{
+		$var=!$var;
+	?>
 
 	<form class="tagtr pair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -86,13 +92,9 @@ $userstatic=new User($db);
 	<input type="hidden" name="source" value="external" />
 	<?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
 		<div class="tagtd nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
-		<?php
-		$events=array();
-		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-		?>
 		<div class="tagtd nowrap maxwidthonsmartphone">
 			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
-			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, $events); ?>
+			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone">
 			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid'); ?>
@@ -109,7 +111,8 @@ $userstatic=new User($db);
 		</div>
 	</form>
 
-<?php } ?>
+<?php }
+	} ?>
 
 	<form class="tagtr liste_titre">
 		<div class="tagtd"><?php echo $langs->trans("Source"); ?></div>
@@ -123,7 +126,8 @@ $userstatic=new User($db);
 	<?php $var=true; ?>
 
 	<?php
-	foreach(array('internal','external') as $source) {
+	$arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
+	foreach($arrayofsource as $source) {
 
 		$tmpobject=$object;
 		if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
@@ -197,7 +201,7 @@ $userstatic=new User($db);
 			?>
 			<?php if ($object->statut >= 0) echo '</a>'; ?>
 		</div>
-		<div class="tagtd nowrap" align="center">
+		<div class="tagtd nowrap" align="right">
 			<?php if ($permission) { ?>
 				&nbsp;<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletecontact&amp;lineid='.$tab[$i]['rowid']; ?>"><?php echo img_delete(); ?></a>
 			<?php } ?>

@@ -194,7 +194,7 @@ class RssParser
         }
 
         $this->_urlRSS = $urlRSS;
-        $newpathofdestfile=$cachedir.'/'.dol_hash($this->_urlRSS);
+        $newpathofdestfile=$cachedir.'/'.dol_hash($this->_urlRSS,3);	// Force md5 hash (does not contains special chars)
         $newmask='0644';
 
         //dol_syslog("RssPArser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
@@ -258,7 +258,7 @@ class RssParser
 	            if (!is_resource($xmlparser)) {
 	                $this->error="ErrorFailedToCreateParser"; return -1;
 	            }
-	
+
 	            xml_set_object($xmlparser, $this);
 	            xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
 	            xml_set_character_data_handler($xmlparser, 'feed_cdata');
@@ -268,7 +268,7 @@ class RssParser
 	            //var_dump($rss->_format);exit;
 	        }
         }
-        
+
         // If $rss loaded
         if ($rss)
         {
@@ -452,7 +452,7 @@ class RssParser
      *
      * 	@param	string		$p			Start
      *  @param	string		$element	Tag
-     *  @param	array		&$attrs		Attributes of tags
+     *  @param	array		$attrs		Attributes of tags
      *  @return	void
      */
     function feed_start_element($p, $element, &$attrs)
@@ -644,7 +644,7 @@ class RssParser
     /**
      * 	To concat 2 string with no warning if an operand is not defined
      *
-     * 	@param	string	&$str1		Str1
+     * 	@param	string	$str1		Str1
      *  @param	string	$str2		Str2
      *  @return	string				String cancatenated
      */

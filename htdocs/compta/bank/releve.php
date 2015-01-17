@@ -349,7 +349,7 @@ else
 				}
 				elseif ($links[$key]['type']=='payment_sc')
 				{
-					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
 					print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
 					print $langs->trans("SocialContributionPayment");
 					print '</a>';
@@ -398,7 +398,7 @@ else
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='member') {
-					print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('ShowMember'),'user').' ';
 					print $links[$key]['label'];
 					print '</a>';

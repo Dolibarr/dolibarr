@@ -111,7 +111,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			}
 		}
 
-		$_file = $dir . "/bordereau-".$number.".pdf";
+		$file = $dir . "/bordereau-".$number.".pdf";
 
 		// Add pdfgeneration hook
 		if (! is_object($hookmanager))
@@ -120,7 +120,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$hookmanager=new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters=array('outputlangs'=>$outputlangs);
+		$parameters=array('file'=>$file, 'outputlangs'=>$outputlangs);
 		global $action;
 		$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
@@ -177,7 +177,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->Close();
 
-		$pdf->Output($_file,'F');
+		$pdf->Output($file,'F');
 
 		// Add pdfgeneration hook
 		if (! is_object($hookmanager))
@@ -191,7 +191,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$reshook=$hookmanager->executeHooks('adterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 		if (! empty($conf->global->MAIN_UMASK))
-			@chmod($_file, octdec($conf->global->MAIN_UMASK));
+			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
         $outputlangs->charset_output=$sav_charset_output;
 	    return 1;   // Pas d'erreur
@@ -201,7 +201,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *	Generate Header
 	 *
-	 *	@param  PDF			&$pdf        	Pdf object
+	 *	@param  PDF			$pdf        	Pdf object
 	 *	@param  int			$page        	Current page number
 	 *	@param  int			$pages       	Total number of pages
 	 *	@param	Translate	$outputlangs	Object language for output
@@ -307,7 +307,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *	Output array
 	 *
-	 *	@param	PDF			&$pdf			PDF object
+	 *	@param	PDF			$pdf			PDF object
 	 *	@param	int			$pagenb			Page nb
 	 *	@param	int			$pages			Pages
 	 *	@param	Translate	$outputlangs	Object lang
@@ -365,7 +365,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			&$pdf     			PDF
+	 *   	@param	PDF			$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text

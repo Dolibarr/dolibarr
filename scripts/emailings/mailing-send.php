@@ -226,7 +226,7 @@ if ($resql)
 								{
 									//Update status communication of thirdparty prospect
 									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$obj2->rowid.")";
-									dol_syslog("fiche.php: set prospect thirdparty status", LOG_DEBUG);
+									dol_syslog("card.php: set prospect thirdparty status", LOG_DEBUG);
 									$resqlx=$db->query($sqlx);
 									if (! $resqlx)
 									{
@@ -236,7 +236,7 @@ if ($resql)
 
 					    			//Update status communication of contact prospect
 									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj2->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
-									dol_syslog("fiche.php: set prospect contact status", LOG_DEBUG);
+									dol_syslog("card.php: set prospect contact status", LOG_DEBUG);
 
 									$resqlx=$db->query($sqlx);
 									if (! $resqlx)

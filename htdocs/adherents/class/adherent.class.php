@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +125,7 @@ class Adherent extends CommonObject
 
 
     /**
-     *  Fonction envoyant un email a l'adherent avec le texte fourni en parametre.
+     *  Function sending an email has the adherent with the text supplied in parameter.
      *
      *  @param	string	$text				Content of message (not html entities encoded)
      *  @param	string	$subject			Subject of message
@@ -247,9 +248,9 @@ class Adherent extends CommonObject
 
 
     /**
-     *	Renvoie le libelle traduit de la nature d'un adherent (physique ou morale)
+     *	Return translated label by the nature of a adherent (physical or moral)
      *
-     *	@param	string		$morphy		Nature physique ou morale de l'adherent
+     *	@param	string		$morphy		Nature of the adherent (physical or moral)
      *	@return	string					Label
      */
     function getmorphylib($morphy='')
@@ -464,8 +465,11 @@ class Adherent extends CommonObject
 
 		    $nbrowsaffected+=$this->db->affected_rows($resql);
 
+		    $action='update';
+
             // Actions on extra fields (by external module)
-            $hookmanager->initHooks(array('memberdao'));
+			// FIXME le hook fait double emploi avec le trigger !!
+		    $hookmanager->initHooks(array('memberdao'));
             $parameters=array('id'=>$this->id);
             $action='';
             $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1041,7 +1045,7 @@ class Adherent extends CommonObject
      *	@param	int		$rowid      Id of object to load
      * 	@param	string	$ref		To load member from its ref
      * 	@param	int		$fk_soc		To load member from its link to third party
-     * 	@param	int		$ref_ext	External reference
+     * 	@param	string	$ref_ext	External reference
      *	@return int         		>0 if OK, 0 if not found, <0 if KO
      */
     function fetch($rowid,$ref='',$fk_soc='',$ref_ext='')
@@ -1090,7 +1094,7 @@ class Adherent extends CommonObject
                 $this->ref				= $obj->rowid;
                 $this->id				= $obj->rowid;
                 $this->ref_ext			= $obj->ref_ext;
-                $this->civility_id		= $obj->civility;
+                $this->civility_id		= $obj->civility_id;
                 $this->firstname		= $obj->firstname;
                 $this->lastname			= $obj->lastname;
                 $this->login			= $obj->login;
@@ -1302,7 +1306,7 @@ class Adherent extends CommonObject
                 return $rowid;
             }
             else
-            {
+			{
                 $this->db->rollback();
                 return -2;
             }
@@ -1558,7 +1562,7 @@ class Adherent extends CommonObject
 
         if ($option == 'card')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.'">';
             $lienfin='</a>';
         }
         if ($option == 'subscription')
@@ -1568,14 +1572,14 @@ class Adherent extends CommonObject
         }
         if ($option == 'category')
         {
-        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
-        	$lienfin='</a>';
+            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
+            $lienfin='</a>';
         }
 
         $picto='user';
         $label=$langs->trans("ShowMember");
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
         return $result;

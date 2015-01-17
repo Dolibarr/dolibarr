@@ -60,7 +60,6 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string	$pass		Mot de passe
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
-	 *	@return	    int					1 if OK, 0 if not
 	 */
 	function __construct($type, $host, $user, $pass, $name='', $port=0)
 	{
@@ -71,6 +70,8 @@ class DoliDBPgsql extends DoliDB
 		if (! empty($conf->db->dolibarr_main_db_collation))	$this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
 		$this->database_user=$user;
+        $this->database_host=$host;
+        $this->database_port=$port;
 
 		$this->transaction_opened=0;
 
@@ -387,7 +388,7 @@ class DoliDBPgsql extends DoliDB
 		if ((! empty($host) && $host == "socket") && ! defined('NOLOCALSOCKETPGCONNECT'))
 		{
 			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";    // $name may be empty
-			$this->db = pg_connect($con_string);
+			$this->db = @pg_connect($con_string);
 		}
 
 		// if local connection failed or not requested, use TCP/IP
@@ -397,7 +398,7 @@ class DoliDBPgsql extends DoliDB
 			if (! $port) $port = 5432;
 
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
-			$this->db = pg_connect($con_string);
+			$this->db = @pg_connect($con_string);
 		}
 
 		// now we test if at least one connect method was a success
@@ -667,7 +668,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Renvoie le code erreur generique de l'operation precedente.
 	 *
-	 * @return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+	 * @return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	function errno()
 	{
@@ -733,7 +734,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Renvoie le texte de l'erreur pgsql de l'operation precedente
 	 *
-	 * @return		error_text
+	 * @return	string		Error text
 	 */
 	function error()
 	{
@@ -836,7 +837,7 @@ class DoliDBPgsql extends DoliDB
 		// Test charset match LC_TYPE (pgsql error otherwise)
 		//print $charset.' '.setlocale(LC_CTYPE,'0'); exit;
 
-		$sql='CREATE DATABASE '.$database.' OWNER '.$owner.' ENCODING \''.$charset.'\'';
+		$sql='CREATE DATABASE "'.$database.'" OWNER "'.$owner.'" ENCODING \''.$charset.'\'';
 		dol_syslog($sql,LOG_DEBUG);
 		$ret=$this->query($sql);
 		return $ret;
@@ -846,8 +847,8 @@ class DoliDBPgsql extends DoliDB
 	 *  List tables into a database
 	 *
 	 *  @param	string		$database	Name of database
-	 *  @param	string		$table		Nmae of table filter ('xxx%')
-	 *  @return	resource				Resource
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
 	 */
 	function DDLListTables($database, $table='')
 	{
@@ -860,7 +861,7 @@ class DoliDBPgsql extends DoliDB
 		{
 			$listtables[] = $row[0];
 		}
-		return  $listtables;
+		return $listtables;
 	}
 
 	/**

@@ -6,6 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,100 +150,9 @@ abstract class ModelNumRefExpedition
  * 	@param	string		$modele			Force le modele a utiliser ('' to not force)
  * 	@param	Translate	$outputlangs	Objet lang a utiliser pour traduction
  *  @return int             			<=0 if KO, >0 if OK
+ * @deprecated Use the new function generateDocument of Expedition class
  */
-function expedition_pdf_create($db, $object, $modele, $outputlangs)
+function expedition_pdf_create(DoliDB $db, Expedition $object, $modele, $outputlangs)
 {
-	global $conf,$user,$langs;
-
-	$langs->load("sendings");
-
-	$error=0;
-
-	$srctemplatepath='';
-
-	// Sets the model on the model name to use
-	if (! dol_strlen($modele))
-	{
-	    if (! empty($conf->global->EXPEDITION_ADDON_PDF))
-	    {
-	        $modele = $conf->global->EXPEDITION_ADDON_PDF;
-	    }
-	    else
-	    {
-	        $modele = 'rouget';
-	    }
-	}
-
-	// If selected model is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':',$modele,2);
-    if (! empty($tmp[1]))
-    {
-        $modele=$tmp[0];
-        $srctemplatepath=$tmp[1];
-    }
-
-	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
-	{
-    	foreach(array('doc','pdf') as $prefix)
-    	{
-    	    $file = $prefix."_".$modele.".modules.php";
-
-    		// We check the model location
-	        $file=dol_buildpath($reldir."core/modules/expedition/doc/".$file,0);
-    		if (file_exists($file))
-    		{
-    			$filefound=1;
-    			$classname=$prefix.'_'.$modele;
-    			break;
-    		}
-    	}
-    	if ($filefound) break;
-    }
-
-	// Load the model
-	if ($filefound)
-	{
-	    require_once $file;
-
-		$obj = new $classname($db);
-
-		$result=$object->fetch_origin();
-
-		// We save charset_output to restore it because write_file can change it if needed for
-		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object, $outputlangs, $srctemplatepath) > 0)
-		{
-			$outputlangs->charset_output=$sav_charset_output;
-
-			// we delete preview files
-        	//require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			//dol_delete_preview($object);
-
-			return 1;
-		}
-		else
-		{
-			$outputlangs->charset_output=$sav_charset_output;
-			dol_syslog("Erreur dans expedition_pdf_create");
-			dol_print_error($db,$obj->error);
-			return 0;
-		}
-	}
-	else
-	{
-		if (! $conf->global->EXPEDITION_ADDON_PDF)
-		{
-			print $langs->trans("Error")." ".$langs->trans("Error_EXPEDITION_ADDON_PDF_NotDefined");
-		}
-		else
-		{
-			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
-		}
-		return 0;
-    }
+	return $object->generateDocument($modele, $outputlangs);
 }

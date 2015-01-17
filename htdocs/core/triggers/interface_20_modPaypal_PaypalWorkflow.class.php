@@ -22,6 +22,8 @@
  *      \brief      Trigger file for paypal workflow
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
  *  Class of triggers for paypal module

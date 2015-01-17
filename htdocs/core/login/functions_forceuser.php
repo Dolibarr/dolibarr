@@ -46,4 +46,3 @@ function check_user_password_forceuser($usertotest,$passwordtotest,$entitytotest
 
 	return $login;
 }
-

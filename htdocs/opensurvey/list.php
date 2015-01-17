@@ -123,7 +123,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-$sql.= " WHERE p.entity = ".getEntity('survey');
+$sql.= " WHERE p.entity = ".getEntity('survey',1);
 if ($status == 'expired') $sql.=" AND date_fin < '".$db->idate($now)."'";
 if ($status == 'opened') $sql.=" AND date_fin >= '".$db->idate($now)."'";
 if ($surveytitle) $sql.=" AND titre LIKE '%".$db->escape($surveytitle)."%'";

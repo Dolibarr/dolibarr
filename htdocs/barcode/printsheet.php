@@ -121,8 +121,8 @@ if ($action == 'builddoc')
 	if (! $error)
 	{
 		$code=$forbarcode;
-		$generator=$stdobject->barcode_type_coder;
-		$encoding=strtoupper($stdobject->barcode_type_code);
+		$generator=$stdobject->barcode_type_coder;				// coder (loaded by fetch_barcode). Engine.
+		$encoding=strtoupper($stdobject->barcode_type_code);	// code (loaded by fetch_barcode). Example 'ean', 'isbn', ...
 		$barcodeimage=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 
 		$diroutput=$conf->barcode->dir_temp;

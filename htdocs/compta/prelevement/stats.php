@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/compta/prelevement/stats.php
  *      \ingroup    prelevement
- *      \brief      Page de stats des prelevements
+ *      \brief      Page with statistics on withdrawals
  */
 
 require('../../main.inc.php');
@@ -96,7 +96,7 @@ if ($resql)
 	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td align="right">%</td>';
 	print '<td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
 
-	$var=True;
+	$var=false;
 
 	while ($i < $num)
 	{

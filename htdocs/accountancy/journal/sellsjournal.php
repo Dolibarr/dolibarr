@@ -56,8 +56,6 @@ $date_endyear = GETPOST('date_endyear');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->access)
-	accessforbidden();
 
 $action = GETPOST('action');
 
@@ -90,11 +88,11 @@ $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.tot
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
 $sql .= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte, ";
 $sql .= " ct.accountancy_code_sell as account_tva";
-$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet fd";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product p ON p.rowid = fd.fk_product";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount aa ON aa.rowid = fd.fk_code_ventilation";
-$sql .= " JOIN " . MAIN_DB_PREFIX . "facture f ON f.rowid = fd.fk_facture";
-$sql .= " JOIN " . MAIN_DB_PREFIX . "societe s ON s.rowid = f.fk_soc";
+$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_product";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON aa.rowid = fd.fk_code_ventilation";
+$sql .= " JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
+$sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " WHERE fd.fk_code_ventilation > 0 ";
 if (! empty($conf->multicompany->enabled)) {
@@ -125,17 +123,17 @@ if ($result) {
 	while ( $i < $num ) {
 		$obj = $db->fetch_object($result);
 		// les variables
-		$cptcli = (! empty($conf->global->COMPTA_ACCOUNT_CUSTOMER)) ? $conf->global->COMPTA_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef");
+		$cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER)) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef");
 		$compta_soc = (! empty($obj->code_compta)) ? $obj->code_compta : $cptcli;
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0)
-				$compta_prod = (! empty($conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT)) ? $conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef");
+				$compta_prod = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef");
 			else
-				$compta_prod = (! empty($conf->global->COMPTA_SERVICE_SOLD_ACCOUNT)) ? $conf->global->COMPTA_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef");
+				$compta_prod = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef");
 		}
-		$cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT)) ? $conf->global->COMPTA_VAT_ACCOUNT : $langs->trans("CodeNotDef");
+		$cpttva = (! empty($conf->global->ACCOUNTING_VAT_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_ACCOUNT : $langs->trans("CodeNotDef");
 		$compta_tva = (! empty($obj->account_tva) ? $obj->account_tva : $cpttva);
 
 		// Invoice lines
@@ -183,7 +181,7 @@ if ($action == 'writebookkeeping') {
 			$bookkeeping->fk_doc = $key;
 			$bookkeeping->fk_docdet = $val["fk_facturedet"];
 			$bookkeeping->code_tiers = $tabcompany[$key]['code_client'];
-			$bookkeeping->numero_compte = $conf->global->COMPTA_ACCOUNT_CUSTOMER;
+			$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			$bookkeeping->label_compte = $tabcompany[$key]['name'];
 			$bookkeeping->montant = $mt;
 			$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
@@ -267,7 +265,7 @@ if ($action == 'export_csv') {
 
 			print $date . $sep;
 			print $conf->global->ACCOUNTING_SELL_JOURNAL . $sep;
-			print length_accountg($conf->global->COMPTA_ACCOUNT_CUSTOMER) . $sep;
+			print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
 			foreach ( $tabttc[$key] as $k => $mt ) {
 				print length_accounta(html_entity_decode($k)) . $sep;
 				print ($mt < 0 ? 'C' : 'D') . $sep;
@@ -422,7 +420,6 @@ if ($action == 'export_csv') {
 		print "<tr " . $bc[$var] . ">";
 
 		// Third party
-		// print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
 		print "<td>" . $date . "</td>";
 		print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 		foreach ( $tabttc[$key] as $k => $mt ) {
@@ -441,7 +438,6 @@ if ($action == 'export_csv') {
 		foreach ( $tabht[$key] as $k => $mt ) {
 			if ($mt) {
 				print "<tr " . $bc[$var] . ">";
-				// print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";
@@ -457,7 +453,6 @@ if ($action == 'export_csv') {
 		foreach ( $tabtva[$key] as $k => $mt ) {
 			if ($mt) {
 				print "<tr " . $bc[$var] . ">";
-				// print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";

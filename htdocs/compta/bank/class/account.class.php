@@ -59,7 +59,7 @@ class Account extends CommonObject
     //! BIC/SWIFT number
     var $bic;
     //! IBAN number (International Bank Account Number)
-    var $iban_prefix;
+    var $iban;			// stored into iban_prefix field into database
     var $proprio;
     var $owner_address;
 
@@ -220,7 +220,7 @@ class Account extends CommonObject
     /**
      *  Add an entry into table ".MAIN_DB_PREFIX."bank
      *
-     *  @param	timsestmap	$date			Date operation
+     *  @param	timestamp	$date			Date operation
      *  @param	string		$oper			1,2,3,4... (deprecated) or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
      *  @param	string		$label			Descripton
      *  @param	float		$amount			Amount
@@ -338,11 +338,12 @@ class Account extends CommonObject
     /**
      *  Create bank account into database
      *
+     *  @param	User	$user		Object user making creation
      *  @return int        			< 0 if KO, > 0 if OK
      */
-    function create()
+    function create($user='')
     {
-        global $langs,$conf;
+        global $langs,$conf, $hookmanager;
 
         // Clean parameters
         if (! $this->min_allowed) $this->min_allowed=0;
@@ -440,6 +441,23 @@ class Account extends CommonObject
                     $this->error=$this->db->lasterror();
                     return -3;
                 }
+                
+                // Actions on extra fields (by external module or standard code)
+                $hookmanager->initHooks(array('bankdao'));
+                $parameters=array('id'=>$this->id);
+                $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                if (empty($reshook))
+                {
+                	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                	{
+                		$result=$this->insertExtraFields();
+                		if ($result < 0)
+                		{
+                			return -4;
+                		}
+                	}
+                }
+                else if ($reshook < 0) return -5;
             }
             return $this->id;
         }
@@ -465,7 +483,7 @@ class Account extends CommonObject
      */
     function update($user='')
     {
-        global $langs,$conf;
+        global $langs,$conf, $hookmanager;
 
         // Clean parameters
         if (! $this->min_allowed) $this->min_allowed=0;
@@ -516,6 +534,25 @@ class Account extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
+        	
+        	// Actions on extra fields (by external module or standard code)
+        	$hookmanager->initHooks(array('bankdao'));
+        	$parameters=array('id'=>$this->id);
+        	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        	if (empty($reshook))
+        	{
+        		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        		{
+        			$result=$this->insertExtraFields();
+        			if ($result < 0)
+        			{
+        				return -1;
+        			}
+        		}
+        	}
+        	else if ($reshook < 0) return -1;
+        	
+        	
             return 1;
         }
         else
@@ -641,7 +678,6 @@ class Account extends CommonObject
                 $this->cle_rib       = $obj->cle_rib;
                 $this->bic           = $obj->bic;
                 $this->iban          = $obj->iban;
-                $this->iban_prefix   = $obj->iban;	// deprecated
                 $this->domiciliation = $obj->domiciliation;
                 $this->proprio       = $obj->proprio;
                 $this->owner_address = $obj->owner_address;
@@ -662,13 +698,21 @@ class Account extends CommonObject
                 $this->min_allowed    = $obj->min_allowed;
                 $this->min_desired    = $obj->min_desired;
                 $this->comment        = $obj->comment;
+                
+                // Retreive all extrafield for thirdparty
+                // fetch optionals attributes and labels
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+                $this->fetch_optionals($this->id,$extralabels);
+                
+                
                 return 1;
             }
             else
-            {
+			{
                 return 0;
             }
-            $this->db->free($result);
         }
         else
         {
@@ -694,6 +738,18 @@ class Account extends CommonObject
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result) {
+        	
+        	// Remove extrafields
+        	if ((empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+        	{
+        		$result=$this->deleteExtraFields();
+        		if ($result < 0)
+        		{
+        			return -1;
+        			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+        		}
+        	}
+        	
             return 1;
         }
         else {
@@ -882,7 +938,7 @@ class Account extends CommonObject
 
         if (empty($mode))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/fiche.php?id='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id.'">';
             $lienfin='</a>';
         }
         else if ($mode == 'transactions')
@@ -891,7 +947,7 @@ class Account extends CommonObject
             $lienfin='</a>';
         }
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAccount"),'account').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAccount").': '.$this->label, 'account', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.$this->label.$lienfin;
         return $result;
     }
@@ -1011,7 +1067,6 @@ class Account extends CommonObject
         $this->cle_rib         = 50;
         $this->bic             = 'AA12';
         $this->iban            = 'FR999999999';
-        $this->iban_prefix     = 'FR';  // deprecated
         $this->domiciliation   = 'The bank addresse';
         $this->proprio         = 'Owner';
         $this->owner_address   = 'Owner address';
@@ -1145,7 +1200,7 @@ class AccountLine extends CommonObject
      *		@param	User	$user	User object that delete
      *      @return	int 			<0 if KO, >0 if OK
      */
-    function delete($user=0)
+    function delete($user=null)
     {
         $nbko=0;
 
@@ -1194,7 +1249,7 @@ class AccountLine extends CommonObject
      *		@param	User	$user	User object that delete
      *      @return	int 			<0 if KO, >0 if OK
      */
-    function delete_urls($user=0)
+    function delete_urls($user=null)
     {
         $nbko=0;
 
@@ -1432,7 +1487,7 @@ class AccountLine extends CommonObject
         $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTransaction"),'account').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTransaction"), 'account', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.$this->rowid.$lienfin;
 
         if ($option == 'showall' || $option == 'showconciliated') $result.=' (';

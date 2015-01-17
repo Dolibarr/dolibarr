@@ -54,23 +54,27 @@ StatsOnShipmentsOnlyValidated=Statistiky provedena na zásilky pouze ověřenýc
 DateDeliveryPlanned=Čelní termín dodání
 DateReceived=Datum doručení obdržel
 SendShippingByEMail=Poslat zásilku EMail
-SendShippingRef=Poslat zásilek %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Události na zásilky
 LinkToTrackYourPackage=Odkaz pro sledování balíku
 ShipmentCreationIsDoneFromOrder=Pro tuto chvíli, je vytvoření nové zásilky provést z objednávky karty.
 RelatedShippings=Související shippings
 ShipmentLine=Zásilka linka
 CarrierList=Seznam dopravců
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Chytit zákazníka
 SendingMethodTRANS=Přepravce
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Jednoduchý model pro dokument o doručení
 DocumentModelTyphon=Více Celý dokument model pro potvrzení o doručení (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstantní EXPEDITION_ADDON_NUMBER není definováno
 SumOfProductVolumes=Součet objemů produktů
 SumOfProductWeights=Součet hmotností produktů
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

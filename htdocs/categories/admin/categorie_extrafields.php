@@ -65,7 +65,7 @@ llxHeader('',$langs->trans("Categories"),$help_url);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("CategoriesSetup"),$linkback,'setup');
 
-$head = categoriesadmin_prepare_head(null);
+$head = categoriesadmin_prepare_head();
 
 dol_fiche_head($head, 'attributes_categories', $langs->trans("Categories"), 0, 'category');
 

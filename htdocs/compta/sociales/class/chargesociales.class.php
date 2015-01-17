@@ -34,6 +34,11 @@ class ChargeSociales extends CommonObject
     public $table='chargesociales';
     public $table_element='chargesociales';
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
+
     var $id;
     var $ref;
     var $date_ech;
@@ -62,17 +67,19 @@ class ChargeSociales extends CommonObject
     /**
      *  Retrouve et charge une charge sociale
      *
-     *  @param	int     $id		1 si trouve, 0 sinon
+     *  @param	int     $id		Id
+     *  @param	string  $ref	Ref
      *  @return	void
      */
-    function fetch($id)
+    function fetch($id, $ref='')
     {
         $sql = "SELECT cs.rowid, cs.date_ech,";
         $sql.= " cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode,";
         $sql.= " c.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs, ".MAIN_DB_PREFIX."c_chargesociales as c";
         $sql.= " WHERE cs.fk_type = c.id";
-        $sql.= " AND cs.rowid = ".$id;
+        if ($ref) $sql.= " AND cs.rowid = ".$ref;
+        else $sql.= " AND cs.rowid = ".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -107,6 +114,24 @@ class ChargeSociales extends CommonObject
         }
     }
 
+	/**
+	 * Check if a social contribution can be created into database
+	 *
+	 * @return	boolean		True or false
+	 */
+	function check()
+	{
+		$newamount=price2num($this->amount,'MT');
+
+        // Validation parametres
+        if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode))
+        {
+            return false;
+        }
+
+
+		return true;
+	}
 
     /**
      *      Create a social contribution into database
@@ -121,12 +146,12 @@ class ChargeSociales extends CommonObject
         // Nettoyage parametres
         $newamount=price2num($this->amount,'MT');
 
-        // Validation parametres
-        if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode))
-        {
-            $this->error="ErrorBadParameter";
-            return -2;
-        }
+		if (!$this->check())
+		{
+			 $this->error="ErrorBadParameter";
+			 return -2;
+		}
+
 
         $this->db->begin();
 
@@ -341,7 +366,7 @@ class ChargeSociales extends CommonObject
         global $langs;
         $langs->load('customers');
         $langs->load('bills');
-        
+
         if ($mode == 0)
         {
             if ($statut ==  0) return $langs->trans("Unpaid");
@@ -399,7 +424,7 @@ class ChargeSociales extends CommonObject
         $lien = '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$this->id.'">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowSocialContribution").': '.$this->lib,'bill').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowSocialContribution").': '.$this->lib, 'bill', 'class="classfortooltip"').$lienfin.' ');
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
         return $result;

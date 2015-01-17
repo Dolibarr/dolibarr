@@ -70,7 +70,7 @@ if (GETPOST('button_removefilter'))
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('membertypecard'));
+$hookmanager->initHooks(array('membertypecard','globalcard'));
 
 /*
  *	Actions
@@ -271,9 +271,11 @@ if ($action == 'create')
 	}
 	print "</table>\n";
 
-	print '<br>';
-	print '<center><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp; &nbsp; ';
-	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
+	print '<br><div class="center">';
+	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Add").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print "</form>\n";
 }
@@ -353,7 +355,7 @@ if ($rowid > 0)
 		}
 
 		// Add
-		print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?action=create&typeid='.$adht->id.'">'.$langs->trans("AddMember").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$adht->id.'">'.$langs->trans("AddMember").'</a></div>';
 
 		// Delete
 		if ($user->rights->adherent->configurer)
@@ -364,7 +366,7 @@ if ($rowid > 0)
 		print "</div>";
 
 
-		// Show list of members (nearly same code than in page liste.php)
+		// Show list of members (nearly same code than in page list.php)
 
 		$membertypestatic=new AdherentType($db);
 
@@ -526,11 +528,11 @@ if ($rowid > 0)
 		        print '<tr '.$bc[$var].'>';
 		        if ($objp->societe != '')
 		        {
-		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
+		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
 		        }
 		        else
 		        {
-		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,32).'</a></td>'."\n";
+		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,32).'</a></td>'."\n";
 		        }
 
 		        // Login
@@ -588,12 +590,12 @@ if ($rowid > 0)
 		        print '<td align="center">';
 				if ($user->rights->adherent->creer)
 				{
-					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=edit&return=liste.php">'.img_edit().'</a>';
+					print '<a href="card.php?rowid='.$objp->rowid.'&action=edit&return=list.php">'.img_edit().'</a>';
 				}
 				print '&nbsp;';
 				if ($user->rights->adherent->supprimer)
 				{
-					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=resign&return=liste.php">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
+					print '<a href="card.php?rowid='.$objp->rowid.'&action=resign&return=list.php">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
 		        }
 				print "</td>";
 
@@ -678,8 +680,11 @@ if ($rowid > 0)
 			print '</table><br><br>';
 		}
 
-		print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp;';
-		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
 		print "</form>";
 	}

@@ -2,8 +2,8 @@
 WorkflowSetup=Configurare Modul Flux de Lucru
 WorkflowDesc=Acest modul vă permite modificarea comportamentului  acțiunilor automate în aplicaţie. În mod implicit, fluxul de lucru este deschis (puteţi face ce  doriţi în ordinea dorită). Puteți activa acțiunile\nautomate de care sunteti interesat
 ThereIsNoWorkflowToModify=Nu există nici un flux de lucru  modificabil pentru modulele  activate.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crează o comandă client automat, după ce o propunere comercială este semnată
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crează o factură client automat, după ce o propunere comercială este semnată
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crează o comandă client automat, după ce o ofertă comercială este semnată
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crează o factură client automat, după ce o ofertă comercială este semnată
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crează o factură client automat, după ce un contract este validat
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crează o factură client automat, după ce o comandă client este închisă
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasează propunere comercială legată ca facturată când comanda client este setată ca plătită

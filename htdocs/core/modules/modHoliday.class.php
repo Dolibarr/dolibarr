@@ -213,7 +213,7 @@ class modHoliday extends DolibarrModules
 								'titre'=>'MenuAddCP',
 								'mainmenu'=>'holiday',
 								'leftmenu'=>'holiday_add',
-								'url'=>'/holiday/fiche.php?mainmenu=holiday&action=request',
+								'url'=>'/holiday/card.php?mainmenu=holiday&action=request',
 								'langs'=>'holiday',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>101,
 								'enabled'=>'$conf->holiday->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.

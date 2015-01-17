@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Sopimukset alueella
 ListOfContracts=Luetteloa sopimuksista
-LastContracts=Viimeisin %s muunnettu sopimukset
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Kaikki sopimukset
 ContractCard=Sopimus-kortti
 ContractStatus=Sopimus asema
@@ -27,7 +27,7 @@ MenuRunningServices=Käynnissä olevat palvelut
 MenuExpiredServices=Lakkaa palvelut
 MenuClosedServices=Suljettu palvelut
 NewContract=Uusi sopimus
-AddContract=Lisää sopimuksen
+AddContract=Create contract
 SearchAContract=Haku sopimuksen
 DeleteAContract=Poista sopimuksen
 CloseAContract=Sulje sopimuksen
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Luettelo käynnissä sopimuksen linjat
 ListOfRunningServices=Luettelo käynnissä olevat palvelut
 NotActivatedServices=Ei aktivoitu palvelut (muun muassa validoitava sopimukset)
 BoardNotActivatedServices=Palvelut aktivoida kesken validoitava sopimukset
-LastContracts=Viimeisin %s muunnettu sopimukset
+LastContracts=Last %s contracts
 LastActivatedServices=Viimeisin %s aktivoitu palvelut
 LastModifiedServices=Viimeisin %s muunnettu palvelut
 EditServiceLine=Muokkaa palvelulinja
@@ -91,6 +91,7 @@ ListOfServicesToExpire=List of Services to expire
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Myyntiedustajaasi allekirjoittamalla sopimuksen

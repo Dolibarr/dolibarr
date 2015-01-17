@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is do
 RelatedShippings=Related shippings
 ShipmentLine=Shipment line
 CarrierList=List of transporters
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Catch by customer
@@ -72,3 +74,7 @@ DocumentModelTyphon=More complete document model for delivery receipts (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
 SumOfProductVolumes=Sum of product volumes
 SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

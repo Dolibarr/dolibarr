@@ -3,7 +3,8 @@
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com> 
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,17 +44,17 @@ if (!$user->admin)
 
 $action = GETPOST('action', 'alpha');
 
-// Other parameters COMPTA_* & ACCOUNTING_*
+// Other parameters ACCOUNTING_*
 $list = array (
 		'ACCOUNTING_LIMIT_LIST_VENTILATION',
 		'ACCOUNTING_LENGTH_GACCOUNT',
 		'ACCOUNTING_LENGTH_AACCOUNT',
-		'COMPTA_ACCOUNT_CUSTOMER',
-		'COMPTA_ACCOUNT_SUPPLIER',
-		'COMPTA_PRODUCT_BUY_ACCOUNT',
-		'COMPTA_PRODUCT_SOLD_ACCOUNT',
-		'COMPTA_SERVICE_BUY_ACCOUNT',
-		'COMPTA_SERVICE_SOLD_ACCOUNT',
+		'ACCOUNTING_ACCOUNT_CUSTOMER',
+		'ACCOUNTING_ACCOUNT_SUPPLIER',
+		'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
+		'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
+		'ACCOUNTING_SERVICE_BUY_ACCOUNT',
+		'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
 		'ACCOUNTING_ACCOUNT_SUSPENSE',
 		'ACCOUNTING_ACCOUNT_TRANSFER_CASH' 
 );
@@ -62,22 +63,22 @@ $list = array (
  * Actions
  */
  
-$compta_mode = defined('COMPTA_MODE')?COMPTA_MODE:'RECETTES-DEPENSES';
+$accounting_mode = defined('ACCOUNTING_MODE')?ACCOUNTING_MODE:'RECETTES-DEPENSES';
 
 if ($action == 'update')
 {
     $error = 0;
 
-    $compta_modes = array(
+    $accounting_modes = array(
         'RECETTES-DEPENSES',
         'CREANCES-DETTES'
     );
 
-    $compta_mode = GETPOST('compta_mode','alpha');
+    $accounting_mode = GETPOST('accounting_mode','alpha');
 	
-	if (in_array($compta_mode,$compta_modes)) {
+	if (in_array($accounting_mode,$accounting_modes)) {
 
-        if (!dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode, 'chaine', 0, '', $conf->entity)) {
+        if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
             $error++;
         }
     } else {
@@ -159,12 +160,12 @@ print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder" width="100%">';
 
-// Cas du parametre COMPTA_MODE
+// Cas du parametre ACCOUNTING_MODE
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description').'</td>';
 print "</tr>\n";
-print '<tr '.$bc[false].'><td width="200"><input type="radio" name="compta_mode" value="RECETTES-DEPENSES"'.($compta_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
+print '<tr '.$bc[false].'><td width="200"><input type="radio" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 // Write info on way to count VAT
 //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
@@ -178,9 +179,8 @@ print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 //	//	print nl2br($langs->trans('OptionModeTrueInfoExpert'));
 //}
 print "</td></tr>\n";
-print '<tr '.$bc[true].'><td width="200"><input type="radio" name="compta_mode" value="CREANCES-DETTES"'.($compta_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
+print '<tr '.$bc[true].'><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
-print '</form>';
 
 print "</table>\n";
 
@@ -190,7 +190,7 @@ print "<br>\n";
  *  Define Chart of accounts
  */
 print '<table class="noborder" width="100%">';
-$var = True;
+$var = true;
 
 print '<tr class="liste_titre">';
 print '<td colspan="3">';
@@ -210,7 +210,7 @@ $sql .= " AND fk_pays = " . $mysoc->country_id;
 dol_syslog('accountancy/admin/index.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 
-$var = True;
+$var = true;
 
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -284,10 +284,10 @@ if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 }
 print '</tr>';
 
-print '</form>';
+
 print "</table>\n";
 
 print '<br /><br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
-
+print '</form>';
 llxFooter();
 $db->close();
