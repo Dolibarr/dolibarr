@@ -63,7 +63,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if ($action == 'setsupplieraccountancycode')
 {
 	$cancelbutton = GETPOST('cancel');
-	if (! $cancelbutton) 
+	if (! $cancelbutton)
 	{
 		$result=$object->fetch($id);
    		$object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
@@ -98,12 +98,22 @@ if ($action == 'setmode' && $user->rights->societe->creer)
 $contactstatic = new Contact($db);
 $form = new Form($db);
 
-if ($object->fetch($id))
+if ($id > 0 && empty($object->id))
 {
-	llxHeader('',$langs->trans('SupplierCard'));
+	// Load data of third party
+	$res=$object->fetch($id);
+	if ($object->id <= 0) dol_print_error($db,$object->error);
+}
+
+if ($object->id > 0)
+{
+	$title=$langs->trans("SupplierCard");
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+	$help_url='';
+	llxHeader('',$title, $help_url);
 
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	$head = societe_prepare_head($object);
 

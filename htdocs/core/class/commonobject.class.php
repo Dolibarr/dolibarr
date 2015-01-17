@@ -2191,7 +2191,6 @@ abstract class CommonObject
             $obj = $this->db->fetch_object($resql);
             if ($obj)
             {
-                $this->id       = $obj->rowid;
                 $this->canvas   = $obj->canvas;
                 return 1;
             }

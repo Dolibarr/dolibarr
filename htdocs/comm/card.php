@@ -85,7 +85,7 @@ $cancelbutton = GETPOST('cancel');
 
 if ($action == 'setcustomeraccountancycode')
 {
-	if (! $cancelbutton) 
+	if (! $cancelbutton)
 	{
 		$result=$object->fetch($id);
 		$object->code_compta=$_POST["customeraccountancycode"];
@@ -105,6 +105,7 @@ if ($action == 'setconditions' && $user->rights->societe->creer)
 	$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
+
 // mode de reglement
 if ($action == 'setmode' && $user->rights->societe->creer)
 {
@@ -112,16 +113,14 @@ if ($action == 'setmode' && $user->rights->societe->creer)
 	$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
+
 // assujetissement a la TVA
 if ($action == 'setassujtva' && $user->rights->societe->creer)
 {
 	$object->fetch($id);
 	$object->tva_assuj=$_POST['assujtva_value'];
-
-	// TODO move to DAO class
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE rowid='".$id."'";
-	$result = $db->query($sql);
-	if (! $result) dol_print_error($result);
+	$result=$object->update($object->id);
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 // set prospect level
@@ -133,7 +132,7 @@ if ($action == 'setprospectlevel' && $user->rights->societe->creer)
 	if ($result < 0) setEventMessage($object->error,'errors');
 }
 
-// Update communication level
+// update prospect level
 if ($action == 'cstc')
 {
 	$object->fetch($id);
@@ -142,10 +141,10 @@ if ($action == 'cstc')
 	if ($result < 0) setEventMessage($object->error,'errors');
 }
 
-// Update communication level
+// update outstandng limit
 if ($action == 'setOutstandingBill')
 {
-	if (!$cancelbutton) 
+	if (!$cancelbutton)
 	{
 		$object->fetch($id);
 		$object->outstanding_limit=GETPOST('OutstandingBill');
@@ -159,13 +158,23 @@ if ($action == 'setOutstandingBill')
  * View
  */
 
-llxHeader('',$langs->trans('CustomerCard'));
-
-
 $contactstatic = new Contact($db);
 $userstatic=new User($db);
 $form = new Form($db);
 $formcompany=new FormCompany($db);
+
+if ($id > 0 && empty($object->id))
+{
+	// Load data of third party
+	$res=$object->fetch($id);
+	if ($object->id <= 0) dol_print_error($db,$object->error);
+}
+
+$title=$langs->trans("CustomerCard");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$title,$help_url);
+
 
 
 if ($mode == 'search')
@@ -196,14 +205,6 @@ if ($mode == 'search')
 
 if ($id > 0)
 {
-	// Load data of third party
-	$object->fetch($id);
-	if ($object->id <= 0)
-	{
-		dol_print_error($db,$object->error);
-	}
-
-
 	$head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"),0,'company');
