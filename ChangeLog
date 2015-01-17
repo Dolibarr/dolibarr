@@ -7,6 +7,7 @@ English Dolibarr ChangeLog
 - Fix: amarok is a bugged theme making dolidroid failed. We swith to eldy automatically with dolidroid.
 - Fix: withdrawal create error if in the same month are deleted previus withdrawals.
 - Fix: [ bug #1801 ] FAC_FORCE_DATE_VALIDATION constant alters supplier invoice date given to numeration modules
+- Fix: [ bug #1784 ] « Message page de connexion » n'apparaît pas
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
