@@ -976,7 +976,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         // Displays meta
         print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
-		if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_HTML5)) print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";	// Needed for Responsive Web Design
+		if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";	// Needed for Responsive Web Design
         $favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
         print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
@@ -988,6 +988,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         $appli='Dolibarr';
         if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
+        if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) print '<title>'.dol_htmlentities($title).'</title>';
         if ($title) print '<title>'.dol_htmlentities($appli.' - '.$title).'</title>';
         else print "<title>".dol_htmlentities($appli)."</title>";
         print "\n";

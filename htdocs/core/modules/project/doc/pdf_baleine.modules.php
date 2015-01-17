@@ -92,7 +92,7 @@ class pdf_baleine extends ModelePDFProjects
 	 */
 	function write_file($object,$outputlangs)
 	{
-		global $user,$langs,$conf;
+		global $conf, $hookmanager, $langs, $user;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO

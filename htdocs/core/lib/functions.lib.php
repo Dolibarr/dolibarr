@@ -900,7 +900,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for local browser TZ usage
- *	@param	Tranlsate	$outputlangs	Object lang that contains language for text translation.
+ *	@param	Translate	$outputlangs	Object lang that contains language for text translation.
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
  * 	@return string      				Formated date or '' if time is null
  *

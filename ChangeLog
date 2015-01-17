@@ -10,6 +10,8 @@ For users:
 - Fix / Improve : [ bug #1747 ] Remove creation of batch 'Undefined'
 - Add Weighted average price as default price for buying price for margin calculation. Add option 
   MARGIN_PMP_AS_DEFAULT_BUY_PRICE to replace with first supplier price.
+- Introduce option MAIN_HTML_TITLE to start to control format of html title content.
+- Add extrafields on bank account cards.
 
 For translators:
 - Update language files.

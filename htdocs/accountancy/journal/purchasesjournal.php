@@ -241,7 +241,7 @@ if ($action == 'writebookkeeping') {
  * View
  */
 
-$companystatic = new Societe($db);
+$companystatic = new Fournisseur($db);
 
 // export csv
 if ($action == 'export_csv')
@@ -406,7 +406,6 @@ if ($action == 'export_csv')
 	$r = '';
 
 	$invoicestatic = new FactureFournisseur($db);
-	$companystatic = new Fournisseur($db);
 
 	foreach ( $tabfac as $key => $val ) {
 		$invoicestatic->id = $key;

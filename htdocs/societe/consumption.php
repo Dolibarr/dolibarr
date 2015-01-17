@@ -67,7 +67,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 }
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id");
-$type_element = GETPOST('type_element')?GETPOST('type_element'):$type_element;
+$type_element = GETPOST('type_element')?GETPOST('type_element'):'';
 
 
 $langs->load("companies");

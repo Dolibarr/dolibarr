@@ -3,6 +3,8 @@
 -- Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
+-- Copyright (C) 2014      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -74,6 +76,10 @@ create table llx_facture
   note_public			text,
   model_pdf				varchar(255),
   import_key			varchar(14),
-  extraparams			varchar(255)							-- for stock other parameters with json format
+  extraparams			varchar(255),							-- for stock other parameters with json format
+
+  situation_cycle_ref smallint UNSIGNED,  -- situation cycle reference
+  situation_counter   tinyint UNSIGNED,   -- situation counter
+  situation_final     boolean             -- is the situation final ?
 
 )ENGINE=innodb;
