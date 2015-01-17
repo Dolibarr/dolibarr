@@ -70,7 +70,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		print '<tr>';
 		print '<td class="nowrap">';
-		print $langs->trans("ActionsOwnedBy").' &nbsp; ';
+		print $langs->trans("ActionsToDoBy").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone">';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
 		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("Group").' &nbsp; ';

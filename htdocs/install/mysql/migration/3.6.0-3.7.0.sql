@@ -153,6 +153,9 @@ ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_da
 
 ALTER TABLE llx_actioncomm_resources CHANGE COLUMN transparent transparency smallint default 1;
 
+ALTER TABLE llx_actioncomm_resources DROP INDEX idx_actioncomm_resources_idx1;
+ALTER TABLE llx_actioncomm_resources ADD UNIQUE INDEX uk_actioncomm_resources(fk_actioncomm, element_type, fk_element);
+
 
 -- Localtaxes by thirds
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax1 varchar(10);
