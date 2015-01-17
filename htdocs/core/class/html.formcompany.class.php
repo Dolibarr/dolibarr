@@ -610,8 +610,6 @@ class FormCompany
                 }
 
 				print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
-				print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-				print '<td class="nobordernopadding">';
 				if ($obj->rowid == 0)
 				{
 					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="" '.$htmloption.' />';
@@ -621,9 +619,6 @@ class FormCompany
 					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
 				}
 				print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php','',$minLength);
-				print '</td>';
-				print '</tr>';
-				print '</table>';
 				print "\n";
 				return $socid;
 			}
