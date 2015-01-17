@@ -29,6 +29,7 @@ ActionsToDoBy=Ενέργειες που ανατέθηκαν σε
 ActionsDoneBy=Ενέργειες που ολοκληρώθηκαν από
 ActionsForUser=Γεγονότα για τον χρήστη
 ActionsForUsersGroup=Γεγονότα όλων των χρηστών της ομάδας
+ActionAssignedTo=Event assigned to
 AllMyActions= Όλες οι ενέργειες/εργασίες μου
 AllActions= Όλες οι ενέργειες/εργασίες
 ViewList=Εμφάνιση Λίστας
@@ -41,9 +42,10 @@ AutoActions= Αυτόματη συμπλήρωση ημερολογίου
 AgendaAutoActionDesc= Εδώ ορίζετε γεγονότα για το οποία θέλετε το  Dolibarr να δημιουργεί αυτόματα μια ενέργεια στην ατζέντα. Αν τίποτα δεν είναι τσεκαρισμένο (προεπιλογή), τότε, μόνο χειροκίνητες ενέργειες θα συμπεριληφθούν στην ατζέντα.
 AgendaSetupOtherDesc= Αυτή η σελίδα παρέχει επιλογές για να καταστεί δυνατή η εξαγωγή των δικών σας εκδηλώσεων Dolibarr σε ένα εξωτερικό ημερολόγιο (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Αυτή η σελίδα σας επιτρέπει να ρυθμίσετε εξωτερικά ημερολόγια.
-ActionsEvents= Γεγονότα για τα οποία θα δημιουργήσουν εγγραφή στο ημερολόγιο, αυτόματα
-PropalValidatedInDolibarr= Η πρόταση %s επικυρώθηκε
-InvoiceValidatedInDolibarr= Το τιμολόγιο %s επικυρώθηκε
+ActionsEvents=Γεγονότα για τα οποία θα δημιουργήσουν εγγραφή στο ημερολόγιο, αυτόματα
+PropalValidatedInDolibarr=Η πρόταση %s επικυρώθηκε
+InvoiceValidatedInDolibarr=Το τιμολόγιο %s επικυρώθηκε
+InvoiceValidatedInDolibarrFromPos=Το τιμολόγιο επικυρώθηκε από το  POS
 InvoiceBackToDraftInDolibarr=Τιμολόγιο %s θα επιστρέψει στην κατάσταση του σχεδίου
 InvoiceDeleteDolibarr=Τιμολόγιο %s διαγράφεται
 OrderValidatedInDolibarr= Η παραγγελία %s επικυρώθηκε
@@ -51,7 +53,6 @@ OrderApprovedInDolibarr=Παραγγελία %s εγκρίθηκε
 OrderRefusedInDolibarr=Παραγγελία %s απορριφθεί
 OrderBackToDraftInDolibarr=Παραγγελία %s θα επιστρέψει στην κατάσταση σχέδιο
 OrderCanceledInDolibarr=Παραγγελία %s ακυρώθηκε
-InterventionValidatedInDolibarr=Η παρέμβαση %s επικυρώθηκε
 ProposalSentByEMail=Η εμπορική πρόταση %s στάλθηκε με e-mail
 OrderSentByEMail=Η παραγγελία του πελάτη %s εστάλη με EMail
 InvoiceSentByEMail=Το τιμολόγιο του πελάτη %s εστάλη με EMail
@@ -59,8 +60,6 @@ SupplierOrderSentByEMail=Η παραγγελία προμηθευτή %s στά�
 SupplierInvoiceSentByEMail=Το τιμολόγιο προμηθευτή %s στάλθηκε με e-mail
 ShippingSentByEMail=Αποστολές %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
 ShippingValidated= Αποστολές %s επικυρωθεί
-InterventionSentByEMail=Παρέμβαση %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
-InterventionClassifiedBilled=Παρέμβαση %s ταξινόμηση ως τιμολογημένα
 NewCompanyToDolibarr= Το στοιχείο δημιουργήθηκε
 DateActionPlannedStart= Προγρ/σμένη ημερομηνία έναρξης
 DateActionPlannedEnd= Προγρ/σμένη ημερομηνία λήξης
@@ -70,9 +69,9 @@ DateActionStart= Ημερομηνία έναρξης
 DateActionEnd= Ημερομηνία λήξης
 AgendaUrlOptions1=Μπορείτε ακόμη να προσθέσετε τις ακόλουθες παραμέτρους για να φιλτράρετε τα αποτέλεσμα:
 AgendaUrlOptions2=<b>login=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που δημιουργήθηκαν και έγιναν από τον χρήστη <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που δημιουργήθηκαν από τον χρήστη<b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> να περιορίσει την παραγωγή ενεργειών που ανήκουν στον χρήστη <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που αφορούν τον χρήστη<b>%s</b>.
-AgendaUrlOptions5=<b>logind=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που έγιναν από τον χρήστη <b>%s</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> να περιορίσει την παραγωγή της σε ενέργειες που σχετίζονται με το έργο <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Εμφάνιση γενεθλίων των προσώπων επικοινωνίας
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των προσώπων επικοινωνίας
 Busy=Απασχολ.
@@ -89,5 +88,5 @@ ExtSiteUrlAgenda=URL για να αποκτήσετε πρόσβαση στο .i
 ExtSiteNoLabel=Χωρίς Περιγραφή
 WorkingTimeRange=Εύρος χρόνου εργασίας
 WorkingDaysRange=Εύρος ημερών εργασίας
-AddEvent=Προσθήκη ενέργειας
+AddEvent=Δημιουργία συμβάντος
 MyAvailability=Η διαθεσιμότητα μου

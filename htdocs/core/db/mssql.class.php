@@ -53,7 +53,6 @@ class DoliDBMssql extends DoliDB
 	 *	@param	    string	$pass		Mot de passe
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
-	 *	@return	    int					1 if OK, 0 if not
      */
 	function __construct($type, $host, $user, $pass, $name='', $port=0)
 	{

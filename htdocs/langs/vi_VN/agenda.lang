@@ -2,12 +2,12 @@
 IdAgenda=ID sự kiện
 Actions=Sự kiện
 ActionsArea=Khu vực sự kiện (hành động và nhiệm vụ)
-Agenda=Chương trình nghị sự
-Agendas=Chương trình nghị sự
+Agenda=Lịch làm việc
+Agendas=Lịch làm việc
 Calendar=Lịch
 Calendars=Lịch
 LocalAgenda=Lịch nội bộ
-ActionsOwnedBy=Event owned by
+ActionsOwnedBy=Tổ chức sự kiện thuộc sở hữu của
 AffectedTo=Giao cho
 DoneBy=Thực hiện bằng cách
 Event=Sự kiện
@@ -29,6 +29,7 @@ ActionsToDoBy=Sự kiện được giao
 ActionsDoneBy=Sự kiện được thực hiện bởi
 ActionsForUser=Sự kiện cho người sử dụng
 ActionsForUsersGroup=Sự kiện cho tất cả người dùng của nhóm
+ActionAssignedTo=Event assigned to
 AllMyActions= Tất cả các sự kiện của tôi / nhiệm vụ
 AllActions= Tất cả các sự kiện / nhiệm vụ
 ViewList=Danh sách xem
@@ -41,26 +42,24 @@ AutoActions= Tự động điền
 AgendaAutoActionDesc= Xác định đây sự kiện mà bạn muốn Dolibarr để tạo ra tự động một sự kiện trong chương trình nghị sự. Nếu không có gì được kiểm tra (theo mặc định), chỉ có hành động thủ công sẽ được đưa vào chương trình nghị sự.
 AgendaSetupOtherDesc= Trang này cung cấp tùy chọn để cho phép xuất khẩu các sự kiện Dolibarr của bạn thành một lịch bên ngoài (thunderbird, google lịch, ...)
 AgendaExtSitesDesc=Trang này cho phép khai báo các nguồn bên ngoài lịch để xem các sự kiện của họ vào chương trình nghị sự Dolibarr.
-ActionsEvents= Sự kiện mà Dolibarr sẽ tạo ra một hành động trong chương trình nghị sự tự động
-PropalValidatedInDolibarr= Đề nghị xác nhận% s
-InvoiceValidatedInDolibarr= Hoá đơn% s xác nhận
-InvoiceBackToDraftInDolibarr=Hoá đơn% s trở lại trạng thái soạn thảo
-InvoiceDeleteDolibarr=Hoá đơn% s bị xóa
-OrderValidatedInDolibarr= Thứ tự% s xác nhận
-OrderApprovedInDolibarr=Thứ tự% s đã được phê duyệt
-OrderRefusedInDolibarr=Thứ tự% s từ chối
-OrderBackToDraftInDolibarr=Thứ tự% s trở lại trạng thái soạn thảo
-OrderCanceledInDolibarr=Thứ tự% s hủy bỏ
-InterventionValidatedInDolibarr=Can thiệp% s xác nhận
-ProposalSentByEMail=Đề nghị thương mại% s gửi bằng thư điện tử
-OrderSentByEMail=Đơn đặt hàng% s gửi Thư điện tử
-InvoiceSentByEMail=Hóa đơn của khách hàng% s gửi Thư điện tử
-SupplierOrderSentByEMail=Để nhà cung cấp% s gửi Thư điện tử
-SupplierInvoiceSentByEMail=Nhà cung cấp hóa đơn% s gửi bằng thư điện tử
-ShippingSentByEMail=Vận chuyển% s gửi thư điện tử
-ShippingValidated= Vận chuyển% s xác nhận
-InterventionSentByEMail=Can thiệp% s gửi thư điện tử
-InterventionClassifiedBilled=Can thiệp% s phân loại như Quảng cáo tại
+ActionsEvents=Sự kiện mà Dolibarr sẽ tạo ra một hành động trong chương trình nghị sự tự động
+PropalValidatedInDolibarr=Đề nghị xác nhận %s
+InvoiceValidatedInDolibarr=Hoá đơn %s xác nhận
+InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
+InvoiceBackToDraftInDolibarr=Hoá đơn %s trở lại trạng thái soạn thảo
+InvoiceDeleteDolibarr=Hoá đơn %s bị xóa
+OrderValidatedInDolibarr= Thứ tự %s xác nhận
+OrderApprovedInDolibarr=Thứ tự %s đã được phê duyệt
+OrderRefusedInDolibarr=Thứ tự %s từ chối
+OrderBackToDraftInDolibarr=Thứ tự %s trở lại trạng thái soạn thảo
+OrderCanceledInDolibarr=Thứ tự %s hủy bỏ
+ProposalSentByEMail=Đề nghị thương mại%s gửi bằng thư điện tử
+OrderSentByEMail=Đơn đặt hàng %s gửi Thư điện tử
+InvoiceSentByEMail=Hóa đơn của khách hàng %s gửi Thư điện tử
+SupplierOrderSentByEMail=Để nhà cung cấp %s gửi Thư điện tử
+SupplierInvoiceSentByEMail=Nhà cung cấp hóa đơn %s gửi bằng thư điện tử
+ShippingSentByEMail=Vận chuyển %s gửi thư điện tử
+ShippingValidated= Vận chuyển %s xác nhận
 NewCompanyToDolibarr= Bên thứ ba tạo ra
 DateActionPlannedStart= Ngày bắt đầu lên kế hoạch
 DateActionPlannedEnd= Ngày kết thúc kế hoạch
@@ -69,10 +68,10 @@ DateActionDoneEnd= Bất ngày cuối
 DateActionStart= Ngày bắt đầu
 DateActionEnd= Ngày kết thúc
 AgendaUrlOptions1=Bạn cũng có thể thêm các thông số sau đây để lọc đầu ra:
-AgendaUrlOptions2=<b>login =% s</b> ​​để hạn chế sản lượng để hành động được tạo ra bởi, phân định hoặc thực hiện bằng cách sử <b>dụng% s.</b>
-AgendaUrlOptions3=<b>Logina =% s</b> ​​để hạn chế sản lượng để hành động được tạo ra bởi người sử <b>dụng% s.</b>
-AgendaUrlOptions4=<b>logint =% s</b> ​​để hạn chế sản lượng để hành động được gán cho người <b>dùng% s.</b>
-AgendaUrlOptions5=<b>logind =% s</b> ​​để hạn chế sản lượng để hành động thực hiện bằng cách sử <b>dụng% s.</b>
+AgendaUrlOptions2=<b>login =%s</b> ​​để hạn chế sản lượng để hành động được tạo ra bởi, phân định hoặc thực hiện bằng cách sử dụng <b>%s</b>.
+AgendaUrlOptions3=<b>Logina =%s</b> ​​để hạn chế sản lượng để hành động thuộc sở hữu của một người dùng <b>%s</b>.
+AgendaUrlOptions4=<b>logint =%s</b> ​​để hạn chế sản lượng để hành động được gán cho người dùng <b>%s</b>.
+AgendaUrlOptionsProject=<b>dự án = PROJECT_ID</b> để hạn chế sản lượng để hành động liên quan đến dự án <b>PROJECT_ID.</b>
 AgendaShowBirthdayEvents=Hiển thị địa chỉ liên lạc sinh nhật
 AgendaHideBirthdayEvents=Giấu địa chỉ liên lạc sinh nhật
 Busy=Bận
@@ -84,10 +83,10 @@ ExportCal=Lịch xuất khẩu
 ExtSites=Nhập lịch bên ngoài
 ExtSitesEnableThisTool=Hiển thị lịch bên ngoài (được định nghĩa vào thiết lập toàn cầu) vào chương trình nghị sự. Không ảnh hưởng đến lịch bên ngoài được xác định bởi người sử dụng.
 ExtSitesNbOfAgenda=Số lịch
-AgendaExtNb=Lịch nb% s
+AgendaExtNb=Lịch nb %s
 ExtSiteUrlAgenda=URL để truy cập tập tin .ical
 ExtSiteNoLabel=Không có Mô tả
 WorkingTimeRange=Phạm vi thời gian làm việc
 WorkingDaysRange=Ngày làm việc trong khoảng
-AddEvent=Add event
-MyAvailability=My availability
+AddEvent=Tạo sự kiện
+MyAvailability=Sẵn có của tôi

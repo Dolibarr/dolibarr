@@ -48,7 +48,6 @@ ConfirmDeleteCP=¿Está seguro de querer eliminar esta petición de días libres
 ErrorCantDeleteCP=Error, no tiene permisos para eliminar esta petición de días libres.
 CantCreateCP=No tiene permisos para realizar peticiones de días libres.
 InvalidValidatorCP=Debe indicar un validador para su petición de días libres.
-UpdateButtonCP=Actualizar
 CantUpdate=No puede actualizar esta petición de días libres.
 NoDateDebut=Debe indicar una fecha de inicio.
 NoDateFin=Debe indicar una fecha de fin.

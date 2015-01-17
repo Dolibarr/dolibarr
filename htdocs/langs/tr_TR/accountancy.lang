@@ -17,8 +17,8 @@ Modelcsv=Dışaaktarım modeli
 Selectmodelcsv=Bir dışaaktarım modeli seç
 Modelcsv_normal=Klasik dışaaktarım
 Modelcsv_CEGID=CEGID Uzmanına yönelik dışaaktarım
-BackToChartofaccounts=Hesap planı geliri
-Back=Gelir
+BackToChartofaccounts=Hesap planı cirosu
+Back=Ciro
 
 Definechartofaccounts=Hesap planı tanımla
 Selectchartofaccounts=Hesap planı seç
@@ -30,8 +30,8 @@ ToDispatch=Gönderilecek
 Dispatched=Gönderilmiş
 
 CustomersVentilation=Müşteri analizi
-SuppliersVentilation=Tedarikçi analizi
-TradeMargin=Ticaret marjı
+SuppliersVentilation=Tedarikç analizi
+TradeMargin=Ticaret oranı
 Reports=Raporlar
 ByCustomerInvoice=Müşteri faturalarına göre
 ByMonth=Aya göre
@@ -46,7 +46,7 @@ Bookkeeping=Büyük Defter
 AccountBalanceByMonth=Aylık hesap bakiyesi
 
 AccountingVentilation=Analiz muhasebesi
-AccountingVentilationSupplier=Teadrikçi hesabı analizi
+AccountingVentilationSupplier=Tedarikçi hesabı analizi
 AccountingVentilationCustomer=Müşteri hesabı analizi
 Line=Satır
 
@@ -68,9 +68,9 @@ NotVentilatedinAccount=Muhasebe hesabında analiz edilmedi.
 
 ACCOUNTING_SEPARATORCSV=CSV Ayırıcı
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Bir sayfada gösterilecek analiz edilen öğe sayısı (önerilen ençok:50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO="Analizlenecek" analiz sayfalarının sıralamasını son öğelerden başlat
-ACCOUNTING_LIST_SORT_VENTILATION_DONE="Analizlenen" analiz sayfalarının sıralamasını son öğelerden başlat
+ACCOUNTING_LIMIT_LIST_VENTILATION=Analiz syfasında gösterilecek öğe sayısı (önerilen ençok:50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Analiz sayfalarında "Analiz edileceklerin" sıralandırılmasını en son öğelerden göre başlatın
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Analiz sayfalarında "Analiz edilmişlerin" sıralandırılmasını en son öğelerden göre başlatın
 
 AccountLength=Dolibarr'da gösterilen muhasebe hesapları uzunluğu
 AccountLengthDesc=Boşlukların sıfır figürü ile değiştirilmesiyle muhasebe hesap uzunluğunun uydurulmasını sağlayan işlevdir. Bu işlev yalnızca görüntüyü değiştirir, Dolibarr'da kayıtlı muhasebe hesaplarını değiştirmez. Dışaaktarma için bu fonksiyonun belirli yazılımla uyumlu olması gerekir.
@@ -111,7 +111,7 @@ PurchasesJournal=Satınalma günlüğü
 DescSellsJournal=Satış günlüğü
 DescPurchasesJournal=Satınalma günlüğü
 BankJournal=Banka günlüğü
-DescBankJournal=Nakitten dışında her türlü ödemeyi içeren banka günlüğü
+DescBankJournal=Nakit dışında her türlü ödemeyi içeren banka günlüğü
 CashJournal=Kasa günlüğü
 DescCashJournal=Nakit ödeme türünü içeren kasa günlüğü
 
@@ -140,14 +140,14 @@ Active=Hesap özeti
 
 NewFiscalYear=Yeni mali yıl
 
-DescVentilCustomer=Burada müşteri faturalarınızın yıllık hesap analizine bakın
+DescVentilCustomer=Müşteri faturalarınızın yıllık hesap analizi için buraya danışın
 TotalVente=Toplam ciro HT
 TotalMarge=Toplam satışlar oranı
 DescVentilDoneCustomer=Burada müşteri faturaları satırlarına ve onların muhasebe hesaplarının listesine bakın.
 DescVentilTodoCustomer=Bir muhasebe hesabıyla müşteri faturanızın kalemlerini analiz edin
 ChangeAccount=Muhasebe hesabını, hesap tarafından seçilen satırlar için değiştirin:
 Vide=-
-DescVentilSupplier=Burada tedarikçi faturalarınızın yıllık hesap analizine bakın
+DescVentilSupplier=Tedarikçi faturalarınızın yıllık hesap analizi için buraya danışın
 DescVentilTodoSupplier=Bir muhasebe hesabıyla tedarikçi faturanızın kalemlerini analiz edin
 DescVentilDoneSupplier=Burada tedarikçi faturaları ve muhasebe hesapları satırları listesine başvurun
 
@@ -155,4 +155,4 @@ ValidateHistory=Otomatikman doğrula
 
 ErrorAccountancyCodeIsAlreadyUse=Hata, kullanıldığı için bu muhasebe hesabını silemezsiniz
 
-FicheVentilation=Havalandırma kartı
+FicheVentilation=Analiz kartı

@@ -29,6 +29,7 @@ ActionsToDoBy=イベントへの影響を受けた
 ActionsDoneBy=によって行われたイベント
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= すべての私のイベント/タスク
 AllActions= すべてのイベント/タスク
 ViewList=リストビュー
@@ -41,9 +42,10 @@ AutoActions= 議題の自動充填
 AgendaAutoActionDesc= ここではDolibarrが自動的に議題でイベントを作成するイベントを定義します。何も（デフォルトで）チェックされていない場合のみ、手動アクションが議題に含まれています。
 AgendaSetupOtherDesc= このページでは、外部のカレンダーにあなたのDolibarrイベントのエクスポートを許可するオプションが用意されています（サンダーバード、Googleカレンダー、...）
 AgendaExtSitesDesc=このページでは、Dolibarrの議題にそれらのイベントを表示するにはカレンダーの外部ソースを宣言することができます。
-ActionsEvents= Dolibarrが自動的に議題でアクションを作成する対象のイベント
-PropalValidatedInDolibarr= 提案%sは、検証
-InvoiceValidatedInDolibarr= 請求書%sは、検証
+ActionsEvents=Dolibarrが自動的に議題でアクションを作成する対象のイベント
+PropalValidatedInDolibarr=提案%sは、検証
+InvoiceValidatedInDolibarr=請求書%sは、検証
+InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=請求書%sはドラフトの状態に戻って
 InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= 注文%sは、検証
@@ -51,7 +53,6 @@ OrderApprovedInDolibarr=注文%sは、承認された
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=注文%sは、ドラフトの状態に戻って
 OrderCanceledInDolibarr=ご注文はキャンセル%s
-InterventionValidatedInDolibarr=介入%sは、検証
 ProposalSentByEMail=電子メールで送信商業提案%s
 OrderSentByEMail=電子メールで送信、顧客の注文%s
 InvoiceSentByEMail=電子メールで送信顧客の請求書%s
@@ -59,8 +60,6 @@ SupplierOrderSentByEMail=電子メールで送信サプライヤの注文%s
 SupplierInvoiceSentByEMail=電子メールで送信サプライヤの請求書%s
 ShippingSentByEMail=電子メールで送信出荷%s
 ShippingValidated= Shipping %s validated
-InterventionSentByEMail=電子メールで送信介入%s
-InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= 第三者が作成した
 DateActionPlannedStart= 計画開始日
 DateActionPlannedEnd= 計画終了日
@@ -70,9 +69,9 @@ DateActionStart= 開始日
 DateActionEnd= 終了日
 AgendaUrlOptions1=また、出力をフィルタリングするには、次のパラメータを追加することができます。
 AgendaUrlOptions2=<b>ログインは= %s</b>に影響を受けた、またはユーザー<b>%s</b>によって行われ、作成されたアクションに出力を制限する。
-AgendaUrlOptions3=ユーザー<b>%s</b>によって作成されたアクションに出力を制限loginA <b>に= %s。</b>
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=ユーザー<b>%s</b>に影響を受けたアクションに出力を制限する<b>logint = %s。</b>
-AgendaUrlOptions5=ユーザー<b>%s</b>によって行われたアクションへの出力を制限する<b>logind = %s。</b>
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=誕生日の連絡先を表示する
 AgendaHideBirthdayEvents=誕生日の接点を隠す
 Busy=Busy
@@ -89,5 +88,5 @@ ExtSiteUrlAgenda=。iCalファイルにアクセスするためのURL
 ExtSiteNoLabel=全く説明がありません
 WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
-AddEvent=Add event
+AddEvent=Create event
 MyAvailability=My availability

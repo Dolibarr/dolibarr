@@ -84,9 +84,26 @@ if ($id > 0 || ! empty($ref))
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('expeditioncard','globalcard'));
 
+
 /*
  * Actions
  */
+
+$warehousecanbeselectedlater=1;
+if (($action == 'create') || ($action == 'add'))
+{
+	if (! empty($conf->productbatch->enabled))
+	{
+		if (! (GETPOST('entrepot_id','int') > 0))
+		{
+			$langs->load("errors");
+			setEventMessage($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
+			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$id);
+			exit;
+		}
+	}
+}
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -262,10 +279,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
     			$outputlangs->setDefaultLang($newlang);
     		}
     		$model=$object->modelpdf;
-    		if (empty($model)) {
-    			$tmp=getListOfModels($db, 'shipping'); $keys=array_keys($tmp); $model=$keys[0];
-    		}
     		$ret = $object->fetch($id); // Reload to get new records
+
     		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		if ($result < 0) dol_print_error($db,$result);
     	}
@@ -593,7 +608,7 @@ if ($action == 'create')
     print_fiche_titre($langs->trans("CreateASending"));
     if (! $origin)
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorBadParameters").'</div>';
+        setEventMessage($langs->trans("ErrorBadParameters"),'errors');
     }
 
     dol_htmloutput_mesg($mesg);
@@ -664,7 +679,8 @@ if ($action == 'create')
             print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
             print '<td colspan="3">';
             //print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
-            print $form->select_date($object->date_livraison?$object->date_livraison:-1,'date_delivery',1,1);
+            $date_delivery = ($date_delivery?$date_delivery:$object->date_livraison); // $date_delivery comes from GETPOST
+            print $form->select_date($date_delivery?$date_delivery:-1,'date_delivery',1,1);
             print "</td>\n";
             print '</tr>';
 
@@ -771,10 +787,13 @@ if ($action == 'create')
                 print '</td>';
                 if (! empty($conf->stock->enabled))
                 {
-					if (empty($conf->productbatch->enabled)) {
-                    print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Stock").'</td>';
-					} else {
-						print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' / '.$langs->trans("Stock").'</td>';
+					if (empty($conf->productbatch->enabled))
+					{
+                    	print '<td align="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
+					}
+					else
+					{
+						print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' ('.$langs->trans("Stock").')</td>';
 					}
                 }
                 print "</tr>\n";
@@ -828,7 +847,7 @@ if ($action == 'create')
                     print '</td>';
                 }
                 else
-                {
+				{
                     print "<td>";
                     if ($type==1) $text = img_object($langs->trans('Service'),'service');
                     else $text = img_object($langs->trans('Product'),'product');
@@ -861,17 +880,19 @@ if ($action == 'create')
                 $quantityAsked = $line->qty;
                 $quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 
+                $warehouse_id = GETPOST('entrepot_id','int');
+
                 $defaultqty=0;
-                if (GETPOST('entrepot_id','int') > 0)
+                if ($warehouse_id > 0)
                 {
                     //var_dump($product);
-                    $stock = $product->stock_warehouse[GETPOST('entrepot_id','int')]->real;
+                    $stock = $product->stock_warehouse[$warehouse_id]->real;
                     $stock+=0;  // Convertit en numerique
                     $defaultqty=min($quantityToBeDelivered, $stock);
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-                if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_object($product->stock_warehouse[GETPOST('entrepot_id','int')])))
+                if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() and is_object($product->stock_warehouse[$warehouse_id])))
 				{
 	                // Quantity to send
 	                print '<td align="center">';
@@ -892,14 +913,14 @@ if ($action == 'create')
 	                        // Show warehouse combo list
 	                    	$ent = "entl".$indiceAsked;
 	                    	$idl = "idl".$indiceAsked;
-	                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+	                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):$warehouse_id;
 	                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
-	                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == GETPOST('entrepot_id','int'))
+	                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id)
 	                        {
 	                            //print $stock.' '.$quantityToBeDelivered;
 	                            if ($stock < $quantityToBeDelivered)
 	                            {
-	                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for entrepot_id but we may have change warehouse
+	                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for this $warehouse_id but you can change warehouse
 	                            }
 	                        }
 	                    }
@@ -934,11 +955,14 @@ if ($action == 'create')
 							}
 						}
 					}
-				} else {
+				}
+				else
+				{
 					print '<td></td><td></td></tr>';
 					$subj=0;
 					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-					foreach ($product->stock_warehouse[GETPOST('entrepot_id','int')]->detail_batch as $dbatch) {
+					foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch)
+					{
 						//var_dump($dbatch);
 						$substock=$dbatch->qty +0 ;
 						print '<tr><td colspan="3" ></td><td align="center">';
@@ -946,8 +970,13 @@ if ($action == 'create')
 						print '</td>';
 
 						print '<td align="left">';
+
+						$staticwarehouse=new Entrepot($db);
+						$staticwarehouse->fetch($warehouse_id);
+						print $staticwarehouse->getNomUrl(0).' / ';
+
 						print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
-						print $langs->trans("DetailBatchFormat", dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->batch, $dbatch->qty);
+						print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
 						if ($defaultqty<=0) {
 							$defaultqty=0;
 						} else {
@@ -962,7 +991,7 @@ if ($action == 'create')
 
             print "</table>";
 
-            print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+            print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
             print '</form>';
 
@@ -1451,12 +1480,14 @@ else if ($id || $ref)
 			}
 
 			// Batch number managment
-			if (! empty($conf->productbatch->enabled)) {
-				if (isset($lines[$i]->detail_batch) ) {
-					print '<td align="center">';
+			if (! empty($conf->productbatch->enabled))
+			{
+				if (isset($lines[$i]->detail_batch))
+				{
+					print '<td>';
 					$detail = '';
 					foreach ($lines[$i]->detail_batch as $dbatch) {
-						$detail.= $langs->trans("DetailBatchFormat",dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->batch,$dbatch->dluo_qty).'<br/>';
+						$detail.= $langs->trans("DetailBatchFormat",$dbatch->batch,dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->dluo_qty).'<br/>';
 					}
 					print $form->textwithtooltip($langs->trans("DetailBatchNumber"),$detail);
 					print '</td>';

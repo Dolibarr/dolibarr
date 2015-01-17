@@ -29,6 +29,7 @@ ActionsToDoBy=Zdarzenia przypisane do
 ActionsDoneBy=Zdarzenia wykonane przez
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Wszystkie moje zdarzenia/zadania
 AllActions= Wszystkie zdarzenia/zadania
 ViewList=Widok listy
@@ -41,9 +42,10 @@ AutoActions= Automatyczne wypełnianie
 AgendaAutoActionDesc= Określ zdarzenia, dla których Dolibarr ma tworzyć automatycznie wpisy w agendzie. Jeżeli nie jest zaznaczone (domyślnie), w agendzie zostaną utworzone wpisy wyłącznie dla działań manualnych.
 AgendaSetupOtherDesc= Ta strona zawiera opcje, pozwalające eksportować Twoje zdarzenia Dolibarr do zewnętrznego kalendarza (Thunderbird, Google Calendar, ...)
 AgendaExtSitesDesc=Ta strona pozwala zdefiniować zewnętrzne źródła kalendarzy, aby zobaczyć uwzględnić zapisane tam zdarzenia w agendzie Dolibarr.
-ActionsEvents= Zdarzenia, dla których Dolibarr stworzy automatycznie zadania w agendzie
-PropalValidatedInDolibarr= Zatwierdzenie oferty %s
-InvoiceValidatedInDolibarr= Zatwierdzenie faktury %s
+ActionsEvents=Zdarzenia, dla których Dolibarr stworzy automatycznie zadania w agendzie
+PropalValidatedInDolibarr=Zatwierdzenie oferty %s
+InvoiceValidatedInDolibarr=Zatwierdzenie faktury %s
+InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Zmiana statusu faktura %s na draft
 InvoiceDeleteDolibarr=Usunięcie faktury %s
 OrderValidatedInDolibarr= Zatwierdzenie zamówienia %s
@@ -51,7 +53,6 @@ OrderApprovedInDolibarr=Akceptacja zamówienia %s
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Zmiana statusu zamówienia %s na draft
 OrderCanceledInDolibarr=Anulowanie zamówienia %s
-InterventionValidatedInDolibarr=Zatwierdzenie Interwencji %s
 ProposalSentByEMail=Oferta %s wysłana e-mailem
 OrderSentByEMail=Zamówienie %s Klienta wysłane e-mailem
 InvoiceSentByEMail=Faktura %s wysłana e-mailem
@@ -59,8 +60,6 @@ SupplierOrderSentByEMail=Zamówienie %s wysłane do dostawcy e-mailem
 SupplierInvoiceSentByEMail=Faktura %s wysłana do dostawcy e-mailem
 ShippingSentByEMail=Informacje o dostawie %s wysłane e-mailem
 ShippingValidated= Shipping %s validated
-InterventionSentByEMail=%s interwencyjne wysłane pocztą
-InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Stworzono kontrahenta
 DateActionPlannedStart= Planowana data rozpoczęcia
 DateActionPlannedEnd= Planowana data zakończenia
@@ -70,9 +69,9 @@ DateActionStart= Data rozpoczęcia
 DateActionEnd= Data zakończenia
 AgendaUrlOptions1=Możesz także dodać następujące parametry do filtr wyjściowy:
 AgendaUrlOptions2=<b>login= %s,</b> aby ograniczyć wyjście do działań stworzonych lub przypisanych do <b>użytkownika %s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina= %s,</b> aby ograniczyć wyjście do działań stworzonych przez użytkownika <b %s.</b>
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s,</b> aby ograniczyć wyjścia do działań przypisanych do użytkownika <b>%s.</b>
-AgendaUrlOptions5=<b>logind=%s,</b> aby ograniczyć wyjście do działań wykonanych przez użytkownika <b>%s.</b>
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Pokaż urodziny kontaktów
 AgendaHideBirthdayEvents=Ukryj urodzin kontaktów
 Busy=Zajęty
@@ -89,5 +88,5 @@ ExtSiteUrlAgenda=URL dostępu. Plik iCal
 ExtSiteNoLabel=Brak opisu
 WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
-AddEvent=Add event
+AddEvent=Create event
 MyAvailability=My availability

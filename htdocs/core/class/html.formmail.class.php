@@ -651,7 +651,7 @@ class FormMail
 
         	if ($this->withform == 1 || $this->withform == -1)
         	{
-        		$out.= '<tr><td align="center" colspan="2"><center>';
+        		$out.= '<tr><td align="center" colspan="2"><div class="center">';
         		$out.= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
         		// Add a javascript test to avoid to forget to submit file before sending email
         		if ($this->withfile == 2 && $conf->use_javascript_ajax)
@@ -664,7 +664,7 @@ class FormMail
         			$out.= ' &nbsp; &nbsp; ';
         			$out.= '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
         		}
-        		$out.= '</center></td></tr>'."\n";
+        		$out.= '</div></td></tr>'."\n";
         	}
 
         	$out.= '</table>'."\n";

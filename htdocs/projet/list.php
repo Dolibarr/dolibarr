@@ -27,6 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load('projects');
 
@@ -61,8 +62,18 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
+$search_year=GETPOST("search_year");
 $search_all=GETPOST("search_all");
 
+// Purge criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_ref="";
+	$search_label="";
+	$search_societe="";
+	$search_year="";
+	$search_all=0;
+}
 
 /*
  * View
@@ -97,6 +108,10 @@ if ($search_label)
 if ($search_societe)
 {
 	$sql .= natural_search('s.nom', $search_societe);
+}
+if ($search_year) {
+	$sql .= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day($search_year,12,false)).")";
+	$sql .= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day($search_year,1,false)).")";
 }
 if ($search_all)
 {
@@ -147,8 +162,10 @@ if ($resql)
 	print '<input type="text" class="flat" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
-	print "</tr>\n";
+	print '<td class="liste_titre nowrap" align="right">';
+    print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print '</td>';
 
 	while ($i < $num)
 	{

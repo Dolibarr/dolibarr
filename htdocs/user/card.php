@@ -37,7 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-//if (! empty($conf->agenda->enabled))require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
@@ -1010,7 +1009,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
  	print "</table>\n";
 
-    print '<center><br><input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit"></center>';
+    print '<br><div align="center"><input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit"></div>';
 
     print "</form>";
 }
@@ -2127,11 +2126,11 @@ else
 
             print '</table>';
 
-            print '<br><center>';
+            print '<br><div align="center">';
             print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';
-            print ' &nbsp; ';
+            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
-            print '</center>';
+            print '</div>';
 
             print '</form>';
 

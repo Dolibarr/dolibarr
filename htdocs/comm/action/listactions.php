@@ -100,7 +100,7 @@ if (! $user->rights->agenda->allactions->read || $filter=='mine')	// If no permi
 }
 
 // Purge search criteria
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $datestart='';
     $dateend='';
@@ -136,6 +136,17 @@ $form=new Form($db);
 
 $nav='';
 $nav.=' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
+if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav.='<input type="hidden" name="status" value="'.$status.'">';
+if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
+if ($filtera) $nav.='<input type="hidden" name="filtera" value="'.$filtera.'">';
+if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+if ($filterd) $nav.='<input type="hidden" name="filterd" value="'.$filterd.'">';
+if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
+if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
+if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
+if ($type)   $nav.='<input type="hidden" name="type" value="'.$type.'">';
+if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
 $nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav.='</form>';
@@ -159,6 +170,7 @@ if ($socid) $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
 if ($pid) $param.="&projectid=".$pid;
 if ($type) $param.="&type=".$type;
+if ($usergroup) $param.="&usergroup=".$usergroup;
 
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
@@ -180,7 +192,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
 if ($usergroup > 0) $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ugu";
 $sql.= " WHERE c.id = a.fk_action";
 $sql.= ' AND a.fk_user_author = u.rowid';
-$sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';    // To limit to entity
+$sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
 if ($actioncode) $sql.=" AND c.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
@@ -203,11 +215,13 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0 || $usergroup > 0)
 	if ($usergroup > 0) $sql.= ($filtera>0||$filtert>0||$filterd>0?" OR ":"")." ugu.fk_usergroup = ".$usergroup;
     $sql.= ")";
 }
-if ($dateselect > 0) $sql.= " AND a.datep2 >= '".$db->idate($dateselect)."' AND a.datep <= '".$db->idate($dateselect+3600*24-1)."'";
+// The second or of next test is to take event with no end date (we suppose duration is 1 hour in such case)
+if ($dateselect > 0) $sql.= " AND ((a.datep2 >= '".$db->idate($dateselect)."' AND a.datep <= '".$db->idate($dateselect+3600*24-1)."') OR (a.datep2 IS NULL AND a.datep > '".$db->idate($dateselect-3600)."' AND a.datep <= '".$db->idate($dateselect+3600*24-1)."'))";
 if ($datestart > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($datestart)."' AND '".$db->idate($datestart+3600*24-1)."'";
 if ($dateend > 0) $sql.= " AND a.datep2 BETWEEN '".$db->idate($dateend)."' AND '".$db->idate($dateend+3600*24-1)."'";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
+
 //print $sql;
 
 dol_syslog("comm/action/listactions.php", LOG_DEBUG);

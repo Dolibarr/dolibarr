@@ -47,6 +47,11 @@ class Propal extends CommonObject
     public $fk_element='fk_propal';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
+
     var $id;
 
     var $socid;		// Id client
@@ -416,7 +421,15 @@ class Propal extends CommonObject
 
 
 			// infos marge
-			$this->line->fk_fournprice = $fk_fournprice;
+			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			    // by external module, take lowest buying price
+			    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			    $productFournisseur = new ProductFournisseur($this->db);
+			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
+			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
+			} else {
+			    $this->line->fk_fournprice = $fk_fournprice;
+			}
 			$this->line->pa_ht = $pa_ht;
 
             // Mise en option de la ligne
@@ -567,7 +580,15 @@ class Propal extends CommonObject
             $this->line->skip_update_total	= $skip_update_total;
 
             // infos marge
-            $this->line->fk_fournprice = $fk_fournprice;
+            if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+                // by external module, take lowest buying price
+                include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			    $productFournisseur = new ProductFournisseur($this->db);
+			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
+			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
+			} else {
+			    $this->line->fk_fournprice = $fk_fournprice;
+			}
             $this->line->pa_ht = $pa_ht;
 
             $this->line->date_start=$date_start;
@@ -651,7 +672,7 @@ class Propal extends CommonObject
      * 	@param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      *  @return     int     			<0 if KO, >=0 if OK
      */
-    function create($user='', $notrigger=0)
+    function create($user, $notrigger=0)
     {
         global $langs,$conf,$mysoc,$hookmanager;
         $error=0;
@@ -846,6 +867,8 @@ class Propal extends CommonObject
                     $resql=$this->update_price(1);
                     if ($resql)
                     {
+                    	$action='update';
+
                     	// Actions on extra fields (by external module or standard code)
                     	// FIXME le hook fait double emploi avec le trigger !!
                     	$hookmanager->initHooks(array('propaldao'));
@@ -917,7 +940,7 @@ class Propal extends CommonObject
     {
         $this->products=$this->lines;
 
-        return $this->create();
+        return $this->create($user);
     }
 
     /**
@@ -1264,6 +1287,8 @@ class Propal extends CommonObject
      */
     function update_extrafields($user)
     {
+    	$action='update';
+
     	// Actions on extra fields (by external module or standard code)
     	// FIXME le hook fait double emploi avec le trigger !!
     	$hookmanager->initHooks(array('propaldao'));
@@ -1967,16 +1992,19 @@ class Propal extends CommonObject
                 {
                     $linkedInvoices[] = $objectid[$i];
                 }
-                // Cas des factures liees via la commande
+                // Cas des factures liees par un autre objet (ex: commande)
                 else
-                {
+				{
                     $this->fetchObjectLinked($objectid[$i],$objecttype);
                     foreach($this->linkedObjectsIds as $subobjecttype => $subobjectid)
                     {
                         $numj=count($subobjectid);
                         for ($j=0;$j<$numj;$j++)
                         {
-                            $linkedInvoices[] = $subobjectid[$j];
+                        	if ($subobjecttype == 'facture')
+                        	{
+                            	$linkedInvoices[] = $subobjectid[$j];
+                        	}
                         }
                     }
                 }
@@ -2118,7 +2146,7 @@ class Propal extends CommonObject
 
                     if (! $error)
                     {
-                        dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
+                        dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
                         $this->db->commit();
                         return 1;
                     }
@@ -2601,7 +2629,7 @@ class Propal extends CommonObject
         $picto='propal';
         $label=$langs->trans("ShowPropal").': '.$this->ref;
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.$this->ref.$lienfin;
         return $result;
@@ -2879,7 +2907,7 @@ class PropaleLigne  extends CommonObject
 
         $error=0;
 
-        dol_syslog("PropaleLigne::insert rang=".$this->rang);
+        dol_syslog(get_class($this)."::insert rang=".$this->rang);
 
         // Clean parameters
         if (empty($this->tva_tx)) $this->tva_tx=0;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  *
@@ -153,7 +153,7 @@ print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEME
 print '</td></tr>';
 
 // ICS
-print '<tr class="impair"><td>'.$langs->trans("ICS").'</td>';
+print '<tr class="pair"><td>'.$langs->trans("ICS").'</td>';
 print '<td align="left">';
 print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="9" ></td>';
 print '</td></tr>';
@@ -161,7 +161,7 @@ print '</td></tr>';
 print '</table>';
 print '<br>';
 
-print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
 print '</form>';
 

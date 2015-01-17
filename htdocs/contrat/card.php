@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Ferran Marcet		  	<fmarcet@2byte.es>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,7 +274,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	                {
 	                    $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
-						if ($product_type == 1) { //only services	// TODO Exclude also deee
+						if ($product_type == 1 || (! empty($conf->global->CONTRACT_SUPPORT_PRODUCTS) && in_array($product_type, array(0,1)))) { 	// TODO Exclude also deee
 							// service prédéfini
 							if ($lines[$i]->fk_product > 0)
 							{
@@ -536,10 +537,10 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model=$object->modelpdf;
-				if (empty($model)) { $tmp=getListOfModels($db, 'contract'); $keys=array_keys($tmp); $model=$keys[0]; }
+
 				$ret = $object->fetch($id); // Reload to get new records
-				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
 			unset($_POST ['prod_entry_mode']);
@@ -718,19 +719,25 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		setEventMessage($object->error,'errors');
 	}
 } elseif ($action=='setref_supplier') {
-	$result = $object->fetch($id);
-	if ($result < 0) {
-		setEventMessage($object->errors,'errors');
-	}
-	$object->ref_supplier=GETPOST('ref_supplier','alpha');
 
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessage($object->errors,'errors');
-		$action='editref_supplier';
-	} else {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
+	$cancelbutton = GETPOST('cancel');
+
+	if (!$cancelbutton) {
+
+		$result = $object->fetch($id);
+		if ($result < 0) {
+			setEventMessage($object->errors, 'errors');
+		}
+		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
+
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessage($object->errors, 'errors');
+			$action = 'editref_supplier';
+		} else {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
 	}
 } elseif ($action=='setref') {
 	$object->ref=GETPOST('ref','alpha');
@@ -847,7 +854,7 @@ $formfile = new FormFile($db);
 $objectlignestatic=new ContratLigne($db);
 
 // Load object modContract
-$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_olive');
+$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_serpis');
 if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
 {
 	$module = substr($module, 0, dol_strlen($module)-4);
@@ -935,8 +942,8 @@ if ($action == 'create')
     }
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$tmpcode.'</td></tr>';
 
-	// Ref Int
-	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+	// Ref supplier
+	print '<tr><td>'.$langs->trans('RefSupplier').'</td>';
 	print '<td colspan="2"><input type="text" size="5" name="ref_supplier" id="ref_supplier" value="'.GETPOST('ref_supplier','alpha').'"></td></tr>';
 
     // Customer
@@ -1020,13 +1027,18 @@ if ($action == 'create')
 
     print "</table>\n";
 
+    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+
     if (is_object($objectsrc))
     {
         print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
         print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
-	}
 
-    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+        if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))
+        {
+        	print '<br>'.$langs->trans("Note").': '.$langs->trans("OnlyLinesWithTypeServiceAreUsed");
+        }
+	}
 
     print "</form>\n";
 
@@ -1043,6 +1055,8 @@ else
 
     if ($object->id > 0)
     {
+    	$object->fetch_thirdparty();
+
         $result=$object->fetch_lines();	// This also init $this->nbofserviceswait, $this->nbofservicesopened, $this->nbofservicesexpired=, $this->nbofservicesclosed
         if ($result < 0) dol_print_error($db,$object->error);
 
@@ -1134,9 +1148,9 @@ else
 
         print '<tr>';
 		print '<td  width="20%">';
-		print $form->editfieldkey("RefCustomer",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
+		print $form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
 		print '</td><td>';
-		print $form->editfieldval("RefCustomer",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
+		print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
 		print '</td>';
 		print '</tr>';
 
@@ -1222,8 +1236,10 @@ else
         /*
          * Lines of contracts
          */
-        $productstatic=new Product($db);
 
+	    if ($conf->product->enabled) {
+			$productstatic=new Product($db);
+	    }
 
         $usemargins=0;
 		if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
@@ -1290,7 +1306,8 @@ else
                         	$productstatic->ref=$objp->label;
                         	print $productstatic->getNomUrl(0,'',16);
                         }
-                        if ($objp->description) print '<br>'.dol_nl2br($objp->description);
+                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM) and $objp->description)
+                            print '<br>'.dol_nl2br($objp->description);
                         print '</td>';
                     }
                     else
@@ -1664,7 +1681,7 @@ else
         }
 
 		// Form to add new line
-        if ($user->rights->contrat->creer && ($object->statut >= 0))
+        if ($user->rights->contrat->creer && ($object->statut == 0))
         {
         	$dateSelector=1;
 
@@ -1713,6 +1730,9 @@ else
         if ($user->societe_id == 0)
         {
             print '<div class="tabsAction">';
+            
+            $parameters=array();
+            $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             if ($object->statut == 0 && $nbofservices)
             {

@@ -3,8 +3,29 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 3.8 compared to 3.7.* *****
+For users:
+- New: Use new combobox.
+- New: Add hidden option MAXTABS_IN_CARD.
+- Fix / Improve : [ bug #1747 ] Remove creation of batch 'Undefined'
+- Add Weighted average price as default price for buying price for margin calculation. Add option 
+  MARGIN_PMP_AS_DEFAULT_BUY_PRICE to replace with first supplier price.
+- Introduce option MAIN_HTML_TITLE to start to control format of html title content.
+- Add extrafields on bank account cards.
+
+For translators:
+- Update language files.
+- New: When a translation is not available we always jump to en_US and only en_US.
+
+For developers:
+- New: Function yn can show a visual checkbox.
+- New: Introduced select2 jquery plugin.
+
+
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Match other auth system: Login can be done entering login or user 
+       email (this open the road for SSO).
 - New: Agenda export by project #1967.
 - New: Increase length of thirdparty to 128 chars.
 - New: "Is Order shippable" icon #1975.
@@ -80,8 +101,9 @@ For users:
 - New: Add dunning into accountancy report.
 - New: Add favorite button into country dictionary to put value on top select list
 - Upgrade phpexcel lib to 1.7.8
-- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export
-- New : Option on extrafields to have them always editable regardless of the document status
+- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export.
+- New : Option on extrafields to have them always editable regardless of the document status.
+- New : New module PrintIPP to print without opening document is available as stable.
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -98,8 +120,11 @@ For users:
 - Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
+- Fix: [ bug #1533 ] Links triggers do not show trigger error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 - Fix: [ bug #1535 ] Supplier invoice Extrafields are not shown
+- Fix: datepicker first day of week can be monday by setting into display setup
+- Fix: [ bug #575 ] GED doesn't works if there is "/" in a mask
 
 For users, new experimental module (need to set feature level of instance to experimental to see them):
 - New: Module Accounting Expert to manage accountancy
@@ -146,6 +171,7 @@ For developers:
 - Qual: Renamed all files & links "fiche.php" into "card.php".
 - Qual: Replace all constants COMPTA_* by ACCOUNTING_*.
 - Qual: Replace all constants ACCOUNTINGEX_* by ACCOUNTING_* to simplify migration of the module
+- Fix: [ bug #1724 ] Can't add a submenu to projects
 
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -160,8 +186,11 @@ Dolibarr better:
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
 - A lot of pages called fiche.php were renamed into card.php
 - A lot of pages called liste.php were renamed into list.php
+- If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
+  warehouse module and your Point Of Sale module if you use one.
 
-
+***** ChangeLog for 3.6.3 compared to 3.6.2 *****
+- Fix: ref_ext was not saved when recording a customer order from web service
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
@@ -172,7 +201,15 @@ Dolibarr better:
 - Fix: Civility & birthdate wasn't save into adherent module.
 - Fix: webservice Thirdparty parameter lastname for invidual creation is now lastname and not ref
 - Fix: Chars - is no more allowed into value for code for extra fields.
-( Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
+- Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
+- Fix: [ bug #1595 ] Selected boolean extrafield in intervention creation page, does not save state
+- Fix: Show sender Country on PDF docs when sender Country <> receiver Country
+- Fix: [ bug #1624 ] Use lowest buying price for margin when selling with POS
+- Fix: [ bug #1749 ] Undefined $mailchimp
+- Fix: [ bug #1736 ] Failing supplier Elephant numeration module with some masks
+- Fix: [ bug #1649 ] Cancel button of several thirdparty actions, does the same thing as modify
+- Fix: [ bug #1736 ] Failing supplier Elephant numeration module with some masks
+- Fix: [ bug #1731 ] Can't use quick navigation on project tasks secondary tabs
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
@@ -313,8 +350,22 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Remove add_photo_web() that is ot used anymore by core code.
 
 
+***** ChangeLog for 3.5.7 compared to 3.5.6 *****
+Fix: Paypal link were broken dur to SSL v3 closed.
+Fix: [ bug #1769 ] Error when installing to a PostgreSQL DB that contains numbers
+Fix: [ bug #1752 ] Date filter of margins module, filters since 12H instead of 00H
+Fix: [ bug #1757 ] Sorting breaks product/service statistics
+
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973
+Fix: Can't update phone_pro from web service
+Fix: Some security holes.
+Fix: copy extrafields when creating order from proposal.
+Fix: report on action was not filtering by environment.
+Fix: Avoid missing class error.
+Fix: Add function dolEscapeXML.
+Fix: Bad days and month reported by function.
+Fix: Bad margin calculation.
 
 ***** ChangeLog for 3.5.5 compared to 3.5.4 *****
 Fix: Holiday module was broken. Initializaion of amount of holidays failed.

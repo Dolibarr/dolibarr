@@ -35,3 +35,6 @@ MessageKO=İptal edilen ödeme sayfası mesajı
 NewPayboxPaymentReceived=Yeni Paybox ödemesi alındı
 NewPayboxPaymentFailed=Yeni Paybox ödemesi denendi ama başarısız oldu
 PAYBOX_PAYONLINE_SENDEMAIL=Ödeme sonrası uyarı Epostası (başarılı ya da başarısız)
+PAYBOX_PBX_SITE=PBX SITE için değer
+PAYBOX_PBX_RANG=PBX Rang için değer
+PAYBOX_PBX_IDENTIFIANT=PBX ID için değer

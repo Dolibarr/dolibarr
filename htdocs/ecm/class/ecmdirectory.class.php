@@ -184,7 +184,7 @@ class EcmDirectory // extends CommonObject
 	 *  @param 	int		$notrigger	    0=no, 1=yes (no update trigger)
 	 *  @return int 			       	<0 if KO, >0 if OK
 	 */
-	function update($user=0, $notrigger=0)
+	function update($user=null, $notrigger=0)
 	{
 		global $conf, $langs;
 
@@ -428,7 +428,7 @@ class EcmDirectory // extends CommonObject
 		$newref=$this->ref;
 		$newlabel=$langs->trans("ShowECMSection").': '.$newref;
 
-		if ($withpicto) $result.=($lien.img_object($newlabel,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($newlabel, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.($max?dol_trunc($newref,$max,'middle'):$newref).$lienfin;
 		return $result;

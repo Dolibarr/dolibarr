@@ -59,7 +59,7 @@ $pagenext = $page + 1;
 if (! $sortorder) { $sortorder=($filter=='outofdate'?"ASC":"DESC"); }
 if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.lastname"); }
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search="";
 	$search_ref="";
@@ -263,8 +263,7 @@ if ($resql)
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 
-	print "</tr>\n";
-	print '</form>';
+	print "</tr>\n";	
 
 	$var=True;
 	while ($i < $num && $i < $conf->liste_limit)
@@ -366,6 +365,7 @@ if ($resql)
 	}
 
 	print "</table>\n";
+	print '</form>';
 
 	if ($num > $conf->liste_limit)
 	{

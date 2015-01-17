@@ -177,7 +177,7 @@ if ($action == 'edit')
 
 	print '<br>';
 
-    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+    print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
     print '<br>';
 
     print '</form>';

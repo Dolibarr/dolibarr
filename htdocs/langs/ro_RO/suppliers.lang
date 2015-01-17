@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Furnizori
 Supplier=Furnizor
-AddSupplier=Adaugă  furnizor
+AddSupplier=Crează un furnizor
 SupplierRemoved=Furnizor şters
 SuppliersInvoice=Factură furnizor
 NewSupplier=Furnizor nou
@@ -22,7 +22,7 @@ ProductHasAlreadyReferenceInThisSupplier=Acest produs are deja o referinţă la 
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Acest furnizor este deja asociat cu referinta: % s
 NoRecordedSuppliers=Nici un furnizor înregistrat
 SupplierPayment=Plată Furnizor
-SuppliersArea=Zona Furnizori
+SuppliersArea=Furnizori
 RefSupplierShort=Ref. furnizor
 Availability=Disponibilitate
 ExportDataset_fournisseur_1=Facturi furnizori şi linii facturi
@@ -40,5 +40,5 @@ AddSupplierInvoice=Crează  factură furnizor
 ListOfSupplierProductForSupplier=Lista  produse şi preţuri pentru furnizorul  <b>%s</b>
 NoneOrBatchFileNeverRan=Nici una sau tratate <b>%s</b> ne executate recent
 SentToSuppliers=Trimite la furnizori
-ListOfSupplierOrders=List of supplier orders
-MenuOrdersSupplierToBill=Supplier orders to invoice
+ListOfSupplierOrders=Lista comenzi furnizori
+MenuOrdersSupplierToBill=Comenzi Furnizor de facturat

@@ -66,7 +66,10 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2
 -- CANADA (id country=14)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (141, 14,   '7','0','VAT standard rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (142, 14,   '0','0','VAT Rate 0',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (143, 14,'5','0','9.975','1','TPS and TVQ rate',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (143, 14,'5','0','9.975','1','GST/TPS and PST/TVQ rate for Province',1);
+--insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (143, 14,'5','0','9.975','1','GST/TPS and PST/TVQ rate for Quebec',1);
+--insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (144, 14,'5','0','7','1','GST/TPS and PST/TVQ rate for British Columbia',1);
+--insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (149, 14,'5','0',null,null,'GST/TPS and PST/TVQ rate for Yukon',1);
 
 
 -- CAMEROUN (id country=24)
@@ -239,6 +242,9 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 6
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 62, 6, '3.8','0','VAT reduced rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 63, 6, '2.5','0','VAT super-reduced rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 64, 6,   '0','0','VAT Rate 0',  1);
+
+-- TAIWAN (id country=213)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213,   '5','0','VAT 5%',1);
 
 -- TUNISIA (id country=10)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active,localtax1,localtax1_type,localtax2,localtax2_type) values (101,10,    '6','0','VAT 6%', 1, 1, '4', 0, 0);

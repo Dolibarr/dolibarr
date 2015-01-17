@@ -70,7 +70,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($rowid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
-$objcanvas='';
+$objcanvas=null;
 if (! empty($canvas))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
@@ -79,7 +79,7 @@ if (! empty($canvas))
 }
 
 // Security check
-$result=restrictedArea($user,'adherent',$rowid,'','','fk_soc', 'rowid', $objcanvas);
+$result=restrictedArea($user, 'adherent', $rowid, '', '', 'fk_soc', 'rowid', $objcanvas);
 
 if ($rowid > 0)
 {
@@ -290,8 +290,6 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->typeid      = $_POST["typeid"];
 		//$object->note        = trim($_POST["comment"]);
 		$object->morphy      = $_POST["morphy"];
-
-		$object->amount      = $_POST["amount"];
 
 		if (GETPOST('deletephoto')) $object->photo='';
 		elseif (! empty($_FILES['photo']['name'])) $object->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
@@ -917,7 +915,7 @@ else
 		print "</table>\n";
 		print '<br>';
 
-		print '<center><input type="submit" class="button" value="'.$langs->trans("AddMember").'"></center>';
+		print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("AddMember").'"></div>';
 
 		print "</form>\n";
 
@@ -1166,11 +1164,11 @@ else
 
 		print '</table>';
 
-		print '<br><center>';
+		print '<br><div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; &nbsp; &nbsp; ';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</center';
+		print '</div>';
 
 		print '</form>';
 

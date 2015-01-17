@@ -312,7 +312,10 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if ($mode == 'source')
 	{
-		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($sourcecompany))."\n";
+		$withCountry = 0;
+		if (!empty($sourcecompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) $withCountry = 1;
+
+		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($sourcecompany, $withCountry, "\n", $outputlangs))."\n";
 
 		if (empty($conf->global->MAIN_PDF_DISABLESOURCEDETAILS))
 		{
@@ -489,7 +492,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
  *  @param  Account		$account         		Bank account object
- *  @param  int			$onlynumber      		Output only number
+ *  @param  int			$onlynumber      		Output only number (bank+desk+key+number according to country, but without name of bank and domiciliation)
  *  @param	int			$default_font_size		Default font size
  *  @return	float                               The Y PDF position
  */
@@ -510,10 +513,14 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 	$outputlangs->load("banks");
 
+	// Use correct name of bank id according to country
+	$bickey="BICNumber";
+	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
+
 	// Get format of bank account according to its country
 	$usedetailedbban=$account->useDetailedBBAN();
 
-	//$onlynumber=0; $usedetailedbban=0; // For tests
+	$onlynumber=0; $usedetailedbban=1; // For tests
 	if ($usedetailedbban)
 	{
 		$savcurx=$curx;
@@ -523,27 +530,6 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 			$pdf->SetFont('','',$default_font_size - $diffsizecontent);
 			$pdf->SetXY($curx, $cury);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': ' . $outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
-			$cury+=3;
-		}
-
-		// Use correct name of bank id according to country
-		$ibankey="IBANNumber";
-		if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
-		if (! empty($account->iban))
-		{
-			$ibanDisplay_temp = $outputlangs->convToOutputCharset($account->iban);
-			$ibanDisplay = "";
-
-			for($i = 0; $i < dol_strlen($ibanDisplay_temp); $i++){
-				$ibanDisplay .= $ibanDisplay_temp[$i];
-				if($i%4 == 3 && $i > 0){
-					$ibanDisplay .= " ";
-				}
-			}
-
-			$pdf->SetFont('','B',$default_font_size - 3);
-			$pdf->SetXY($curx, $cury);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $ibanDisplay, 0, 'L', 0);
 			$cury+=3;
 		}
 
@@ -609,7 +595,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		}
 
 		$curx=$savcurx;
-		$cury+=10;
+		$cury+=9;
 	}
 	else
 	{
@@ -626,10 +612,6 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		if ($diffsizecontent <= 2) $cury+=1;
 	}
 
-	// Use correct name of bank id according to country
-	$bickey="BICNumber";
-	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
-
 	$pdf->SetFont('','',$default_font_size - $diffsizecontent);
 
 	if (empty($onlynumber) && ! empty($account->domiciliation))
@@ -644,8 +626,29 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	}
 	else if (! $usedetailedbban) $cury+=1;
 
+	// Use correct name of bank id according to country
+	$ibankey="IBANNumber";
+	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+	if (! empty($account->iban))
+	{
+		$ibanDisplay_temp = $outputlangs->convToOutputCharset($account->iban);
+		$ibanDisplay = "";
+
+		for($i = 0; $i < dol_strlen($ibanDisplay_temp); $i++)
+		{
+			$ibanDisplay .= $ibanDisplay_temp[$i];
+			if($i%4 == 3 && $i > 0)	$ibanDisplay .= " ";
+		}
+
+		$pdf->SetFont('','B',$default_font_size - 3);
+		$pdf->SetXY($curx, $cury);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $ibanDisplay, 0, 'L', 0);
+		$cury+=3;
+	}
+
 	if (! empty($account->bic))
 	{
+		$pdf->SetFont('','B',$default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 	}
@@ -758,7 +761,9 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// Capital
 	if ($fromcompany->capital)
 	{
-		$line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",price($fromcompany->capital, 0, $outputlangs, 0, 0, 0, $conf->currency));
+		$tmpamounttoshow = price2num($fromcompany->capital); // This field is a free string
+		if (is_numeric($tmpamounttoshow) && $tmpamounttoshow > 0) $line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",price($tmpamounttoshow, 0, $outputlangs, 0, 0, 0, $conf->currency));
+		else $line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",$tmpamounttoshow,$outputlangs);
 	}
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
@@ -1268,7 +1273,7 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
  *
  *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
- *  @param  Tranlate	$outputlangs		Object langs for output
+ *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide value (0 = no,	1 = yes, 2 = just special lines)
  *  @return	void
  */

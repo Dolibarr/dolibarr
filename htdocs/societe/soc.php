@@ -65,7 +65,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($socid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
-$objcanvas='';
+$objcanvas=null;
 if (! empty($canvas))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
@@ -106,7 +106,6 @@ if (empty($reshook))
     {
     	//obtidre selected del combobox
     	$value=GETPOST('lt1');
-    	$object = new Societe($db);
     	$object->fetch($socid);
     	$res=$object->setValueFrom('localtax1_value', $value);
     }
@@ -114,7 +113,6 @@ if (empty($reshook))
     {
     	//obtidre selected del combobox
     	$value=GETPOST('lt2');
-    	$object = new Societe($db);
     	$object->fetch($socid);
     	$res=$object->setValueFrom('localtax2_value', $value);
     }
@@ -583,13 +581,21 @@ if (empty($reshook))
  *  View
  */
 
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$langs->trans("ThirdParty"),$help_url);
-
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
+
+if ($socid > 0 && empty($object->id))
+{
+    $res=$object->fetch($socid);
+	if ($result <= 0) dol_print_error('',$object->error);
+}
+
+$title=$langs->trans("ThirdParty");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$title,$help_url);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -598,12 +604,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-    if (empty($object->error) && $socid)
- 	{
-	     $object = new Societe($db);
-	     $result=$object->fetch($socid);
-	     if ($result <= 0) dol_print_error('',$object->error);
- 	}
    	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
     $objcanvas->display_canvas($action);							// Show template
 }
@@ -782,16 +782,19 @@ else
             print '<div class="hideonsmartphone float">';
             print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
             print '</div>';
-            print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked="checked"').'>';
 	        print '<label for="radiocompany">';
+            print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked="checked"').'>';
 	        print '&nbsp;';
             print $langs->trans("Company/Fundation");
 	        print '</label>';
             print ' &nbsp; &nbsp; ';
-            print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'').'>';
-	        print '&nbsp;';
-            print $langs->trans("Individual");
-            print ' ('.$langs->trans("ToCreateContactWithSameName").')';
+	        print '<label for="radioprivate">';
+            $text ='<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'').'>';
+	        $text.='&nbsp;';
+	        $text.= $langs->trans("Individual");
+	        $htmltext=$langs->trans("ToCreateContactWithSameName");
+	        print $form->textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
+            print '</label>';
             print '</div>';
             print "<br>\n";
         }
@@ -808,6 +811,8 @@ else
         print '<input type="hidden" name="LastName" value="'.$langs->trans('LastName').'">';
         print '<input type="hidden" name="ThirdPartyName" value="'.$langs->trans('ThirdPartyName').'">';
         if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
+
+        dol_fiche_head(null, 'card', '', 0, '');
 
         print '<table class="border" width="100%">';
 
@@ -1051,14 +1056,7 @@ else
             print $form->selectyesno('localtax2assuj_value',0,1);
             print '</td><tr>';
         }
-/*
-        if ($mysoc->country_code=='ES' && $mysoc->localtax2_assuj!="1" && ! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")=='')  )
-        {
-        	print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
-        	print $form->selectyesno('localtax2assuj_value',0,1);
-        	print '</td><tr>';
-        }
-*/
+
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
             print '<tr><td><label for="default_lang">'.$langs->trans("DefaultLang").'</label></td><td colspan="3" class="maxwidthonsmartphone">'."\n";
@@ -1095,9 +1093,11 @@ else
 
         print '</table>'."\n";
 
-        print '<br><center>';
+        dol_fiche_end();
+
+        print '<div class="center">';
         print '<input type="submit" class="button" value="'.$langs->trans('AddThirdParty').'">';
-        print '</center>'."\n";
+        print '</div>'."\n";
 
         print '</form>'."\n";
     }
@@ -1111,9 +1111,6 @@ else
 
         if ($socid)
         {
-            $object = new Societe($db);
-            $res=$object->fetch($socid);
-            if ($res < 0) { dol_print_error($db,$object->error); exit; }
             $res=$object->fetch_optionals($object->id,$extralabels);
             //if ($res < 0) { dol_print_error($db); exit; }
 
@@ -1608,11 +1605,11 @@ else
             print '</table>';
             print '<br>';
 
-            print '<center>';
+            print '<div align="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-            print ' &nbsp; &nbsp; ';
+            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-            print '</center>';
+            print '</div>';
 
             print '</form>';
 
@@ -1624,9 +1621,6 @@ else
         /*
          * View
          */
-        $object = new Societe($db);
-        $res=$object->fetch($socid);
-        if ($res < 0) { dol_print_error($db,$object->error); exit; }
         $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
@@ -1727,7 +1721,7 @@ else
         // Status
         print '<tr><td>'.$langs->trans("Status").'</td>';
         print '<td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
-        if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer) {
+        if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             print ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
         } else {
             print $object->getLibStatut(2);

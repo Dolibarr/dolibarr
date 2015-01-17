@@ -1,6 +1,0 @@
-fixtures:
-  repositories:
-    stdlib: "git://github.com/puppetlabs/puppetlabs-stdlib.git"
-    concat: "git://github.com/puppetlabs/puppetlabs-concat.git"
-  symlinks:
-    apache: "#{source_dir}"

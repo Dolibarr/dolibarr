@@ -29,6 +29,7 @@ ActionsToDoBy=Actions áhrif til
 ActionsDoneBy=Actions gert með því að
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Allar aðgerðir mínar / verkefni
 AllActions= Allar aðgerðir / verkefni
 ViewList=Skoða lista
@@ -41,9 +42,10 @@ AutoActions= Sjálfvirk fyllingu dagskrá
 AgendaAutoActionDesc= Veldu hér viðburðir sem þú vilt Dolibarr að búa sjálfvirkt til aðgerða á dagskrá. Ef ekkert er valið (sjálfgefið), verður eingöngu handvirk aðgerð að koma fram í dagskrá.
 AgendaSetupOtherDesc= Þessi síða leyfir að stilla aðrar breytur græju dagskrá.
 AgendaExtSitesDesc=Þessi síða leyfir þér að lýsa ytri uppsprettur dagatal til að sjá atburði í Dolibarr dagskrá.
-ActionsEvents= Viðburðir sem Dolibarr vilja búa til aðgerða á dagskrá sjálfkrafa
-PropalValidatedInDolibarr= Tillaga %s  staðfestar
-InvoiceValidatedInDolibarr= Invoice %s  staðfestar
+ActionsEvents=Viðburðir sem Dolibarr vilja búa til aðgerða á dagskrá sjálfkrafa
+PropalValidatedInDolibarr=Tillaga %s  staðfestar
+InvoiceValidatedInDolibarr=Invoice %s  staðfestar
+InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Vörureikningi %s fara aftur til drög að stöðu
 InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Panta %s  staðfestar
@@ -51,7 +53,6 @@ OrderApprovedInDolibarr=Panta %s samþykkt
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Panta %s fara aftur til drög að stöðu
 OrderCanceledInDolibarr=Panta %s niður
-InterventionValidatedInDolibarr=Intervention %s  staðfestar
 ProposalSentByEMail=Verslunarhúsnæði %s tillaga send með tölvupósti
 OrderSentByEMail=Viðskiptavinur röð %s send með tölvupósti
 InvoiceSentByEMail=Viðskiptavinur vörureikningi %s send með tölvupósti
@@ -59,8 +60,6 @@ SupplierOrderSentByEMail=Birgir röð %s send með tölvupósti
 SupplierInvoiceSentByEMail=Birgir vörureikningi %s send með tölvupósti
 ShippingSentByEMail=Sendingarmáti %s send með tölvupósti
 ShippingValidated= Shipping %s validated
-InterventionSentByEMail=Inngrip %s send með tölvupósti
-InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Í þriðja aðila til
 DateActionPlannedStart= Fyrirhugaður upphafsdagur
 DateActionPlannedEnd= Áætlaðir lokadagur
@@ -70,9 +69,9 @@ DateActionStart= Upphafsdagur
 DateActionEnd= Lokadagur
 AgendaUrlOptions1=Þú getur einnig bætt við eftirfarandi breytur til að sía framleiðsla:
 AgendaUrlOptions2=<b>login = %s </b> til að takmarka framleiðsla til aðgerða stofnuðum af áhrifum eða gert með <b>notandann %s .</b>
-AgendaUrlOptions3=<b>logina = %s </b> til að takmarka framleiðsla til aðgerða skapa við <b>notandann %s .</b>
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint = %s </b> til að takmarka framleiðsla til aðgerða áhrif til <b>notandi %s .</b>
-AgendaUrlOptions5=<b>logind = %s </b> til að takmarka framleiðsla til aðgerða gert með <b>notandann %s .</b>
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=tengiliði Sýna afmæli's
 AgendaHideBirthdayEvents=tengiliðir Fela afmæli's
 Busy=Busy
@@ -89,5 +88,5 @@ ExtSiteUrlAgenda=Slóð til að opna. Kvæmd skrá
 ExtSiteNoLabel=Engin lýsing
 WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
-AddEvent=Add event
+AddEvent=Create event
 MyAvailability=My availability

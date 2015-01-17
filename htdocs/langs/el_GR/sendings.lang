@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=Προς το παρόν, η δημιουργί�
 RelatedShippings=Σχετικές αποστολές
 ShipmentLine=Σειρά αποστολής
 CarrierList=Κατάλογος των μεταφορέων
+SendingRunning=Προϊόν από παραγγελία του πελάτη που έχει ήδη αποσταλεί
+SuppliersReceiptRunning=Προϊόν από παραγγελία προμηθευτή έχει ληφθεί
 
 # Sending methods
 SendingMethodCATCH=Πιάσε τον πελάτη

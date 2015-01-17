@@ -25,12 +25,13 @@
  */
 
 /**
- * Classe permettant la gestion des comptes generaux de compta
+ * Class to manage accounting accounts
  */
 class AccountingAccount
 {
 	var $db;
 	var $error;
+	var $errors;
 
 	var $id;
 	var $rowid;
@@ -125,6 +126,8 @@ class AccountingAccount
 	{
 		global $conf, $langs;
 		$error = 0;
+
+		$now=dol_now();
 
 		// Clean parameters
 		if (isset($this->fk_pcg_version))

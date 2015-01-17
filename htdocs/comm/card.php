@@ -80,15 +80,20 @@ $parameters = array('socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+//Some actions show a "cancel" input submit button with name="cancel"
+$cancelbutton = GETPOST('cancel');
 
 if ($action == 'setcustomeraccountancycode')
 {
-	$result=$object->fetch($id);
-	$object->code_compta=$_POST["customeraccountancycode"];
-	$result=$object->update($object->id,$user,1,1,0);
-	if ($result < 0)
+	if (! $cancelbutton)
 	{
-		setEventMessage($object->errors, 'errors');
+		$result=$object->fetch($id);
+		$object->code_compta=$_POST["customeraccountancycode"];
+		$result=$object->update($object->id,$user,1,1,0);
+		if ($result < 0)
+		{
+			setEventMessage($object->errors, 'errors');
+		}
 	}
 	$action="";
 }
@@ -100,6 +105,7 @@ if ($action == 'setconditions' && $user->rights->societe->creer)
 	$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
+
 // mode de reglement
 if ($action == 'setmode' && $user->rights->societe->creer)
 {
@@ -107,16 +113,14 @@ if ($action == 'setmode' && $user->rights->societe->creer)
 	$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
+
 // assujetissement a la TVA
 if ($action == 'setassujtva' && $user->rights->societe->creer)
 {
 	$object->fetch($id);
 	$object->tva_assuj=$_POST['assujtva_value'];
-
-	// TODO move to DAO class
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE rowid='".$id."'";
-	$result = $db->query($sql);
-	if (! $result) dol_print_error($result);
+	$result=$object->update($object->id);
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 // set prospect level
@@ -128,7 +132,7 @@ if ($action == 'setprospectlevel' && $user->rights->societe->creer)
 	if ($result < 0) setEventMessage($object->error,'errors');
 }
 
-// Update communication level
+// update prospect level
 if ($action == 'cstc')
 {
 	$object->fetch($id);
@@ -137,13 +141,16 @@ if ($action == 'cstc')
 	if ($result < 0) setEventMessage($object->error,'errors');
 }
 
-// Update communication level
+// update outstandng limit
 if ($action == 'setOutstandingBill')
 {
-	$object->fetch($id);
-	$object->outstanding_limit=GETPOST('OutstandingBill');
-	$result=$object->set_OutstandingBill($user);
-	if ($result < 0) setEventMessage($object->error,'errors');
+	if (!$cancelbutton)
+	{
+		$object->fetch($id);
+		$object->outstanding_limit=GETPOST('OutstandingBill');
+		$result=$object->set_OutstandingBill($user);
+		if ($result < 0) setEventMessage($object->error,'errors');
+	}
 }
 
 
@@ -151,13 +158,23 @@ if ($action == 'setOutstandingBill')
  * View
  */
 
-llxHeader('',$langs->trans('CustomerCard'));
-
-
 $contactstatic = new Contact($db);
 $userstatic=new User($db);
 $form = new Form($db);
 $formcompany=new FormCompany($db);
+
+if ($id > 0 && empty($object->id))
+{
+	// Load data of third party
+	$res=$object->fetch($id);
+	if ($object->id <= 0) dol_print_error($db,$object->error);
+}
+
+$title=$langs->trans("CustomerCard");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$title,$help_url);
+
 
 
 if ($mode == 'search')
@@ -188,14 +205,6 @@ if ($mode == 'search')
 
 if ($id > 0)
 {
-	// Load data of third party
-	$object->fetch($id);
-	if ($object->id <= 0)
-	{
-		dol_print_error($db,$object->error);
-	}
-
-
 	$head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"),0,'company');
@@ -289,24 +298,15 @@ if ($id > 0)
 	print '</tr>';
 
 	// Local Taxes
-	if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+	if ($mysoc->useLocalTax(1))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
-		print yn($object->localtax1_assuj);
-		print '</td></tr>';
-		print '<tr><td class="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
-		print yn($object->localtax2_assuj);
-		print '</td></tr>';
-	}
-	elseif($mysoc->localtax1_assuj=="1")
-	{
-		print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
 		print yn($object->localtax1_assuj);
 		print '</td></tr>';
 	}
-	elseif($mysoc->localtax2_assuj=="1")
+	if ($mysoc->useLocalTax(2))
 	{
-		print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
 		print yn($object->localtax2_assuj);
 		print '</td></tr>';
 	}
@@ -530,6 +530,7 @@ if ($id > 0)
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
+				$var=!$var;
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap"><a href="propal.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a>'."\n";
 				if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 )
@@ -539,7 +540,6 @@ if ($id > 0)
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td align="right" style="min-width: 60px" class="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
-				$var=!$var;
 				$i++;
 			}
 			$db->free($resql);

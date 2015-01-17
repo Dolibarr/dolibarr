@@ -29,6 +29,7 @@ ActionsToDoBy=Events assigned to
 ActionsDoneBy=Events done by
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= All my events/tasks
 AllActions= All events/tasks
 ViewList=List view
@@ -41,9 +42,10 @@ AutoActions= Automatic filling
 AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked (by default), only manual actions will be included in agenda.
 AgendaSetupOtherDesc= This page provides options to allow export of your Dolibarr events into an external calendar (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=This page allows to declare external sources of calendars to see their events into Dolibarr agenda.
-ActionsEvents= Events for which Dolibarr will create an action in agenda automatically
-PropalValidatedInDolibarr= Proposal %s validated
-InvoiceValidatedInDolibarr= Invoice %s validated
+ActionsEvents=Events for which Dolibarr will create an action in agenda automatically
+PropalValidatedInDolibarr=Proposal %s validated
+InvoiceValidatedInDolibarr=Invoice %s validated
+InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Invoice %s go back to draft status
 InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Order %s validated
@@ -51,7 +53,6 @@ OrderApprovedInDolibarr=Order %s approved
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Order %s go back to draft status
 OrderCanceledInDolibarr=Order %s canceled
-InterventionValidatedInDolibarr=Intervention %s validated
 ProposalSentByEMail=Commercial proposal %s sent by EMail
 OrderSentByEMail=Customer order %s sent by EMail
 InvoiceSentByEMail=Customer invoice %s sent by EMail
@@ -59,8 +60,6 @@ SupplierOrderSentByEMail=Supplier order %s sent by EMail
 SupplierInvoiceSentByEMail=Supplier invoice %s sent by EMail
 ShippingSentByEMail=Shipping %s sent by EMail
 ShippingValidated= Shipping %s validated
-InterventionSentByEMail=Intervention %s sent by EMail
-InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Third party created
 DateActionPlannedStart= Planned start date
 DateActionPlannedEnd= Planned end date
@@ -70,9 +69,9 @@ DateActionStart= Start date
 DateActionEnd= End date
 AgendaUrlOptions1=You can also add following parameters to filter output:
 AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by, assigned to or done by user <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions created by user <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b>.
-AgendaUrlOptions5=<b>logind=%s</b> to restrict output to actions done by user <b>%s</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Show birthday's contacts
 AgendaHideBirthdayEvents=Hide birthday's contacts
 Busy=Busy
@@ -89,5 +88,5 @@ ExtSiteUrlAgenda=URL to access .ical file
 ExtSiteNoLabel=No Description
 WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
-AddEvent=Add event
+AddEvent=Create event
 MyAvailability=My availability

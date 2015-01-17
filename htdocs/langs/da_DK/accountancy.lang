@@ -25,134 +25,134 @@ Selectchartofaccounts=Vælg en kontoplan
 Validate=Godkend
 Addanaccount=Tilføj en regnskabsmæssig konto
 AccountAccounting=Regnskabsmæssig konto
-Ventilation=Ventilation
+Ventilation=Sammenbrud
 ToDispatch=Afsend
-Dispatched=Dispatched
+Dispatched=Afsendt
 
-CustomersVentilation=Ventilation customers
-SuppliersVentilation=Ventilation suppliers
-TradeMargin=Trade margin
-Reports=Reports
-ByCustomerInvoice=By invoices customers
-ByMonth=By Month
-NewAccount=New accounting account
-Update=Update
-List=List
-Create=Create
-UpdateAccount=Modification of an accounting account
-UpdateMvts=Modification of a movement
-WriteBookKeeping=Record accounts in general ledger
-Bookkeeping=General ledger
-AccountBalanceByMonth=Account balance by month
+CustomersVentilation=Udspecificer kunder
+SuppliersVentilation=Udspecificer leverandører
+TradeMargin=Handelsforskel
+Reports=Reporter
+ByCustomerInvoice=Efter fakturakunder
+ByMonth=Efter måned
+NewAccount=By regnskabskonto
+Update=Opdater
+List=Liste
+Create=Opret
+UpdateAccount=Ændring af en regnskabsmæssig konto
+UpdateMvts=Ændring af en bevægelse
+WriteBookKeeping=Optage konti i kontoplanen
+Bookkeeping=Kontoplan
+AccountBalanceByMonth=Kontobalance efter måned
 
-AccountingVentilation=Accounting ventilation
-AccountingVentilationSupplier=Accounting ventilation supplier
-AccountingVentilationCustomer=Accounting ventilation customer
-Line=Line
+AccountingVentilation=Udspecificer regnskab
+AccountingVentilationSupplier=Udspecificer regnskab leverandører
+AccountingVentilationCustomer=Udspecificer regnskab kunder
+Line=Linje
 
-CAHTF=Total purchase supplier HT
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=In the accounting account
+CAHTF=Samlet køb leverandør
+InvoiceLines=Linjer af faktura, der skal fornyes
+InvoiceLinesDone=Fornyede linjer af faktura
+IntoAccount=I den regnskabsmæssige konto
 
-Ventilate=Ventilate
-VentilationAuto=Automatic ventilation
+Ventilate=Forny
+VentilationAuto=Udspecificer automatisk
 
-Processing=Processing
-EndProcessing=The end of processing
-AnyLineVentilate=Any lines to ventilate
-SelectedLines=Selected lines
-Lineofinvoice=Line of invoice
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+Processing=Forarbejde
+EndProcessing=Forarbejdet
+AnyLineVentilate=Linjer, der skal fornyes
+SelectedLines=Valgte linjer
+Lineofinvoice=Fakturalinjer
+VentilatedinAccount=Fornyet med succes i den regnskabsmæssige konto
+NotVentilatedinAccount=Ikke fornyede i den regnskabsmæssige konto
 
 ACCOUNTING_SEPARATORCSV=Separator CSV
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+AccountLength=Længde af regnskabssystemet konti i Dolibarr
+AccountLengthDesc=Funktion gør det muligt at foregive en længde på regnskabsmæssig konto ved at erstatte mellemrum med tallet nul. Da denne funktion kun vises på skærmen ændrer det ikke ved de bogføring registreret i Dolibarr konti. For eksport, er det nødvendigt denne funktion til at være kompatibel med bestemt software.
+ACCOUNTING_LENGTH_GACCOUNT=Længde af det almindelige regnskab
+ACCOUNTING_LENGTH_AACCOUNT=Længde af de tredjeparts-konti
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
-ACCOUNTING_CASH_JOURNAL=Cash journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=Salgskladde
+ACCOUNTING_PURCHASE_JOURNAL=Indkøbskladde
+ACCOUNTING_BANK_JOURNAL=Bankkladde
+ACCOUNTING_CASH_JOURNAL=Kontantkladde
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Diversekladde
+ACCOUNTING_SOCIAL_JOURNAL=Socialkladde
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto overførsel
+ACCOUNTING_ACCOUNT_SUSPENSE=Ventende konto
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskab konto som standard for købte produkter (hvis ikke defineret i produktark)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Regnskab konto som standard for de solgte produkter (hvis ikke defineret i produktark)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Regnskab konto som standard for de indkøbte tjenester (hvis ikke defineret i tjeneste ark)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Regnskab konto som standard for de solgte ydelser (hvis ikke defineret i tjeneste ark)
 
-Doctype=Type of document
-Docdate=Date
+Doctype=Dokumenttype
+Docdate=Dato
 Docref=Reference
-Numerocompte=Account
-Code_tiers=Thirdparty
-Labelcompte=Label account
-Debit=Debit
-Credit=Credit
-Amount=Amount
+Numerocompte=Konto
+Code_tiers=Trediepart
+Labelcompte=Kontonavn
+Debit=Debet
+Credit=Kredit
+Amount=Beløb
 Sens=Sens
 Codejournal=Journal
 
-DelBookKeeping=Delete the records of the general ledger
+DelBookKeeping=Slet posterne i kontoplanen
 
-SellsJournal=Sells journal
-PurchasesJournal=Purchases journal
-DescSellsJournal=Sells journal
-DescPurchasesJournal=Purchases journal
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
+SellsJournal=Salgskladde
+PurchasesJournal=Købskladde
+DescSellsJournal=Salgskladde
+DescPurchasesJournal=Købskladde
+BankJournal=Bankjournal
+DescBankJournal=Bankkladden herunder alle de typer af andre betalinger end kontanter
+CashJournal=Kontantkladde
+DescCashJournal=Kontantkladde herunder betalinger med kontanter
 
-CashPayment=Cash Payment
+CashPayment=Kontant betaling
 
-SupplierInvoicePayment=Payment of invoice supplier
-CustomerInvoicePayment=Payment of invoice customer
+SupplierInvoicePayment=Betaling af leverandørfakturaer
+CustomerInvoicePayment=Betaling af kundefaktura
 
-ThirdPartyAccount=Thirdparty account
+ThirdPartyAccount=Tredjepart konto
 
-NewAccountingMvt=New movement
-NumMvts=Number of movement
-ListeMvts=List of the movement
-ErrorDebitCredit=Debit and Credit cannot have a value at the same time
+NewAccountingMvt=Ny bevægelse
+NumMvts=Antal bevægelser
+ListeMvts=Liste af bevægelser / kontokort
+ErrorDebitCredit=Debet og kredit kan ikke have en værdi på samme tid
 
-ReportThirdParty=List thirdparty account
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+ReportThirdParty=Tredjeparts konto liste
+DescThirdPartyReport=Gå til en liste over de tredjeparts kunder og leverandører og deres regnskabssystemer konti
 
-ListAccounts=List of the accounting accounts
+ListAccounts=Liste over de regnskabsmæssige konti
 
-Pcgversion=Version of the plan
-Pcgtype=Class of account
-Pcgsubtype=Under class of account
-Accountparent=Root of the account
-Active=Statement
+Pcgversion=Version af planen
+Pcgtype=Kontoens klasse
+Pcgsubtype=Kontoens underklasse
+Accountparent=Roden af kontoen
+Active=Erklæring
 
-NewFiscalYear=New fiscal year
+NewFiscalYear=Nyt finansår
 
-DescVentilCustomer=Consult here the annual accounting ventilation of your invoices customers
-TotalVente=Total turnover HT
-TotalMarge=Total sales margin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
+TotalVente=Samlet omsætning
+TotalMarge=Samlet salgsforskel
+DescVentilDoneCustomer=Gå til en liste over de linjer af fakturaer kunder og deres regnskabskonto
+DescVentilTodoCustomer=Forny dine linjer ag kundefaktura med en regnskabskonto
+ChangeAccount=Skift den regnskabsmæssige konto for strækninger, der er udvalgt af hensyn til:
 Vide=-
-DescVentilSupplier=Consult here the annual accounting ventilation of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
+DescVentilTodoSupplier=Forny dine linier af faktura leverandører med en regnskabskonto
+DescVentilDoneSupplier=Gå til en liste over de linjer af fakturaer leverandør og deres regnskabskonto
 
-ValidateHistory=Validate Automatically
+ValidateHistory=Forny automatisk
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+ErrorAccountancyCodeIsAlreadyUse=Fejl, kan du ikke slette denne regnskabsmæssige konto, fordi den bruges
 
-FicheVentilation=Ventilation card
+FicheVentilation=Breakdown card

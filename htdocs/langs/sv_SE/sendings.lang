@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=För närvarande är skapandet av en ny leverans
 RelatedShippings=Relaterade sändningar
 ShipmentLine=Transport linje
 CarrierList=Lista över transportörer
+SendingRunning=Produkten från kundorder redan skickad
+SuppliersReceiptRunning=Produkten från leverantörs beställning redan mottaget
 
 # Sending methods
 SendingMethodCATCH=Fångst av kunden

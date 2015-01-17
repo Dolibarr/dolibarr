@@ -29,8 +29,8 @@ Ventilation=Contabilizar
 ToDispatch=A realizar
 Dispatched=Realizadas
 
-CustomersVentilation=Contabilización ventas
-SuppliersVentilation=Contabilización compras
+CustomersVentilation=Contabilizar clientes
+SuppliersVentilation=Contabilizar proveedores
 TradeMargin=Margen de beneficio
 Reports=Informes
 ByCustomerInvoice=Por facturas a clientes
@@ -45,8 +45,8 @@ WriteBookKeeping=Registrar los asientos en el libro mayor
 Bookkeeping=Libro Mayor
 AccountBalanceByMonth=Saldo mensual
 
-AccountingVentilation=Contabilización
-AccountingVentilationSupplier=Contabilización compras
+AccountingVentilation=Descuadre contabilidad
+AccountingVentilationSupplier=Contablilización compras
 AccountingVentilationCustomer=Contabilización ventas
 Line=Línea
 

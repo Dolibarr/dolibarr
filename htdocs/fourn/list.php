@@ -60,7 +60,7 @@ if (! $sortfield) $sortfield="nom";
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('supplierlist'));
 
-if (GETPOST("button_removefilter_x"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$socname="";
 	$search_name="";

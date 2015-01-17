@@ -46,6 +46,11 @@ class Product extends CommonObject
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'ref';
+
 	var $regeximgext='\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff';
 
 	//! Identifiant unique
@@ -124,9 +129,9 @@ class Product extends CommonObject
 	//! barcode
 	var $barcode;               // value
 	var $barcode_type;          // id
-	var $barcode_type_code;     // code (loaded by fetch_barcode). Example ean, isbn...
+	var $barcode_type_code;     // code  (loaded by fetch_barcode). Example 'ean', 'isbn', ...
 	var $barcode_type_label;    // label (loaded by fetch_barcode)
-	var $barcode_type_coder;    // coder (loaded by fetch_barcode)
+	var $barcode_type_coder;    // coder (loaded by fetch_barcode). Engine.
 
 	var $stats_propale=array();
 	var $stats_commande=array();
@@ -680,6 +685,8 @@ class Product extends CommonObject
 					}
 				}
 
+				$action='update';
+
 				// Actions on extra fields (by external module or standard code)
 				$hookmanager->initHooks(array('productdao'));
 				$parameters=array('id'=>$this->id);
@@ -1164,11 +1171,12 @@ class Product extends CommonObject
 	 */
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
+		require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
 		$result = 0;
 
 		// We do select by searching with qty and prodfournprice
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity,";
-		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx";
+		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_price_expression";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
 		if ($qty) $sql.= " AND pfp.quantity <= ".$qty;
@@ -1180,6 +1188,13 @@ class Product extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			if ($obj && $obj->quantity > 0)		// If found
 			{
+                if (!empty($obj->fk_price_expression)) {
+                    $priceparser = new PriceParser($this->db);
+                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_price_expression, $obj->quantity, $obj->tva_tx);
+                    if ($price_result >= 0) {
+                    	$obj->price = $price_result;
+                    }
+                }
 				$this->buyprice = $obj->price;                      // \deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
 				$this->ref_fourn = $obj->ref_fourn;                 // Ref supplier
@@ -1191,7 +1206,7 @@ class Product extends CommonObject
 			{
 				// We do same select again but searching with qty, ref and id product
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
-				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx";
+				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx, pfp.fk_price_expression";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " WHERE pfp.ref_fourn = '".$fourn_ref."'";
 				$sql.= " AND pfp.fk_product = ".$product_id;
@@ -1206,6 +1221,13 @@ class Product extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($obj && $obj->quantity > 0)		// If found
 					{
+		                if (!empty($obj->fk_price_expression)) {
+		                    $priceparser = new PriceParser($this->db);
+		                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_price_expression, $obj->quantity, $obj->tva_tx);
+		                    if ($result >= 0) {
+		                    	$obj->price = $price_result;
+		                    }
+		                }
 						$this->buyprice = $obj->price;                      // deprecated
 						$this->fourn_qty = $obj->quantity;					// min quantity for price
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
@@ -1396,7 +1418,7 @@ class Product extends CommonObject
 		if (! $id && ! $ref && ! $ref_ext)
 		{
 			$this->error='ErrorWrongParameters';
-			dol_print_error(get_class($this)."::fetch ".$this->error, LOG_ERR);
+			dol_print_error(get_class($this)."::fetch ".$this->error);
 			return -1;
 		}
 
@@ -2819,8 +2841,8 @@ class Product extends CommonObject
 		if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
 
 		if ($withpicto) {
-			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->label,'product').$lienfin.' ');
-			if ($this->type == 1) $result.=($lien.img_object($langs->trans("ShowService").' '.$this->label,'service').$lienfin.' ');
+			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->label, 'product', 'class="classfortooltip"').$lienfin.' ');
+			if ($this->type == 1) $result.=($lien.img_object($langs->trans("ShowService").' '.$this->label, 'service', 'class="classfortooltip"').$lienfin.' ');
 		}
 		$result.=$lien.$newref.$lienfin;
 		return $result;
@@ -3247,11 +3269,11 @@ class Product extends CommonObject
     						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
     						if ($photo_vignette && $imgarray['height'] > $maxHeight) {
     							$return.= '<!-- Show thumb -->';
-    							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+    							$return.= '<img class="photo photowithmargin" border="0" '.($conf->dol_use_jmobile?'max-height':'height').'="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
     						}
     						else {
     							$return.= '<!-- Show original file -->';
-    							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+    							$return.= '<img class="photo photowithmargin" border="0" '.($conf->dol_use_jmobile?'max-height':'height').'="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
     						}
 
     						$return.= '</a>'."\n";

@@ -1,0 +1,20 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Διαχειριστείτε παρτίδα/σειριακό
+ProductStatusOnBatch=Διαχείριση
+ProductStatusNotOnBatch=Χωρίς διαχείριση
+ProductStatusOnBatchShort=Διαχείριση
+ProductStatusNotOnBatchShort=Χωρίς διαχείριση
+Batch=Παρτίδα/Σειριακός
+atleast1batchfield=Φάτε την ημερομηνία λήξης ή ημερομηνία πώλησης ή τον αριθμό παρτίδας
+batch_number=Παρτίδα/Σειριακός αριθμός
+l_eatby=Φάτε ημερομηνία λήξης
+l_sellby=Ημερομηνία πώλησης
+DetailBatchNumber=Παρτίδα/Λεπτομέρειες σειριακού
+DetailBatchFormat=Παρτίδα/Κωδικός: %s - E:%s - s:%s (Ποσότητα: %d)
+printBatch=Παρτίδα: %s
+printEatby=Eat-by: %s
+printSellby=Πώληση ανά: %s
+printQty=Ποσότητα: %d
+AddDispatchBatchLine=Προσθέστε μια γραμμή για Χρόνο Διάρκειας αποστολής
+BatchDefaultNumber=Απροσδιόριστο
+WhenProductBatchModuleOnOptionAreForced=Όταν το module παρτίδας/σειριακός είναι ενεργοποιημένο, αύξηση/μείωση \nη κατάσταση των αποθεμάτων αναγκάζει την τελευταία επιλογή και δεν μπορούν να τροποποιηθούν. Άλλες επιλογές μπορούν να οριστούν όπως θέλετε.

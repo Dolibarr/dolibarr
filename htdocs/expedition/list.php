@@ -36,7 +36,7 @@ $result = restrictedArea($user, 'expedition',$expeditionid,'');
 
 $search_ref_exp = GETPOST("search_ref_exp");
 $search_ref_liv = GETPOST('search_ref_liv');
-$search_societe = GETPOST("search_societe");
+$search_company = GETPOST("search_company");
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -51,12 +51,12 @@ if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="DESC";
 $limit = $conf->liste_limit;
 
-// Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_ref_exp='';
     $search_ref_liv='';
-    $search_societe='';
+    $search_company='';
 }
 
 /*
@@ -92,7 +92,7 @@ if ($socid)
 }
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
-if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
+if ($search_company) $sql .= natural_search('s.nom', $search_company);
 
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1,$offset);
@@ -107,23 +107,25 @@ if ($resql)
 	$param="";
 	if ($search_ref_exp) $param.= "&amp;search_ref_exp=".$search_ref_exp;
 	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".$search_ref_liv;
-	if ($search_societe) $param.= "&amp;search_societe=".$search_societe;
+	if ($search_company) $param.= "&amp;search_company=".$search_company;
 
 	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
 
 	$i = 0;
+    print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),"ship2bill.php","e.ref","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),"ship2bill.php","s.nom", "", $param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateDeliveryPlanned"),"ship2bill.php","e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"],"e.ref","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateDeliveryPlanned"), $_SERVER["PHP_SELF"],"e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
 	if($conf->livraison_bon->enabled) {
-		print_liste_field_titre($langs->trans("DeliveryOrder"),"ship2bill.php","e.date_expedition","",$param, '',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("DateReceived"),"ship2bill.php","e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DeliveryOrder"), $_SERVER["PHP_SELF"],"e.date_expedition","",$param, '',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateReceived"), $_SERVER["PHP_SELF"],"e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
 	}
-	print_liste_field_titre($langs->trans("Status"),"ship2bill.php","e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"],"e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+	print '<td class="liste_titre">&nbsp;</td>';
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -132,7 +134,7 @@ if ($resql)
 	print '<input class="flat" size="10" type="text" name="search_ref_exp" value="'.$search_ref_exp.'">';
     print '</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
+	print '<input class="flat" type="text" size="10" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	if($conf->livraison_bon->enabled) {
@@ -141,13 +143,9 @@ if ($resql)
 		print '</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
-	print '<td class="liste_titre" align="right">';
-	// Développé dans la 3.7
-	//print img_search();
-	//print img_searchclear();
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+    print '</td>';
 	print '<td class="liste_titre" align="center">';
 	print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
 	print '</td>';
@@ -161,12 +159,15 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 
 		$var=!$var;
+		
+		// Ref
 		print "<tr ".$bc[$var].">";
 		print "<td>";
 		$shipment->id=$objp->rowid;
 		$shipment->ref=$objp->ref;
 		print $shipment->getNomUrl(1);
 		print "</td>\n";
+
 		// Third party
 		print '<td>';
 		$companystatic->id=$objp->socid;
@@ -174,7 +175,8 @@ if ($resql)
 		$companystatic->name=$objp->socname;
 		print $companystatic->getNomUrl(1);
 		print '</td>';
-		// Date delivery  planed
+
+		// Date delivery planed
 		print "<td align=\"center\">";
 		print dol_print_date($db->jdate($objp->date_expedition),"day");
 		/*$now = time();

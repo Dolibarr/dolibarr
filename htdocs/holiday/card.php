@@ -761,7 +761,6 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         	print '<input type="hidden" name="userid" value="'.$userid.'">';
         }
         else print $form->select_users(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
-        //var_dump($cp->getConfCP('nbHolidayDeducted'));
         $nb_holiday = $cp->getCPforUser($user->id) / $cp->getConfCP('nbHolidayDeducted');
         print ' &nbsp; <span>'.$langs->trans('SoldeCPUser', round($nb_holiday,2)).'</span>';
         print '</td>';
@@ -823,11 +822,11 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '</div>';
         print '</from>'."\n";
 
-        print '<center>';
+        print '<div class="center">';
         print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
         print '&nbsp; &nbsp; ';
         print '<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)">';
-        print '</center>';
+        print '</div>';
     }
 
 }

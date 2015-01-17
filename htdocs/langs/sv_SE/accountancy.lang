@@ -25,12 +25,12 @@ Selectchartofaccounts=Välj en kontoplan
 Validate=Validera
 Addanaccount=Lägg till ett redovisningskonto
 AccountAccounting=Redovisningskonto
-Ventilation=Ventilation
+Ventilation=Fördelning
 ToDispatch=Avsändandet
 Dispatched=Levereras
 
-CustomersVentilation=Ventilationskunder
-SuppliersVentilation=Ventilations leverantörer
+CustomersVentilation=Fördelning kunder
+SuppliersVentilation=Fördelning leverantörerna
 TradeMargin=Handelsmarginal
 Reports=Rapporter
 ByCustomerInvoice=Enligt faktura kunder
@@ -45,9 +45,9 @@ WriteBookKeeping=Record konton i huvudboken
 Bookkeeping=Huvudbok
 AccountBalanceByMonth=Saldo per månad
 
-AccountingVentilation=Redovisning ventilation
-AccountingVentilationSupplier=Redovisning ventilations leverantör
-AccountingVentilationCustomer=Redovisning ventilations kund
+AccountingVentilation=Uppdelning redovisning
+AccountingVentilationSupplier=Uppdelning redovisnings leverantör
+AccountingVentilationCustomer=Uppdelning redovisnings kund
 Line=Linje
 
 CAHTF=Totala köpesleverantörs HT
@@ -56,7 +56,7 @@ InvoiceLinesDone=Ventilerade linjer faktura
 IntoAccount=I bokföringskonto
 
 Ventilate=Ventilera
-VentilationAuto=Automatisk ventilation
+VentilationAuto=Automatisk uppdelning
 
 Processing=Bearbetning
 EndProcessing=I slutet av behandlingen
@@ -68,9 +68,9 @@ NotVentilatedinAccount=Inte ventilerad i redovisningskonto
 
 ACCOUNTING_SEPARATORCSV=Separator CSV
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Antal element som skall ventil visas av sidan (max rekommenderad: 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Börja sorteringen av sidorna i ventilations "Måste ventilera" av de senaste delarna
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Börja sorteringen av sidorna i ventilation "Ventilerade" av de senaste delarna
+ACCOUNTING_LIMIT_LIST_VENTILATION=Antal element att vara uppdelning framgår av sidan (max rekommenderad: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Börja sortering av nedbrytnings sidor "Måste uppdelning" av de senaste element
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Börja sorteringen av nedbrytnings sidor "Breakdown" av de senaste element
 
 AccountLength=Längd på redovisningen redovisning i Dolibarr
 AccountLengthDesc=Funktion som gör det möjligt att låtsas en längd av bokföringskonto genom att ersätta mellanslag med noll siffra. Den här funktionen berör endast displayen, det ändrar inte redovisningskonton registrerade i Dolibarr. För export, är nödvändigt denna funktion för att vara kompatibel med viss programvara.
@@ -140,14 +140,14 @@ Active=Uttalande
 
 NewFiscalYear=Nytt räkenskapsår
 
-DescVentilCustomer=Rådgör här den årliga redovisningen ventilation av dina fakturor kunder
+DescVentilCustomer=Rådgör här den årliga fördelningen redovisning av era fakturor kunder
 TotalVente=Total omsättning HT
 TotalMarge=Total försäljning marginal
 DescVentilDoneCustomer=Konsul här listan med linjerna av fakturor kunder och deras bokföringskonto
 DescVentilTodoCustomer=Ventilera dina rader av kundfaktura med en redovisningskonto
 ChangeAccount=Ändra bokföringskonto för linjer som valts ut av kontot:
 Vide=-
-DescVentilSupplier=Rådgör här den årliga redovisningen ventilation av dina fakturor leverantörer
+DescVentilSupplier=Rådgör här den årliga fördelningen redovisning av dina fakturor leverantörer
 DescVentilTodoSupplier=Ventilera dina rader av leverantörsfaktura med en redovisningskonto
 DescVentilDoneSupplier=Konsul här listan med linjerna av fakturor leverantör och deras bokföringskonto
 
@@ -155,4 +155,4 @@ ValidateHistory=Validera Automatiskt
 
 ErrorAccountancyCodeIsAlreadyUse=Fel, du kan inte ta bort denna redovisningskonto eftersom den används
 
-FicheVentilation=Ventilation kort
+FicheVentilation=Uppdelning kort

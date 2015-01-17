@@ -116,10 +116,9 @@ function commande_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object informations.
  *
- *  @param	Object	$object		order
- *  @return	array   	        head array with tabs
+ *  @return	array   	    		    head array with tabs
  */
-function order_admin_prepare_head($object)
+function order_admin_prepare_head()
 {
 	global $langs, $conf, $user;
 
@@ -131,7 +130,7 @@ function order_admin_prepare_head($object)
 	$head[$h][2] = 'general';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'order_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/order_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
@@ -143,7 +142,7 @@ function order_admin_prepare_head($object)
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'order_admin','remove');
 
 	return $head;
 }

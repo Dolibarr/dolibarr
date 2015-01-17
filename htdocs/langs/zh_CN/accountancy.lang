@@ -25,12 +25,12 @@ Selectchartofaccounts=选择会计科目表
 Validate=验证
 Addanaccount=添加一个会计帐户
 AccountAccounting=会计账户
-Ventilation=通风
+Ventilation=Breakdown
 ToDispatch=派遣
 Dispatched=调度
 
-CustomersVentilation=通风客户
-SuppliersVentilation=通风系统供应商
+CustomersVentilation=Breakdown customers
+SuppliersVentilation=Breakdown suppliers
 TradeMargin=贸易保证金
 Reports=报告
 ByCustomerInvoice=依据”发票“的客户
@@ -45,9 +45,9 @@ WriteBookKeeping=在”总账“中的”账户记录“
 Bookkeeping=总帐
 AccountBalanceByMonth=”账户余额“按月份
 
-AccountingVentilation=会计通风
-AccountingVentilationSupplier=会计通风的供应商
-AccountingVentilationCustomer=会计通风客户
+AccountingVentilation=Breakdown accounting
+AccountingVentilationSupplier=Breakdown accounting supplier
+AccountingVentilationCustomer=Breakdown accounting customer
 Line=线
 
 CAHTF=总采购供应商HT
@@ -56,7 +56,7 @@ InvoiceLinesDone=发票通风线
 IntoAccount=在会计帐户
 
 Ventilate=通风
-VentilationAuto=自动通风
+VentilationAuto=Automatic breakdown
 
 Processing=处理
 EndProcessing=处理的结束
@@ -68,9 +68,9 @@ NotVentilatedinAccount=不通风的会计账户
 
 ACCOUNTING_SEPARATORCSV=Separator CSV
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
 AccountLength=会计长度账户显示在的Dolibarr
 AccountLengthDesc=功能允许由零的数字代替空格假装会计账户的长度。这个函数只接触了显示屏，它不修改的Dolibarr登记的会计科目。为出口，这个功能是必要的，以与特定的软件兼容。
@@ -84,7 +84,7 @@ ACCOUNTING_CASH_JOURNAL=Cash journal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=转账账户
 ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
@@ -140,14 +140,14 @@ Active=声明
 
 NewFiscalYear=新财年
 
-DescVentilCustomer=在这里，请咨询您的发票客户的年度会计通风
+DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=总成交量HT
 TotalMarge=总销售利润率
 DescVentilDoneCustomer=这里查阅发票的客户的行和其会计帐户的列表
 DescVentilTodoCustomer=与会计帐户通风客户发票行
 ChangeAccount=变化的账户选择行会计帐户：
 Vide=-
-DescVentilSupplier=在这里，请咨询您的发票供应商的年度会计通风
+DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
 DescVentilTodoSupplier=与会计帐户通风发票的供应商的线路
 DescVentilDoneSupplier=在这里请教发票的供应商的线条和其会计帐户列表
 
@@ -155,4 +155,4 @@ ValidateHistory=自动验证
 
 ErrorAccountancyCodeIsAlreadyUse=错误，你不能删除这个会计帐户，因为它是用来
 
-FicheVentilation=通风卡
+FicheVentilation=Breakdown card

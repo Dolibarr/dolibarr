@@ -573,7 +573,7 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
 /**
  * Return last or next value for a mask (according to area we should not reset)
  *
- * @param   DoliDB		$db			Database handler
+ * @param   DoliDB		$db				Database handler
  * @param   string		$mask			Mask to use
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
@@ -581,8 +581,8 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  * @param   Societe		$objsoc			The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode			'next' for next value or 'last' for last value
- * @param   bool		$bentityon		activate the entity filterdefault is true (for modules not compatible with multicompany)
- * @return 	string					New value (numeric) or error message
+ * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
+ * @return 	string						New value (numeric) or error message
  */
 function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true)
 {
@@ -784,9 +784,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $sql = "SELECT MAX(".$sqlstring.") as val";
     $sql.= " FROM ".MAIN_DB_PREFIX.$table;
     $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
-    $sql.= " AND ".$field." NOT LIKE '%PROV%'";
+	$sql.= " AND ".$field." NOT LIKE '(PROV%)'";
     if ($bentityon) // only if entity enable
     	$sql.= " AND entity IN (".getEntity($table, 1).")";
+
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -1836,3 +1837,42 @@ function fetchObjectByElement($element_id,$element_type) {
 	}
 	return 0;
 }
+
+
+/**
+ *	Convert an array with RGB value into hex RGB value
+ *
+ *  @param	array	$arraycolor			Array
+ *  @param	string	$colorifnotfound	Color code to return if entry not defined
+ *  @return	string						RGB hex value (without # before). For example: FF00FF
+ *  @see	Make the opposite of colorStringToArray
+ */
+function colorArrayToHex($arraycolor,$colorifnotfound='888888')
+{
+	if (! is_array($arraycolor)) return $colorifnotfound;
+	return dechex($arraycolor[0]).dechex($arraycolor[1]).dechex($arraycolor[2]);
+}
+
+
+/**
+ *	Convert a string RGB value ('FFFFFF', '255,255,255') into an array RGB array(255,255,255)
+ *
+ *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
+ *  @param	string	$colorifnotfound	Color code to return if entry not defined
+ *  @return	string						RGB hex value (without # before). For example: FF00FF
+ *  @see	Make the opposite of colorArrayToHex
+ */
+function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
+{
+	if (is_array($stringcolor)) return $stringcolor;	// If already into correct output format, we return as is
+	$tmp=preg_match('/^([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/',$stringcolor,$reg);
+	if (! $tmp)
+	{
+		$tmp=explode(',',$stringcolor);
+		if (count($tmp) < 3) return $colorifnotfound;
+		return $tmp;
+	}
+	return array(hexdec($reg[1]),hexdec($reg[2]),hexdec($reg[3]));
+}
+
+

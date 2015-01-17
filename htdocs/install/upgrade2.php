@@ -363,7 +363,22 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
         	// Reload modules (this must be always and only into last targeted version)
-        	migrate_reload_modules($db,$langs,$conf);
+			$listofmodule=array(
+				    	'MAIN_MODULE_AGENDA',
+				    	'MAIN_MODULE_SOCIETE',
+				    	'MAIN_MODULE_PRODUIT',
+				    	'MAIN_MODULE_SERVICE',
+				    	'MAIN_MODULE_COMMANDE',
+				    	'MAIN_MODULE_FACTURE',
+				    	'MAIN_MODULE_FOURNISSEUR',
+				    	'MAIN_MODULE_USER',
+				    	'MAIN_MODULE_DEPLACEMENT',
+				    	'MAIN_MODULE_DON',
+				    	'MAIN_MODULE_ECM',
+				    	'MAIN_MODULE_PAYBOX',
+			    		'MAIN_MODULE_OPENSURVEY'
+	    	);
+        	migrate_reload_modules($db,$langs,$conf,$listofmodule);
 
         	// Reload menus (this must be always and only into last targeted version)
         	migrate_reload_menu($db,$langs,$conf,$versionto);
@@ -1523,7 +1538,7 @@ function migrate_price_contrat($db,$langs,$conf)
                 // On met a jour les 3 nouveaux champs
                 $contratligne= new ContratLigne($db);
                 //$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
-                $contratligne->rowid=$rowid;
+                $contratligne->id=$rowid;
 
                 $result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,0,'HT',$info_bits,0,$tmpmysoc);
                 $total_ht  = $result[0];
@@ -3634,137 +3649,172 @@ function migrate_delete_old_dir($db,$langs,$conf)
  * We must do this when internal menu of module or permissions has changed
  * or when triggers have moved.
  *
- * @param	DoliDB		$db			Database handler
- * @param	Translate	$langs		Object langs
- * @param	Conf		$conf		Object conf
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @param	array		$listofmodule	List of modules
  * @return	void
  */
-function migrate_reload_modules($db,$langs,$conf)
+function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 {
     dolibarr_install_syslog("upgrade2::migrate_reload_modules");
 
-    if (! empty($conf->global->MAIN_MODULE_AGENDA))
+    // Module to reload if no info is provided
+    if (count($listofmodule) == 0)
     {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Agenda");
-        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modAgenda.class.php';
-        if ($res) {
-            $mod=new modAgenda($db);
-            $mod->remove('noboxes');
-            $mod->init('newboxdefonly');
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_SOCIETE))
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Societe");
-        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';
-        if ($res) {
-            $mod=new modSociete($db);
-            $mod->remove('noboxes');
-            $mod->init('newboxdefonly');
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_PRODUIT))    // Permission has changed into 2.7
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Produit");
-        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modProduct.class.php';
-        if ($res) {
-            $mod=new modProduct($db);
-            //$mod->remove('noboxes');
-            $mod->init('newboxdefonly');
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_SERVICE))    // Permission has changed into 2.7
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Service");
-        if ($res) {
-            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
-            $mod=new modService($db);
-            //$mod->remove('noboxes');
-            $mod->init('newboxdefonly');
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_COMMANDE))   // Permission has changed into 2.9
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Commande");
-        if ($res) {
-            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
-            $mod=new modCommande($db);
-            //$mod->remove('noboxes');
-            $mod->init('newboxdefonly');
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_FACTURE))    // Permission has changed into 2.9
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Facture");
-        if ($res) {
-            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
-            $mod=new modFacture($db);
-            //$mod->remove('noboxes');
-            $mod->init('newboxdefonly');
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_FOURNISSEUR))    // Permission has changed into 2.9
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Fournisseur");
-        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
-        if ($res) {
-            $mod=new modFournisseur($db);
-            //$mod->remove('noboxes');
-            $mod->init('newboxdefonly');
-        }
+    	$listofmodule=array(
+	    	'MAIN_MODULE_AGENDA',
+	    	'MAIN_MODULE_SOCIETE',
+	    	'MAIN_MODULE_PRODUIT',
+	    	'MAIN_MODULE_SERVICE',
+	    	'MAIN_MODULE_COMMANDE',
+	    	'MAIN_MODULE_FACTURE',
+	    	'MAIN_MODULE_FOURNISSEUR',
+	    	'MAIN_MODULE_USER',
+	    	'MAIN_MODULE_DEPLACEMENT',
+	    	'MAIN_MODULE_DON',
+	    	'MAIN_MODULE_ECM',
+	    	'MAIN_MODULE_PAYBOX',
+    		'MAIN_MODULE_OPENSURVEY'
+    	);
     }
 
-    if (! empty($conf->global->MAIN_MODULE_USER))    // Permission has changed into 3.0
+    foreach($listofmodule as $moduletoreload)
     {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module User");
-        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modUser.class.php';
-        if ($res) {
-            $mod=new modUser($db);
-            //$mod->remove('noboxes');  // We need to remove because id of module has changed
-            $mod->init('newboxdefonly');
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_DEPLACEMENT))    // Permission has changed into 3.0
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Deplacement");
-        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php';
-        if ($res) {
-            $mod=new modDeplacement($db);
-            //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
-            $mod->init('newboxdefonly');
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_DON))    // Permission has changed into 3.0
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Don");
-        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDon.class.php';
-        if ($res) {
-            $mod=new modDon($db);
-            //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
-            $mod->init('newboxdefonly');
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_ECM))    // Permission has changed into 3.0 and 3.1
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ECM");
-        if ($res) {
-            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
-            $mod=new modECM($db);
-            $mod->remove('noboxes');	// We need to remove because a permission id has been removed
-            $mod->init('newboxdefonly');
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_PAYBOX))    // Permission has changed into 3.0
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Paybox");
-        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php';
-        if ($res) {
-            $mod=new modPaybox($db);
-            $mod->remove('noboxes');  // We need to remove because id of module has changed
-            $mod->init('newboxdefonly');
-        }
-    }
+    	if (empty($moduletoreload) || empty($conf->global->$moduletoreload)) continue;
 
+	    if ($moduletoreload == 'MAIN_MODULE_AGENDA')
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Agenda");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modAgenda.class.php';
+	        if ($res) {
+	            $mod=new modAgenda($db);
+	            $mod->remove('noboxes');
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+	    if ($moduletoreload == 'MAIN_MODULE_SOCIETE')
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Societe");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';
+	        if ($res) {
+	            $mod=new modSociete($db);
+	            $mod->remove('noboxes');
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+	    if ($moduletoreload == 'MAIN_MODULE_PRODUIT')    // Permission has changed into 2.7
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Produit");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modProduct.class.php';
+	        if ($res) {
+	            $mod=new modProduct($db);
+	            //$mod->remove('noboxes');
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+	    if ($moduletoreload == 'MAIN_MODULE_SERVICE')    // Permission has changed into 2.7
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Service");
+	        if ($res) {
+	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
+	            $mod=new modService($db);
+	            //$mod->remove('noboxes');
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+	    if ($moduletoreload == 'MAIN_MODULE_COMMANDE')   // Permission has changed into 2.9
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Commande");
+	        if ($res) {
+	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
+	            $mod=new modCommande($db);
+	            //$mod->remove('noboxes');
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+	    if ($moduletoreload == 'MAIN_MODULE_FACTURE')    // Permission has changed into 2.9
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Facture");
+	        if ($res) {
+	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
+	            $mod=new modFacture($db);
+	            //$mod->remove('noboxes');
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+	    if ($moduletoreload == 'MAIN_MODULE_FOURNISSEUR')    // Permission has changed into 2.9
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Fournisseur");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
+	        if ($res) {
+	            $mod=new modFournisseur($db);
+	            //$mod->remove('noboxes');
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+
+	    if ($moduletoreload == 'MAIN_MODULE_USER')    // Permission has changed into 3.0
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module User");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modUser.class.php';
+	        if ($res) {
+	            $mod=new modUser($db);
+	            //$mod->remove('noboxes');  // We need to remove because id of module has changed
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+	    if ($moduletoreload == 'MAIN_MODULE_DEPLACEMENT')    // Permission has changed into 3.0
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Deplacement");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php';
+	        if ($res) {
+	            $mod=new modDeplacement($db);
+	            //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+	    if ($moduletoreload == 'MAIN_MODULE_DON')    // Permission has changed into 3.0
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Don");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDon.class.php';
+	        if ($res) {
+	            $mod=new modDon($db);
+	            //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+	    if ($moduletoreload == 'MAIN_MODULE_ECM')    // Permission has changed into 3.0 and 3.1
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ECM");
+	        if ($res) {
+	            $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
+	            $mod=new modECM($db);
+	            $mod->remove('noboxes');	// We need to remove because a permission id has been removed
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+	    if ($moduletoreload == 'MAIN_MODULE_PAYBOX')    // Permission has changed into 3.0
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Paybox");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php';
+	        if ($res) {
+	            $mod=new modPaybox($db);
+	            $mod->remove('noboxes');  // We need to remove because id of module has changed
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+    	if ($moduletoreload == 'MAIN_MODULE_OPENSURVEY')    // Permission has changed into 3.0
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Opensurvey");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modOpenSurvey.class.php';
+	        if ($res) {
+	            $mod=new modOpenSurvey($db);
+	            $mod->remove('noboxes');  // We need to remove because menu entries has changed
+	            $mod->init('newboxdefonly');
+	        }
+	    }
+    }
 }
 
 

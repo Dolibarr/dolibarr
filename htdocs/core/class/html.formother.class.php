@@ -311,15 +311,25 @@ class FormOther
      */
     function select_categories($type,$selected=0,$htmlname='search_categ',$nocateg=0)
     {
-        global $langs;
+        global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
         // Load list of "categories"
         $static_categs = new Categorie($this->db);
         $tab_categs = $static_categs->get_full_arbo($type);
 
+        $moreforfilter = '';
+        $nodatarole = '';
+        // Enhance with select2
+        if ($conf->use_javascript_ajax)
+        {
+            include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            $moreforfilter.= ajax_combobox('select_categ_'.$htmlname);
+            $nodatarole=' data-role="none"';
+        }
+
         // Print a select with each of them
-        $moreforfilter ='<select class="flat" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
+        $moreforfilter.='<select class="flat" id="select_categ_'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
         $moreforfilter.='<option value="">&nbsp;</option>';	// Should use -1 to say nothing
 
         if (is_array($tab_categs))
@@ -349,16 +359,26 @@ class FormOther
      *  @param  string	$htmlname      	Name of combo list (example: 'search_sale')
      *  @param  User	$user           Object user
      *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+     *  @param	int		$showempty		1=show also an empty value
      *  @return string					Html combo list code
      */
-    function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0)
+    function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0,$showempty=1)
     {
         global $conf,$langs;
         $langs->load('users');
 
+        $out = '';
+        $nodatarole = '';
+        // Enhance with select2
+        if ($conf->use_javascript_ajax)
+        {
+            include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            $out.= ajax_combobox($htmlname);
+            $nodatarole=' data-role="none"';
+        }
         // Select each sales and print them in a select input
-        $moreforfilter ='<select class="flat" name="'.$htmlname.'">';
-        $moreforfilter.='<option value="">&nbsp;</option>';
+        $out.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+        if ($showempty) $out.='<option value="-1">&nbsp;</option>';
 
         // Get list of users allowed to be viewed
         $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
@@ -383,34 +403,35 @@ class FormOther
         {
             while ($obj_usr = $this->db->fetch_object($resql_usr))
             {
-                $moreforfilter.='<option value="'.$obj_usr->rowid.'"';
 
-                if ($obj_usr->rowid == $selected) $moreforfilter.=' selected="selected"';
+                $out.='<option value="'.$obj_usr->rowid.'"';
 
-                $moreforfilter.='>';
-                $moreforfilter.=dolGetFirstLastname($obj_usr->firstname,$obj_usr->lastname);
+                if ($obj_usr->rowid == $selected) $out.=' selected="selected"';
+
+                $out.='>';
+                $out.=dolGetFirstLastname($obj_usr->firstname,$obj_usr->lastname);
                 // Complete name with more info
                 $moreinfo=0;
                 if (! empty($conf->global->MAIN_SHOW_LOGIN))
                 {
-                	$moreforfilter.=($moreinfo?' - ':' (').$obj_usr->login;
-                	$moreinfo++;
+                    $out.=($moreinfo?' - ':' (').$obj_usr->login;
+                    $moreinfo++;
                 }
                 if ($showstatus >= 0)
                 {
 					if ($obj_usr->statut == 1 && $showstatus == 1)
 					{
-						$moreforfilter.=($moreinfo?' - ':' (').$langs->trans('Enabled');
+						$out.=($moreinfo?' - ':' (').$langs->trans('Enabled');
 	                	$moreinfo++;
 					}
 					if ($obj_usr->statut == 0)
 					{
-						$moreforfilter.=($moreinfo?' - ':' (').$langs->trans('Disabled');
+						$out.=($moreinfo?' - ':' (').$langs->trans('Disabled');
                 		$moreinfo++;
 					}
 				}
-				$moreforfilter.=($moreinfo?')':'');
-                $moreforfilter.='</option>';
+				$out.=($moreinfo?')':'');
+                $out.='</option>';
             }
             $this->db->free($resql_usr);
         }
@@ -418,9 +439,9 @@ class FormOther
         {
             dol_print_error($this->db);
         }
-        $moreforfilter.='</select>';
+        $out.='</select>';
 
-        return $moreforfilter;
+        return $out;
     }
 
     /**
@@ -560,13 +581,13 @@ class FormOther
      *
      *		@param	string		$set_color		Pre-selected color
      *		@param	string		$prefix			Name of HTML field
-     *		@param	string		$form_name		Name of form
+     *		@param	string		$form_name		Deprecated. Not used.
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@return	void
      * 		@deprecated
      */
-    function select_color($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
+    function select_color($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='')
     {
     	print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
     }
@@ -576,13 +597,13 @@ class FormOther
      *
      *		@param	string		$set_color		Pre-selected color
      *		@param	string		$prefix			Name of HTML field
-     *		@param	string		$form_name		Name of form
+     *		@param	string		$form_name		Deprecated. Not used.
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@param	string		$morecss		Add css style into input field
      * 		@return	void
      */
-    function selectColor($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='', $morecss='')
+    function selectColor($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='', $morecss='')
     {
         global $langs,$conf;
 
@@ -1034,6 +1055,7 @@ class FormOther
         if ($nbboxactivated)
         {
         	$langs->load("boxes");
+			$langs->load("projects");
 
         	$emptybox=new ModeleBoxes($db);
 

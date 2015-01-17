@@ -29,6 +29,7 @@ ActionsToDoBy=受影响的行动
 ActionsDoneBy=做的动作
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= 我所有的事件/任务
 AllActions= 所有/任务行动
 ViewList=查看列表
@@ -41,9 +42,10 @@ AutoActions= 全自动灌装议程
 AgendaAutoActionDesc= 这里定义Dolibarr会为其自动创建待办事项的活动。如果没有被选\n中(默认情况下)，只有手动操作被列入待办事项。
 AgendaSetupOtherDesc= 这页允许配置议程模块其他参数。
 AgendaExtSitesDesc=此页面允许声明日历的外部来源，从而在Dolibarr待办事项中可以看到他们的事件。
-ActionsEvents= Dolibarr将为其自动创建一个动作的事件
-PropalValidatedInDolibarr= 建议%s的验证
-InvoiceValidatedInDolibarr= 发票%s的验证
+ActionsEvents=Dolibarr将为其自动创建一个动作的事件
+PropalValidatedInDolibarr=建议%s的验证
+InvoiceValidatedInDolibarr=发票%s的验证
+InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=发票的%s去回到草案状态
 InvoiceDeleteDolibarr=删除  %s  发票
 OrderValidatedInDolibarr= 订购%s的验证
@@ -51,7 +53,6 @@ OrderApprovedInDolibarr=为了%s批准
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=为了%s回到草案状态
 OrderCanceledInDolibarr=为了%s取消
-InterventionValidatedInDolibarr=%s的验证干预
 ProposalSentByEMail=商业建议通过电子邮件发送%s
 OrderSentByEMail=客户订单通过电子邮件发送%s
 InvoiceSentByEMail=客户发票通过电子邮件发送%s
@@ -59,8 +60,6 @@ SupplierOrderSentByEMail=供应商的订单通过电子邮件发送%s
 SupplierInvoiceSentByEMail=供应商的发票通过电子邮件发送%s
 ShippingSentByEMail=通过电子邮件发送的航运%s
 ShippingValidated= Shipping %s validated
-InterventionSentByEMail=通过电子邮件发送的干预%s
-InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= 第三方创建
 DateActionPlannedStart= 计划开始日期
 DateActionPlannedEnd= 计划结束日期
@@ -70,9 +69,9 @@ DateActionStart= 开始日期
 DateActionEnd= 结束日期
 AgendaUrlOptions1=您还可以添加以下参数来筛选输出：
 AgendaUrlOptions2=<b>login=%s</b> 表示限制只导出创造用户，受影响用户或使用者或执行者为<b>%s</b>的待办事项。
-AgendaUrlOptions3=<b>logina=%s</b> 表示限制只导出创建用户为<b>%s</b>的待办事项。
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b>表示限制只导出使用者与受影响者为<b>%s</b>的待办事项。
-AgendaUrlOptions5=<b>logind=%s</b>表示限制只导出执行者为<b>%s</b>的待办事项。
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=显示生日的接触
 AgendaHideBirthdayEvents=隐藏生日的接触
 Busy=忙碌
@@ -89,5 +88,5 @@ ExtSiteUrlAgenda=URL来访问。iCal文件
 ExtSiteNoLabel=无说明
 WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
-AddEvent=Add event
+AddEvent=Create event
 MyAvailability=My availability

@@ -367,6 +367,7 @@ ActionsOnCompany=Eventos respecto a este tercero
 ActionsOnMember=Eventos respecto a este miembro
 NActions=%s eventos
 NActionsLate=%s en retraso
+RequestAlreadyDone=Solicitud ya registrada
 Filter=Filtro
 RemoveFilter=Eliminar filtro
 ChartGenerated=Gráficos generados

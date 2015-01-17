@@ -94,7 +94,7 @@ print '</td></tr>';
 
 print '</table>';
 
-print '<center><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+print '<div class="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form><br><br>';
 

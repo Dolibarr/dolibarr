@@ -46,7 +46,7 @@ llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 print_fiche_titre($langs->trans('MenuConfCP'));
 
-$congespayes = new Holidays($db);
+$congespayes = new Holiday($db);
 $listUsers = $congespayes->fetchUsers(false, true);
 
 // Si il y a une action de mise à jour

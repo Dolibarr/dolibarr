@@ -167,7 +167,7 @@ print $total;
 print '</td></tr>';
 print '</table>';
 
-if (! empty($conf->categorie->enabled))
+if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS))
 {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	print '<br>';
@@ -341,8 +341,12 @@ llxFooter();
 $db->close();
 
 
-
-
+/*
+ *  Print html activity for product type
+ *
+ *  @param      int $product_type   Type of product
+ *  @return     void
+ */
 function activitytrim($product_type)
 {
 	global $conf,$langs,$db;

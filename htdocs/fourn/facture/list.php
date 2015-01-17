@@ -72,8 +72,9 @@ $search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax","alpha");
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
+$filter = GETPOST("filtre");
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
 {
 	$search_ref="";
 	$search_ref_supplier="";
@@ -83,6 +84,7 @@ if (GETPOST("button_removefilter"))
 	$search_amount_all_tax="";
 	$year="";
 	$month="";
+	$filter="";
 }
 
 /*
@@ -136,9 +138,9 @@ if ($socid)
 {
 	$sql .= " AND s.rowid = ".$socid;
 }
-if (GETPOST('filtre') && GETPOST('filtre') != -1)		// GETPOST('filtre') may be a string
+if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
 {
-	$filtrearr = explode(",", GETPOST('filtre'));
+	$filtrearr = explode(",", $filter);
 	foreach ($filtrearr as $fil)
 	{
 		$filt = explode(":", $fil);
@@ -148,7 +150,7 @@ if (GETPOST('filtre') && GETPOST('filtre') != -1)		// GETPOST('filtre') may be a
 
 if ($search_ref)
 {
-	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.rowid', 'fac.ref'), $search_ref);// For backward compatibility
+	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.ref'), $search_ref);
 	else $sql .= natural_search('fac.ref', $search_ref);
 }
 if (search_ref_supplier)
@@ -217,7 +219,7 @@ if ($resql)
 	if ($search_company)      	$param.='&search_company='.urlencode($search_company);
 	if ($search_amount_no_tax)	$param.='&search_amount_no_tax='.urlencode($search_amount_no_tax);
 	if ($search_amount_all_tax)	$param.='&search_amount_all_tax='.urlencode($search_amount_all_tax);
-	if (GETPOST("filtre") && GETPOST('filtre') != -1) $param.='&filtre='.urlencode(GETPOST("filtre"));
+	if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
 
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -269,8 +271,8 @@ if ($resql)
 	print '</td><td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
-	$liststatus=array('paye:0'=>$langs->trans("Unpayed"), 'paye:1'=>$langs->trans("Payed"));
-	print $form->selectarray('filtre', $liststatus, GETPOST('filtre'), 1);
+	$liststatus=array('paye:0'=>$langs->trans("Unpaid"), 'paye:1'=>$langs->trans("Paid"));
+	print $form->selectarray('filtre', $liststatus, $filter, 1);
 	print '</td><td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -329,7 +331,7 @@ if ($resql)
 		//print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
 		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5);
 		print '</td>';
-		
+
 		print '<td align="center">&nbsp;</td>';
 
 		print "</tr>\n";

@@ -29,6 +29,7 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
@@ -84,6 +85,52 @@ $server->wsdl->addComplexType(
 		)
 );
 
+$line_fields = array(
+	'id' => array('name'=>'id','type'=>'xsd:string'),
+	'type' => array('name'=>'type','type'=>'xsd:int'),
+	'fk_commande' => array('name'=>'fk_commande','type'=>'xsd:int'),
+	'fk_parent_line' => array('name'=>'fk_parent_line','type'=>'xsd:int'),
+	'desc' => array('name'=>'desc','type'=>'xsd:string'),
+	'qty' => array('name'=>'qty','type'=>'xsd:double'),
+	'price' => array('name'=>'price','type'=>'xsd:double'),
+	'unitprice' => array('name'=>'unitprice','type'=>'xsd:double'),
+	'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:double'),
+
+	'remise' => array('name'=>'remise','type'=>'xsd:double'),
+	'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:double'),
+
+	'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
+	'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
+	'total' => array('name'=>'total','type'=>'xsd:double'),
+
+	'date_start' => array('name'=>'date_start','type'=>'xsd:date'),
+	'date_end' => array('name'=>'date_end','type'=>'xsd:date'),
+
+	// From product
+	'product_id' => array('name'=>'product_id','type'=>'xsd:int'),
+	'product_ref' => array('name'=>'product_ref','type'=>'xsd:string'),
+	'product_label' => array('name'=>'product_label','type'=>'xsd:string'),
+	'product_desc' => array('name'=>'product_desc','type'=>'xsd:string')
+);
+
+
+//Retreive all extrafield for thirdsparty
+// fetch optionals attributes and labels
+$extrafields=new ExtraFields($db);
+$extralabels=$extrafields->fetch_name_optionals_label('commandedet',true);
+if (count($extrafields)>0) {
+	$extrafield_line_array = array();
+}
+foreach($extrafields->attribute_label as $key=>$label)
+{
+	//$value=$object->array_options["options_".$key];
+	$type =$extrafields->attribute_type[$key];
+	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+	else {$type='xsd:string';}
+	$extrafield_line_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+}
+$line_fields=array_merge($line_fields,$extrafield_line_array);
+
 // Define other specific objects
 $server->wsdl->addComplexType(
 		'line',
@@ -91,33 +138,7 @@ $server->wsdl->addComplexType(
 		'struct',
 		'all',
 		'',
-		array(
-				'id' => array('name'=>'id','type'=>'xsd:string'),
-		        'type' => array('name'=>'type','type'=>'xsd:int'),
-				'fk_commande' => array('name'=>'fk_commande','type'=>'xsd:int'),
-				'fk_parent_line' => array('name'=>'fk_parent_line','type'=>'xsd:int'),
-				'desc' => array('name'=>'desc','type'=>'xsd:string'),
-				'qty' => array('name'=>'qty','type'=>'xsd:double'),
-				'price' => array('name'=>'price','type'=>'xsd:double'),
-				'unitprice' => array('name'=>'unitprice','type'=>'xsd:double'),
-				'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:double'),
-
-				'remise' => array('name'=>'remise','type'=>'xsd:double'),
-				'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:double'),
-
-				'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
-				'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
-				'total' => array('name'=>'total','type'=>'xsd:double'),
-
-				'date_start' => array('name'=>'date_start','type'=>'xsd:date'),
-				'date_end' => array('name'=>'date_end','type'=>'xsd:date'),
-
-				// From product
-		        'product_id' => array('name'=>'product_id','type'=>'xsd:int'),
-				'product_ref' => array('name'=>'product_ref','type'=>'xsd:string'),
-				'product_label' => array('name'=>'product_label','type'=>'xsd:string'),
-				'product_desc' => array('name'=>'product_desc','type'=>'xsd:string')
-		)
+		$line_fields
 );
 
 /*$server->wsdl->addComplexType(
@@ -151,53 +172,73 @@ $server->wsdl->addComplexType(
 		)
 );
 
+$order_fields = array(
+	'id' => array('name'=>'id','type'=>'xsd:string'),
+	'ref' => array('name'=>'ref','type'=>'xsd:string'),
+	'ref_client' => array('name'=>'ref_client','type'=>'xsd:string'),
+	'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
+	'ref_int' => array('name'=>'ref_int','type'=>'xsd:string'),
+	'thirdparty_id' => array('name'=>'thirdparty_id','type'=>'xsd:int'),
+	'status' => array('name'=>'status','type'=>'xsd:int'),
+	'billed' => array('name'=>'billed','type'=>'xsd:string'),
+	'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
+	'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
+	'total_localtax1' => array('name'=>'total_localtax1','type'=>'xsd:double'),
+	'total_localtax2' => array('name'=>'total_localtax2','type'=>'xsd:double'),
+	'total' => array('name'=>'total','type'=>'xsd:double'),
+	'date' => array('name'=>'date','type'=>'xsd:date'),
+	'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
+	'date_validation' => array('name'=>'date_validation','type'=>'xsd:dateTime'),
+	'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
+	'remise' => array('name'=>'remise','type'=>'xsd:string'),
+	'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:string'),
+	'remise_absolue' => array('name'=>'remise_absolue','type'=>'xsd:string'),
+	'source' => array('name'=>'source','type'=>'xsd:string'),
+	'note_private' => array('name'=>'note_private','type'=>'xsd:string'),
+	'note_public' => array('name'=>'note_public','type'=>'xsd:string'),
+	'project_id' => array('name'=>'project_id','type'=>'xsd:string'),
+
+	'mode_reglement_id' => array('name'=>'mode_reglement_id','type'=>'xsd:string'),
+	'mode_reglement_code' => array('name'=>'mode_reglement_code','type'=>'xsd:string'),
+	'mode_reglement' => array('name'=>'mode_reglement','type'=>'xsd:string'),
+	'cond_reglement_id' => array('name'=>'cond_reglement_id','type'=>'xsd:string'),
+	'cond_reglement_code' => array('name'=>'cond_reglement_code','type'=>'xsd:string'),
+	'cond_reglement' => array('name'=>'cond_reglement','type'=>'xsd:string'),
+	'cond_reglement_doc' => array('name'=>'cond_reglement_doc','type'=>'xsd:string'),
+
+	'date_livraison' => array('name'=>'date_livraison','type'=>'xsd:date'),
+	'fk_delivery_address' => array('name'=>'fk_delivery_address','type'=>'xsd:int'),
+	'demand_reason_id' => array('name'=>'demand_reason_id','type'=>'xsd:string'),
+
+	'lines' => array('name'=>'lines','type'=>'tns:LinesArray2')
+);
+
+//Retreive all extrafield for thirdsparty
+// fetch optionals attributes and labels
+$extrafields=new ExtraFields($db);
+$extralabels=$extrafields->fetch_name_optionals_label('commande',true);
+if (count($extrafields)>0) {
+	$extrafield_array = array();
+}
+foreach($extrafields->attribute_label as $key=>$label)
+{
+	//$value=$object->array_options["options_".$key];
+	$type =$extrafields->attribute_type[$key];
+	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+	else {$type='xsd:string';}
+	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+}
+$order_fields=array_merge($order_fields,$extrafield_array);
+
 $server->wsdl->addComplexType(
 		'order',
 		'complexType',
 		'struct',
 		'all',
 		'',
-		array(
-				'id' => array('name'=>'id','type'=>'xsd:string'),
-				'ref' => array('name'=>'ref','type'=>'xsd:string'),
-				'ref_client' => array('name'=>'ref_client','type'=>'xsd:string'),
-				'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
-				'ref_int' => array('name'=>'ref_int','type'=>'xsd:string'),
-				'thirdparty_id' => array('name'=>'thirdparty_id','type'=>'xsd:int'),
-				'status' => array('name'=>'status','type'=>'xsd:int'),
-				'facturee' => array('name'=>'facturee','type'=>'xsd:string'),
-				'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
-				'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
-				'total_localtax1' => array('name'=>'total_localtax1','type'=>'xsd:double'),
-				'total_localtax2' => array('name'=>'total_localtax2','type'=>'xsd:double'),
-				'total' => array('name'=>'total','type'=>'xsd:double'),
-				'date' => array('name'=>'date','type'=>'xsd:date'),
-		        'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
-		        'date_validation' => array('name'=>'date_validation','type'=>'xsd:dateTime'),
-	    	    'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
-				'remise' => array('name'=>'remise','type'=>'xsd:string'),
-				'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:string'),
-				'remise_absolue' => array('name'=>'remise_absolue','type'=>'xsd:string'),
-				'source' => array('name'=>'source','type'=>'xsd:string'),
-				'note_private' => array('name'=>'note_private','type'=>'xsd:string'),
-				'note_public' => array('name'=>'note_public','type'=>'xsd:string'),
-				'project_id' => array('name'=>'project_id','type'=>'xsd:string'),
-
-				'mode_reglement_id' => array('name'=>'mode_reglement_id','type'=>'xsd:string'),
-				'mode_reglement_code' => array('name'=>'mode_reglement_code','type'=>'xsd:string'),
-				'mode_reglement' => array('name'=>'mode_reglement','type'=>'xsd:string'),
-				'cond_reglement_id' => array('name'=>'cond_reglement_id','type'=>'xsd:string'),
-				'cond_reglement_code' => array('name'=>'cond_reglement_code','type'=>'xsd:string'),
-				'cond_reglement' => array('name'=>'cond_reglement','type'=>'xsd:string'),
-				'cond_reglement_doc' => array('name'=>'cond_reglement_doc','type'=>'xsd:string'),
-
-				'date_livraison' => array('name'=>'date_livraison','type'=>'xsd:date'),
-				'fk_delivery_address' => array('name'=>'fk_delivery_address','type'=>'xsd:int'),
-				'demand_reason_id' => array('name'=>'demand_reason_id','type'=>'xsd:string'),
-
-				'lines' => array('name'=>'lines','type'=>'tns:LinesArray2')
-		)
+		$order_fields
 );
+
 /*
 $server->wsdl->addComplexType(
 		'OrdersArray',
@@ -273,8 +314,17 @@ $server->register(
 		'WS to create an order'
 );
 
+$server->register(
+		'updateOrder',
+		array('authentication'=>'tns:authentication','order'=>'tns:order'),	// Entry values
+		array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),	// Exit values
+		$ns,
+		$ns.'#updateOrder',
+		$styledoc,
+		$styleuse,
+		'WS to update an order'
+);
 
-// Register WSDL
 $server->register(
 		'validOrder',
 		array('authentication'=>'tns:authentication','id'=>'xsd:string'),	// Entry values
@@ -398,7 +448,7 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 					'remise_absolue' => $order->remise_absolue,
 
 					'source' => $order->source,
-					'facturee' => $order->facturee,
+					'billed' => $order->billed,
 					'note_private' => $order->note_private,
 					'note_public' => $order->note_public,
 					'cond_reglement_id' => $order->cond_reglement_id,
@@ -555,7 +605,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 					'remise_absolue' => $order->remise_absolue,
 
 					'source' => $order->source,
-					'facturee' => $order->facturee,
+					'billed' => $order->billed,
 					'note_private' => $order->note_private,
 					'note_public' => $order->note_public,
 					'cond_reglement_id' => $order->cond_reglement_id,
@@ -638,11 +688,21 @@ function createOrder($authentication,$order)
 		$newobject->note_private=$order['note_private'];
 		$newobject->note_public=$order['note_public'];
 		$newobject->statut=0;	// We start with status draft
-		$newobject->facturee=$order['facturee'];
+		$newobject->billed=$order['billed'];
 		$newobject->fk_project=$order['project_id'];
 		$newobject->cond_reglement_id=$order['cond_reglement_id'];
 		$newobject->demand_reason_id=$order['demand_reason_id'];
 		$newobject->date_creation=$now;
+
+		// Retrieve all extrafield for order
+		// fetch optionals attributes and labels
+		$extrafields=new ExtraFields($db);
+		$extralabels=$extrafields->fetch_name_optionals_label('commandet',true);
+		foreach($extrafields->attribute_label as $key=>$label)
+		{
+			$key='options_'.$key;
+			$newobject->array_options[$key]=$order[$key];
+		}
 
 		// Trick because nusoap does not store data with same structure if there is one or several lines
 		$arrayoflines=array();
@@ -666,6 +726,17 @@ function createOrder($authentication,$order)
 			$newline->total_ttc=$line['total'];
 			$newline->date_start=$line['date_start'];
 			$newline->date_end=$line['date_end'];
+
+			// Retrieve all extrafield for lines
+			// fetch optionals attributes and labels
+			$extrafields=new ExtraFields($db);
+			$extralabels=$extrafields->fetch_name_optionals_label('commandedet',true);
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newline->array_options[$key]=$line[$key];
+			}
+
 			$newobject->lines[]=$newline;
 		}
 
@@ -799,6 +870,110 @@ function validOrder($authentication,$id='')
 
 	return $objectresp;
 }
+
+/**
+ * Update an order
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	array		$order				Order info
+ * @return	array							Array result
+ */
+function updateOrder($authentication,$order)
+{
+	global $db,$conf,$langs;
+
+	$now=dol_now();
+
+	dol_syslog("Function: updateOrder login=".$authentication['login']);
+
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+	// Init and check authentication
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	// Check parameters
+	if (empty($order['id']) && empty($order['ref']) && empty($order['ref_ext']))	{
+		$error++; $errorcode='KO'; $errorlabel="Order id or ref or ref_ext is mandatory.";
+	}
+
+	if (! $error)
+	{
+		$objectfound=false;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
+		$object=new Commande($db);
+		$result=$object->fetch($order['id'],(empty($order['id'])?$order['ref']:''),(empty($order['id']) && empty($order['ref'])?$order['ref_ext']:''));
+
+		if (!empty($object->id)) {
+
+			$objectfound=true;
+
+			$db->begin();
+
+			if (isset($order['status']))
+			{
+				if ($order['status'] == -1) $result=$object->cancel($fuser);
+				if ($order['status'] == 1)  $result=$object->valid($fuser);
+				if ($order['status'] == 0)  $result=$object->set_reopen($fuser);
+				if ($order['status'] == 3)  $result=$object->cloture($fuser);
+			}
+
+			if (isset($order['billed']))
+			{
+				if ($order['billed'])   $result=$object->classifyBilled($fuser);
+				if (! $order['billed']) $result=$object->classifyBilled($fuser);
+			}
+
+			//Retreive all extrafield for object
+			// fetch optionals attributes and labels
+			$extrafields=new ExtraFields($db);
+			$extralabels=$extrafields->fetch_name_optionals_label('commande',true);
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				$key='options_'.$key;
+				if (isset($order[$key]))
+				{
+					$result=$object->setValueFrom($key, $order[$key], 'commande_extrafields');
+				}
+			}
+
+			if ($result <= 0) {
+				$error++;
+			}
+		}
+
+		if ((! $error) && ($objectfound))
+		{
+			$db->commit();
+			$objectresp=array(
+					'result'=>array('result_code'=>'OK', 'result_label'=>''),
+					'id'=>$object->id
+			);
+		}
+		elseif ($objectfound)
+		{
+			$db->rollback();
+			$error++;
+			$errorcode='KO';
+			$errorlabel=$object->error;
+		} else {
+			$error++;
+			$errorcode='NOT_FOUND';
+			$errorlabel='Order id='.$order['id'].' ref='.$order['ref'].' ref_ext='.$order['ref_ext'].' cannot be found';
+		}
+	}
+
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
+
+	return $objectresp;
+}
+
 
 // Return the results.
 $server->service(file_get_contents("php://input"));

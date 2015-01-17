@@ -102,7 +102,7 @@ if ($conf->salaries->enabled)
 			// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
 			$sql.= " AND s.datev between '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 		}
-		if (preg_match('/^s/',$sortfield)) $sql.= $db->order($sortfield,$sortorder);
+		if (preg_match('/^s\./',$sortfield)) $sql.= $db->order($sortfield,$sortorder);
 
 		$result = $db->query($sql);
 		if ($result)
@@ -204,7 +204,7 @@ if ($conf->tax->enabled)
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= ")";
 	}
-	if (! preg_match('/^pv/',$sortfield)) $sql.= $db->order($sortfield,$sortorder);
+	if (preg_match('/^cs\./',$sortfield) || preg_match('/^c\./',$sortfield) || preg_match('/^pc\./',$sortfield) || preg_match('/^pct\./',$sortfield)) $sql.= $db->order($sortfield,$sortorder);
 	//$sql.= $db->plimit($limit+1,$offset);
 	//print $sql;
 
@@ -295,7 +295,7 @@ if ($conf->tax->enabled)
 			// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
 			$sql.= " AND pv.datev between '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 		}
-		if (preg_match('/^pv/',$sortfield)) $sql.= $db->order($sortfield,$sortorder);
+		if (preg_match('/^pv\./',$sortfield)) $sql.= $db->order($sortfield,$sortorder);
 
 		$result = $db->query($sql);
 		if ($result)

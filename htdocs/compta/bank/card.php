@@ -143,7 +143,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->number          = trim($_POST["number"]);
     $account->cle_rib         = trim($_POST["cle_rib"]);
     $account->bic             = trim($_POST["bic"]);
-    $account->iban_prefix     = trim($_POST["iban_prefix"]);
+    $account->iban            = trim($_POST["iban"]);
     $account->domiciliation   = trim($_POST["domiciliation"]);
 
     $account->proprio 	      = trim($_POST["proprio"]);
@@ -366,12 +366,15 @@ if ($action == 'create')
     }
 
 	// Accountancy journal
-	print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
-    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.$account->accountancy_journal.'"></td></tr>';
+	if (! empty($conf->accounting->enabled))
+	{
+		print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
+	    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.$account->accountancy_journal.'"></td></tr>';
+	}
 
 	print '</table>';
 
-	print '<center><br><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></center>';
+	print '<br><div class="center"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></div>';
 
 	print '</form>';
 }
@@ -498,8 +501,11 @@ else
 		print '<td colspan="3">'.$account->account_number.'</td></tr>';
 
 		// Accountancy journal
-		print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
-		print '<td colspan="3">'.$account->accountancy_journal.'</td></tr>';
+		if (! empty($conf->accounting->enabled))
+		{
+			print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
+			print '<td colspan="3">'.$account->accountancy_journal.'</td></tr>';
+		}
 
 		print '</table>';
 
@@ -670,13 +676,19 @@ else
         }
 
 		// Accountancy journal
-        print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
-        print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$account->accountancy_journal).'"></td></tr>';
+		if (! empty($conf->accounting->enabled))
+		{
+	        print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
+	        print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$account->accountancy_journal).'"></td></tr>';
+		}
 
 		print '</table>';
 
-		print '<center><br><input value="'.$langs->trans("Modify").'" type="submit" class="button">';
-		print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button"></center>';
+		print '<br><div class="center">';
+		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';
+		print '</div>';
 
 		print '</form>';
 	}

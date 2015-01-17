@@ -29,6 +29,7 @@ ActionsToDoBy=Aktioner påvirkes i
 ActionsDoneBy=Aktioner udført af
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Alle mine handlinger / opgaver
 AllActions= Alle les handlinger / opgaver
 ViewList=Vis liste
@@ -41,9 +42,10 @@ AutoActions= Automatisk påfyldning af dagsorden
 AgendaAutoActionDesc= Definer her begivenheder, som du vil Dolibarr at skabe automatisk en indsats på dagsordenen. Hvis det ikke er kontrolleret (som standard), kun manuel foranstaltninger vil blive inkluderet i dagsordenen.
 AgendaSetupOtherDesc= Denne side giver mulighed for at konfigurere andre parametre af dagsorden-modulet.
 AgendaExtSitesDesc=Denne side giver mulighed for at erklære eksterne kalendere til at se deres begivenheder i Dolibarr dagsorden.
-ActionsEvents= Begivenheder, for hvilke Dolibarr vil skabe en indsats på dagsordenen automatisk
-PropalValidatedInDolibarr= Forslag valideret
-InvoiceValidatedInDolibarr= Faktura valideret
+ActionsEvents=Begivenheder, for hvilke Dolibarr vil skabe en indsats på dagsordenen automatisk
+PropalValidatedInDolibarr=Forslag valideret
+InvoiceValidatedInDolibarr=Faktura valideret
+InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Faktura %s gå tilbage til udkast til status
 InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Bestil valideret
@@ -51,7 +53,6 @@ OrderApprovedInDolibarr=Bestil %s godkendt
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Bestil %s gå tilbage til udkast til status
 OrderCanceledInDolibarr=Bestil %s annulleret
-InterventionValidatedInDolibarr=Intervention %s valideret
 ProposalSentByEMail=Kommercielle forslag %s sendt via e-mail
 OrderSentByEMail=Kunde ordre %s sendt via e-mail
 InvoiceSentByEMail=Kundefaktura %s sendt via e-mail
@@ -59,8 +60,6 @@ SupplierOrderSentByEMail=Leverandør ordre %s sendt via e-mail
 SupplierInvoiceSentByEMail=Leverandørfaktura %s sendt via e-mail
 ShippingSentByEMail=Forsendelse %s sendt via e-mail
 ShippingValidated= Shipping %s validated
-InterventionSentByEMail=Intervention %s sendt via e-mail
-InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Tredjepart skabt
 DateActionPlannedStart= Planlagt startdato
 DateActionPlannedEnd= Planlagte slutdato
@@ -70,9 +69,9 @@ DateActionStart= Startdato
 DateActionEnd= Slutdato
 AgendaUrlOptions1=Du kan også tilføje følgende parametre til at filtrere output:
 AgendaUrlOptions2=<b>login=<b>login= %s</b> for at begrænse produktionen til aktioner skabt af, påvirkes i eller udføres af <b>brugeren %s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina= %s</b> for at begrænse produktionen til aktioner skabt af <b>brugeren %s.</b>
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=<b>logint= %s</b> for at begrænse produktionen til aktioner påvirket til <b>brugeren %s.</b>
-AgendaUrlOptions5=<b>logind=<b>logind= %s</b> for at begrænse produktionen til aktioner udført af <b>brugeren %s.</b>
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Vis fødselsdag kontakter
 AgendaHideBirthdayEvents=Skjul fødselsdag kontakter
 Busy=Busy
@@ -89,5 +88,5 @@ ExtSiteUrlAgenda=URL for at få adgang. ICal fil
 ExtSiteNoLabel=Ingen beskrivelse
 WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
-AddEvent=Add event
+AddEvent=Create event
 MyAvailability=My availability

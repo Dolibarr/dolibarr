@@ -41,8 +41,8 @@ List=Liste
 Create=Créer
 UpdateAccount=Modification de compte comptable
 UpdateMvts=Modification de mouvements
-WriteBookKeeping=Record accounts in general ledger
-Bookkeeping=General ledger
+WriteBookKeeping=Enregistrer les écritures dans le grand livre
+Bookkeeping=Grand livre
 AccountBalanceByMonth=Solde par mois
 
 AccountingVentilation=Ventilation comptable
@@ -53,106 +53,106 @@ Line=Ligne
 CAHTF=Total achats fournisseur HT
 InvoiceLines=Lignes de factures à ventiler
 InvoiceLinesDone=Lignes de factures ventilées
-IntoAccount=In the accounting account
+IntoAccount=Dans le compte comptable
 
-Ventilate=Ventilate
-VentilationAuto=Automatic ventilation
+Ventilate=Ventiler
+VentilationAuto=Ventilation automatique
 
-Processing=Processing
-EndProcessing=The end of processing
-AnyLineVentilate=Any lines to ventilate
+Processing=Traitement en cours
+EndProcessing=Fin du traitement
+AnyLineVentilate=Aucune ligne à ventiler
 SelectedLines=Lignes sélectionnées
-Lineofinvoice=Line of invoice
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+Lineofinvoice=Ligne de la facture
+VentilatedinAccount=Ventilé avec succès dans le compte comptable
+NotVentilatedinAccount=Non ventilé dans le compte comptable
 
-ACCOUNTING_SEPARATORCSV=Separator CSV
+ACCOUNTING_SEPARATORCSV=Séparateur CSV
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre d'éléments à ventiler affichés par page (maximum conseillé : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Commencer le tri des pages de ventilation "A ventiler" par les éléments les plus récents
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencer le tri des pages de ventilation "Ventilées" par les éléments les plus récents
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+AccountLength=Longueur des comptes comptables affichés dans Dolibarr 
+AccountLengthDesc=Fonction permettant de simuler une longueur de compte comptable en remplaçant les espaces par le chiffre zéro. Cette fonction touche uniquement à l'affichage, elle ne modifie pas les comptes comptables enregistrés dans Dolibarr. Pour l'export, cette fonction est nécessaire pour être compatible avec certains logiciels.
+ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes généraux
+ACCOUNTING_LENGTH_AACCOUNT=Longueur des comptes tiers
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
-ACCOUNTING_CASH_JOURNAL=Cash journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=Journal des ventes
+ACCOUNTING_PURCHASE_JOURNAL=Journal des achats
+ACCOUNTING_BANK_JOURNAL=Journal de banque
+ACCOUNTING_CASH_JOURNAL=Journal de caisse
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal des opérations diverses
+ACCOUNTING_SOCIAL_JOURNAL=Journal de paie
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable de tranfert
+ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable d'attente
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (si non défini dans la fiche produit)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Compte comptable par défaut pour les produits vendus (si non défini dans la fiche produit)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable par défaut pour les services achetés (si non défini dans la fiche service)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable par défaut pour les services vendus (si non défini dans la fiche service)
 
 Doctype=Type de documents
 Docdate=Date
-Docref=Reference
+Docref=Référence
 Numerocompte=Compte
 Code_tiers=Tiers
-Labelcompte=Label account
+Labelcompte=Libellé du compte
 Debit=Débit
 Credit=Crédit
 Amount=Montant
 Sens=Sens
 Codejournal=Journal
 
-DelBookKeeping=Delete the records of the general ledger
+DelBookKeeping=Supprimer les écritures du grand livre
 
 SellsJournal=Journal des ventes
 PurchasesJournal=Journal des achats
 DescSellsJournal=Journal des ventes
 DescPurchasesJournal=Journal des achats
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
+BankJournal=Journal de banque
+DescBankJournal=Journal de banque comprenant tous les types de règlements autres que espèce\t
+CashJournal=Journal de caisse
+DescCashJournal=Journal de caisse comprenant le type de règlement "espèce"
 
-CashPayment=Cash Payment
+CashPayment=Règlement espèce
 
-SupplierInvoicePayment=Payment of invoice supplier
-CustomerInvoicePayment=Payment of invoice customer
+SupplierInvoicePayment=Paiement de facture fournisseur
+CustomerInvoicePayment=Paiement de facture client
 
-ThirdPartyAccount=Thirdparty account
+ThirdPartyAccount=Comptes de tiers
 
-NewAccountingMvt=New movement
-NumMvts=Number of movement
+NewAccountingMvt=Nouveau mouvement
+NumMvts=Nombre de mouvement
 ListeMvts=Liste des mouvements
-ErrorDebitCredit=Debit and Credit cannot have a value at the same time
+ErrorDebitCredit=Débit et crédit ne peuvent pas avoir la même valeur en même temps.
 
-ReportThirdParty=List thirdparty account
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+ReportThirdParty=Liste compte tiers
+DescThirdPartyReport=Consultez ici la liste des tiers clients et fournisseurs et leurs codes comptables
 
-ListAccounts=List of the accounting accounts
+ListAccounts=Liste des comptes comptables
 
 Pcgversion=Version du plan
 Pcgtype=Classe de compte
-Pcgsubtype=Under class of account
+Pcgsubtype=Sous classe de compte
 Accountparent=Racine des comptes
 Active=Relevé
 
 NewFiscalYear=Nouvelle année fiscale
 
-DescVentilCustomer=Consult here the annual accounting ventilation of your invoices customers
-TotalVente=Total turnover HT
-TotalMarge=Total sales margin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilCustomer=Consultez ici la ventilation comptable annuelle de vos factures clients
+TotalVente=Chiffre d'affaires HT
+TotalMarge=Total marge
+DescVentilDoneCustomer=Consultez ici la liste des lignes de factures clients et leur compte comptable
+DescVentilTodoCustomer=Consultez ici la liste des lignes de factures clients et leur compte comptable
+ChangeAccount=Changer le compte comptable pour les lignes sélectionnées par le compte :
 Vide=-
-DescVentilSupplier=Consult here the annual accounting ventilation of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Consultez ici la ventilation comptable annuelle de vos factures fournisseurs
+DescVentilTodoSupplier=Ventilez vos lignes de facture fournisseur avec un compte comptable
+DescVentilDoneSupplier=Consultez ici la liste des lignes de factures fournisseur et leur compte comptable
 
-ValidateHistory=Validate Automatically
+ValidateHistory=Valider Automatiquement
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
 
-FicheVentilation=Ventilation card
+FicheVentilation=Fiche ventilation

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Področje pogodb
 ListOfContracts=Seznam pogodb
-LastContracts=Zadnjih % pogodb
+LastModifiedContracts=Zadnjih %s spremenjenih pogodb
 AllContracts=Vse pogodbe
 ContractCard=Kartica pogodbe
 ContractStatus=Status pogodbe
@@ -27,7 +27,7 @@ MenuRunningServices=Aktivne storitve
 MenuExpiredServices=Pretečene storitve
 MenuClosedServices=Zaključene storitve
 NewContract=Nova pogodba
-AddContract=Dodaj pogodbo
+AddContract=Ustvari pogodbo
 SearchAContract=Išči pogodbo
 DeleteAContract=Izbriši pogodbo
 CloseAContract=Zaključi pogodbo
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Seznam aktivnih vrstic pogodbe
 ListOfRunningServices=Seznam aktivnih storitev
 NotActivatedServices=Neaktivne storitve (med potrjenimi pogodbami)
 BoardNotActivatedServices=Storitve, ki jih je potrebno aktivirati (med potrjenimi pogodbami)
-LastContracts=Zadnjih % pogodb
+LastContracts=Zadnjih %s pogodb
 LastActivatedServices=Zadnjih %s aktiviranih storitev
 LastModifiedServices=Zadnjih %s spremenjenih storitev
 EditServiceLine=Ureditev storitvene vrstice
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Seznam storitev, ki potečejo
 NoteListOfYourExpiredServices=Ta seznam vsebuje samo storitve po pogodbah s partnerji, ki so povezane z referentom.
 StandardContractsTemplate=Predloga standardnih pogodb
 ContactNameAndSignature=Za %s, ime in podpis:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Podpisnik pogodbe

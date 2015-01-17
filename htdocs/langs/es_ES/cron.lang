@@ -18,9 +18,8 @@ CronExplainHowToRunUnix=En entorno Unix debes usar crontab para ejecutar el coma
 CronExplainHowToRunWin=En un entorno de Microsoft(tm) Windows puedes usar el programador de tareas para ejecutar el comando cada varios minutos
 # Menu
 CronJobs=Tareas programadas
-CronListActive= Tareas Activas
-CronListInactive= Tareas Inactivas
-CronListActive= Tareas Activas
+CronListActive=Listado de tareas activas/programadas
+CronListInactive=Tareas Inactivas
 # Page list
 CronDateLastRun=Últ. ejec.
 CronLastOutput=Res. ult. ejec.

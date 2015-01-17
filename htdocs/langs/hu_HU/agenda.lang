@@ -29,6 +29,7 @@ ActionsToDoBy=Eseményeket befolyásolhatja
 ActionsDoneBy=Actions done by
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Az én cselekvéseim/feladataim
 AllActions= Az összes cselekvés/feladat
 ViewList=Lista megtekintése
@@ -41,9 +42,10 @@ AutoActions= Napirend automatikus kitöltése
 AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an action in agenda. If nothing is checked (by default), only manual actions will be included in agenda.
 AgendaSetupOtherDesc= Ez az oldal lehetővé teszi a napirend modul konfigurálását.
 AgendaExtSitesDesc=Ez az oldal lehetővé teszi, hogy nyilvánítsa külső forrásokat naptárak látják eseményeket Dolibarr napirenden.
-ActionsEvents= Events for which Dolibarr will create an action in agenda automatically
-PropalValidatedInDolibarr= %s ajánlat érvényesítve
-InvoiceValidatedInDolibarr= %s számla érvényesítve
+ActionsEvents=Events for which Dolibarr will create an action in agenda automatically
+PropalValidatedInDolibarr=%s ajánlat érvényesítve
+InvoiceValidatedInDolibarr=%s számla érvényesítve
+InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Számla %s menj vissza a tervezett jogállását
 InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= %s megrendelés érvényesítve
@@ -51,7 +53,6 @@ OrderApprovedInDolibarr=Rendelés %s jóváhagyott
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Rendelés %s menj vissza vázlat
 OrderCanceledInDolibarr=Rendelés %s törölt
-InterventionValidatedInDolibarr=%s közbenjárás érvényesítve
 ProposalSentByEMail=Üzleti ajánlat %s postáztuk
 OrderSentByEMail=Ügyfél érdekében %s postáztuk
 InvoiceSentByEMail=Az ügyfél számlát postáztuk %s
@@ -59,8 +60,6 @@ SupplierOrderSentByEMail=Szállító érdekében %s postáztuk
 SupplierInvoiceSentByEMail=Szállító számlát postáztuk %s
 ShippingSentByEMail=Szállítás %s postáztuk
 ShippingValidated= Shipping %s validated
-InterventionSentByEMail=Beavatkozás %s postáztuk
-InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Harmadik fél létrehozva
 DateActionPlannedStart= Tervezett indulási dátum
 DateActionPlannedEnd= Tervezett befejezési dátum
@@ -70,9 +69,9 @@ DateActionStart= Indulási dátum
 DateActionEnd= Befejezési dátum
 AgendaUrlOptions1=Az alábbi paramétereket hozzá lehet adni a kimenet szűréséhez:
 AgendaUrlOptions2=<b>login=%s</b> kimenet szükítése a <b>%s</b> felhasználó által létrehozott cselekvésekre, érintő cselekvésekre,által végzett cselekvésekre.
-AgendaUrlOptions3=<b>logina=%s</b> kimenet szükítése a <b>%s</b> felhasználó által létrehozott cselekvésekre.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> kimenet szükítése a <b>%s</b> felhasználó érintő cselekvésekre.
-AgendaUrlOptions5=<b>logind=%s</b> kimenet szükítése a <b>%s</b> felhasználó által végzett cselekvésekre.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Kapcsolatok születésnapjának mutatása
 AgendaHideBirthdayEvents=Kapcsolatok születésnapjának elrejtése
 Busy=Busy
@@ -89,5 +88,5 @@ ExtSiteUrlAgenda=URL eléréséhez. ICal fájl
 ExtSiteNoLabel=Nincs leírás
 WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
-AddEvent=Add event
+AddEvent=Create event
 MyAvailability=My availability

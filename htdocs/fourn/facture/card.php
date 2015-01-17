@@ -711,10 +711,8 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
     			$outputlangs->setDefaultLang($newlang);
     		}
     		$model=$object->modelpdf;
-    		if (empty($model)) {
-    			$tmp=getListOfModels($db, 'invoice_supplier'); $keys=array_keys($tmp); $model=$keys[0];
-    		}
     		$ret = $object->fetch($id); // Reload to get new records
+
     		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		if ($result < 0) dol_print_error($db,$result);
     	}
@@ -793,10 +791,8 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
     			$outputlangs->setDefaultLang($newlang);
     		}
     		$model=$object->modelpdf;
-    		if (empty($model)) {
-    			$tmp=getListOfModels($db, 'invoice_supplier'); $keys=array_keys($tmp); $model=$keys[0];
-    		}
     		$ret = $object->fetch($id); // Reload to get new records
+
     		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		if ($result < 0) dol_print_error($db,$result);
     	}
@@ -1503,7 +1499,7 @@ if ($action == 'create')
     // Bouton "Create Draft"
     print "</table>\n";
 
-    print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
+    print '<br><div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></div>';
 
     print "</form>\n";
 
@@ -2368,7 +2364,7 @@ else
                 			$i ++;
                 		}
                 		print '</table>';
-                		print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></center>';
+                		print '<br><div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
                 		print '</form>';
                 		$db->free($resqlorderlist);
                 	} else {

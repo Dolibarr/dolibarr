@@ -45,6 +45,8 @@ $id = GETPOST("id",'int');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
+$backtopage=GETPOST("backtopage");
+
 // Security check
 $result=restrictedArea($user,'stock');
 
@@ -71,16 +73,29 @@ if ($action == 'add' && $user->rights->stock->creer)
 	$object->town        = GETPOST("town");
 	$object->country_id  = GETPOST("country_id");
 
-	if (! empty($object->libelle)) {
+	if (! empty($object->libelle))
+	{
 		$id = $object->create($user);
 		if ($id > 0)
 		{
-			header("Location: card.php?id=".$id);
-			exit;
-		}
+			setEventMessage($langs->trans("RecordSaved"));
 
-		$action = 'create';
-		setEventMessage($object->error, 'errors');
+			if (! empty($backtopage))
+			{
+				header("Location: ".$backtopage);
+				exit;
+			}
+			else
+			{
+				header("Location: card.php?id=".$id);
+				exit;
+			}
+		}
+		else
+		{
+			$action = 'create';
+			setEventMessage($object->error, 'errors');
+		}
 	}
 	else {
 		setEventMessage($langs->trans("ErrorWarehouseRefRequired"), 'errors');
@@ -164,6 +179,9 @@ if ($action == 'create')
 	print "<form action=\"card.php\" method=\"post\">\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+
+	dol_fiche_head();
 
 	print '<table class="border" width="100%">';
 
@@ -206,7 +224,9 @@ if ($action == 'create')
 
 	print '</table>';
 
-	print '<center><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+	dol_fiche_end();
+
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
 	print '</form>';
 }
@@ -425,10 +445,10 @@ else
 					$totalunit+=$objp->value;
 
                     // Price buy PMP
-					print '<td align="right">'.price(price2num($objp->pmp,'MU')).'</td>';
+					print '<td align="right">'.price(price2num($objp->ppmp,'MU')).'</td>';
                     // Total PMP
-					print '<td align="right">'.price(price2num($objp->pmp*$objp->value,'MT')).'</td>';
-					$totalvalue+=price2num($objp->pmp*$objp->value,'MT');
+					print '<td align="right">'.price(price2num($objp->ppmp*$objp->value,'MT')).'</td>';
+					$totalvalue+=price2num($objp->ppmp*$objp->value,'MT');
 
                     // Price sell min
                     if (empty($conf->global->PRODUIT_MULTIPRICES))
@@ -538,8 +558,11 @@ else
 
 			print '</table>';
 
-			print '<center><br><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+			print '<br><div class="center">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '</div>';
 
 			print '</form>';
 

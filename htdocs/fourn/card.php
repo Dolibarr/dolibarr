@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Jean Heimburger		<jean@tiaris.info>
@@ -62,13 +62,17 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if ($action == 'setsupplieraccountancycode')
 {
-    $result=$object->fetch($id);
-    $object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
-    $result=$object->update($object->id,$user,1,0,1);
-    if ($result < 0)
-    {
-        $mesg=join(',',$object->errors);
-    }
+	$cancelbutton = GETPOST('cancel');
+	if (! $cancelbutton)
+	{
+		$result=$object->fetch($id);
+   		$object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
+	    $result=$object->update($object->id,$user,1,0,1);
+	    if ($result < 0)
+	    {
+	        $mesg=join(',',$object->errors);
+	    }
+	}
     $action="";
 }
 // conditions de reglement
@@ -94,12 +98,22 @@ if ($action == 'setmode' && $user->rights->societe->creer)
 $contactstatic = new Contact($db);
 $form = new Form($db);
 
-if ($object->fetch($id))
+if ($id > 0 && empty($object->id))
 {
-	llxHeader('',$langs->trans('SupplierCard'));
+	// Load data of third party
+	$res=$object->fetch($id);
+	if ($object->id <= 0) dol_print_error($db,$object->error);
+}
+
+if ($object->id > 0)
+{
+	$title=$langs->trans("SupplierCard");
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+	$help_url='';
+	llxHeader('',$title, $help_url);
 
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	$head = societe_prepare_head($object);
 
@@ -174,24 +188,15 @@ if ($object->fetch($id))
 	print '</tr>';
 
 	// Local Taxes
-	if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+	if ($mysoc->useLocalTax(1))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
-		print yn($object->localtax1_assuj);
-		print '</td></tr>';
-		print '<tr><td class="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
-		print yn($object->localtax2_assuj);
-		print '</td></tr>';
-	}
-	elseif($mysoc->localtax1_assuj=="1")
-	{
-		print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("LocalTax1IsUsed").'</td><td colspan="3">';
 		print yn($object->localtax1_assuj);
 		print '</td></tr>';
 	}
-	elseif($mysoc->localtax2_assuj=="1")
+	if ($mysoc->useLocalTax(2))
 	{
-		print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("LocalTax2IsUsed").'</td><td colspan="3">';
 		print yn($object->localtax2_assuj);
 		print '</td></tr>';
 	}
@@ -304,8 +309,8 @@ if ($object->fetch($id))
 
 	if ($user->rights->fournisseur->commande->lire)
 	{
-		
-		
+
+
 		// TODO move to DAO class
 		// Check if there are supplier orders billable
 		$sql2 = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_supplier,';
@@ -325,7 +330,7 @@ if ($object->fetch($id))
 		} else {
 			setEventMessage($db->lasterror(),'errors');
 		}
-		
+
 		// TODO move to DAO class
 		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
@@ -394,13 +399,13 @@ if ($object->fetch($id))
 	if ($user->rights->fournisseur->facture->lire)
 	{
 		// TODO move to DAO class
-		$sql = 'SELECT f.rowid,f.libelle,f.ref_supplier,f.fk_statut,f.datef as df,f.total_ttc as amount,f.paye,';
+		$sql = 'SELECT f.rowid,f.libelle,f.ref,f.ref_supplier,f.fk_statut,f.datef as df,f.total_ttc as amount,f.paye,';
 		$sql.= ' SUM(pf.amount) as am';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn';
 		$sql.= ' WHERE f.fk_soc = '.$object->id;
 		$sql.= " AND f.entity =".$conf->entity;
-		$sql.= ' GROUP BY f.rowid,f.libelle,f.ref_supplier,f.fk_statut,f.datef,f.total_ttc,f.paye';
+		$sql.= ' GROUP BY f.rowid,f.libelle,f.ref,f.ref_supplier,f.fk_statut,f.datef,f.total_ttc,f.paye';
 		$sql.= ' ORDER BY f.datef DESC';
 		$resql=$db->query($sql);
 		if ($resql)
@@ -425,7 +430,13 @@ if ($object->fetch($id))
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 				print '<a href="facture/card.php?facid='.$obj->rowid.'">';
-				print img_object($langs->trans('ShowBill'),'bill').' '.$obj->ref_supplier.'</a> '.dol_trunc($obj->libelle,14).'</td>';
+				$facturestatic->id=$obj->rowid;
+				$facturestatic->ref=($obj->ref?$obj->ref:$obj->rowid).($obj->ref_supplier?' - '.$obj->ref_supplier:'');
+				//$facturestatic->ref_supplier=$obj->ref_supplier;
+				print $facturestatic->getNomUrl(1);
+				//print img_object($langs->trans('ShowBill'),'bill').' '.($obj->ref?$obj->ref:$obj->rowid).' - '.$obj->ref_supplier.'</a>';
+				print ' '.dol_trunc($obj->libelle,14);
+				print '</td>';
 				print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->df),'day').'</td>';
 				print '<td align="right" class="nowrap">'.price($obj->amount).'</td>';
 				print '<td align="right" class="nowrap">';
@@ -455,11 +466,11 @@ if ($object->fetch($id))
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	// modified by hook
-	if (empty($reshook)) 
+	if (empty($reshook))
 	{
 
 	print '<div class="tabsAction">';
-	
+
 	if ($user->rights->fournisseur->commande->creer)
 	{
 		$langs->load("orders");
@@ -471,7 +482,7 @@ if ($object->fetch($id))
 		$langs->load("bills");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
 	}
-	
+
 	if ($user->rights->fournisseur->facture->creer)
 	{
 		if (! empty($orders2invoice) && $orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';

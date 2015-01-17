@@ -2,7 +2,7 @@
 Sms=Sms
 SmsSetup=Sms de configurare
 SmsDesc=Această pagină vă permite să definiţi opţiunile de globali de pe caracteristici SMS
-SmsCard=SMS Card
+SmsCard=Fişă SMS 
 AllSms=Toate SMS campanii de
 SmsTargets=Ţinte
 SmsRecipients=Ţinte
@@ -27,7 +27,7 @@ SmsResult=Rezultatul de trimiterea de SMS
 TestSms=Sms de testare
 ValidSms=Validare Sms
 ApproveSms=Aprobare Sms
-SmsStatusDraft=Proiect
+SmsStatusDraft=Schiţă
 SmsStatusValidated=Validate
 SmsStatusApproved=Aprobat
 SmsStatusSent=Trimisa

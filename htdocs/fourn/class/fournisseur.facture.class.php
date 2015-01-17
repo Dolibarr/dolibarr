@@ -43,6 +43,11 @@ class FactureFournisseur extends CommonInvoice
     public $fk_element='fk_facture_fourn';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
+
     var $rowid;
     var $ref;
     var $product_ref;
@@ -255,6 +260,8 @@ class FactureFournisseur extends CommonInvoice
             $result=$this->update_price();
             if ($result > 0)
             {
+            	$action='create';
+
 				// Actions on extra fields (by external module or standard code)
 				// FIXME le hook fait double emploi avec le trigger !!
 				$hookmanager->initHooks(array('supplierinvoicedao'));
@@ -539,7 +546,7 @@ class FactureFournisseur extends CommonInvoice
      *  @param  int		$notrigger       0=launch triggers after, 1=disable triggers
      *  @return int 			         <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
         global $conf, $langs;
         $error=0;
@@ -1482,7 +1489,7 @@ class FactureFournisseur extends CommonInvoice
         $ref=$this->ref;
         if (empty($ref)) $ref=$this->id;
 
-        if ($withpicto) $result.=($lien.img_object($label,'bill').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($label, 'bill', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.($max?dol_trunc($ref,$max):$ref).$lienfin;
         return $result;
     }
@@ -1491,7 +1498,7 @@ class FactureFournisseur extends CommonInvoice
       *      Return next reference of supplier invoice not already used (or last reference)
       *      according to numbering module defined into constant INVOICE_SUPPLIER_ADDON_NUMBER
       *
-      *      @param	   Society		$soc		object company
+      *      @param	   Societe		$soc		Thirdparty object
       *      @param    string		$mode		'next' for next value or 'last' for last value
       *      @return   string					free ref or last ref
       */

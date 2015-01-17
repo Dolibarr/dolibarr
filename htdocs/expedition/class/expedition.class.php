@@ -113,7 +113,7 @@ class Expedition extends CommonObject
 	/**
 	 *	Return next contract ref
 	 *
-	 *	@param	Societe		$soc	Objet society
+	 *	@param	Societe		$soc	Thirdparty object
 	 *	@return string				Free reference for contract
 	 */
 	function getNextNumRef($soc)
@@ -604,9 +604,11 @@ class Expedition extends CommonObject
 
 					if (! empty($conf->productbatch->enabled)) {
 						$details=ExpeditionLigneBatch::FetchAll($this->db,$obj->rowid);
-						foreach ($details as $dbatch) {
-							$result=$mouvS->livraison_batch($dbatch->fk_origin_stock,$dbatch->dluo_qty);
-							if ($result < 0) { $error++; $this->errors[]=$mouvS->$error; break 2; }
+						if (! empty($details)) {
+							foreach ($details as $dbatch) {
+								$result=$mouvS->livraison_batch($dbatch->fk_origin_stock,$dbatch->dluo_qty);
+								if ($result < 0) { $error++; $this->errors[]=$mouvS->$error; break 2; }
+							}
 						}
 					}
 				}
@@ -800,7 +802,7 @@ class Expedition extends CommonObject
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
      *  @return int 			       	<0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -1217,7 +1219,7 @@ class Expedition extends CommonObject
 		$picto='sending';
 		$label=$langs->trans("ShowSending").': '.$this->ref;
 
-		if ($withpicto) $result.=($linkstart.img_object($label,$picto).$linkend);
+		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$linkstart.$this->ref.$linkend;
 		return $result;

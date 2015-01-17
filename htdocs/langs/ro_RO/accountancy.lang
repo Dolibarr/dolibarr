@@ -1,158 +1,158 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
 
-Accounting=Accounting
-Globalparameters=Global parameters
-Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
-Menuaccount=Accounting accounts
-Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tools
+Accounting=Contabilitate
+Globalparameters=Parametri globali
+Chartofaccounts=Plan de conturi
+Fiscalyear=Ani fiscali
+Menuaccount=Conturi contabile
+Menuthirdpartyaccount=Conturi terţi
+MenuTools=Instrumente
 
-ConfigAccountingExpert=Configuration of the module accounting expert
-Journaux=Journals
-JournalFinancial=Financial journals
-Exports=Exports
-Modelcsv=Model of export
-Selectmodelcsv=Select a model of export
+ConfigAccountingExpert=Configurare modul expert contabil
+Journaux=Jurnale
+JournalFinancial=Jurnale financiale
+Exports=Exporturi
+Modelcsv=Model export
+Selectmodelcsv=Selectează un model de export
 Modelcsv_normal=Classic export
-Modelcsv_CEGID=Export towards CEGID Expert
-BackToChartofaccounts=Return chart of accounts
+Modelcsv_CEGID=Export către CEGID Expert
+BackToChartofaccounts=Înapi la plan de conturi
 Back=Return
 
-Definechartofaccounts=Define a chart of accounts
-Selectchartofaccounts=Select a chart of accounts
-Validate=Validate
-Addanaccount=Add an accounting account
-AccountAccounting=Accounting account
-Ventilation=Ventilation
-ToDispatch=To dispatch
-Dispatched=Dispatched
+Definechartofaccounts=Defineşte un plan de conturi
+Selectchartofaccounts=Selectează un plan de conturi
+Validate=Validează
+Addanaccount=Add un cont contabil
+AccountAccounting=Cont contabil
+Ventilation=Ventilare
+ToDispatch=De ventilat
+Dispatched=Ventilat
 
-CustomersVentilation=Ventilation customers
-SuppliersVentilation=Ventilation suppliers
-TradeMargin=Trade margin
-Reports=Reports
-ByCustomerInvoice=By invoices customers
-ByMonth=By Month
-NewAccount=New accounting account
-Update=Update
+CustomersVentilation=Ventilare clienţi
+SuppliersVentilation=Ventilare furnizori
+TradeMargin=Marjă comercială
+Reports=Rapoarte
+ByCustomerInvoice=Pe facturi clienţi
+ByMonth=Pe lună
+NewAccount=Cont contabil nou
+Update=Modifică
 List=List
-Create=Create
-UpdateAccount=Modification of an accounting account
-UpdateMvts=Modification of a movement
-WriteBookKeeping=Record accounts in general ledger
-Bookkeeping=General ledger
-AccountBalanceByMonth=Account balance by month
+Create=Crează
+UpdateAccount=Modificare cont contabil
+UpdateMvts=Modificare mişcare
+WriteBookKeeping=Înregistrare contabilă in Cartea Mare
+Bookkeeping=Cartea Mare
+AccountBalanceByMonth=Sold pe luni
 
-AccountingVentilation=Accounting ventilation
-AccountingVentilationSupplier=Accounting ventilation supplier
-AccountingVentilationCustomer=Accounting ventilation customer
-Line=Line
+AccountingVentilation=Ventilare contabilă
+AccountingVentilationSupplier=Ventilare contabila furnizor
+AccountingVentilationCustomer=Ventilare contabila  client
+Line=Linie
 
-CAHTF=Total purchase supplier HT
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=In the accounting account
+CAHTF=Total cumpărări furnizor fara taxe
+InvoiceLines=Liniile facturii de ventilat
+InvoiceLinesDone=Liniile facturii ventilate
+IntoAccount=În conturi contabile
 
-Ventilate=Ventilate
-VentilationAuto=Automatic ventilation
+Ventilate=Ventilează
+VentilationAuto=Ventilare automată
 
-Processing=Processing
-EndProcessing=The end of processing
-AnyLineVentilate=Any lines to ventilate
-SelectedLines=Selected lines
-Lineofinvoice=Line of invoice
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+Processing=Procesează
+EndProcessing=Sfârşitul procesării
+AnyLineVentilate=Nicio linie de ventilat
+SelectedLines=Linii selectate
+Lineofinvoice=Linia facturii
+VentilatedinAccount=Ventilare cu succes in conturi contabile
+NotVentilatedinAccount=Ne ventilate in conturi contabile
 
 ACCOUNTING_SEPARATORCSV=Separator CSV
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Numărul de elemente de ventilat afişat pe pagină (maxim recomandat: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Începe sortarea paginilor ventilate "Trebuie ventilate" începand cu cele mai recente elemente
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Începe sortarea paginilor ventilate "Ventilare" începand cu cele mai recente elemente
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+AccountLength=Lungimea conturilor contabile  afişate în Dolibarr
+AccountLengthDesc=Funcția pentru a simula lungirea unui cont contabil prin înlocuirea spatiile  libere cu cifra zero. Această funcție afectează numai  afişarea , aceasta nu va schimba conturile contabile înregistrate în Dolibarr. Pentru export, această funcţie este necesară să fie compatibil cu unele software-ul
+ACCOUNTING_LENGTH_GACCOUNT=Lungimea conturilor generale
+ACCOUNTING_LENGTH_AACCOUNT=Lungimea conturilor de terţi
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
-ACCOUNTING_CASH_JOURNAL=Cash journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=Jurnal vânzări
+ACCOUNTING_PURCHASE_JOURNAL=Jurnal cumpărări
+ACCOUNTING_BANK_JOURNAL=Jurnal bancă
+ACCOUNTING_CASH_JOURNAL=Jurnal casă
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal Diverse
+ACCOUNTING_SOCIAL_JOURNAL=Jurnal Asigurări Sociale
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cont transfer
+ACCOUNTING_ACCOUNT_SUSPENSE=Cont  contabil de aşteptare
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cont Contabilitate Predefinit pentru produsele cumpărate(dacă nu este definit în fişa produsului)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cont Contabilitate Predefinit pentru produsele vândute (dacă nu este definit în fişa produsului)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Cont Contabilitate Predefinit pentru serviciile cumpărate(dacă nu este definit în fişa produsului)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cont Contabilitate Predefinit pentru serviciilor vândute(dacă nu este definit în fişa produsului)
 
-Doctype=Type of document
-Docdate=Date
-Docref=Reference
-Numerocompte=Account
-Code_tiers=Thirdparty
-Labelcompte=Label account
+Doctype=Tipul documentului
+Docdate=Data
+Docref=Referinţă
+Numerocompte=Cont
+Code_tiers=Terţ
+Labelcompte=Etichetă cont
 Debit=Debit
 Credit=Credit
-Amount=Amount
+Amount=Sumă
 Sens=Sens
 Codejournal=Journal
 
-DelBookKeeping=Delete the records of the general ledger
+DelBookKeeping=Şterge înregistrări din Cartea Mare
 
-SellsJournal=Sells journal
-PurchasesJournal=Purchases journal
-DescSellsJournal=Sells journal
-DescPurchasesJournal=Purchases journal
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
+SellsJournal=Jurnal Vânzări
+PurchasesJournal=Jurnal Cumpărări
+DescSellsJournal=Jurnal Vânzări
+DescPurchasesJournal=Jurnal Cumpărări
+BankJournal=Jurnal Bancă
+DescBankJournal=Jurnal Banca inclusiv toate tipurile plaţilor altele decat numerar
+CashJournal=Jurnal Casă
+DescCashJournal=Jurnal Cash inclusiv tipul plaţii numerar
 
-CashPayment=Cash Payment
+CashPayment=Plaţi numerar
 
-SupplierInvoicePayment=Payment of invoice supplier
-CustomerInvoicePayment=Payment of invoice customer
+SupplierInvoicePayment=Plata factura furnizor
+CustomerInvoicePayment=Incasare factura client
 
-ThirdPartyAccount=Thirdparty account
+ThirdPartyAccount=Cont terţi
 
-NewAccountingMvt=New movement
-NumMvts=Number of movement
-ListeMvts=List of the movement
-ErrorDebitCredit=Debit and Credit cannot have a value at the same time
+NewAccountingMvt=Transfer nou
+NumMvts=Numarul transferurilor
+ListeMvts=Lista transferurilor
+ErrorDebitCredit=Debitul și creditul nu pot avea o valoare, în același timp,
 
-ReportThirdParty=List thirdparty account
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+ReportThirdParty=Lista Conturi terţi
+DescThirdPartyReport=Consultati aici lista terţilor furnizori și clienţi şi conturile lor  contabile
 
-ListAccounts=List of the accounting accounts
+ListAccounts=Lista conturilor contabile
 
-Pcgversion=Version of the plan
-Pcgtype=Class of account
-Pcgsubtype=Under class of account
-Accountparent=Root of the account
-Active=Statement
+Pcgversion=Versiunea planului
+Pcgtype=Clasa contului
+Pcgsubtype=Sub Clasa contului
+Accountparent=Rădăcina contului
+Active=Extras 
 
-NewFiscalYear=New fiscal year
+NewFiscalYear=An fiscal nou
 
-DescVentilCustomer=Consult here the annual accounting ventilation of your invoices customers
-TotalVente=Total turnover HT
-TotalMarge=Total sales margin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilCustomer=Consultati aici ventilarea contabilă anuală a facturilor de clienților ale dvs.
+TotalVente=Total Cifră de afaceri fără tva
+TotalMarge=Total Marje vânzări
+DescVentilDoneCustomer=Consultati aici lista liniilor de facturi client și conturile lor  contabile
+DescVentilTodoCustomer=Consultati aici lista liniilor de facturi client cu un cont contabil
+ChangeAccount=Schimbaţi contul contabil pentru liniile selectate prin contul: 
 Vide=-
-DescVentilSupplier=Consult here the annual accounting ventilation of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Consultati aici ventilarea contabilă anuală a facturilor de furnizori ale dvs.
+DescVentilTodoSupplier=Consultati aici lista liniilor de facturi furnizor cu un cont contabil
+DescVentilDoneSupplier=Consultati aici lista liniilor de facturi furnizor și conturile lor  contabile
 
-ValidateHistory=Validate Automatically
+ValidateHistory=Validează automat
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+ErrorAccountancyCodeIsAlreadyUse=Eroare, nu puteți șterge acest cont contabil, deoarece este folosit
 
-FicheVentilation=Ventilation card
+FicheVentilation=Fişă Ventilare

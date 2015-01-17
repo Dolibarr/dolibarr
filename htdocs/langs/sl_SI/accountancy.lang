@@ -1,158 +1,158 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
 
-Accounting=Accounting
-Globalparameters=Global parameters
-Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
-Menuaccount=Accounting accounts
-Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tools
+Accounting=Računovodstvo
+Globalparameters=Globalni parametri
+Chartofaccounts=Kontni plan
+Fiscalyear=Fiskalna leta
+Menuaccount=Računovodski izkazi
+Menuthirdpartyaccount=Thirdparty računi
+MenuTools=Orodja
 
-ConfigAccountingExpert=Configuration of the module accounting expert
-Journaux=Journals
-JournalFinancial=Financial journals
-Exports=Exports
-Modelcsv=Model of export
-Selectmodelcsv=Select a model of export
-Modelcsv_normal=Classic export
-Modelcsv_CEGID=Export towards CEGID Expert
-BackToChartofaccounts=Return chart of accounts
+ConfigAccountingExpert=Konfiguracija modula računovodskega strokovnjaka
+Journaux=Revije
+JournalFinancial=Finančne revije
+Exports=Izvoz
+Modelcsv=Model izvoza
+Selectmodelcsv=Izberite model izvoza
+Modelcsv_normal=Classic izvoz
+Modelcsv_CEGID=Izvoz v CEGID Expert
+BackToChartofaccounts=Prikaz kontnega plana
 Back=Return
 
-Definechartofaccounts=Define a chart of accounts
-Selectchartofaccounts=Select a chart of accounts
-Validate=Validate
-Addanaccount=Add an accounting account
-AccountAccounting=Accounting account
-Ventilation=Ventilation
-ToDispatch=To dispatch
-Dispatched=Dispatched
+Definechartofaccounts=Določite kontni plan
+Selectchartofaccounts=Izberite kontni plan
+Validate=Potrjevanje
+Addanaccount=Dodaj računovodskega račun
+AccountAccounting=Računovodstvo račun
+Ventilation=Pregled
+ToDispatch=Odpremo
+Dispatched=Odpošlje
 
-CustomersVentilation=Ventilation customers
-SuppliersVentilation=Ventilation suppliers
-TradeMargin=Trade margin
-Reports=Reports
-ByCustomerInvoice=By invoices customers
-ByMonth=By Month
-NewAccount=New accounting account
+CustomersVentilation=Pregled kupcev
+SuppliersVentilation=Pregled dobaviteljev
+TradeMargin=Trgovska marža
+Reports=Poročila
+ByCustomerInvoice=Z računov strank,
+ByMonth=Po mesecih
+NewAccount=Novi računovodski račun
 Update=Update
-List=List
-Create=Create
-UpdateAccount=Modification of an accounting account
-UpdateMvts=Modification of a movement
-WriteBookKeeping=Record accounts in general ledger
-Bookkeeping=General ledger
-AccountBalanceByMonth=Account balance by month
+List=Seznam
+Create=Ustvari
+UpdateAccount=Sprememba obračunskega računa
+UpdateMvts=Sprememba pretoka
+WriteBookKeeping=Evidenčnih računov v glavno knjigo
+Bookkeeping=Glavna knjiga
+AccountBalanceByMonth=Stanje na računu po mesecu
 
-AccountingVentilation=Accounting ventilation
-AccountingVentilationSupplier=Accounting ventilation supplier
-AccountingVentilationCustomer=Accounting ventilation customer
+AccountingVentilation=Pregled računov
+AccountingVentilationSupplier=Pregled računov dobaviteljev
+AccountingVentilationCustomer=Pregled računov kupcev
 Line=Line
 
-CAHTF=Total purchase supplier HT
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=In the accounting account
+CAHTF=Skupaj nakup dobavitelj HT
+InvoiceLines=Linije računa, ki se prezračuje
+InvoiceLinesDone=Prezračevane linije računa
+IntoAccount=Obračunskega računa
 
-Ventilate=Ventilate
-VentilationAuto=Automatic ventilation
+Ventilate=Prezračiti
+VentilationAuto=Avtomatski pregled
 
 Processing=Processing
-EndProcessing=The end of processing
-AnyLineVentilate=Any lines to ventilate
-SelectedLines=Selected lines
-Lineofinvoice=Line of invoice
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+EndProcessing=Konec obdelave
+AnyLineVentilate=Vrsticami prezračiti
+SelectedLines=Izbrane vrstice
+Lineofinvoice=Line računa
+VentilatedinAccount=Uspešno prezračen v obračunskem računu
+NotVentilatedinAccount=Ni prezračen v obračunskem računu
 
-ACCOUNTING_SEPARATORCSV=Separator CSV
+ACCOUNTING_SEPARATORCSV=Ločilo CSV
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be ventilated shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the pages of ventilation "Has to ventilate" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the pages of ventilation "Ventilated" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+AccountLength=Dolžina računovodstva računov prikazan v Dolibarrju
+AccountLengthDesc=Funkcija omogoča, da Predstavljati dolžino obračunskega računa z zamenjavo prostorov z ničelno sliki. Ta funkcija se dotakne le zaslon, ne spreminja računovodskih račune registrirane v Dolibarrju. Za izvoz, to funkcijo je potrebno, da so združljivi z določeno programsko opremo.
+ACCOUNTING_LENGTH_GACCOUNT=Dolžina glavne knjige
+ACCOUNTING_LENGTH_AACCOUNT=Dolžina računih tretjih oseb
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
-ACCOUNTING_CASH_JOURNAL=Cash journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=Prodam revija
+ACCOUNTING_PURCHASE_JOURNAL=Nakup revij
+ACCOUNTING_BANK_JOURNAL=Bank revija
+ACCOUNTING_CASH_JOURNAL=Cash revija
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Razno revija
+ACCOUNTING_SOCIAL_JOURNAL=Socialna revija
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Račun za prenos
+ACCOUNTING_ACCOUNT_SUSPENSE=Račun čakanja
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Računovodstvo račun privzeto za kupljene izdelke (če ni opredeljen v listu izdelkov)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Računovodstvo račun privzeto za prodanih proizvodov (če ni opredeljen v listu izdelkov)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Računovodstvo račun privzeto za kupljene storitve (če to ni opredeljeno v storitvenem stanja)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Računovodstvo račun privzeto za prodanih storitev (če ni opredeljen v storitvenem stanja)
 
-Doctype=Type of document
-Docdate=Date
+Doctype=Vrsta dokumenta
+Docdate=Datum
 Docref=Reference
-Numerocompte=Account
+Numerocompte=Račun
 Code_tiers=Thirdparty
-Labelcompte=Label account
-Debit=Debit
+Labelcompte=Račun Label
+Debit=Debetne
 Credit=Credit
-Amount=Amount
+Amount=Znesek
 Sens=Sens
-Codejournal=Journal
+Codejournal=Revija
 
-DelBookKeeping=Delete the records of the general ledger
+DelBookKeeping=Izbriši zapise v glavno knjigo
 
-SellsJournal=Sells journal
-PurchasesJournal=Purchases journal
-DescSellsJournal=Sells journal
-DescPurchasesJournal=Purchases journal
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
+SellsJournal=Sells revija
+PurchasesJournal=Nakupi revija
+DescSellsJournal=Sells revija
+DescPurchasesJournal=Nakupi revija
+BankJournal=Bank revija
+DescBankJournal=Bank revija vključno z vsemi vrstami, razen gotovine plačila
+CashJournal=Cash revija
+DescCashJournal=Cash revija, vključno z načinom plačila gotovine
 
-CashPayment=Cash Payment
+CashPayment=Gotovina Plačilo
 
-SupplierInvoicePayment=Payment of invoice supplier
-CustomerInvoicePayment=Payment of invoice customer
+SupplierInvoicePayment=Plačilo dobavitelju računa
+CustomerInvoicePayment=Plačilo računa kupca
 
-ThirdPartyAccount=Thirdparty account
+ThirdPartyAccount=Thirdparty račun
 
-NewAccountingMvt=New movement
-NumMvts=Number of movement
-ListeMvts=List of the movement
-ErrorDebitCredit=Debit and Credit cannot have a value at the same time
+NewAccountingMvt=Novo gibanje
+NumMvts=Število gibanja
+ListeMvts=Seznam gibanja
+ErrorDebitCredit=Debetne in Credit ne more imeti vrednosti hkrati
 
-ReportThirdParty=List thirdparty account
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+ReportThirdParty=Seznam thirdparty račun
+DescThirdPartyReport=Posvetujejo tukaj seznam thirdparty kupcev in dobaviteljev in njihovih računovodskih računov
 
-ListAccounts=List of the accounting accounts
+ListAccounts=Seznam računovodskih računov
 
-Pcgversion=Version of the plan
-Pcgtype=Class of account
-Pcgsubtype=Under class of account
-Accountparent=Root of the account
-Active=Statement
+Pcgversion=Različica načrta
+Pcgtype=Razred račun
+Pcgsubtype=Pod razred račun
+Accountparent=Root računa
+Active=Izjava
 
-NewFiscalYear=New fiscal year
+NewFiscalYear=Novo poslovno leto
 
-DescVentilCustomer=Consult here the annual accounting ventilation of your invoices customers
-TotalVente=Total turnover HT
-TotalMarge=Total sales margin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
+TotalVente=Skupni prihodek HT
+TotalMarge=Skupaj prodajna marža
+DescVentilDoneCustomer=Posvetujejo tukaj seznam vrstic računov strank in njihovo računovodsko račun
+DescVentilTodoCustomer=Prezračite svoje linije računa stranke z računovodsko račun
+ChangeAccount=Spremenite računovodsko račun linij, ki jih na račun izbranih:
 Vide=-
-DescVentilSupplier=Consult here the annual accounting ventilation of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
+DescVentilTodoSupplier=Prezračite svoje linije dobavitelja na računu z računovodsko račun
+DescVentilDoneSupplier=Posvetujejo tukaj seznam vrstic računov dobaviteljem in njihovo računovodsko račun
 
-ValidateHistory=Validate Automatically
+ValidateHistory=Potrditi Samodejno
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+ErrorAccountancyCodeIsAlreadyUse=Napaka, ne morete izbrisati to računovodsko račun, ker se uporablja
 
-FicheVentilation=Ventilation card
+FicheVentilation=Breakdown card

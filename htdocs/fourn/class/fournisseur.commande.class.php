@@ -45,6 +45,11 @@ class CommandeFournisseur extends CommonOrder
     public $fk_element = 'fk_commande';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
+
     var $id;
 
     var $ref;		 // TODO deprecated
@@ -533,7 +538,7 @@ class CommandeFournisseur extends CommonOrder
         $picto='order';
         $label=$langs->trans("ShowOrder").': '.$this->ref;
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.$this->ref.$lienfin;
         return $result;
@@ -828,7 +833,7 @@ class CommandeFournisseur extends CommonOrder
         $result = 0;
         if ($user->rights->fournisseur->commande->commander)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 3, fk_input_method=".$methode.",date_commande=".$this->db->idate("$date");
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 3, fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."'";
             $sql .= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::commande", LOG_DEBUG);
@@ -953,6 +958,8 @@ class CommandeFournisseur extends CommonOrder
 
 	                if (! $error)
                     {
+                    	$action='create';
+
 	                    // Actions on extra fields (by external module or standard code)
 	                    // FIXME le hook fait double emploi avec le trigger !!
 	                    $hookmanager->initHooks(array('supplierorderdao'));

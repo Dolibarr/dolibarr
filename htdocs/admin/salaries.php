@@ -23,7 +23,7 @@
  */
 
 require '../main.inc.php';
-	
+
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -45,7 +45,7 @@ $list = array (
 /*
  * Actions
  */
- 
+
 if ($action == 'update')
 {
     $error = 0;
@@ -72,12 +72,12 @@ if ($action == 'update')
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans('SalariesSetup'));
 
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('ConfigSalaries'),$linkback,'setup');
+print_fiche_titre($langs->trans('SalariesSetup'),$linkback,'setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -98,7 +98,7 @@ foreach ($list as $key)
 	print '<tr '.$bc[$var].' class="value">';
 
 	// Param
-	$label = $langs->trans($key); 
+	$label = $langs->trans($key);
 	print '<td><label for="'.$key.'">'.$label.'</label></td>';
 
 	// Value

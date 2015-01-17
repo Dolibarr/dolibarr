@@ -114,7 +114,7 @@ if ($resql)
 /*
  * Commandes a traiter
  */
-$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -136,7 +136,7 @@ if ($resql)
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
+		print '<td colspan="3">'.$langs->trans("OrdersToProcess").'</td></tr>';
 		$var = True;
 		while ($i < $num)
 		{
@@ -146,13 +146,19 @@ if ($resql)
 			print '<td class="nowrap">';
 			$orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
+			$orderstatic->statut=$obj->fk_statut;
+			$orderstatic->facturee=0;
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
 			$companystatic->name=$obj->name;
 			$companystatic->id=$obj->socid;
 			print $companystatic->getNomUrl(1,'customer',32);
-			print '</td></tr>';
+			print '</td>';
+			print '<td align="right">';
+			print $orderstatic->getLibStatut(3);
+			print '</td>';
+			print '</tr>';
 			$i++;
 		}
 		print "</table><br>";

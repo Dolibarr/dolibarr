@@ -57,7 +57,7 @@ class ActionComm extends CommonObject
     var $datef;			// Date action end (datep2)
     var $durationp = -1;      // -1=Unkown duration			// deprecated
     var $fulldayevent = 0;    // 1=Event on full day
-    var $punctual = 1;        // Milestone					// TODO Not sure we need this. Milestone is already event with end date = start date
+    var $punctual = 1;        // Milestone					// deprecated. Milestone is already event with end date = start date
     var $percentage;    // Percentage
     var $location;      // Location
 
@@ -241,8 +241,11 @@ class ActionComm extends CommonObject
 
             if (! $error)
             {
+            	$action='create';
+
 	            // Actions on extra fields (by external module or standard code)
-	            $hookmanager->initHooks(array('actioncommdao'));
+				// FIXME le hook fait double emploi avec le trigger !!
+            	$hookmanager->initHooks(array('actioncommdao'));
 	            $parameters=array('actcomm'=>$this->id);
 	            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 	            if (empty($reshook))
@@ -347,7 +350,7 @@ class ActionComm extends CommonObject
                 $this->label				= $obj->label;
                 $this->datep				= $this->db->jdate($obj->datep);
                 $this->datef				= $this->db->jdate($obj->datep2);
-				$this->durationp			= $this->durationp;					// deprecated
+//				$this->durationp			= $this->durationp;					// deprecated
 
                 $this->datec   				= $this->db->jdate($obj->datec);
                 $this->datem   				= $this->db->jdate($obj->datem);
@@ -560,8 +563,10 @@ class ActionComm extends CommonObject
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
         if ($this->db->query($sql))
         {
+			$action='update';
 
         	// Actions on extra fields (by external module or standard code)
+			// FIXME le hook fait double emploi avec le trigger !!
         	$hookmanager->initHooks(array('actioncommdao'));
         	$parameters=array('actcomm'=>$this->id);
         	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -878,23 +883,23 @@ class ActionComm extends CommonObject
         if ($withpicto == 2)
         {
             $libelle=$label;
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->transnoentities("Action".$this->type_code);
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->transnoentities("Action".$this->type_code);
             $libelleshort='';
         }
         else
        {
-       		$libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
-       		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
-       		$libelleshort=dol_trunc($libelle,$maxlength);
+            $libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+            $libelleshort=dol_trunc($libelle,$maxlength);
         }
 
         if ($withpicto)
         {
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
-        	{
-        		 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
-        	}
-            $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle,($overwritepicto?$overwritepicto:'action')).$lienfin;
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
+            {
+                $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
+            }
+            $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle, ($overwritepicto?$overwritepicto:'action'), 'class="classfortooltip"').$lienfin;
         }
         if ($withpicto==1) $result.=' ';
         $result.=$lien.$libelleshort.$lienfin;
@@ -1137,7 +1142,7 @@ class ActionComm extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
+        global $user,$langs,$conf,$user;
 
         $now=dol_now();
 
@@ -1161,6 +1166,9 @@ class ActionComm extends CommonObject
         $this->transparency=1;	// 1 means opaque
         $this->priority=1;
         $this->note = 'Note';
+
+        $this->userownerid=$user->id;
+        $this->userassigned[$user->id]=array('id'=>$user->id, 'transparency'=> 1);
     }
 
 }

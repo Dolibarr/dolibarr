@@ -56,6 +56,8 @@ UseSearchToSelectCompany=استفاده از رشته های تکمیل خودک
 ActivityStateToSelectCompany= اضافه کردن یک گزینه فیلتر برای نشان دادن / پنهان کن thirdparties که در حال حاضر در فعالیت و یا تا به آن متوقف شد
 UseSearchToSelectContactTooltip=همچنین اگر شما تعداد زیادی از اشخاص ثالث (> 100 000)، شما می توانید سرعت با تنظیم CONTACT_DONOTSEARCH_ANYWHERE ثابت به 1 در راه اندازی-> دیگر افزایش دهد. جست و جو خواهد شد و سپس محدود به شروع از رشته است.
 UseSearchToSelectContact=استفاده از رشته های تکمیل خودکار را انتخاب کنید تماس با (به جای استفاده از جعبه لیست).
+DelaiedFullListToSelectCompany=Wait you press a key before loading content of thirdparties combo list (This may increase performance if you have a large number of thirdparties)
+DelaiedFullListToSelectContact=Wait you press a key before loading content of contact combo list (This may increase performance if you have a large number of contact)
 SearchFilter=جستجو فیلتر گزینه
 NumberOfKeyToSearch=اسمشو نبر از شخصیت های به ماشه جستجو:٪ s را
 ViewFullDateActions=نمایش رویدادهای تاریخ های کامل در برگه سوم
@@ -208,6 +210,7 @@ ModulesJobDesc=ماژول های کسب و کار راه اندازی از پی�
 ModulesMarketPlaceDesc=شما می توانید ماژول های بیشتری برای دانلود در وب سایت های خارجی را در اینترنت پیدا کنید ...
 ModulesMarketPlaces=ماژول های بیشتر ...
 DoliStoreDesc=DoliStore، محل رسمی بازار برای ماژول های خارجی Dolibarr ERP / CRM
+DoliPartnersDesc=List with some companies that can provide/develop on-demand modules or features (Note: any Open Source company knowning PHP language can provide you specific development)
 WebSiteDesc=ارائه دهندگان وب سایت شما می توانید جستجو برای پیدا کردن ماژول های بیشتر ...
 URL=پیوند
 BoxesAvailable=جعبه دسترس
@@ -437,14 +440,14 @@ Module52Name=سهام
 Module52Desc=مدیریت انبار (محصول)
 Module53Name=خدمات
 Module53Desc=مدیریت خدمات
-Module54Name=قراردادها
-Module54Desc=قرارداد و خدمات مدیریت
+Module54Name=Contracts/Subscriptions
+Module54Desc=Management of contracts (services or reccuring subscriptions)
 Module55Name=بارکد
 Module55Desc=مدیریت بارکد
 Module56Name=تلفن
 Module56Desc=یکپارچه سازی تلفن
 Module57Name=سفارشات ایستاده
-Module57Desc=ایستاده سفارشات و مدیریت خروج
+Module57Desc=Standing orders and withdrawal management. Also includes generation of SEPA file for european countries.
 Module58Name=کلیک برای تماس
 Module58Desc=یکپارچه سازی سیستم ClickToDial (ستاره، ...)
 Module59Name=Bookmark4u
@@ -475,8 +478,8 @@ Module320Name=خوراک RSS
 Module320Desc=اضافه کردن خوراک RSS در داخل صفحات صفحه نمایش Dolibarr
 Module330Name=بوک مارک ها
 Module330Desc=مدیریت چوب الف
-Module400Name=پروژه ها
-Module400Desc=مدیریت پروژه در داخل ماژول های دیگر
+Module400Name=Projects/Opportunities/Leads
+Module400Desc=Management of projects, opportunities or leads. You can then assign any element (invoice, order, proposal, intervention, ...) to a project and get a transversal view from the project view.
 Module410Name=Webcalendar
 Module410Desc=ادغام Webcalendar
 Module500Name=هزینه های ویژه (مالیاتی، کمک های اجتماعی، سود سهام)
@@ -484,7 +487,7 @@ Module500Desc=مدیریت هزینه های خاص مانند مالیات، م
 Module510Name=حقوق
 Module510Desc=مدیریت کارکنان حقوق و پرداخت
 Module600Name=اطلاعیه ها
-Module600Desc=ارسال اطلاعیه ها از طریق ایمیل در برخی از وقایع کسب و کار Dolibarr به تماس با شخص ثالث
+Module600Desc=Send EMail notifications on some Dolibarr business events to third-party contacts (setup defined on each thirdparty)
 Module700Name=کمک های مالی
 Module700Desc=مدیریت کمک مالی
 Module1200Name=اخوندک
@@ -495,6 +498,8 @@ Module1780Name=دسته بندی ها
 Module1780Desc=مدیریت گروه (محصولات، تامین کنندگان و مشتریان)
 Module2000Name=ویرایشگر WYSIWYG
 Module2000Desc=اجازه می دهد به ویرایش برخی از متن با استفاده از ویرایشگر پیشرفته
+Module2200Name=Dynamic Prices
+Module2200Desc=Enable the usage of math expressions for prices
 Module2300Name=cron را
 Module2300Desc=وظیفه مدیریت برنامه ریزی
 Module2400Name=دستور کار
@@ -503,6 +508,8 @@ Module2500Name=الکترونیکی مدیریت محتوا
 Module2500Desc=ذخیره و به اشتراک اسناد
 Module2600Name=سرویس دهنده وب
 Module2600Desc=فعال کردن Dolibarr خدمات وب سرور
+Module2650Name=WebServices (client)
+Module2650Desc=Enable the Dolibarr web services client (Can be used to push data/requests to external servers. Supplier orders supported only for the moment)
 Module2700Name=Gravatar در
 Module2700Desc=استفاده از سرویس آنلاین Gravatar در (www.gravatar.com) برای نشان دادن عکس از کاربران / کاربران (که با ایمیل های خود را). نیاز به دسترسی به اینترنت
 Module2800Desc=FTP کارفرما
@@ -514,20 +521,20 @@ Module5000Name=چند شرکت
 Module5000Desc=اجازه می دهد تا به شما برای مدیریت شرکت های متعدد
 Module6000Name=گردش کار
 Module6000Desc=مدیریت گردش کار
-Module20000Name=تعطیلات
-Module20000Desc=اعلام و کارکنان تعطیلات را دنبال
+Module20000Name=Leave Requests management
+Module20000Desc=Declare and follow employees leaves requests
 Module39000Name=Product batch
-Module39000Desc=Batch number, eat-by and sell-by date management on products
+Module39000Desc=Batch or serial number, eat-by and sell-by date management on products
 Module50000Name=خزانه
 Module50000Desc=ماژول برای ارائه یک صفحه پرداخت آنلاین از طریق کارت اعتباری با خزانه
 Module50100Name=نقطه ای از فروش
 Module50100Desc=نقطه ای از ماژول فروش
-Module50200Name= پی پال
-Module50200Desc= ماژول برای ارائه یک صفحه پرداخت آنلاین از طریق کارت اعتباری با پی پال
+Module50200Name=پی پال
+Module50200Desc=ماژول برای ارائه یک صفحه پرداخت آنلاین از طریق کارت اعتباری با پی پال
 Module50400Name=Accounting (advanced)
 Module50400Desc=Accounting management (double parties)
 Module54000Name=PrintIPP
-Module54000Desc=چاپ از طریق جام IPP پرینتر.
+Module54000Desc=Direct print (without opening the documents) using Cups IPP interface (Printer must be visible from server, and CUPS must be installe on server).
 Module55000Name=نظرسنجی گسترش
 Module55000Desc=ماژول را به نظر سنجی آنلاین (مانند دودل، خاتم کاری، Rdvz، ...)
 Module59000Name=حاشیه
@@ -606,15 +613,16 @@ Permission151=خوانده شده سفارشات ایستاده
 Permission152=ایجاد / تغییر درخواست سفارشات ایستاده
 Permission153=سفارشات ایستاده انتقال رسید
 Permission154=اعتبار / امتناع ایستاده سفارشات رسید
-Permission161=خوانده شده قرارداد
-Permission162=ایجاد / اصلاح قرارداد
-Permission163=فعال کردن یک سرویس از یک قرارداد
-Permission164=غیر فعال کردن یک سرویس از یک قرارداد
-Permission165=حذف قرارداد
-Permission171=خوانده شده سفر
-Permission172=ایجاد / اصلاح سفر
-Permission173=حذف سفر
-Permission178=سفرهای صادرات
+Permission161=Read contracts/subscriptions
+Permission162=Create/modify contracts/subscriptions
+Permission163=Activate a service/subscription of a contract
+Permission164=Disable a service/subscription of a contract
+Permission165=Delete contracts/subscriptions
+Permission171=Read trips and expenses (own and his subordinates)
+Permission172=Create/modify trips and expenses
+Permission173=Delete trips and expenses
+Permission174=Read all trips and expenses
+Permission178=Export trips and expenses
 Permission180=دفعات بازدید: تامین کنندگان
 Permission181=خوانده شده سفارشات کالا
 Permission182=ایجاد / تغییر سفارشات کالا
@@ -671,7 +679,7 @@ Permission300=دفعات بازدید: بارکد
 Permission301=ایجاد / تغییر کدهای نوار
 Permission302=حذف کدهای نوار
 Permission311=خوانده شده خدمات
-Permission312=اختصاص خدمات به قرارداد
+Permission312=Assign service/subscription to contract
 Permission331=خوانده شده بوک مارک ها
 Permission332=ایجاد / تغییر بوک مارک ها
 Permission333=حذف بوک مارک ها
@@ -701,8 +709,8 @@ Permission701=خوانده شده
 Permission702=ایجاد / تغییر کمک های مالی
 Permission703=حذف کمک های مالی
 Permission1001=خوانده شده سهام
-Permission1002=ایجاد / تغییر سهام
-Permission1003=حذف سهام
+Permission1002=Create/modify warehouses
+Permission1003=Delete warehouses
 Permission1004=خوانده شده جنبش های سهام
 Permission1005=ایجاد / تغییر جنبش های سهام
 Permission1101=خوانده شده تحویل سفارشات
@@ -778,6 +786,7 @@ DictionaryOrderMethods=مرتب سازی بر روش
 DictionarySource=منبع از پیشنهادات / سفارشات
 DictionaryAccountancyplan=نمودار حساب
 DictionaryAccountancysystem=مدل برای نمودار حساب
+DictionaryEMailTemplates=Emails templates
 SetupSaved=راه اندازی نجات داد
 BackToModuleList=بازگشت به لیست ماژول ها
 BackToDictionaryList=برگشت به فهرست واژه نامه ها
@@ -887,6 +896,7 @@ PermanentLeftSearchForm=فرم جستجو دائمی در منوی سمت چپ
 DefaultLanguage=زبان پیش فرض برای استفاده از (زبان)
 EnableMultilangInterface=فعال کردن رابط کاربری چند زبانه
 EnableShowLogo=نمایش لوگو را در منوی سمت چپ
+EnableHtml5=Enable Html5 (Developement - Only available on Eldy template)
 SystemSuccessfulyUpdated=سیستم شما با موفقیت به روز رسانی شده است
 CompanyInfo=شرکت / اطلاعات پایه
 CompanyIds=هویت شرکت / بنیاد
@@ -1038,7 +1048,6 @@ YesInSummer=بله در فصل تابستان
 OnlyFollowingModulesAreOpenedToExternalUsers=توجه داشته باشید، فقط ماژول های زیر را به کاربران خارجی (هر چه باشد اجازه چنین کاربران) باز:
 SuhosinSessionEncrypt=ذخیره سازی جلسه رمز شده توسط Suhosin
 ConditionIsCurrently=وضعیت در حال حاضر از٪ s
-TestNotPossibleWithCurrentBrowsers=تشخیص خودکار امکان پذیر نمی باشد
 YouUseBestDriver=شما با استفاده از راننده٪ است که بهترین راننده های موجود در حال حاضر.
 YouDoNotUseBestDriver=You use drive %s but driver %s is recommended.
 NbOfProductIsLowerThanNoPb=شما فقط٪ محصولات / خدمات را به پایگاه داده باشد. این به این مورد نیاز هر بهینه سازی خاص است.
@@ -1074,7 +1083,7 @@ ModuleCompanyCodeAquarium=بازگشت یک کد حسابداری ساخته ش�
 ModuleCompanyCodePanicum=بازگشت یک کد حسابداری خالی است.
 ModuleCompanyCodeDigitaria=کد حسابداری بستگی به کد های شخص ثالث. کد از شخصیت "C" در مقام اول و پس از آن 5 حرف اول کد های شخص ثالث تشکیل شده است.
 UseNotifications=استفاده از اطلاعیه
-NotificationsDesc=ایمیل های اطلاعیه قابلیت اجازه می دهد تا شما را به سکوت، ارسال ایمیل به صورت خودکار، برای برخی از حوادث Dolibarr، به اشخاص ثالث (مشتریان یا تامین کنندگان) است که به پیکربندی شده است. انتخاب اطلاع رسانی و اهداف تماس با فعال یک حزب سوم در زمان ساخته شده است.
+NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events. Targets of notifications can be defined:<br>* per third parties contacts (customers or suppliers), one third party at time.<br>* or by setting a global target email address on module setup page.
 ModelModules=اسناد قالب
 DocumentModelOdt=تولید اسناد از OpenDocuments قالب (. ODT و یا فایل های ODS برای آفیس اپن سورس کنند، KOffice، TextEdit، ...)
 WatermarkOnDraft=تعیین میزان مد آب در پیش نویس سند
@@ -1138,6 +1147,7 @@ AddDeliveryAddressAbility=توانایی اضافه کردن تاریخ تحوی
 UseOptionLineIfNoQuantity=یک خط از محصول / خدمات با مقدار صفر به عنوان یک گزینه در نظر گرفته
 FreeLegalTextOnProposal=متن رایگان در طرح های تجاری
 WatermarkOnDraftProposal=تعیین میزان مد آب در پیش نویس طرح تجاری (هیچ اگر خالی)
+BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
 ##### Orders #####
 OrdersSetup=راه اندازی مدیریت سفارش
 OrdersNumberingModules=سفارشات شماره مدل
@@ -1146,6 +1156,7 @@ HideTreadedOrders=مخفی کردن سفارشات درمان و یا لغو د�
 ValidOrderAfterPropalClosed=به اعتبار منظور پس از پیشنهاد نزدیک تر است، امکان به گام نیست به دستور موقت
 FreeLegalTextOnOrders=متن رایگان در سفارشات
 WatermarkOnDraftOrders=تعیین میزان مد آب به دستور پیش نویس (هیچ اگر خالی)
+ShippableOrderIconInList=Add an icon in Orders list which indicate if order is shippable
 ##### Clicktodial #####
 ClickToDialSetup=کلیک کنید تا شماره گیری راه اندازی ماژول
 ClickToDialUrlDesc=آدرس نامیده می شود که با کلیک بر روی picto تلفن انجام می شود. در URL، شما می توانید برچسب ها <br> <b>__PHONETO__</b> خواهد شد که با شماره تلفن از فرد جایگزین را به تماس <br> <b>__PHONEFROM__</b> خواهد شد که با شماره تلفن تماس شخص (شما) به جای <br> <b>__LOGIN__</b> خواهد شد که با ورود clicktodial خود را جایگزین (تعریف شده در کارت کاربر شما) <br> <b>__PASS__</b> خواهد شد که با رمز عبور clicktodial شما (تعریف شده در کارت کاربر خود را) جایگزین شده است.
@@ -1158,7 +1169,7 @@ FicheinterNumberingModules=مداخله شماره مدل
 TemplatePDFInterventions=اسناد کارت مداخله مدل
 WatermarkOnDraftInterventionCards=تعیین میزان مد آب در اسناد کارت مداخله (هیچ اگر خالی)
 ##### Contracts #####
-ContractsSetup=راه اندازی ماژول قراردادها
+ContractsSetup=Contracts/Subscriptions module setup
 ContractsNumberingModules=قرارداد شماره ماژول ها
 TemplatePDFContracts=اسناد قرارداد مدل
 FreeLegalTextOnContracts=متن رایگان در قرارداد
@@ -1322,7 +1333,7 @@ FilesOfTypeNotCompressed=فایل های از نوع٪ s را با HTTP سرور
 CacheByServer=کش سرور
 CacheByClient=کش شده توسط مرورگر
 CompressionOfResources=فشرده سازی از پاسخهای HTTP
-TestNotPossibleWithCurrentBrowsers=تشخیص خودکار امکان پذیر نمی باشد
+TestNotPossibleWithCurrentBrowsers=Such an automatic detection is not possible with current browsers
 ##### Products #####
 ProductSetup=راه اندازی ماژول محصولات
 ServiceSetup=راه اندازی خدمات ماژول
@@ -1382,9 +1393,10 @@ MailingSetup=ایمیل راه اندازی ماژول
 MailingEMailFrom=پست الکترونیکی فرستنده (از) برای ایمیل های فرستاده شده توسط ایمیل ماژول
 MailingEMailError=ایمیل بازگشت (خطاها به) برای ایمیل با اشتباهات
 ##### Notification #####
-NotificationSetup=بو هشدار از طریق راه اندازی ماژول ایمیل
+NotificationSetup=EMail notification module setup
 NotificationEMailFrom=پست الکترونیکی فرستنده (از) برای ایمیل های ارسال شده اطلاعیه
-ListOfAvailableNotifications=فهرست اطلاعیه در دسترس است (این لیست بستگی به ماژول های فعال)
+ListOfAvailableNotifications=List of events you can set notification on, for each thirdparty (go into thirdparty card to setup) or by setting a fixed email (List depends on activated modules)
+FixedEmailTarget=Fixed email target
 ##### Sendings #####
 SendingsSetup=در حال ارسال راه اندازی ماژول
 SendingsReceiptModel=ارسال مدل رسید
@@ -1412,8 +1424,9 @@ OSCommerceTestOk=اتصال به سرور '٪ s' را در پایگاه داده
 OSCommerceTestKo1=اتصال به کارگزار «٪ s 'موفق اما پایگاه داده'٪ s 'را نمی تواند رسید.
 OSCommerceTestKo2=اتصال به کارگزار «٪ s 'با کاربر'٪ s 'شکست خورده است.
 ##### Stock #####
-StockSetup=سهام ماژول تنظیمات
-UserWarehouse=استفاده از سهام شخصی کاربر
+StockSetup=Warehouse module setup
+UserWarehouse=Use user personal warehouses
+IfYouUsePointOfSaleCheckModule=If you use a Point of Sale module (POS module provided by default or another external module), this setup may be ignored by your Point Of Sale module. Most point of sales modules are designed to create immediatly an invoice and decrease stock by default whatever are options here. So, if you need or not to have a stock decrease when registering a sell from your Point Of Sale, check also your POS module set up.
 ##### Menu #####
 MenuDeleted=منوی حذف
 TreeMenu=منوها درخت
@@ -1478,11 +1491,14 @@ ClickToDialDesc=این ماژول اجازه می دهد تا پس از شمار
 ##### Point Of Sales (CashDesk) #####
 CashDesk=نقطه ای از فروش
 CashDeskSetup=نقطه ای از راه اندازی ماژول فروش
-CashDeskThirdPartyForSell=شخص ثالث عمومی به استفاده از برای فروش
+CashDeskThirdPartyForSell=Default generic third party to use for sells
 CashDeskBankAccountForSell=پیش فرض حساب استفاده برای دریافت پرداخت های نقدی
 CashDeskBankAccountForCheque= پیش فرض حساب استفاده برای دریافت پرداخت توسط چک
 CashDeskBankAccountForCB= پیش فرض حساب استفاده برای دریافت پرداخت توسط کارت های اعتباری
-CashDeskIdWareHouse=انبار استفاده برای فروش
+CashDeskDoNotDecreaseStock=Disable stock decrease when a sell is done from Point of Sale
+CashDeskIdWareHouse=Force and restrict warehouse to use for stock decrease
+StockDecreaseForPointOfSaleDisabled=Stock decrease from Point Of Sale disabled
+CashDeskYouDidNotDisableStockDecease=You did not disable stock decrease when making a sell from Point Of Sale. So a warehouse is required.
 ##### Bookmark #####
 BookmarkSetup=راه اندازی ماژول چوب الف
 BookmarkDesc=این ماژول به شما اجازه مدیریت بوک مارک ها. شما همچنین می توانید کلید های میانبر برای هر صفحه Dolibarr و یا وب سایت های externale در منوی سمت چپ خود را اضافه کنید.
@@ -1535,6 +1551,14 @@ DeleteFiscalYear=حذف سال مالی
 ConfirmDeleteFiscalYear=آیا مطمئن هستید این سال مالی را حذف کنید؟
 Opened=افتتاح شد
 Closed=بسته
-
+AlwaysEditable=Can always be edited
+MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
+NbMajMin=Minimum number of uppercase characters
+NbNumMin=Minimum number of numeric characters
+NbSpeMin=Minimum number of special characters
+NbIteConsecutive=Maximum number of repeating same characters
+NoAmbiCaracAutoGeneration=Do not use ambiguous characters ("1","l","i","|","0","O") for automatic generation
+SalariesSetup=Setup of module salaries
+SortOrder=Sort order
 Format=قالب
 TypePaymentDesc=0:Customer payment type, 1:Supplier payment type, 2:Both customers and suppliers payment type

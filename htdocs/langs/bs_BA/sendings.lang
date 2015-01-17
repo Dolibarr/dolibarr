@@ -61,6 +61,8 @@ ShipmentCreationIsDoneFromOrder=U ovom trenutku, nova pošiljka se kreira sa kar
 RelatedShippings=Povezana otpremanja
 ShipmentLine=Tekst pošiljke
 CarrierList=Lista transportera
+SendingRunning=Product from customer order already sent
+SuppliersReceiptRunning=Product from supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Catch by customer

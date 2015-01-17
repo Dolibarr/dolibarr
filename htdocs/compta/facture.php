@@ -417,8 +417,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model=$object->modelpdf;
-				if (empty($model)) { $tmp=getListOfModels($db, 'invoice'); $keys=array_keys($tmp); $model=$keys[0]; }
 				$ret = $object->fetch($id); // Reload to get new records
+
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     			if ($result < 0) dol_print_error($db,$result);
 			}
@@ -500,8 +500,8 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model=$object->modelpdf;
-				if (empty($model)) { $tmp=getListOfModels($db, 'invoice'); $keys=array_keys($tmp); $model=$keys[0]; }
 				$ret = $object->fetch($id); // Reload to get new records
+
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
@@ -1115,16 +1115,15 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 	// Set if we used free entry or predefined product
 	$predef='';
 	$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+	$price_ht = GETPOST('price_ht');
 	if (GETPOST('prod_entry_mode') == 'free')
 	{
 		$idprod=0;
-		$price_ht = GETPOST('price_ht');
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 	}
 	else
 	{
 		$idprod=GETPOST('idprod', 'int');
-		$price_ht = '';
 		$tva_tx = '';
 	}
 
@@ -1328,8 +1327,8 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 						$outputlangs->setDefaultLang($newlang);
 					}
 					$model=$object->modelpdf;
-					if (empty($model)) { $tmp=getListOfModels($db, 'invoice'); $keys=array_keys($tmp); $model=$keys[0]; }
 					$ret = $object->fetch($id); // Reload to get new records
+
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
@@ -1615,14 +1614,7 @@ else if ($action == 'remove_file') {
 	}
 }
 
-// Print file
-else if ($action == 'print_file' and $user->rights->printipp->read) {
-	require_once DOL_DOCUMENT_ROOT . '/core/class/dolprintipp.class.php';
-	$printer = new dolPrintIPP($db, $conf->global->PRINTIPP_HOST, $conf->global->PRINTIPP_PORT, $user->login, $conf->global->PRINTIPP_USER, $conf->global->PRINTIPP_PASSWORD);
-	$printer->print_file(GETPOST('file', 'alpha'), GETPOST('printer', 'alpha'));
-	setEventMessage($langs->trans("FileWasSentToPrinter", GETPOST('file')));
-	$action = '';
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_printipp.inc.php';
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer)
 {
@@ -1774,7 +1766,9 @@ if ($action == 'create')
 			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 			$ref_int = (! empty($objectsrc->ref_int) ? $objectsrc->ref_int : '');
 
-			$soc = $objectsrc->thirdparty;
+			// only if socid not filled else it's allready done upper
+			if (empty($socid))
+				$soc = $objectsrc->thirdparty;
 
 			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
@@ -1793,7 +1787,7 @@ if ($action == 'create')
 	{
 		$cond_reglement_id 	= $soc->cond_reglement_id;
 		$mode_reglement_id 	= $soc->mode_reglement_id;
-        $fk_account         = $soc->fk_account;
+		$fk_account        	= $soc->fk_account;
 		$remise_percent 	= $soc->remise_percent;
 		$remise_absolue 	= 0;
 		$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);		// Do not set 0 here (0 for a date is 1970)
@@ -2275,10 +2269,11 @@ if ($action == 'create')
 	print "</table>\n";
 
 	// Button "Create Draft"
-	print '<br><center>';
+	print '<br><div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
-	print '&nbsp;<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
-	print '</center>';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print "</form>\n";
 
@@ -3486,7 +3481,7 @@ if ($action == 'create')
 					$i ++;
 				}
 				print '</table>';
-				print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></center>';
+				print '<br><div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
 				print '</form>';
 				$db->free($resqlorderlist);
 			} else {

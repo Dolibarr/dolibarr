@@ -1122,9 +1122,9 @@ if ($action == 'create')
 	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 		}
 
-		print '<center><br>';
+		print '<br><div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '</center>';
+		print '</div>';
 
 		print '</form>';
 	}
@@ -1137,10 +1137,10 @@ if ($action == 'create')
 		print '</td></tr>';
 		print '</table>';
 
-		print '<br><center>';
+		print '<br><div class="center">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '</center>';
+		print '</div>';
 
 		print '</form>';
 	}
@@ -1373,6 +1373,8 @@ else if ($id > 0 || ! empty($ref))
 		$sql.= ' ft.date as date_intervention';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql.= ' WHERE ft.fk_fichinter = '.$object->id;
+		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION))
+			$sql.= ' AND ft.duree <> 0';
 		$sql.= ' ORDER BY ft.rang ASC, ft.rowid';
 
 		$resql = $db->query($sql);
@@ -1486,7 +1488,9 @@ else if ($id > 0 || ! empty($ref))
 
 					// Duration
 					print '<td align="right">';
-					$form->select_duration('duration',$objp->duree);
+					$selectmode='select';
+					if (! empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) $selectmode='text';
+					$form->select_duration('duration',$objp->duree, $selectmode);
 					print '</td>';
 
 					print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';

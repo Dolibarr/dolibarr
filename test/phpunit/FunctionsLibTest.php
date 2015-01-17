@@ -83,6 +83,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -822,6 +824,34 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 		//With $forxml parameter
 		$this->assertEquals(dol_nl2br($string, 1, 1), "a<br />a");
+	}
+
+	/**
+	 * testDolPrice2Num
+	 *
+	 * @return boolean
+	 */
+	public function testDolPrice2Num()
+	{
+		$this->assertEquals(1000, price2num('1 000.0'));
+		$this->assertEquals(1000, price2num('1 000','MT'));
+		$this->assertEquals(1000, price2num('1 000','MU'));
+		
+		$this->assertEquals(1000.123456, price2num('1 000.123456'));
+
+		// Round down
+		$this->assertEquals(1000.12, price2num('1 000.123452','MT'));
+		$this->assertEquals(1000.12345, price2num('1 000.123452','MU'),"Test MU");
+
+		// Round up
+		$this->assertEquals(1000.13, price2num('1 000.125456','MT'));
+		$this->assertEquals(1000.12546, price2num('1 000.125456','MU'),"Test MU");
+
+		// Text can't be converted
+		$this->assertEquals('12.4$',price2num('12.4$'));
+		$this->assertEquals('12r.4$',price2num('12r.4$'));
+		
+		return true;		
 	}
 
 }

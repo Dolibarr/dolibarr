@@ -99,7 +99,7 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td class="fieldrequired">'.$langs->trans("Label")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"". (GETPOST('EXTERNALSITE_LABEL','alpha')?GETPOST('EXTERNALSITE_LABEL','alpha'):((empty($conf->global->EXTERNALSITE_LABEL) || $conf->global->EXTERNALSITE_LABEL=='ExternalSite')?'':$conf->global->EXTERNALSITE_LABEL)) . "\" size=\"12\"></td>";
-print "<td>My menu entry</td>";
+print "<td>".$langs->trans("ExampleMyMenuEntry")."</td>";
 print "</tr>";
 
 $var=!$var;
@@ -114,9 +114,9 @@ print "</tr>";
 print "</table>";
 
 
-print '<br><center>';
-print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
-print "</center>";
+print '<br><div class="center">';
+print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+print '</div>';
 
 print "</form>\n";
 

@@ -29,6 +29,7 @@ ActionsToDoBy=Akcia priradené
 ActionsDoneBy=Akcie vykonané
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Všetky moje akcie / úlohy
 AllActions= Všetky udalosti / úlohy
 ViewList=Zobrazenie zoznamu
@@ -41,9 +42,10 @@ AutoActions= Automatické plnenie
 AgendaAutoActionDesc= Definujte tu udalosti, na ktoré chcete Dolibarr vytvoriť automaticky udalosť v programe. Pokiaľ nie je označená (v predvolenom nastavení), bude iba manuálne činnosti byť zahrnuté do programu rokovania.
 AgendaSetupOtherDesc= Táto stránka poskytuje možnosti, ako dať export vašich akcií Dolibarr do externého kalendára (thunderbird, Google kalendár, ...)
 AgendaExtSitesDesc=Táto stránka umožňuje deklarovať externé zdroje kalendárov vidieť svoje akcie do programu Dolibarr.
-ActionsEvents= Udalosti, pre ktoré Dolibarr vytvorí akciu v programe automaticky
-PropalValidatedInDolibarr= Návrh %s overená
-InvoiceValidatedInDolibarr= Faktúra %s overená
+ActionsEvents=Udalosti, pre ktoré Dolibarr vytvorí akciu v programe automaticky
+PropalValidatedInDolibarr=Návrh %s overená
+InvoiceValidatedInDolibarr=Faktúra %s overená
+InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Faktúra %s vrátiť do stavu návrhu
 InvoiceDeleteDolibarr=Faktúra %s zmazaná
 OrderValidatedInDolibarr= Objednať %s overená
@@ -51,7 +53,6 @@ OrderApprovedInDolibarr=Objednať %s schválený
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Objednať %s vrátiť do stavu návrhu
 OrderCanceledInDolibarr=Objednať %s zrušený
-InterventionValidatedInDolibarr=Intervenčné %s overená
 ProposalSentByEMail=Komerčné návrh %s zaslaná e-mailom
 OrderSentByEMail=%s zákazníkov objednávka zaslaná e-mailom
 InvoiceSentByEMail=%s faktúre Zákazníka zaslaná e-mailom
@@ -59,8 +60,6 @@ SupplierOrderSentByEMail=%s Dodávateľ objednávka zaslaná e-mailom
 SupplierInvoiceSentByEMail=%s dodávateľskej faktúry zasielané e-mailom
 ShippingSentByEMail=Prepravné %s zaslaná e-mailom
 ShippingValidated= Shipping %s validated
-InterventionSentByEMail=Intervenčné %s zaslaná e-mailom
-InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Tretia strana vytvorená
 DateActionPlannedStart= Plánovaný dátum začatia
 DateActionPlannedEnd= Plánovaný dátum ukončenia
@@ -70,9 +69,9 @@ DateActionStart= Dátum začatia
 DateActionEnd= Dátum ukončenia
 AgendaUrlOptions1=Môžete tiež pridať nasledujúce parametre filtrovania výstupu:
 AgendaUrlOptions2=<b>login = %s</b> obmedziť výstup na akcie vytvorené, pridelených alebo vykonať užívateľa <b>%s.</b>
-AgendaUrlOptions3=<b>Logina = %s</b> obmedziť výstup na akcie vytvorené užívateľom <b>%s.</b>
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint = %s</b> obmedziť výstup na akcie priradených užívateľských <b>%s.</b>
-AgendaUrlOptions5=<b>logind = %s</b> obmedziť výstup na akcie vykonané užívateľom <b>%s.</b>
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Zobraziť narodeniny kontaktov
 AgendaHideBirthdayEvents=Skryť narodeniny kontaktov
 Busy=Zaneprázdnený
@@ -89,5 +88,5 @@ ExtSiteUrlAgenda=URL pre prístup. Súbor iCal
 ExtSiteNoLabel=Nie Popis
 WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
-AddEvent=Add event
+AddEvent=Create event
 MyAvailability=My availability

@@ -18,9 +18,9 @@
 
 /**
  *      \file       test/phpunit/SqlTest.php
- *		\ingroup    test
+ *      \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
@@ -59,71 +59,73 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class SqlTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return SecurityTest
-	 */
-	function __construct()
-	{
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	// Static methods
-  	public static function setUpBeforeClass()
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return SecurityTest
+     */
+    function __construct()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-    	print __METHOD__."\n";
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
     }
+
+    // Static methods
+    public static function setUpBeforeClass()
+    {
+        global $conf,$user,$langs,$db;
+        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+
+        print __METHOD__."\n";
+    }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return  void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return  void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
@@ -133,38 +135,37 @@ class SqlTest extends PHPUnit_Framework_TestCase
      */
     public function testSql()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$listofsqldir = array(DOL_DOCUMENT_ROOT.'/install/mysql/tables', DOL_DOCUMENT_ROOT.'/install/mysql/migration');
+        $listofsqldir = array(DOL_DOCUMENT_ROOT.'/install/mysql/tables', DOL_DOCUMENT_ROOT.'/install/mysql/migration');
 
-		foreach ($listofsqldir as $dir)
-		{
-			print 'Process dir '.$dir."\n";
-			$filesarray = scandir($dir);
-			foreach($filesarray as $key => $file)
-			{
-				if (! preg_match('/\.sql$/',$file)) continue;
+        foreach ($listofsqldir as $dir) {
+            print 'Process dir '.$dir."\n";
+            $filesarray = scandir($dir);
+            foreach($filesarray as $key => $file) {
+                if (! preg_match('/\.sql$/',$file))
+                    continue;
 
-				print 'Check sql file '.$file."\n";
-				$filecontent=file_get_contents($dir.'/'.$file);
+                print 'Check sql file '.$file."\n";
+                $filecontent=file_get_contents($dir.'/'.$file);
 
-				$result=strpos($filecontent,'`');
-				print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
-				$this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
+                $result=strpos($filecontent,'`');
+                print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
+                $this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
 
-				$result=strpos($filecontent,'int(');
-				print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
-				$this->assertTrue($result===false, 'Found int(x) instead of integer into '.$file.'. Bad.');
+                $result=strpos($filecontent,'int(');
+                print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
+                $this->assertTrue($result===false, 'Found int(x) instead of integer into '.$file.'. Bad.');
 
-				$result=strpos($filecontent,'ON DELETE CASCADE');
-				print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
-				$this->assertTrue($result===false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
-			}
-		}
+                $result=strpos($filecontent,'ON DELETE CASCADE');
+                print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
+                $this->assertTrue($result===false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
+            }
+        }
 
         return;
     }
@@ -176,28 +177,28 @@ class SqlTest extends PHPUnit_Framework_TestCase
      */
     public function testInitData()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdata');
-		foreach($filesarray as $key => $file)
-		{
-			if (! preg_match('/\.sql$/',$file)) continue;
+        $filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdata');
+        foreach($filesarray as $key => $file) {
+            if (! preg_match('/\.sql$/',$file))
+                continue;
 
-			print 'Check sql file '.$file."\n";
-			$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdata/'.$file);
+            print 'Check sql file '.$file."\n";
+            $filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdata/'.$file);
 
-			$result=strpos($filecontent,'@gmail.com');
-			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
-			$this->assertTrue($result===false, 'Found a bad key into file '.$file);
+            $result=strpos($filecontent,'@gmail.com');
+            print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
+            $this->assertTrue($result===false, 'Found a bad key into file '.$file);
 
-			$result=strpos($filecontent,'eldy@');
-			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
-			$this->assertTrue($result===false, 'Found a bad key into file '.$file);
-		}
+            $result=strpos($filecontent,'eldy@');
+            print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
+            $this->assertTrue($result===false, 'Found a bad key into file '.$file);
+        }
 
         return;
     }

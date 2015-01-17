@@ -26,7 +26,6 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $action=GETPOST('action');
 
@@ -204,11 +203,11 @@ if ($action == 'edit')
 
 	print '</table>';
 
-	print '<br><center>';
+	print '<br><div class="center">';
 	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; ';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</center>';
+	print '</div>';
 
 	print '</form>';
 }

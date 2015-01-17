@@ -48,16 +48,15 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
-$search_nom=GETPOST("search_nom");
+$search_company=GETPOST("search_company");
 $search_zipcode=GETPOST("search_zipcode");
 $search_town=GETPOST("search_town");
 $search_code=GETPOST("search_code");
 $search_compta=GETPOST("search_compta");
 $search_status		= GETPOST("search_status",'int');
-if ($search_status=='') $search_status=1; // always display activ customer first
 
 // Load sale and categ filters
-$search_sale  = GETPOST("search_sale");
+$search_sale  = GETPOST("search_sale",'int');
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
 // If the internal user must only see his customers, force searching by him
@@ -76,23 +75,20 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $a
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
-    $search_categ='';
-    $catid='';
-    $search_sale='';
-    $socname="";
-    $search_nom="";
+	$search_sale="";
+	$search_categ="";
+	$catid="";
+    $search_company="";
     $search_zipcode="";
     $search_town="";
-    $search_idprof1='';
-    $search_idprof2='';
-    $search_idprof3='';
-    $search_idprof4='';
-    $seach_status=1;
+    $search_code='';
+    $search_compta='';
+    $search_status='';
 }
 
-
+if ($search_status=='') $search_status=1; // always display activ customer first
 
 /*
  * view
@@ -107,23 +103,23 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.zip, s.town, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
 $sql.= " s.datec, s.canvas";
-if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe"; // We need this table joined to the select in order to filter by categ
-if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.client IN (1, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
-if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql.= " AND s.rowid = sc.fk_soc";
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
 if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
-if ($search_nom) {
-	$sql .= natural_search('s.nom', $search_nom);
+if ($search_company) {
+	$sql .= natural_search('s.nom', $search_company);
 }
 if ($search_zipcode) $sql.= " AND s.zip LIKE '".$db->escape($search_zipcode)."%'";
 if ($search_town) {
@@ -134,7 +130,7 @@ if ($search_compta) $sql.= " AND s.code_compta LIKE '%".$db->escape($search_comp
 
 if ($search_status!='') $sql .= " AND s.status = ".$db->escape($search_status);
 // Insert sale filter
-if ($search_sale)
+if ($search_sale > 0)
 {
 	$sql .= " AND sc.fk_user = ".$search_sale;
 }
@@ -156,9 +152,9 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 
-	$param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
+	$param = "&amp;search_company=".$search_company."&amp;search_code=".$search_code."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
- 	if ($search_sale != '')	$param.='&amp;search_sale='.$search_sale;
+ 	if ($search_sale > 0)	$param.='&amp;search_sale='.$search_sale;
  	if ($search_status != '') $param.='&amp;search_status='.$search_status;
 
 	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
@@ -207,7 +203,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_nom" value="'.$search_nom.'" size="10">';
+	print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
 	print '</td>';
 
 	print '<td class="liste_titre">';
@@ -235,7 +231,6 @@ if ($result)
     print '</td>';
 
     print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print '&nbsp; ';
     print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
 

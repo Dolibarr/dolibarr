@@ -159,6 +159,7 @@ class box_actions extends ModeleBoxes
 			$actioncejour=false;
 			$contents=$this->info_box_contents;
 			$nblines=count($contents);
+			$bcx=array();
 			$bcx[0] = 'class="box_pair"';
 			$bcx[1] = 'class="box_impair"';
 			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo"))

@@ -242,3 +242,8 @@ ForceUpdateChildPriceSoc=Establecer el mismo precio en las filiales de los clien
 PriceByCustomerLog=Log de precios por clientes
 MinimumPriceLimit=El precio mínimo no puede ser menor de %s
 MinimumRecommendedPrice=El precio mínimo recomendado es: %s
+PriceExpressionEditor=Editor de expresión de precios
+PriceExpressionSelected=Expresión de precios seleccionada
+PriceExpressionEditorHelp="price = 2 + 2" o "2 + 2" para indicar el precio<br>ExtraFields son variables como "#options_myextrafieldkey# * 2"<br>Existen variables especiales como #quantity# y #tva_tx#<br>Use ; para separar expresiones
+PriceMode=Modo precio
+PriceNumeric=Número

@@ -115,7 +115,7 @@ ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseu
 -- Fix: deprecated tag to new one
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
-
+update llx_opensurvey_sondage set tms = now();
 
 -- ALTER TABLE llx_facture_fourn ALTER COLUMN fk_cond_reglement DROP NOT NULL;
 
@@ -203,4 +203,14 @@ UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS
 -- GRANT ALL ON *.* TO 'myuser'@'localhost';
 -- GRANT ALL ON *.* TO 'myuser'@'%';
 -- flush privileges;
+
+-- Fix type of product 2 does not exists
+update llx_propaldet set product_type = 1 where product_type = 2;
+update llx_commandedet set product_type = 1 where product_type = 2;
+update llx_facturedet set product_type = 1 where product_type = 2;
+--update llx_propaldet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
+--update llx_commandedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
+--update llx_facturedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
+
+
 

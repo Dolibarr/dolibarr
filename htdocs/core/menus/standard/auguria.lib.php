@@ -231,7 +231,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			print '<div class="menu_titre" id="menu_titre_logo"></div>';
 			print '<div class="menu_top" id="menu_top_logo"></div>';
 			print '<div class="menu_contenu" id="menu_contenu_logo">';
-			print '<center><img title="" src="'.$urllogo.'"></center>'."\n";
+			print '<div class="center"><img title="" src="'.$urllogo.'"></div>'."\n";
 			print '</div>';
 			print '<div class="menu_end" id="menu_end_logo"></div>';
 			print '</div>'."\n";
@@ -272,6 +272,42 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		}
 		else dol_print_error($db);
 		$db->free($resql);
+	}
+	
+	if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
+	{
+		$newmenu->add('/accountancy/journal/index.php?leftmenu=journal',$langs->trans("Journaux"),0,$user->rights->banque->lire);
+
+		if ($leftmenu == 'journal')
+		{
+			$sql = "SELECT rowid, label, accountancy_journal";
+			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+			$sql.= " WHERE entity = ".$conf->entity;
+			$sql.= " AND clos = 0";
+			$sql.= " ORDER BY label";
+
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$numr = $db->num_rows($resql);
+				$i = 0;
+
+				if ($numr > 0)
+
+				while ($i < $numr)
+				{
+					$objp = $db->fetch_object($resql);
+					$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid,$langs->trans("Journal").' - '.$objp->label,1,$user->rights->accounting->comptarapport->lire);
+					$i++;
+				}
+			}
+			else dol_print_error($db);
+			$db->free($resql);
+
+			// Add other journal
+			$newmenu->add("/accountancy/journal/sellsjournal.php?leftmenu=journal",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire);
+			$newmenu->add("/accountancy/journal/purchasesjournal.php?leftmenu=journal",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire);
+		}
 	}
 
 	if ($conf->ftp->enabled && $mainmenu == 'ftp')	// Entry for FTP

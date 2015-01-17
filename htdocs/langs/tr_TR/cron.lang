@@ -18,9 +18,8 @@ CronExplainHowToRunUnix=Unix ortamında her dakika Komut satırını çalıştı
 CronExplainHowToRunWin=Microsoft (tm) Windows ortamında her dakika Komut satırı çalıştırmak için Planlı görev araçlarını kullanabilirsiniz
 # Menu
 CronJobs=Planlı işler
-CronListActive= Etkin işler listesi
-CronListInactive= Etkin olmayan işler listesi
-CronListActive= Etkin işler listesi
+CronListActive=Etkin/programlı işler listesi
+CronListInactive=Etkin olmayan işler listesi
 # Page list
 CronDateLastRun=Son çalıştırma
 CronLastOutput=Son çalıştırma çıktısı

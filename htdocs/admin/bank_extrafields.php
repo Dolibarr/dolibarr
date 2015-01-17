@@ -68,7 +68,7 @@ print_fiche_titre($langs->trans("BankSetupModule"),$linkback,'setup');
 
 $head = bank_admin_prepare_head(null);
 
-dol_fiche_head($head, 'attributes', $langs->trans("Bank"), 0, 'account');
+dol_fiche_head($head, 'attributes', $langs->trans("BankSetupModule"), 0, 'account');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";

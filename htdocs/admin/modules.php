@@ -520,11 +520,18 @@ else
     $var=!$var;
     print "<tr ".$bc[$var].">\n";
     $url='http://www.dolistore.com';
-    print '<td align="left"><a href="'.$url.'" target="_blank"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+    print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
     print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
-    print '<td><a href="'.$url.'" target="_blank">'.$url.'</a></td>';
+    print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
     print '</tr>';
 
+    $var=!$var;
+    print "<tr ".$bc[$var].">\n";
+    $url='http://partners.dolibarr.org';
+    print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
+    print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
+    print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
+    print '</tr>';
 
     print "</table>\n";
 }
@@ -534,7 +541,7 @@ dol_fiche_end();
 
 
 // Show warning about external users
-if ($mode != 'marketplace') print '<div class="info">'.showModulesExludedForExternal($modules).'</div><br>'."\n";
+if ($mode != 'marketplace') print info_admin(showModulesExludedForExternal($modules))."\n";
 
 
 llxFooter();

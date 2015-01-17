@@ -29,6 +29,7 @@ ActionsToDoBy=Įvykiai priskirti
 ActionsDoneBy=Įvykiai atlikti
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Visi mano įvykiai/užduotys
 AllActions= Visi įvykiai/užduotys
 ViewList=Sąrašo vaizdas
@@ -41,9 +42,10 @@ AutoActions= Automatinis užpildymas
 AgendaAutoActionDesc= Nustatykite įvykius, kuriems norite, kad Dolibarr sukurtų automatiškai įvykį operacijoje. Jei niekas nepažymėta (pagal nutylėjimą), tik rankomis įvesti veiksmai bus įtraukti į operaciją.
 AgendaSetupOtherDesc= Šis puslapis suteikia galimybę eksportuoti Jūsų Dolibarr įvykius į išorinį kalendorių (Thunderbird, Google Calendar, ...)
 AgendaExtSitesDesc=Šis puslapis leidžia paskelbti išorinius kalendorių šaltinius, kad pamatyti juose esančius įvykius Dolibarr operacijose.
-ActionsEvents= Įvykiai, kuriems Dolibarr sukurs veiksmą operacijų sąraše automatiškai
-PropalValidatedInDolibarr= Pasiūlymas %s pripažintas galiojančiu
-InvoiceValidatedInDolibarr= Sąskaita-faktūra %s pripažinta galiojančia
+ActionsEvents=Įvykiai, kuriems Dolibarr sukurs veiksmą operacijų sąraše automatiškai
+PropalValidatedInDolibarr=Pasiūlymas %s pripažintas galiojančiu
+InvoiceValidatedInDolibarr=Sąskaita-faktūra %s pripažinta galiojančia
+InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Sąskaita-faktūra %s grąžinama į projektinę būklę
 InvoiceDeleteDolibarr=Sąskaita-faktūra %s ištrinta
 OrderValidatedInDolibarr= Užsakymas %s pripažintas galiojančiu
@@ -51,7 +53,6 @@ OrderApprovedInDolibarr=Užsakymas %s patvirtintas
 OrderRefusedInDolibarr=Užsakymas %s atmestas
 OrderBackToDraftInDolibarr=Užsakymas %s grąžintas į projektinę būklę
 OrderCanceledInDolibarr=Užsakymas %s atšauktas
-InterventionValidatedInDolibarr=Intervencija %s pripažinta galiojančia
 ProposalSentByEMail=Komercinis pasiūlymas %s išsiųstas e-paštu
 OrderSentByEMail=Kliento užsakymas %s atsiųstas e-paštu
 InvoiceSentByEMail=Kliento sąskaita-faktūra %s išsiųsta e-paštu
@@ -59,8 +60,6 @@ SupplierOrderSentByEMail=Tiekėjo užsakymas %s atsiųstas e-paštu
 SupplierInvoiceSentByEMail=Tiekėjo sąskaita-faktūra %s atsiųsta e-paštu
 ShippingSentByEMail=Pakrovimo dokumentas %s atsiųstas e-paštu
 ShippingValidated= Pakrovimas %s pripažintas galiojančiu
-InterventionSentByEMail=Intervencija %s atsiųsta e-paštu
-InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Trečioji šalis sukūrė
 DateActionPlannedStart= Planuojama pradžios data
 DateActionPlannedEnd= Planuojama pabaigos data
@@ -70,9 +69,9 @@ DateActionStart= Pradžios data
 DateActionEnd= Pabaigos data
 AgendaUrlOptions1=Taip pat galite pridėti šiuos parametrus išvesties filtravimui:
 AgendaUrlOptions2=<b>login=%s</b> ​​apriboti išvedimą veiksmais, sukurtais, priskirtais arba įvykdytais vartotojo <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> ​​apriboti išvedimą veiksmais, sukurtais vartotojo <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint =%s</b> ​​apriboti išvedimą veiksmais, priskirtais vartotojui <b>%s</b>.
-AgendaUrlOptions5=<b>logind=%s</b> ​​apriboti išvedimo veiksmais, padarytais vartotojo <b>%s</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Rodyti gimtadienio adresatus
 AgendaHideBirthdayEvents=Paslėpti gimtadienio adresatus
 Busy=Užimtas
@@ -89,5 +88,5 @@ ExtSiteUrlAgenda=URL prieiga prie .ical failo
 ExtSiteNoLabel=Aprašymo nėra
 WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
-AddEvent=Add event
+AddEvent=Create event
 MyAvailability=My availability

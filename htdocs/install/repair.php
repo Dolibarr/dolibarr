@@ -510,9 +510,9 @@ if (empty($actiondone))
 }
 
 
-print '<center><a href="../index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+print '<div class="center"><a href="../index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
 print $langs->trans("GoToDolibarr");
-print '</a></center>';
+print '</a></div>';
 
 pFooter(1,$setuplang);
 

@@ -148,3 +148,11 @@ background: #DDDFDD;
 
 table { font-size: 12px; }
 table.login {  border: 1px solid #C0C0C0; background: #F0F0F0; font-size: 12px; }
+
+.inline-block
+{
+	display:inline-block;
+	vertical-align: top;
+	margin: 12px;
+	min-width: 400px;
+}

@@ -117,7 +117,7 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 /**
  * Show a LDAP array into an HTML output array.
  *
- * @param	string	$result	    Array to show. This array is already encoded into charset_output
+ * @param	array	$result	    Array to show. This array is already encoded into charset_output
  * @param   int		$level		Level
  * @param   int		$count		Count
  * @param   string	$var		Var

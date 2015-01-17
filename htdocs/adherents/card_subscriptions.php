@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
@@ -315,13 +316,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         }
                     }
                     else
-                    {
+					{
                         $error++;
                         $errmsg=$acct->error;
                     }
                 }
                 else
-                {
+				{
                     $error++;
                     $errmsg=$acct->error;
                 }
@@ -385,6 +386,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 {
 	                // Add line to draft invoice
 	                $idprodsubscription=0;
+			        if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled))) $idprodsubscription = $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS;
+
 	                $vattouse=0;
 	                if (isset($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) && $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS == 'defaultforfoundationcountry')
 	                {
@@ -947,9 +950,10 @@ if ($rowid)
             print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.GETPOST('cotisation').'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
             // Label
-            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-            print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
-            print dol_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
+            print '<tr><td>'.$langs->trans("Label").'</td>';
+            print '<td><input name="label" type="text" size="32" value="';
+            if (empty($conf->global->MEMBER_NO_DEFAULT_LABEL)) print $langs->trans("Subscription").' '.dol_print_date(($datefrom?$datefrom:time()),"%Y");
+            print '"></td></tr>';
 
             // Complementary action
             if (! empty($conf->banque->enabled) || ! empty($conf->facture->enabled))
@@ -990,7 +994,13 @@ if ($rowid)
                     	print $langs->trans("CreateDolibarrThirdParty");
                     	print '</a>)';
                     }
-                    if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0).'.';
+                    if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0);
+                    if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+                    {
+                    	$prodtmp=new Product($db);
+                    	$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+                    	print '. '.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(0));
+                    }
                     print '<br>';
                 }
                 // Add invoice with payments
@@ -1009,7 +1019,13 @@ if ($rowid)
                     	print $langs->trans("CreateDolibarrThirdParty");
                     	print '</a>)';
                     }
-                    if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0).'.';
+                    if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0);
+                    if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+                    {
+                    	$prodtmp=new Product($db);
+                    	$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+                    	print '. '.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(0));
+                    }
                     print '<br>';
                 }
                 print '</td></tr>';
@@ -1078,11 +1094,11 @@ if ($rowid)
         print '</table>';
         print '<br>';
 
-        print '<center>';
+        print '<div class="center">';
         print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
-        print ' &nbsp; &nbsp; ';
+        print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
         print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-        print '</center>';
+        print '</div>';
 
         print '</form>';
 

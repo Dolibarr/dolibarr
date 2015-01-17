@@ -198,7 +198,7 @@ print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
 
 print "<br>";
 
-$head = supplierorder_admin_prepare_head(null);
+$head = supplierorder_admin_prepare_head();
 
 dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), 0, 'company');
 

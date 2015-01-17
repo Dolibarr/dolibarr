@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Contracts area
 ListOfContracts=List of contracts
-LastContracts=Last %s modified contracts
+LastModifiedContracts=Last %s modified contracts
 AllContracts=All contracts
 ContractCard=Contract card
 ContractStatus=Contract status
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=List of running contract lines
 ListOfRunningServices=List of running services
 NotActivatedServices=Inactive services (among validated contracts)
 BoardNotActivatedServices=Services to activate among validated contracts
-LastContracts=Last % contracts
+LastContracts=Last %s contracts
 LastActivatedServices=Last %s activated services
 LastModifiedServices=Last %s modified services
 EditServiceLine=Edit service line
@@ -91,6 +91,7 @@ ListOfServicesToExpire=List of Services to expire
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sales representative signing contract

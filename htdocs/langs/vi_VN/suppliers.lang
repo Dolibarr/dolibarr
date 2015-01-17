@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Nhà cung cấp
 Supplier=Nhà cung cấp
-AddSupplier=Thêm một nhà cung cấp
+AddSupplier=Tạo một nhà cung cấp
 SupplierRemoved=Nhà cung cấp loại bỏ
 SuppliersInvoice=Nhà cung cấp hóa đơn
 NewSupplier=Nhà cung cấp mới
@@ -11,7 +11,7 @@ ShowSupplier=Hiện nhà cung cấp
 OrderDate=Ngày đặt hàng
 BuyingPrice=Giá mua
 BuyingPriceMin=Giá mua tối thiểu
-BuyingPriceMinShort=Min giá mua
+BuyingPriceMinShort=Tối thiểu giá mua
 TotalBuyingPriceMin=Tổng số subproducts giá mua
 SomeSubProductHaveNoPrices=Một số phụ phẩm đã có giá quy định
 AddSupplierPrice=Thêm giá nhà cung cấp
@@ -40,5 +40,5 @@ AddSupplierInvoice=Tạo nhà cung cấp hóa đơn
 ListOfSupplierProductForSupplier=Danh sách sản phẩm và giá cả cho nhà cung <b>cấp% s</b>
 NoneOrBatchFileNeverRan=Không có hoặc hàng <b>loạt% s</b> không chạy gần đây
 SentToSuppliers=Gửi đến nhà cung cấp
-ListOfSupplierOrders=List of supplier orders
-MenuOrdersSupplierToBill=Supplier orders to invoice
+ListOfSupplierOrders=Danh sách các đơn đặt hàng nhà cung cấp
+MenuOrdersSupplierToBill=Đơn đặt hàng nhà cung cấp cho hóa đơn

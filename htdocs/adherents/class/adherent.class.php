@@ -465,8 +465,11 @@ class Adherent extends CommonObject
 
 		    $nbrowsaffected+=$this->db->affected_rows($resql);
 
+		    $action='update';
+
             // Actions on extra fields (by external module)
-            $hookmanager->initHooks(array('memberdao'));
+			// FIXME le hook fait double emploi avec le trigger !!
+		    $hookmanager->initHooks(array('memberdao'));
             $parameters=array('id'=>$this->id);
             $action='';
             $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1042,7 +1045,7 @@ class Adherent extends CommonObject
      *	@param	int		$rowid      Id of object to load
      * 	@param	string	$ref		To load member from its ref
      * 	@param	int		$fk_soc		To load member from its link to third party
-     * 	@param	int		$ref_ext	External reference
+     * 	@param	string	$ref_ext	External reference
      *	@return int         		>0 if OK, 0 if not found, <0 if KO
      */
     function fetch($rowid,$ref='',$fk_soc='',$ref_ext='')
@@ -1303,7 +1306,7 @@ class Adherent extends CommonObject
                 return $rowid;
             }
             else
-            {
+			{
                 $this->db->rollback();
                 return -2;
             }
@@ -1569,14 +1572,14 @@ class Adherent extends CommonObject
         }
         if ($option == 'category')
         {
-        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
-        	$lienfin='</a>';
+            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
+            $lienfin='</a>';
         }
 
         $picto='user';
         $label=$langs->trans("ShowMember");
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
         return $result;
