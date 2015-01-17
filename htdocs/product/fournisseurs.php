@@ -83,124 +83,124 @@ $parameters=array('socid'=>$socid, 'id_prod'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
 
-if ($action == 'remove_pf')
-{
-	$product = new ProductFournisseur($db);
-	if ($product->fetch($id) > 0)
+if (empty($reshook)) {
+	if ($action == 'remove_pf')
 	{
-		if ($rowid)
+		$product = new ProductFournisseur($db);
+		if ($product->fetch($id) > 0)
 		{
-			$result=$product->remove_product_fournisseur_price($rowid);
-			$action = '';
-			$mesg = '<div class="ok">'.$langs->trans("PriceRemoved").'.</div>';
+			if ($rowid)
+			{
+				$result=$product->remove_product_fournisseur_price($rowid);
+				$action = '';
+				$mesg = '<div class="ok">'.$langs->trans("PriceRemoved").'.</div>';
+			}
 		}
 	}
-}
 
-if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
-{
-    $id_fourn=GETPOST("id_fourn");
-    if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
-    $ref_fourn=GETPOST("ref_fourn");
-    if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
-    $quantity=GETPOST("qty");
-	$remise_percent=price2num(GETPOST('remise_percent','alpha'));
-    $npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
-    $tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
-    $tva_tx = price2num($tva_tx);
+	if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
+	{
+	    $id_fourn=GETPOST("id_fourn");
+	    if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
+	    $ref_fourn=GETPOST("ref_fourn");
+	    if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
+	    $quantity=GETPOST("qty");
+		$remise_percent=price2num(GETPOST('remise_percent','alpha'));
+	    $npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
+	    $tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
+	    $tva_tx = price2num($tva_tx);
 
-    if ($tva_tx == '')
-    {
-		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("VATRateForSupplierProduct")).'</div>';
-    }
-	if (empty($quantity))
-	{
-		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")).'</div>';
-	}
-	if (empty($ref_fourn))
-	{
-		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")).'</div>';
-	}
-	if ($id_fourn <= 0)
-	{
-		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")).'</div>';
-	}
-	if ($_POST["price"] < 0 || $_POST["price"] == '')
-	{
-		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")).'</div>';
-	}
-
-	$product = new ProductFournisseur($db);
-	$result=$product->fetch($id);
-	if ($result <= 0)
-	{
-	    $error++;
-	    $mesg=$product->error;
-	}
-
-	if (! $error)
-    {
-    	$db->begin();
-
-		if (! $error)
+	    if ($tva_tx == '')
+	    {
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("VATRateForSupplierProduct")).'</div>';
+	    }
+		if (empty($quantity))
 		{
-			$ret=$product->add_fournisseur($user, $id_fourn, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
-			if ($ret == -3)
-			{
-				$error++;
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")).'</div>';
+		}
+		if (empty($ref_fourn))
+		{
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")).'</div>';
+		}
+		if ($id_fourn <= 0)
+		{
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")).'</div>';
+		}
+		if ($_POST["price"] < 0 || $_POST["price"] == '')
+		{
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")).'</div>';
+		}
 
-				$product->fetch($product->product_id_already_linked);
-				$productLink = $product->getNomUrl(1,'supplier');
-
-				$mesg='<div class="error">'.$langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink).'</div>';
-			}
-			else if ($ret < 0)
-			{
-				$error++;
-				$mesg='<div class="error">'.$product->error.'</div>';
-			}
+		$product = new ProductFournisseur($db);
+		$result=$product->fetch($id);
+		if ($result <= 0)
+		{
+		    $error++;
+		    $mesg=$product->error;
 		}
 
 		if (! $error)
-		{
-			$supplier=new Fournisseur($db);
-			$result=$supplier->fetch($id_fourn);
-			if (isset($_POST['ref_fourn_price_id']))
-				$product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
+	    {
+	        $db->begin();
 
-			$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, $npr);
-			if ($ret < 0)
+			if (! $error)
 			{
-				$error++;
-				$mesg='<div class="error">'.$product->error.'</div>';
+				$ret=$product->add_fournisseur($user, $id_fourn, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
+				if ($ret == -3)
+				{
+					$error++;
+
+					$product->fetch($product->product_id_already_linked);
+					$productLink = $product->getNomUrl(1,'supplier');
+
+					$mesg='<div class="error">'.$langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink).'</div>';
+				}
+				else if ($ret < 0)
+				{
+					$error++;
+					$mesg='<div class="error">'.$product->error.'</div>';
+				}
 			}
-		}
 
-		if (! $error)
-		{
-			$db->commit();
-			$action='';
-		}
-		else
-		{
-			$db->rollback();
-		}
-    }
+			if (! $error)
+			{
+				$supplier=new Fournisseur($db);
+				$result=$supplier->fetch($id_fourn);
+				if (isset($_POST['ref_fourn_price_id']))
+					$product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
+
+				$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, $npr);
+				if ($ret < 0)
+				{
+					$error++;
+					$mesg='<div class="error">'.$product->error.'</div>';
+				}
+			}
+
+			if (! $error)
+			{
+				$db->commit();
+				$action='';
+			}
+			else
+			{
+				$db->rollback();
+			}
+	    }
+	}
+
+	if (GETPOST('cancel') == $langs->trans("Cancel"))
+	{
+		$action = '';
+		header("Location: fournisseurs.php?id=".$_GET["id"]);
+		exit;
+	}
 }
-
-if (GETPOST('cancel') == $langs->trans("Cancel"))
-{
-	$action = '';
-	header("Location: fournisseurs.php?id=".$_GET["id"]);
-	exit;
-}
-
-
 
 /*
  * view
