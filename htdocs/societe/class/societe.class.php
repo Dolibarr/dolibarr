@@ -1999,6 +1999,8 @@ class Societe extends CommonObject
     {
         $contact_property='';
 
+        if (empty($rowid)) return '';
+
         $sql = "SELECT rowid, email, phone_mobile, lastname, firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
         $sql.= " WHERE rowid = '".$rowid."'";
