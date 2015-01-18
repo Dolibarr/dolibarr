@@ -138,6 +138,13 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
+        if (! is_array($this->userassigned))	// For backward compatibility
+        {
+        	$tmpid=$this->userassigned;
+        	$this->userassigned=array();
+        	$this->userassigned[$tmpid]=array('id'=>$tmpid);
+        }
+
         $userownerid=$this->userownerid;
         $userdoneid=$this->userdoneid;
 
