@@ -202,17 +202,6 @@ class Facture extends CommonInvoice
 		if (! $this->cond_reglement_id) $this->cond_reglement_id = 0;
 		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 		$this->brouillon = 1;
-		if (empty($this->situation_cycle_ref)) {
-			$this->situation_cycle_ref = 'null';
-		}
-
-		if (empty($this->situation_counter)) {
-			$this->situation_counter = 'null';
-		}
-
-		if (empty($this->situation_final)) {
-			$this->situation_final = '0';
-		}
 
 		dol_syslog(get_class($this)."::create user=".$user->id);
 
@@ -290,23 +279,23 @@ class Facture extends CommonInvoice
 		$sql.= ", '".$this->type."'";
 		$sql.= ", '".$socid."'";
 		$sql.= ", '".$this->db->idate($now)."'";
-		$sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
-		$sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
+		$sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
+		$sql.= ", ".($this->remise_percent>0?$this->remise_percent:'NULL');
 		$sql.= ", '".$this->db->idate($this->date)."'";
-		$sql.= ",".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
-		$sql.= ",".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
-		$sql.= ",".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
-		$sql.= ",".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
+		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
+		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= ", ".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
+		$sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
 		$sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
-		$sql.= ",".($this->fk_facture_source?"'".$this->db->escape($this->fk_facture_source)."'":"null");
-		$sql.= ",".($user->id > 0 ? "'".$user->id."'":"null");
-		$sql.= ",".($this->fk_project?$this->fk_project:"null");
-		$sql.= ','.$this->cond_reglement_id;
-		$sql.= ",".$this->mode_reglement_id;
+		$sql.= ", ".($this->fk_facture_source?"'".$this->db->escape($this->fk_facture_source)."'":"null");
+		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
+		$sql.= ", ".($this->fk_project?$this->fk_project:"null");
+		$sql.= ", ".$this->cond_reglement_id;
+		$sql.= ", ".$this->mode_reglement_id;
 		$sql.= ", '".$this->db->idate($datelim)."', '".$this->modelpdf."'";
-		$sql.= ", ".$this->situation_cycle_ref;
-		$sql.= ", ".$this->situation_counter;
-		$sql.= ", ".$this->situation_final;
+		$sql.= ", ".$this->situation_cycle_ref?"'".$this->db->escape($this->situation_cycle_ref)."'":"null";
+		$sql.= ", ".$this->situation_counter?"'".$this->db->escape($this->situation_counter)."'":"null";
+		$sql.= ", ".$this->situation_final?$this->situation_final:0;
 		$sql.=")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
