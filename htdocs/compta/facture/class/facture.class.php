@@ -2335,8 +2335,11 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Update invoice line with percentage
+	 * 
 	 * @param FactureLigne $line Invoice line
-	 * @param int $percent
+	 * @param int $percent Percentage
+	 * @return void
 	 */
 	function update_percent($line, $percent)
 	{
@@ -3451,6 +3454,7 @@ class Facture extends CommonInvoice
 	/**
 	 * Checks if the invoice is the first of a cycle
 	 *
+	 * @return boolean
 	 */
 	function is_first()
 	{
@@ -3460,6 +3464,7 @@ class Facture extends CommonInvoice
 	/**
 	 * Returns an array containing the previous situations as Facture objects
 	 *
+	 * @return mixed -1 if error, array of previous situations
 	 */
 	function get_prev_sits()
 	{
@@ -3514,7 +3519,6 @@ class Facture extends CommonInvoice
 	 * @return int 0 or 1 if OK, -1 if error
 	 *
 	 */
-
 	function is_last_in_cycle()
 	{
 		$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . $this->situation_cycle_ref;
@@ -4096,7 +4100,6 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 * @return int >= 0
 	 */
-
 	function get_prev_progress()
 	{
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
