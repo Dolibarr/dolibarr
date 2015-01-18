@@ -1,4 +1,4 @@
-/a*
-/b*
-/c*
-/d*
+/*
+!.gitignore
+!README.md
+!index.html
