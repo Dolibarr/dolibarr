@@ -60,7 +60,7 @@ class AdherentType extends CommonObject
      *  Fonction qui permet de creer le status de l'adherent
      *
      *  @param      User		$user		User making creation
-     *  @return     						>0 if OK, < 0 if KO
+     *  @return     int						>0 if OK, < 0 if KO
      */
     function create($user)
     {
@@ -248,13 +248,13 @@ class AdherentType extends CommonObject
                     $i++;
                 }
             }
-            return $projets;
         }
         else
         {
             print $this->db->error();
         }
 
+        return $projets;
     }
 
 
@@ -287,7 +287,7 @@ class AdherentType extends CommonObject
     /**
      *     getMailOnValid
      *
-     *     @return     Return mail model
+     *     @return string     Return mail model
      */
     function getMailOnValid()
     {
@@ -306,7 +306,7 @@ class AdherentType extends CommonObject
     /**
      *     getMailOnSubscription
      *
-     *     @return     Return mail model
+     *     @return string     Return mail model
      */
     function getMailOnSubscription()
     {
@@ -325,7 +325,7 @@ class AdherentType extends CommonObject
     /**
      *     getMailOnResiliate
      *
-     *     @return     Return mail model
+     *     @return string     Return mail model
      */
     function getMailOnResiliate()
     {
