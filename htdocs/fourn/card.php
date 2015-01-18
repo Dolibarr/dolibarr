@@ -60,34 +60,37 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if ($action == 'setsupplieraccountancycode')
+if (empty($reshook))
 {
-	$cancelbutton = GETPOST('cancel');
-	if (! $cancelbutton) 
+	if ($action == 'setsupplieraccountancycode')
 	{
-		$result=$object->fetch($id);
-   		$object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
-	    $result=$object->update($object->id,$user,1,0,1);
-	    if ($result < 0)
-	    {
-	        $mesg=join(',',$object->errors);
-	    }
+		$cancelbutton = GETPOST('cancel');
+		if (! $cancelbutton)
+		{
+			$result=$object->fetch($id);
+	   		$object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
+		    $result=$object->update($object->id,$user,1,0,1);
+		    if ($result < 0)
+		    {
+		        $mesg=join(',',$object->errors);
+		    }
+		}
+	    $action="";
 	}
-    $action="";
-}
-// conditions de reglement
-if ($action == 'setconditions' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentTerms(GETPOST('cond_reglement_supplier_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-// mode de reglement
-if ($action == 'setmode' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentMethods(GETPOST('mode_reglement_supplier_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
+	// conditions de reglement
+	if ($action == 'setconditions' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setPaymentTerms(GETPOST('cond_reglement_supplier_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
+	// mode de reglement
+	if ($action == 'setmode' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setPaymentMethods(GETPOST('mode_reglement_supplier_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
 }
 
 
