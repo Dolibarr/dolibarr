@@ -2666,7 +2666,7 @@ class Form
 	 *
 	 * @return    string                     HTML select
 	 */
-	function load_situation_invoices($selected = '', $socid)
+	function load_situation_invoices($selected = '', $socid=null)
 	{
 		global $langs;
 

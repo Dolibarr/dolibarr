@@ -2335,8 +2335,12 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Update_percent
+	 * 
 	 * @param FactureLigne $line Invoice line
 	 * @param int $percent
+	 * 
+	 * @return void
 	 */
 	function update_percent($line, $percent)
 	{
@@ -2545,9 +2549,9 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *    	Return amount (with tax) of all credit notes and deposits invoices used by invoice
+	 * Return amount (with tax) of all credit notes and deposits invoices used by invoice
 	 *
-	 *		@return		int			<0 if KO, Sum of credit notes and deposits amount otherwise
+	 * @return		int			<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	function getSumCreditNotesUsed()
 	{
@@ -2567,9 +2571,9 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 *    	Return amount (with tax) of all deposits invoices used by invoice
+	 * Return amount (with tax) of all deposits invoices used by invoice
 	 *
-	 *		@return		int			<0 if KO, Sum of deposits amount otherwise
+	 * @return		int			<0 if KO, Sum of deposits amount otherwise
 	 */
 	function getSumDepositsUsed()
 	{
@@ -3460,6 +3464,7 @@ class Facture extends CommonInvoice
 	/**
 	 * Returns an array containing the previous situations as Facture objects
 	 *
+	 * @return array array of prev_sits
 	 */
 	function get_prev_sits()
 	{
@@ -3514,7 +3519,6 @@ class Facture extends CommonInvoice
 	 * @return int 0 or 1 if OK, -1 if error
 	 *
 	 */
-
 	function is_last_in_cycle()
 	{
 		$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . $this->situation_cycle_ref;
@@ -4096,7 +4100,6 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 * @return int >= 0
 	 */
-
 	function get_prev_progress()
 	{
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
