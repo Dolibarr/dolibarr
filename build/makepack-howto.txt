@@ -11,7 +11,6 @@ beta version of Dolibarr, step by step.
 - Update version/info in /ChangeLog
 - Update version number with x.y.z-w in htdocs/filefunc.inc.php
 - Update version number with x.y.z-w in build/debian/changelog
-- Update version number with x.y.z-w in build/exe/doliwamp/doliwamp.iss
 - Update version number with x.y.z-w in build/rpm/*.spec
 - Commit all changes.
 - Add a Tag (x.y.betaz_YYYYMMDD) and push it: git push --tags
@@ -30,10 +29,9 @@ This files describe steps made by Dolibarr packaging team to make a
 complete release of Dolibarr, step by step.
 
 - Check all files are commited.
-- Update version/info in ChangeLog
+- Update version/info in ChangeLog. To generate a changelog, you can do "git log x.y.z..HEAD --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^Fix\|New\|Sec'"
 - Update version number with x.y.z in htdocs/filefunc.inc.php
 - Update version number with x.y.z in build/debian/changelog
-- Update version number with x.y.z in build/exe/doliwamp/doliwamp.iss
 - Update version number with x.y.z in build/rpm/*.spec
 - Commit all changes.
 

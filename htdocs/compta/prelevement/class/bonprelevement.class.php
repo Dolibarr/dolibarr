@@ -736,7 +736,7 @@ class BonPrelevement extends CommonObject
     function Create($banque=0, $agence=0, $mode='real')
     {
         global $conf,$langs;
-        
+
         dol_syslog(__METHOD__."::Bank=".$banque." Office=".$agence, LOG_DEBUG);
 
         require_once (DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
@@ -782,7 +782,7 @@ class BonPrelevement extends CommonObject
             //if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
             dol_syslog(__METHOD__."::Read invoices, sql=".$sql, LOG_DEBUG);
-            
+
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -894,24 +894,23 @@ class BonPrelevement extends CommonObject
             if (!$error)
             {
 				$ref = substr($year,-2).$month;
-				
+
 				$sql = "SELECT substring(ref from char_length(ref) - 1)";
 				$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql.= " WHERE ref LIKE '%".$ref."%'";
 				$sql.= " AND entity = ".$conf->entity;
 				$sql.= " ORDER BY ref DESC LIMIT 1";
-				
+
 				dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
-				dol_syslog(__METHOD__."::Treatments", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 
 				if ($resql)
 				{
 					$row = $this->db->fetch_row($resql);
 					$ref = "T".$ref.str_pad(dol_substr("00".intval($row[0])+1),2,"0",STR_PAD_LEFT);
-	
+
 					$filebonprev = $ref;
-	                
+
 	                // Create withdraw receipt in database
 	                $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
 	                $sql.= " ref, entity, datec";
@@ -920,18 +919,16 @@ class BonPrelevement extends CommonObject
 	                $sql.= ", ".$conf->entity;
 	                $sql.= ", '".$this->db->idate($now)."'";
 	                $sql.= ")";
-	
-	                dol_syslog(__METHOD__, LOG_DEBUG);
+
 	                $resql = $this->db->query($sql);
-	
 	                if ($resql)
 	                {
 	                    $prev_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
-	
+
 	                    $dir=$conf->prelevement->dir_output.'/receipts';
 	                    $file=$filebonprev;
 	                    if (! is_dir($dir)) dol_mkdir($dir);
-	
+
 	                    $bonprev = new BonPrelevement($this->db, $dir."/".$file);
 	                    $bonprev->id = $prev_id;
 	                }
@@ -946,8 +943,6 @@ class BonPrelevement extends CommonObject
 					$error++;
 					dol_syslog(__METHOD__."::Get last withdraw receipt ".$this->db->error(), LOG_ERR);
 				}
-
-				
             }
 
             /*
@@ -1011,7 +1006,7 @@ class BonPrelevement extends CommonObject
                  */
 
             	dol_syslog(__METHOD__."::Init withdraw receipt for ".count($factures_prev)." invoices", LOG_DEBUG);
-              
+
                 if (count($factures_prev) > 0)
                 {
                     $bonprev->date_echeance = $datetimeprev;
@@ -1045,13 +1040,10 @@ class BonPrelevement extends CommonObject
             $sql.= " WHERE rowid = ".$prev_id;
             $sql.= " AND entity = ".$conf->entity;
 
-            dol_syslog(__METHOD__."::Update total, sql=".$sql, LOG_DEBUG);
-            
             $resql=$this->db->query($sql);
             if (! $resql)
             {
                 $error++;
-                dol_syslog("Erreur mise a jour du total - $sql");
                 dol_syslog(__METHOD__."::Error update total: ".$this->db->error(), LOG_ERR);
             }
 
