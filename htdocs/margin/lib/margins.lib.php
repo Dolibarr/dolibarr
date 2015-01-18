@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2014   Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,21 +57,25 @@ function marges_admin_prepare_head()
  */
 function marges_prepare_head()
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
 	$langs->load("marges@marges");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/margin/productMargins.php";
-	$head[$h][1] = $langs->trans("ProductMargins");
-	$head[$h][2] = 'productMargins';
-	$h++;
+	if ($user->rights->produit->lire) {
+		$head[$h][0] = DOL_URL_ROOT."/margin/productMargins.php";
+		$head[$h][1] = $langs->trans("ProductMargins");
+		$head[$h][2] = 'productMargins';
+		$h++;
+	}
 
-	$head[$h][0] = DOL_URL_ROOT."/margin/customerMargins.php";
-	$head[$h][1] = $langs->trans("CustomerMargins");
-	$head[$h][2] = 'customerMargins';
-	$h++;
+	if ($user->rights->societe->lire) {
+		$head[$h][0] = DOL_URL_ROOT."/margin/customerMargins.php";
+		$head[$h][1] = $langs->trans("CustomerMargins");
+		$head[$h][2] = 'customerMargins';
+		$h++;
+	}
 
 	$head[$h][0] = DOL_URL_ROOT."/margin/agentMargins.php";
 	$head[$h][1] = $langs->trans("SalesRepresentativeMargins");

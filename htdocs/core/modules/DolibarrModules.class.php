@@ -748,6 +748,8 @@ abstract class DolibarrModules
 
         $err=0;
 
+        if (empty($this->const)) return 0;
+
         foreach ($this->const as $key => $value)
         {
             $name      = $this->const[$key][0];
@@ -815,6 +817,8 @@ abstract class DolibarrModules
         global $conf;
 
         $err=0;
+
+        if (empty($this->const)) return 0;
 
         foreach ($this->const as $key => $value)
         {

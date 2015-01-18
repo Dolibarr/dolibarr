@@ -79,76 +79,78 @@ $object = new Societe($db);
 $parameters = array('socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 
-//Some actions show a "cancel" input submit button with name="cancel"
-$cancelbutton = GETPOST('cancel');
+if (empty($reshook)) {
+	//Some actions show a "cancel" input submit button with name="cancel"
+	$cancelbutton = GETPOST('cancel');
 
-if ($action == 'setcustomeraccountancycode')
-{
-	if (!$cancelbutton) {
-		$result=$object->fetch($id);
-		$object->code_compta=$_POST["customeraccountancycode"];
-		$result=$object->update($object->id,$user,1,1,0);
-		if ($result < 0)
-		{
-			$mesgs[]=join(',',$object->errors);
+	if ($action == 'setcustomeraccountancycode')
+	{
+		if (!$cancelbutton) {
+			$result=$object->fetch($id);
+			$object->code_compta=$_POST["customeraccountancycode"];
+			$result=$object->update($object->id,$user,1,1,0);
+			if ($result < 0)
+			{
+				$mesgs[]=join(',',$object->errors);
+			}
+			$action="";
 		}
-		$action="";
 	}
-}
 
-// conditions de reglement
-if ($action == 'setconditions' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-// mode de reglement
-if ($action == 'setmode' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-// assujetissement a la TVA
-if ($action == 'setassujtva' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$object->tva_assuj=$_POST['assujtva_value'];
-
-	// TODO move to DAO class
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE rowid='".$id."'";
-	$result = $db->query($sql);
-	if (! $result) dol_print_error($result);
-}
-
-// set prospect level
-if ($action == 'setprospectlevel' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
-	$result=$object->set_prospect_level($user);
-	if ($result < 0) setEventMessage($object->error,'errors');
-}
-
-// Update communication level
-if ($action == 'cstc')
-{
-	$object->fetch($id);
-	$object->stcomm_id=GETPOST('stcomm','int');
-	$result=$object->set_commnucation_level($user);
-	if ($result < 0) setEventMessage($object->error,'errors');
-}
-
-// Update communication level
-if ($action == 'setOutstandingBill')
-{
-	if (!$cancelbutton) {
+	// conditions de reglement
+	if ($action == 'setconditions' && $user->rights->societe->creer)
+	{
 		$object->fetch($id);
-		$object->outstanding_limit = GETPOST('OutstandingBill');
-		$result = $object->set_OutstandingBill($user);
-		if ($result < 0) {
-			setEventMessage($object->error, 'errors');
+		$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
+	// mode de reglement
+	if ($action == 'setmode' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
+	// assujetissement a la TVA
+	if ($action == 'setassujtva' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$object->tva_assuj=$_POST['assujtva_value'];
+
+		// TODO move to DAO class
+		$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE rowid='".$id."'";
+		$result = $db->query($sql);
+		if (! $result) dol_print_error($result);
+	}
+
+	// set prospect level
+	if ($action == 'setprospectlevel' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
+		$result=$object->set_prospect_level($user);
+		if ($result < 0) setEventMessage($object->error,'errors');
+	}
+
+	// Update communication level
+	if ($action == 'cstc')
+	{
+		$object->fetch($id);
+		$object->stcomm_id=GETPOST('stcomm','int');
+		$result=$object->set_commnucation_level($user);
+		if ($result < 0) setEventMessage($object->error,'errors');
+	}
+
+	// Update communication level
+	if ($action == 'setOutstandingBill')
+	{
+		if (!$cancelbutton) {
+			$object->fetch($id);
+			$object->outstanding_limit = GETPOST('OutstandingBill');
+			$result = $object->set_OutstandingBill($user);
+			if ($result < 0) {
+				setEventMessage($object->error, 'errors');
+			}
 		}
 	}
 }

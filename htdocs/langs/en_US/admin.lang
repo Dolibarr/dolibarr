@@ -1014,7 +1014,7 @@ SendingMailSetup=Setup of sendings by email
 SendmailOptionNotComplete=Warning, on some Linux systems, to send email from your email, sendmail execution setup must contains option -ba (parameter mail.force_extra_parameters into your php.ini file). If some recipients never receive emails, try to edit this PHP parameter with mail.force_extra_parameters = -ba).
 PathToDocuments=Path to documents
 PathDirectory=Directory
-SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail direct" will generate a mail message that might be not correctly parsed by some receiving mail servers. Result is that some mails can't be read by people hosted by thoose bugged platforms. It's case for some Internet providers (Ex: Orange in France). This is not a problem into Dolibarr nor into PHP but onto receiving mail server. You can however add option MAIN_FIX_FOR_BUGGED_MTA to 1 into setup - other to modify Dolibarr to avoid this. However, you may experience problem with other servers that respect strictly the SMTP standard. The other solution (recommanded) is to use the method "SMTP socket library" that has no disadvantages.
+SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail direct" will generate a mail message that might be not correctly parsed by some receiving mail servers. Result is that some mails can't be read by people hosted by those bugged platforms. It's case for some Internet providers (Ex: Orange in France). This is not a problem into Dolibarr nor into PHP but onto receiving mail server. You can however add option MAIN_FIX_FOR_BUGGED_MTA to 1 into setup - other to modify Dolibarr to avoid this. However, you may experience problem with other servers that respect strictly the SMTP standard. The other solution (recommended) is to use the method "SMTP socket library" that has no disadvantages.
 TranslationSetup=Configuration de la traduction
 TranslationDesc=Choice of language visible on screen can be modified:<br>* Globally from menu <strong>Home - Setup - Display</strong><br>* For user only from tab <strong>User display</strong> of user card (click on login on top of screen). 
 TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b>
@@ -1387,7 +1387,7 @@ AdvancedEditor=Advanced editor
 ActivateFCKeditor=Activate advanced editor for:
 FCKeditorForCompany=WYSIWIG creation/edition of elements description and note (except products/services)
 FCKeditorForProduct=WYSIWIG creation/edition of products/services description and note
-FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <font class="warning">Warning: Using this option for this case is seriously not recommanded as it can create problems with special characters and page formating when building PDF files.</font>
+FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <font class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formating when building PDF files.</font>
 FCKeditorForMailing= WYSIWIG creation/edition for mass eMailings (Tools->eMailing)
 FCKeditorForUserSignature=WYSIWIG creation/edition of user signature
 FCKeditorForMail=WYSIWIG creation/edition for all mail (except Outils->eMailing)
