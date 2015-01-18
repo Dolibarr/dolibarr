@@ -13,6 +13,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #1804 ] SQL error when sending email without addresee
 - Fix: [ bug #1803 ] AJAX company contact input is not aligned
 - Fix: [ bug #1787 ] Incorrect behaviour of doActions hook
+- Fix: [ bug #1796 ] Unable to use numeration modules from an external module
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
