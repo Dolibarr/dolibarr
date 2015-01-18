@@ -76,13 +76,13 @@ $modulepart='produit';
 $parameters=array('id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
+if (empty($reshook)) {
+	/*
+	 * Action envoie fichier
+	 */
 
-/*
- * Action envoie fichier
- */
-
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
-
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_pre_headers.tpl.php';
+}
 
 /*
  *	View
