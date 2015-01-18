@@ -61,57 +61,58 @@ $hookmanager->initHooks(array('resource_card'));
 $parameters=array('resource_id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
+if (empty($reshook)) {
 
-/*******************************************************************
-* ACTIONS
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
+	/*******************************************************************
+	* ACTIONS
+	*
+	* Put here all code to do according to value of "action" parameter
+	********************************************************************/
 
-if ($action == 'update' && ! $_POST["cancel"]  && $user->rights->resource->write )
-{
-	$error=0;
-
-	if (empty($ref))
+	if ($action == 'update' && ! $_POST["cancel"]  && $user->rights->resource->write )
 	{
-		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
-	}
+		$error=0;
 
-	if (! $error)
-	{
-		$res = $object->fetch($id);
-		if ( $res > 0 )
+		if (empty($ref))
 		{
-			$object->ref          			= $ref;
-			$object->description  			= $description;
-			$object->fk_code_type_resource  = $fk_code_type_resource;
-		
-			$result=$object->update($user);
-			if ($result > 0)
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
+		}
+
+		if (! $error)
+		{
+			$res = $object->fetch($id);
+			if ( $res > 0 )
 			{
-				Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-				exit;
+				$object->ref          			= $ref;
+				$object->description  			= $description;
+				$object->fk_code_type_resource  = $fk_code_type_resource;
+
+				$result=$object->update($user);
+				if ($result > 0)
+				{
+					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+					exit;
+				}
+				else
+				{
+					setEventMessage('<div class="error">'.$object->error.'</div>');
+					$action='edit';
+				}
+
 			}
 			else
 			{
-				setEventMessage('<div class="error">'.$object->error.'</div>');
+				setEventMessage($object->error,'errors');
 				$action='edit';
 			}
-			
 		}
-		else 
+		else
 		{
-			setEventMessage($object->error,'errors');
 			$action='edit';
 		}
 	}
-	else
-	{
-		$action='edit';
-	}
 }
-
 
 /***************************************************
 * VIEW

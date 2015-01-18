@@ -162,11 +162,13 @@ $hookmanager->initHooks(array('prospectlist'));
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
 
-if ($action == 'cstc')
-{
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
-	$sql .= " WHERE rowid = ".$_GET["socid"];
-	$result=$db->query($sql);
+if (empty($reshook)) {
+	if ($action == 'cstc')
+	{
+		$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
+		$sql .= " WHERE rowid = ".$_GET["socid"];
+		$result=$db->query($sql);
+	}
 }
 
 
