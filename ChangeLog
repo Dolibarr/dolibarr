@@ -8,6 +8,7 @@ English Dolibarr ChangeLog
 - Fix: withdrawal create error if in the same month are deleted previus withdrawals.
 - Fix: [ bug #1801 ] FAC_FORCE_DATE_VALIDATION constant alters supplier invoice date given to numeration modules
 - Fix: [ bug #1802 ] SQL error when updating a task with PostgreSQL database
+- Fix: [ bug #1785 ] Start date is lost in Project > Linked objects
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
