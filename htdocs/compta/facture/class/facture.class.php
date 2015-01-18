@@ -2338,7 +2338,7 @@ class Facture extends CommonInvoice
 	 * Update_percent
 	 * 
 	 * @param FactureLigne $line Invoice line
-	 * @param int $percent
+	 * @param int $percent percent
 	 * 
 	 * @return void
 	 */
@@ -3455,6 +3455,7 @@ class Facture extends CommonInvoice
 	/**
 	 * Checks if the invoice is the first of a cycle
 	 *
+	 *	@return boolean ($this->situation_counter == 1)
 	 */
 	function is_first()
 	{
