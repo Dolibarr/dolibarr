@@ -2338,7 +2338,7 @@ class Facture extends CommonInvoice
 	 * Update invoice line with percentage
 	 * 
 	 * @param FactureLigne $line Invoice line
-	 * @param int $percent
+	 * @param int $percent Percentage
 	 * @return void
 	 */
 	function update_percent($line, $percent)
