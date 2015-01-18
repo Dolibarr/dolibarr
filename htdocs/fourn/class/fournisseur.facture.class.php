@@ -1497,10 +1497,14 @@ class FactureFournisseur extends CommonInvoice
 
         $file = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER.".php";
         $classname = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER;
+
         // Include file with class
-        foreach ($conf->file->dol_document_root as $dirroot)
-        {
-            $dir = $dirroot."/core/modules/supplier_invoice/";
+        $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+        foreach ($dirmodels as $reldir) {
+
+            $dir = dol_buildpath($reldir."core/modules/supplier_invoice/");
+
             // Load file with numbering class (if found)
             $mybool|=@include_once $dir.$file;
         }
