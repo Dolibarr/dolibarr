@@ -144,7 +144,7 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='facture')  $this->elementtype='invoice';
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
-		
+
         $userownerid=$this->userownerid;
         $userdoneid=$this->userdoneid;
 
