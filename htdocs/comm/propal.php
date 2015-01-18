@@ -9,6 +9,7 @@
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
+ * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -404,20 +405,23 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 	$langs->load('mails');
 
 	if ($object->id > 0) {
+
+		$receiver = GETPOST('receiver');
+
 		if ($_POST ['sendto']) {
 			// Le destinataire a ete fourni via le champ libre
 			$sendto = $_POST ['sendto'];
 			$sendtoid = 0;
-		} elseif ($_POST ['receiver'] != '-1') {
+		} elseif ($receiver !== "") {
 			// Recipient was provided from combo list
-			if ($_POST ['receiver'] == 'thirdparty') 			// Id of third party
+			if ($receiver == 'thirdparty') 			// Id of third party
 			{
 				$sendto = $object->client->email;
 				$sendtoid = 0;
-			} else 			// Id du contact
+			} elseif ($receiver != '-1') 			// Id du contact
 			{
-				$sendto = $object->client->contact_get_property($_POST ['receiver'], 'email');
-				$sendtoid = $_POST ['receiver'];
+				$sendto = $object->client->contact_get_property($receiver, 'email');
+				$sendtoid = $receiver;
 			}
 		}
 
