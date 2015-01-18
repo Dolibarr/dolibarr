@@ -320,74 +320,71 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 {
 	global $conf;
 
-	if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
+	//if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
+	//if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
-
-	/* Some properties for combobox:
-	minLengthToAutocomplete: 2,
-	comboboxContainerClass: "comboboxContainer",
-	comboboxValueContainerClass: "comboboxValueContainer",
-	comboboxValueContentClass: "comboboxValueContent",
-	comboboxDropDownClass: "comboboxDropDownContainer",
-	comboboxDropDownButtonClass: "comboboxDropDownButton",
-	comboboxDropDownItemClass: "comboboxItem",
-	comboboxDropDownItemHoverClass: "comboboxItemHover",
-	comboboxDropDownGroupItemHeaderClass: "comboboxGroupItemHeader",
-	comboboxDropDownGroupItemContainerClass: "comboboxGroupItemContainer",
-	animationType: "slide",
-	width: "500px" */
-
+	if (empty($conf->use_javascript_ajax)) return ''; 
+	
+	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
+	
 	$msg = '<script type="text/javascript">
-	$(document).ready(function() {
-    	$("#'.$htmlname.'").combobox({
-    		minLengthToAutocomplete : '.$minLengthToAutocomplete.',
-    		selected : function(event,ui) {
-    			var obj = '.json_encode($events).';
-    			$.each(obj, function(key,values) {
-    				if (values.method.length) {
-    					runJsCodeForEvent'.$htmlname.'(values);
-    				}
+		$(document).ready(function() {
+			$(\'#'.$htmlname.'\').select2({
+				width: \'resolve\',
+				minimumInputLength: '.$minLengthToAutocomplete.',
+			});';
+
+	if (count($event))
+	{
+		$msg.= '
+			jQuery("#'.$htmlname.'").change(function () {
+				var obj = '.json_encode($events).';
+		   		$.each(obj, function(key,values) {
+	    			if (values.method.length) {
+	    				runJsCodeForEvent'.$htmlname.'(values);
+	    			}
 				});
-			}
-		});
-
-		function runJsCodeForEvent'.$htmlname.'(obj) {
-			var id = $("#'.$htmlname.'").val();
-			var method = obj.method;
-			var url = obj.url;
-			var htmlname = obj.htmlname;
-			var showempty = obj.showempty;
-    		$.getJSON(url,
-					{
-						action: method,
-						id: id,
-						htmlname: htmlname,
-						showempty: showempty
-					},
-					function(response) {
-						$.each(obj.params, function(key,action) {
-							if (key.length) {
-								var num = response.num;
-								if (num > 0) {
-									$("#" + key).removeAttr(action);
-								} else {
-									$("#" + key).attr(action, action);
+			});
+			
+			function runJsCodeForEvent'.$htmlname.'(obj) {
+				var id = $("#'.$htmlname.'").val();
+				var method = obj.method;
+				var url = obj.url;
+				var htmlname = obj.htmlname;
+				var showempty = obj.showempty;
+	    		$.getJSON(url,
+						{
+							action: method,
+							id: id,
+							htmlname: htmlname,
+							showempty: showempty
+						},
+						function(response) {
+							$.each(obj.params, function(key,action) {
+								if (key.length) {
+									var num = response.num;
+									if (num > 0) {
+										$("#" + key).removeAttr(action);
+									} else {
+										$("#" + key).attr(action, action);
+									}
 								}
+							});
+							$("select#" + htmlname).html(response.value);
+							if (response.num) {
+								var selecthtml_str = response.value;
+								var selecthtml_dom=$.parseHTML(selecthtml_str);
+								$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+							} else {
+								$("#inputautocomplete"+htmlname).val("");
 							}
-						});
-						$("select#" + htmlname).html(response.value);
-						if (response.num) {
-							var selecthtml_str = response.value;
-							var selecthtml_dom=$.parseHTML(selecthtml_str);
-							$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
-						} else {
-							$("#inputautocomplete"+htmlname).val("");
+							$("select#" + htmlname).change();	/* Trigger event change */
 						}
-						$("select#" + htmlname).change();	/* Trigger event change */
-					});
-		}
-
-	});'."\n";
+				);
+			}';
+	}
+	
+	$msg.= '});'."\n";
     $msg.= "</script>\n";
 
     return $msg;

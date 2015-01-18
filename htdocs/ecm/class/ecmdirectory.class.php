@@ -428,7 +428,7 @@ class EcmDirectory // extends CommonObject
 		$newref=$this->ref;
 		$newlabel=$langs->trans("ShowECMSection").': '.$newref;
 
-		if ($withpicto) $result.=($lien.img_object($newlabel,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($newlabel, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.($max?dol_trunc($newref,$max,'middle'):$newref).$lienfin;
 		return $result;

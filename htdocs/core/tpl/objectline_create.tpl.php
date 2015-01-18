@@ -2,7 +2,9 @@
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +60,9 @@ if (in_array($object->element,array('propal','facture','invoice','commande','ord
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
+	if ($this->situation_cycle_ref) {
+		print '<td align="right">' . $langs->trans('Progress') . '</td>';
+	}
 	if (! empty($usemargins))
 	{
 		?>
@@ -214,8 +219,11 @@ else {
 	<td align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
 	</td>
 	<td align="right" class="nowrap"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
-
 	<?php
+	if ($this->situation_cycle_ref) {
+		$coldisplay++;
+		print '<td align="right" class="nowrap"><input type="text" size="1" value="0" name="progress">%</td>';
+	}
 	if (! empty($usemargins))
 	{
 		?>
@@ -277,6 +285,7 @@ if (! empty($conf->service->enabled) && $dateSelector && GETPOST('type') != '0')
 {
 	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;
+	if($this->situation_cycle_ref) $colspan++;
 	if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
 	if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
 
@@ -448,41 +457,74 @@ jQuery(document).ready(function() {
 		setforpredef();
 		jQuery('#trlinefordates').show();
 	});
+
+	/* Sur changemenr de produit, on recharge la liste des prix fournisseur */
 	$("#idprod, #idprodfournprice").change(function()
 	{
 		setforpredef();
 		jQuery('#trlinefordates').show();
 
-		<?php if (! empty($usemargins) && $user->rights->margins->creer) { ?>
+		<?php
+		if (! empty($usemargins) && $user->rights->margins->creer)
+		{
+			$langs->load('stocks');
+			?>
 
 		/* Code for margin */
   		$("#fournprice_predef options").remove();
 		$("#fournprice_predef").hide();
 		$("#buying_price").val("").show();
+		/* Call post to load content of combo list fournprice_predef */
   		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', { 'idprod': $(this).val() }, function(data) {
 	    	if (data && data.length > 0)
 	    	{
     	  		var options = '';
+    	  		var defaultkey = '';
+    	  		var defaultprice = '';
 	      		var i = 0;
 	      		$(data).each(function() {
-	        		i++;
-	        		options += '<option value="'+this.id+'" price="'+this.price+'"';
-	        		if (i == 1) {
-	          			options += ' selected';
-	          			$("#buying_price").val(this.price);
-	        		}
-	        		options += '>'+this.label+'</option>';
+	      			if (this.id != 'pmpprice')
+		      		{
+		        		i++;
+		        		options += '<option value="'+this.id+'" price="'+this.price+'"';
+		        		if (this.price > 0 && i == 1) { defaultkey = this.id; defaultprice = this.price; }
+		        		options += '>'+this.label+'</option>';
+		      		}
+	      			if (this.id == 'pmpprice')
+	      			{
+		      			var defaultbuyprice = <?php echo (isset($conf->global->MARGIN_PMP_AS_DEFAULT_BUY_PRICE)?int($conf->global->MARGIN_PMP_AS_DEFAULT_BUY_PRICE):1); ?>;
+		      			if (this.price > 0 && 1 == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
+	    	      		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
+	      			}
 	      		});
-	      		options += '<option value=""><?php echo $langs->trans("InputPrice"); ?></option>';
-	      		$("#buying_price").hide();
+	      		options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
+
+				/* alert(defaultkey+' '+defaultprice); */
 	      		$("#fournprice_predef").html(options).show();
+	      		$("#fournprice_predef").val(defaultkey);
+
+	      		/* At loading, no product are yet selected, so we hide field of buying_price */
+	      		$("#buying_price").hide();
+
+	      		/* Define default price at loading */
+	      		var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
+	      		$("#buying_price").val(defaultprice);
+
 	      		$("#fournprice_predef").change(function() {
-	        		var selval = $(this).find('option:selected').attr("price");
-	        		if (selval)
-	          			$("#buying_price").val(selval).hide();
-	        		else
-	          			$('#buying_price').show();
-	      		});
+	      			/* Hide field buying_price according to choice into list (if 'inputprice' or not) */
+					var linevalue=$(this).find('option:selected').val();
+	        		var pricevalue = $(this).find('option:selected').attr("price");
+	        		if (linevalue != 'inputprice' && linevalue != 'pmpprice') {
+	          			$("#buying_price").val(pricevalue).hide();	/* We set value then hide field */
+	        		}
+	        		if (linevalue == 'inputprice') {
+		          		$('#buying_price').show();
+	        		}
+	        		if (linevalue == 'pmpprice') {
+	        			$("#buying_price").val(pricevalue);
+		          		$('#buying_price').hide();
+	        		}
+				});
 	    	}
 	  	},
 	  	'json');

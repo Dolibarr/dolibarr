@@ -203,3 +203,4 @@ MembersByNature=Medlemmar på sort
 VATToUseForSubscriptions=Moms-sats för prenumeration
 NoVatOnSubscription=Ingen moms för prenumeration
 MEMBER_PAYONLINE_SENDEMAIL=E-post för att varna när Dolibarr mottager en bekräftelse för en validerad betalning för en prenumeration
+ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Produkten används för beställnings linje i fakturan: %s

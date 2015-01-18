@@ -155,10 +155,10 @@ foreach ( $list as $key ) {
 	print '</td></tr>';
 }
 
-print '</form>';
 print "</table>\n";
 
 print '<br /><div style="text-align:center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
+print '</form>';
 
 llxFooter();
 $db->close();

@@ -3,6 +3,8 @@
 -- Copyright (C) 2004-2005	Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+-- Copyright (C) 2012       Cédric Salvador       <csalvador@gpcsolutions.fr>
+-- Copyright (C) 2014       Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -55,8 +57,11 @@ create table llx_facturedet
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,
   special_code					integer UNSIGNED DEFAULT 0,			-- code pour les lignes speciales
   rang							integer    DEFAULT 0,				-- ordre d'affichage
-  import_key					varchar(14)
-  
+  import_key					varchar(14),
+
+  situation_percent real,   -- % progression of lines invoicing
+  fk_prev_id        integer -- id of the line in the previous situation
+
 )ENGINE=innodb;
 
 -- 

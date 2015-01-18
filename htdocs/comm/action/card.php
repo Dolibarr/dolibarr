@@ -681,7 +681,7 @@ if ($action == 'create')
 			$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
 		}
 	}
-	print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
+	print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
 	if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").': <input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked="checked"':'').'> '.$langs->trans("Busy");
 	print '</td></tr>';
 
@@ -905,7 +905,7 @@ if ($id > 0)
 	    }
 
 		// Assigned to
-		print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
@@ -928,7 +928,7 @@ if ($id > 0)
 				$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
 			}
 		}
-		print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
+		print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
 		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked="checked"':'').'">'.$langs->trans("Busy");
 		print '</td></tr>';
 
@@ -1045,7 +1045,7 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
         // Full day event
-        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent).'</td></tr>';
+        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent, 3).'</td></tr>';
 
 		$rowspan=4;
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) $rowspan++;
@@ -1077,7 +1077,7 @@ if ($id > 0)
     	}
 
 		// Assigned to
-    	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+    	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{

@@ -141,8 +141,8 @@ if ($resql)
 else dol_print_error($db);
 
 // Load sale and categ filters
-$search_sale = GETPOST('search_sale');
-$search_categ = GETPOST('search_categ');
+$search_sale = GETPOST('search_sale','int');
+$search_categ = GETPOST('search_categ','int');
 // If the internal user must only see his prospect, force searching by him
 if (!$user->rights->societe->client->voir && !$socid) $search_sale = $user->id;
 
@@ -200,11 +200,11 @@ $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe"; // We need this table joined to the select in order to filter by categ
-if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.client IN (2, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
-if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql.= " AND s.rowid = sc.fk_soc";
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
 if ($socid) $sql.= " AND s.rowid = " .$socid;
 if (isset($stcomm) && $stcomm != '') $sql.= " AND s.fk_stcomm=".$stcomm;
 if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
@@ -229,7 +229,7 @@ if ($search_levels)
 	$sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
 }
 // Insert sale filter
-if ($search_sale)
+if ($search_sale > 0)
 {
 	$sql .= " AND sc.fk_user = ".$db->escape($search_sale);
 }
@@ -281,7 +281,7 @@ if ($resql)
  	if ($search_level_from != '') $param.='&amp;search_level_from='.$search_level_from;
  	if ($search_level_to != '') $param.='&amp;search_level_to='.$search_level_to;
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
- 	if ($search_sale != '') $param.='&amp;search_sale='.$search_sale;
+ 	if ($search_sale > 0) $param.='&amp;search_sale='.$search_sale;
  	if ($search_status != '') $param.='&amp;search_status='.$search_status;
  	// $param and $urladd should have the same value
  	$urladd = $param;

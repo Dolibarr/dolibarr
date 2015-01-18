@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@capnetworks.com>
- * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Philippe Grand			    <philippe.grand@atoo-net.com>
  *
@@ -328,10 +328,16 @@ foreach ($dirmodels as $reldir)
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$nextval=$module->getNextValue($mysoc,$ficheinter);
-						if ($nextval != $langs->trans("NotAvailable"))
-						{
-							$htmltooltip.=''.$langs->trans("NextValue").': '.$nextval;
-						}
+                        if ("$nextval" != $langs->trans("NotAvailable")) {   // Keep " on nextval
+                            $htmltooltip.=''.$langs->trans("NextValue").': ';
+                            if ($nextval) {
+                                if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                    $nextval = $langs->trans($nextval);
+                                $htmltooltip.=$nextval.'<br>';
+                            } else {
+                                $htmltooltip.=$langs->trans($module->error).'<br>';
+                            }
+                        }
 						print '<td align="center">';
 						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';

@@ -46,6 +46,11 @@ class Product extends CommonObject
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'ref';
+
 	var $regeximgext='\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff';
 
 	//! Identifiant unique
@@ -2836,8 +2841,8 @@ class Product extends CommonObject
 		if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
 
 		if ($withpicto) {
-			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->label,'product').$lienfin.' ');
-			if ($this->type == 1) $result.=($lien.img_object($langs->trans("ShowService").' '.$this->label,'service').$lienfin.' ');
+			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->label, 'product', 'class="classfortooltip"').$lienfin.' ');
+			if ($this->type == 1) $result.=($lien.img_object($langs->trans("ShowService").' '.$this->label, 'service', 'class="classfortooltip"').$lienfin.' ');
 		}
 		$result.=$lien.$newref.$lienfin;
 		return $result;

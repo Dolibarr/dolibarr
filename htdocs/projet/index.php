@@ -84,7 +84,8 @@ if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProject").'</td></tr>';
 	print '<tr '.$bc[$var].'>';
 	print '<td class="nowrap"><label for="sf_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_ref" id="sf_ref" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print '<td rowspan="3"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print '<tr '.$bc[$var].'><td class="nowrap"><label for="syear">'.$langs->trans("Year").'</label>:</td><td><input type="text" class="flat" name="search_year" id="search_year" size="18"></td>';
 	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="search_all" id="search_all" size="18"></td>';
 	print '</tr>';
 	print "</table></form>\n";

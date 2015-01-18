@@ -164,10 +164,10 @@ class Account extends CommonObject
      * 		TODO Move this into AccountLine
      *      Return array with links from llx_bank_url
      *
-     *      @param	int		$fk_bank        To search using bank transaction id
-     *      @param	int		$url_id         To search using link to
-     *      @param  string	$type           To search using type
-     *      @return array           		Array of links
+     *      @param  int         $fk_bank    To search using bank transaction id
+     *      @param  int         $url_id     To search using link to
+     *      @param  string      $type       To search using type
+     *      @return array|-1                Array of links or -1 on error
      */
     function get_url($fk_bank='', $url_id='', $type='')
     {
@@ -343,7 +343,7 @@ class Account extends CommonObject
      */
     function create($user='')
     {
-        global $langs,$conf;
+        global $langs,$conf, $hookmanager;
 
         // Clean parameters
         if (! $this->min_allowed) $this->min_allowed=0;
@@ -441,6 +441,23 @@ class Account extends CommonObject
                     $this->error=$this->db->lasterror();
                     return -3;
                 }
+                
+                // Actions on extra fields (by external module or standard code)
+                $hookmanager->initHooks(array('bankdao'));
+                $parameters=array('id'=>$this->id);
+                $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                if (empty($reshook))
+                {
+                	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                	{
+                		$result=$this->insertExtraFields();
+                		if ($result < 0)
+                		{
+                			return -4;
+                		}
+                	}
+                }
+                else if ($reshook < 0) return -5;
             }
             return $this->id;
         }
@@ -466,7 +483,7 @@ class Account extends CommonObject
      */
     function update($user='')
     {
-        global $langs,$conf;
+        global $langs,$conf, $hookmanager;
 
         // Clean parameters
         if (! $this->min_allowed) $this->min_allowed=0;
@@ -517,6 +534,25 @@ class Account extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
+        	
+        	// Actions on extra fields (by external module or standard code)
+        	$hookmanager->initHooks(array('bankdao'));
+        	$parameters=array('id'=>$this->id);
+        	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        	if (empty($reshook))
+        	{
+        		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        		{
+        			$result=$this->insertExtraFields();
+        			if ($result < 0)
+        			{
+        				return -1;
+        			}
+        		}
+        	}
+        	else if ($reshook < 0) return -1;
+        	
+        	
             return 1;
         }
         else
@@ -662,6 +698,15 @@ class Account extends CommonObject
                 $this->min_allowed    = $obj->min_allowed;
                 $this->min_desired    = $obj->min_desired;
                 $this->comment        = $obj->comment;
+                
+                // Retreive all extrafield for thirdparty
+                // fetch optionals attributes and labels
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+                $this->fetch_optionals($this->id,$extralabels);
+                
+                
                 return 1;
             }
             else
@@ -693,6 +738,18 @@ class Account extends CommonObject
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result) {
+        	
+        	// Remove extrafields
+        	if ((empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+        	{
+        		$result=$this->deleteExtraFields();
+        		if ($result < 0)
+        		{
+        			return -1;
+        			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+        		}
+        	}
+        	
             return 1;
         }
         else {
@@ -890,7 +947,7 @@ class Account extends CommonObject
             $lienfin='</a>';
         }
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAccount"),'account').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAccount").': '.$this->label, 'account', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.$this->label.$lienfin;
         return $result;
     }
@@ -1430,7 +1487,7 @@ class AccountLine extends CommonObject
         $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTransaction"),'account').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTransaction"), 'account', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.$this->rowid.$lienfin;
 
         if ($option == 'showall' || $option == 'showconciliated') $result.=' (';

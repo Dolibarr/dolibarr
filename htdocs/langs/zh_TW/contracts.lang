@@ -53,7 +53,7 @@ ListOfRunningContractsLines=名單合同線運行
 ListOfRunningServices=運行服務的列表
 NotActivatedServices=不活躍的服務（除驗證合同）
 BoardNotActivatedServices=服務激活驗證合同之間
-LastContracts=Last % contracts
+LastContracts=Last %s contracts
 LastActivatedServices=上次%s的激活服務
 LastModifiedServices=最後%S修飾服務
 EditServiceLine=編輯服務項目
@@ -91,6 +91,7 @@ ListOfServicesToExpire=List of Services to expire
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=銷售代表簽訂合同

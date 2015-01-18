@@ -655,21 +655,21 @@ class Holiday extends CommonObject
      */
     function getNomUrl($withpicto=0)
     {
-    	global $langs;
+        global $langs;
 
-    	$result='';
+        $result='';
 
-    	$lien = '<a href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$this->id.'">';
-    	$lienfin='</a>';
+        $lien = '<a href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$this->id.'">';
+        $lienfin='</a>';
 
-    	$picto='holiday';
+        $picto='holiday';
 
-    	$label=$langs->trans("Show").': '.$this->ref;
+        $label=$langs->trans("Show").': '.$this->ref;
 
-    	if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
-    	if ($withpicto && $withpicto != 2) $result.=' ';
-    	if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
-    	return $result;
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto && $withpicto != 2) $result.=' ';
+        if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+        return $result;
     }
 
 

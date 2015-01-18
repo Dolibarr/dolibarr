@@ -1752,7 +1752,7 @@ class Societe extends CommonObject
         $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name,'company').$lienfin);
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name, 'company', 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($name,$maxlen):$name).$lienfin;
 
@@ -2382,7 +2382,7 @@ class Societe extends CommonObject
      *
      *    @param	int		$idprof		1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
      *    @param	string	$value		Value of profid
-     *    @param	int		$socid		Id of society if update
+     *    @param	int		$socid		Id of thirdparty if update
      *    @return   boolean				true if exists, false if not
      */
     function id_prof_exists($idprof,$value,$socid=0)
@@ -2903,10 +2903,10 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Check if thirdparty may using localtax or not
+     *  Check if we must use localtax feature or not according to country (country of $mysocin most cases).
      *
      *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
-     *  @return		array					array(0=>boolean, 1=>boolean)
+     *  @return		boolean					true or false
      */
     function useLocalTax($localTaxNum=0)
     {
@@ -2928,9 +2928,9 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Check if thirdparty is from a country using revenue stamps
+     *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
      *
-     *  @return		boolean			Yes or no
+     *  @return		boolean			true or false
      */
     function useRevenueStamp()
     {

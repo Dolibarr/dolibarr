@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Veikiančių sutarčių eilučių sąrašas
 ListOfRunningServices=Veikiančių paslaugų sąrašas
 NotActivatedServices=Neaktyvios paslaugos (tarp patvirtintų sutarčių)
 BoardNotActivatedServices=Paslaugos aktyvavimui iš patvirtintų sutarčių
-LastContracts=Last % contracts
+LastContracts=Last %s contracts
 LastActivatedServices=Paskutinės %s aktyvuotos paslaugos
 LastModifiedServices=Paskutinės %s modifikuotos paslaugos
 EditServiceLine=Redaguoti paslaugos eilutę
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Paslaugų, kurios baigiasi, sąrašas
 NoteListOfYourExpiredServices=Šiame sąraše yra tik paslaugos sutarčių trečiosioms šalims, su kuriom Jūs susijęs kaip pardavimo atstovas.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Pardavimų atstovas pasirašantis sutartį

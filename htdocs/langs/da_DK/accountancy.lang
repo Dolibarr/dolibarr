@@ -25,12 +25,12 @@ Selectchartofaccounts=Vælg en kontoplan
 Validate=Godkend
 Addanaccount=Tilføj en regnskabsmæssig konto
 AccountAccounting=Regnskabsmæssig konto
-Ventilation=Breakdown
+Ventilation=Sammenbrud
 ToDispatch=Afsend
 Dispatched=Afsendt
 
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
+CustomersVentilation=Udspecificer kunder
+SuppliersVentilation=Udspecificer leverandører
 TradeMargin=Handelsforskel
 Reports=Reporter
 ByCustomerInvoice=Efter fakturakunder
@@ -45,9 +45,9 @@ WriteBookKeeping=Optage konti i kontoplanen
 Bookkeeping=Kontoplan
 AccountBalanceByMonth=Kontobalance efter måned
 
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
+AccountingVentilation=Udspecificer regnskab
+AccountingVentilationSupplier=Udspecificer regnskab leverandører
+AccountingVentilationCustomer=Udspecificer regnskab kunder
 Line=Linje
 
 CAHTF=Samlet køb leverandør
@@ -56,7 +56,7 @@ InvoiceLinesDone=Fornyede linjer af faktura
 IntoAccount=I den regnskabsmæssige konto
 
 Ventilate=Forny
-VentilationAuto=Automatic breakdown
+VentilationAuto=Udspecificer automatisk
 
 Processing=Forarbejde
 EndProcessing=Forarbejdet

@@ -29,6 +29,7 @@ ActionsToDoBy=Toimet vaikuttaa
 ActionsDoneBy=Toimet tehdään
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= Kaikki toimet / tehtävät
 AllActions= Toutes les actions / tehtävät
 ViewList=Näytä lista

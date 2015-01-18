@@ -388,7 +388,7 @@ class Resource extends CommonObject
     	$sql.= " ty.label as type_label";
     	$sql.= " FROM ".MAIN_DB_PREFIX."resource as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
-    	//$sql.= " WHERE t.entity IN (".getEntity('resource').")";
+    	$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
 
     	//Manage filter
     	if (!empty($filter)){
@@ -402,7 +402,7 @@ class Resource extends CommonObject
     		}
     	}
     	$sql.= " GROUP BY t.rowid";
-    	$sql.= " ORDER BY $sortfield $sortorder ";
+    	$sql.= $this->db->order($sortfield,$sortorder);
     	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
@@ -462,7 +462,7 @@ class Resource extends CommonObject
 		$sql.= " t.fk_user_create,";
 		$sql.= " t.tms";
    		$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-   		//$sql.= " WHERE t.entity IN (".getEntity('resource').")";
+   		$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
 
    		//Manage filter
    		if (!empty($filter)){
@@ -476,7 +476,8 @@ class Resource extends CommonObject
    			}
    		}
    		$sql.= " GROUP BY t.rowid";
-   		$sql.= " ORDER BY $sortfield $sortorder " . $this->db->plimit($limit+1,$offset);
+    	$sql.= $this->db->order($sortfield,$sortorder);
+   		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
    		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
    		$resql=$this->db->query($sql);
@@ -547,7 +548,7 @@ class Resource extends CommonObject
     	$sql.= " t.fk_user_create,";
     	$sql.= " t.tms";
     	$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-    	//$sql.= " WHERE t.entity IN (".getEntity('resource').")";
+    	$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
 
     	//Manage filter
     	if (!empty($filter)){
@@ -561,7 +562,8 @@ class Resource extends CommonObject
     		}
     	}
     	$sql.= " GROUP BY t.resource_id";
-    	$sql.= " ORDER BY " . $sortfield . "  " . $sortorder . " " . $this->db->plimit($limit+1,$offset);
+    	$sql.= $this->db->order($sortfield,$sortorder);
+    	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
     	$resql=$this->db->query($sql);
@@ -796,16 +798,20 @@ class Resource extends CommonObject
 	    return $resources;
     }
 
+    /*
+     *  Return an int number of resources linked to the element
+     *
+     *  @return     int
+     */
     function fetchElementResources($element,$element_id)
     {
-    	$resources = $this->getElementResources($element,$element_id);
-    	$i=0;
-    	foreach($resources as $nb => $resource)
-    	{
-    		$this->lines[$i] = fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
-    		$i++;
-    	}
-    	return $i;
+        $resources = $this->getElementResources($element,$element_id);
+        $i=0;
+        foreach($resources as $nb => $resource) {
+            $this->lines[$i] = fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
+            $i++;
+        }
+        return $i;
 
     }
 
@@ -876,7 +882,7 @@ class Resource extends CommonObject
 
         $label=$langs->trans("ShowResource").': '.$this->ref;
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.$this->ref.$lienfin;
         return $result;

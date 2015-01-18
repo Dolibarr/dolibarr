@@ -73,7 +73,7 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 
 	if (! $error)
 	{
-		$object->fetch($id);
+		$object->fetch($id, $ref);
 		$object->fetch_projet();
 
 		if (empty($object->projet->statut))
@@ -119,7 +119,7 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 
 	if (! $error)
 	{
-		$object->fetch($id);
+		$object->fetch($id, $ref);
 
 		$object->timespent_id = $_POST["lineid"];
 		$object->timespent_note = $_POST["timespent_note_line"];
@@ -194,7 +194,7 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Fiche projet en mode visu
  	 */
-	if ($object->fetch($id) >= 0)
+	if ($object->fetch($id, $ref) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
@@ -259,8 +259,6 @@ if ($id > 0 || ! empty($ref))
 			print '</table>';
 
 			dol_fiche_end();
-
-			print '<br>';
 		}
 
 		$head=task_prepare_head($object);
@@ -362,8 +360,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td>'.$langs->trans("By").'</td>';
 			print '<td>'.$langs->trans("Note").'</td>';
 			print '<td>'.$langs->trans("ProgressDeclared").'</td>';
-			print '<td align="right">'.$langs->trans("Duration").'</td>';
-			print '<td width="80">&nbsp;</td>';
+			print '<td align="right" colspan="2">'.$langs->trans("NewTimeSpent").'</td>';
 			print "</tr>\n";
 
 			print '<tr '.$bc[false].'>';
@@ -396,7 +393,7 @@ if ($id > 0 || ! empty($ref))
 			print $formother->select_percent(GETPOST('progress')?GETPOST('progress'):$object->progress,'progress');
 			print '</td>';
 
-			// Duration
+			// Duration - Time spent
 			print '<td class="nowrap" align="right">';
 			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, 'text');
 			print '</td>';
@@ -446,13 +443,13 @@ if ($id > 0 || ! empty($ref))
 		print '<input type="hidden" name="action" value="updateline">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
-		
+
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="100">'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("By").'</td>';
 		print '<td align="left">'.$langs->trans("Note").'</td>';
-		print '<td align="right">'.$langs->trans("Duration").'</td>';
+		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 

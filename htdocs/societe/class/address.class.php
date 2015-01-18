@@ -426,7 +426,7 @@ class Address
 		$lien = '<a href="'.DOL_URL_ROOT.'/comm/address.php?id='.$this->id.'&socid='.$this->socid.'">';
 		$lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAddress").': '.$this->label,'address').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAddress").': '.$this->label, 'address', 'class="classfortooltip"').$lienfin.' ');
 		$result.=$lien.$this->label.$lienfin;
 		return $result;
 	}

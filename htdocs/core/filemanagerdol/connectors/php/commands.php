@@ -118,6 +118,13 @@ function GetFoldersAndFiles( $resourceType, $currentFolder )
 	echo '</Files>' ;
 }
 
+/**
+ * Create folder
+ *
+ * @param   string $resourceType    Resource type
+ * @param   string $currentFolder   Current folder
+ * @return void
+ */
 function CreateFolder( $resourceType, $currentFolder )
 {
 	if (!isset($_GET)) {

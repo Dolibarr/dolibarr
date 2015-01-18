@@ -180,7 +180,7 @@ $order_fields = array(
 	'ref_int' => array('name'=>'ref_int','type'=>'xsd:string'),
 	'thirdparty_id' => array('name'=>'thirdparty_id','type'=>'xsd:int'),
 	'status' => array('name'=>'status','type'=>'xsd:int'),
-	'facturee' => array('name'=>'facturee','type'=>'xsd:string'),
+	'billed' => array('name'=>'billed','type'=>'xsd:string'),
 	'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
 	'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
 	'total_localtax1' => array('name'=>'total_localtax1','type'=>'xsd:double'),
@@ -314,8 +314,17 @@ $server->register(
 		'WS to create an order'
 );
 
+$server->register(
+		'updateOrder',
+		array('authentication'=>'tns:authentication','order'=>'tns:order'),	// Entry values
+		array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),	// Exit values
+		$ns,
+		$ns.'#updateOrder',
+		$styledoc,
+		$styleuse,
+		'WS to update an order'
+);
 
-// Register WSDL
 $server->register(
 		'validOrder',
 		array('authentication'=>'tns:authentication','id'=>'xsd:string'),	// Entry values
@@ -439,7 +448,7 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 					'remise_absolue' => $order->remise_absolue,
 
 					'source' => $order->source,
-					'facturee' => $order->facturee,
+					'billed' => $order->billed,
 					'note_private' => $order->note_private,
 					'note_public' => $order->note_public,
 					'cond_reglement_id' => $order->cond_reglement_id,
@@ -596,7 +605,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 					'remise_absolue' => $order->remise_absolue,
 
 					'source' => $order->source,
-					'facturee' => $order->facturee,
+					'billed' => $order->billed,
 					'note_private' => $order->note_private,
 					'note_public' => $order->note_public,
 					'cond_reglement_id' => $order->cond_reglement_id,
@@ -679,12 +688,12 @@ function createOrder($authentication,$order)
 		$newobject->note_private=$order['note_private'];
 		$newobject->note_public=$order['note_public'];
 		$newobject->statut=0;	// We start with status draft
-		$newobject->facturee=$order['facturee'];
+		$newobject->billed=$order['billed'];
 		$newobject->fk_project=$order['project_id'];
 		$newobject->cond_reglement_id=$order['cond_reglement_id'];
 		$newobject->demand_reason_id=$order['demand_reason_id'];
 		$newobject->date_creation=$now;
-		
+
 		// Retrieve all extrafield for order
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
@@ -717,7 +726,7 @@ function createOrder($authentication,$order)
 			$newline->total_ttc=$line['total'];
 			$newline->date_start=$line['date_start'];
 			$newline->date_end=$line['date_end'];
-			
+
 			// Retrieve all extrafield for lines
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
@@ -727,7 +736,7 @@ function createOrder($authentication,$order)
 				$key='options_'.$key;
 				$newline->array_options[$key]=$line[$key];
 			}
-			
+
 			$newobject->lines[]=$newline;
 		}
 
@@ -861,6 +870,110 @@ function validOrder($authentication,$id='')
 
 	return $objectresp;
 }
+
+/**
+ * Update an order
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	array		$order				Order info
+ * @return	array							Array result
+ */
+function updateOrder($authentication,$order)
+{
+	global $db,$conf,$langs;
+
+	$now=dol_now();
+
+	dol_syslog("Function: updateOrder login=".$authentication['login']);
+
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+	// Init and check authentication
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	// Check parameters
+	if (empty($order['id']) && empty($order['ref']) && empty($order['ref_ext']))	{
+		$error++; $errorcode='KO'; $errorlabel="Order id or ref or ref_ext is mandatory.";
+	}
+
+	if (! $error)
+	{
+		$objectfound=false;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
+		$object=new Commande($db);
+		$result=$object->fetch($order['id'],(empty($order['id'])?$order['ref']:''),(empty($order['id']) && empty($order['ref'])?$order['ref_ext']:''));
+
+		if (!empty($object->id)) {
+
+			$objectfound=true;
+
+			$db->begin();
+
+			if (isset($order['status']))
+			{
+				if ($order['status'] == -1) $result=$object->cancel($fuser);
+				if ($order['status'] == 1)  $result=$object->valid($fuser);
+				if ($order['status'] == 0)  $result=$object->set_reopen($fuser);
+				if ($order['status'] == 3)  $result=$object->cloture($fuser);
+			}
+
+			if (isset($order['billed']))
+			{
+				if ($order['billed'])   $result=$object->classifyBilled($fuser);
+				if (! $order['billed']) $result=$object->classifyBilled($fuser);
+			}
+
+			//Retreive all extrafield for object
+			// fetch optionals attributes and labels
+			$extrafields=new ExtraFields($db);
+			$extralabels=$extrafields->fetch_name_optionals_label('commande',true);
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				$key='options_'.$key;
+				if (isset($order[$key]))
+				{
+					$result=$object->setValueFrom($key, $order[$key], 'commande_extrafields');
+				}
+			}
+
+			if ($result <= 0) {
+				$error++;
+			}
+		}
+
+		if ((! $error) && ($objectfound))
+		{
+			$db->commit();
+			$objectresp=array(
+					'result'=>array('result_code'=>'OK', 'result_label'=>''),
+					'id'=>$object->id
+			);
+		}
+		elseif ($objectfound)
+		{
+			$db->rollback();
+			$error++;
+			$errorcode='KO';
+			$errorlabel=$object->error;
+		} else {
+			$error++;
+			$errorcode='NOT_FOUND';
+			$errorlabel='Order id='.$order['id'].' ref='.$order['ref'].' ref_ext='.$order['ref_ext'].' cannot be found';
+		}
+	}
+
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
+
+	return $objectresp;
+}
+
 
 // Return the results.
 $server->service(file_get_contents("php://input"));

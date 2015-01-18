@@ -189,8 +189,8 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model=$object->modelpdf;
-				if (empty($model)) { $tmp=getListOfModels($db, 'propal'); $keys=array_keys($tmp); $model=$keys[0]; }
 				$ret = $object->fetch($id); // Reload to get new records
+
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
@@ -499,9 +499,6 @@ else if ($action == 'add' && $user->rights->propal->creer)
 			    			$outputlangs->setDefaultLang($newlang);
 			    		}
 			    		$model=$object->modelpdf;
-			    		if (empty($model)) {
-			    			$tmp=getListOfModels($db, 'propal'); $keys=array_keys($tmp); $model=$keys[0];
-			    		}
 
 			    		$ret = $object->fetch($id); // Reload to get new records
 			    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -605,16 +602,15 @@ else if ($action == 'addline' && $user->rights->propal->creer) {
 	// Set if we used free entry or predefined product
 	$predef='';
 	$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+	$price_ht = GETPOST('price_ht');
 	if (GETPOST('prod_entry_mode') == 'free')
 	{
 		$idprod=0;
-		$price_ht = GETPOST('price_ht');
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 	}
 	else
 	{
 		$idprod=GETPOST('idprod', 'int');
-		$price_ht = '';
 		$tva_tx = '';
 	}
 
@@ -1151,6 +1147,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->
 	}
 }
 
+
 /*
  * View
  */
@@ -1236,12 +1233,13 @@ if ($action == 'create')
 	print '<form name="addprop" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="add">';
-
 	if ($origin != 'project' && $originid) {
 		print '<input type="hidden" name="origin" value="' . $origin . '">';
 		print '<input type="hidden" name="originid" value="' . $originid . '">';
 	}
 
+	dol_fiche_head();
+	
 	print '<table class="border" width="100%">';
 
 	// Reference
@@ -1312,7 +1310,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Bank Account
-    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->module->banque->enabled) {
+    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled) {
         print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
         $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';
@@ -1435,16 +1433,13 @@ if ($action == 'create')
 	print "</table>\n";
 
 
-	print '<br>';
-
-
 	/*
 	 * Combobox pour la fonction de copie
  	 */
 
 	if (empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE)) print '<input type="hidden" name="createmode" value="empty">';
 
-	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '<table>';
+	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '<br><table>';
 	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE))
 	{
 		// For backward compatibility
@@ -1514,9 +1509,10 @@ if ($action == 'create')
 		}
 		print '</td></tr>';
 	}
-	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '</table><br>';
+	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '</table>';
 
-
+	dol_fiche_end();
+	
 	$langs->load("bills");
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="' . $langs->trans("CreateDraft") . '">';
@@ -2110,12 +2106,14 @@ if ($action == 'create')
 
 				// Create an invoice and classify billed
 				if ($object->statut == 2) {
-					if (! empty($conf->facture->enabled) && $user->rights->facture->creer) {
+					if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
+					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddBill") . '</a></div>';
 					}
 
-					$arraypropal = $object->getInvoiceArrayList();
-					if (is_array($arraypropal) && count($arraypropal) > 0) {
+					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
+					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || ! empty($conf->global->WORKFLOW_PROPAL_CAN_CLASSIFIED_BILLED_WITHOUT_INVOICES))
+					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=classifybilled&amp;socid=' . $object->socid . '">' . $langs->trans("ClassifyBilled") . '</a></div>';
 					}
 				}

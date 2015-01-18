@@ -56,7 +56,7 @@ $search_compta=GETPOST("search_compta");
 $search_status		= GETPOST("search_status",'int');
 
 // Load sale and categ filters
-$search_sale  = GETPOST("search_sale");
+$search_sale  = GETPOST("search_sale",'int');
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
 // If the internal user must only see his customers, force searching by him
@@ -103,17 +103,17 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.zip, s.town, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
 $sql.= " s.datec, s.canvas";
-if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe"; // We need this table joined to the select in order to filter by categ
-if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.client IN (1, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
-if ((!$user->rights->societe->client->voir && !$socid) || $search_sale) $sql.= " AND s.rowid = sc.fk_soc";
+if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
 if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
@@ -130,7 +130,7 @@ if ($search_compta) $sql.= " AND s.code_compta LIKE '%".$db->escape($search_comp
 
 if ($search_status!='') $sql .= " AND s.status = ".$db->escape($search_status);
 // Insert sale filter
-if ($search_sale)
+if ($search_sale > 0)
 {
 	$sql .= " AND sc.fk_user = ".$search_sale;
 }
@@ -154,7 +154,7 @@ if ($result)
 
 	$param = "&amp;search_company=".$search_company."&amp;search_code=".$search_code."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
- 	if ($search_sale != '')	$param.='&amp;search_sale='.$search_sale;
+ 	if ($search_sale > 0)	$param.='&amp;search_sale='.$search_sale;
  	if ($search_status != '') $param.='&amp;search_status='.$search_status;
 
 	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);

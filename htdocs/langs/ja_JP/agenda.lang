@@ -29,6 +29,7 @@ ActionsToDoBy=イベントへの影響を受けた
 ActionsDoneBy=によって行われたイベント
 ActionsForUser=Events for user
 ActionsForUsersGroup=Events for all users of group
+ActionAssignedTo=Event assigned to
 AllMyActions= すべての私のイベント/タスク
 AllActions= すべてのイベント/タスク
 ViewList=リストビュー

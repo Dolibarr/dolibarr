@@ -354,7 +354,7 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 	if ($showmode == 1)
 	{
 		print '<a class="tmenuimage" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
-		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
 		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
 		print '<span class="mainmenuaspan">';
@@ -487,7 +487,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					}
 					$newmenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"),1);
 					$newmenu->add("/admin/delais.php?mainmenu=home",$langs->trans("Alerts"),1);
-					$newmenu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"),1);
+					$newmenu->add("/admin/security_other.php?mainmenu=home", $langs->trans("Security"),1);
 					$newmenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"),1);
 					$newmenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"),1);
 					$newmenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
@@ -1132,12 +1132,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$langs->load("projects");
 
 				// Project affected to user
-				$newmenu->add("/projet/index.php?leftmenu=projects&mode=mine", $langs->trans("MyProjects"), 0, $user->rights->projet->lire, '', $mainmenu, 'projects');
+				$newmenu->add("/projet/index.php?leftmenu=projects&mode=mine", $langs->trans("MyProjects"), 0, $user->rights->projet->lire, '', $mainmenu, 'myprojects');
 				$newmenu->add("/projet/card.php?leftmenu=projects&action=create&mode=mine", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
 				$newmenu->add("/projet/list.php?leftmenu=projects&mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
 
 				// All project i have permission on
-				$newmenu->add("/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire && $user->rights->projet->lire);
+				$newmenu->add("/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire && $user->rights->projet->lire, '', $mainmenu, 'projects');
 				$newmenu->add("/projet/card.php?leftmenu=projects&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
 				$newmenu->add("/projet/list.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
 

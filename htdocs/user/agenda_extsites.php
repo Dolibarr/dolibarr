@@ -122,15 +122,16 @@ $arrayofcss=array();
 
 llxHeader('',$langs->trans("UserSetup"),'','',0,0,$arrayofjs,$arrayofcss);
 
+
+print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="id" value="'.$id.'">';
+
 $head=user_prepare_head($fuser);
 
 dol_fiche_head($head, 'extsites', $langs->trans("User"), 0, 'user');
 
 print $langs->trans("AgendaExtSitesDesc")."<br>\n";
 print "<br>\n";
-
-print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="id" value="'.$id.'">';
 
 $selectedvalue=$conf->global->AGENDA_DISABLE_EXT;
 if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
@@ -172,7 +173,8 @@ while ($i <= $MAXAGENDA)
 }
 
 print '</table>';
-print '<br>';
+
+dol_fiche_end();
 
 print '<div class="center">';
 print "<input type=\"submit\" id=\"save\" name=\"save\" class=\"button hideifnotset\" value=\"".$langs->trans("Save")."\">";
@@ -180,7 +182,6 @@ print "</div>";
 
 print "</form>\n";
 
-dol_fiche_end();
 
 llxFooter();
 

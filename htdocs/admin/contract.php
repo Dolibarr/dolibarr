@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2011-2013      Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2014      Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,30 +182,15 @@ else if ($action == 'setmod')
 	dolibarr_set_const($db, "CONTRACT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
-else if ($action == 'set_CONTRACT_FREE_TEXT')
+else if ($action == 'set_other')
 {
 	$freetext= GETPOST('CONTRACT_FREE_TEXT','alpha');
-	$res = dolibarr_set_const($db, "CONTRACT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+	$res1 = dolibarr_set_const($db, "CONTRACT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        setEventMessage($langs->trans("SetupSaved"));
-    }
-    else
-    {
-        setEventMessage($langs->trans("Error"),'errors');
-    }
-}
-
-else if ($action == 'set_CONTRACT_DRAFT_WATERMARK')
-{
 	$draft= GETPOST('CONTRACT_DRAFT_WATERMARK','alpha');
+	$res2 = dolibarr_set_const($db, "CONTRACT_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
-	$res = dolibarr_set_const($db, "CONTRACT_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
+	if (! $res1 > 0 || ! $res2 > 0) $error++;
 
  	if (! $error)
     {
@@ -216,6 +201,7 @@ else if ($action == 'set_CONTRACT_DRAFT_WATERMARK')
         setEventMessage($langs->trans("Error"),'errors');
     }
 }
+
 
 /*
  * View
@@ -313,18 +299,16 @@ foreach ($dirmodels as $reldir)
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$nextval=$module->getNextValue($mysoc,$contract);
-						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-						{
-							$htmltooltip.=''.$langs->trans("NextValue").': ';
-							if ($nextval)
-							{
-								$htmltooltip.=$nextval.'<br>';
-							}
-							else
-							{
-								$htmltooltip.=$langs->trans($module->error).'<br>';
-							}
-						}
+                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+                            $htmltooltip.=''.$langs->trans("NextValue").': ';
+                            if ($nextval) {
+                                if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                    $nextval = $langs->trans($nextval);
+                                $htmltooltip.=$nextval.'<br>';
+                            } else {
+                                $htmltooltip.=$langs->trans($module->error).'<br>';
+                            }
+                        }
 
 						print '<td align="center">';
 						print $form->textwithpicto('',$htmltooltip,1,0);
@@ -506,44 +490,42 @@ print "<br>";
  *
  */
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_other">';
+
 print_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
-print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 $var=true;
 
 $var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_CONTRACT_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnContracts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 print '<textarea name="CONTRACT_FREE_TEXT" class="flat" cols="120">'.$conf->global->CONTRACT_FREE_TEXT.'</textarea>';
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
+print '</td></tr>'."\n";
 
 //Use draft Watermark
 $var=!$var;
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"set_CONTRACT_DRAFT_WATERMARK\">";
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraftContractCards").'<br>';
 print '<input size="50" class="flat" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.$conf->global->CONTRACT_DRAFT_WATERMARK.'">';
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
+print '</td></tr>'."\n";
 
 print '</table>';
 
-print '<br>';
+print '<div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+print '</div>';
 
-$db->close();
+print '</form>';
+
+dol_fiche_end();
+
 
 llxFooter();
+
+$db->close();

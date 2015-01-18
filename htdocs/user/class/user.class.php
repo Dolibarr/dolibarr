@@ -138,7 +138,7 @@ class User extends CommonObject
 	 *
 	 *	@param	int		$id		       		Si defini, id a utiliser pour recherche
 	 * 	@param  string	$login       		Si defini, login a utiliser pour recherche
-	 *	@param  strinf	$sid				Si defini, sid a utiliser pour recherche
+	 *	@param  string	$sid				Si defini, sid a utiliser pour recherche
 	 * 	@param	int		$loadpersonalconf	Also load personal conf of user (in $user->conf->xxx)
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
@@ -1662,7 +1662,7 @@ class User extends CommonObject
 	/**
 	 *  Add user into a group
 	 *
-	 *  @param	Group	$group      Id of group
+	 *  @param	int	$group      Id of group
 	 *  @param  int		$entity     Entity
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				<0 if KO, >0 if OK
@@ -1721,7 +1721,7 @@ class User extends CommonObject
 	/**
 	 *  Remove a user from a group
 	 *
-	 *  @param	Group   $group       Id of group
+	 *  @param	int   $group       Id of group
 	 *  @param  int		$entity      Entity
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     <0 if KO, >0 if OK
@@ -1792,10 +1792,10 @@ class User extends CommonObject
 
 		if ($withpicto)
 		{
-			$result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin);
+            $result.=($lien.img_object($langs->trans("ShowUser"), 'user', 'class="classfortooltip"').$lienfin);
 			if ($withpicto != 2) $result.=' ';
 		}
-		$result.=$lien.$this->getFullName($langs,'','',16).$lienfin;
+		$result.=$lien.$this->getFullName($langs,'','',24).$lienfin;
 		return $result;
 	}
 

@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -48,6 +49,10 @@ $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
 
+$account = new Account($db);
+$extrafields = new ExtraFields($db);
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($account->table_element);
 
 /*
  * Actions
@@ -99,6 +104,9 @@ if ($_POST["action"] == 'add')
     	$action='create';       // Force chargement page en mode creation
     	$error++;
     }
+
+    // Fill array 'array_options' with data from add form
+    $ret = $extrafields->setOptionalsFromPost($extralabels,$account);
 
     if (! $error)
     {
@@ -171,6 +179,9 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     	$action='edit';       // Force chargement page en mode creation
     	$error++;
     }
+
+    // Fill array 'array_options' with data from add form
+    $ret = $extrafields->setOptionalsFromPost($extralabels,$account);
 
     if (! $error)
     {
@@ -306,6 +317,15 @@ if ($action == 'create')
 	$doleditor=new DolEditor('account_comment',$account->comment,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
 	$doleditor->Create();
 	print '</td></tr>';
+    
+ 	// Other attributes
+	$parameters=array('colspan' => 3);
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$account,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $account->showOptionals($extrafields,'edit',$parameters);
+	}
+
 
 	print '</table>';
 
@@ -464,6 +484,14 @@ else
 		print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 		print '<td colspan="3">'.$account->comment.'</td></tr>';
 
+		// Other attributes
+		$parameters=array('colspan' => 3);
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$account,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+			print $account->showOptionals($extrafields);
+		}
+
 		print '</table>';
 
 		print '<br>';
@@ -620,6 +648,15 @@ else
 		$doleditor=new DolEditor('account_comment',(isset($_POST["account_comment"])?$_POST["account_comment"]:$account->comment),'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
 		$doleditor->Create();
 		print '</td></tr>';
+
+		// Other attributes
+		$parameters=array('colspan' => 3);
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$account,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+			print $account->showOptionals($extrafields,'edit');
+		}
+
 
 		print '</table>';
 

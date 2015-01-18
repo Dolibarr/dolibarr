@@ -20,12 +20,8 @@
  * $withproject (if we are on task contact)
  */
 
-if (! class_exists('Contact')) {
-	require DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-}
-if (! class_exists('FormCompany')) {
-	require DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $module = $object->element;
 
@@ -96,13 +92,9 @@ $userstatic=new User($db);
 	<input type="hidden" name="source" value="external" />
 	<?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
 		<div class="tagtd nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
-		<?php
-		$events=array();
-		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-		?>
 		<div class="tagtd nowrap maxwidthonsmartphone">
 			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
-			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, $events); ?>
+			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone">
 			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid'); ?>

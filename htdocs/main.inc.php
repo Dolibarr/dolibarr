@@ -1,14 +1,15 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2014 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -959,12 +960,12 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
     if (empty($conf->css)) $conf->css = '/theme/eldy/style.css.php';	// If not defined, eldy by default
 
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-    //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">';
-    //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
-    //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-    //print '<!DOCTYPE HTML>';
-    print "\n";
+    if (empty($conf->global->MAIN_ACTIVATE_HTML5)) {
+        $doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+    }else {
+        $doctype = '<!doctype html>'; // Html5 - Developement - Only available on Eldy template
+    }
+    print $doctype."\n";
     if (! empty($conf->global->MAIN_USE_CACHE_MANIFEST)) print '<html lang="'.substr($langs->defaultlang,0,2).'" manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
     else print '<html lang="'.substr($langs->defaultlang,0,2).'">'."\n";
     //print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
@@ -975,6 +976,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         // Displays meta
         print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
+		if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";	// Needed for Responsive Web Design
         $favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
         print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
@@ -986,12 +988,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         $appli='Dolibarr';
         if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
+        if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) print '<title>'.dol_htmlentities($title).'</title>';
         if ($title) print '<title>'.dol_htmlentities($appli.' - '.$title).'</title>';
         else print "<title>".dol_htmlentities($appli)."</title>";
         print "\n";
 
         $ext='';
         if (! empty($conf->dol_use_jmobile)) $ext='version='.urlencode(DOL_VERSION);
+        if (GETPOST('version')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
 
         if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
         {
@@ -1186,7 +1190,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))     // jQuery plugin "mutiselect", "multiple-select", "select2"...
             {
             	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.js'.($ext?'?'.$ext:'').'" />'."\n";
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
             // jQuery jMobile
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
@@ -1543,33 +1547,33 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
 	    {
 	        $langs->load("companies");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname', 'T', 'searchleft');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname', 'T', 'searchleftt');
 	    }
 
 	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
 	    {
 	        $langs->load("companies");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname', '', 'searchleft');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname', '', 'searchleftc');
 	    }
 
 	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
 	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
 	    {
 	        $langs->load("products");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleft');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp');
 	    }
 
 	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire)) && ! empty($conf->fournisseur->enabled)
 	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER))
 	    {
 	        $langs->load("products");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/list.php', DOL_URL_ROOT.'/fourn/product/list.php', img_object('','product').' '.$langs->trans("SupplierRef"), 'products', 'srefsupplier', '', 'searchleft');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/list.php', DOL_URL_ROOT.'/fourn/product/list.php', img_object('','product').' '.$langs->trans("SupplierRef"), 'products', 'srefsupplier', '', 'searchlefts');
 	    }
 
 	    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
 	    {
 	        $langs->load("members");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall', 'M', 'searchleft');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm');
 	    }
 
 	    // Execute hook printSearchForm
@@ -1812,6 +1816,10 @@ function getHelpParamFor($helppagename,$langs)
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname,$accesskey='', $idname='')
 {
     global $conf,$langs;
+
+    if (!$htmlinputid) {
+        $htmlinputid = $htmlinputname;
+    }
 
     $ret='';
     $ret.='<form action="'.$urlaction.'" method="post">';

@@ -29,6 +29,7 @@ ActionsToDoBy=Handlinger relatert til
 ActionsDoneBy=Handlinger utført av
 ActionsForUser=Hendelser for brukere
 ActionsForUsersGroup=Hendelser for alle brukerene i gruppen
+ActionAssignedTo=Event assigned to
 AllMyActions= Alle mine handlinger/oppgaver
 AllActions= Alle handlinger/oppgaver
 ViewList=Vis liste

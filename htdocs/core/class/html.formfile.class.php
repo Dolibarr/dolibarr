@@ -271,13 +271,13 @@ class FormFile
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
-        
+
         $printer=0;
         if (in_array($modulepart,array('facture','propal','proposal','order','commande')))	// This feature is implemented only for such elements
         {
         	$printer = (!empty($user->rights->printipp->read) && !empty($conf->printipp->enabled))?true:false;
         }
-        
+
         $hookmanager->initHooks(array('formfile'));
         $forname='builddoc';
         $out='';
@@ -856,7 +856,7 @@ class FormFile
 			}
 			if ($nboffiles == 0)
 			{
-				print '<tr '.$bc[$var].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
+				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
 				if (empty($textifempty)) print $langs->trans("NoFileFound");
 				else print $textifempty;
 				print '</td></tr>';
@@ -998,7 +998,6 @@ class FormFile
                 if ($modulepart == 'user')             { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
 
                 if (! $id && ! $ref) continue;
-
                 $found=0;
                 if (! empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref]))
                 {
@@ -1007,7 +1006,19 @@ class FormFile
                 else
                 {
                     //print 'Fetch '.$id." - ".$ref.'<br>';
-                    $result=$object_instance->fetch($id,$ref);
+
+                    if ($id) {
+                        $result = $object_instance->fetch($id);
+                    } else {
+                        //fetchOneLike looks for objects with wildcards in its reference.
+                        //It is useful for those masks who get underscores instead of their actual symbols
+                        //fetchOneLike requires some info in the object. If it doesn't have it, then 0 is returned
+                        //that's why we look only look fetchOneLike when fetch returns 0
+                        if (!$result = $object_instance->fetch('', $ref)) {
+                            $result = $object_instance->fetchOneLike($ref);
+                        }
+                    }
+
                     if ($result > 0)  { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance); }    // Save object into a cache
                     if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; unset($filearray[$key]); }
                 }
@@ -1044,7 +1055,7 @@ class FormFile
 
         if (count($filearray) == 0)
         {
-            print '<tr '.$bc[$var].'><td colspan="4">';
+            print '<tr '.$bc[false].'><td colspan="4">';
             if (empty($textifempty)) print $langs->trans("NoFileFound");
             else print $textifempty;
             print '</td></tr>';
@@ -1100,6 +1111,8 @@ class FormFile
         global $user, $conf, $langs, $user;
         global $bc;
         global $sortfield, $sortorder;
+
+        $langs->load("link");
 
         require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
         $link = new Link($this->db);
@@ -1162,7 +1175,7 @@ class FormFile
         $nboflinks = count($links);
         if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-        $var = false;
+        $var = true;
         foreach ($links as $link)
         {
             $var =! $var;
@@ -1209,7 +1222,7 @@ class FormFile
         }
         if ($nboflinks == 0)
         {
-            print '<tr ' . $bc[$var] . '><td colspan="5">';
+            print '<tr ' . $bc[false] . '><td colspan="5">';
             print $langs->trans("NoLinkFound");
             print '</td></tr>';
         }

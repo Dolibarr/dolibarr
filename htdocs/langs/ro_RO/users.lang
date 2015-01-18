@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - users
-HRMArea=Zona HRM 
-UserCard=Utilizator carte
-ContactCard=Contact carte
-GroupCard=Grupul de carte
+HRMArea=HRM 
+UserCard=Fişă Utilizator 
+ContactCard=Fişă Contact
+GroupCard=Fişă Grup
 NoContactCard=Nu carte între persoane de contact
 Permission=Permission
 Permissions=Permisiuni
@@ -102,7 +102,7 @@ UserDisabled=User %s cu handicap
 UserEnabled=User %s activat
 UserDeleted=User %s eliminat
 NewGroupCreated=Grupul creat %s
-GroupModified=Group %s modified
+GroupModified=Grup %s modificat
 GroupDeleted=Grupul %s eliminat
 ConfirmCreateContact=Yu Sunteţi sigur că doriţi să creaţi un cont pentru acest Dolibarr de contact?
 ConfirmCreateLogin=Sunteţi sigur că doriţi să creaţi un cont pentru acest Dolibarr membru?

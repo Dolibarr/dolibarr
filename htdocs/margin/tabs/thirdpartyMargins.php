@@ -143,7 +143,7 @@ if ($socid > 0)
 		$sql.= " AND d.buy_price_ht IS NOT NULL";
 		if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
 		$sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut, f.type";
-		$sql.= " ORDER BY ".$sortfield." ".$sortorder;
+		$sql.= $db->order($sortfield,$sortorder);
 		// TODO: calculate total to display then restore pagination
 		//$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
@@ -206,7 +206,7 @@ if ($socid > 0)
 					print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
 					print "</tr>\n";
 					$i++;
-					$cumul_achat += (($objp->type == 2 ? -1 : 1) * $objp->buying_price);
+					$cumul_achat += $objp->buying_price;
 					$cumul_vente += $objp->selling_price;
 				}
 			}
@@ -255,8 +255,8 @@ $db->close();
 ?>
 <script type="text/javascript">
 $(document).ready(function() {
-	$("#totalMargin").html("<?php echo price($totalMargin); ?>");
-	$("#marginRate").html("<?php echo (($marginRate === '')?'n/a':price($marginRate)."%"); ?>");
-	$("#markRate").html("<?php echo (($markRate === '')?'n/a':price($markRate)."%"); ?>");
+	$("#totalMargin").html("<?php echo price($totalMargin, null, null, null, null, $rounding); ?>");
+	$("#marginRate").html("<?php echo (($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%"); ?>");
+	$("#markRate").html("<?php echo (($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%"); ?>");
 });
 </script>

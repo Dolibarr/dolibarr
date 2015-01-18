@@ -560,7 +560,7 @@ class Contact extends CommonObject
 
 				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-        $this->skype			= $obj->skype;
+        		$this->skype			= $obj->skype;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
@@ -897,7 +897,7 @@ class Contact extends CommonObject
 			$lienfin='</a>';
 		}
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->getFullName($langs),'contact').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->getFullName($langs), 'contact', 'class="classfortooltip"').$lienfin.' ');
 		$result.=$lien.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$lienfin;
 		return $result;
 	}

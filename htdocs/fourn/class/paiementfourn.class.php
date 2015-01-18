@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 /**
- *	\class      PaiementFourn
- *	\brief      Classe permettant la gestion des paiements des factures fournisseurs
+ *	Class to manage payments for supplier invoices
  */
 class PaiementFourn extends Paiement
 {
@@ -345,7 +344,7 @@ class PaiementFourn extends Paiement
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, datec, fk_user_author, tms';
+		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
@@ -357,6 +356,7 @@ class PaiementFourn extends Paiement
 			{
 				$obj = $this->db->fetch_object($resql);
 				$this->id = $obj->rowid;
+
 				if ($obj->fk_user_creat)
 				{
 					$cuser = new User($this->db);
@@ -381,10 +381,10 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	 *	Retourne la liste des factures sur lesquels porte le paiement
+	 *	Return list of supplier invoices the payment point to
 	 *
-	 *	@param      string	$filter         Critere de filtre
-	 *	@return     array           		Tableau des id de factures
+	 *	@param      string	$filter         SQL filter
+	 *	@return     array           		Array of supplier invoice id
 	 */
 	function getBillsArray($filter='')
 	{
@@ -499,7 +499,7 @@ class PaiementFourn extends Paiement
 			$text=$langs->trans($reg[1]);
 		}
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"),'payment').$lienfin);
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$text.$lienfin;
 		return $result;

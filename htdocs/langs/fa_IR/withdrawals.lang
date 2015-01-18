@@ -79,10 +79,11 @@ CreditDate=در اعتباری
 WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country %s (Your country is not supported)
 ShowWithdraw=نمایش برداشت
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=با این حال، اگر فاکتور حداقل یک عقب نشینی پرداخت هنوز پردازش نشده، آن را مجموعه ای به عنوان پرداخت می شود اجازه می دهد تا مدیریت خروج قبل.
-DoStandingOrdersBeforePayments=در این تب شما اجازه می دهد به درخواست حکم ایستاده. پس از آن کامل شده است، شما می توانید پرداخت تایپ برای بستن صورتحساب.
+DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once donee, go into menu Bank->Withdrawal to manage the standing order. When standing order is closed, payment on invoice will be automatically recorded, and invoice closed if remainder to pay is null.
 WithdrawalFile=فایل برداشت
 SetToStatusSent=تنظیم به وضعیت "فایل ارسال شد"
 ThisWillAlsoAddPaymentOnInvoice=این نیز خواهد پرداخت به فاکتورها اعمال می شود و آنها را طبقه بندی به عنوان "پرداخت"
+StatisticsByLineStatus=Statistics by status of lines
 
 ### Notifications
 InfoCreditSubject=پرداخت سفارش ثابت٪ توسط بانک

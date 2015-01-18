@@ -25,5 +25,5 @@ UserSynchronized=Användare synkroniseras
 GroupSynchronized=Grupp synkroniseras
 MemberSynchronized=Medlem synkroniseras
 ContactSynchronized=Kontakta synkroniseras
-ForceSynchronize=Force synkronisera Dolibarr -> LDAP
+ForceSynchronize=Tvinga synkronisering Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Misslyckades med att läsa LDAP-databas. Kontrollera LDAP-modul setup och databas tillgänglighet.

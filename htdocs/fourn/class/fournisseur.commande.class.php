@@ -45,6 +45,11 @@ class CommandeFournisseur extends CommonOrder
     public $fk_element = 'fk_commande';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
+
     var $id;
 
     var $ref;		 // TODO deprecated
@@ -533,7 +538,7 @@ class CommandeFournisseur extends CommonOrder
         $picto='order';
         $label=$langs->trans("ShowOrder").': '.$this->ref;
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.$this->ref.$lienfin;
         return $result;
@@ -828,7 +833,7 @@ class CommandeFournisseur extends CommonOrder
         $result = 0;
         if ($user->rights->fournisseur->commande->commander)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 3, fk_input_method=".$methode.",date_commande=".$this->db->idate("$date");
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 3, fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."'";
             $sql .= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::commande", LOG_DEBUG);
@@ -1069,25 +1074,25 @@ class CommandeFournisseur extends CommonOrder
      *	Add order line
      *
      *	@param      string	$desc            		Description
-     *	@param      double	$pu_ht              	Unit price
-     *	@param      double	$qty             		Quantity
-     *	@param      double	$txtva           		Taux tva
-     *	@param      double	$txlocaltax1        	Localtax1 tax
-     *  @param      double	$txlocaltax2        	Localtax2 tax
+     *	@param      float	$pu_ht              	Unit price
+     *	@param      float	$qty             		Quantity
+     *	@param      float	$txtva           		Taux tva
+     *	@param      float	$txlocaltax1        	Localtax1 tax
+     *  @param      float	$txlocaltax2        	Localtax2 tax
      *	@param      int		$fk_product      		Id produit
      *  @param      int		$fk_prod_fourn_price	Id supplier price
      *  @param      string	$fourn_ref				Supplier reference
-     *	@param      double	$remise_percent  		Remise
+     *	@param      float	$remise_percent  		Remise
      *	@param      string	$price_base_type		HT or TTC
-     *	@param		double	$pu_ttc					Unit price TTC
+     *	@param		float	$pu_ttc					Unit price TTC
      *	@param		int		$type					Type of line (0=product, 1=service)
      *	@param		int		$info_bits				More information
-     *  @param		int		$notrigger				Disable triggers
-     *  @param		timestamp	$date_start			Date start of service
-     *  @param		timestamp	$date_end			Date end of service
+     *  @param		bool	$notrigger				Disable triggers
+     *  @param		int		$date_start				Date start of service
+     *  @param		int		$date_end				Date end of service
      *	@return     int             				<=0 if KO, >0 if OK
      */
-    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0, $info_bits=0, $notrigger=false, $date_start='', $date_end='')
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null)
     {
         global $langs,$mysoc;
 

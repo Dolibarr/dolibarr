@@ -327,7 +327,7 @@ $server->register(
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
- * @param	ref_ext		$ref_ext			Ref external of object
+ * @param	string		$ref_ext			Ref external of object
  * @param   string      $lang               Lang to force
  * @return	mixed
  */
@@ -378,7 +378,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	if (! empty($product->multilangs[$langs->defaultlang]["label"]))     		$product->label =  $product->multilangs[$langs->defaultlang]["label"];
             	if (! empty($product->multilangs[$langs->defaultlang]["description"]))     	$product->description =  $product->multilangs[$langs->defaultlang]["description"];
             	if (! empty($product->multilangs[$langs->defaultlang]["note"]))     		$product->note =  $product->multilangs[$langs->defaultlang]["note"];
-		
+
 		$productorservice_result_fields = array(
 		    'id' => $product->id,
 	   	    'ref' => $product->ref,
@@ -396,7 +396,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
 		    'country_id' => $product->country_id>0?$product->country_id:'',
 		    'country_code' => $product->country_code,
 		    'custom_code' => $product->customcode,
-	
+
 	            'price_net' => $product->price,
 	            'price' => $product->price_ttc,
 	            'price_min_net' => $product->price_min,
@@ -408,7 +408,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
 		    //! Spanish local taxes
 		    'localtax1_tx' => $product->localtax1_tx,
 		    'localtax2_tx' => $product->localtax2_tx,
-	
+
 		    'stock_real' => $product->stock_reel,
 		    'stock_alert' => $product->seuil_stock_alerte,
 		    'pmp' => $product->pmp,
@@ -416,19 +416,19 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
 		    'dir' => $pdir,
 		    'images' => $product->liste_photos($dir,$nbmax=10)
                 );
-                
+
                 //Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields=new ExtraFields($db);
             	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
             	//Get extrafield values
             	$product->fetch_optionals($product->id,$extralabels);
-            	
+
             	foreach($extrafields->attribute_label as $key=>$label)
             	{
             		$productorservice_result_fields=array_merge($productorservice_result_fields,array('options_'.$key => $product->array_options['options_'.$key]));
             	}
-		
+
                 // Create
                 $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
@@ -533,7 +533,7 @@ function createProductOrService($authentication,$product)
         }*/
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
-        
+
         $extrafields=new ExtraFields($db);
 	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
 	foreach($extrafields->attribute_label as $key=>$label)
@@ -652,7 +652,7 @@ function updateProductOrService($authentication,$product)
         }*/
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
-        
+
 	$extrafields=new ExtraFields($db);
 	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
 	foreach($extrafields->attribute_label as $key=>$label)
@@ -965,19 +965,19 @@ function getProductsForCategory($authentication,$id,$lang='')
 		                		'dir' => $pdir,
 		                		'images' => $obj->liste_photos($dir,$nbmax=10)
 							);
-							
+
 							//Retreive all extrafield for thirdsparty
 							// fetch optionals attributes and labels
 							$extrafields=new ExtraFields($db);
 							$extralabels=$extrafields->fetch_name_optionals_label('product',true);
 							//Get extrafield values
 							$product->fetch_optionals($obj->id,$extralabels);
-							
+
 							foreach($extrafields->attribute_label as $key=>$label)
 							{
 								$products[$iProduct]=array_merge($products[$iProduct],array('options_'.$key => $product->array_options['options_'.$key]));
 							}
-							
+
 							$iProduct++;
 						}
 

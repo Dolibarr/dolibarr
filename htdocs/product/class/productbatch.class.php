@@ -42,6 +42,7 @@ class Productbatch extends CommonObject
 	var $batch='';
 	var $qty;
 	var $import_key;
+	public $warehouseid;
 
 
 
@@ -155,10 +156,11 @@ class Productbatch extends CommonObject
 		$sql.= " t.eatby,";
 		$sql.= " t.batch,";
 		$sql.= " t.qty,";
-		$sql.= " t.import_key";
-
+		$sql.= " t.import_key,";
+		$sql.= " w.fk_entrepot";
 
         $sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
+        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."product_stock w on t.fk_product_stock=w.rowid";
         $sql.= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -177,6 +179,7 @@ class Productbatch extends CommonObject
 				$this->batch = $obj->batch;
 				$this->qty = $obj->qty;
 				$this->import_key = $obj->import_key;
+				$this->warehouseid= $obj->fk_entrepot;
 			}
 			$this->db->free($resql);
 

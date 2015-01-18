@@ -57,7 +57,7 @@ class ActionComm extends CommonObject
     var $datef;			// Date action end (datep2)
     var $durationp = -1;      // -1=Unkown duration			// deprecated
     var $fulldayevent = 0;    // 1=Event on full day
-    var $punctual = 1;        // Milestone					// TODO Not sure we need this. Milestone is already event with end date = start date
+    var $punctual = 1;        // Milestone					// deprecated. Milestone is already event with end date = start date
     var $percentage;    // Percentage
     var $location;      // Location
 
@@ -138,8 +138,18 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
+        if (! is_array($this->userassigned))	// For backward compatibility
+        {
+        	$tmpid=$this->userassigned;
+        	$this->userassigned=array();
+        	$this->userassigned[$tmpid]=array('id'=>$tmpid);
+        }
+
         $userownerid=$this->userownerid;
         $userdoneid=$this->userdoneid;
+
+        // Be sure assigned user array is not empty.
+        if (count($this->userassigned) == 0) $this->userassigned = array('id'=>$userownerid);
 
         if (! $this->type_id || ! $this->type_code)
         {
@@ -350,7 +360,7 @@ class ActionComm extends CommonObject
                 $this->label				= $obj->label;
                 $this->datep				= $this->db->jdate($obj->datep);
                 $this->datef				= $this->db->jdate($obj->datep2);
-				$this->durationp			= $this->durationp;					// deprecated
+//				$this->durationp			= $this->durationp;					// deprecated
 
                 $this->datec   				= $this->db->jdate($obj->datec);
                 $this->datem   				= $this->db->jdate($obj->datem);
@@ -883,23 +893,23 @@ class ActionComm extends CommonObject
         if ($withpicto == 2)
         {
             $libelle=$label;
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->transnoentities("Action".$this->type_code);
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->transnoentities("Action".$this->type_code);
             $libelleshort='';
         }
         else
        {
-       		$libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
-       		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
-       		$libelleshort=dol_trunc($libelle,$maxlength);
+            $libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+            $libelleshort=dol_trunc($libelle,$maxlength);
         }
 
         if ($withpicto)
         {
-        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
-        	{
-        		 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
-        	}
-            $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle,($overwritepicto?$overwritepicto:'action')).$lienfin;
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
+            {
+                $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
+            }
+            $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle, ($overwritepicto?$overwritepicto:'action'), 'class="classfortooltip"').$lienfin;
         }
         if ($withpicto==1) $result.=' ';
         $result.=$lien.$libelleshort.$lienfin;
@@ -973,7 +983,7 @@ class ActionComm extends CommonObject
             $sql.= " a.label, a.code, a.note, a.fk_action as type_id,";
             $sql.= " a.fk_soc,";
             $sql.= " a.fk_user_author, a.fk_user_mod,";
-            $sql.= " a.fk_user_action, a.fk_user_done,";
+            $sql.= " a.fk_user_action,";
             $sql.= " a.fk_contact, a.percent as percentage,";
             $sql.= " a.fk_element, a.elementtype,";
             $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
@@ -981,9 +991,11 @@ class ActionComm extends CommonObject
             $sql.= " s.nom as socname,";
             $sql.= " c.id as type_id, c.code as type_code, c.libelle";
             $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";	// Link to get author of event for export
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
-            $sql.= " WHERE a.fk_action=c.id";
+			// We must filter on assignement table
+			if ($filters['logint'] || $filters['login']) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
+			$sql.= " WHERE a.fk_action=c.id";
             $sql.= " AND a.entity = ".$conf->entity;
             foreach ($filters as $key => $value)
             {
@@ -993,17 +1005,8 @@ class ActionComm extends CommonObject
                 if ($key == 'idfrom')       $sql.=" AND a.id >= ".(is_numeric($value)?$value:0);
                 if ($key == 'idto')         $sql.=" AND a.id <= ".(is_numeric($value)?$value:0);
                 if ($key == 'project')      $sql.=" AND a.fk_project=".(is_numeric($value)?$value:0);
-                if ($key == 'login')
-                {
-                    $login=$value;
-                    $userforfilter=new User($this->db);
-                    $result=$userforfilter->fetch('',$value);
-                    $sql.= " AND (";
-                    $sql.= " a.fk_user_author = ".$userforfilter->id;
-                    $sql.= " OR a.fk_user_action = ".$userforfilter->id;
-                    $sql.= " OR a.fk_user_done = ".$userforfilter->id;
-                    $sql.= ")";
-                }
+    	        // We must filter on assignement table
+				if ($key == 'logint' || $key == 'login') $sql.= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
                 if ($key == 'logina')
                 {
                     $logina=$value;
@@ -1011,19 +1014,12 @@ class ActionComm extends CommonObject
                     $result=$userforfilter->fetch('',$value);
                     $sql.= " AND a.fk_user_author = ".$userforfilter->id;
                 }
-                if ($key == 'logint')
+                if ($key == 'logint' || $key == 'login')
                 {
                     $logint=$value;
                     $userforfilter=new User($this->db);
                     $result=$userforfilter->fetch('',$value);
-                    $sql.= " AND a.fk_user_action = ".$userforfilter->id;
-                }
-                if ($key == 'logind')
-                {
-                    $logind=$value;
-                    $userforfilter=new User($this->db);
-                    $result=$userforfilter->fetch('',$value);
-                    $sql.= " AND a.fk_user_done = ".$userforfilter->id;
+                    $sql.= " AND ar.fk_element = ".$userforfilter->id;
                 }
             }
             $sql.= " AND a.datep IS NOT NULL";		// To exclude corrupted events and avoid errors in lightning/sunbird import
@@ -1142,7 +1138,7 @@ class ActionComm extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
+        global $user,$langs,$conf,$user;
 
         $now=dol_now();
 
@@ -1166,6 +1162,9 @@ class ActionComm extends CommonObject
         $this->transparency=1;	// 1 means opaque
         $this->priority=1;
         $this->note = 'Note';
+
+        $this->userownerid=$user->id;
+        $this->userassigned[$user->id]=array('id'=>$user->id, 'transparency'=> 1);
     }
 
 }

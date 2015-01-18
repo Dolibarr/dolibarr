@@ -27,3 +27,13 @@ create table llx_c_price_expression
 )ENGINE=innodb;
 
 ALTER TABLE llx_product_fournisseur_price ADD fk_price_expression integer DEFAULT NULL;
+
+-- Taiwan VAT Rates
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213, '5', '0', 'VAT 5%', 1);
+
+-- Add situation invoices
+ALTER TABLE llx_facture ADD situation_cycle_ref integer;
+ALTER TABLE llx_facture ADD situation_counter integer;
+ALTER TABLE llx_facture ADD situation_final integer;
+ALTER TABLE llx_facturedet ADD situation_percent real;
+ALTER TABLE llx_facturedet ADD fk_prev_id integer;

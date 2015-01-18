@@ -228,35 +228,38 @@ if ($resql)
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print "</td></tr>\n";
 
-	// Loop on each record
-	$total_debit=0;
-	$total_credit=0;
-	while ($i < min($num,$limit))
-	{
-		$objp = $db->fetch_object($resql);
-		$printline=false;
-		//Search Description
-		if ($description) {
-			preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthee on tente recherche de traduction
-			if ($reg[1]) {
-				if ($langs->transnoentities($reg[1])==$description) {
-					$printline=true;
-				}
-			}elseif ($objp->label==$description) {$printline=true;}
-		}else {$printline=true;}
+    // Loop on each record
+    $total_debit=0;
+    $total_credit=0;
+    while ($i < min($num,$limit)) {
+        $objp = $db->fetch_object($resql);
+        $printline=false;
+        //Search Description
+        if ($description) {
+            preg_match('/\((.+)\)/i',$objp->label,$reg); // Si texte entoure de parenthese on tente recherche de traduction
+            if ($reg[1]) {
+                if ($langs->transnoentities($reg[1])==$description) {
+                    $printline=true;
+                }
+            } elseif ($objp->label==$description) {
+                $printline=true;
+            }
+        } else {
+            $printline=true;
+        }
 
-		if ($printline) {
-			$var=!$var;
+        if ($printline) {
+            $var=!$var;
 
-			print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var].">";
 
-			// Ref
-			print '<td align="left" class="nowrap">';
-			print "<a href=\"ligne.php?rowid=".$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid."</a> &nbsp; ";
-			print '</td>';
+            // Ref
+            print '<td align="left" class="nowrap">';
+            print "<a href=\"ligne.php?rowid=".$objp->rowid.'">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'payment', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
+            print '</td>';
 
-			// Date ope
-	        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
+            // Date ope
+            print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
 
 	        // Date value
 	        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->dv),"day")."</td>\n";

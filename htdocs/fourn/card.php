@@ -62,13 +62,17 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if ($action == 'setsupplieraccountancycode')
 {
-    $result=$object->fetch($id);
-    $object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
-    $result=$object->update($object->id,$user,1,0,1);
-    if ($result < 0)
-    {
-        $mesg=join(',',$object->errors);
-    }
+	$cancelbutton = GETPOST('cancel');
+	if (! $cancelbutton)
+	{
+		$result=$object->fetch($id);
+   		$object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
+	    $result=$object->update($object->id,$user,1,0,1);
+	    if ($result < 0)
+	    {
+	        $mesg=join(',',$object->errors);
+	    }
+	}
     $action="";
 }
 // conditions de reglement
@@ -94,12 +98,22 @@ if ($action == 'setmode' && $user->rights->societe->creer)
 $contactstatic = new Contact($db);
 $form = new Form($db);
 
-if ($object->fetch($id))
+if ($id > 0 && empty($object->id))
 {
-	llxHeader('',$langs->trans('SupplierCard'));
+	// Load data of third party
+	$res=$object->fetch($id);
+	if ($object->id <= 0) dol_print_error($db,$object->error);
+}
+
+if ($object->id > 0)
+{
+	$title=$langs->trans("SupplierCard");
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+	$help_url='';
+	llxHeader('',$title, $help_url);
 
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	$head = societe_prepare_head($object);
 
@@ -174,24 +188,15 @@ if ($object->fetch($id))
 	print '</tr>';
 
 	// Local Taxes
-	if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+	if ($mysoc->useLocalTax(1))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
-		print yn($object->localtax1_assuj);
-		print '</td></tr>';
-		print '<tr><td class="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
-		print yn($object->localtax2_assuj);
-		print '</td></tr>';
-	}
-	elseif($mysoc->localtax1_assuj=="1")
-	{
-		print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("LocalTax1IsUsed").'</td><td colspan="3">';
 		print yn($object->localtax1_assuj);
 		print '</td></tr>';
 	}
-	elseif($mysoc->localtax2_assuj=="1")
+	if ($mysoc->useLocalTax(2))
 	{
-		print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("LocalTax2IsUsed").'</td><td colspan="3">';
 		print yn($object->localtax2_assuj);
 		print '</td></tr>';
 	}

@@ -23,6 +23,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $graphwidth=DolGraph::getDefaultGraphSizeForStats('width',700);
@@ -69,7 +70,7 @@ dol_mkdir($dir);
 
 if ($mode)
 {
-    // Define sql	
+    // Define sql
     if ($mode == 'memberbycountry')
     {
         $label=$langs->trans("Country");

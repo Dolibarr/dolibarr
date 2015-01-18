@@ -496,7 +496,7 @@ class Opensurveysondage extends CommonObject
 	 */
 	public function deleteComment($id_comment)
 	{
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_comments WHERE id_comment = '.$id_comment.' AND id_sondage = '.$this->id_sondage;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_comments WHERE id_comment = '.$id_comment.' AND id_sondage = "'.$this->db->escape($this->id_sondage).'"';
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {

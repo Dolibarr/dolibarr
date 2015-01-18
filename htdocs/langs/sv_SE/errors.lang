@@ -138,6 +138,24 @@ ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Fel, denna medlem ännu koppla
 ErrorThereIsSomeDeliveries=Fel, det finns några leveranser kopplade till denna sändning. Radering vägrade.
 ErrorCantDeletePaymentReconciliated=Kan inte ta bort en betalning som hade genererat en banktransaktion som conciliated
 ErrorCantDeletePaymentSharedWithPayedInvoice=Kan inte ta bort en betalning som delas av minst en faktura med status betalt
+ErrorPriceExpression1=Kan inte tilldela till konstant '%s'
+ErrorPriceExpression2=Kan inte omdefiniera inbyggd funktion %s
+ErrorPriceExpression3=Odefinierad variabel '%s' i funktionsdefinition
+ErrorPriceExpression4=Otillåten karaktär "%s '
+ErrorPriceExpression5=Oväntad '%s'
+ErrorPriceExpression6=Fel antal argument (%s givet, %s förväntades)
+ErrorPriceExpression8=Oväntad operatör '%s'
+ErrorPriceExpression9=Ett oväntat fel uppstod
+ErrorPriceExpression10=Iperator %s saknar operand
+ErrorPriceExpression11=Förväntar '%s'
+ErrorPriceExpression14=Division med noll
+ErrorPriceExpression17=Odefinierad variabel '%s'
+ErrorPriceExpression19=Expression hittades inte
+ErrorPriceExpression20=Tomma uttryck
+ErrorPriceExpression21=Tomt resultat '%s'
+ErrorPriceExpression22=Negativt resultat '%s'
+ErrorPriceExpressionInternal=Internt fel '%s'
+ErrorPriceExpressionUnknown=Okänt fel '%s'
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligatoriska inställningsparametrarna har ännu inte definierat
