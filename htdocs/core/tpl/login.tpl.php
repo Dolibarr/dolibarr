@@ -203,7 +203,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 <?php if ($main_home)
 {
 ?>
-	<div class="center" class="login_main_home" style="max-width: 80%">
+	<div class="login_main_home" style="max-width: 80%">
 	<?php echo $main_home; ?>
 	</div><br>
 <?php
