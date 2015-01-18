@@ -1690,7 +1690,7 @@ else if ($action == 'remove_file') {
 	}
 }
 
-include DOL_DOCUMENT_ROOT.'/core/actions_printipp.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer)
 {

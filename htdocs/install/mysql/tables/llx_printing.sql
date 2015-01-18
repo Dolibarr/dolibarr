@@ -1,5 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2013 Florian HENRY <florian.henry@open-concept.pro>
+-- Copyright (C) 2013   Florian HENRY     <florian.henry@open-concept.pro>
+-- Copyright (C) 2014   Frederic France   <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,15 +17,16 @@
 --
 -- ============================================================================
 
-CREATE TABLE llx_printer_ipp 
+CREATE TABLE llx_printing 
 (
  rowid integer AUTO_INCREMENT PRIMARY KEY,
- tms 	timestamp,
- datec 	datetime,
+ tms timestamp,
+ datec datetime,
  printer_name text NOT NULL, 
  printer_location text NOT NULL,
- printer_uri varchar(255) NOT NULL,
+ printer_id varchar(255) NOT NULL,
  copy integer NOT NULL DEFAULT '1',
  module varchar(16) NOT NULL,
- login varchar(32) NOT NULL
+ driver varchar(16) NOT NULL,
+ userid integer
 )ENGINE=innodb;

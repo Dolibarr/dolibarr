@@ -429,6 +429,8 @@ if (GETPOST('removedfile','alpha'))
     $action ='presend';
 }
 
+include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
 /*
  * Send mail
 */

@@ -26,6 +26,21 @@ create table llx_c_price_expression
   expression    varchar(80) NOT NULL
 )ENGINE=innodb;
 
+--create table for user conf of printing driver
+CREATE TABLE llx_printing 
+(
+ rowid integer AUTO_INCREMENT PRIMARY KEY,
+ tms timestamp,
+ datec datetime,
+ printer_name text NOT NULL, 
+ printer_location text NOT NULL,
+ printer_id varchar(255) NOT NULL,
+ copy integer NOT NULL DEFAULT '1',
+ module varchar(16) NOT NULL,
+ driver varchar(16) NOT NULL,
+ userid integer
+)ENGINE=innodb;
+
 ALTER TABLE llx_product_fournisseur_price ADD fk_price_expression integer DEFAULT NULL;
 
 -- Taiwan VAT Rates

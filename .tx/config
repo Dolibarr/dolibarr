@@ -236,6 +236,18 @@ source_file = htdocs/langs/en_US/paypal.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.printgcp]
+file_filter = htdocs/langs/<lang>/printgcp.lang
+source_file = htdocs/langs/en_US/printgcp.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.printing]
+file_filter = htdocs/langs/<lang>/printing.lang
+source_file = htdocs/langs/en_US/printing.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.printipp]
 file_filter = htdocs/langs/<lang>/printipp.lang
 source_file = htdocs/langs/en_US/printipp.lang
