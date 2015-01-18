@@ -37,3 +37,11 @@ ALTER TABLE llx_facture ADD situation_counter integer;
 ALTER TABLE llx_facture ADD situation_final integer;
 ALTER TABLE llx_facturedet ADD situation_percent real;
 ALTER TABLE llx_facturedet ADD fk_prev_id integer;
+
+-- Convert SMTP config to main entity, so new entities don't get the old values
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SENDMODE";
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTP_PORT";
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTP_SERVER";
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTPS_ID";
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTPS_PW";
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_EMAIL_TLS";
