@@ -15,6 +15,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #1787 ] Incorrect behaviour of doActions hook
 - Fix: [ bug #1796 ] Unable to use numeration modules from an external module
 - Fix: [ bug #1783 ] SQL error when enabling 3rd party module with PostgreSQL and MySQL strict mode ON
+- Fix: [ bug #1717 ] Sorting unpaid invoices by amount received brings due amount
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
