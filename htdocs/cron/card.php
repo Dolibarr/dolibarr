@@ -354,7 +354,7 @@ if (($action=="create") || ($action=="edit"))
 	print $langs->trans('CronEvery')."</td>";
 	print "<td><select name=\"nbfrequency\">";
 	for($i=1; $i<=60; $i++){
-		if(($object->frequency/$object->unitfrequency) == $i){
+		if(!is_null($object->unitfrequency) && ($object->frequency/$object->unitfrequency) == $i){
 			print "<option value='".$i."' selected='selected'>".$i."</option>";
 		}
 		else{

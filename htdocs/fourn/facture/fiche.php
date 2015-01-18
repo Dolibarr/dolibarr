@@ -1500,12 +1500,7 @@ else
             if ($objectref == 'PROV')
             {
                 $savdate=$object->date;
-                if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))
-                {
-                    $object->date=dol_now();
-                    //TODO: Possibly will have to control payment information into suppliers
-                    //$object->date_lim_reglement=$object->calculate_date_lim_reglement();
-                }
+
                 $numref = $object->getNextNumRef($societe);
             }
             else
