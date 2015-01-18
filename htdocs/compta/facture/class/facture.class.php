@@ -293,9 +293,9 @@ class Facture extends CommonInvoice
 		$sql.= ", ".$this->cond_reglement_id;
 		$sql.= ", ".$this->mode_reglement_id;
 		$sql.= ", '".$this->db->idate($datelim)."', '".$this->modelpdf."'";
-		$sql.= ", ".$this->situation_cycle_ref?"'".$this->db->escape($this->situation_cycle_ref)."'":"null";
-		$sql.= ", ".$this->situation_counter?"'".$this->db->escape($this->situation_counter)."'":"null";
-		$sql.= ", ".$this->situation_final?$this->situation_final:0;
+		$sql.= ", ".($this->situation_cycle_ref?"'".$this->db->escape($this->situation_cycle_ref)."'":"null");
+		$sql.= ", ".($this->situation_counter?"'".$this->db->escape($this->situation_counter)."'":"null");
+		$sql.= ", ".($this->situation_final?$this->situation_final:0);
 		$sql.=")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
