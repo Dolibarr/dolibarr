@@ -994,7 +994,7 @@ elseif ($action == 'show_week') // View by week
     {
         // Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
-		$tmparray = dol_getdate($curtime,'fast');
+		$tmparray = dol_getdate($curtime, true);
 		$tmpday = $tmparray['mday'];
 		$tmpmonth = $tmparray['mon'];
 		$tmpyear = $tmparray['year'];

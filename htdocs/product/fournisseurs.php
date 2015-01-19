@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2014      Ion Agorria          <ion@agorria.com> 
+ * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,150 +81,153 @@ $parameters=array('socid'=>$socid, 'id_prod'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if ($action == 'remove_pf')
+if (empty($reshook))
 {
-	$product = new ProductFournisseur($db);
-	if ($product->fetch($id) > 0)
+	if ($action == 'remove_pf')
 	{
-		if ($rowid)
+		$product = new ProductFournisseur($db);
+		if ($product->fetch($id) > 0)
 		{
-			$result=$product->remove_product_fournisseur_price($rowid);
-			$action = '';
-			setEventMessage($langs->trans("PriceRemoved"));
+			if ($rowid)
+			{
+				$result=$product->remove_product_fournisseur_price($rowid);
+				$action = '';
+				setEventMessage($langs->trans("PriceRemoved"));
+			}
 		}
 	}
-}
 
-if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
-{
-    $id_fourn=GETPOST("id_fourn");
-    if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
-    $ref_fourn=GETPOST("ref_fourn");
-    if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
-    $quantity=GETPOST("qty");
-	$remise_percent=price2num(GETPOST('remise_percent','alpha'));
-    $npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
-    $tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
-    $tva_tx = price2num($tva_tx);
-    $price_expression = GETPOST('eid', 'int') == 0 ? 'NULL' : GETPOST('eid', 'int'); //Discard expression if not in expression mode
+	if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
+	{
+		$id_fourn=GETPOST("id_fourn");
+		if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
+		$ref_fourn=GETPOST("ref_fourn");
+		if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
+		$quantity=GETPOST("qty");
+		$remise_percent=price2num(GETPOST('remise_percent','alpha'));
+		$npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
+		$tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
+		$tva_tx = price2num($tva_tx);
+		$price_expression = GETPOST('eid', 'int') == 0 ? 'NULL' : GETPOST('eid', 'int'); //Discard expression if not in expression mode
 
-    if ($tva_tx == '')
-    {
-		$error++;
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("VATRateForSupplierProduct")), 'errors');
-    }
-	if (empty($quantity))
-	{
-		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")), 'errors');
-	}
-	if (empty($ref_fourn))
-	{
-		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")), 'errors');
-	}
-	if ($id_fourn <= 0)
-	{
-		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")), 'errors');
-	}
-	if ($_POST["price"] < 0 || $_POST["price"] == '')
-	{
-		if ($price_expression == 'NULL') { //This is not because of using expression instead of numeric price
+		if ($tva_tx == '')
+		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")), 'errors');
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("VATRateForSupplierProduct")), 'errors');
 		}
-		else
+		if (empty($quantity))
 		{
-			$_POST["price"] = 0;
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")), 'errors');
+		}
+		if (empty($ref_fourn))
+		{
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")), 'errors');
+		}
+		if ($id_fourn <= 0)
+		{
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")), 'errors');
+		}
+		if ($_POST["price"] < 0 || $_POST["price"] == '')
+		{
+			if ($price_expression == 'NULL') { //This is not because of using expression instead of numeric price
+				$error++;
+				setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")), 'errors');
+			}
+			else
+			{
+				$_POST["price"] = 0;
+			}
+		}
+
+		$product = new ProductFournisseur($db);
+		$result=$product->fetch($id);
+		if ($result <= 0)
+		{
+			$error++;
+			setEventMessage($product->error, 'errors');
+		}
+
+		if (! $error)
+		{
+			$db->begin();
+
+			if (! $error)
+			{
+				$ret=$product->add_fournisseur($user, $id_fourn, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
+				if ($ret == -3)
+				{
+					$error++;
+
+					$product->fetch($product->product_id_already_linked);
+					$productLink = $product->getNomUrl(1,'supplier');
+
+					setEventMessage($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink), 'errors');
+				}
+				else if ($ret < 0)
+				{
+					$error++;
+					setEventMessage($product->error, 'errors');
+				}
+			}
+
+			if (! $error)
+			{
+				$supplier=new Fournisseur($db);
+				$result=$supplier->fetch($id_fourn);
+				if (isset($_POST['ref_fourn_price_id']))
+					$product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
+
+				$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, $npr);
+				if ($ret < 0)
+				{
+
+					$error++;
+					setEventMessage($product->error, 'errors');
+				}
+				else
+				{
+					if ($price_expression != 'NULL') {
+						//Check the expression validity by parsing it
+						$priceparser = new PriceParser($db);
+						$price_result = $priceparser->parseProductSupplier($id, $price_expression, $quantity, $tva_tx);
+						if ($price_result < 0) { //Expression is not valid
+							$error++;
+							setEventMessage($priceparser->translatedError(), 'errors');
+						}
+					}
+					if (! $error && ! empty($conf->dynamicprices->enabled)) {
+						$ret=$product->setPriceExpression($price_expression);
+						if ($ret < 0)
+						{
+							$error++;
+							setEventMessage($product->error, 'errors');
+						}
+					}
+				}
+			}
+
+			if (! $error)
+			{
+				$db->commit();
+				$action='';
+			}
+			else
+			{
+				$db->rollback();
+			}
 		}
 	}
 
-	$product = new ProductFournisseur($db);
-	$result=$product->fetch($id);
-	if ($result <= 0)
+	if (GETPOST('cancel') == $langs->trans("Cancel"))
 	{
-	    $error++;
-		setEventMessage($product->error, 'errors');
+		$action = '';
+		header("Location: fournisseurs.php?id=".$_GET["id"]);
+		exit;
 	}
-
-	if (! $error)
-    {
-    	$db->begin();
-
-		if (! $error)
-		{
-			$ret=$product->add_fournisseur($user, $id_fourn, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
-			if ($ret == -3)
-			{
-				$error++;
-
-				$product->fetch($product->product_id_already_linked);
-				$productLink = $product->getNomUrl(1,'supplier');
-
-				setEventMessage($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink), 'errors');
-			}
-			else if ($ret < 0)
-			{
-				$error++;
-				setEventMessage($product->error, 'errors');
-			}
-		}
-
-		if (! $error)
-		{
-			$supplier=new Fournisseur($db);
-			$result=$supplier->fetch($id_fourn);
-			if (isset($_POST['ref_fourn_price_id']))
-				$product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
-
-			$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, $npr);
-			if ($ret < 0)
-			{
-				$error++;
-				setEventMessage($product->error, 'errors');
-			} 
-			else 
-			{
-				if ($price_expression != 'NULL') {
-					//Check the expression validity by parsing it
-	                $priceparser = new PriceParser($db);
-	                $price_result = $priceparser->parseProductSupplier($id, $price_expression, $quantity, $tva_tx);
-	                if ($price_result < 0) { //Expression is not valid
-						$error++;
-						setEventMessage($priceparser->translatedError(), 'errors');
-					}
-				}
-				if (! $error && ! empty($conf->dynamicprices->enabled)) {
-					$ret=$product->setPriceExpression($price_expression);
-					if ($ret < 0)
-					{
-						$error++;
-						setEventMessage($product->error, 'errors');
-					}
-				}
-			}
-		}
-
-		if (! $error)
-		{
-			$db->commit();
-			$action='';
-		}
-		else
-		{
-			$db->rollback();
-		}
-    }
 }
-
-if (GETPOST('cancel') == $langs->trans("Cancel"))
-{
-	$action = '';
-	header("Location: fournisseurs.php?id=".$_GET["id"]);
-	exit;
-}
-
 
 
 /*
@@ -398,7 +401,8 @@ if ($id || $ref)
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):'')).'">';
 				print '</td></tr>';
 
-				if (! empty($conf->dynamicprices->enabled)) { //Only show price mode and expression selector if module is enabled
+				if (! empty($conf->dynamicprices->enabled)) //Only show price mode and expression selector if module is enabled
+				{ 
 					// Price mode selector
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceMode").'</td><td>';
 					$price_expression = new PriceExpression($db);
@@ -456,7 +460,7 @@ if ($id || $ref)
 						print '</tr>';
 					}
 				}
-				
+
 				if (is_object($hookmanager))
 				{
 					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$product->id);
@@ -467,7 +471,7 @@ if ($id || $ref)
 
 				print '<br><div class="center">';
 				print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print '&nbsp; &nbsp;';
 				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 
@@ -568,7 +572,7 @@ if ($id || $ref)
 
 						// Charges ????
 						if ($conf->global->PRODUCT_CHARGES)
-						{	
+						{
 							if (! empty($conf->margin->enabled))
 							{
 								print '<td align="right">';
@@ -576,7 +580,7 @@ if ($id || $ref)
 								print '</td>';
 							}
 						}
-						
+
 						// Unit price
 						print '<td align="right">';
 						print price($productfourn->fourn_unitprice);
@@ -598,7 +602,7 @@ if ($id || $ref)
 								print '</td>';
 							}
 						}
-						
+
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$product->id);

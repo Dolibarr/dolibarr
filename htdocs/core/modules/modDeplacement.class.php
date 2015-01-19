@@ -95,17 +95,17 @@ class modDeplacement extends DolibarrModules
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'supprimer';
 
-    	$this->rights[3][0] = 174;
-		$this->rights[3][1] = 'Lire toutes les notes de frais';
-		$this->rights[3][2] = 'd';
-		$this->rights[3][3] = 0;
-		$this->rights[3][4] = 'readall';
+    	$this->rights[4][0] = 174;
+		$this->rights[4][1] = 'Lire toutes les notes de frais';
+		$this->rights[4][2] = 'd';
+		$this->rights[4][3] = 0;
+		$this->rights[4][4] = 'readall';
 
-		$this->rights[6][0] = 178;
-		$this->rights[6][1] = 'Exporter les notes de frais et deplacements';
-		$this->rights[6][2] = 'd';
-		$this->rights[6][3] = 0;
-		$this->rights[6][4] = 'export';
+		$this->rights[5][0] = 178;
+		$this->rights[5][1] = 'Exporter les notes de frais et deplacements';
+		$this->rights[5][2] = 'd';
+		$this->rights[5][3] = 0;
+		$this->rights[5][4] = 'export';
 
 		// Exports
 		$r=0;

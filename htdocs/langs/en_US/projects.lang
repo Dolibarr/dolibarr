@@ -103,6 +103,7 @@ CloneContacts=Clone contacts
 CloneNotes=Clone notes
 CloneProjectFiles=Clone project joined files
 CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
+CloneMoveDate=Update project/tasks dates from now ?
 ConfirmCloneProject=Are you sure to clone this project ?
 ProjectReportDate=Change task date according project start date
 ErrorShiftTaskDate=Impossible to shift task date according to new project start date

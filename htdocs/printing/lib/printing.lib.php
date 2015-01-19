@@ -16,44 +16,54 @@
  */
 
 /**
- *  \file           htdocs/printipp/lib/printipp.lib.php
- *  \ingroup        printipp
- *  \brief          Library for printipp functions
+ *  \file           htdocs/printing/lib/printing.lib.php
+ *  \ingroup        printing
+ *  \brief          Library for printing functions
  */
 
 
 
 /**
- *  Define head array for tabs of printipp tools setup pages
+ *  Define head array for tabs of printing tools setup pages
  *
  *  @return         Array of head
  */
-function printippadmin_prepare_head()
+function printingadmin_prepare_head()
 {
     global $langs, $conf;
 
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/printipp/admin/printipp.php?mode=config";
-    $head[$h][1] = $langs->trans("CupsServer");
+    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=config";
+    $head[$h][1] = $langs->trans("ListDrivers");
     $head[$h][2] = 'config';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT."/printipp/admin/printipp.php?mode=test";
-    $head[$h][1] = $langs->trans("Printer");
+    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=setup";
+    $head[$h][1] = $langs->trans("SetupDriver");
+    $head[$h][2] = 'setup';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=test";
+    $head[$h][1] = $langs->trans("TestDriver");
     $head[$h][2] = 'test';
     $h++;
 
-    $object=new stdClass();
+    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=userconf";
+    $head[$h][1] = $langs->trans("UserConf");
+    $head[$h][2] = 'userconf';
+    $h++;
+
+    //$object=new stdClass();
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);                                                   to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'printippadmin');
+    //complete_head_from_modules($conf,$langs,$object,$head,$h,'printingadmin');
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'printipp','remove');
+    //complete_head_from_modules($conf,$langs,$object,$head,$h,'printing','remove');
 
     return $head;
 }

@@ -2550,21 +2550,18 @@ class Propal extends CommonObject
         {
         	$mybool=false;
 
-		$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
-		foreach ($dirmodels as $reldir)
-		{
-	            $file = $conf->global->PROPALE_ADDON.".php";
-	            $classname = $conf->global->PROPALE_ADDON;
+            $file = $conf->global->PROPALE_ADDON.".php";
+            $classname = $conf->global->PROPALE_ADDON;
 
-	            // Include file with class
-	            foreach ($conf->file->dol_document_root as $dirroot)
-	            {
-	            	$dir = $dirroot.$reldir."/core/modules/propale/";
-	            	// Load file with numbering class (if found)
-	            	$mybool|=@include_once $dir.$file;
-	            }
-		}
+            // Include file with class
+            $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+            foreach ($dirmodels as $reldir) {
 
+                $dir = dol_buildpath($reldir."core/modules/propale/");
+
+                // Load file with numbering class (if found)
+                $mybool|=@include_once $dir.$file;
+            }
 
             if (! $mybool)
             {
@@ -2581,14 +2578,14 @@ class Propal extends CommonObject
                 return $numref;
             }
             else
-            {
+			{
                 $this->error=$obj->error;
                 //dol_print_error($db,"Propale::getNextNumRef ".$obj->error);
                 return "";
             }
         }
         else
-        {
+		{
             $langs->load("errors");
             print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
             return "";

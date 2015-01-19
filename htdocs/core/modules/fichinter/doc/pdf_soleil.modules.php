@@ -106,7 +106,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
-		global $user,$langs,$conf,$mysoc;
+		global $conf, $hookmanager, $langs, $user;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO

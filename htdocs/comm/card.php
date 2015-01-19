@@ -66,6 +66,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
+$cancelbutton = GETPOST('cancel');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('commcard','globalcard'));
@@ -80,12 +81,14 @@ $parameters = array('socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-//Some actions show a "cancel" input submit button with name="cancel"
-$cancelbutton = GETPOST('cancel');
-
-if ($action == 'setcustomeraccountancycode')
+if (empty($reshook))
 {
-	if (! $cancelbutton) 
+	if ($cancelbutton)
+	{
+		$action="";
+	}
+
+	if ($action == 'setcustomeraccountancycode')
 	{
 		$result=$object->fetch($id);
 		$object->code_compta=$_POST["customeraccountancycode"];
@@ -95,57 +98,52 @@ if ($action == 'setcustomeraccountancycode')
 			setEventMessage($object->errors, 'errors');
 		}
 	}
-	$action="";
-}
 
-// conditions de reglement
-if ($action == 'setconditions' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-// mode de reglement
-if ($action == 'setmode' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-// assujetissement a la TVA
-if ($action == 'setassujtva' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$object->tva_assuj=$_POST['assujtva_value'];
+	// conditions de reglement
+	if ($action == 'setconditions' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
 
-	// TODO move to DAO class
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE rowid='".$id."'";
-	$result = $db->query($sql);
-	if (! $result) dol_print_error($result);
-}
+	// mode de reglement
+	if ($action == 'setmode' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
 
-// set prospect level
-if ($action == 'setprospectlevel' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
-	$result=$object->set_prospect_level($user);
-	if ($result < 0) setEventMessage($object->error,'errors');
-}
+	// assujetissement a la TVA
+	if ($action == 'setassujtva' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$object->tva_assuj=$_POST['assujtva_value'];
+		$result=$object->update($object->id);
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
 
-// Update communication level
-if ($action == 'cstc')
-{
-	$object->fetch($id);
-	$object->stcomm_id=GETPOST('stcomm','int');
-	$result=$object->set_commnucation_level($user);
-	if ($result < 0) setEventMessage($object->error,'errors');
-}
+	// set prospect level
+	if ($action == 'setprospectlevel' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
+		$result=$object->set_prospect_level($user);
+		if ($result < 0) setEventMessage($object->error,'errors');
+	}
 
-// Update communication level
-if ($action == 'setOutstandingBill')
-{
-	if (!$cancelbutton) 
+	// update prospect level
+	if ($action == 'cstc')
+	{
+		$object->fetch($id);
+		$object->stcomm_id=GETPOST('stcomm','int');
+		$result=$object->set_commnucation_level($user);
+		if ($result < 0) setEventMessage($object->error,'errors');
+	}
+
+	// update outstandng limit
+	if ($action == 'setOutstandingBill')
 	{
 		$object->fetch($id);
 		$object->outstanding_limit=GETPOST('OutstandingBill');
@@ -159,13 +157,23 @@ if ($action == 'setOutstandingBill')
  * View
  */
 
-llxHeader('',$langs->trans('CustomerCard'));
-
-
 $contactstatic = new Contact($db);
 $userstatic=new User($db);
 $form = new Form($db);
 $formcompany=new FormCompany($db);
+
+if ($id > 0 && empty($object->id))
+{
+	// Load data of third party
+	$res=$object->fetch($id);
+	if ($object->id <= 0) dol_print_error($db,$object->error);
+}
+
+$title=$langs->trans("CustomerCard");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$title,$help_url);
+
 
 
 if ($mode == 'search')
@@ -196,14 +204,6 @@ if ($mode == 'search')
 
 if ($id > 0)
 {
-	// Load data of third party
-	$object->fetch($id);
-	if ($object->id <= 0)
-	{
-		dol_print_error($db,$object->error);
-	}
-
-
 	$head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"),0,'company');

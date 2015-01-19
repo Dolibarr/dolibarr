@@ -320,7 +320,7 @@ if (($action=="create") || ($action=="edit")) {
     print $langs->trans('CronEvery')."</td>";
     print "<td><select name=\"nbfrequency\">";
     for($i=1; $i<=60; $i++) {
-        if(($object->frequency/$object->unitfrequency) == $i) {
+        if (! empty($object->unitfrequency) && ($object->frequency/$object->unitfrequency) == $i) {
             print "<option value='".$i."' selected='selected'>".$i."</option>";
         } else {
             print "<option value='".$i."'>".$i."</option>";
@@ -607,6 +607,7 @@ if (($action=="create") || ($action=="edit")) {
         print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&id='.$object->id.'">'.$langs->trans("CronExecute").'</a>';
     }
     print '<br><br></div>';
+
 }
 
 

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2014   Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,5 +22,15 @@
  *	\brief      Page d'index du module margin
  */
 
-require 'productMargins.php';
+require '../main.inc.php';
+
+if ($user->rights->produit->lire) {
+	$page = 'productMargins';
+} elseif ($user->rights->societe->lire) {
+	$page = 'customerMargins';
+} else {
+	$page = 'agentMargins';
+}
+
+header('Location: '.dol_buildpath('/margin/'.$page.'.php', 1));
 

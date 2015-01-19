@@ -26,7 +26,47 @@ create table llx_c_price_expression
   expression    varchar(80) NOT NULL
 )ENGINE=innodb;
 
+--create table for user conf of printing driver
+CREATE TABLE llx_printing 
+(
+ rowid integer AUTO_INCREMENT PRIMARY KEY,
+ tms timestamp,
+ datec datetime,
+ printer_name text NOT NULL, 
+ printer_location text NOT NULL,
+ printer_id varchar(255) NOT NULL,
+ copy integer NOT NULL DEFAULT '1',
+ module varchar(16) NOT NULL,
+ driver varchar(16) NOT NULL,
+ userid integer
+)ENGINE=innodb;
+
 ALTER TABLE llx_product_fournisseur_price ADD fk_price_expression integer DEFAULT NULL;
 
 -- Taiwan VAT Rates
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213, '5', '0', 'VAT 5%', 1);
+
+-- Add situation invoices
+ALTER TABLE llx_facture ADD COLUMN situation_cycle_ref smallint;
+ALTER TABLE llx_facture ADD COLUMN situation_counter smallint;
+ALTER TABLE llx_facture ADD COLUMN situation_final smallint;
+ALTER TABLE llx_facturedet ADD COLUMN situation_percent real;
+ALTER TABLE llx_facturedet ADD COLUMN fk_prev_id integer;
+
+-- Convert SMTP config to main entity, so new entities don't get the old values
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SENDMODE";
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTP_PORT";
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTP_SERVER";
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTPS_ID";
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTPS_PW";
+UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_EMAIL_TLS";
+
+
+create table llx_bank_account_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+

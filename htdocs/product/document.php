@@ -73,16 +73,20 @@ if ($id > 0 || ! empty($ref))
 }
 $modulepart='produit';
 
+
+/*
+ * Actions
+ */
+
 $parameters=array('id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-
-/*
- * Action envoie fichier
- */
-
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+if (empty($reshook))
+{
+	// Action sending file
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_pre_headers.tpl.php';
+}
 
 
 /*
