@@ -3,6 +3,7 @@
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
