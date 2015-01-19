@@ -1437,71 +1437,83 @@ class Task extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
-    /**
-     * Is the task having a delay?
-     * Requires: $this->date_end to be defined.
-     * Also it requires $conf->projet->tasks->warning_delay to be set
-     *
-     * @return bool
-     */
-    public function hasDelay()
-    {
-        global $conf;
+	/**
+	 * Is the task having a delay?
+	 * Requires: $this->date_end to be defined.
+	 * Also it requires $conf->projet->tasks->warning_delay to be set
+	 *
+	 * @return bool
+	 */
+	public function hasDelay()
+	{
+		global $conf;
 
-        if (!$this->date_end || !$conf->projet->warning_delay) {
-            return false;
-        }
+		if (!$this->date_end || !$conf->projet->warning_delay) {
+			return false;
+		}
 
-        $now = dol_now();
+		$now = dol_now();
 
-        if ($this->date_end < ($now - $conf->projet->tasks->warning_delay)) {
-            return true;
-        }
+		if ($this->date_end < ($now - $conf->projet->tasks->warning_delay)) {
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *
-     *      @param	User	$user        		Objet user
-     *      @return int         				<0 if KO, 0=Nothing to show, >0 if OK
-     */
-    public function load_board(User $user)
-    {
-        global $conf;
+	/**
+	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 * @param User $user Objet user
+	 * @return int <0 if KO, 0=Nothing to show, >0 if OK
+	 * @deprecated Use loadBoard if possible
+	 */
+	public function load_board(User $user)
+	{
+		return $this->loadBoard($user);
+	}
 
-        if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+	/**
+	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 *      @param	User	$user        		Objet user
+	 *      @return int         				<0 if KO, 0=Nothing to show, >0 if OK
+	 */
+	public function loadBoard(User $user)
+	{
+		global $conf;
 
-        $this->nbtodo=$this->nbtodolate=0;
+		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
 
-        $sql = "SELECT t.fk_statut, t.datee";
-        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t,";
-        $sql.= " ".MAIN_DB_PREFIX."projet as p";
-        $sql.= " WHERE p.rowid = t.fk_projet AND t.entity = ".$conf->entity;
-        $sql.= " AND p.fk_statut = 1";
+		$this->nbtodo=$this->nbtodolate=0;
 
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $num=$this->db->num_rows($resql);
-            while ($obj=$this->db->fetch_object($resql))
-            {
-                $this->nbtodo++;
+		$sql = "SELECT t.fk_statut, t.datee";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t,";
+		$sql.= " ".MAIN_DB_PREFIX."projet as p";
+		$sql.= " WHERE p.rowid = t.fk_projet AND t.entity = ".$conf->entity;
+		$sql.= " AND p.fk_statut = 1";
 
-                $this->date_end = $obj->datee;
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num=$this->db->num_rows($resql);
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nbtodo++;
 
-                if ($this->hasDelay()) {
-                    $this->nbtodolate++;
-                }
-            }
-            return $num;
-        }
-        else
-        {
-            dol_print_error($this->db);
-            $this->error=$this->db->error();
-            return -1;
-        }
-    }
+				$this->date_end = $obj->datee;
+
+				if ($this->hasDelay()) {
+					$this->nbtodolate++;
+				}
+			}
+			return $num;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 }
