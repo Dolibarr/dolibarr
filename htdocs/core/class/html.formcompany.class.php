@@ -588,15 +588,17 @@ class FormCompany
 							function(response) {
 								if (response != null)
 								{
+									var num = response.num;
+
 									$.each(obj.params, function(key,action) {
 										if (key.length) {
-											var num = response.num;
 											if (num > 0) {
 												$("#" + key).removeAttr(action);
 											} else {
 												$("#" + key).attr(action, action);
 											}
-										}
+										} else {
+											var num = 0;
 										if (response.num) {
 
 											var selected = $("select#" + htmlname+ " option:first");
