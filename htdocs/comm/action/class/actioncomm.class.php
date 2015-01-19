@@ -118,6 +118,13 @@ class ActionComm extends CommonObject
         $error=0;
         $now=dol_now();
 
+        // Check parameters
+        if (empty($this->userownerid)) 
+        {
+        	$this->errors[]='ErrorPropertyUserowneridNotDefined';
+        	return -1;
+        }
+        
         // Clean parameters
         $this->label=dol_trunc(trim($this->label),128);
         $this->location=dol_trunc(trim($this->location),128);
@@ -147,8 +154,9 @@ class ActionComm extends CommonObject
         $userownerid=$this->userownerid;
         $userdoneid=$this->userdoneid;
 
-        // Be sure assigned user array is not empty.
-        if (count($this->userassigned) == 0) $this->userassigned[] = array('id'=>$userownerid);
+        // Be sure assigned user is defined as an array of array('id'=>,'mandatory'=>,...).
+        if (empty($this->userassigned) || count($this->userassigned) == 0 || ! is_array($this->userassigned)) 
+        	$this->userassigned = array($userownerid=>array('id'=>$userownerid));
         
         if (! $this->type_id || ! $this->type_code)
         {
@@ -235,6 +243,12 @@ class ActionComm extends CommonObject
 			{
 				foreach($this->userassigned as $key => $val)
 				{
+			        if (! is_array($val))	// For backward compatibility when valid
+			        {
+			        	$tmpid=$val;
+			        	$val=array('id'=>$val);
+			        }
+					
 					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['mandatory']?$val['mandatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
 

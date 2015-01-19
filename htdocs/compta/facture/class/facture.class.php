@@ -202,17 +202,6 @@ class Facture extends CommonInvoice
 		if (! $this->cond_reglement_id) $this->cond_reglement_id = 0;
 		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 		$this->brouillon = 1;
-		if (empty($this->situation_cycle_ref)) {
-			$this->situation_cycle_ref = 'null';
-		}
-
-		if (empty($this->situation_counter)) {
-			$this->situation_counter = 'null';
-		}
-
-		if (empty($this->situation_final)) {
-			$this->situation_final = '0';
-		}
 
 		dol_syslog(get_class($this)."::create user=".$user->id);
 
@@ -301,12 +290,12 @@ class Facture extends CommonInvoice
 		$sql.= ",".($this->fk_facture_source?"'".$this->db->escape($this->fk_facture_source)."'":"null");
 		$sql.= ",".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql.= ",".($this->fk_project?$this->fk_project:"null");
-		$sql.= ','.$this->cond_reglement_id;
-		$sql.= ",".$this->mode_reglement_id;
+		$sql.= ", ".$this->cond_reglement_id;
+		$sql.= ", ".$this->mode_reglement_id;
 		$sql.= ", '".$this->db->idate($datelim)."', '".$this->modelpdf."'";
-		$sql.= ", ".$this->situation_cycle_ref;
-		$sql.= ", ".$this->situation_counter;
-		$sql.= ", ".$this->situation_final;
+		$sql.= ", ".($this->situation_cycle_ref?"'".$this->db->escape($this->situation_cycle_ref)."'":"null");
+		$sql.= ", ".($this->situation_counter?"'".$this->db->escape($this->situation_counter)."'":"null");
+		$sql.= ", ".($this->situation_final?$this->situation_final:0);
 		$sql.=")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -2027,7 +2016,7 @@ class Facture extends CommonInvoice
 	 *      @param      int         $fk_prev_id         Previous situation line id reference
 	 *    	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_option=0, $situation_percent=0, $fk_prev_id='')
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_option=0, $situation_percent=100, $fk_prev_id='')
 	{
 		global $mysoc, $conf, $langs;
 
@@ -2335,11 +2324,10 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 * Update_percent
-	 * 
+	 * Update invoice line with percentage
+	 *
 	 * @param FactureLigne $line Invoice line
-	 * @param int $percent percent
-	 * 
+	 * @param int $percent Percentage
 	 * @return void
 	 */
 	function update_percent($line, $percent)
@@ -2610,14 +2598,19 @@ class Facture extends CommonInvoice
 		else if ($conf->global->FACTURE_ADDON=='terre') $conf->global->FACTURE_ADDON='mod_facture_terre';
 		else if ($conf->global->FACTURE_ADDON=='mercure') $conf->global->FACTURE_ADDON='mod_facture_mercure';
 
+		if (! empty($conf->global->FACTURE_ADDON))
+		{
 		$mybool=false;
 
 		$file = $conf->global->FACTURE_ADDON.".php";
 		$classname = $conf->global->FACTURE_ADDON;
 		// Include file with class
-		foreach ($conf->file->dol_document_root as $dirroot)
-		{
-			$dir = $dirroot."/core/modules/facture/";
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+			foreach ($dirmodels as $reldir) {
+
+				$dir = dol_buildpath($reldir."core/modules/facture/");
+
 			// Load file with numbering class (if found)
 			$mybool|=@include_once $dir.$file;
 		}
@@ -2636,7 +2629,6 @@ class Facture extends CommonInvoice
 				$mybool|=@include_once $dir.$file;
 			}
 		}
-		//print "xx".$mybool.$dir.$file."-".$classname;
 
 		if (! $mybool)
 		{
@@ -2646,7 +2638,7 @@ class Facture extends CommonInvoice
 
 		$obj = new $classname();
 		$numref = "";
-		$numref = $obj->getNumRef($soc,$this,$mode);
+			$numref = $obj->getNextValue($soc,$this,$mode);
 
 		if ($numref != "")
 		{
@@ -2654,8 +2646,15 @@ class Facture extends CommonInvoice
 		}
 		else
 		{
-			//dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
-			return false;
+				dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
+				return "";
+			}
+		}
+		else
+		{
+			$langs->load("errors");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			return "";
 		}
 	}
 
@@ -3455,7 +3454,7 @@ class Facture extends CommonInvoice
 	/**
 	 * Checks if the invoice is the first of a cycle
 	 *
-	 *	@return boolean ($this->situation_counter == 1)
+	 * @return boolean
 	 */
 	function is_first()
 	{
@@ -3465,7 +3464,7 @@ class Facture extends CommonInvoice
 	/**
 	 * Returns an array containing the previous situations as Facture objects
 	 *
-	 * @return array array of prev_sits
+	 * @return mixed -1 if error, array of previous situations
 	 */
 	function get_prev_sits()
 	{

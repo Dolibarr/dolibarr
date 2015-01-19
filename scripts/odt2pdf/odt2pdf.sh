@@ -1,8 +1,12 @@
 #!/bin/bash
 # @copyright  GPL License 2010 -  Vikas Mahajan - http://vikasmahajan.wordpress.com
 # @copyright  GPL License 2013 -  Florian HEnry - florian.henry@open-concept.pro
-
 #
+# Convert an ODT into a PDF using "jodconverter" tool.
+# Dolibarr variable MAIN_ODT_AS_PDF must be defined to have this script called after ODT generation.
+# Dolibarr variable MAIN_DOL_SCRIPTS_ROOT must be defined to path of script directories (otherwise dolibarr will try to guess).
+ 
+
 #if [ -f "$1.odt" ]
 # then
 #    soffice --invisible --convert-to pdf:writer_pdf_Export --outdir $2 "$1.odt"

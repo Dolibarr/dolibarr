@@ -103,7 +103,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 			else	// Id du contact
 			{
-				$sendto = $thirdparty->contact_get_property($_POST['receiver'],'email');
+				$sendto = $thirdparty->contact_get_property((int) $_POST['receiver'],'email');
 				$sendtoid = $_POST['receiver'];
 			}
 		}
@@ -120,7 +120,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 			else	// Id du contact
 			{
-				$sendtocc = $thirdparty->contact_get_property($_POST['receivercc'],'email');
+				$sendtocc = $thirdparty->contact_get_property((int) $_POST['receivercc'],'email');
 			}
 		}
 
