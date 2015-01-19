@@ -1002,16 +1002,17 @@ class Project extends CommonObject
 	  *	@param	bool	$clone_project_file		clone file of project
 	  *	@param	bool	$clone_task_file		clone file of task (if task are copied)
       *	@param	bool	$clone_note		clone note of project
+      * @param	bool	$move_date		move task date on clone
       *	@param	bool	$notrigger		no trigger flag
 	  * @return	int						New id of clone
 	  */
-	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$notrigger=0)
+	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$move_date=true,$notrigger=0)
 	{
 		global $user,$langs,$conf;
 
 		$error=0;
 
-		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note);
+		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note." move_date=".$move_date,LOG_DEBUG);
 
 		$now = dol_mktime(0,0,0,idate('m',dol_now()),idate('d',dol_now()),idate('Y',dol_now()));
 
@@ -1027,11 +1028,13 @@ class Project extends CommonObject
 		$orign_project_ref=$clone_project->ref;
 
 		$clone_project->id=0;
-        $clone_project->date_start = $now;
-        if (!(empty($clone_project->date_end)))
-        {
-        	$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
-        }
+		if ($move_date) {
+	        $clone_project->date_start = $now;
+	        if (!(empty($clone_project->date_end)))
+	        {
+	        	$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
+	        }
+		}
 
         $clone_project->datec = $now;
 
@@ -1185,7 +1188,7 @@ class Project extends CommonObject
 
 			    foreach ($tasksarray as $tasktoclone)
 			    {
-					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,true,true,false,$clone_task_file,true,false);
+					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,$move_date,true,false,$clone_task_file,true,false);
 					if ($result_clone <= 0)
 				    {
 				    	$this->error.=$result_clone->error;
