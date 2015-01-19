@@ -151,13 +151,14 @@ class ActionComm extends CommonObject
         	$this->userassigned=array();
         	$this->userassigned[$tmpid]=array('id'=>$tmpid);
         }
+
         $userownerid=$this->userownerid;
         $userdoneid=$this->userdoneid;
 
         // Be sure assigned user is defined as an array of array('id'=>,'mandatory'=>,...).
         if (empty($this->userassigned) || count($this->userassigned) == 0 || ! is_array($this->userassigned)) 
         	$this->userassigned = array($userownerid=>array('id'=>$userownerid));
-        
+
         if (! $this->type_id || ! $this->type_code)
         {
         	$key=empty($this->type_id)?$this->type_code:$this->type_id;
@@ -243,7 +244,7 @@ class ActionComm extends CommonObject
 			{
 				foreach($this->userassigned as $key => $val)
 				{
-			        if (! is_array($val))	// For backward compatibility when valid
+			        if (! is_array($val))	// For backward compatibility when val=id
 			        {
 			        	$tmpid=$val;
 			        	$val=array('id'=>$val);

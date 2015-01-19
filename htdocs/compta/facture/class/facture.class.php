@@ -279,17 +279,17 @@ class Facture extends CommonInvoice
 		$sql.= ", '".$this->type."'";
 		$sql.= ", '".$socid."'";
 		$sql.= ", '".$this->db->idate($now)."'";
-		$sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
-		$sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
+		$sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
+		$sql.= ", ".($this->remise_percent>0?$this->remise_percent:'NULL');
 		$sql.= ", '".$this->db->idate($this->date)."'";
-		$sql.= ",".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
-		$sql.= ",".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
-		$sql.= ",".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
-		$sql.= ",".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
+		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
+		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= ", ".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
+		$sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
 		$sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
-		$sql.= ",".($this->fk_facture_source?"'".$this->db->escape($this->fk_facture_source)."'":"null");
-		$sql.= ",".($user->id > 0 ? "'".$user->id."'":"null");
-		$sql.= ",".($this->fk_project?$this->fk_project:"null");
+		$sql.= ", ".($this->fk_facture_source?"'".$this->db->escape($this->fk_facture_source)."'":"null");
+		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
+		$sql.= ", ".($this->fk_project?$this->fk_project:"null");
 		$sql.= ", ".$this->cond_reglement_id;
 		$sql.= ", ".$this->mode_reglement_id;
 		$sql.= ", '".$this->db->idate($datelim)."', '".$this->modelpdf."'";
@@ -2537,9 +2537,9 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 * Return amount (with tax) of all credit notes and deposits invoices used by invoice
+	 *    	Return amount (with tax) of all credit notes and deposits invoices used by invoice
 	 *
-	 * @return		int			<0 if KO, Sum of credit notes and deposits amount otherwise
+	 *		@return		int			<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	function getSumCreditNotesUsed()
 	{
@@ -2559,9 +2559,9 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 * Return amount (with tax) of all deposits invoices used by invoice
+	 *    	Return amount (with tax) of all deposits invoices used by invoice
 	 *
-	 * @return		int			<0 if KO, Sum of deposits amount otherwise
+	 *		@return		int			<0 if KO, Sum of deposits amount otherwise
 	 */
 	function getSumDepositsUsed()
 	{
@@ -2600,52 +2600,53 @@ class Facture extends CommonInvoice
 
 		if (! empty($conf->global->FACTURE_ADDON))
 		{
-		$mybool=false;
+			$mybool=false;
 
-		$file = $conf->global->FACTURE_ADDON.".php";
-		$classname = $conf->global->FACTURE_ADDON;
-		// Include file with class
+			$file = $conf->global->FACTURE_ADDON.".php";
+			$classname = $conf->global->FACTURE_ADDON;
+
+			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
 
 				$dir = dol_buildpath($reldir."core/modules/facture/");
 
-			// Load file with numbering class (if found)
-			$mybool|=@include_once $dir.$file;
-		}
-
-		// For compatibility
-		if (! $mybool)
-		{
-			$file = $conf->global->FACTURE_ADDON."/".$conf->global->FACTURE_ADDON.".modules.php";
-			$classname = "mod_facture_".$conf->global->FACTURE_ADDON;
-			$classname = preg_replace('/\-.*$/','',$classname);
-			// Include file with class
-			foreach ($conf->file->dol_document_root as $dirroot)
-			{
-				$dir = $dirroot."/core/modules/facture/";
 				// Load file with numbering class (if found)
 				$mybool|=@include_once $dir.$file;
 			}
-		}
 
-		if (! $mybool)
-		{
-			dol_print_error('',"Failed to include file ".$file);
-			return '';
-		}
+			// For compatibility
+			if (! $mybool)
+			{
+				$file = $conf->global->FACTURE_ADDON."/".$conf->global->FACTURE_ADDON.".modules.php";
+				$classname = "mod_facture_".$conf->global->FACTURE_ADDON;
+				$classname = preg_replace('/\-.*$/','',$classname);
+				// Include file with class
+				foreach ($conf->file->dol_document_root as $dirroot)
+				{
+					$dir = $dirroot."/core/modules/facture/";
+					// Load file with numbering class (if found)
+					$mybool|=@include_once $dir.$file;
+				}
+			}
 
-		$obj = new $classname();
-		$numref = "";
+			if (! $mybool)
+			{
+				dol_print_error('',"Failed to include file ".$file);
+				return '';
+			}
+
+			$obj = new $classname();
+			$numref = "";
 			$numref = $obj->getNextValue($soc,$this,$mode);
 
-		if ($numref != "")
-		{
-			return $numref;
-		}
-		else
-		{
+			if ($numref != "")
+			{
+				return $numref;
+			}
+			else
+			{
 				dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
 				return "";
 			}
