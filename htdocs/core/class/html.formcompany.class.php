@@ -599,7 +599,7 @@ class FormCompany
 											}
 										} else {
 											var num = 0;
-										if (response.num) {
+										if (num) {
 
 											var selected = $("select#" + htmlname+ " option:first");
 
