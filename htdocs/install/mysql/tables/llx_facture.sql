@@ -78,8 +78,8 @@ create table llx_facture
   import_key			varchar(14),
   extraparams			varchar(255),							-- for stock other parameters with json format
 
-  situation_cycle_ref smallint UNSIGNED,  -- situation cycle reference
-  situation_counter   tinyint UNSIGNED,   -- situation counter
-  situation_final     boolean             -- is the situation final ?
+  situation_cycle_ref smallint,  -- situation cycle reference
+  situation_counter   smallint,  -- situation counter
+  situation_final     smallint   -- is the situation final ?
 
 )ENGINE=innodb;
