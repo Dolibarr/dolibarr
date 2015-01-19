@@ -548,7 +548,7 @@ class Task extends CommonObject
      * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
      * @param	string	$filteronprojref	Filter on project ref
      * @param	string	$filteronprojstatus	Filter on project status
-     * @param   int     $filter_delay
+     * @param   int     $filter_delay       Filter only due tasks
      * @return 	array						Array of tasks
      */
     function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $filter_delay = 0)
