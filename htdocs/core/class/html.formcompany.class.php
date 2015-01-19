@@ -596,7 +596,6 @@ class FormCompany
 											} else {
 												$("#" + key).attr(action, action);
 											}
-											console.log(htmlname);
 										}
 										if (response.num) {
 
