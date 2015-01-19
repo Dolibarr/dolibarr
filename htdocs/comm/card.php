@@ -531,11 +531,13 @@ if ($id > 0)
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
-				print '<td class="nowrap"><a href="propal.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a>'."\n";
-				if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 )
-				{
-					print " ".img_warning();
-				}
+                print '<td class="nowrap">';
+                $propal_static->id=$objp->propalid;
+                $propal_static->ref=$objp->ref;
+                print $propal_static->getNomUrl(1);
+                if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 ) {
+                    print " ".img_warning();
+                }
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td align="right" style="min-width: 60px" class="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
@@ -606,7 +608,10 @@ if ($id > 0)
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
-				print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
+                print '<td class="nowrap">';
+                $commande_static->id=$objp->cid;
+                $commande_static->ref=$objp->ref;
+                print $commande_static->getNomUrl(1);
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td align="right" style="min-width: 60px" class="nowrap">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
