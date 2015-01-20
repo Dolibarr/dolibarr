@@ -325,8 +325,12 @@ if (empty($reshook))
 								}
 							}
 
+						    if (!empty($conf->global->MAILING_DELAY))
+						    {
+                            	sleep($conf->global->MAILING_DELAY);
+                        	}
 
-							//test if CHECK READ change statut prospect contact
+                        	//test if CHECK READ change statut prospect contact
 						}
 						else
 						{
