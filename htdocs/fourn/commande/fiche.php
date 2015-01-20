@@ -530,7 +530,8 @@ else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fou
             }
             
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-                supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+            	$ret=$object->fetch($object->id);    // Reload to get new records
+            	supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             }
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
             exit;
@@ -569,7 +570,8 @@ else if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fo
         }
         
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        	$ret=$object->fetch($object->id);    // Reload to get new records
+        	supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
         header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
         exit;
