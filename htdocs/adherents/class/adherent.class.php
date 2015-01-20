@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +125,7 @@ class Adherent extends CommonObject
 
 
     /**
-     *  Fonction envoyant un email a l'adherent avec le texte fourni en parametre.
+     *  Function sending an email has the adherent with the text supplied in parameter.
      *
      *  @param	string	$text				Content of message (not html entities encoded)
      *  @param	string	$subject			Subject of message
@@ -247,9 +248,9 @@ class Adherent extends CommonObject
 
 
     /**
-     *	Renvoie le libelle traduit de la nature d'un adherent (physique ou morale)
+     *	Return translated label by the nature of a adherent (physical or moral)
      *
-     *	@param	string		$morphy		Nature physique ou morale de l'adherent
+     *	@param	string		$morphy		Nature of the adherent (physical or moral)
      *	@return	string					Label
      */
     function getmorphylib($morphy='')
@@ -348,12 +349,12 @@ class Adherent extends CommonObject
 
                 if (! $notrigger)
                 {
-                    // Appel des triggers
+                    // Call triggers
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                    // Fin appel triggers
+                    // End call triggers
                 }
 
                 if (count($this->errors))
@@ -1101,7 +1102,7 @@ class Adherent extends CommonObject
                 $this->ref				= $obj->rowid;
                 $this->id				= $obj->rowid;
                 $this->ref_ext			= $obj->ref_ext;
-                $this->civility_id		= $obj->civility;
+                $this->civility_id		= $obj->civility_id;
                 $this->firstname		= $obj->firstname;
                 $this->lastname			= $obj->lastname;
                 $this->login			= $obj->login;

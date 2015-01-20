@@ -39,6 +39,7 @@ require_once '../main.inc.php';
 
 if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));	// If language was forced on URL by the main.inc.php
 $langs->load("main");
+$langs->load("agenda");
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 
@@ -57,7 +58,7 @@ if (GETPOST('mode') && GETPOST('mode') == 'test')
 }
 else
 {
-	print '<title>Calendar</title>';
+	print '<title>'.$langs->trans("Calendar").'</title>';
 }
 
 // Define tradMonths javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)

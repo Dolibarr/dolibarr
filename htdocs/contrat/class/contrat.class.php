@@ -1,12 +1,12 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Destailleur Laurent		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ class Contrat extends CommonObject
 	public $table_element='contrat';
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
 	var $ref;
@@ -91,23 +92,31 @@ class Contrat extends CommonObject
 		global $db, $langs, $conf;
 		$langs->load("contracts");
 
-		$dir = DOL_DOCUMENT_ROOT . "/core/modules/contract";
-
-		if (empty($conf->global->CONTRACT_ADDON))
+		if (!empty($conf->global->CONTRACT_ADDON))
 		{
-		    $conf->global->CONTRACT_ADDON='mod_contract_serpis';
-		}
+			$mybool = false;
 
-		$file = $conf->global->CONTRACT_ADDON.".php";
+			$file = $conf->global->CONTRACT_ADDON.".php";
+			$classname = $conf->global->CONTRACT_ADDON;
 
-		// Chargement de la classe de numerotation
-		$classname = $conf->global->CONTRACT_ADDON;
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-		$result=include_once $dir.'/'.$file;
-		if ($result)
-		{
+			foreach ($dirmodels as $reldir) {
+
+				$dir = dol_buildpath($reldir."core/modules/contract/");
+
+				// Load file with numbering class (if found)
+				$mybool|=@include_once $dir.$file;
+			}
+
+			if (! $mybool)
+			{
+				dol_print_error('',"Failed to include file ".$file);
+				return '';
+			}
+
 			$obj = new $classname();
-
 			$numref = "";
 			$numref = $obj->getNextValue($soc,$this);
 
@@ -117,15 +126,17 @@ class Contrat extends CommonObject
 			}
 			else
 			{
+				$this->error = $obj->error;
 				dol_print_error($db,get_class($this)."::getNextValue ".$obj->error);
 				return "";
 			}
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("Error_CONTRACT_ADDON_NotDefined");
+			$langs->load("errors");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
 			return "";
-			}
+		}
 	}
 
 	/**

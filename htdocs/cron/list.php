@@ -100,6 +100,21 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 	if ($result < 0) {
 		setEventMessage($object->error,'errors');
 	}
+	else 
+	{
+		$res = $object->reprogram_jobs($user->login);
+		if ($res > 0)
+		{
+			if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
+			else setEventMessage($langs->trans("JobFinished"),'mesgs');
+			$action='';
+		}
+		else
+		{
+			setEventMessage($object->error,'errors');
+			$action='';
+		}
+	}
 
 	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-1');		// Make a call to avoid to run twice job when using back
 	exit;

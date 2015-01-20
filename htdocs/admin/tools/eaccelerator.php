@@ -350,4 +350,3 @@ print "<br><br>";
 llxFooter();
 
 $db->close();
-?>

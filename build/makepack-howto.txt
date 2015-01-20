@@ -36,14 +36,13 @@ complete release of Dolibarr, step by step.
 - Update version number with x.y.z in build/exe/doliwamp/doliwamp.iss
 - Update version number with x.y.z in build/rpm/*.spec
 - Commit all changes.
-- Add a Tag (x.y.z)
 
 - Build Dolibarr and DoliWamp packages with makepack-dolibarr.pl
 - Check content of built packages.
 - Move build files into www.dolibarr.org web site
   (/home/dolibarr/wwwroot/files/stable).
 - Run makepack-dolibarr.pl again with option to publish files on 
-  sourceforge.
+  sourceforge. This will also add official tag.
 - Edit symbolic links in directory "/home/dolibarr/wwwroot/files/stable/xxx"
   on server to point to new files (used by some web sites).
 

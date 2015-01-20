@@ -853,17 +853,17 @@ function unActivateModule($value, $requiredby=1)
 /**
  *  Add external modules to list of dictionaries
  *
- * 	@param		array		&$taborder			Taborder
- * 	@param		array		&$tabname			Tabname
- * 	@param		array		&$tablib			Tablib
- * 	@param		array		&$tabsql			Tabsql
- * 	@param		array		&$tabsqlsort		Tabsqlsort
- * 	@param		array		&$tabfield			Tabfield
- * 	@param		array		&$tabfieldvalue		Tabfieldvalue
- * 	@param		array		&$tabfieldinsert	Tabfieldinsert
- * 	@param		array		&$tabrowid			Tabrowid
- * 	@param		array		&$tabcond			Tabcond
- * 	@param		array		&$tabhelp			Tabhelp
+ * 	@param		array		$taborder			Taborder
+ * 	@param		array		$tabname			Tabname
+ * 	@param		array		$tablib			Tablib
+ * 	@param		array		$tabsql			Tabsql
+ * 	@param		array		$tabsqlsort		Tabsqlsort
+ * 	@param		array		$tabfield			Tabfield
+ * 	@param		array		$tabfieldvalue		Tabfieldvalue
+ * 	@param		array		$tabfieldinsert	Tabfieldinsert
+ * 	@param		array		$tabrowid			Tabrowid
+ * 	@param		array		$tabcond			Tabcond
+ * 	@param		array		$tabhelp			Tabhelp
  * 	@return		int			1
  */
 function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond,&$tabhelp)

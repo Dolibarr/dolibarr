@@ -50,7 +50,7 @@ $projectstatic = new Project($db);
 
 /*
  * Actions
-*/
+ */
 
 if ($action == 'addtimespent' && $user->rights->projet->creer)
 {
@@ -72,7 +72,7 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 
 	if (! $error)
 	{
-		$object->fetch($id);
+		$object->fetch($id, $ref);
 
 		$object->timespent_note = $_POST["timespent_note"];
 		$object->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
@@ -109,7 +109,7 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 
 	if (! $error)
 	{
-		$object->fetch($id);
+		$object->fetch($id, $ref);
 
 		$object->timespent_id = $_POST["lineid"];
 		$object->timespent_note = $_POST["timespent_note_line"];
@@ -171,7 +171,7 @@ if (! empty($project_ref) && ! empty($withproject))
 
 /*
  * View
-*/
+ */
 
 llxHeader("",$langs->trans("Task"));
 
@@ -183,7 +183,7 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Fiche projet en mode visu
 	*/
-	if ($object->fetch($id) >= 0)
+	if ($object->fetch($id, $ref) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
@@ -277,14 +277,11 @@ if ($id > 0 || ! empty($ref))
 			$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-		print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 		print '</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-
-		// Planned workload
-		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">'.convertSecondToTime($object->planned_workload,'allhourmin').'</td></tr>';
 
 		// Project
 		if (empty($withproject))
@@ -299,6 +296,30 @@ if ($id > 0 || ! empty($ref))
 			else print '&nbsp;';
 			print '</td></tr>';
 		}
+
+		// Date start
+		print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
+		print dol_print_date($object->date_start,'dayhour');
+		print '</td></tr>';
+
+		// Date end
+		print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
+		print dol_print_date($object->date_end,'dayhour');
+		print '</td></tr>';
+
+		// Planned workload
+		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">'.convertSecondToTime($object->planned_workload,'allhourmin').'</td></tr>';
+
+		// Declared progress
+		print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+		print $object->progress.' %';
+		print '</td></tr>';
+
+		// Calculated progress
+		print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
+		if ($object->planned_workload) print round(100 * $object->duration_effective / $object->planned_workload,2).' %';
+		else print '';
+		print '</td></tr>';
 
 		print '</table>';
 

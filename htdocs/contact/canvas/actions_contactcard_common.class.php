@@ -94,7 +94,7 @@ abstract class ActionsContactCardCommon
     /**
      *  Load data control
      *
-	 *  @param	string	&$action    Type of action
+	 *  @param	string	$action    Type of action
 	 *  @param	int		$id			Id of object
      *	@return	void
      */
@@ -228,7 +228,7 @@ abstract class ActionsContactCardCommon
 	/**
      *  Set content of ->tpl array, to use into template
      *
-     *  @param	string		&$action    Type of action
+     *  @param	string		$action    Type of action
      *  @param	int			$id			Id
      *  @return	string					HTML output
      */

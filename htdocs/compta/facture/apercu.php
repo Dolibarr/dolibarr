@@ -420,4 +420,3 @@ elseif (file_exists($fileimagebis))
 $db->close();
 
 llxFooter();
-?>

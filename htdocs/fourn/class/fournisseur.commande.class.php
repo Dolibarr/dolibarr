@@ -551,44 +551,50 @@ class CommandeFournisseur extends CommonOrder
         global $db, $langs, $conf;
         $langs->load("orders");
 
-        $dir = DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/';
-
         if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER))
         {
+            $mybool = false;
+
             $file = $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER.'.php';
+            $classname=$conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER;
 
-            if (is_readable($dir.'/'.$file))
+            // Include file with class
+            $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+            foreach ($dirmodels as $reldir) {
+
+                $dir = dol_buildpath($reldir."core/modules/supplier_order/");
+
+                // Load file with numbering class (if found)
+                $mybool|=@include_once $dir.$file;
+            }
+
+            if (! $mybool)
             {
-                // Definition du nom de modele de numerotation de commande fournisseur
-                $modName=$conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER;
-                require_once $dir.'/'.$file;
+                dol_print_error('',"Failed to include file ".$file);
+                return '';
+            }
 
-                // Recuperation de la nouvelle reference
-                $objMod = new $modName($this->db);
+            $obj = new $classname();
+            $numref = "";
+            $numref = $obj->getNextValue($soc,$this);
 
-                $numref = "";
-                $numref = $objMod->commande_get_num($soc,$this);
-
-                if ( $numref != "")
-                {
-                    return $numref;
-                }
-                else
-                {
-                    dol_print_error($db, get_class($this)."::getNextNumRef ".$obj->error);
-                    return -1;
-                }
+            if ( $numref != "")
+            {
+                return $numref;
             }
             else
             {
-                print $langs->trans("Error")." ".$langs->trans("Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File",$conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER);
-                return -2;
+                $this->error = $obj->error;
+                dol_print_error($db, get_class($this)."::getNextNumRef ".$obj->error);
+                return "";
             }
         }
         else
         {
-            print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_SUPPLIER_ADDON_NotDefined");
-            return -3;
+            $langs->load("errors");
+            print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+            return "";
         }
     }
 
@@ -2016,7 +2022,8 @@ class CommandeFournisseur extends CommonOrder
     }
 
     /**
-     * Returns the translated input method
+     * Returns the translated input method of object (defined if $this->methode_commande_id > 0).
+     * This function make a sql request to get translation. No cache yet, try to not use it inside a loop.
      *
      * @return string
      */
@@ -2026,21 +2033,19 @@ class CommandeFournisseur extends CommonOrder
 
         if ($this->methode_commande_id > 0)
         {
-            $sql = "SELECT rowid, code, libelle";
+            $sql = "SELECT rowid, code, libelle as label";
             $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_method';
             $sql.= " WHERE active=1 AND rowid = ".$db->escape($this->methode_commande_id);
 
             $query = $db->query($sql);
-
             if ($query && $db->num_rows($query))
             {
-                $result = $db->fetch_object($query);
+                $obj = $db->fetch_object($query);
 
-                $string = $langs->trans($result->code);
-
-                if ($string == $result->code)
+                $string = $langs->trans($obj->code);
+                if ($string == $obj->code)
                 {
-                    $string = $obj->libelle != '-' ? $obj->libelle : '';
+                    $string = $obj->label != '-' ? $obj->label : '';
                 }
 
                 return $string;

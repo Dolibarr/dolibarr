@@ -6,17 +6,34 @@
 	<exclude-pattern>*/conf.php</exclude-pattern>
 	<exclude-pattern>*/includes/*</exclude-pattern>
 	<exclude-pattern>*/documents/*</exclude-pattern>
+	<exclude-pattern>*/dev/vagrant/*</exclude-pattern>
 	<exclude-pattern>*/custom/*</exclude-pattern>
 	<exclude-pattern>*/nltechno*</exclude-pattern>
-		
-	<!-- List of all tests -->
+
+		<!-- List of all tests -->
 
 	<rule ref="Internal.NoCodeFound">
 		<severity>0</severity>
 	</rule>
 
 	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
- 
+
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedCATCH">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedFOREACH">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedIF">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedELSE">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedELSEIF">
+		<severity>0</severity>
+	</rule>
+	
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowed">
 		<severity>0</severity>
 	</rule>
@@ -105,7 +122,7 @@
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
             <property name="complexity" value="80" />
-            <property name="absoluteComplexity" value="200" />
+            <property name="absoluteComplexity" value="250" />
         </properties>
     </rule>
     <rule ref="Generic.Metrics.NestingLevel">
@@ -162,7 +179,75 @@
     <rule ref="PEAR.Commenting.ClassComment.MissingTag">
         <severity>0</severity>
     </rule>
-    
+    <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@categoryTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@licenseTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@linkTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
+        <severity>0</severity>
+    </rule>
+    <!-- TODO Remove this and fix reported errors -->
+    <rule ref="PEAR.Commenting.ClassComment.Missing">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.Missing">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@categoryTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@licenseTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@linkTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
+        <severity>0</severity>
+    </rule>
+    <!-- TODO Remove this and fix reported errors -->
+    <rule ref="PEAR.Commenting.ClassComment.Missing">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.Missing">
+        <severity>0</severity>
+    </rule>
+        
     <!-- 
     <rule ref="PEAR.Commenting.FileComment" />
     <rule ref="PEAR.Commenting.FileComment.WrongStyle">
@@ -219,6 +304,24 @@
 	<rule ref="PEAR.Functions.FunctionCallSignature.Indent">
 	    <severity>0</severity>
 	</rule>
+    <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeOpenBracket">
+        <severity>0</severity>
+    </rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterOpenBracket">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeCloseBracket">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterCloseBracket">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
+        <severity>0</severity>
+    </rule>
 	
 	<rule ref="PEAR.Functions.ValidDefaultValue" />
 
@@ -236,6 +339,10 @@
 	</rule>
 	
 	<rule ref="PEAR.NamingConventions.ValidFunctionName" />
+
+	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionDoubleUnderscore">
+        <severity>0</severity>
+	</rule>
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNameInvalid">
         <severity>0</severity>
 	</rule>

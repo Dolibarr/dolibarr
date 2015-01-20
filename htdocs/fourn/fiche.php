@@ -48,36 +48,47 @@ $result = restrictedArea($user, 'societe&fournisseur', $id, '&societe');
 
 $object = new Fournisseur($db);
 
-/*
- * Action
- */
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('suppliercard'));
 
-if ($action == 'setsupplieraccountancycode')
-{
-    $result=$object->fetch($id);
-    $object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
-    $result=$object->update($object->id,$user,1,0,1);
-    if ($result < 0)
-    {
-        $mesg=join(',',$object->errors);
-    }
-    $action="";
-}
-// conditions de reglement
-if ($action == 'setconditions' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentTerms(GETPOST('cond_reglement_supplier_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-// mode de reglement
-if ($action == 'setmode' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentMethods(GETPOST('mode_reglement_supplier_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
+$parameters = array('id' => $id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
+if (empty($reshook)) {
+	/*
+	 * Action
+	 */
+
+	if ($action == 'setsupplieraccountancycode')
+	{
+		$cancelbutton = GETPOST('cancel');
+
+		if (!$cancelbutton) {
+
+			$result = $object->fetch($id);
+			$object->code_compta_fournisseur = $_POST["supplieraccountancycode"];
+			$result = $object->update($object->id, $user, 1, 0, 1);
+			if ($result < 0) {
+				$mesg = join(',', $object->errors);
+			}
+			$action = "";
+		}
+	}
+	// conditions de reglement
+	if ($action == 'setconditions' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setPaymentTerms(GETPOST('cond_reglement_supplier_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
+	// mode de reglement
+	if ($action == 'setmode' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setPaymentMethods(GETPOST('mode_reglement_supplier_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
+}
 
 /*
  * View
@@ -435,34 +446,41 @@ if ($object->fetch($id))
 	 * Barre d'actions
 	 */
 
+	
 	print '<div class="tabsAction">';
-
-	if ($user->rights->fournisseur->commande->creer)
-	{
-		$langs->load("orders");
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
+	
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+		// modified by hook
+		if (empty($reshook)) {
+	
+		if ($user->rights->fournisseur->commande->creer)
+		{
+			$langs->load("orders");
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
+		}
+	
+		if ($user->rights->fournisseur->facture->creer)
+		{
+			$langs->load("bills");
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
+		}
+	
+	    // Add action
+	    if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+	    {
+	        if ($user->rights->agenda->myactions->create)
+	        {
+	            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a>';
+	        }
+	        else
+	        {
+	            print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
+	        }
+	    }
+	
+		print '</div>';
 	}
-
-	if ($user->rights->fournisseur->facture->creer)
-	{
-		$langs->load("bills");
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
-	}
-
-    // Add action
-    if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
-    {
-        if ($user->rights->agenda->myactions->create)
-        {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a>';
-        }
-        else
-        {
-            print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
-        }
-    }
-
-	print '</div>';
 	print '<br>';
 
     if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))

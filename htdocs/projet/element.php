@@ -130,12 +130,12 @@ print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'
 
 // Date start
 print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-print dol_print_date($object->date_start,'day');
+print dol_print_date($project->date_start,'day');
 print '</td></tr>';
 
 // Date end
 print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-print dol_print_date($object->date_end,'day');
+print dol_print_date($project->date_end,'day');
 print '</td></tr>';
 
 print '</table>';
@@ -212,7 +212,7 @@ if ($action=="addelement")
 	$elementselectid = GETPOST("elementselect");
 	$result=$project->update_element($tablename, $elementselectid);
 	if ($result<0) {
-		setEventMessage($mailchimp->error,'errors');
+		setEventMessage($project->error,'errors');
 	}
 }
 
@@ -373,8 +373,10 @@ foreach ($listofreferent as $key => $value)
 	}
 }
 
+$langs->load('margins');
+
 // Margin display of the project
-print_titre("Margin");
+print_titre($langs->trans("Margins"));
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td align="left" width="200">'.$langs->trans("Element").'</td>';

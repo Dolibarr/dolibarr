@@ -460,7 +460,7 @@ function createThirdParty($authentication,$thirdparty)
         $result=$newobject->create($fuser);
         if ($newobject->particulier && $result > 0) {
             $newobject->firstname = $thirdparty['firstname'];
-            $newobject->name_bis = $thirdparty['ref'];
+            $newobject->name_bis = $thirdparty['lastname'];
             $result = $newobject->create_individual($fuser);
         }
         if ($result <= 0)

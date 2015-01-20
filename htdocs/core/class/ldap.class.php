@@ -370,7 +370,7 @@ class Ldap
 	 *	Ldap object connect and bind must have been done
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	string[]	$info		Attributes array
+	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
@@ -423,7 +423,7 @@ class Ldap
 	 *	Ldap object connect and bind must have been done
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	string[]	$info		Attributes array
+	 *	@param	array		$info		Attributes array
 	 *	@param	string		$user		Objet user that modify
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
@@ -475,7 +475,7 @@ class Ldap
 	 *	Ldap object connect and bind must have been done
 	 *
 	 *  @param	string		$dn			DN entry key
-	 *  @param  string[]	$info		Attributes array
+	 *  @param  array		$info		Attributes array
 	 *  @param  User		$user		Objet user that update
 	 * 	@param	string		$olddn		Old DN entry key (before update)
 	 *	@return	int						<0 if KO, >0 if OK
@@ -563,7 +563,7 @@ class Ldap
 	 * 	Build a LDAP message
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	string[]	$info		Attributes array
+	 *	@param	array		$info		Attributes array
 	 *	@return	string					Content of file
 	 */
 	function dump_content($dn, $info)
@@ -605,7 +605,7 @@ class Ldap
 	 * 	Dump a LDAP message to ldapinput.in file
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	string[]	$info		Attributes array
+	 *	@param	array		$info		Attributes array
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function dump($dn, $info)
@@ -642,7 +642,7 @@ class Ldap
 	 *	Ldap object connect and bind must have been done
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	string[]	$info		Attributes array
+	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
@@ -694,7 +694,7 @@ class Ldap
 	 *	Ldap object connect and bind must have been done
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	string[]	$info		Attributes array
+	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
@@ -746,7 +746,7 @@ class Ldap
 	 *	Ldap object connect and bind must have been done
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	string[]	$info		Attributes array
+	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
 	 *	@return	int						<0 if KO, >0 if OK
 	 */

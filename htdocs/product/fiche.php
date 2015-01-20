@@ -124,7 +124,7 @@ if (empty($reshook))
     // Barcode value
     if ($action ==	'setbarcode' && $createbarcode)
     {
-    	$result=$object->check_barcode(GETPOST('barcode'),GETPOT('barcode_type_code'));
+    	$result=$object->check_barcode(GETPOST('barcode'),GETPOST('barcode_type_code'));
 
 		if ($result >= 0)
 		{
@@ -422,10 +422,10 @@ if (empty($reshook))
                             $_error++;
                             $action = "";
 
-                            $mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$object->ref);
+                            $mesg=$langs->trans("ErrorProductAlreadyExists",$object->ref);
                             $mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$object->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
-                            $mesg.='</div>';
                             setEventMessage($mesg, 'errors');
+                            $object->fetch($id);
                             //dol_print_error($object->db);
                         }
                         else

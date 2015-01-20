@@ -282,7 +282,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
     /**
      * Edit an object to test updates
      *
-     * @param 	mixed	&$localobject		Object Facture
+     * @param 	mixed	$localobject		Object Facture
      * @return	void
      */
     public function changeProperties(&$localobject)
@@ -329,4 +329,4 @@ class FactureTest extends PHPUnit_Framework_TestCase
         return $retAr;
     }
 }
-?>
+

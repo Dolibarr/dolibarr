@@ -37,11 +37,27 @@ class box_clients extends ModeleBoxes
 	var $depends = array("societe");
 
 	var $db;
-	var $param;
+	var $enabled = 1;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB	$db      	Database handler
+     *  @param	string	$param		More parameters
+	 */
+	function __construct($db,$param='')
+	{
+		global $conf, $user;
+
+		$this->db = $db;
+
+		// disable box for such cases
+		if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled=0;	// disabled by this option
+	}
 
 	/**
      *  Load data for box to show them later

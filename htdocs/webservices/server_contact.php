@@ -655,6 +655,7 @@ function updateContact($authentication,$contact)
 			$object->province_id=$contact['province_id'];
 
 
+			$object->phone_pro=$contact['phone_pro'];
 			$object->phone_perso=$contact['phone_perso'];
 			$object->phone_mobile=$contact['phone_mobile'];
 			$object->fax=$contact['fax'];

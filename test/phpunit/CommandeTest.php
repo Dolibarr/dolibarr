@@ -265,4 +265,3 @@ class CommandeTest extends PHPUnit_Framework_TestCase
     }
 
 }
-?>

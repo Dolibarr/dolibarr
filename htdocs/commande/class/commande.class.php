@@ -5,7 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,17 +137,20 @@ class Commande extends CommonOrder
             $classname = $conf->global->COMMANDE_ADDON;
 
             // Include file with class
-            foreach ($conf->file->dol_document_root as $dirroot)
-            {
-            	$dir = $dirroot."/core/modules/commande/";
-            	// Load file with numbering class (if found)
-            	$mybool|=@include_once $dir.$file;
+            $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+            foreach ($dirmodels as $reldir) {
+
+                $dir = dol_buildpath($reldir."core/modules/commande/");
+
+                // Load file with numbering class (if found)
+                $mybool|=@include_once $dir.$file;
             }
 
             if (! $mybool)
             {
-            	dol_print_error('',"Failed to include file ".$file);
-            	return '';
+                dol_print_error('',"Failed to include file ".$file);
+                return '';
             }
 
             $obj = new $classname();
@@ -658,18 +661,19 @@ class Commande extends CommonOrder
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
-        $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_client, ref_int";
+        $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_ext, ref_client, ref_int";
         $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
         $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
-        $sql.= ", ".($this->fk_project?$this->fk_project:"null");
+        $sql.= ", ".($this->fk_project>0?$this->fk_project:"null");
         $sql.= ", '".$this->db->idate($date)."'";
         $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
-        $sql.= ", '".$this->db->escape($this->ref_client)."'";
+        $sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
+        $sql.= ", ".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
         $sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
         $sql.= ", '".$this->modelpdf."'";
         $sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
@@ -725,7 +729,8 @@ class Commande extends CommonOrder
                         $fk_parent_line,
                         $this->lines[$i]->fk_fournprice,
                         $this->lines[$i]->pa_ht,
-                    	$this->lines[$i]->label
+                    	$this->lines[$i]->label,
+						$this->lines[$i]->array_options
                     );
                     if ($result < 0)
                     {
@@ -863,6 +868,10 @@ class Commande extends CommonOrder
 
         $this->db->begin();
 
+		// get extrafields so they will be clone
+		foreach($this->lines as $line)
+			$line->fetch_optionals($line->rowid);
+
         // Load source object
         $objFrom = dol_clone($this);
 
@@ -892,6 +901,13 @@ class Commande extends CommonOrder
         $this->date_creation      = '';
         $this->date_validation    = '';
         $this->ref_client         = '';
+
+        // Set ref
+        require_once DOL_DOCUMENT_ROOT ."/core/modules/commande/".$conf->global->COMMANDE_ADDON.'.php';
+        $obj = $conf->global->COMMANDE_ADDON;
+        $modCommande = new $obj;
+        $this->ref = $modCommande->getNextValue($objsoc,$this);
+
 
         // Create clone
         $result=$this->create($user);
@@ -980,7 +996,12 @@ class Commande extends CommonOrder
 				$line->marge_tx			= $marginInfos[1];
 				$line->marque_tx		= $marginInfos[2];
 
-                $this->lines[$i] = $line;
+                // get extrafields from original line
+				$object->lines[$i]->fetch_optionals($object->lines[$i]->rowid);
+				foreach($object->lines[$i]->array_options as $options_key => $value)
+					$line->array_options[$options_key] = $value;
+
+				$this->lines[$i] = $line;
             }
 
             $this->socid                = $object->socid;
@@ -998,6 +1019,11 @@ class Commande extends CommonOrder
 
             $this->origin				= $object->element;
             $this->origin_id			= $object->id;
+
+            // get extrafields from original line
+			$object->fetch_optionals($object->id);
+			foreach($object->array_options as $options_key => $value)
+				$this->array_options[$options_key] = $value;
 
             // Possibility to add external linked objects with hooks
             $this->linked_objects[$this->origin] = $this->origin_id;
@@ -1192,7 +1218,15 @@ class Commande extends CommonOrder
             $this->line->date_end=$date_end;
 
 			// infos marge
-			$this->line->fk_fournprice = $fk_fournprice;
+			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			    // by external module, take lowest buying price
+			    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			    $productFournisseur = new ProductFournisseur($this->db);
+			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
+			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
+			} else {
+			    $this->line->fk_fournprice = $fk_fournprice;
+			}
 			$this->line->pa_ht = $pa_ht;
 
             // TODO Ne plus utiliser
@@ -2399,7 +2433,15 @@ class Commande extends CommonOrder
             $this->line->skip_update_total=$skip_update_total;
 
 			// infos marge
-			$this->line->fk_fournprice = $fk_fournprice;
+			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			    //by external module, take lowest buying price
+			    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			    $productFournisseur = new ProductFournisseur($this->db);
+			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
+			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
+			} else {
+			    $this->line->fk_fournprice = $fk_fournprice;
+			}
 			$this->line->pa_ht = $pa_ht;
 
             // TODO deprecated

@@ -164,8 +164,8 @@ $sql = "SELECT";
 $sql.= " s.rowid as socid, s.nom, s.code_client, s.client,";
 if ($client) $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql.= " sum(d.total_ht) as selling_price,";
-$sql.= " sum(".$db->ifsql('d.total_ht <=0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
-$sql.= " sum(".$db->ifsql('d.total_ht <=0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge";
+$sql.= " sum(".$db->ifsql('d.total_ht < 0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
+$sql.= " sum(".$db->ifsql('d.total_ht < 0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -173,6 +173,7 @@ $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND f.fk_statut > 0";
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " AND d.fk_facture = f.rowid";
+$sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
 if ($client)
   $sql.= " AND f.fk_soc = ".$socid;
 if (!empty($startdate))

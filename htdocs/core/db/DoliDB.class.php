@@ -17,8 +17,8 @@
  */
 
 /**
- * \file htdocs/core/db/dolidb.class.php
- * \brief Class file to manage Dolibarr database access
+ * \file 		htdocs/core/db/DoliDB.class.php
+ * \brief 		Class file to manage Dolibarr database access
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/db/Database.interface.php';

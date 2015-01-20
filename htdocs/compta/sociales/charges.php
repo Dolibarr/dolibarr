@@ -300,7 +300,7 @@ if ($id > 0)
 		 * Payments
 		 */
 		$sql = "SELECT p.rowid, p.num_paiement, datep as dp, p.amount,";
-		$sql.= "c.libelle as paiement_type";
+		$sql.= "c.code as type_code,c.libelle as paiement_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
 		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
@@ -333,8 +333,9 @@ if ($id > 0)
 				print "<tr ".$bc[$var]."><td>";
 				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-				print "<td>".$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
-        		print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+			        $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;				
+                                print "<td>".$labeltype.' '.$objp->num_paiement."</td>\n";
+				print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
 				print "</tr>";
 				$totalpaye += $objp->amount;
 				$i++;

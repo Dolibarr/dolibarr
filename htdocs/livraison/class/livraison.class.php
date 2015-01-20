@@ -968,5 +968,3 @@ class LivraisonLigne
 	}
 
 }
-
-?>

@@ -78,4 +78,3 @@ if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled)
 }
 print '</li></ul>';
 print '</div>';
-?>

@@ -351,7 +351,6 @@ class DoliDBMysqli extends DoliDB
      *	@return int		    Nombre de lignes
      *	@see    num_rows
      */
-
     function affected_rows($resultset)
     {
         // If resultset not provided, we take the last used by connexion

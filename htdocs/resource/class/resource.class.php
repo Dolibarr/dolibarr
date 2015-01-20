@@ -23,8 +23,8 @@
  */
 
 // Put here all includes required by your class file
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 
 /**
  *	DAO Resource object
@@ -330,12 +330,12 @@ class Resource extends CommonObject
     function delete($rowid, $notrigger=0)
     {
         global $user,$langs,$conf;
-    
+
         $error=0;
-    
+
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."resource";
         $sql.= " WHERE rowid =".$rowid;
-    
+
         dol_syslog(get_class($this)."::delete sql=".$sql);
         if ($this->db->query($sql))
         {
@@ -355,7 +355,7 @@ class Resource extends CommonObject
                     }
                     // End call triggers
                 }
-    
+
                 return 1;
             }
             else {
@@ -371,7 +371,7 @@ class Resource extends CommonObject
             return -1;
         }
     }
-    
+
     /**
      *	Load resource objects into $this->lines
      *
@@ -507,9 +507,9 @@ class Resource extends CommonObject
    					$line->fk_user_create	=	$obj->fk_user_create;
 
 					if($obj->resource_id && $obj->resource_type)
-						$line->objresource = $this->fetchObjectByElement($obj->resource_id,$obj->resource_type);
+						$line->objresource = fetchObjectByElement($obj->resource_id,$obj->resource_type);
 					if($obj->element_id && $obj->element_type)
-						$line->objelement = $this->fetchObjectByElement($obj->element_id,$obj->element_type);
+						$line->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
         			$this->lines[$i] = $line;
 
    					$i++;
@@ -591,7 +591,7 @@ class Resource extends CommonObject
     				$line->mandatory		=	$obj->mandatory;
     				$line->fk_user_create	=	$obj->fk_user_create;
 
-    				$this->lines[$i] = $this->fetchObjectByElement($obj->resource_id,$obj->resource_type);
+    				$this->lines[$i] = fetchObjectByElement($obj->resource_id,$obj->resource_type);
 
     				$i++;
     			}
@@ -814,7 +814,7 @@ class Resource extends CommonObject
     	$i=0;
     	foreach($resources as $nb => $resource)
     	{
-    		$this->lines[$i] = $this->fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
+    		$this->lines[$i] = fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
     		$i++;
     	}
     	return $i;

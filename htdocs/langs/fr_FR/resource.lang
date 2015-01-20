@@ -33,3 +33,5 @@ TitleResourceCard=Fiche ressource
 ConfirmDeleteResource=Confirmer la suppression de cette ressource?
 RessourceSuccessfullyDeleted=Ressource effacée avec succès
 DictionaryResourceType=Type de ressources
+
+SelectResource=Sélectionner la ressource

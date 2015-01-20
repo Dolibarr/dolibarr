@@ -156,7 +156,7 @@ if ($resql)
 
 		print "<tr ".$bc[$var].">";
 		print '<td>';
-		
+
         $result='';
         $lien=$lienfin='';
         $lien = '<a href="'.dol_buildpath('/commande/orderstoinvoice.php',1).'?socid='.$obj->rowid.'">';
@@ -164,7 +164,7 @@ if ($resql)
         $name=$obj->nom;
         $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name,'company').$lienfin);
         $result.=$lien.(dol_trunc($name,$maxlen)).$lienfin;
-		
+
 		print $result;
 		print '</td>';
 		print '<td>'.$obj->town.'&nbsp;</td>';
@@ -185,7 +185,7 @@ else
 	dol_print_error($db);
 }
 
+llxFooter();
+
 $db->close();
 
-llxFooter();
-?>

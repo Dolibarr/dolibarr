@@ -50,4 +50,3 @@ function holiday_prepare_head($object)
 	return $head;
 }
 
-?>

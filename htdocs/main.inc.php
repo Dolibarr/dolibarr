@@ -110,7 +110,7 @@ function test_sql_and_script_inject($val, $type)
 /**
  * Security: Return true if OK, false otherwise.
  *
- * @param		string		&$var		Variable name
+ * @param		string		$var		Variable name
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
  * @return		boolean					true if there is an injection
  */
@@ -725,7 +725,7 @@ if (! empty($conf->browser->phone))
 // If we force to use jmobile, then we reenable javascript
 if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 // Disabled bugged themes
-if (! empty($conf->dol_use_jmobile) && in_array($conf->theme,array('bureau2crea','cameleo')))
+if (! empty($conf->dol_use_jmobile) && in_array($conf->theme,array('bureau2crea','cameleo','amarok')))
 {
 	$conf->theme='eldy';
 	$conf->css  =  "/theme/".$conf->theme."/style.css.php";

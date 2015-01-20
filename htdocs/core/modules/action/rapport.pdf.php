@@ -159,7 +159,7 @@ class CommActionRapport
 	/**
 	 * Write content of pages
 	 *
-	 * @param   PDF			&$pdf			Object pdf
+	 * @param   PDF			$pdf			Object pdf
      * @param	Translate   $outputlangs	Object langs
 	 * @return  int							1
 	 */
@@ -184,6 +184,7 @@ class CommActionRapport
 		$sql.= " WHERE c.id=a.fk_action AND a.fk_user_author = u.rowid";
 		$sql.= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($this->year,$this->month,false))."'";
 		$sql.= " AND '".$this->db->idate(dol_get_last_day($this->year,$this->month,false))."'";
+		$sql.= " AND a.entity = ".$conf->entity;
 		$sql.= " ORDER BY a.datep DESC";
 
 		dol_syslog(get_class($this)."::_page sql=".$sql);
@@ -255,7 +256,7 @@ class CommActionRapport
 	/**
 	 *  Show top header of page.
 	 *
-	 * 	@param	PDF			&$pdf     		Object PDF
+	 * 	@param	PDF			$pdf     		Object PDF
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 * 	@param	int			$pagenb			Page nb
 	 *  @return	void

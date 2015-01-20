@@ -95,9 +95,18 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 	}
 	else
 	{
-		if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
-		else setEventMessage($langs->trans("JobFinished"),'mesgs');
-		$action='';
+		$res = $object->reprogram_jobs($user->login);
+		if ($res > 0)
+		{
+			if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
+			else setEventMessage($langs->trans("JobFinished"),'mesgs');
+			$action='';
+		}
+		else
+		{
+			setEventMessage($object->error,'errors');
+			$action='';
+		}
 	}
 }
 
@@ -345,7 +354,7 @@ if (($action=="create") || ($action=="edit"))
 	print $langs->trans('CronEvery')."</td>";
 	print "<td><select name=\"nbfrequency\">";
 	for($i=1; $i<=60; $i++){
-		if(($object->frequency/$object->unitfrequency) == $i){
+		if(!is_null($object->unitfrequency) && ($object->frequency/$object->unitfrequency) == $i){
 			print "<option value='".$i."' selected='selected'>".$i."</option>";
 		}
 		else{

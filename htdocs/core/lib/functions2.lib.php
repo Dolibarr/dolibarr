@@ -738,7 +738,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $sql = "SELECT MAX(".$sqlstring.") as val";
     $sql.= " FROM ".MAIN_DB_PREFIX.$table;
     $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
-    $sql.= " AND ".$field." NOT LIKE '%PROV%'";
+    $sql.= " AND ".$field." NOT LIKE '(PROV%)'";
     $sql.= " AND entity IN (".getEntity($table, 1).")";
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
@@ -1107,7 +1107,7 @@ function numero_semaine($time)
  *	Convertit une masse d'une unite vers une autre unite
  *
  *	@param	float	$weight    		Masse a convertir
- *	@param  int		&$from_unit 		Unite originale en puissance de 10
+ *	@param  int		$from_unit 		Unite originale en puissance de 10
  *	@param  int		$to_unit   		Nouvelle unite  en puissance de 10
  *	@return float	        		Masse convertie
  */
@@ -1142,7 +1142,7 @@ function weight_convert($weight,&$from_unit,$to_unit)
  *
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
- *	@param	User	&$user      Object user
+ *	@param	User	$user      Object user
  *	@param	array	$tab        Tableau (cle=>valeur) des parametres a sauvegarder
  *	@return int         		<0 if KO, >0 if OK
  *

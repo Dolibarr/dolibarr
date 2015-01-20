@@ -8,7 +8,7 @@
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2014 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
@@ -391,7 +391,7 @@ class Facture extends CommonInvoice
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
 							$this->lines[$i]->label,
-							''
+							$this->lines[$i]->array_options
 						);
 						if ($result < 0)
 						{
@@ -593,6 +593,10 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
+		// get extrafields so they will be clone
+		foreach($this->lines as $line)
+			$line->fetch_optionals($line->rowid);
+
 		// Load source object
 		$objFrom = dol_clone($this);
 
@@ -721,6 +725,11 @@ class Facture extends CommonInvoice
 			$marginInfos			= getMarginInfos($object->lines[$i]->subprice, $object->lines[$i]->remise_percent, $object->lines[$i]->tva_tx, $object->lines[$i]->localtax1_tx, $object->lines[$i]->localtax2_tx, $object->lines[$i]->fk_fournprice, $object->lines[$i]->pa_ht);
 			$line->pa_ht			= $marginInfos[0];
 
+            // get extrafields from original line
+			$object->lines[$i]->fetch_optionals($object->lines[$i]->rowid);
+			foreach($object->lines[$i]->array_options as $options_key => $value)
+				$line->array_options[$options_key] = $value;
+
 			$this->lines[$i] = $line;
 		}
 
@@ -739,6 +748,11 @@ class Facture extends CommonInvoice
 
 		$this->origin				= $object->element;
 		$this->origin_id			= $object->id;
+
+        // get extrafields from original line
+		$object->fetch_optionals($object->id);
+		foreach($object->array_options as $options_key => $value)
+			$this->array_options[$options_key] = $value;
 
 		// Possibility to add external linked objects with hooks
 		$this->linked_objects[$this->origin] = $this->origin_id;
@@ -1564,11 +1578,11 @@ class Facture extends CommonInvoice
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
 				if ($result < 0) {
-					$error++; 
+					$error++;
 					$this->errors=$interface->errors;
 					$this->db->rollback();
 					return -1;
-					
+
 				}
 				// Fin appel triggers
 
@@ -2199,7 +2213,15 @@ class Facture extends CommonInvoice
 			$this->line->skip_update_total	= $skip_update_total;
 
 			// infos marge
-			$this->line->fk_fournprice = $fk_fournprice;
+			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			    // POS or external module, take lowest buying price
+			    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			    $productFournisseur = new ProductFournisseur($this->db);
+			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
+			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
+			} else {
+			    $this->line->fk_fournprice = $fk_fournprice;
+			}
 			$this->line->pa_ht = $pa_ht;
 
 			if (is_array($array_option) && count($array_option)>0) {
@@ -2482,52 +2504,64 @@ class Facture extends CommonInvoice
 		else if ($conf->global->FACTURE_ADDON=='terre') $conf->global->FACTURE_ADDON='mod_facture_terre';
 		else if ($conf->global->FACTURE_ADDON=='mercure') $conf->global->FACTURE_ADDON='mod_facture_mercure';
 
-		$mybool=false;
-
-		$file = $conf->global->FACTURE_ADDON.".php";
-		$classname = $conf->global->FACTURE_ADDON;
-		// Include file with class
-		foreach ($conf->file->dol_document_root as $dirroot)
+		if (! empty($conf->global->FACTURE_ADDON))
 		{
-			$dir = $dirroot."/core/modules/facture/";
-			// Load file with numbering class (if found)
-			$mybool|=@include_once $dir.$file;
-		}
+			$mybool=false;
 
-		// For compatibility
-		if (! $mybool)
-		{
-			$file = $conf->global->FACTURE_ADDON."/".$conf->global->FACTURE_ADDON.".modules.php";
-			$classname = "mod_facture_".$conf->global->FACTURE_ADDON;
-			$classname = preg_replace('/\-.*$/','',$classname);
+			$file = $conf->global->FACTURE_ADDON.".php";
+			$classname = $conf->global->FACTURE_ADDON;
+
 			// Include file with class
-			foreach ($conf->file->dol_document_root as $dirroot)
-			{
-				$dir = $dirroot."/core/modules/facture/";
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+			foreach ($dirmodels as $reldir) {
+
+				$dir = dol_buildpath($reldir."core/modules/facture/");
+
 				// Load file with numbering class (if found)
 				$mybool|=@include_once $dir.$file;
 			}
-		}
-		//print "xx".$mybool.$dir.$file."-".$classname;
 
-		if (! $mybool)
-		{
-			dol_print_error('',"Failed to include file ".$file);
-			return '';
-		}
+			// For compatibility
+			if (! $mybool)
+			{
+				$file = $conf->global->FACTURE_ADDON."/".$conf->global->FACTURE_ADDON.".modules.php";
+				$classname = "mod_facture_".$conf->global->FACTURE_ADDON;
+				$classname = preg_replace('/\-.*$/','',$classname);
+				// Include file with class
+				foreach ($conf->file->dol_document_root as $dirroot)
+				{
+					$dir = $dirroot."/core/modules/facture/";
+					// Load file with numbering class (if found)
+					$mybool|=@include_once $dir.$file;
+				}
+			}
 
-		$obj = new $classname();
-		$numref = "";
-		$numref = $obj->getNumRef($soc,$this,$mode);
+			if (! $mybool)
+			{
+				dol_print_error('',"Failed to include file ".$file);
+				return '';
+			}
 
-		if ($numref != "")
-		{
-			return $numref;
+			$obj = new $classname();
+			$numref = "";
+			$numref = $obj->getNextValue($soc,$this,$mode);
+
+			if ($numref != "")
+			{
+				return $numref;
+			}
+			else
+			{
+				dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
+				return "";
+			}
 		}
 		else
 		{
-			//dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
-			return false;
+			$langs->load("errors");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			return "";
 		}
 	}
 
@@ -3463,6 +3497,14 @@ class FactureLigne  extends CommonInvoiceLine
 				return -1;
 			}
 		}
+		
+		// POS or by external module, take lowest buying price
+		if (!empty($this->fk_product) && empty($this->fk_fournprice) && empty($this->pa_ht)) {
+		    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		    $productFournisseur = new ProductFournisseur($this->db);
+		    $productFournisseur->find_min_price_product_fournisseur($this->fk_product);
+		    $this->fk_fournprice = $productFournisseur->product_fourn_price_id;
+		}
 
 		$this->db->begin();
 
@@ -3574,7 +3616,7 @@ class FactureLigne  extends CommonInvoiceLine
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result = $interface->run_triggers('LINEBILL_INSERT',$this,$user,$langs,$conf);
-				if ($result < 0) 
+				if ($result < 0)
 				{
 					$error++;
 					$this->errors=$interface->errors;

@@ -75,4 +75,3 @@ include_once 'affPied.php';
 
 print '</div></div></div>'."\n";
 print '</body></html>'."\n";
-?>

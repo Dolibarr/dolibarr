@@ -111,7 +111,7 @@ if ($conf->salaries->enabled)
 		    $total = 0 ;
 		    print '<table class="noborder" width="100%">';
 		    print '<tr class="liste_titre">';
-			  print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"s.datev","",$param,'width="120"',$sortfield,$sortorder);
+			  print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"s.datev","",$param,'width="140px"',$sortfield,$sortorder);
 			  print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'',$sortfield,$sortorder);
 			  print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
 			  print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"s.rowid","",$param,'',$sortfield,$sortorder);
@@ -144,7 +144,7 @@ if ($conf->salaries->enabled)
 
 		        $i++;
 		    }
-		    print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
+		    print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
 		    print '<td align="right">'.price($total)."</td>";
 		    print '<td align="center">&nbsp;</td>';
 		    print '<td align="center">&nbsp;</td>';
@@ -174,7 +174,7 @@ if ($conf->tax->enabled)
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'width="120"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'width="140px"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"c.libelle","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"cs.fk_type","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
@@ -304,7 +304,7 @@ if ($conf->tax->enabled)
 		    $total = 0 ;
 		    print '<table class="noborder" width="100%">';
 		    print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"pv.datev","",$param,'width="120"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"pv.datev","",$param,'width="140px"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"pv.label","",$param,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pv.rowid","",$param,'',$sortfield,$sortorder);
@@ -337,7 +337,7 @@ if ($conf->tax->enabled)
 
 		        $i++;
 		    }
-		    print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
+		    print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
 		    print '<td align="right">'.price($total)."</td>";
 		    print '<td align="center">&nbsp;</td>';
 		    print '<td align="center">&nbsp;</td>';

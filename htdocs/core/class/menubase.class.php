@@ -152,7 +152,7 @@ class Menubase
         $sql.= " '".$this->fk_menu."',";
         $sql.= " ".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
         $sql.= " ".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
-        $sql.= " '".$this->position."',";
+        $sql.= " '".(int) $this->position."',";
         $sql.= " '".$this->db->escape($this->url)."',";
         $sql.= " '".$this->db->escape($this->target)."',";
         $sql.= " '".$this->db->escape($this->titre)."',";
@@ -380,7 +380,7 @@ class Menubase
      * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
      * 	@param	int		$type_user		0=Menu for backoffice, 1=Menu for front office
      * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
-     * 	@param  array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+     * 	@param  array	$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * 	@return	array					Return array with menu entries for top menu
      */
     function menuTopCharger($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
@@ -408,7 +408,7 @@ class Menubase
      * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
      * 	@param	int		$type_user		0=Menu for backoffice, 1=Menu for front office
      * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
-     * 	@param  array	&$tabMenu       Array with menu entries already loaded
+     * 	@param  array	$tabMenu       Array with menu entries already loaded
      * 	@return Menu    		       	Menu array for particular mainmenu value or full tabArray
      */
     function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
@@ -493,7 +493,7 @@ class Menubase
      *  @param	string	$myleftmenu     Value for left that defined leftmenu
      *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
      *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
-     *  @param  array	&$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
+     *  @param  array	$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
     function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)

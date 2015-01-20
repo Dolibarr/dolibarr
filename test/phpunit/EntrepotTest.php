@@ -257,4 +257,3 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
         return;
     }
 }
-?>

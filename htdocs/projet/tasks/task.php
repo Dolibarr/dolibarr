@@ -348,7 +348,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Progress
-			print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 			print $formother->select_percent($object->progress,'progress');
 			print '</td></tr>';
 
@@ -436,14 +436,15 @@ if ($id > 0 || ! empty($ref))
 			print convertSecondToTime($object->planned_workload,'allhourmin');
 			print '</td></tr>';
 
-			// Progress
+			// Declared progress
 			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 			print $object->progress.' %';
 			print '</td></tr>';
 
-			// Progress
+			// Calculated progress
 			print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
-			print $object->progress.' %';
+			if ($object->planned_workload) print round(100 * $object->duration_effective / $object->planned_workload,2).' %';
+			else print '';
 			print '</td></tr>';
 
 			// Description

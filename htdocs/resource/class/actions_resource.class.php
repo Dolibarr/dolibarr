@@ -46,8 +46,8 @@ class ActionsResource
 	 * doActions for resource module
 	 *
 	 * @param 	array 	$parameters 	parameters
-	 * @param 	Object 	&$object 		object
-	 * @param 	string 	&$action 		action
+	 * @param 	Object 	$object 		object
+	 * @param 	string 	$action 		action
 	 * @return	void
 	 */
 	/* Why a hook action ? TODO Remove this class and replace a method into commonobject

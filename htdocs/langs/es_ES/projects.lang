@@ -3,6 +3,7 @@ RefProject=Ref. proyecto
 ProjectId=Id proyecto
 Project=Proyecto
 Projects=Proyectos
+ProjectStatus=Estado del proyecto
 SharedProject=Proyecto compartido
 PrivateProject=Contactos del proyecto
 MyProjectsDesc=Esta vista muestra aquellos proyectos en los que usted es un contacto afectado (cualquier tipo).

@@ -8,7 +8,7 @@
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-214  Christophe Battarel  	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -413,7 +413,15 @@ class Propal extends CommonObject
 
 
 			// infos marge
-			$this->line->fk_fournprice = $fk_fournprice;
+			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			    // by external module, take lowest buying price
+			    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			    $productFournisseur = new ProductFournisseur($this->db);
+			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
+			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
+			} else {
+			    $this->line->fk_fournprice = $fk_fournprice;
+			}
 			$this->line->pa_ht = $pa_ht;
 
             // Mise en option de la ligne
@@ -565,7 +573,15 @@ class Propal extends CommonObject
             $this->line->skip_update_total	= $skip_update_total;
 
             // infos marge
-            $this->line->fk_fournprice = $fk_fournprice;
+            if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+                // by external module, take lowest buying price
+                include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			    $productFournisseur = new ProductFournisseur($this->db);
+			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
+			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
+			} else {
+			    $this->line->fk_fournprice = $fk_fournprice;
+			}
             $this->line->pa_ht = $pa_ht;
 
             $this->line->date_start=$date_start;
@@ -797,7 +813,10 @@ class Propal extends CommonObject
 							$fk_parent_line,
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
-							$this->lines[$i]->label
+							$this->lines[$i]->label,
+                            $this->lines[$i]->date_start,
+							$this->lines[$i]->date_end,
+							$this->lines[$i]->array_options
 						);
 
                         if ($result < 0)
@@ -931,6 +950,10 @@ class Propal extends CommonObject
         $now=dol_now();
 
         $this->db->begin();
+
+		// get extrafields so they will be clone
+		foreach($this->lines as $line)
+			$line->fetch_optionals($line->rowid);
 
         // Load source object
         $objFrom = dol_clone($this);
@@ -1072,7 +1095,7 @@ class Propal extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.entity = ".$conf->entity;
-        if ($ref) $sql.= " AND p.ref='".$this->db->escape($ref)."'";
+        if ($ref) $sql.= " AND p.ref='".$ref."'";
         else $sql.= " AND p.rowid=".$rowid;
 
         dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -2541,11 +2564,14 @@ class Propal extends CommonObject
             $classname = $conf->global->PROPALE_ADDON;
 
             // Include file with class
-            foreach ($conf->file->dol_document_root as $dirroot)
-            {
-            	$dir = $dirroot."/core/modules/propale/";
-            	// Load file with numbering class (if found)
-            	$mybool|=@include_once $dir.$file;
+            $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+            foreach ($dirmodels as $reldir) {
+
+                $dir = dol_buildpath($reldir."core/modules/propale/");
+
+                // Load file with numbering class (if found)
+                $mybool|=@include_once $dir.$file;
             }
 
             if (! $mybool)

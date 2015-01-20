@@ -520,4 +520,3 @@ if($object->type == 4)
 
 llxFooter();
 $db->close();
-?>
