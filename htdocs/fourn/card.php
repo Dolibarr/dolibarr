@@ -367,7 +367,11 @@ if ($object->id > 0)
 				$var=!$var;
 
 				print "<tr ".$bc[$var].">";
-				print '<td><a href="commande/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref.'</a></td>';
+                print '<td class="nowrap">';
+                $orderstatic->id=$obj->rowid;
+                $orderstatic->ref=$obj->ref;
+                print $orderstatic->getNomUrl(1);
+                print '</td>';
 				print '<td align="center" width="80">';
 				if ($obj->dc)
 				{
