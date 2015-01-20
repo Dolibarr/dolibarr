@@ -414,19 +414,20 @@ class EcmDirectory // extends CommonObject
 		global $langs;
 
 		$result='';
+        //$newref=str_replace('_',' ',$this->ref);
+        $newref=$this->ref;
+        $newlabel=$langs->trans("ShowECMSection").': '.$newref;
+        $linkclose='"'.($more?' '.$more:'').' title="'.$newlabel.'" class="classfortooltip">';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.'"'.($more?' '.$more:'').'>';
-		if ($option == 'index') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true"'.($more?' '.$more:'').'>';
-		if ($option == 'indexexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false"'.($more?' '.$more:'').'>';
-		if ($option == 'indexnotexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true"'.($more?' '.$more:'').'>';
+        $lien = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.$linkclose;
+        if ($option == 'index') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
+        if ($option == 'indexexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false'.$linkclose;
+        if ($option == 'indexnotexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
 		$lienfin='</a>';
 
 		//$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';
 		$picto='dir';
 
-		//$newref=str_replace('_',' ',$this->ref);
-		$newref=$this->ref;
-		$newlabel=$langs->trans("ShowECMSection").': '.$newref;
 
         if ($withpicto) $result.=($lien.img_object($newlabel, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';

@@ -1559,25 +1559,26 @@ class Adherent extends CommonObject
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowMember").': '.$this->ref;
+        $linkclose = '" title="'.$label.'" class="classfortooltip">';
 
         if ($option == 'card')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.$linkclose;
             $lienfin='</a>';
         }
         if ($option == 'subscription')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$this->id.$linkclose;
             $lienfin='</a>';
         }
         if ($option == 'category')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3'.$linkclose;
             $lienfin='</a>';
         }
 
         $picto='user';
-        $label=$langs->trans("ShowMember");
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';

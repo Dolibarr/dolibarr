@@ -1217,16 +1217,16 @@ class Expedition extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowSending").': '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
 		if ($short) return $url;
 
-		$linkstart = '<a href="'.$url.'">';
+        $linkstart = '<a href="'.$url.'" title="'.$label.'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='sending';
-		$label=$langs->trans("ShowSending").': '.$this->ref;
 
 		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';

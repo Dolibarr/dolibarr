@@ -1682,13 +1682,13 @@ class Contrat extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowContract").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='contract';
 
-		$label=$langs->trans("ShowContract").': '.$this->ref;
 
 		if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
@@ -2211,13 +2211,13 @@ class ContratLigne extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowContractOfService").': '.$this->label;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.$label.'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='contract';
 
-		$label=$langs->trans("ShowContractOfService").': '.$this->label;
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';

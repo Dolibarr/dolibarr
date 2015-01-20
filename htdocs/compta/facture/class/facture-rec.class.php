@@ -558,13 +558,13 @@ class FactureRec extends Facture
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowInvoice").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id.'" title="'.$label.'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='bill';
 
-		$label=$langs->trans("ShowInvoice").': '.$this->ref;
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';

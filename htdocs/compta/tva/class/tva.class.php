@@ -638,12 +638,12 @@ class Tva extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowVatPayment").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='payment';
-		$label=$langs->trans("ShowVatPayment").': '.$this->ref;
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';

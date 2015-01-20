@@ -1749,7 +1749,7 @@ class Societe extends CommonObject
         }
 
         // Add type of canvas
-        $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'">';
+        $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'" title="'.$name.'" class="classfortooltip">';
         $lienfin='</a>';
 
         if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name, 'company', 'class="classfortooltip"').$lienfin);

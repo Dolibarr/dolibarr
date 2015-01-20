@@ -865,7 +865,7 @@ class Facture extends CommonInvoice
 		if ($this->type == self::TYPE_SITUATION) $label=$langs->transnoentitiesnoconv("ShowInvoiceSituation").': '.$this->ref;
 		if ($moretitle) $label.=' - '.$moretitle;
 
-		$linkstart='<a href="'.$url.'">';
+        $linkstart='<a href="'.$url.'" title="'.$label.'" class="classfortooltip">';
 		$linkend='</a>';
 
         if ($withpicto) $result.=($linkstart.img_object(($max?dol_trunc($label,$max):$label), $picto, 'class="classfortooltip"').$linkend);

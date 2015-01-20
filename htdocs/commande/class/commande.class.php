@@ -2884,11 +2884,11 @@ class Commande extends CommonOrder
 
         if ($short) return $url;
 
-        $linkstart = '<a href="'.$url.'">';
-        $linkend='</a>';
-
         $picto='order';
         $label=$langs->trans("ShowOrder").': '.$this->ref;
+
+        $linkstart = '<a href="'.$url.'" title="'.$label.'" class="classfortooltip">';
+        $linkend='</a>';
 
         if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';

@@ -357,13 +357,13 @@ class Deplacement extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("Show").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='trip';
 
-		$label=$langs->trans("Show").': '.$this->ref;
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';

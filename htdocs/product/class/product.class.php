@@ -2812,33 +2812,27 @@ class Product extends CommonObject
 		global $langs;
 
 		$result='';
+        $newref=$this->ref;
+        if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
+        if ($this->type == 0) $label = $langs->trans("ShowProduct").': '.$this->ref.' '.$this->label;
+        if ($this->type == 1) $label = $langs->trans("ShowService").': '.$this->ref.' '.$this->label;
+        $linkclose = '" title="'.$label.'" class="classfortooltip">';
 
-		if ($option == 'supplier')
-		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.'">';
-			$lienfin='</a>';
-		}
-        else if ($option == 'stock')
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id.'">';
+        if ($option == 'supplier') {
+            $lien = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
+            $lienfin='</a>';
+        } else if ($option == 'stock') {
+            $lien = '<a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id.$linkclose;
+            $lienfin='</a>';
+        } else if ($option == 'composition') {
+            $lien = '<a href="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id.$linkclose;
+            $lienfin='</a>';
+        } else if ($option == 'category') {
+            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&amp;type=0'.$linkclose;
+        } else {
+            $lien = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$this->id.$linkclose;
             $lienfin='</a>';
         }
-        else if ($option == 'composition')
-        {
-			$lien = '<a href="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id.'">';
-			$lienfin='</a>';
-        }
-        else if ($option == 'category')
-        {
-        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=0">';
-        }
-        else
-		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$this->id.'">';
-			$lienfin='</a>';
-		}
-		$newref=$this->ref;
-		if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
 
 		if ($withpicto) {
 			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->label, 'product', 'class="classfortooltip"').$lienfin.' ');

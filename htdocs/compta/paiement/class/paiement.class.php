@@ -748,8 +748,9 @@ class Paiement extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = $langs->trans("ShowPayment").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
 		$lienfin='</a>';
 
         if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$lienfin);

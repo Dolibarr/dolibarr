@@ -1786,13 +1786,13 @@ class User extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = $langs->trans("ShowUser").': '.$this->getFullName($langs,'','',24);
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
 		$lienfin='</a>';
 
-		if ($withpicto)
-		{
-            $result.=($lien.img_object($langs->trans("ShowUser"), 'user', 'class="classfortooltip"').$lienfin);
+        if ($withpicto) {
+            $result.=($lien.img_object($label, 'user', 'class="classfortooltip"').$lienfin);
 			if ($withpicto != 2) $result.=' ';
 		}
 		$result.=$lien.$this->getFullName($langs,'','',24).$lienfin;

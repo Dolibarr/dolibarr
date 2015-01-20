@@ -887,17 +887,18 @@ class Contact extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = $langs->trans("ShowContact").': '.$this->getFullName($langs);
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.$label.'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		if ($option == 'xxx')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.$label.'" class="classfortooltip">';
 			$lienfin='</a>';
 		}
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->getFullName($langs), 'contact', 'class="classfortooltip"').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($label, 'contact', 'class="classfortooltip"').$lienfin.' ');
 		$result.=$lien.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$lienfin;
 		return $result;
 	}

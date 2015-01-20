@@ -512,11 +512,12 @@ class Entrepot extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = $langs->trans("ShowStock").': '.$this->libelle;
 
-		$lien='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'">';
-		$lienfin='</a>';
+        $lien='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+        $lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowStock"), 'stock', 'class="classfortooltip"').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($label, 'stock', 'class="classfortooltip"').$lienfin.' ');
 		$result.=$lien.$this->libelle.$lienfin;
 		return $result;
 	}

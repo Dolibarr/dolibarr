@@ -487,17 +487,17 @@ class PaiementFourn extends Paiement
 		global $langs;
 
 		$result='';
+        $text=$this->ref;   // Sometimes ref contains label
+        if (preg_match('/^\((.*)\)$/i',$text,$reg)) {
+            // Label generique car entre parentheses. On l'affiche en le traduisant
+            if ($reg[1]=='paiement') $reg[1]='Payment';
+            $text=$langs->trans($reg[1]);
+        }
+        $label = $langs->trans("ShowPayment").': '.$text;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'">';
-		$lienfin='</a>';
+        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+        $lienfin='</a>';
 
-		$text=$this->ref;	// Sometimes ref contains label
-		if (preg_match('/^\((.*)\)$/i',$text,$reg))
-		{
-			// Label g诩rique car entre parenth粥s. On l'affiche en le traduisant
-			if ($reg[1]=='paiement') $reg[1]='Payment';
-			$text=$langs->trans($reg[1]);
-		}
 
         if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';

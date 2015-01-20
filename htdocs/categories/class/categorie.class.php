@@ -1274,9 +1274,9 @@ class Categorie extends CommonObject
 		global $langs;
 
 		$result='';
-
-		$lien = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'">';
 		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
+
+        $lien = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.$label.'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='category';

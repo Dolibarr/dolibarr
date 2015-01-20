@@ -2605,29 +2605,29 @@ class Propal extends CommonObject
         global $langs;
 
         $result='';
-        if ($option == '')
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .'">';
+        $label=$langs->trans("ShowPropal").': '.$this->ref;
+        $linkclose = '" title="'.$label.'" class="classfortooltip">';
+        if ($option == '') {
+            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
         }
-        if ($option == 'compta')   // deprecated
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .'">';
+        if ($option == 'compta') {  // deprecated
+            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
         }
-        if ($option == 'expedition')
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .'">';
+        if ($option == 'expedition') {
+            $lien = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .$linkclose;
         }
-        if ($option == 'document')
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .'">';
+        if ($option == 'document') {
+            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .$linkclose;
         }
         $lienfin='</a>';
 
         $picto='propal';
-        $label=$langs->trans("ShowPropal").': '.$this->ref;
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
-        if ($withpicto && $withpicto != 2) $result.=' ';
+
+        if ($withpicto)
+            $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto && $withpicto != 2)
+            $result.=' ';
         $result.=$lien.$this->ref.$lienfin;
         return $result;
     }
