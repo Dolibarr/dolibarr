@@ -1,6 +1,9 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
 --------------------------------------------------------------
+***** ChangeLog for 3.8 compared to 3.7.* *****
+- New: Add Option to not change date on cloning project
+- New: Add check list from table for extrafield type
 
 
 ***** ChangeLog for 3.8 compared to 3.7.* *****

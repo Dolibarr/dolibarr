@@ -30,6 +30,36 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 abstract class CommonInvoice extends CommonObject
 {
+    /**
+     * Standard invoice
+     */
+    const TYPE_STANDARD = 0;
+
+    /**
+     * Replacement invoice
+     */
+    const TYPE_REPLACEMENT = 1;
+
+    /**
+     * Credit note invoice
+     */
+    const TYPE_CREDIT_NOTE = 2;
+
+    /**
+     * Deposit invoice
+     */
+    const TYPE_DEPOSIT = 3;
+
+    /**
+     * Proforma invoice
+     */
+    const TYPE_PROFORMA = 4;
+
+    /**
+     * Situation invoice
+     */
+    const TYPE_SITUATION = 5;
+
 	/**
 	 * 	Return amount of payments already done
 	 *
@@ -145,12 +175,12 @@ abstract class CommonInvoice extends CommonObject
 	function getLibType()
 	{
 		global $langs;
-		if ($this->type == Facture::TYPE_STANDARD) return $langs->trans("InvoiceStandard");
-		if ($this->type == Facture::TYPE_REPLACEMENT) return $langs->trans("InvoiceReplacement");
-		if ($this->type == Facture::TYPE_CREDIT_NOTE) return $langs->trans("InvoiceAvoir");
-		if ($this->type == Facture::TYPE_DEPOSIT) return $langs->trans("InvoiceDeposit");
-		if ($this->type == Facture::TYPE_PROFORMA) return $langs->trans("InvoiceProForma");
-		if ($this->type == Facture::TYPE_SITUATION) return $langs->trans("InvoiceSituation");
+        if ($this->type == CommonInvoice::TYPE_STANDARD) return $langs->trans("InvoiceStandard");
+        if ($this->type == CommonInvoice::TYPE_REPLACEMENT) return $langs->trans("InvoiceReplacement");
+        if ($this->type == CommonInvoice::TYPE_CREDIT_NOTE) return $langs->trans("InvoiceAvoir");
+        if ($this->type == CommonInvoice::TYPE_DEPOSIT) return $langs->trans("InvoiceDeposit");
+        if ($this->type == CommonInvoice::TYPE_PROFORMA) return $langs->trans("InvoiceProForma");
+        if ($this->type == CommonInvoice::TYPE_SITUATION) return $langs->trans("InvoiceSituation");
 		return $langs->trans("Unknown");
 	}
 
