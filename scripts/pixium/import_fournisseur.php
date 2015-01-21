@@ -1,11 +1,12 @@
 <?php
 /*
+ * Script d'import des fournisseurs depuis le fichier data.csv
  * @author Emmanuel Haguet <ehaguet@teclib.com>
  */
-
-const CSV_FILENAME = 'data.csv';
+const CSV_FILENAME = "fournisseurs_et_produit.csv";
 const CSV_SEPARATOR = ',';
 const NB_MIN_COLONNE = 5;
+const USERNAME = 'dolibarr';
 
 $path=dirname(__FILE__).'/';
 
@@ -15,7 +16,6 @@ require_once (DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 $langs->load('main');
 
 function getCountryId($country) {
-   
    $tab = array(
          'texas' => 'United States',
          'USA' => 'United States',
@@ -66,6 +66,7 @@ function import($data) {
    }
    
    $user = new User($db);
+   $user->fetch('', USERNAME);
    
    $address = ucfirst($data[$colonne -6]);
    $zip     = $data[$colonne -5];
