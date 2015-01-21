@@ -75,7 +75,7 @@ print '<br>';
 
 $head = supplierorder_admin_prepare_head(null);
 
-dol_fiche_head($head, 'supplierinvoice', $langs->trans("Suppliers"), 0, 'company');
+dol_fiche_head($head, 'supplierinvoicedet', $langs->trans("Suppliers"), 0, 'company');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br><br>'."\n";
