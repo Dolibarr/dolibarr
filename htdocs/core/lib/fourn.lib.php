@@ -190,6 +190,11 @@ function supplierorder_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");
 	$head[$h][2] = 'supplierinvoice';
 	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoicedet_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$head[$h][2] = 'supplierinvoicedet';
+	$h++;
 
 	complete_head_from_modules($conf,$langs,null,$head,$h,'supplierorder_admin','remove');
 
