@@ -126,7 +126,7 @@ if (! empty($conf->fournisseur->enabled))
 		{
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftOrders").' ('.$num.')</td></tr>';
+			print '<td colspan="3">'.$langs->trans("DraftOrders").' <span class="badge">'.$num.'</span></td></tr>';
 
 			$i = 0;
 			$var = true;
@@ -183,7 +183,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		{
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftBills").' ('.$num.')</td></tr>';
+			print '<td colspan="3">'.$langs->trans("DraftBills").' <span class="badge">'.$num.'</span></td></tr>';
 			$i = 0;
 			$tot_ttc = 0;
 			$var = True;

@@ -245,6 +245,11 @@ if ($resql)
 										$error++;
 									}
 								}
+                                
+                                if (!empty($conf->global->MAILING_DELAY)) {
+                                    sleep($conf->global->MAILING_DELAY);
+                                }
+
 							}
 						}
 						else
