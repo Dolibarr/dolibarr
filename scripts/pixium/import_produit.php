@@ -1,9 +1,9 @@
 <?php
 /*
- * Script d'import des produits depuis le fichier data.csv
+ * Script d'import des produits depuis le fichier fournisseurs_et_produits.csv
  * @author Emmanuel Haguet <ehaguet@teclib.com>
  */
-const CSV_FILENAME = "fournisseurs_et_produit.csv";
+const CSV_FILENAME = "fournisseurs_et_produits.csv";
 const CSV_SEPARATOR = ',';
 const NB_MIN_COLONNE = 5;
 const USERNAME = 'dolibarr';
@@ -20,10 +20,16 @@ function getRefOfProduct($name) {
    global $db;
    $resql = $db->query("SELECT *
                         FROM ".MAIN_DB_PREFIX."product
-                        WHERE ref LIKE '".$name."_%'
+                        WHERE ref LIKE '".$name."\_%'
                         ORDER BY ref desc");
    $obj = $db->fetch_object($resql);
-   return $name . '_' . ($obj) ? (substr(strstr($obj->ref, '_'), 1) +1) : 0;
+   if ($obj) {
+      $num = substr(strstr($obj->ref, '_'), 1);
+      $num++;
+   } else {
+      $num = 0;
+   }
+   return $name . '_' . str_pad($num, 4, '0', STR_PAD_LEFT);
 }
 
 /**
@@ -34,12 +40,11 @@ function getRefOfProduct($name) {
  */
 function multiexplode($delimiters, $string) {
    $ready = str_replace($delimiters, $delimiters[0], $string);
-   $launch = explode($delimiters[0], $ready);
-   return $launch;
+   return explode($delimiters[0], $ready);
 }
 
-function constructRef($libelle_produit) {
-   $ref = '';
+function constructRefLetter($libelle_produit) {
+   $ref = ''; //init
    $i = 0;
    $parts_ref = multiexplode(array(' ', '-'), $libelle_produit);
    foreach ($parts_ref as $part_ref) {
@@ -60,41 +65,43 @@ function import($data) {
    }
    $name = ucfirst($data[1]);
    if (empty($name)) {
+      //echo "<tr><td>Nom vide</td></tr>";
       return;
    }
    
    $libelle_produit = $data[2];
    
-   $ref = getRefOfProduct(constructRef($libelle_produit));
+   $ref_letter = constructRefLetter($libelle_produit);
+   $ref = getRefOfProduct($ref_letter);
    
    /*echo "<tr>
             <td>$name</td>
             <td>$libelle_produit</td>
-            <td>$ref</td>
-         </tr>";*/
+            <td>$ref</td>";*/
    
    $product = new Product($db);
    $product->ref = $ref;
    $product->libelle = $name;
-   
-   //Important : tosell, tobuy
-   $product->status = 0;
-   $product->status_buy = 1;
+   $product->status = 0; //tosell
+   $product->status_buy = 1; //tobuy
    
    $user = new User($db);
    $user->fetch('', USERNAME);
    $returnvalue = $product->create($user);
+   //echo "<td>";
    if ($returnvalue >= 0) {
-      echo 'OK ';
+      //echo 'OK';
    } else {
-      //TODO : Meilleur gestion des messages d'erreur
-      echo '<span style="color:red">KO</span> ';
+      //echo '<span style="color:red">KO</span>';
    }
+   
+   //echo "</td></tr>";
 }
 
 //$csv = array_map('str_getcsv', file(CSV_FILENAME));
 
-/*echo "<table>";
+/*
+echo "<table>";
 echo "<tr>
          <td>name</td>
          <td>libelle_produit</td>

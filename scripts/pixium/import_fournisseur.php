@@ -3,7 +3,7 @@
  * Script d'import des fournisseurs depuis le fichier data.csv
  * @author Emmanuel Haguet <ehaguet@teclib.com>
  */
-const CSV_FILENAME = "fournisseurs_et_produit.csv";
+const CSV_FILENAME = "fournisseurs_et_produits.csv";
 const CSV_SEPARATOR = ',';
 const NB_MIN_COLONNE = 5;
 const USERNAME = 'dolibarr';
