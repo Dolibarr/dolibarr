@@ -350,7 +350,7 @@ class ProductFournisseur extends Product
             	$this->fourn_remise             = $obj->remise;
             	$this->fourn_unitprice          = $obj->unitprice;
             	$this->fourn_unitcharges        = $obj->unitcharges;
-            	$this->tva_tx					= $obj->tva_tx;
+            	$this->fourn_tva_tx					= $obj->tva_tx;
             	$this->product_id				= $obj->fk_product;	// deprecated
             	$this->fk_product				= $obj->fk_product;
             	$this->fk_availability			= $obj->fk_availability;
@@ -476,11 +476,11 @@ class ProductFournisseur extends Product
     }
 
     /**
-     * 	Load properties for minimum price
+     *  Load properties for minimum price
      *
-     *  @param	int		$prodid	    Product id
-     *  @param	int		$qty		Minimum quantity
-     *  @return int					<0 if KO, >0 if OK, 0 if empty
+     *  @param  int     $prodid     Product id
+     *  @param  int     $qty        Minimum quantity
+     *  @return int                 <0 if KO, >0 if OK
      */
     function find_min_price_product_fournisseur($prodid, $qty=0)
     {
@@ -498,41 +498,79 @@ class ProductFournisseur extends Product
         $this->fourn_name             = '';
         $this->id                     = '';
 
-        $product_fourn_list = $this->list_product_fournisseur_price($prodid);
+        $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
+        $sql.= " pfp.rowid as product_fourn_price_id, pfp.ref_fourn,";
+        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.charges, pfp.unitcharges, ";
+        $sql.= " pfp.remise, pfp.remise_percent, pfp.fk_supplier_price_expression";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+        $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+        $sql.= " AND pfp.fk_product = ".$prodid;
+        $sql.= " AND pfp.fk_soc = s.rowid";
+        if ($qty > 0) $sql.= " AND pfp.quantity <= ".$qty;
 
         dol_syslog(get_class($this)."::find_min_price_product_fournisseur", LOG_DEBUG);
 
-        if (is_array($product_fourn_list))
+        $resql = $this->db->query($sql);
+        if ($resql)
         {
-            if (count($product_fourn_list) == 0) 
+            $record_array = array();
+
+            //Store each record to array for later search of min
+            while ($record = $this->db->fetch_array($resql))
             {
+                $record_array[]=$record;
+            }
+
+            if (count($record_array) == 0) 
+            {
+                $this->db->free($resql);
                 return 0;
             }
             else
             {
                 $min = -1;
-                foreach($product_fourn_list as $productfourn)
+                foreach($record_array as $record)
                 { 
-                    if ($productfourn->fourn_price < $min || $min == -1)
+                    $fourn_price = $record["price"];
+                    $fourn_unitprice = $record["unitprice"];
+                    if (!empty($record["fk_supplier_price_expression"])) {
+                        $priceparser = new PriceParser($this->db);
+                        $price_result = $priceparser->parseProductSupplier($prodid, $record["fk_supplier_price_expression"], $record["quantity"], $record["tva_tx"]);
+                        if ($price_result >= 0) {
+                            $fourn_price = price2num($price_result,'MU');
+                            if ($record["quantity"] != 0)
+                            {
+                                $fourn_unitprice = price2num($fourn_price/$record["quantity"],'MU');
+                            }
+                            else
+                            {
+                                $fourn_unitprice = $fourn_price;
+                            }
+                        }
+                    }
+                    if ($fourn_unitprice < $min || $min == -1)
                     {
-                        $this->product_fourn_price_id   = $productfourn->product_fourn_price_id;
-                        $this->fourn_ref                = $productfourn->fourn_ref;
-                        $this->fourn_price              = $productfourn->fourn_price;
-                        $this->fourn_qty                = $productfourn->fourn_qty;
-                        $this->fourn_remise_percent     = $productfourn->fourn_remise_percent;
-                        $this->fourn_remise             = $productfourn->fourn_remise;
-                        $this->fourn_unitprice          = $productfourn->fourn_unitprice;
-                        $this->fourn_charges            = $productfourn->fourn_charges;
-                        $this->fourn_unitcharges        = $productfourn->fourn_unitcharges;
-                        $this->fourn_tva_tx             = $productfourn->fourn_tva_tx;
-                        $this->fourn_id                 = $productfourn->fourn_id;
-                        $this->fourn_name               = $productfourn->fourn_name;
-                        $this->fk_supplier_price_expression      = $productfourn->fk_supplier_price_expression;
-                        $this->id                       = $productfourn->id;
+                        $this->product_fourn_price_id   = $record["product_fourn_price_id"];
+                        $this->fourn_ref                = $record["ref_fourn"];
+                        $this->fourn_price              = $fourn_price;
+                        $this->fourn_qty                = $record["quantity"];
+                        $this->fourn_remise_percent     = $record["remise_percent"];
+                        $this->fourn_remise             = $record["remise"];
+                        $this->fourn_unitprice          = $fourn_unitprice;
+                        $this->fourn_charges            = $record["charges"];
+                        $this->fourn_unitcharges        = $record["unitcharges"];
+                        $this->fourn_tva_tx             = $record["tva_tx"];
+                        $this->fourn_id                 = $record["fourn_id"];
+                        $this->fourn_name               = $record["supplier_name"];
+                        $this->fk_supplier_price_expression      = $record["fk_supplier_price_expression"];
+                        $this->id                       = $prodid;
+                        $min = $this->fourn_unitprice;
                     }
                 }
-                return 1;
             }
+
+            $this->db->free($resql);
+            return 1;
         }
         else
         {
