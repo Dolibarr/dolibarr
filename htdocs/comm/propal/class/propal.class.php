@@ -2606,7 +2606,9 @@ class Propal extends CommonObject
 
         $result='';
         $label=$langs->trans("ShowPropal").': '.$this->ref;
-        $linkclose = '" title="'.$label.'" class="classfortooltip">';
+        if (! empty($this->ref_client))
+            $label.= '<br>'.$langs->trans('RefCustomer').': '.$this->ref_client;
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         if ($option == '') {
             $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
         }

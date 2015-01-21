@@ -488,7 +488,7 @@ class PaymentSalary extends CommonObject
 		$result='';
         $label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='payment';

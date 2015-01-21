@@ -1560,7 +1560,7 @@ class Adherent extends CommonObject
 
         $result='';
         $label=$langs->trans("ShowMember").': '.$this->ref;
-        $linkclose = '" title="'.$label.'" class="classfortooltip">';
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if ($option == 'card')
         {

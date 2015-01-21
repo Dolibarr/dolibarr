@@ -2816,7 +2816,7 @@ class Product extends CommonObject
         if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
         if ($this->type == 0) $label = $langs->trans("ShowProduct").': '.$this->ref.' '.$this->label;
         if ($this->type == 1) $label = $langs->trans("ShowService").': '.$this->ref.' '.$this->label;
-        $linkclose = '" title="'.$label.'" class="classfortooltip">';
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if ($option == 'supplier') {
             $lien = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;

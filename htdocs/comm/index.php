@@ -142,7 +142,7 @@ if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
  */
 if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
-	$sql = "SELECT p.rowid, p.ref, p.total_ht, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -172,6 +172,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				print '<tr '.$bc[$var].'><td  class="nowrap">';
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
+                $propalstatic->ref_client=$obj->ref_client;
 				print $propalstatic->getNomUrl(1);
 				print '</td>';
 				print '<td class="nowrap">';
@@ -209,7 +210,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$langs->load("orders");
 
-	$sql = "SELECT c.rowid, c.ref, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -239,6 +240,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 				print '<tr '.$bc[$var].'><td class="nowrap">';
                 $orderstatic->id=$obj->rowid;
                 $orderstatic->ref=$obj->ref;
+                $orderstatic->ref_client=$obj->ref_client;
                 print $orderstatic->getNomUrl(1);
                 print '</td>';
 				print '<td class="nowrap">';
@@ -467,7 +469,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
 	$langs->load("propal");
 
-	$sql = "SELECT s.nom as name, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql = "SELECT s.nom as name, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -503,6 +505,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 
 				$propalstatic->id=$obj->propalid;
 				$propalstatic->ref=$obj->ref;
+                $propalstatic->ref_client=$obj->ref_client;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td class="nobordernopadding nowrap">';

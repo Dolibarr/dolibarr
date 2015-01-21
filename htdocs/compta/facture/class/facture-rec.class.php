@@ -560,7 +560,7 @@ class FactureRec extends Facture
 		$result='';
         $label=$langs->trans("ShowInvoice").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='bill';

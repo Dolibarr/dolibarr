@@ -266,7 +266,7 @@ class Cotisation extends CommonObject
 		$result='';
         $label=$langs->trans("ShowSubscription").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='payment';

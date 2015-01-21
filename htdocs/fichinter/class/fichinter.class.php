@@ -549,7 +549,7 @@ class Fichinter extends CommonObject
 		$result='';
         $label=$langs->trans("Show").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='intervention';

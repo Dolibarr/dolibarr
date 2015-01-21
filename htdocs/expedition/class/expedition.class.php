@@ -1223,7 +1223,7 @@ class Expedition extends CommonObject
 
 		if ($short) return $url;
 
-        $linkstart = '<a href="'.$url.'" title="'.$label.'" class="classfortooltip">';
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='sending';

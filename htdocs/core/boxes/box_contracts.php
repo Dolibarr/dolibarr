@@ -79,8 +79,7 @@ class box_contracts extends ModeleBoxes
 
     			$i = 0;
 
-    			while ($i < $num)
-    			{
+                while ($i < $num) {
     				$objp = $db->fetch_object($resql);
     				$datec=$db->jdate($objp->datec);
     				$dateterm=$db->jdate($objp->fin_validite);
@@ -94,50 +93,69 @@ class box_contracts extends ModeleBoxes
     				// fin_validite is no more on contract but on services
     				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
-    				$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-    				'logo' => $this->boximg,
-    				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => $this->boximg,
+                        'tooltip' => $langs->trans('Contract').': '.($objp->ref?$objp->ref:$objp->rowid),
+                        'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid,
+                    );
 
-    				$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-    				'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
-    				'text2'=> $late,
-    				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => ($objp->ref?$objp->ref:$objp->rowid), // Some contracts have no ref
+                        'tooltip' => $langs->trans('Contract').': '.($objp->ref?$objp->ref:$objp->rowid),
+                        'text2'=> $late,
+                        'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid,
+                    );
 
-    				$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-    				'logo' => 'company',
-    				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => 'company',
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
 
-    				$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-    				'text' => dol_trunc($objp->name,40),
-    				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][3] = array(
+                        'td' => 'align="left"',
+                        'text' => dol_trunc($objp->name,40),
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
 
-    				$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-    				'text' => dol_print_date($datec,'day'));
+                    $this->info_box_contents[$i][4] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($datec,'day'),
+                    );
 
-    				$this->info_box_contents[$i][5] = array('td' => 'align="right" class="nowrap"',
-    				'text' => $contractstatic->getLibStatut(6),
-    				'asis'=>1
-    				);
+                    $this->info_box_contents[$i][5] = array(
+                        'td' => 'align="right" class="nowrap"',
+                        'text' => $contractstatic->getLibStatut(6),
+                        'asis'=>1,
+                    );
 
-    				$i++;
-    			}
+                    $i++;
+                }
 
-    			if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedContracts"));
+                if ($num==0)
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoRecordedContracts"),
+                    );
 
-				$db->free($resql);
-    		}
-    		else
-    		{
-    			$this->info_box_contents[0][0] = array(  'td' => 'align="left"',
-                                                        'maxlength'=>500,
-                                                        'text' => ($db->error().' sql='.$sql));
-    		}
-    	}
-    	else
-    	{
-    		$this->info_box_contents[0][0] = array('td' => 'align="left"',
-    		'text' => $langs->trans("ReadPermissionNotAllowed"));
-    	}
+                $db->free($resql);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
+        }
     }
 
 	/**

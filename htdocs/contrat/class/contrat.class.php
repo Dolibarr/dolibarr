@@ -1684,7 +1684,7 @@ class Contrat extends CommonObject
 		$result='';
         $label=$langs->trans("ShowContract").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='contract';
@@ -2213,7 +2213,7 @@ class ContratLigne extends CommonObject
 		$result='';
         $label=$langs->trans("ShowContractOfService").': '.$this->label;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.$label.'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='contract';

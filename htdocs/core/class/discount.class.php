@@ -433,18 +433,16 @@ class DiscountAbsolute
 
         $result='';
 
-        if ($option == 'invoice')
-        {
+        if ($option == 'invoice') {
             $label=$langs->trans("ShowDiscount").': '.$this->ref_facture_source;
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->fk_facture_source.'" title="'.$label.'" class="classfortooltip">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->fk_facture_source.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $lienfin='</a>';
             $ref=$this->ref_facture_source;
             $picto='bill';
         }
-        if ($option == 'discount')
-        {
+        if ($option == 'discount') {
             $label=$langs->trans("Discount");
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->fk_soc.'" title="'.$label.'" class="classfortooltip">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->fk_soc.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $lienfin='</a>';
             $ref=$langs->trans("Discount");
             $picto='generic';

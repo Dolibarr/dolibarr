@@ -514,7 +514,7 @@ class Entrepot extends CommonObject
 		$result='';
         $label = $langs->trans("ShowStock").': '.$this->libelle;
 
-        $lien='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+        $lien='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
         if ($withpicto) $result.=($lien.img_object($label, 'stock', 'class="classfortooltip"').$lienfin.' ');

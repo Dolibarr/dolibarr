@@ -272,7 +272,7 @@ class AdherentType extends CommonObject
         $result='';
         $label=$langs->trans("ShowTypeCard",$this->libelle);
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
         $picto='group';

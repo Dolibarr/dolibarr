@@ -898,8 +898,8 @@ class ActionComm extends CommonObject
 
         $result='';
         $label=$this->label;
-        if (empty($label)) $label=$this->libelle;	// For backward compatibility
-        $linkclose = '" title="'.$label.'" class="classfortooltip">';
+        if (empty($label)) $label=$this->libelle;   // For backward compatibility
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.$linkclose;
         else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.$linkclose;
         $lienfin='</a>';

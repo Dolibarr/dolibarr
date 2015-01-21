@@ -790,7 +790,7 @@ class Project extends CommonObject
         $lien = '';
         $lienfin = '';
         $label = $langs->trans("ShowProject") . ': ' . $this->ref . ($this->title ? ' - ' . $this->title : '');
-        $linkclose = '" title="'.$label.'" class="classfortooltip">';
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if ($option != 'nolink') {
             if (preg_match('/\.php$/',$option)) {

@@ -98,8 +98,12 @@ class box_external_rss extends ModeleBoxes
         }
         else
         {
-        	$this->info_box_head = array('text' => $title,
-        		'sublink' => $link, 'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown")), 'subpicto'=>'object_bookmark');
+            $this->info_box_head = array(
+                'text' => $title,
+                'sublink' => $link,
+                'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown")),
+                'subpicto'=>'object_bookmark',
+            );
 		}
 
 		// INFO on items
@@ -112,8 +116,8 @@ class box_external_rss extends ModeleBoxes
 			// Feed common fields
             $href  = $item['link'];
         	$title = urldecode($item['title']);
-			$date  = $item['date_timestamp'];	// date will be empty if conversion into timestamp failed
-			if ($rssparser->getFormat() == 'rss')		// If RSS
+			$date  = $item['date_timestamp'];       // date will be empty if conversion into timestamp failed
+			if ($rssparser->getFormat() == 'rss')   // If RSS
 			{
 				if (! $date && isset($item['pubdate']))    $date=$item['pubdate'];
 				if (! $date && isset($item['dc']['date'])) $date=$item['dc']['date'];
@@ -138,19 +142,27 @@ class box_external_rss extends ModeleBoxes
             $title=preg_replace("/^\s+/","",$title);                                  // Supprime espaces de debut
             $this->info_box_contents["$href"]="$title";
 
-            $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-            'logo' => $this->boximg,
-            'url' => $href,
-            'target' => 'newrss');
+            $this->info_box_contents[$i][0] = array(
+                'td' => 'align="left" width="16"',
+                'logo' => $this->boximg,
+                'url' => $href,
+                'tooltip' => $title,
+                'target' => 'newrss',
+            );
 
-            $this->info_box_contents[$i][1] = array('td' => 'align="left"',
-            'text' => $title,
-            'url' => $href,
-            'maxlength' => 64,
-            'target' => 'newrss');
+            $this->info_box_contents[$i][1] = array(
+                'td' => 'align="left"',
+                'text' => $title,
+                'url' => $href,
+                'tooltip' => $title,
+                'maxlength' => 64,
+                'target' => 'newrss',
+            );
 
-            $this->info_box_contents[$i][2] = array('td' => 'align="right" nowrap="1"',
-            'text' => $date);
+            $this->info_box_contents[$i][2] = array(
+                'td' => 'align="right" nowrap="1"',
+                'text' => $date,
+            );
         }
     }
 

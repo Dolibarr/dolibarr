@@ -495,7 +495,7 @@ class PaiementFourn extends Paiement
         }
         $label = $langs->trans("ShowPayment").': '.$text;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
 

@@ -873,7 +873,7 @@ class Resource extends CommonObject
 
         if ($option == '')
         {
-            $lien = '<a href="'.dol_buildpath('/resource/card.php',1).'?id='.$this->id. $get_params .'" title="'.$label.'" class="classfortooltip">';
+            $lien = '<a href="'.dol_buildpath('/resource/card.php',1).'?id='.$this->id. $get_params .'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $picto='resource@resource';
             $label=$langs->trans("ShowResource").': '.$this->ref;
 

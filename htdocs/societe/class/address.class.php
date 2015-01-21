@@ -424,7 +424,7 @@ class Address
 		$result='';
         $label = $langs->trans("ShowAddress").': '.$this->label;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/comm/address.php?id='.$this->id.'&socid='.$this->socid.'" title="'.$label.'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/comm/address.php?id='.$this->id.'&socid='.$this->socid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
         if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAddress").': '.$this->label, 'address', 'class="classfortooltip"').$lienfin.' ');

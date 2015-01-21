@@ -1120,12 +1120,12 @@ class BonPrelevement extends CommonObject
         $result='';
         $label = $langs->trans("ShowWithdraw").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
         if ($option == 'xxx')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $lienfin='</a>';
         }
 

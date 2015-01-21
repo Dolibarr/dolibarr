@@ -80,70 +80,85 @@ class box_commandes extends ModeleBoxes
             $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);
-            if ($result)
-            {
+            if ($result) {
                 $num = $db->num_rows($result);
 
                 $i = 0;
 
-                while ($i < $num)
-                {
+                while ($i < $num) {
                     $objp = $db->fetch_object($result);
                     $date=$db->jdate($objp->date_commande);
-					$datem=$db->jdate($objp->tms);
+                    $datem=$db->jdate($objp->tms);
 
-                    $this->info_box_contents[$i][] = array('td' => 'align="left" width="16"',
-                    'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/commande/card.php?id=".$objp->rowid);
-
-                    $this->info_box_contents[$i][] = array('td' => 'align="left"',
-                    'text' => $objp->ref,
-                    'url' => DOL_URL_ROOT."/commande/card.php?id=".$objp->rowid);
-
-					$this->info_box_contents[$i][] = array('td' => 'align="left" width="16"',
-                    'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
-
-					$this->info_box_contents[$i][] = array('td' => 'align="left"',
-                    'text' => $objp->name,
-                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
-
-					$this->info_box_contents[$i][] = array('td' => 'align="right"',
-                    'text' => price($objp->total_ht),
-					);
-
-					if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_SHOW_VALIDATE_USER))
-					{
-						if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
-						$this->info_box_contents[$i][] = array('td' => 'align="right"',
-    	                'text' => (($objp->fk_user_valid > 0)?$userstatic->getNomUrl(1):''),
-						'url' => (($objp->fk_user_valid > 0)?DOL_URL_ROOT.'/user/card.php?id='.$objp->fk_user_valid:'')
-						);
-					}
-
-					$this->info_box_contents[$i][] = array('td' => 'align="right"',
-                    'text' => dol_print_date($date,'day'),
+                    $this->info_box_contents[$i][] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => $this->boximg,
+                        'tooltip' => $langs->trans('Order').': '.$objp->ref,
+                        'url' => DOL_URL_ROOT."/commande/card.php?id=".$objp->rowid,
                     );
 
-                    $this->info_box_contents[$i][] = array('td' => 'align="right" width="18"',
-                    'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3));
+                    $this->info_box_contents[$i][] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->ref,
+                        'tooltip' => $langs->trans('Order').': '.$objp->ref,
+                        'url' => DOL_URL_ROOT."/commande/card.php?id=".$objp->rowid,
+                    );
+                    $this->info_box_contents[$i][] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => 'company',
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
+
+                    $this->info_box_contents[$i][] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->name,
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
+
+                    $this->info_box_contents[$i][] = array(
+                        'td' => 'align="right"',
+                        'text' => price($objp->total_ht),
+                    );
+
+                    if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_SHOW_VALIDATE_USER)) {
+                        if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
+                        $this->info_box_contents[$i][] = array(
+                            'td' => 'align="right"',
+                            'text' => (($objp->fk_user_valid > 0)?$userstatic->getNomUrl(1):''),
+                            'url' => (($objp->fk_user_valid > 0)?DOL_URL_ROOT.'/user/card.php?id='.$objp->fk_user_valid:''),
+                        );
+                    }
+
+                    $this->info_box_contents[$i][] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($date,'day'),
+                    );
+
+                    $this->info_box_contents[$i][] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3),
+                    );
 
                     $i++;
                 }
 
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedOrders"));
 
-				$db->free($result);
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
             }
-            else {
-                $this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-            }
-        }
-        else {
-            $this->info_box_contents[0][0] = array('align' => 'left',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'align' => 'left',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
         }
     }
 

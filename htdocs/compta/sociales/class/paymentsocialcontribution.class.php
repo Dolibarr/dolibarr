@@ -589,7 +589,7 @@ class PaymentSocialContribution extends CommonObject
 
 		if (!empty($this->id))
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.$label.'" class="classfortooltip">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$lienfin='</a>';
 
             if ($withpicto) $result.=($lien.img_object($label, 'payment', 'class="classfortooltip"').$lienfin.' ');
