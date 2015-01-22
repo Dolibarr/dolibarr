@@ -270,12 +270,12 @@ class AdherentType extends CommonObject
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowTypeCard",$this->libelle);
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
         $picto='group';
-        $label=$langs->trans("ShowTypeCard",$this->libelle);
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
