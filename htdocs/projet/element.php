@@ -275,7 +275,7 @@ foreach ($listofreferent as $key => $value)
 		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
 			print '<input type="hidden" name="tablename" value="'.$tablename.'">';
-			print '<input type="hidden" name="action" value="addelement">';
+			print '<input type="hidden" name="action" value="view">';
 			print '<table><tr>';
 			//print '<td>'.$langs->trans("Filter").':</td>';
 			print '<td>'.$langs->trans("From").' ';
