@@ -308,10 +308,6 @@ class FormFile
                     $modellist=ModeleThirdPartyDoc::liste_modeles($this->db);
                 }
             }
-			else if ($modulepart == 'agenda')
-            {
-               null;
-            }
             else if ($modulepart == 'propal')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
@@ -442,7 +438,7 @@ class FormFile
             {
                 $modellist='';
             }
-            else
+            else if ($modulepart != 'agenda')
             {
 
                 // For normalized standard modules
