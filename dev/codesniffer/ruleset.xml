@@ -230,6 +230,7 @@
 
     <rule ref="PEAR.Commenting.FunctionComment.Missing" />
 
+    <!--
     <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag">
         <severity>0</severity>
     </rule>
@@ -246,6 +247,7 @@
     <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag">
         <severity>0</severity>
     </rule>
+    -->
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
         <severity>0</severity>
