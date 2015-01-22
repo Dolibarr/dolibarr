@@ -99,13 +99,19 @@ class box_produits extends ModeleBoxes
 						}
 					}
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
-                    'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
+                        'tooltip' => $objp->label,
+                        'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->label,
-                    'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->label,
+                        'tooltip' => $objp->label,
+                        'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid,
+                    );
 
 					if ($objp->price_base_type == 'HT')
 					{
@@ -117,39 +123,54 @@ class box_produits extends ModeleBoxes
 						$price=price($objp->price_ttc);
 						$price_base_type=$langs->trans("TTC");
 					}
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-                    'text' => $price);
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="right"',
+                        'text' => $price,
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left" class="nowrap"',
-                    'text' => $price_base_type);
+                    $this->info_box_contents[$i][3] = array(
+                        'td' => 'align="left" class="nowrap"',
+                        'text' => $price_base_type,
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-                    'text' => dol_print_date($datem,'day'));
+                    $this->info_box_contents[$i][4] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($datem,'day'),
+                    );
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
-                    'text' => $productstatic->LibStatut($objp->tosell,3,0));
+                    $this->info_box_contents[$i][5] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $productstatic->LibStatut($objp->tosell,3,0),
+                    );
 
-                    $this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
-                    'text' => $productstatic->LibStatut($objp->tobuy,3,1));
+                    $this->info_box_contents[$i][6] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $productstatic->LibStatut($objp->tobuy,3,1),
+                    );
 
                     $i++;
-				}
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProducts"));
+                }
+                if ($num==0)
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoRecordedProducts"),
+                    );
 
-				$db->free($result);
-			}
-			else
-			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
-		}
-	}
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
+        }
+    }
 
 	/**
 	 *	Method to show box

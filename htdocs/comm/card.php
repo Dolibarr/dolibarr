@@ -500,7 +500,7 @@ if ($id > 0)
 	{
 		$propal_static = new Propal($db);
 
-		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
+		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.ref_client, p.remise, ";
 		$sql.= " p.datep as dp, p.fin_validite as datelimite";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
@@ -534,6 +534,7 @@ if ($id > 0)
                 print '<td class="nowrap">';
                 $propal_static->id=$objp->propalid;
                 $propal_static->ref=$objp->ref;
+                $propal_static->ref_client=$objp->ref_client;
                 print $propal_static->getNomUrl(1);
                 if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 ) {
                     print " ".img_warning();
@@ -561,7 +562,7 @@ if ($id > 0)
 		$commande_static=new Commande($db);
 
 		$sql = "SELECT s.nom, s.rowid,";
-		$sql.= " c.rowid as cid, c.total_ht, c.ref, c.fk_statut, c.facture,";
+		$sql.= " c.rowid as cid, c.total_ht, c.ref, c.ref_client, c.fk_statut, c.facture,";
 		$sql.= " c.date_commande as dc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql.= " WHERE c.fk_soc = s.rowid ";
@@ -611,6 +612,7 @@ if ($id > 0)
                 print '<td class="nowrap">';
                 $commande_static->id=$objp->cid;
                 $commande_static->ref=$objp->ref;
+                $commande_static->ref_client=$objp->ref_client;
                 print $commande_static->getNomUrl(1);
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';

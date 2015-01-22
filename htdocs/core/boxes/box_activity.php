@@ -94,7 +94,7 @@ class box_activity extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $facturestatic=new Facture($db);
 
-            $cachefile = DOL_DATA_ROOT.'/facture/temp/boxactivity-invoice'.$fileid;
+            $cachefile = DOL_DATA_ROOT.'/cache/boxes/boxactivity-invoice'.$fileid;
             $refresh = !file_exists($cachefile) || ($now-$cachetime) > dol_filemtime($cachefile);
             $data = array();
             if ($refresh) {
@@ -173,7 +173,7 @@ class box_activity extends ModeleBoxes
                     );
             }
 
-            $cachefile = DOL_DATA_ROOT.'/facture/temp/boxactivity-invoice2'.$fileid;
+            $cachefile = DOL_DATA_ROOT.'/cache/boxes/boxactivity-invoice2'.$fileid;
             $refresh = !file_exists($cachefile) || ($now-$cachetime) > dol_filemtime($cachefile);
 
             if ($refresh) {
@@ -255,7 +255,7 @@ class box_activity extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
             $commandestatic=new Commande($db);
 
-            $cachefile = DOL_DATA_ROOT.'/commande/temp/boxactivity-order'.$fileid;
+            $cachefile = DOL_DATA_ROOT.'/cache/boxes/boxactivity-order'.$fileid;
             $refresh = !file_exists($cachefile) || ($now-$cachetime) > dol_filemtime($cachefile);
             $data = array();
             if ($refresh) {
@@ -334,7 +334,7 @@ class box_activity extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $propalstatic=new Propal($db);
 
-            $cachefile = DOL_DATA_ROOT.'/propale/temp/boxactivity-propal'.$fileid;
+            $cachefile = DOL_DATA_ROOT.'/cache/boxes/boxactivity-propal'.$fileid;
             $refresh = !file_exists($cachefile) || ($now-$cachetime) > dol_filemtime($cachefile);
             $data = array();
             if ($refresh) {

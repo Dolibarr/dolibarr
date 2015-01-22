@@ -1181,8 +1181,8 @@ else
                 $object->idprof2				= GETPOST('idprof2', 'alpha');
                 $object->idprof3				= GETPOST('idprof3', 'alpha');
                 $object->idprof4				= GETPOST('idprof4', 'alpha');
-        		    $object->idprof5				= GETPOST('idprof5', 'alpha');
-        		    $object->idprof6				= GETPOST('idprof6', 'alpha');
+                $object->idprof5				= GETPOST('idprof5', 'alpha');
+                $object->idprof6				= GETPOST('idprof6', 'alpha');
                 $object->typent_id				= GETPOST('typent_id', 'int');
                 $object->effectif_id			= GETPOST('effectif_id', 'int');
                 $object->barcode				= GETPOST('barcode', 'alpha');

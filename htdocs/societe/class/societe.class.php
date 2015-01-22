@@ -1748,11 +1748,13 @@ class Societe extends CommonObject
             $lien = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
         }
 
+        $label = $langs->trans("ShowCompany").': '.$name;
+
         // Add type of canvas
-        $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'" title="'.dol_escape_htmltag($name, 1).'" class="classfortooltip">';
+        $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name, 'company', 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, 'company', 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($name,$maxlen):$name).$lienfin;
 

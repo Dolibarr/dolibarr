@@ -127,7 +127,7 @@ class box_comptes extends ModeleBoxes
 
                     $this->info_box_contents[$i][3] = array(
                         'td' => 'align="right"',
-                        'text' => price($solde, 0, $langs, 0, 0, -1, $objp->currency_code)
+                        'text' => price($solde, 0, $langs, 0, -1, -1, $objp->currency_code)
                     );
 
                     $i++;
@@ -148,10 +148,10 @@ class box_comptes extends ModeleBoxes
                         'td' => 'align="right" class="liste_total"',
                         'text' => '&nbsp;'
                     );
-                    $totalamount=price($solde,0,$langs,0,0,-1,$key);
+
                     $this->info_box_contents[$i][3] = array(
                         'td' => 'align="right" class="liste_total"',
-                        'text' => $totalamount
+                        'text' => price($solde, 0, $langs, 0, 0, -1, $key)
                     );
                     $i++;
                 }
