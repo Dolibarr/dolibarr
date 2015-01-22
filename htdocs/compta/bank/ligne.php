@@ -358,7 +358,7 @@ if ($result)
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='user') {
-                    print '<a href="'.DOL_URL_ROOT.'/user/fiche?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowUser'),'user').' ';
                     print $langs->trans("User");
                     print '</a>';
