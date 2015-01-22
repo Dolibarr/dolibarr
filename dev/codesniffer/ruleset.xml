@@ -185,7 +185,7 @@
     <rule ref="PEAR.Commenting.ClassComment" />
 
     <rule ref="PEAR.Commenting.ClassComment.MissingTag" />
-
+    <!--
     <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag">
         <severity>0</severity>
     </rule>
@@ -205,7 +205,7 @@
     <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag">
         <severity>0</severity>
     </rule>
-
+    -->
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName" />
@@ -215,8 +215,6 @@
     <rule ref="PEAR.Commenting.FunctionComment.MissingReturn" />
 
     <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired" />
-
-    <rule ref="PEAR.Commenting.FunctionComment.Missing" />
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
 
@@ -234,7 +232,6 @@
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
         <severity>0</severity>
     </rule>
-    <rule ref="PEAR.Commenting.ClassComment.Missing" />
 
     <rule ref="PEAR.Commenting.FunctionComment.MissingReturn" />
 
