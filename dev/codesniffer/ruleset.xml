@@ -218,19 +218,9 @@
 
     <rule ref="PEAR.Commenting.FunctionComment.Missing" />
 
-    <rule ref="PEAR.Commenting.ClassComment.Missing@categoryTag" />
-
-    <rule ref="PEAR.Commenting.ClassComment.Missing@licenseTag" />
-
-    <rule ref="PEAR.Commenting.ClassComment.Missing@linkTag" />
-
-    <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag" />
-
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName" />
-
-    <rule ref="PEAR.Commenting.ClassComment.Missing" />
 
     <rule ref="PEAR.Commenting.FunctionComment.MissingReturn" />
 
