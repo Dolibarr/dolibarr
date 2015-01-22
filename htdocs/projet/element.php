@@ -356,18 +356,22 @@ foreach ($listofreferent as $key => $value)
 				print "</td>\n";
 
 				// Date
-				$date=$element->date;
-				if (empty($date)) $date=$element->datep;
-				if (empty($date)) $date=$element->date_contrat;
-				if (empty($date)) $date=$element->datev; //Fiche inter
+				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order') $date=$element->date_commande;
+				else 
+				{
+					$date=$element->date;
+					if (empty($date)) $date=$element->datep;
+					if (empty($date)) $date=$element->date_contrat;
+					if (empty($date)) $date=$element->datev; //Fiche inter
+				}
 				print '<td align="center">'.dol_print_date($date,'day').'</td>';
 
 				// Third party
                 print '<td align="left">';
-                if (is_object($element->client)) print $element->client->getNomUrl(1,'',48);
+                if (is_object($element->thirdparty)) print $element->thirdparty->getNomUrl(1,'',48);
 				print '</td>';
 
-                // Amount
+                // Amount without tax
 				if (empty($value['disableamount']))
 				{
 					print '<td align="right">';
@@ -378,7 +382,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				else print '<td></td>';
 
-                // Amount
+                // Amount inc tax
 				if (empty($value['disableamount']))
 				{
 					print '<td align="right">';
