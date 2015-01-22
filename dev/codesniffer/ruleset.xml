@@ -208,8 +208,6 @@
 
     <rule ref="PEAR.Commenting.FunctionComment.Missing" />
 
-    <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag" />
-
     <rule ref="PEAR.Commenting.ClassComment.Missing@categoryTag" />
 
     <rule ref="PEAR.Commenting.ClassComment.Missing@licenseTag" />
