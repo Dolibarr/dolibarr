@@ -16,7 +16,7 @@
 --
 -- ========================================================================
 
-create table llx_facture_fourndet_extrafields
+create table llx_facture_fourn_det_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp,
