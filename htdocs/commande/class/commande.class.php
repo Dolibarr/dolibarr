@@ -1683,12 +1683,14 @@ class Commande extends CommonOrder
 
         $sql = 'SELECT cd.rowid, cd.fk_product,';
         $sql.= ' sum(ed.qty) as qty';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed ';
-		if ($filtre_statut >= 0) $sql.= ' JOIN '.MAIN_DB_PREFIX.'expedition as e ON ed.fk_expedition = e.rowid ';
-        $sql.= ' JOIN '.MAIN_DB_PREFIX.'commandedet as cd ON ed.fk_origin_line = cd.rowid';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed,';
+        if ($filtre_statut >= 0) $sql.= ' '.MAIN_DB_PREFIX.'expedition as e,';
+        $sql.= ' '.MAIN_DB_PREFIX.'commandedet as cd';
         $sql.= ' WHERE';
-        $sql.= ' cd.fk_commande =' .$this->id;
-        if ($filtre_statut >= 0) $sql.=' AND e.fk_statut = '.$filtre_statut;
+        if ($filtre_statut >= 0) $sql.= ' ed.fk_expedition = e.rowid AND';
+        $sql.= ' ed.fk_origin_line = cd.rowid';
+        $sql.= ' AND cd.fk_commande =' .$this->id;
+        if ($filtre_statut >= 0) $sql.=' AND e.fk_statut >= '.$filtre_statut;
         $sql.= ' GROUP BY cd.rowid, cd.fk_product';
         //print $sql;
 
