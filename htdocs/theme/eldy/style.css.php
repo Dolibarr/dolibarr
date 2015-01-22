@@ -532,8 +532,8 @@ margin : 0px auto;
 
 <?php
 $minwidthtmenu=66;
-$heightmenu=52;
-$heightmenu2=40;
+$heightmenu=46;			/* height of top menu, part with image */
+$heightmenu2=46;        /* height of top menu, ârt with login  */
 ?>
 
 div#tmenu_tooltip {
@@ -679,7 +679,7 @@ div.mainmenu {
 	position : relative;
 	background-repeat:no-repeat;
 	background-position:center top;
-	height: <?php echo ($heightmenu-17); ?>px;
+	height: <?php echo ($heightmenu-19); ?>px;
 	margin-left: 0px;
 	min-width: 40px;
 }
@@ -704,14 +704,8 @@ div.mainmenu.bank {
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank.png',1) ?>);
 }
 
-div.mainmenu.bookmark {
-}
-
 div.mainmenu.cashdesk {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png',1) ?>);
-}
-
-div.mainmenu.click2dial {
 }
 
 div.mainmenu.companies {
@@ -734,21 +728,12 @@ div.mainmenu.ftp {
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1) ?>);
 }
 
-div.mainmenu.gravatar {
-}
-
-div.mainmenu.geopipmaxmind {
-}
-
 div.mainmenu.hrm {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday.png',1) ?>);
 }
 
 div.mainmenu.members {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1) ?>);
-}
-
-div.mainmenu.paypal {
 }
 
 div.mainmenu.products {
@@ -763,14 +748,6 @@ div.mainmenu.project {
 div.mainmenu.tools {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1) ?>);
 }
-
-div.mainmenu.webservices {
-}
-
-div.mainmenu.google {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/globe.png',1) ?>);
-}
-
 
 <?php
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
@@ -2443,6 +2420,11 @@ li.cal_event       { border: none; list-style-type: none; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
+.cal_peruserviewname { max-width: 100px; height: 22px; }
+
+.topmenuimage {
+	background-size: 28px auto;
+}
 
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */

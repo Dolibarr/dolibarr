@@ -1,5 +1,5 @@
--- ============================================================================
--- Copyright (C) 2013 Florian HENRY <florian.henry@open-concept.pro>
+-- ===================================================================
+-- Copyright (C) 2014 Florian Henry	<florian.henry@open-concept.pro>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,17 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ============================================================================
+-- ===================================================================
 
-CREATE TABLE llx_printer_ipp 
-(
- rowid integer AUTO_INCREMENT PRIMARY KEY,
- tms 	timestamp,
- datec 	datetime,
- printer_name text NOT NULL, 
- printer_location text NOT NULL,
- printer_uri varchar(255) NOT NULL,
- copy integer NOT NULL DEFAULT '1',
- module varchar(16) NOT NULL,
- login varchar(32) NOT NULL
-)ENGINE=innodb;
+
+ALTER TABLE llx_bank_account_extrafields ADD INDEX idx_bank_account_extrafields (fk_object);

@@ -140,26 +140,25 @@ class Commande extends CommonOrder
 
         if (! empty($conf->global->COMMANDE_ADDON))
         {
-		$mybool=false;
-		$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
-		foreach ($dirmodels as $reldir)
-		{
-	            $file = $conf->global->COMMANDE_ADDON.".php";
-	            $classname = $conf->global->COMMANDE_ADDON;
+        	$mybool=false;
 
-	            // Include file with class
-	            foreach ($conf->file->dol_document_root as $dirroot)
-	            {
-	            	$dir = $dirroot.$reldir."/core/modules/commande/";
-	            	// Load file with numbering class (if found)
-	            	$mybool|=@include_once $dir.$file;
-	            }
-		}
+        	$file = $conf->global->COMMANDE_ADDON.".php";
+			$classname = $conf->global->COMMANDE_ADDON;
+
+			// Include file with class
+			$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir)
+			{
+                $dir = dol_buildpath($reldir."core/modules/commande/");
+
+                // Load file with numbering class (if found)
+                $mybool|=@include_once $dir.$file;
+            }
 
             if (! $mybool)
             {
-            	dol_print_error('',"Failed to include file ".$file);
-            	return '';
+                dol_print_error('',"Failed to include file ".$file);
+                return '';
             }
 
             $obj = new $classname();
@@ -2885,11 +2884,13 @@ class Commande extends CommonOrder
 
         if ($short) return $url;
 
-        $linkstart = '<a href="'.$url.'">';
-        $linkend='</a>';
-
         $picto='order';
         $label=$langs->trans("ShowOrder").': '.$this->ref;
+        if (! empty($this->ref_client))
+            $label.= '<br>'.$langs->trans('RefCustomer').': '.$this->ref_client;
+
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend='</a>';
 
         if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';

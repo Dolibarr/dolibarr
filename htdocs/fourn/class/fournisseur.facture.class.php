@@ -1472,19 +1472,19 @@ class FactureFournisseur extends CommonInvoice
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowInvoice").': '.$this->ref;
+        if ($this->ref_supplier) $label.=' / '.$this->ref_supplier;
 
         if ($option == 'document')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $lienfin='</a>';
         }
         else
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $lienfin='</a>';
         }
-        $label=$langs->trans("ShowInvoice").': '.$this->ref;
-        if ($this->ref_supplier) $label.=' / '.$this->ref_supplier;
 
         $ref=$this->ref;
         if (empty($ref)) $ref=$this->id;
@@ -1514,10 +1514,14 @@ class FactureFournisseur extends CommonInvoice
 
         $file = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER.".php";
         $classname = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER;
+
         // Include file with class
-        foreach ($conf->file->dol_document_root as $dirroot)
-        {
-            $dir = $dirroot."/core/modules/supplier_invoice/";
+        $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+        foreach ($dirmodels as $reldir) {
+
+            $dir = dol_buildpath($reldir."core/modules/supplier_invoice/");
+
             // Load file with numbering class (if found)
             $mybool|=@include_once $dir.$file;
         }

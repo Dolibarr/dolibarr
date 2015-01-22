@@ -41,6 +41,7 @@ $langs->load('companies');
 $langs->load('commercial');
 
 $action	= GETPOST('action');
+$cancelbutton = GETPOST('cancel');
 
 // Security check
 $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
@@ -60,10 +61,14 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if ($action == 'setsupplieraccountancycode')
+if (empty($reshook))
 {
-	$cancelbutton = GETPOST('cancel');
-	if (! $cancelbutton) 
+	if ($cancelbutton)
+	{
+		$action = "";
+	}
+
+	if ($action == 'setsupplieraccountancycode')
 	{
 		$result=$object->fetch($id);
    		$object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
@@ -73,21 +78,20 @@ if ($action == 'setsupplieraccountancycode')
 	        $mesg=join(',',$object->errors);
 	    }
 	}
-    $action="";
-}
-// conditions de reglement
-if ($action == 'setconditions' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentTerms(GETPOST('cond_reglement_supplier_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-// mode de reglement
-if ($action == 'setmode' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentMethods(GETPOST('mode_reglement_supplier_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
+	// conditions de reglement
+	if ($action == 'setconditions' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setPaymentTerms(GETPOST('cond_reglement_supplier_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
+	// mode de reglement
+	if ($action == 'setmode' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setPaymentMethods(GETPOST('mode_reglement_supplier_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
 }
 
 
@@ -98,12 +102,22 @@ if ($action == 'setmode' && $user->rights->societe->creer)
 $contactstatic = new Contact($db);
 $form = new Form($db);
 
-if ($object->fetch($id))
+if ($id > 0 && empty($object->id))
 {
-	llxHeader('',$langs->trans('SupplierCard'));
+	// Load data of third party
+	$res=$object->fetch($id);
+	if ($object->id <= 0) dol_print_error($db,$object->error);
+}
+
+if ($object->id > 0)
+{
+	$title=$langs->trans("SupplierCard");
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+	$help_url='';
+	llxHeader('',$title, $help_url);
 
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	$head = societe_prepare_head($object);
 
@@ -285,7 +299,7 @@ if ($object->fetch($id))
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("All").' ('.$object->nbOfProductRefs().')';
+		print '<a href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("All").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
 		print '</a></td></tr></table>';
 	}
 
@@ -341,7 +355,7 @@ if ($object->fetch($id))
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
     			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
-    			print '<td align="right"><a href="commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td>';
+    			print '<td align="right"><a href="commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';
@@ -353,7 +367,11 @@ if ($object->fetch($id))
 				$var=!$var;
 
 				print "<tr ".$bc[$var].">";
-				print '<td><a href="commande/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref.'</a></td>';
+                print '<td class="nowrap">';
+                $orderstatic->id=$obj->rowid;
+                $orderstatic->ref=$obj->ref;
+                print $orderstatic->getNomUrl(1);
+                print '</td>';
 				print '<td align="center" width="80">';
 				if ($obj->dc)
 				{
@@ -408,7 +426,7 @@ if ($object->fetch($id))
 
 			    print '<tr class="liste_titre">';
     			print '<td colspan="4">';
-    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id.'">'.$langs->trans('AllBills').' ('.$num.')</td>';
+    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id.'">'.$langs->trans('AllBills').' <span class="badge">'.$num.'</span></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';

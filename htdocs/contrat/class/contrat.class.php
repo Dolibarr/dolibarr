@@ -211,23 +211,31 @@ class Contrat extends CommonObject
 		global $db, $langs, $conf;
 		$langs->load("contracts");
 
-		$dir = DOL_DOCUMENT_ROOT . "/core/modules/contract";
-
-		if (empty($conf->global->CONTRACT_ADDON))
+		if (!empty($conf->global->CONTRACT_ADDON))
 		{
-		    $conf->global->CONTRACT_ADDON='mod_contract_serpis';
-		}
+			$mybool = false;
 
-		$file = $conf->global->CONTRACT_ADDON.".php";
+			$file = $conf->global->CONTRACT_ADDON.".php";
+			$classname = $conf->global->CONTRACT_ADDON;
 
-		// Chargement de la classe de numerotation
-		$classname = $conf->global->CONTRACT_ADDON;
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-		$result=include_once $dir.'/'.$file;
-		if ($result)
-		{
+			foreach ($dirmodels as $reldir) {
+
+				$dir = dol_buildpath($reldir."core/modules/contract/");
+
+				// Load file with numbering class (if found)
+				$mybool|=@include_once $dir.$file;
+			}
+
+			if (! $mybool)
+			{
+				dol_print_error('',"Failed to include file ".$file);
+				return '';
+			}
+
 			$obj = new $classname();
-
 			$numref = "";
 			$numref = $obj->getNextValue($soc,$this);
 
@@ -237,15 +245,17 @@ class Contrat extends CommonObject
 			}
 			else
 			{
+				$this->error = $obj->error;
 				dol_print_error($db,get_class($this)."::getNextValue ".$obj->error);
 				return "";
 			}
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("Error_CONTRACT_ADDON_NotDefined");
+			$langs->load("errors");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
 			return "";
-			}
+		}
 	}
 
 	/**
@@ -1672,13 +1682,13 @@ class Contrat extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowContract").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='contract';
 
-		$label=$langs->trans("ShowContract").': '.$this->ref;
 
 		if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
@@ -2201,13 +2211,13 @@ class ContratLigne extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowContractOfService").': '.$this->label;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='contract';
 
-		$label=$langs->trans("ShowContractOfService").': '.$this->label;
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
@@ -2484,47 +2494,6 @@ class ContratLigne extends CommonObject
 			$this->error=$this->db->error();
 			$this->db->rollback();
 			return -2;
-		}
-	}
-
-	/**
-	 *      Load elements linked to contract (only intervention for the moment)
-	 *
-	 *      @param	string	$type           Object type
-	 *      @return array 	$elements		array of linked elements
-	 */
-	function get_element_list($type)
-	{
-		$elements = array();
-
-		$sql = '';
-		if ($type == 'intervention')
-			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "fichinter WHERE fk_contrat=" . $this->id;
-		if (! $sql) return -1;
-
-		//print $sql;
-		dol_syslog(get_class($this)."::get_element_list", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$nump = $this->db->num_rows($result);
-			if ($nump)
-			{
-				$i = 0;
-				while ($i < $nump)
-				{
-					$obj = $this->db->fetch_object($result);
-					$elements[$i] = $obj->rowid;
-					$i++;
-				}
-				$this->db->free($result);
-				/* Return array */
-				return $elements;
-			}
-		}
-		else
-		{
-		    dol_print_error($this->db);
 		}
 	}
 

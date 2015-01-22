@@ -106,7 +106,6 @@ if (empty($reshook))
     {
     	//obtidre selected del combobox
     	$value=GETPOST('lt1');
-    	$object = new Societe($db);
     	$object->fetch($socid);
     	$res=$object->setValueFrom('localtax1_value', $value);
     }
@@ -114,7 +113,6 @@ if (empty($reshook))
     {
     	//obtidre selected del combobox
     	$value=GETPOST('lt2');
-    	$object = new Societe($db);
     	$object->fetch($socid);
     	$res=$object->setValueFrom('localtax2_value', $value);
     }
@@ -583,13 +581,21 @@ if (empty($reshook))
  *  View
  */
 
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$langs->trans("ThirdParty"),$help_url);
-
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
+
+if ($socid > 0 && empty($object->id))
+{
+    $res=$object->fetch($socid);
+	if ($result <= 0) dol_print_error('',$object->error);
+}
+
+$title=$langs->trans("ThirdParty");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$title,$help_url);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -598,12 +604,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-    if (empty($object->error) && $socid)
- 	{
-	     $object = new Societe($db);
-	     $result=$object->fetch($socid);
-	     if ($result <= 0) dol_print_error('',$object->error);
- 	}
    	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
     $objcanvas->display_canvas($action);							// Show template
 }
@@ -1111,9 +1111,6 @@ else
 
         if ($socid)
         {
-            $object = new Societe($db);
-            $res=$object->fetch($socid);
-            if ($res < 0) { dol_print_error($db,$object->error); exit; }
             $res=$object->fetch_optionals($object->id,$extralabels);
             //if ($res < 0) { dol_print_error($db); exit; }
 
@@ -1624,9 +1621,6 @@ else
         /*
          * View
          */
-        $object = new Societe($db);
-        $res=$object->fetch($socid);
-        if ($res < 0) { dol_print_error($db,$object->error); exit; }
         $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
@@ -1751,7 +1745,8 @@ else
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" class="nowrap">';
     	if (! empty($object->country_code))
     	{
-           	$img=picto_from_langcode($object->country_code);
+           	//$img=picto_from_langcode($object->country_code);
+           	$img='';
            	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
            	else print ($img?$img.' ':'').$object->country;
     	}

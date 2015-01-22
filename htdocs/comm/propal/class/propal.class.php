@@ -2550,21 +2550,18 @@ class Propal extends CommonObject
         {
         	$mybool=false;
 
-		$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
-		foreach ($dirmodels as $reldir)
-		{
-	            $file = $conf->global->PROPALE_ADDON.".php";
-	            $classname = $conf->global->PROPALE_ADDON;
+            $file = $conf->global->PROPALE_ADDON.".php";
+            $classname = $conf->global->PROPALE_ADDON;
 
-	            // Include file with class
-	            foreach ($conf->file->dol_document_root as $dirroot)
-	            {
-	            	$dir = $dirroot.$reldir."/core/modules/propale/";
-	            	// Load file with numbering class (if found)
-	            	$mybool|=@include_once $dir.$file;
-	            }
-		}
+            // Include file with class
+            $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+            foreach ($dirmodels as $reldir) {
 
+                $dir = dol_buildpath($reldir."core/modules/propale/");
+
+                // Load file with numbering class (if found)
+                $mybool|=@include_once $dir.$file;
+            }
 
             if (! $mybool)
             {
@@ -2581,14 +2578,14 @@ class Propal extends CommonObject
                 return $numref;
             }
             else
-            {
+			{
                 $this->error=$obj->error;
                 //dol_print_error($db,"Propale::getNextNumRef ".$obj->error);
                 return "";
             }
         }
         else
-        {
+		{
             $langs->load("errors");
             print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
             return "";
@@ -2608,29 +2605,31 @@ class Propal extends CommonObject
         global $langs;
 
         $result='';
-        if ($option == '')
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .'">';
+        $label=$langs->trans("ShowPropal").': '.$this->ref;
+        if (! empty($this->ref_client))
+            $label.= '<br>'.$langs->trans('RefCustomer').': '.$this->ref_client;
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        if ($option == '') {
+            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
         }
-        if ($option == 'compta')   // deprecated
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .'">';
+        if ($option == 'compta') {  // deprecated
+            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
         }
-        if ($option == 'expedition')
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .'">';
+        if ($option == 'expedition') {
+            $lien = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .$linkclose;
         }
-        if ($option == 'document')
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .'">';
+        if ($option == 'document') {
+            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .$linkclose;
         }
         $lienfin='</a>';
 
         $picto='propal';
-        $label=$langs->trans("ShowPropal").': '.$this->ref;
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
-        if ($withpicto && $withpicto != 2) $result.=' ';
+
+        if ($withpicto)
+            $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto && $withpicto != 2)
+            $result.=' ';
         $result.=$lien.$this->ref.$lienfin;
         return $result;
     }

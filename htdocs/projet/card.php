@@ -353,7 +353,8 @@ if (empty($reshook))
 		$clone_project_files = GETPOST('clone_project_files') ? 1 : 0;
 		$clone_task_files = GETPOST('clone_task_files') ? 1 : 0;
 	    $clone_notes=GETPOST('clone_notes')?1:0;
-	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes);
+	    $move_date=GETPOST('move_date')?1:0;
+	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes,$move_date);
 	    if ($result <= 0)
 	    {
 		    setEventMessage($object->error, 'errors');
@@ -538,6 +539,7 @@ else
     		'text' => $langs->trans("ConfirmClone"),
             array('type' => 'checkbox', 'name' => 'clone_contacts',		'label' => $langs->trans("CloneContacts"), 			'value' => true),
             array('type' => 'checkbox', 'name' => 'clone_tasks',   		'label' => $langs->trans("CloneTasks"), 			'value' => true),
+        	array('type' => 'checkbox', 'name' => 'move_date',   		'label' => $langs->trans("CloneMoveDate"), 			'value' => true),
             array('type' => 'checkbox', 'name' => 'clone_notes',   		'label' => $langs->trans("CloneNotes"), 			'value' => true),
         	array('type' => 'checkbox', 'name' => 'clone_project_files','label' => $langs->trans("CloneProjectFiles"),	    'value' => false),
         	array('type' => 'checkbox', 'name' => 'clone_task_files',	'label' => $langs->trans("CloneTaskFiles"),         'value' => false)

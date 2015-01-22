@@ -45,7 +45,10 @@ class Adherent extends CommonObject
     var $mesgs;
 
     var $id;
+
     var $ref;
+    public $ref_ext;
+
     var $civility_id;
     var $firstname;
     var $lastname;
@@ -107,6 +110,7 @@ class Adherent extends CommonObject
 
     var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
+    public $entity;
 
     /**
 	 *	Constructor
@@ -1237,7 +1241,7 @@ class Adherent extends CommonObject
     /**
      *	Insert subscription into database and eventually add links to banks, mailman, etc...
      *
-     *	@param	timestamp	$date        		Date of effect of subscription
+     *	@param	int	        $date        		Date of effect of subscription
      *	@param	double		$montant     		Amount of subscription (0 accepted for some members)
      *	@param	int			$accountid			Id bank account
      *	@param	string		$operation			Type operation (if Id bank account provided)
@@ -1245,7 +1249,7 @@ class Adherent extends CommonObject
      *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
      *	@param	string		$emetteur_nom		Name of cheque writer
      *	@param	string		$emetteur_banque	Name of bank of cheque
-     *	@param	timestamp	$datesubend			Date end subscription
+     *	@param	int     	$datesubend			Date end subscription
      *	@return int         					rowid of record added, <0 if KO
      */
     function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
@@ -1559,25 +1563,26 @@ class Adherent extends CommonObject
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowMember").': '.$this->ref;
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if ($option == 'card')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.$linkclose;
             $lienfin='</a>';
         }
         if ($option == 'subscription')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$this->id.$linkclose;
             $lienfin='</a>';
         }
         if ($option == 'category')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3'.$linkclose;
             $lienfin='</a>';
         }
 
         $picto='user';
-        $label=$langs->trans("ShowMember");
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
@@ -1601,7 +1606,7 @@ class Adherent extends CommonObject
      *
      *  @param	int			$statut      			Id statut
      *	@param	int			$need_subscription		1 si type adherent avec cotisation, 0 sinon
-     *	@param	timestamp	$date_end_subscription	Date fin adhesion
+     *	@param	int     	$date_end_subscription	Date fin adhesion
      *  @param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string      						Label
      */

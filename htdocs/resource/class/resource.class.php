@@ -869,10 +869,11 @@ class Resource extends CommonObject
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowResource").': '.$this->ref;
 
         if ($option == '')
         {
-            $lien = '<a href="'.dol_buildpath('/resource/card.php',1).'?id='.$this->id. $get_params .'">';
+            $lien = '<a href="'.dol_buildpath('/resource/card.php',1).'?id='.$this->id. $get_params .'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $picto='resource@resource';
             $label=$langs->trans("ShowResource").': '.$this->ref;
 
@@ -880,7 +881,6 @@ class Resource extends CommonObject
 
         $lienfin='</a>';
 
-        $label=$langs->trans("ShowResource").': '.$this->ref;
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';

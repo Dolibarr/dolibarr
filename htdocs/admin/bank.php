@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->load("admin");
@@ -86,11 +87,15 @@ $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("BankSetupModule"),$linkback,'setup');
-print '<br>';
+
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_BANK_CHEQUERECEIPT_FREE_TEXT">';
+
+$head = bank_admin_prepare_head(null);
+dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), 0, 'account');
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
@@ -183,7 +188,11 @@ while ($i < $nbofbank)
 }
 
 print '</table>'."\n";
+
+dol_fiche_end();
+
 print '</form>';
-$db->close();
 
 llxFooter();
+
+$db->close();

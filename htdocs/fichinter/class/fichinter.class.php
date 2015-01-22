@@ -547,13 +547,13 @@ class Fichinter extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("Show").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='intervention';
 
-		$label=$langs->trans("Show").': '.$this->ref;
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
@@ -574,25 +574,33 @@ class Fichinter extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("interventions");
 
-		$dir = DOL_DOCUMENT_ROOT . "/core/modules/fichinter/";
-
 		if (! empty($conf->global->FICHEINTER_ADDON))
 		{
-			$file = $conf->global->FICHEINTER_ADDON.".php";
-			$classname = $conf->global->FICHEINTER_ADDON;
-			if (! file_exists($dir.$file))
-			{
-				$file='mod_'.$file;
-				$classname='mod_'.$classname;
+			$mybool = false;
+
+			$file = "mod_".$conf->global->FICHEINTER_ADDON.".php";
+			$classname = "mod_".$conf->global->FICHEINTER_ADDON;
+
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+			foreach ($dirmodels as $reldir) {
+
+				$dir = dol_buildpath($reldir."core/modules/fichinter/");
+
+				// Load file with numbering class (if found)
+				$mybool|=@include_once $dir.$file;
 			}
 
-			// Chargement de la classe de numerotation
-			require_once $dir.$file;
+			if (! $mybool)
+			{
+				dol_print_error('',"Failed to include file ".$file);
+				return '';
+			}
 
 			$obj = new $classname();
-
 			$numref = "";
-			$numref = $obj->getNumRef($soc,$this);
+			$numref = $obj->getNextValue($soc,$this);
 
 			if ( $numref != "")
 			{
@@ -606,6 +614,7 @@ class Fichinter extends CommonObject
 		}
 		else
 		{
+			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined");
 			return "";
 		}

@@ -189,7 +189,7 @@ class UserGroup extends CommonObject
 	 *
 	 * 	@param	string	$excludefilter		Filter to exclude
 	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
-	 * 	@return	array 						Array of users
+	 * 	@return	mixed						Array of users or -1 on error
 	 */
 	function listUsersForGroup($excludefilter='', $mode=0)
 	{

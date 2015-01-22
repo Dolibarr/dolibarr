@@ -1,6 +1,9 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
 --------------------------------------------------------------
+***** ChangeLog for 3.8 compared to 3.7.* *****
+- New: Add Option to not change date on cloning project
+- New: Add check list from table for extrafield type
 
 
 ***** ChangeLog for 3.8 compared to 3.7.* *****
@@ -8,7 +11,11 @@ For users:
 - New: Use new combobox.
 - New: Add hidden option MAXTABS_IN_CARD.
 - Fix / Improve : [ bug #1747 ] Remove creation of batch 'Undefined'
-
+- Add Weighted average price as default price for buying price for margin calculation. Add option 
+  MARGIN_PMP_AS_DEFAULT_BUY_PRICE to replace with first supplier price.
+- Introduce option MAIN_HTML_TITLE to start to control format of html title content.
+- Add extrafields on bank account cards.
+- Added delay between mails in Newsletter module
 
 For translators:
 - Update language files.
@@ -188,6 +195,20 @@ Dolibarr better:
 
 ***** ChangeLog for 3.6.3 compared to 3.6.2 *****
 - Fix: ref_ext was not saved when recording a customer order from web service
+- Fix: amarok is a bugged theme making dolidroid failed. We swith to eldy automatically with dolidroid.
+- Fix: withdrawal create error if in the same month are deleted previus withdrawals.
+- Fix: [ bug #1788 ] Duplicated doActions hook in product/fournisseurs.php
+- Fix: withdrawal create error if in the same month are deleted previus withdrawals.
+- Fix: [ bug #1801 ] FAC_FORCE_DATE_VALIDATION constant alters supplier invoice date given to numeration modules
+- Fix: [ bug #1802 ] SQL error when updating a task with PostgreSQL database
+- Fix: [ bug #1785 ] Start date is lost in Project > Linked objects
+- Fix: [ bug #1804 ] SQL error when sending email without addresee
+- Fix: [ bug #1803 ] AJAX company contact input is not aligned
+- Fix: [ bug #1787 ] Incorrect behaviour of doActions hook
+- Fix: [ bug #1796 ] Unable to use numeration modules from an external module
+- Fix: [ bug #1783 ] SQL error when enabling 3rd party module with PostgreSQL and MySQL strict mode ON
+- Fix: [ bug #1717 ] Sorting unpaid invoices by amount received brings due amount
+- Fix: [ bug #1784 ] MOTD doesn't show up in Amarok theme
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
@@ -352,6 +373,8 @@ Fix: Paypal link were broken dur to SSL v3 closed.
 Fix: [ bug #1769 ] Error when installing to a PostgreSQL DB that contains numbers
 Fix: [ bug #1752 ] Date filter of margins module, filters since 12H instead of 00H
 Fix: [ bug #1757 ] Sorting breaks product/service statistics
+Fix: [ bug #1797 ] Tulip supplier invoice module takes creation date instead of invoice date
+Fix: [ bug #1792 ] Users are not allowed to see margins module index page when no product view permission is enabled
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

@@ -73,65 +73,83 @@ class box_contacts extends ModeleBoxes
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
-			if ($result)
-			{
+            if ($result) {
 				$num = $db->num_rows($result);
 
 				$contactstatic=new Contact($db);
 				$societestatic=new Societe($db);
 
 				$i = 0;
-				while ($i < $num)
-				{
+                while ($i < $num) {
 					$objp = $db->fetch_object($result);
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
-					$contactstatic->lastname=$objp->lastname;
+                    $contactstatic->lastname=$objp->lastname;
                     $contactstatic->firstname=$objp->firstname;
                     $contactstatic->civility_id=$objp->civility_id;
 
                     $societestatic->id=$objp->fk_soc;
                     $societestatic->name=$objp->socname;
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/contact/card.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => $this->boximg,
+                        'tooltip' => $langs->trans('Contact').': '.$contactstatic->getFullName($langs,0),
+                        'url' => DOL_URL_ROOT."/contact/card.php?id=".$objp->rowid,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $contactstatic->getFullName($langs,0),
-                    'url' => DOL_URL_ROOT."/contact/card.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => $contactstatic->getFullName($langs,0),
+                        'tooltip' => $langs->trans('Contact').': '.$contactstatic->getFullName($langs,0),
+                        'url' => DOL_URL_ROOT."/contact/card.php?id=".$objp->rowid,
+                    );
 
-                    $this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-    				'logo' => ($objp->fk_soc > 0?'company':''),
-    				'url' => ($objp->fk_soc > 0?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->fk_soc:''));
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => ($objp->fk_soc > 0?'company':''),
+                        'tooltip' => $societestatic->name,
+                        'url' => ($objp->fk_soc > 0?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->fk_soc:''),
+                    );
 
-                    $this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $societestatic->name,
-                    'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->fk_soc);
+                    $this->info_box_contents[$i][3] = array(
+                        'td' => 'align="left"',
+                        'text' => $societestatic->name,
+                        'tooltip' => $societestatic->name,
+                        'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->fk_soc,
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-					'text' => dol_print_date($datem, "day"));
+                    $this->info_box_contents[$i][4] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($datem, "day"),
+                    );
 
-					$i++;
-				}
+                    $i++;
+                }
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedContacts"));
+                if ($num==0)
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoRecordedContacts"),
+                    );
 
-				$db->free($result);
-			}
-			else {
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else {
-			$this->info_box_contents[0][0] = array('align' => 'left',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
-		}
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'align' => 'left',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
+        }
 
-	}
+    }
 
 	/**
 	 *	Method to show box

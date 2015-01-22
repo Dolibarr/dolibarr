@@ -121,21 +121,30 @@ class Expedition extends CommonObject
 		global $db, $langs, $conf;
 		$langs->load("sendings");
 
-		$dir = DOL_DOCUMENT_ROOT . "/core/modules/expedition";
-
-	    if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
+	    if (!empty($conf->global->EXPEDITION_ADDON_NUMBER))
         {
-            $conf->global->EXPEDITION_ADDON_NUMBER='mod_expedition_safor';
-        }
+			$mybool = false;
 
-		$file = $conf->global->EXPEDITION_ADDON_NUMBER.".php";
+			$file = $conf->global->EXPEDITION_ADDON_NUMBER.".php";
+			$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
 
-		// Chargement de la classe de numerotation
-		$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
+	        // Include file with class
+	        $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-		$result=include_once $dir.'/'.$file;
-		if ($result)
-		{
+	        foreach ($dirmodels as $reldir) {
+
+		        $dir = dol_buildpath($reldir."core/modules/expedition/");
+
+		        // Load file with numbering class (if found)
+		        $mybool|=@include_once $dir.$file;
+	        }
+
+	        if (! $mybool)
+	        {
+		        dol_print_error('',"Failed to include file ".$file);
+		        return '';
+	        }
+
 			$obj = new $classname();
 			$numref = "";
 			$numref = $obj->getNextValue($soc,$this);
@@ -149,12 +158,12 @@ class Expedition extends CommonObject
 				dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
-		}
-		else
-		{
-			print $langs->trans("Error")." ".$langs->trans("Error_EXPEDITION_ADDON_NUMBER_NotDefined");
-			return "";
-		}
+        }
+	    else
+	    {
+		    print $langs->trans("Error")." ".$langs->trans("Error_EXPEDITION_ADDON_NUMBER_NotDefined");
+		    return "";
+	    }
 	}
 
 	/**
@@ -1208,16 +1217,16 @@ class Expedition extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowSending").': '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
 		if ($short) return $url;
 
-		$linkstart = '<a href="'.$url.'">';
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='sending';
-		$label=$langs->trans("ShowSending").': '.$this->ref;
 
 		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';

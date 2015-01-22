@@ -13,7 +13,8 @@
  * Copyright (C) 2010-2014 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
  * Copyright (C) 2012-2014 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2013      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014 Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014      Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2656,6 +2657,57 @@ class Form
             }
         }
     }
+
+	/**
+	 * Creates HTML last in cycle situation invoices selector
+	 *
+	 * @param       string  $selected   Preselected ID
+	 * @param       int     $socid      Company ID
+	 *
+	 * @return    string                     HTML select
+	 */
+	function load_situation_invoices($selected = '', $socid = '')
+	{
+		global $langs;
+
+		$langs->load('bills');
+
+		$opt = '<option value ="" selected="selected"></option>';
+		$sql = 'SELECT rowid, facnumber, situation_cycle_ref, situation_counter, situation_final, fk_soc FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_counter>=1';
+		$sql .= ' order by situation_cycle_ref, situation_counter desc';
+		$resql = $this->db->query($sql);
+		if ($resql && $this->db->num_rows($resql) > 0) {
+			// Last seen cycle
+			$ref = 0;
+			while ($res = $this->db->fetch_array($resql, MYSQL_NUM)) {
+				//Same company ?
+				if ($socid == $res[5]) {
+					//Same cycle ?
+					if ($res[2] != $ref) {
+						// Just seen this cycle
+						$ref = $res[2];
+						//not final ?
+						if ($res[4] != 1) {
+							//Not prov?
+							if (substr($res[1], 1, 4) != 'PROV') {
+								if ($selected == $res[0]) {
+									$opt .= '<option value="' . $res[0] . '" selected="selected">' . $res[1] . '</option>';
+								} else {
+									$opt .= '<option value="' . $res[0] . '">' . $res[1] . '</option>';
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+				dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
+		}
+		if ($opt == '<option value ="" selected="selected"></option>') {
+			$opt = '<option value ="0" selected="selected">' . $langs->trans('NoSituations') . '</option>';
+		}
+		return $opt;
+	}
 
     /**
      *  Return a HTML select list of bank accounts

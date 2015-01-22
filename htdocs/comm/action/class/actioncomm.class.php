@@ -118,6 +118,13 @@ class ActionComm extends CommonObject
         $error=0;
         $now=dol_now();
 
+        // Check parameters
+        if (empty($this->userownerid)) 
+        {
+        	$this->errors[]='ErrorPropertyUserowneridNotDefined';
+        	return -1;
+        }
+        
         // Clean parameters
         $this->label=dol_trunc(trim($this->label),128);
         $this->location=dol_trunc(trim($this->location),128);
@@ -138,8 +145,19 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
+        if (! is_array($this->userassigned))	// For backward compatibility
+        {
+        	$tmpid=$this->userassigned;
+        	$this->userassigned=array();
+        	$this->userassigned[$tmpid]=array('id'=>$tmpid);
+        }
+
         $userownerid=$this->userownerid;
         $userdoneid=$this->userdoneid;
+
+        // Be sure assigned user is defined as an array of array('id'=>,'mandatory'=>,...).
+        if (empty($this->userassigned) || count($this->userassigned) == 0 || ! is_array($this->userassigned)) 
+        	$this->userassigned = array($userownerid=>array('id'=>$userownerid));
 
         if (! $this->type_id || ! $this->type_code)
         {
@@ -226,6 +244,12 @@ class ActionComm extends CommonObject
 			{
 				foreach($this->userassigned as $key => $val)
 				{
+			        if (! is_array($val))	// For backward compatibility when val=id
+			        {
+			        	$tmpid=$val;
+			        	$val=array('id'=>$val);
+			        }
+					
 					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['mandatory']?$val['mandatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
 
@@ -873,11 +897,12 @@ class ActionComm extends CommonObject
         global $conf,$langs;
 
         $result='';
-        if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
-        else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.'">';
-        $lienfin='</a>';
         $label=$this->label;
-        if (empty($label)) $label=$this->libelle;	// For backward compatibility
+        if (empty($label)) $label=$this->libelle;   // For backward compatibility
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.$linkclose;
+        else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.$linkclose;
+        $lienfin='</a>';
         //print 'rrr'.$this->libelle.'-'.$withpicto;
 
         if ($withpicto == 2)
@@ -973,7 +998,7 @@ class ActionComm extends CommonObject
             $sql.= " a.label, a.code, a.note, a.fk_action as type_id,";
             $sql.= " a.fk_soc,";
             $sql.= " a.fk_user_author, a.fk_user_mod,";
-            $sql.= " a.fk_user_action, a.fk_user_done,";
+            $sql.= " a.fk_user_action,";
             $sql.= " a.fk_contact, a.percent as percentage,";
             $sql.= " a.fk_element, a.elementtype,";
             $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
@@ -981,9 +1006,11 @@ class ActionComm extends CommonObject
             $sql.= " s.nom as socname,";
             $sql.= " c.id as type_id, c.code as type_code, c.libelle";
             $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";	// Link to get author of event for export
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
-            $sql.= " WHERE a.fk_action=c.id";
+			// We must filter on assignement table
+			if ($filters['logint'] || $filters['login']) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
+			$sql.= " WHERE a.fk_action=c.id";
             $sql.= " AND a.entity = ".$conf->entity;
             foreach ($filters as $key => $value)
             {
@@ -993,17 +1020,8 @@ class ActionComm extends CommonObject
                 if ($key == 'idfrom')       $sql.=" AND a.id >= ".(is_numeric($value)?$value:0);
                 if ($key == 'idto')         $sql.=" AND a.id <= ".(is_numeric($value)?$value:0);
                 if ($key == 'project')      $sql.=" AND a.fk_project=".(is_numeric($value)?$value:0);
-                if ($key == 'login')
-                {
-                    $login=$value;
-                    $userforfilter=new User($this->db);
-                    $result=$userforfilter->fetch('',$value);
-                    $sql.= " AND (";
-                    $sql.= " a.fk_user_author = ".$userforfilter->id;
-                    $sql.= " OR a.fk_user_action = ".$userforfilter->id;
-                    $sql.= " OR a.fk_user_done = ".$userforfilter->id;
-                    $sql.= ")";
-                }
+    	        // We must filter on assignement table
+				if ($key == 'logint' || $key == 'login') $sql.= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
                 if ($key == 'logina')
                 {
                     $logina=$value;
@@ -1011,19 +1029,12 @@ class ActionComm extends CommonObject
                     $result=$userforfilter->fetch('',$value);
                     $sql.= " AND a.fk_user_author = ".$userforfilter->id;
                 }
-                if ($key == 'logint')
+                if ($key == 'logint' || $key == 'login')
                 {
                     $logint=$value;
                     $userforfilter=new User($this->db);
                     $result=$userforfilter->fetch('',$value);
-                    $sql.= " AND a.fk_user_action = ".$userforfilter->id;
-                }
-                if ($key == 'logind')
-                {
-                    $logind=$value;
-                    $userforfilter=new User($this->db);
-                    $result=$userforfilter->fetch('',$value);
-                    $sql.= " AND a.fk_user_done = ".$userforfilter->id;
+                    $sql.= " AND ar.fk_element = ".$userforfilter->id;
                 }
             }
             $sql.= " AND a.datep IS NOT NULL";		// To exclude corrupted events and avoid errors in lightning/sunbird import

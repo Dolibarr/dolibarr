@@ -1,5 +1,6 @@
 <?php
 /*
+ * Copyright (C) 2014       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,20 +17,21 @@
  */
 
 /**
- *	\file       htdocs/printipp/index.php
- *	\ingroup    printipp
- *	\brief      Printipp
+ *  \file       htdocs/printing/index.php
+ *  \ingroup    printing
+ *  \brief      Printing
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
 
-llxHeader("",$langs->trans("Printer"));
+llxHeader("",$langs->trans("Printing"));
 
-print_fiche_titre($langs->trans("Printer"));
+print_fiche_titre($langs->trans("Printing"));
 
-$printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
-$printer->list_jobs('commande');
+// List Jobs from printing modules
+//$printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
+//$printer->list_jobs('commande');
 
 llxFooter();
 
