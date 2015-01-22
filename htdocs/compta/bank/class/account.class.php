@@ -935,15 +935,16 @@ class Account extends CommonObject
         global $langs;
 
         $result='';
+        $linkclose = '" title="'.dol_escape_htmltag($this->label, 1).'" class="classfortooltip">';
 
         if (empty($mode))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id.$linkclose;
             $lienfin='</a>';
         }
         else if ($mode == 'transactions')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$this->id.$linkclose;
             $lienfin='</a>';
         }
 
@@ -1483,11 +1484,11 @@ class AccountLine extends CommonObject
         global $langs;
 
         $result='';
-
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'">';
+        $label=$langs->trans("ShowTransaction").': '.$this->rowid;
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTransaction"), 'account', 'class="classfortooltip"').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($label, 'account', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.$this->rowid.$lienfin;
 
         if ($option == 'showall' || $option == 'showconciliated') $result.=' (';

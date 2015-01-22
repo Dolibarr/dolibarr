@@ -789,25 +789,22 @@ class Project extends CommonObject
         $result = '';
         $lien = '';
         $lienfin = '';
+        $label = $langs->trans("ShowProject") . ': ' . $this->ref . ($this->title ? ' - ' . $this->title : '');
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        if ($option != 'nolink')
-        {
-        	if (preg_match('/\.php$/',$option))
-        	{
-            	$lien = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . '">';
-            	$lienfin = '</a>';
-        	}
-        	else
-        	{
-            	$lien = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . '">';
-            	$lienfin = '</a>';
-        	}
+        if ($option != 'nolink') {
+            if (preg_match('/\.php$/',$option)) {
+                $lien = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . $linkclose;
+                $lienfin = '</a>';
+            } else {
+                $lien = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . $linkclose;
+                $lienfin = '</a>';
+            }
         }
 
         $picto = 'projectpub';
         if (!$this->public) $picto = 'project';
 
-        $label = $langs->trans("ShowProject") . ': ' . $this->ref . ($this->title ? ' - ' . $this->title : '');
 
         if ($withpicto) $result.=($lien . img_object($label, $picto, 'class="classfortooltip"') . $lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';

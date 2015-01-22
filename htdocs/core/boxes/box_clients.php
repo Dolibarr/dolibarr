@@ -104,19 +104,28 @@ class box_clients extends ModeleBoxes
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $this->boximg,
-                    'url' => $url.$objp->socid);
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => $this->boximg,
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => $url.$objp->socid
+                    );
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->name,
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => $url.$objp->socid
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->name,
-                    'url' => $url.$objp->socid);
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($datem, "day")
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => dol_print_date($datem, "day"));
-
-                    $this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
-                    'text' => $thirdpartystatic->LibStatut($objp->status,3));
+                    $this->info_box_contents[$i][3] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $thirdpartystatic->LibStatut($objp->status,3)
+                    );
 
 					$i++;
 				}

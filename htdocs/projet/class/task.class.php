@@ -505,13 +505,13 @@ class Task extends CommonObject
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowTask").': '.$this->ref.($this->label?' - '.$this->label:'');
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
         $picto='projecttask';
 
-        $label=$langs->trans("ShowTask").': '.$this->ref.($this->label?' - '.$this->label:'');
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
