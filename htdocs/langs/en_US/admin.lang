@@ -1374,9 +1374,9 @@ ListOfAvailableNotifications=List of available notifications (This list depends 
 SendingsSetup=Sending module setup
 SendingsReceiptModel=Sending receipt model
 SendingsNumberingModules=Sendings numbering modules
-SendingsAbility=Support sendings sheets for customer deliveries
+SendingsAbility=Support shipment sheets for customer deliveries
 NoNeedForDeliveryReceipts=In most cases, sendings receipts are used both as sheets for customer deliveries (list of products to send) and sheets that is recevied and signed by customer. So product deliveries receipts is a duplicated feature and is rarely activated.
-FreeLegalTextOnShippings=Free text on shippings
+FreeLegalTextOnShippings=Free text on shipments
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Products deliveries receipt numbering module
 DeliveryOrderModel=Products deliveries receipt model

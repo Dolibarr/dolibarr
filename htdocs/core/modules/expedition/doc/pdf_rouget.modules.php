@@ -180,10 +180,16 @@ class pdf_rouget extends ModelePdfExpedition
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
-				if (! empty($object->note_public) || (! empty($object->tracking_number) && ! empty($object->shipping_method_id)))
+				if (! empty($object->note_public) || ! empty($object->tracking_number))
 				{
 					$tab_top = 88;
 					$tab_top_alt = $tab_top;
+
+					$pdf->SetFont('','B', $default_font_size - 2);
+					$pdf->writeHTMLCell(60, 4, $this->posxdesc-1, $tab_top-1, $outputlangs->transnoentities("TrackingNumber")." : " . $object->tracking_number, 0, 1, false, true, 'L');
+
+					$tab_top_alt = $pdf->GetY();
+					//$tab_top_alt += 1;
 
 					// Tracking number
 					if (! empty($object->tracking_number))
@@ -198,14 +204,14 @@ class pdf_rouget extends ModelePdfExpedition
 								$label=$outputlangs->trans("LinkToTrackYourPackage")."<br>";
 								$label.=$outputlangs->trans("SendingMethod".strtoupper($code))." :";
 								$pdf->SetFont('','B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, 7, $this->posxdesc-1, $tab_top-1, $label." ".$object->tracking_url, 0, 1, false, true, 'L');
+								$pdf->writeHTMLCell(60, 4, $this->posxdesc-1, $tab_top+6, $label." ".$object->tracking_url, 0, 1, false, true, 'L');
 
-								$tab_top_alt += 7;
+								$tab_top_alt = $pdf->GetY();
 							}
 						}
 					}
 
-					// Affiche notes
+					// Notes
 					if (! empty($object->note_public))
 					{
 						$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
