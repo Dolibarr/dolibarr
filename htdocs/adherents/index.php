@@ -159,7 +159,7 @@ if ($conf->use_javascript_ajax)
     print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-    print '<tr><td align="center">';
+    print '<tr '.$bc[0].'><td align="center" colspan="2">';
 
     $SommeA=0;
     $SommeB=0;

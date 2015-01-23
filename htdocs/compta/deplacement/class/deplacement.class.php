@@ -231,7 +231,7 @@ class Deplacement extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " WHERE entity IN (".getEntity('deplacement').")";
 		if ($ref) $sql.= " AND ref ='".$this->db->escape($ref)."'";
-		else $sql.= " AND id = ".$id;
+		else $sql.= " AND rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -357,15 +357,15 @@ class Deplacement extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("Show").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='trip';
 
-		$label=$langs->trans("Show").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;

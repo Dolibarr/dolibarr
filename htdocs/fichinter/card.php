@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
@@ -77,7 +77,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('interventioncard'));
+$hookmanager->initHooks(array('interventioncard','globalcard'));
 
 $object = new Fichinter($db);
 $extrafields = new ExtraFields($db);
@@ -745,14 +745,15 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 			if (strlen(GETPOST('subject','alphs'))) $subject = GETPOST('subject','alpha');
 			else $subject = $langs->transnoentities('Intervention').' '.$object->ref;
 			$actiontypecode='AC_OTH_AUTO';
-			$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+			$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
 			if ($message)
 			{
-				$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
-				$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
-				$actionmsg.=$message;
+				if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+				$actionmsg = dol_concatdesc($actionmsg, $message);
 			}
-			$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
+			$actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
 		}
 
 		// Create form object
@@ -1121,9 +1122,9 @@ if ($action == 'create')
 	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 		}
 
-		print '<center><br>';
+		print '<br><div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '</center>';
+		print '</div>';
 
 		print '</form>';
 	}
@@ -1136,10 +1137,10 @@ if ($action == 'create')
 		print '</td></tr>';
 		print '</table>';
 
-		print '<br><center>';
+		print '<br><div class="center">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '</center>';
+		print '</div>';
 
 		print '</form>';
 	}
@@ -1165,13 +1166,13 @@ else if ($id > 0 || ! empty($ref))
 
 	$formconfirm='';
 
-	// Confirmation de la suppression de la fiche d'intervention
+	// Confirm deletion of intervention
 	if ($action == 'delete')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
 	}
 
-	// Confirmation validation
+	// Confirm validation
 	if ($action == 'validate')
 	{
 		// on verifie si l'objet est en numerotation provisoire
@@ -1191,16 +1192,16 @@ else if ($id > 0 || ! empty($ref))
 		}
 		$text=$langs->trans('ConfirmValidateIntervention',$numref);
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',1,1);
 	}
 
-	// Confirmation de la validation de la fiche d'intervention
+	// Confirm back to draft
 	if ($action == 'modify')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
 	}
 
-	// Confirmation de la suppression d'une ligne d'intervention
+	// Confirm deletion of line
 	if ($action == 'ask_deleteline')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
@@ -1330,49 +1331,9 @@ else if ($id > 0 || ! empty($ref))
 	// Statut
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
-    // Other attributes (TODO Move this into an include)
-    $parameters=array('colspan' => ' colspan="3"');
-    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			if ($action == 'edit_extras') {
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-			} else {
-				$value=$object->array_options["options_".$key];
-			}
-			if ($extrafields->attribute_type[$key] == 'separate')
-			{
-				print $extrafields->showSeparator($key);
-			}
-			else
-			{
-				print '<tr><td';
-				if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-				print '>'.$label.'</td><td colspan="3">';
-				// Convert date into timestamp format
-				if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
-				{
-					$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$db->jdate($object->array_options['options_'.$key]);
-				}
-				if ($action == 'edit_extras' && $user->rights->ficheinter->creer && GETPOST('attribute') == $key)
-				{
-					print '<input type="hidden" name="attribute" value="'.$key.'">';
-
-					print $extrafields->showInputField($key,$value);
-
-					print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-				}
-				else
-				{
-					print $extrafields->showOutputField($key,$value);
-					if (($object->statut == 0 || $object->statut == 1) && $user->rights->ficheinter->creer) print ' &nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
-				}
-				print '</td></tr>'."\n";
-			}
-		}
-	}
+    // Other attributes
+    $cols = 3;
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print "</table>";
 
@@ -1412,6 +1373,8 @@ else if ($id > 0 || ! empty($ref))
 		$sql.= ' ft.date as date_intervention';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql.= ' WHERE ft.fk_fichinter = '.$object->id;
+		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION))
+			$sql.= ' AND ft.duree <> 0';
 		$sql.= ' ORDER BY ft.rang ASC, ft.rowid';
 
 		$resql = $db->query($sql);
@@ -1525,7 +1488,9 @@ else if ($id > 0 || ! empty($ref))
 
 					// Duration
 					print '<td align="right">';
-					$form->select_duration('duration',$objp->duree);
+					$selectmode='select';
+					if (! empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) $selectmode='text';
+					$form->select_duration('duration',$objp->duree, $selectmode);
 					print '</td>';
 
 					print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -1639,7 +1604,7 @@ else if ($id > 0 || ! empty($ref))
 				if ($object->statut == 0 && $user->rights->ficheinter->creer && (count($object->lines) > 0 || ! empty($conf->global->FICHINTER_DISABLE_DETAILS)))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate"';
-					print '>'.$langs->trans("Valid").'</a></div>';
+					print '>'.$langs->trans("Validate").'</a></div>';
 				}
 
 				// Modify
@@ -1692,8 +1657,8 @@ else if ($id > 0 || ! empty($ref))
 					$langs->load("bills");
 					if ($object->statut < 2)
 					{
-						if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
-						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a></div>';
+						if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
+						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddBill").'</a></div>';
 					}
 
 					if (! empty($conf->global->FICHINTER_CLASSIFY_BILLED))

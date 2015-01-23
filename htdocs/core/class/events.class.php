@@ -111,7 +111,7 @@ class Events // extends CommonObject
 		$this->description=trim($this->description);
 
 		// Check parameters
-		if (! $this->description) { $this->error='ErrorBadValueForParameter'; return -1; }
+		if (empty($this->description)) { $this->error='ErrorBadValueForParameter'; return -1; }
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
@@ -129,7 +129,7 @@ class Events // extends CommonObject
 		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".dol_trunc($_SERVER['HTTP_USER_AGENT'],250)."'":'NULL').",";
 		$sql.= " '".$this->db->idate($this->dateevent)."',";
 		$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
-		$sql.= " '".$this->db->escape($this->description)."'";
+		$sql.= " '".$this->db->escape(dol_trunc($this->description,250))."'";
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -154,7 +154,7 @@ class Events // extends CommonObject
 	 * @param   int		$notrigger	    0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
-	function update($user=0, $notrigger=0)
+	function update($user=null, $notrigger=0)
 	{
 		global $conf, $langs;
 
@@ -191,7 +191,7 @@ class Events // extends CommonObject
 	 *  @param  User	$user       User that load
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id, $user=0)
+	function fetch($id, $user=null)
 	{
 		global $langs;
 

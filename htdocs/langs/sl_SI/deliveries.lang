@@ -24,3 +24,5 @@ Deliverer=Dostavil :
 Sender=Pošiljatelj
 Recipient=Prejemnik
 ErrorStockIsNotEnough=Zaloga je premajhna
+Shippable=Možna odprema
+NonShippable=Ni možna odprema

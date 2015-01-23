@@ -51,13 +51,12 @@ $pagenext = $page + 1;
 
 
 /*
- * Mode Liste
- *
+ * View
  */
 
 llxHeader();
 
-$sql = "SELECT s.nom, s.rowid as socid, c.lastname, c.firstname, a.label, n.rowid";
+$sql = "SELECT s.nom as name, s.rowid as socid, c.lastname, c.firstname, a.label, n.rowid";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
 $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
 $sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
@@ -94,7 +93,7 @@ if ($result)
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
-		print "<td><a href=\"card.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
+		print "<td><a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
 		print "<td>".dolGetFirstLastname($obj->firstname, $obj->lastname)."</td>\n";
 		print "<td>".$obj->titre."</td>\n";
 		print "</tr>\n";

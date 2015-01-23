@@ -198,7 +198,8 @@ else
 	
 	print '</table>';
 	
-	?><br><center><input type="submit" class="button" value="<?php echo $langs->trans("Add") ?>"></center>
+	?>
+	<br><div class="center"><input type="submit" class="button" value="<?php echo $langs->trans("Add") ?>"></div>
 	<input type="hidden" name="action" value="add">
 	<input type="hidden" name="numero_entry" value="<?php echo ($lastftpentry+1) ?>">
 	<?php

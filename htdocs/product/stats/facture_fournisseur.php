@@ -122,7 +122,7 @@ if ($id > 0 || ! empty($ref))
         print '</div>';
 
 
-        $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client, f.ref, f.total_ht as total_ht,";
+        $sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client, f.ref, f.total_ht as total_ht,";
         $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
         if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -172,7 +172,7 @@ if ($id > 0 || ! empty($ref))
                     $supplierinvoicestatic->ref=$objp->facnumber;
 					print $supplierinvoicestatic->getNomUrl(1);
                     print "</td>\n";
-                    print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";
                     print dol_print_date($db->jdate($objp->datef))."</td>";

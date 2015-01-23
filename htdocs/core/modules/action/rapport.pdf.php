@@ -127,7 +127,7 @@ class CommActionRapport
 				$hookmanager=new HookManager($this->db);
 			}
 			$hookmanager->initHooks(array('pdfgeneration'));
-			$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+			$parameters=array('file'=>$file, 'outputlangs'=>$outputlangs);
 			global $action;
 			$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
@@ -210,6 +210,7 @@ class CommActionRapport
 		$sql.= " WHERE c.id=a.fk_action AND a.fk_user_author = u.rowid";
 		$sql.= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($this->year,$this->month,false))."'";
 		$sql.= " AND '".$this->db->idate(dol_get_last_day($this->year,$this->month,false))."'";
+		$sql.= " AND a.entity = ".$conf->entity;
 		$sql.= " ORDER BY a.datep DESC";
 
 		$eventstatic=new ActionComm($this->db);

@@ -88,7 +88,7 @@ function member_prepare_head($object)
     $head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
-    if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+    if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 	$h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$object->id;
@@ -174,7 +174,7 @@ function member_stats_prepare_head($object)
     $head[$h][1] = $langs->trans("Country");
     $head[$h][2] = 'statscountry';
     $h++;
-    
+
     $head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbyregion';
     $head[$h][1] = $langs->trans("Region");
     $head[$h][2] = 'statsregion';

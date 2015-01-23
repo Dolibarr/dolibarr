@@ -37,6 +37,11 @@ class Fichinter extends CommonObject
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'ref';
+
 	var $id;
 
 	var $socid;		// Id client
@@ -79,6 +84,9 @@ class Fichinter extends CommonObject
 		$this->statuts_short[0]='Draft';
 		$this->statuts_short[1]='Validated';
 		$this->statuts_short[2]='StatusInterInvoiced';
+		$this->statuts_logo[0]='statut0';
+		$this->statuts_logo[1]='statut4';
+		$this->statuts_logo[2]='statut6';
 	}
 
 
@@ -240,6 +248,7 @@ class Fichinter extends CommonObject
 		$sql.= ", fk_projet = ".$this->fk_project;
 		$sql.= ", note_private = ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= ", fk_user_modif = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -373,9 +382,10 @@ class Fichinter extends CommonObject
 	 *	Validate a intervention
 	 *
 	 *	@param		User		$user		User that validate
-	 *	@return		int			<0 if KO, >0 if OK
+     *  @param		int			$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function setValid($user)
+	function setValid($user, $notrigger=0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -397,6 +407,7 @@ class Fichinter extends CommonObject
 			{
 				$num = $this->ref;
 			}
+            $this->newref = $num;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET fk_statut = 1";
@@ -415,9 +426,17 @@ class Fichinter extends CommonObject
 				$error++;
 			}
 
+			if (! $error && ! $notrigger)
+			{
+                // Call trigger
+                $result=$this->call_trigger('FICHINTER_VALIDATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+			}
+
 			if (! $error)
 			{
-				$this->oldref = '';
+				$this->oldref = $this->ref;
 
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref))
@@ -425,20 +444,26 @@ class Fichinter extends CommonObject
 					// Rename of object directory ($this->ref = old ref, $num = new ref)
 					// to  not lose the linked files
 					$oldref = dol_sanitizeFileName($this->ref);
-					$snum = dol_sanitizeFileName($num);
+					$newref = dol_sanitizeFileName($num);
 					$dirsource = $conf->ficheinter->dir_output.'/'.$oldref;
-					$dirdest = $conf->ficheinter->dir_output.'/'.$snum;
+					$dirdest = $conf->ficheinter->dir_output.'/'.$newref;
 					if (file_exists($dirsource))
 					{
-						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+						dol_syslog(get_class($this)."::setValid rename dir ".$dirsource." into ".$dirdest);
 
 						if (@rename($dirsource, $dirdest))
 						{
-							$this->oldref = $oldref;
-
-							dol_syslog("Rename ok");
-							// Suppression ancien fichier PDF dans nouveau rep
-							dol_delete_file($conf->ficheinter->dir_output.'/'.$snum.'/'.$oldref.'*.*');
+	                        dol_syslog("Rename ok");
+	                        // Rename docs starting with $oldref with $newref
+	                        $listoffiles=dol_dir_list($conf->ficheinter->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        foreach($listoffiles as $fileentry)
+	                        {
+	                        	$dirsource=$fileentry['name'];
+	                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+	                        	$dirsource=$fileentry['path'].'/'.$dirsource;
+	                        	$dirdest=$fileentry['path'].'/'.$dirdest;
+	                        	@rename($dirsource, $dirdest);
+	                        }
 						}
 					}
 				}
@@ -451,14 +476,6 @@ class Fichinter extends CommonObject
 				$this->statut=1;
 				$this->brouillon=0;
 				$this->date_validation=$now;
-			}
-
-			if (! $error)
-			{
-                // Call trigger
-                $result=$this->call_trigger('FICHINTER_VALIDATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
 			}
 
 			if (! $error)
@@ -499,37 +516,23 @@ class Fichinter extends CommonObject
 		global $langs;
 
 		if ($mode == 0)
-		{
 			return $langs->trans($this->statuts[$statut]);
-		}
+
 		if ($mode == 1)
-		{
 			return $langs->trans($this->statuts_short[$statut]);
-		}
+
 		if ($mode == 2)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
-		}
+			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]).' '.$langs->trans($this->statuts_short[$statut]);
+
 		if ($mode == 3)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-		}
+			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]);
+
 		if ($mode == 4)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-		}
+			return img_picto($langs->trans($this->statuts_short[$statut]),$this->statuts_logo[$statut]).' '.$langs->trans($this->statuts[$statut]);
+
 		if ($mode == 5)
-		{
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-		}
+			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),$this->statuts_logo[$statut]);
+
 	}
 
 	/**
@@ -544,15 +547,15 @@ class Fichinter extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("Show").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='intervention';
 
-		$label=$langs->trans("Show").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;
@@ -563,7 +566,7 @@ class Fichinter extends CommonObject
 	 *	Returns the next non used reference of intervention
 	 *	depending on the module numbering assets within FICHEINTER_ADDON
 	 *
-	 *	@param	    Societe		$soc		Object society
+	 *	@param	    Societe		$soc		Thirdparty object
 	 *	@return     string					Free reference for intervention
 	 */
 	function getNextNumRef($soc)
@@ -571,25 +574,33 @@ class Fichinter extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("interventions");
 
-		$dir = DOL_DOCUMENT_ROOT . "/core/modules/fichinter/";
-
 		if (! empty($conf->global->FICHEINTER_ADDON))
 		{
-			$file = $conf->global->FICHEINTER_ADDON.".php";
-			$classname = $conf->global->FICHEINTER_ADDON;
-			if (! file_exists($dir.$file))
-			{
-				$file='mod_'.$file;
-				$classname='mod_'.$classname;
+			$mybool = false;
+
+			$file = "mod_".$conf->global->FICHEINTER_ADDON.".php";
+			$classname = "mod_".$conf->global->FICHEINTER_ADDON;
+
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+			foreach ($dirmodels as $reldir) {
+
+				$dir = dol_buildpath($reldir."core/modules/fichinter/");
+
+				// Load file with numbering class (if found)
+				$mybool|=@include_once $dir.$file;
 			}
 
-			// Chargement de la classe de numerotation
-			require_once $dir.$file;
+			if (! $mybool)
+			{
+				dol_print_error('',"Failed to include file ".$file);
+				return '';
+			}
 
 			$obj = new $classname();
-
 			$numref = "";
-			$numref = $obj->getNumRef($soc,$this);
+			$numref = $obj->getNextValue($soc,$this);
 
 			if ( $numref != "")
 			{
@@ -603,6 +614,7 @@ class Fichinter extends CommonObject
 		}
 		else
 		{
+			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined");
 			return "";
 		}
@@ -619,9 +631,11 @@ class Fichinter extends CommonObject
 		global $conf;
 
 		$sql = "SELECT f.rowid,";
-		$sql.= " datec,";
+		$sql.= " f.datec,";
+		$sql.= " f.tms as date_modification,";
 		$sql.= " f.date_valid as datev,";
 		$sql.= " f.fk_user_author,";
+		$sql.= " f.fk_user_modif as fk_user_modification,";
 		$sql.= " f.fk_user_valid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		$sql.= " WHERE f.rowid = ".$id;
@@ -637,6 +651,7 @@ class Fichinter extends CommonObject
 				$this->id                = $obj->rowid;
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->date_validation   = $this->db->jdate($obj->datev);
 
 				$cuser = new User($this->db);
@@ -649,6 +664,13 @@ class Fichinter extends CommonObject
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation     = $vuser;
 				}
+				if ($obj->fk_user_modification)
+				{
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modification);
+					$this->user_modification   = $muser;
+				}
+
 			}
 			$this->db->free($resql);
 		}
@@ -805,7 +827,8 @@ class Fichinter extends CommonObject
 		if ($user->rights->ficheinter->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
-			$sql.= " SET description = '".$this->db->escape($description)."'";
+			$sql.= " SET description = '".$this->db->escape($description)."',";
+			$sql.= " fk_user_modif = ".$user->id;
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
 

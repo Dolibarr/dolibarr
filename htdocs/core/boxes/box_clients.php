@@ -37,11 +37,27 @@ class box_clients extends ModeleBoxes
 	var $depends = array("societe");
 
 	var $db;
-	var $param;
+	var $enabled = 1;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB	$db      	Database handler
+     *  @param	string	$param		More parameters
+	 */
+	function __construct($db,$param='')
+	{
+		global $conf, $user;
+
+		$this->db = $db;
+
+		// disable box for such cases
+		if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled=0;	// disabled by this option
+	}
 
 	/**
      *  Load data for box to show them later
@@ -63,7 +79,7 @@ class box_clients extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom, s.rowid as socid, s.datec, s.tms, s.status";
+			$sql = "SELECT s.nom as name, s.rowid as socid, s.datec, s.tms, s.status";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.client IN (1, 3)";
@@ -88,19 +104,28 @@ class box_clients extends ModeleBoxes
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $this->boximg,
-                    'url' => $url.$objp->socid);
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => $this->boximg,
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => $url.$objp->socid
+                    );
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->name,
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => $url.$objp->socid
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->nom,
-                    'url' => $url.$objp->socid);
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($datem, "day")
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => dol_print_date($datem, "day"));
-
-                    $this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
-                    'text' => $thirdpartystatic->LibStatut($objp->status,3));
+                    $this->info_box_contents[$i][3] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $thirdpartystatic->LibStatut($objp->status,3)
+                    );
 
 					$i++;
 				}

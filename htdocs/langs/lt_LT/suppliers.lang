@@ -40,3 +40,5 @@ AddSupplierInvoice=Sukurti tiekėjo sąskaitą-faktūrą
 ListOfSupplierProductForSupplier=Produktų ir kainų sąrašas tiekėjui <b>%s</b>
 NoneOrBatchFileNeverRan=Nėra arba grupinis <b>%s</b> neseniai neįvyko
 SentToSuppliers=Nusiųsta tiekėjams
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

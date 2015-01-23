@@ -38,6 +38,11 @@ class Project extends CommonObject
     public $fk_element = 'fk_projet';
     protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
+
     var $id;
     var $ref;
     var $description;
@@ -298,7 +303,7 @@ class Project extends CommonObject
         else if (! empty($ref))
         {
         	$sql.= " WHERE ref='".$this->db->escape($ref)."'";
-        	$sql.= " AND entity IN (".getEntity('project').")";
+        	$sql.= " AND entity IN (".getEntity('project',1).")";
         }
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -388,19 +393,38 @@ class Project extends CommonObject
     /**
      * 	Return list of elements for type linked to project
      *
-     * 	@param		string		$type		'propal','order','invoice','order_supplier','invoice_supplier'
-     * 	@param		string		$tablename	name of table associated of the type
-     * 	@return		array					List of orders linked to project, <0 if error
+     * 	@param		string		$type			'propal','order','invoice','order_supplier','invoice_supplier'
+     * 	@param		string		$tablename		name of table associated of the type
+     * 	@param		string		$datefieldname	name of table associated of the type
+     *  @param		string		$dates			Start date (at 00:00:00)
+     *  @param		string		$datee			End date (at 23:00:00)
+     * 	@return		mixed						List of orders linked to project, < 0 or string if error
      */
-    function get_element_list($type, $tablename)
+    function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
     {
         $elements = array();
 
         if ($type == 'agenda')
+        {
             $sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project=" . $this->id;
+        }
         else
+		{
             $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet=" . $this->id;
-        if (! $sql) return -1;
+		}
+		if ($dates > 0)
+		{
+			if (empty($datefieldname) && ! empty($this->table_element_date)) $datefieldname=$this->table_element_date;
+			if (empty($datefieldname)) return 'Error this object has no date field defined';
+			$sql.=" AND (".$datefieldname." >= '".$this->db->idate($dates)."' OR ".$datefieldname." IS NULL)";
+		}
+    	if ($datee > 0)
+		{
+			if (empty($datefieldname) && ! empty($this->table_element_date)) $datefieldname=$this->table_element_date;
+			if (empty($datefieldname)) return 'Error this object has no date field defined';
+			$sql.=" AND (".$datefieldname." <= '".$this->db->idate($datee)."' OR ".$datefieldname." IS NULL)";
+		}
+		if (! $sql) return -1;
 
         //print $sql;
         dol_syslog(get_class($this)."::get_element_list", LOG_DEBUG);
@@ -460,48 +484,71 @@ class Project extends CommonObject
             }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
-        $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql)
+        // Delete tasks
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_time";
+	        $sql.= " WHERE fk_task IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
-        $sql.= " WHERE fk_projet=" . $this->id;
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql)
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
+	        $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet";
-        $sql.= " WHERE rowid=" . $this->id;
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql)
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
+	        $sql.= " WHERE fk_projet=" . $this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
-        $sql.= " WHERE fk_object=" . $this->id;
-
-        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (! $resql)
+        // Delete project
+        if (! $error)
         {
-        	$this->errors[] = $this->db->lasterror();
-        	$error++;
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet";
+	        $sql.= " WHERE rowid=" . $this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
+        }
+
+        if (! $error)
+        {
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
+	        $sql.= " WHERE fk_object=" . $this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (! $resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
         if (empty($error))
@@ -526,16 +573,9 @@ class Project extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('PROJECT_DELETE',$user);
-                if ($result < 0)
-                {
+
+                if ($result < 0) {
                     $error++;
-                    if (! empty($interface->errors))
-                    {
-                		foreach ($interface->errors as $errmsg ) {
-                			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-                			$this->errors[] =$errmsg;
-                		}
-                    }
                 }
                 // End call triggers
             }
@@ -749,27 +789,24 @@ class Project extends CommonObject
         $result = '';
         $lien = '';
         $lienfin = '';
+        $label = $langs->trans("ShowProject") . ': ' . $this->ref . ($this->title ? ' - ' . $this->title : '');
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        if ($option != 'nolink')
-        {
-        	if (preg_match('/\.php$/',$option))
-        	{
-            	$lien = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . '">';
-            	$lienfin = '</a>';
-        	}
-        	else
-        	{
-            	$lien = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . '">';
-            	$lienfin = '</a>';
-        	}
+        if ($option != 'nolink') {
+            if (preg_match('/\.php$/',$option)) {
+                $lien = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . $linkclose;
+                $lienfin = '</a>';
+            } else {
+                $lien = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . $linkclose;
+                $lienfin = '</a>';
+            }
         }
 
         $picto = 'projectpub';
         if (!$this->public) $picto = 'project';
 
-        $label = $langs->trans("ShowProject") . ': ' . $this->ref . ($this->title ? ' - ' . $this->title : '');
 
-        if ($withpicto) $result.=($lien . img_object($label, $picto) . $lienfin);
+        if ($withpicto) $result.=($lien . img_object($label, $picto, 'class="classfortooltip"') . $lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$lien . $this->ref . $lienfin . (($addlabel && $this->title) ? ' - ' . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;
@@ -891,7 +928,7 @@ class Project extends CommonObject
             $sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
             $sql.= ", " . MAIN_DB_PREFIX . "c_type_contact as ctc";
         }
-        $sql.= " WHERE p.entity IN (".getEntity('project').")";
+        $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
         // Internal users must see project he is contact to even if project linked to a third party he can't see.
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         if ($socid > 0) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = " . $socid . ")";
@@ -962,16 +999,17 @@ class Project extends CommonObject
 	  *	@param	bool	$clone_project_file		clone file of project
 	  *	@param	bool	$clone_task_file		clone file of task (if task are copied)
       *	@param	bool	$clone_note		clone note of project
+      * @param	bool	$move_date		move task date on clone
       *	@param	bool	$notrigger		no trigger flag
 	  * @return	int						New id of clone
 	  */
-	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$notrigger=0)
+	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$move_date=true,$notrigger=0)
 	{
 		global $user,$langs,$conf;
 
 		$error=0;
 
-		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note);
+		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note." move_date=".$move_date,LOG_DEBUG);
 
 		$now = dol_mktime(0,0,0,idate('m',dol_now()),idate('d',dol_now()),idate('Y',dol_now()));
 
@@ -987,11 +1025,13 @@ class Project extends CommonObject
 		$orign_project_ref=$clone_project->ref;
 
 		$clone_project->id=0;
-        $clone_project->date_start = $now;
-        if (!(empty($clone_project->date_end)))
-        {
-        	$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
-        }
+		if ($move_date) {
+	        $clone_project->date_start = $now;
+	        if (!(empty($clone_project->date_end)))
+	        {
+	        	$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
+	        }
+		}
 
         $clone_project->datec = $now;
 
@@ -1145,7 +1185,7 @@ class Project extends CommonObject
 
 			    foreach ($tasksarray as $tasktoclone)
 			    {
-					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,true,true,false,$clone_task_file,true,false);
+					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,$move_date,true,false,$clone_task_file,true,false);
 					if ($result_clone <= 0)
 				    {
 				    	$this->error.=$result_clone->error;
@@ -1368,7 +1408,7 @@ class Project extends CommonObject
 			}
 		}
 
-		$modelpath = "core/modules/project/pdf/";
+		$modelpath = "core/modules/project/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}

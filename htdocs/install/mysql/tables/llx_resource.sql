@@ -17,7 +17,7 @@
 CREATE TABLE llx_resource
 (
   rowid           		integer AUTO_INCREMENT PRIMARY KEY,
-  entity          		integer,
+  entity          		integer DEFAULT 1 NOT NULL,
   ref             		varchar(255),
   description     		text,
   fk_code_type_resource varchar(32),

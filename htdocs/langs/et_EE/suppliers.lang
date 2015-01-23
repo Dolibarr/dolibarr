@@ -40,3 +40,5 @@ AddSupplierInvoice=Loo ostuarve
 ListOfSupplierProductForSupplier=Hankija <b>%s</b> toodete ja hindade nimekiri
 NoneOrBatchFileNeverRan=Puudub või partiid <b>%s</b> pole hiljuti käivitatud
 SentToSuppliers=Saadetud hankijatele
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

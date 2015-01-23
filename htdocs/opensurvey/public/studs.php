@@ -113,7 +113,9 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 		$nom=substr(GETPOST("nom"),0,64);
 
 		// Check if vote already exists
-		$sql = 'SELECT id_users, nom FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
+		$sql = 'SELECT id_users, nom as name';
+		$sql.= ' FROM '.MAIN_DB_PREFIX."opensurvey_user_studs';
+		$sql.= ' WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
 		$resql = $db->query($sql);
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0)
@@ -389,7 +391,7 @@ else
 $sumfor = array();
 $sumagainst = array();
 $compteur = 0;
-$sql ="SELECT id_users, nom, id_sondage, reponses";
+$sql ="SELECT id_users, nom as name, id_sondage, reponses";
 $sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 $sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
 $resql=$db->query($sql);
@@ -406,7 +408,7 @@ while ($compteur < $num)
 	$ensemblereponses = $obj->reponses;
 
 	// ligne d'un usager pré-authentifié
-	$mod_ok = (in_array($obj->nom, $listofvoters));
+	$mod_ok = (in_array($obj->name, $listofvoters));
 
 	if (!$mod_ok && !$object->allow_spy) {
 		$compteur++;
@@ -416,7 +418,7 @@ while ($compteur < $num)
 	print '<tr>'."\n";
 
 	// Name
-	print '<td class="nom">'.dol_htmlentities($obj->nom).'</td>'."\n";
+	print '<td class="nom">'.dol_htmlentities($obj->name).'</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (! $testligneamodifier)

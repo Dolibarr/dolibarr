@@ -1,17 +1,55 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
 --------------------------------------------------------------
+***** ChangeLog for 3.8 compared to 3.7.* *****
+- New: Add Option to not change date on cloning project
+- New: Add check list from table for extrafield type
+
+
+***** ChangeLog for 3.8 compared to 3.7.* *****
+For users:
+- New: Use new combobox.
+- New: Add hidden option MAXTABS_IN_CARD.
+- Fix / Improve : [ bug #1747 ] Remove creation of batch 'Undefined'
+- Add Weighted average price as default price for buying price for margin calculation. Add option 
+  MARGIN_PMP_AS_DEFAULT_BUY_PRICE to replace with first supplier price.
+- Introduce option MAIN_HTML_TITLE to start to control format of html title content.
+- Add extrafields on bank account cards.
+- Added delay between mails in Newsletter module
+
+For translators:
+- Update language files.
+- New: When a translation is not available we always jump to en_US and only en_US.
+
+For developers:
+- New: Function yn can show a visual checkbox.
+- New: Introduced select2 jquery plugin.
 
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Match other auth system: Login can be done entering login or user 
+       email (this open the road for SSO).
+- New: Agenda export by project #1967.
+- New: Increase length of thirdparty to 128 chars.
+- New: "Is Order shippable" icon #1975.
+- New: statistics on supplier orders and invoices on home page.
+- New: Add permissions to read all trips and expenses.
+- New: Can filter on date into tab "Referring object" of a project.
+- New: Module notification has been enhanced:
+       EMail use now language of target contact.
+       Can also define a fixed email for notifications.
+- New: Feature to link manually an order to an invoice does not disappear once
+       link has been done.
+- New: Can set a color on user card (visible into agenda view).
+- New: extrafields for projects and tasks are exported to ODT documents.
+- New: Add number of active notification into tab title (like we do for notes and documents)
+- New: Can add product into category from category card.
 - New: PDF event report show project and status of event.
-- New: Onto event summary of elements, end date and status are visible.
 - New: Can filter on status on interventions.
 - New: Add help info of field type into dictionary of payment types.
 - New: Add proposals into referer page of thirdparty.
 - New: On contact list can set filter on both active and not active (no more exclusive select). 
-- New: Each user can include its own external ics calendar into dolibarr agenda view.
 - New: Intervention documents are now available in ECM module.
 - New: Can attach supplier order to a customer order.
 - New: Supervisor is now visible into user list. 
@@ -22,16 +60,21 @@ For users:
 - New: No more dependency between contract and service module.
 - New: [ task #867 ] Remove ESAEB external module code from core.
 - New: Can create proposal from an intervention.
+- New: An event can be assigned to several users.
 - New: Can filter events on a group of users.
 - New: Can filter events of a thirdparty.
+- New: Onto event summary of elements, end date and status are visible.
 - New: Split Agenda view (month, week, day) into different tabs.
+- New: Add a view "per user" of agenda events (with different colors according to type of event).
+- New: Each user can include its own external ics calendar into dolibarr agenda view.
+- New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
+       create an automatic event into agenda.
+- New: Add new type of event (when type of events are used, not by default).
+- New: Can disable predefined type of events.
 - New: Form to add a photo is immediatly available on photo page if
        permissions are ok (save one click per photo to add).
 - New: Add option PRODUCT_MAX_VISIBLE_PHOTO to limit number of photos
        shown on main product card.
-- New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
-       create an automatic event into agenda.
-- New: Add new type of event (when type of events are used, not by default).
 - New: Add country into table of thirdparties type. This will allow to provide
        a list of thirdparty types specific to a country (like argentina that
        need type A or B).
@@ -48,7 +91,7 @@ For users:
 - New: [ task #1204 ] add Numering contrat module free (like leopard in product module).
 - New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice.
 - New: Enable supplier price log table.
-- New: [ task #1204 ] add a External reference to contract.
+- New: [ task #1204 ] add a supplier reference to contract.
 - New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
 - New: Optimize size of image static resources.
 - New: Add hourly and daily amount on user card. Add weekly working hours and salary on user card.
@@ -56,7 +99,15 @@ For users:
 - New: Add option MAIN_GENERATE_INVOICES_WITH_PICTURE to show picture 
        onto PDF like MAIN_GENERATE_PROPOSALS_WITH_PICTURE dir for proposals.
 - New: Add more search field in list of cheque deposits.
+- New: Add feature to order to invoice on supplier part.
+- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export.
+- New: Direct invoice creation from predefined invoice.
+- New: Add dunning into accountancy report.
+- New: Add favorite button into country dictionary to put value on top select list
 - Upgrade phpexcel lib to 1.7.8
+- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export.
+- New : Option on extrafields to have them always editable regardless of the document status.
+- New : New module PrintIPP to print without opening document is available as stable.
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -73,10 +124,13 @@ For users:
 - Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
+- Fix: [ bug #1533 ] Links triggers do not show trigger error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
-- New: Direct invoice creation from predefined invoice
-- New: Add dunning into accountancy report
-For users, new experimental module:
+- Fix: [ bug #1535 ] Supplier invoice Extrafields are not shown
+- Fix: datepicker first day of week can be monday by setting into display setup
+- Fix: [ bug #575 ] GED doesn't works if there is "/" in a mask
+
+For users, new experimental module (need to set feature level of instance to experimental to see them):
 - New: Module Accounting Expert to manage accountancy
 		Special Thanks to developpers :
 			Olivier Geffroy
@@ -90,6 +144,7 @@ For users, new experimental module:
 			Hydroflex		 		 120 euros
 			Asysteo			 		 120 euros
 			Fournisseur médical		 120 euros
+- Removed: unmaintained OScommerce module
 
 For translators:
 - Update language files.
@@ -110,6 +165,9 @@ For developers:
 - New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card.
 - New: renamed table llx_c_pays to llx_c_country & libelle field to label.
 - New: Added hook "formConfirm" and "doActions" for fichinter card
+- New: Can search list of thirdparties from web service on part of name.
+- New: Function getCurrencyAmount is marked as deprecated. Use function price to output a price
+       including currency symbol.
 - Qual: Renamed table llx_c_civilite into llx_c_civility,
 		field civilite into label in the same table,
 		and field civilite into civility in other table.
@@ -117,10 +175,14 @@ For developers:
 - Qual: Renamed all files & links "fiche.php" into "card.php".
 - Qual: Replace all constants COMPTA_* by ACCOUNTING_*.
 - Qual: Replace all constants ACCOUNTINGEX_* by ACCOUNTING_* to simplify migration of the module
+- Fix: [ bug #1724 ] Can't add a submenu to projects
 
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
+- If you can't see trips and expenses records, check that you have the new permission "read all
+  trips and expenses".
+- Deprecated module "oscommerce" were removed.
 - Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
 - Some field into database were renamed from "libelle" to "label".
 - Table llx_c_pays were renamed into llx_c_country.  
@@ -128,11 +190,49 @@ Dolibarr better:
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
 - A lot of pages called fiche.php were renamed into card.php
 - A lot of pages called liste.php were renamed into list.php
- 
+- If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
+  warehouse module and your Point Of Sale module if you use one.
+
+***** ChangeLog for 3.6.3 compared to 3.6.2 *****
+- Fix: ref_ext was not saved when recording a customer order from web service
+- Fix: amarok is a bugged theme making dolidroid failed. We swith to eldy automatically with dolidroid.
+- Fix: withdrawal create error if in the same month are deleted previus withdrawals.
+- Fix: [ bug #1788 ] Duplicated doActions hook in product/fournisseurs.php
+- Fix: withdrawal create error if in the same month are deleted previus withdrawals.
+- Fix: [ bug #1801 ] FAC_FORCE_DATE_VALIDATION constant alters supplier invoice date given to numeration modules
+- Fix: [ bug #1802 ] SQL error when updating a task with PostgreSQL database
+- Fix: [ bug #1785 ] Start date is lost in Project > Linked objects
+- Fix: [ bug #1804 ] SQL error when sending email without addresee
+- Fix: [ bug #1803 ] AJAX company contact input is not aligned
+- Fix: [ bug #1787 ] Incorrect behaviour of doActions hook
+- Fix: [ bug #1796 ] Unable to use numeration modules from an external module
+- Fix: [ bug #1783 ] SQL error when enabling 3rd party module with PostgreSQL and MySQL strict mode ON
+- Fix: [ bug #1717 ] Sorting unpaid invoices by amount received brings due amount
+- Fix: [ bug #1784 ] MOTD doesn't show up in Amarok theme
+
+***** ChangeLog for 3.6.2 compared to 3.6.1 *****
+- Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
+- Fix: bug 1588 : relative discount.
+- Fix: label of input method not tranlated.
+- Fix: box of customer and propsects were not correctly disabled.
+- Fix: [ bug #1618 ] PHP Error thrown when saving a barcode
+- Fix: Civility & birthdate wasn't save into adherent module.
+- Fix: webservice Thirdparty parameter lastname for invidual creation is now lastname and not ref
+- Fix: Chars - is no more allowed into value for code for extra fields.
+- Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
+- Fix: [ bug #1595 ] Selected boolean extrafield in intervention creation page, does not save state
+- Fix: Show sender Country on PDF docs when sender Country <> receiver Country
+- Fix: [ bug #1624 ] Use lowest buying price for margin when selling with POS
+- Fix: [ bug #1749 ] Undefined $mailchimp
+- Fix: [ bug #1736 ] Failing supplier Elephant numeration module with some masks
+- Fix: [ bug #1649 ] Cancel button of several thirdparty actions, does the same thing as modify
+- Fix: [ bug #1736 ] Failing supplier Elephant numeration module with some masks
+- Fix: [ bug #1731 ] Can't use quick navigation on project tasks secondary tabs
+
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
 - Fix: Can upload files on services.
-- Fix: sql errors on updat fichinter.
+- Fix: sql errors on update fichinter.
 - Fix: debian script syntax error.
 - Fix: error "menu param is not inside list" into pos module.
 - Fix: Salary payments are not reflected on the reporting sheets.
@@ -147,7 +247,13 @@ For users:
 - Fix: Extrafield feature select from table should try to translate multiple column when not needed 
 - Fix: cents for indian ruppes are calle paisa and paise.
 - Fix: Invoices payments may be older than invoices.
+- Fix: Withdrawal total amount is double
 - Fix: [ bug #1593 ] Spanish Localtax IRPF not being calculated since 3.6.0 in supplier invoices when adding a line
+- Fix: Web service categorie WDSL declaration is correct
+- Fix: ErrorBadValueForParamNotAString was displayed in virtual product if no base price defined
+- Fix: Category creation failed and no message output
+- Fix: Lanf for Payment Type
+- Fix: PHPCheckstyle 1.5.5
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
@@ -261,6 +367,25 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Properties "civilite_id" were renamed into "civility_id".
 - Remove add_photo_web() that is ot used anymore by core code.
 
+
+***** ChangeLog for 3.5.7 compared to 3.5.6 *****
+Fix: Paypal link were broken dur to SSL v3 closed.
+Fix: [ bug #1769 ] Error when installing to a PostgreSQL DB that contains numbers
+Fix: [ bug #1752 ] Date filter of margins module, filters since 12H instead of 00H
+Fix: [ bug #1757 ] Sorting breaks product/service statistics
+Fix: [ bug #1797 ] Tulip supplier invoice module takes creation date instead of invoice date
+Fix: [ bug #1792 ] Users are not allowed to see margins module index page when no product view permission is enabled
+
+***** ChangeLog for 3.5.6 compared to 3.5.5 *****
+Fix: Avoid missing class error for fetch_thirdparty method #1973
+Fix: Can't update phone_pro from web service
+Fix: Some security holes.
+Fix: copy extrafields when creating order from proposal.
+Fix: report on action was not filtering by environment.
+Fix: Avoid missing class error.
+Fix: Add function dolEscapeXML.
+Fix: Bad days and month reported by function.
+Fix: Bad margin calculation.
 
 ***** ChangeLog for 3.5.5 compared to 3.5.4 *****
 Fix: Holiday module was broken. Initializaion of amount of holidays failed.

@@ -54,9 +54,10 @@ $size=$extrafields->attribute_size[$attrname];
 $unique=$extrafields->attribute_unique[$attrname];
 $required=$extrafields->attribute_required[$attrname];
 $pos=$extrafields->attribute_pos[$attrname];
+$alwayseditable=$extrafields->attribute_alwayseditable[$attrname];
 $param=$extrafields->attribute_param[$attrname];
 
-if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_array($param))
+if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
 	$param_chain = '';
 	foreach ($param['options'] as $key => $value)
@@ -67,7 +68,7 @@ if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_a
 		}
 	}
 }
-elseif ($type== 'sellist')
+elseif (($type== 'sellist') || ($type == 'chkbxlst'))
 {
 	$paramlist=array_keys($param['options']);
 	$param_chain = $paramlist[0];
@@ -88,7 +89,7 @@ elseif ($type== 'sellist')
 <tr><td><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php  echo $extrafields->attribute_pos[$attrname];  ?>"></td></tr>
 <!--  Value (for select list / radio) -->
 <?php
-if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($type == 'radio')))
+if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($type == 'chkbxlst') || ($type == 'radio'))
 {
 ?>
 <tr id="value_choice">
@@ -97,8 +98,8 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($typ
 </td>
 <td>
 <table class="nobordernopadding">
-<tr><td width="30%">
-	<textarea name="param" id="param"><?php echo $param_chain; ?></textarea>
+<tr><td>
+	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo $param_chain; ?></textarea>
 </td><td><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelp".$type),1,0)?></td></tr>
 </table>
 </td>
@@ -110,6 +111,8 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($typ
 <tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique" <?php echo ($unique?' checked="true"':''); ?>></td></tr>
 <!-- Required -->
 <tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo ($required?' checked="true"':''); ?>></td></tr>
+<!-- Always editable -->
+<tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo ($alwayseditable?' checked="true"':''); ?>></td></tr>
 
 </table>
 

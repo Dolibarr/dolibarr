@@ -53,13 +53,14 @@ class DoliDBMssql extends DoliDB
 	 *	@param	    string	$pass		Mot de passe
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
-	 *	@return	    int					1 if OK, 0 if not
      */
 	function __construct($type, $host, $user, $pass, $name='', $port=0)
 	{
 		global $conf,$langs;
 
 		$this->database_user=$user;
+        $this->database_host=$host;
+        $this->database_port=$port;
 		$this->transaction_opened=0;
 
 		if (! function_exists("mssql_connect"))
@@ -255,8 +256,12 @@ class DoliDBMssql extends DoliDB
 			{
 				$this->transaction_opened=0;
 				dol_syslog("COMMIT Transaction",LOG_DEBUG);
+				return 1;
 			}
-			return $ret;
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{
@@ -672,7 +677,7 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Nmae of table filter ('xxx%')
-	 *  @return	resource				Resource
+     *  @return	array					List of tables in an array
 	 */
 	function DDLListTables($database,$table='')
 	{

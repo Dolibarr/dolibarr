@@ -21,8 +21,9 @@
  *  \ingroup    core
  *  \brief      File to manage triggers Mailman and Spip
  */
-require_once (DOL_DOCUMENT_ROOT."/mailmanspip/class/mailmanspip.class.php");
-require_once (DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+require_once DOL_DOCUMENT_ROOT."/mailmanspip/class/mailmanspip.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 
 /**

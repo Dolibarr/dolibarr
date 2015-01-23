@@ -40,7 +40,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
     function __construct($db)
     {
     	global $conf;
-    	
+
         $this->db=$db;
 
         $this->arrayofproducts=array();
@@ -233,10 +233,6 @@ class mailing_thirdparties_services_expired extends MailingTargets
      */
     function url($id)
     {
-        //$companystatic=new Societe($this->db);
-        //$companystatic->id=$id;
-        //$companystatic->nom='';
-        //return $companystatic->getNomUrl(1);	// Url too long
         return '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$id.'">'.img_object('',"company").'</a>';
     }
 

@@ -44,14 +44,6 @@ function prelevement_prepare_head($object)
 	$head[$h][2] = 'prelevement';
 	$h++;
 
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Preview");
-		$head[$h][2] = 'preview';
-		$h++;
-	}
-
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Lines");
 	$head[$h][2] = 'lines';

@@ -23,8 +23,8 @@
  */
 
 // Put here all includes required by your class file
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 
 /**
  *	DAO Resource object
@@ -205,7 +205,7 @@ class Resource extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
     	global $conf, $langs;
     	$error=0;
@@ -329,7 +329,7 @@ class Resource extends CommonObject
     function delete($rowid, $notrigger=0)
     {
         global $user,$langs,$conf;
-    
+
         $error=0;
 
         if (! $notrigger)
@@ -339,10 +339,10 @@ class Resource extends CommonObject
             if ($result < 0) return -1;
             // End call triggers
         }
-        
+
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."resource";
         $sql.= " WHERE rowid =".$rowid;
-    
+
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if ($this->db->query($sql))
         {
@@ -364,7 +364,7 @@ class Resource extends CommonObject
             return -1;
         }
     }
-    
+
     /**
      *	Load resource objects into $this->lines
      *
@@ -388,7 +388,7 @@ class Resource extends CommonObject
     	$sql.= " ty.label as type_label";
     	$sql.= " FROM ".MAIN_DB_PREFIX."resource as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
-    	//$sql.= " WHERE t.entity IN (".getEntity('resource').")";
+    	$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
 
     	//Manage filter
     	if (!empty($filter)){
@@ -402,7 +402,7 @@ class Resource extends CommonObject
     		}
     	}
     	$sql.= " GROUP BY t.rowid";
-    	$sql.= " ORDER BY $sortfield $sortorder ";
+    	$sql.= $this->db->order($sortfield,$sortorder);
     	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
@@ -462,7 +462,7 @@ class Resource extends CommonObject
 		$sql.= " t.fk_user_create,";
 		$sql.= " t.tms";
    		$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-   		//$sql.= " WHERE t.entity IN (".getEntity('resource').")";
+   		$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
 
    		//Manage filter
    		if (!empty($filter)){
@@ -476,7 +476,8 @@ class Resource extends CommonObject
    			}
    		}
    		$sql.= " GROUP BY t.rowid";
-   		$sql.= " ORDER BY $sortfield $sortorder " . $this->db->plimit($limit+1,$offset);
+    	$sql.= $this->db->order($sortfield,$sortorder);
+   		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
    		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
    		$resql=$this->db->query($sql);
@@ -500,9 +501,9 @@ class Resource extends CommonObject
    					$line->fk_user_create	=	$obj->fk_user_create;
 
 					if($obj->resource_id && $obj->resource_type)
-						$line->objresource = $this->fetchObjectByElement($obj->resource_id,$obj->resource_type);
+						$line->objresource = fetchObjectByElement($obj->resource_id,$obj->resource_type);
 					if($obj->element_id && $obj->element_type)
-						$line->objelement = $this->fetchObjectByElement($obj->element_id,$obj->element_type);
+						$line->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
         			$this->lines[$i] = $line;
 
    					$i++;
@@ -547,7 +548,7 @@ class Resource extends CommonObject
     	$sql.= " t.fk_user_create,";
     	$sql.= " t.tms";
     	$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-    	//$sql.= " WHERE t.entity IN (".getEntity('resource').")";
+    	$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
 
     	//Manage filter
     	if (!empty($filter)){
@@ -561,7 +562,8 @@ class Resource extends CommonObject
     		}
     	}
     	$sql.= " GROUP BY t.resource_id";
-    	$sql.= " ORDER BY " . $sortfield . "  " . $sortorder . " " . $this->db->plimit($limit+1,$offset);
+    	$sql.= $this->db->order($sortfield,$sortorder);
+    	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
     	$resql=$this->db->query($sql);
@@ -584,7 +586,7 @@ class Resource extends CommonObject
     				$line->mandatory		=	$obj->mandatory;
     				$line->fk_user_create	=	$obj->fk_user_create;
 
-    				$this->lines[$i] = $this->fetchObjectByElement($obj->resource_id,$obj->resource_type);
+    				$this->lines[$i] = fetchObjectByElement($obj->resource_id,$obj->resource_type);
 
     				$i++;
     			}
@@ -633,7 +635,7 @@ class Resource extends CommonObject
 
     	if (! $this->table_element)
     	{
-    		dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
+    		dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined");
     		return -1;
     	}
 
@@ -695,7 +697,7 @@ class Resource extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update_element_resource($user=0, $notrigger=0)
+    function update_element_resource($user=null, $notrigger=0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -732,7 +734,7 @@ class Resource extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('RESOURCE_MODIFY',$user);
-                if ($result < 0) $error++;          
+                if ($result < 0) $error++;
                 // End call triggers
 	    	}
 		}
@@ -796,16 +798,20 @@ class Resource extends CommonObject
 	    return $resources;
     }
 
+    /*
+     *  Return an int number of resources linked to the element
+     *
+     *  @return     int
+     */
     function fetchElementResources($element,$element_id)
     {
-    	$resources = $this->getElementResources($element,$element_id);
-    	$i=0;
-    	foreach($resources as $nb => $resource)
-    	{
-    		$this->lines[$i] = $this->fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
-    		$i++;
-    	}
-    	return $i;
+        $resources = $this->getElementResources($element,$element_id);
+        $i=0;
+        foreach($resources as $nb => $resource) {
+            $this->lines[$i] = fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
+            $i++;
+        }
+        return $i;
 
     }
 
@@ -863,10 +869,11 @@ class Resource extends CommonObject
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowResource").': '.$this->ref;
 
         if ($option == '')
         {
-            $lien = '<a href="'.dol_buildpath('/resource/card.php',1).'?id='.$this->id. $get_params .'">';
+            $lien = '<a href="'.dol_buildpath('/resource/card.php',1).'?id='.$this->id. $get_params .'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $picto='resource@resource';
             $label=$langs->trans("ShowResource").': '.$this->ref;
 
@@ -874,9 +881,8 @@ class Resource extends CommonObject
 
         $lienfin='</a>';
 
-        $label=$langs->trans("ShowResource").': '.$this->ref;
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.$this->ref.$lienfin;
         return $result;

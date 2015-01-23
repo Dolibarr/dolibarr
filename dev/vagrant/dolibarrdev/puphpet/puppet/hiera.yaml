@@ -1,7 +1,0 @@
----
-:backends: yaml
-:yaml:
-    :datadir: '/vagrant/puphpet'
-:hierarchy:
-    - config
-:logger: console

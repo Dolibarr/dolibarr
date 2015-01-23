@@ -181,7 +181,6 @@ print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 print "</td></tr>\n";
 print '<tr '.$bc[true].'><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
-print '</form>';
 
 print "</table>\n";
 
@@ -191,7 +190,7 @@ print "<br>\n";
  *  Define Chart of accounts
  */
 print '<table class="noborder" width="100%">';
-$var = True;
+$var = true;
 
 print '<tr class="liste_titre">';
 print '<td colspan="3">';
@@ -211,7 +210,7 @@ $sql .= " AND fk_pays = " . $mysoc->country_id;
 dol_syslog('accountancy/admin/index.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 
-$var = True;
+$var = true;
 
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -285,10 +284,10 @@ if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 }
 print '</tr>';
 
-print '</form>';
+
 print "</table>\n";
 
 print '<br /><br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
-
+print '</form>';
 llxFooter();
 $db->close();

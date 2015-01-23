@@ -222,7 +222,7 @@ class FormCompany
 		$out='';
 
 		// On recherche les departements/cantons/province active d'une region et pays actif
-		$sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, c.label as country, c.code as country_code FROM";
+		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code FROM";
 		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
@@ -270,7 +270,7 @@ class FormCompany
 							$out.= '<option value="'.$obj->rowid.'">';
 						}
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-						$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+						$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
 						$out.= '</option>';
 					}
 					$i++;
@@ -292,7 +292,7 @@ class FormCompany
 	 *   Retourne la liste deroulante des regions actives dont le pays est actif
 	 *   La cle de la liste est le code (il peut y avoir plusieurs entree pour
 	 *   un code donnee mais dans ce cas, le champ pays et lang differe).
-	 *   Ainsi les liens avec les regions se font sur une region independemment de son nom.
+	 *   Ainsi les liens avec les regions se font sur une region independemment de son name.
 	 *
 	 *   @param		string		$selected		Preselected value
 	 *   @param		string		$htmlname		Name of HTML select field
@@ -520,118 +520,105 @@ class FormCompany
 	 *  @param  string		$htmlname       Name of HTML form
 	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
-     *  @param	array		$events			More js events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @param	string		$moreparam		String with more param to add into url when noajax search is used.
 	 * 	@return int 						The selected third party ID
 	 */
-	function selectCompaniesForNewContact($object, $var_id, $selected='', $htmlname='newcompany', $limitto='', $forceid=0, $events=array(), $moreparam='')
+	function selectCompaniesForNewContact($object, $var_id, $selected='', $htmlname='newcompany', $limitto='', $forceid=0, $moreparam='')
 	{
 		global $conf, $langs;
 
-		// On recherche les societes
-		$sql = "SELECT s.rowid, s.nom FROM";
-		$sql.= " ".MAIN_DB_PREFIX."societe as s";
-		$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
-		if ($selected && $conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $sql.= " AND rowid = ".$selected;
-		else
+		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
 		{
-			// For ajax search we limit here. For combo list, we limit later
-			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT
-			&& is_array($limitto) && count($limitto))
-			{
-				$sql.= " AND rowid IN (".join(',',$limitto).")";
-			}
-		}
-		$sql.= " ORDER BY nom ASC";
+			// Use Ajax search
+			$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
 
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
+			$socid=0; $name='';
+			if ($selected > 0)
 			{
-				// Use Ajax search
-				$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
-
-				$socid=0;
-				if ($selected)
+				$tmpthirdparty=new Societe($this->db);
+				$result = $tmpthirdparty->fetch($selected);
+				if ($result > 0)
 				{
-					$obj = $this->db->fetch_object($resql);
-					$socid = $obj->rowid?$obj->rowid:'';
+					$socid = $selected;
+					$name = $tmpthirdparty->name;
 				}
+			}
 
-				// We recall a page after a small delay when a new input has been selected
-				$htmloption='';
-				//$javaScript = "window.location=\'".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid>0?$forceid:$object->id)."&amp;".$htmlname."=\' + document.getElementById(\'".$htmlname."\').value;";
-                //$htmloption.= 'onChange="ac_delay(\''.$javaScript.'\',\'500\');"';								// When we select with mouse
-                //$htmloption.= 'onKeyUp="if (event.keyCode== 13) { ac_delay(\''.$javaScript.'\',\'500\'); }"';	// When we select with keyboard
+			// Refresh contacts list on thirdparty list change
+			$htmloption='';
 
-                if (count($events))	// If there is some ajax events to run once selection is done, we add code here to run events
-                {
-	                print '<script type="text/javascript">
-						jQuery(document).ready(function() {
-	                   		$("#search_'.$htmlname.'").change(function() {
-								var obj = '.json_encode($events).';
-				    			$.each(obj, function(key,values) {
-				    				if (values.method.length) {
-				    					runJsCodeForEvent'.$htmlname.'(values);
-				    				}
-								});
-                			});
+			$events=array();
+			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			if (count($events))	// If there is some ajax events to run once selection is done, we add code here to run events
+			{
+				print '<script type="text/javascript">
+				jQuery(document).ready(function() {
+					$("#search_'.$htmlname.'").change(function() {
+						var obj = '.json_encode($events).';
+						$.each(obj, function(key,values) {
+							if (values.method.length) {
+								runJsCodeForEvent'.$htmlname.'(values);
+							}
+						});
+						/* Clean contact */
+						$("div#s2id_contactid>a>span").html(\'\');
+					});
 
-							// Function used to execute events when search_htmlname change
-							function runJsCodeForEvent'.$htmlname.'(obj) {
-								var id = $("#'.$htmlname.'").val();
-								var method = obj.method;
-								var url = obj.url;
-								var htmlname = obj.htmlname;
-					    		$.getJSON(url,
-									{
-										action: method,
-										id: id,
-										htmlname: htmlname
-									},
-									function(response) {
-										if (response != null)
-										{
-											$.each(obj.params, function(key,action) {
-												if (key.length) {
-													var num = response.num;
-													if (num > 0) {
-														$("#" + key).removeAttr(action);
-													} else {
-														$("#" + key).attr(action, action);
-													}
-												}
-											});
-											$("select#" + htmlname).html(response.value);
+					// Function used to execute events when search_htmlname change
+					function runJsCodeForEvent'.$htmlname.'(obj) {
+						var id = $("#'.$htmlname.'").val();
+						var method = obj.method;
+						var url = obj.url;
+						var htmlname = obj.htmlname;
+						$.getJSON(url,
+							{
+								action: method,
+								id: id,
+								htmlname: htmlname
+							},
+							function(response) {
+								if (response != null)
+								{
+									$.each(obj.params, function(key,action) {
+										if (key.length) {
+											var num = response.num;
+											if (num > 0) {
+												$("#" + key).removeAttr(action);
+											} else {
+												$("#" + key).attr(action, action);
+											}
 										}
 									});
-							};
-						});
-					</script>';
-                }
-
-				print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
-				//print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-				//print '<td class="nobordernopadding">';
-				if ($obj->rowid == 0)
-				{
-					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="" '.$htmloption.' />';
-				}
-				else
-				{
-					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
-				}
-				print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php','',$minLength);
-				//print '</td>';
-				//print '</tr>';
-				//print '</table>';
-				//print "\n";
-				return $socid;
+									$("select#" + htmlname).html(response.value);
+								}
+							}
+						);
+					};
+				});
+				</script>';
 			}
-			else
+
+			print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
+			print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$name.'" '.$htmloption.' />';
+			print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php','',$minLength);
+			return $socid;
+		}
+		else
+		{
+			// Search to list thirdparties
+			$sql = "SELECT s.rowid, s.nom as name FROM";
+			$sql.= " ".MAIN_DB_PREFIX."societe as s";
+			$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+			// For ajax search we limit here. For combo list, we limit later
+			if (is_array($limitto) && count($limitto))
 			{
-				// No Ajax search
+				$sql.= " AND s.rowid IN (".join(',',$limitto).")";
+			}
+			$sql.= " ORDER BY s.nom ASC";
+
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
 				print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"';
 				if ($conf->use_javascript_ajax)
 				{
@@ -653,14 +640,14 @@ class FormCompany
 						{
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled="disabled"';
-							print ' selected="selected">'.dol_trunc($obj->nom,24).'</option>';
+							print ' selected="selected">'.dol_trunc($obj->name,24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
 						else
 						{
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled="disabled"';
-							print '>'.dol_trunc($obj->nom,24).'</option>';
+							print '>'.dol_trunc($obj->name,24).'</option>';
 						}
 						$i ++;
 					}
@@ -668,10 +655,11 @@ class FormCompany
 				print "</select>\n";
 				return $firstCompany;
 			}
-		}
-		else
-		{
-			dol_print_error($this->db);
+			else
+			{
+				dol_print_error($this->db);
+				print 'Error sql';
+			}
 		}
 	}
 
@@ -682,22 +670,21 @@ class FormCompany
      *  @param  string		$selected       Default selected value
      *  @param  string		$htmlname		HTML select name
      *  @param  string		$source			Source ('internal' or 'external')
-     *  @param  string		$order			Sort criteria
+     *  @param  string		$sortorder		Sort criteria
      *  @param  int			$showempty      1=Add en empty line
      *  @return	void
      */
-	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $order='code', $showempty=0)
+	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='code', $showempty=0)
 	{
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
-			$lesTypes = $object->liste_type_contact($source, $order, 0, 1);
+			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
 			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';
 			foreach($lesTypes as $key=>$value)
 			{
 				print '<option value="'.$key.'"';
-				if ($key == $selected)
-					print ' selected';
+				if ($key == $selected) print ' selected';
 				print '>'.$value.'</option>';
 			}
 			print "</select>\n";

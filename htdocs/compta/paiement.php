@@ -4,6 +4,8 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,187 +69,190 @@ if ($facid > 0)
 }
 
 // Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('paiementcard'));
-
-$parameters=array('socid'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$hookmanager->initHooks(array('paiementcard','globalcard'));
 
 
 /*
  * Actions
  */
 
-if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='yes'))
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
-    $error = 0;
+	if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='yes'))
+	{
+	    $error = 0;
 
-    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-    $paiement_id = 0;
-    $totalpayment = 0;
-    $atleastonepaymentnotnull = 0;
+	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+	    $paiement_id = 0;
+	    $totalpayment = 0;
+	    $atleastonepaymentnotnull = 0;
 
-    // Generate payment array and check if there is payment higher than invoice and payment date before invoice date
-    $tmpinvoice=new Facture($db);
-    foreach ($_POST as $key => $value)
-    {
-        if (substr($key,0,7) == 'amount_')
-        {
-            $cursorfacid = substr($key,7);
-            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
-            $totalpayment = $totalpayment + $amounts[$cursorfacid];
-            if (! empty($amounts[$cursorfacid])) $atleastonepaymentnotnull++;
-            $result=$tmpinvoice->fetch($cursorfacid);
-            if ($result <= 0) dol_print_error($db);
-            $amountsresttopay[$cursorfacid]=price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement());
-            if ($amounts[$cursorfacid])
-            {
-	            // Check amount
-	            if ($amounts[$cursorfacid] && (abs($amounts[$cursorfacid]) > abs($amountsresttopay[$cursorfacid])))
-	            {
-	                $addwarning=1;
-	                $formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' '.$langs->trans("HelpPaymentHigherThanReminderToPay");
-	            }
-	            // Check date
-	            if ($datepaye && ($datepaye < $tmpinvoice->date))
-	            {
-	            	$langs->load("errors");
-	                //$error++;
-	                setEventMessage($langs->transnoentities("WarningPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye,'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), 'warnings');
-	            }
-            }
-
-            $formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);
-        }
-    }
-
-    // Check parameters
-    if (! GETPOST('paiementcode'))
-    {
-        setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('PaymentMode')), 'errors');
-        $error++;
-    }
-
-    if (! empty($conf->banque->enabled))
-    {
-        // If bank module is on, account is required to enter a payment
-        if (GETPOST('accountid') <= 0)
-        {
-            setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), 'errors');
-            $error++;
-        }
-    }
-
-    if (empty($totalpayment) && empty($atleastonepaymentnotnull))
-    {
-        setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->trans('PaymentAmount')), 'errors');
-        $error++;
-    }
-
-    if (empty($datepaye))
-    {
-        setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('Date')), 'errors');
-        $error++;
-    }
-}
-
-/*
- * Action add_paiement
- */
-if ($action == 'add_paiement')
-{
-    if ($error)
-    {
-        $action = 'create';
-    }
-    // Le reste propre a cette action s'affiche en bas de page.
-}
-
-/*
- * Action confirm_paiement
- */
-if ($action == 'confirm_paiement' && $confirm == 'yes')
-{
-    $error=0;
-
-    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-
-    $db->begin();
-
-    // Clean parameters amount if payment is for a credit note
-    if (GETPOST('type') == 2)
-    {
-	    foreach ($amounts as $key => $value)	// How payment is dispatch
+	    // Generate payment array and check if there is payment higher than invoice and payment date before invoice date
+	    $tmpinvoice=new Facture($db);
+	    foreach ($_POST as $key => $value)
 	    {
-	    	$newvalue = price2num($value,'MT');
-	    	$amounts[$key] = -$newvalue;
+	        if (substr($key,0,7) == 'amount_')
+	        {
+	            $cursorfacid = substr($key,7);
+	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
+	            $totalpayment = $totalpayment + $amounts[$cursorfacid];
+	            if (! empty($amounts[$cursorfacid])) $atleastonepaymentnotnull++;
+	            $result=$tmpinvoice->fetch($cursorfacid);
+	            if ($result <= 0) dol_print_error($db);
+	            $amountsresttopay[$cursorfacid]=price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement());
+	            if ($amounts[$cursorfacid])
+	            {
+		            // Check amount
+		            if ($amounts[$cursorfacid] && (abs($amounts[$cursorfacid]) > abs($amountsresttopay[$cursorfacid])))
+		            {
+		                $addwarning=1;
+		                $formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' '.$langs->trans("HelpPaymentHigherThanReminderToPay");
+		            }
+		            // Check date
+		            if ($datepaye && ($datepaye < $tmpinvoice->date))
+		            {
+		            	$langs->load("errors");
+		                //$error++;
+		                setEventMessage($langs->transnoentities("WarningPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye,'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), 'warnings');
+		            }
+	            }
+
+	            $formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);
+	        }
 	    }
-    }
 
-    if (! empty($conf->banque->enabled))
-    {
-    	// Si module bank actif, un compte est obligatoire lors de la saisie d'un paiement
-    	if (GETPOST('accountid') <= 0)
-    	{
-    		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), 'errors');
-    		$error++;
-    	}
-    }
+	    // Check parameters
+	    if (! GETPOST('paiementcode'))
+	    {
+	        setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('PaymentMode')), 'errors');
+	        $error++;
+	    }
 
-    // Creation of payment line
-    $paiement = new Paiement($db);
-    $paiement->datepaye     = $datepaye;
-    $paiement->amounts      = $amounts;   // Array with all payments dispatching
-    $paiement->paiementid   = dol_getIdFromCode($db,$_POST['paiementcode'],'c_paiement');
-    $paiement->num_paiement = $_POST['num_paiement'];
-    $paiement->note         = $_POST['comment'];
+	    if (! empty($conf->banque->enabled))
+	    {
+	        // If bank module is on, account is required to enter a payment
+	        if (GETPOST('accountid') <= 0)
+	        {
+	            setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), 'errors');
+	            $error++;
+	        }
+	    }
 
-    if (! $error)
-    {
-    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));
-    	if ($paiement_id < 0)
-        {
-            setEventMessage($paiement->error, 'errors');
-            $error++;
-        }
-    }
+	    if (empty($totalpayment) && empty($atleastonepaymentnotnull))
+	    {
+	        setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->trans('PaymentAmount')), 'errors');
+	        $error++;
+	    }
 
-    if (! $error)
-    {
-    	$label='(CustomerInvoicePayment)';
-    	if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
-        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
-        if ($result < 0)
-        {
-            setEventMessage($paiement->error, 'errors');
-            $error++;
-        }
-    }
+	    if (empty($datepaye))
+	    {
+	        setEventMessage($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('Date')), 'errors');
+	        $error++;
+	    }
+	}
 
-    if (! $error)
-    {
-        $db->commit();
+	/*
+	 * Action add_paiement
+	 */
+	if ($action == 'add_paiement')
+	{
+	    if ($error)
+	    {
+	        $action = 'create';
+	    }
+	    // Le reste propre a cette action s'affiche en bas de page.
+	}
 
-        // If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
-        $invoiceid=0;
-        foreach ($paiement->amounts as $key => $amount)
-        {
-            $facid = $key;
-            if (is_numeric($amount) && $amount <> 0)
-            {
-                if ($invoiceid != 0) $invoiceid=-1; // There is more than one invoice payed by this payment
-                else $invoiceid=$facid;
-            }
-        }
-        if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/compta/facture.php?facid='.$invoiceid;
-        else $loc = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id;
-        header('Location: '.$loc);
-        exit;
-    }
-    else
-    {
-        $db->rollback();
-    }
+	/*
+	 * Action confirm_paiement
+	 */
+	if ($action == 'confirm_paiement' && $confirm == 'yes')
+	{
+	    $error=0;
+
+	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+
+	    $db->begin();
+
+	    // Clean parameters amount if payment is for a credit note
+	    if (GETPOST('type') == 2)
+	    {
+		    foreach ($amounts as $key => $value)	// How payment is dispatch
+		    {
+		    	$newvalue = price2num($value,'MT');
+		    	$amounts[$key] = -$newvalue;
+		    }
+	    }
+
+	    if (! empty($conf->banque->enabled))
+	    {
+	    	// Si module bank actif, un compte est obligatoire lors de la saisie d'un paiement
+	    	if (GETPOST('accountid') <= 0)
+	    	{
+	    		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), 'errors');
+	    		$error++;
+	    	}
+	    }
+
+	    // Creation of payment line
+	    $paiement = new Paiement($db);
+	    $paiement->datepaye     = $datepaye;
+	    $paiement->amounts      = $amounts;   // Array with all payments dispatching
+	    $paiement->paiementid   = dol_getIdFromCode($db,$_POST['paiementcode'],'c_paiement');
+	    $paiement->num_paiement = $_POST['num_paiement'];
+	    $paiement->note         = $_POST['comment'];
+
+	    if (! $error)
+	    {
+	    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));
+	    	if ($paiement_id < 0)
+	        {
+	            setEventMessage($paiement->error, 'errors');
+	            $error++;
+	        }
+	    }
+
+	    if (! $error)
+	    {
+	    	$label='(CustomerInvoicePayment)';
+	    	if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
+	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
+	        if ($result < 0)
+	        {
+	            setEventMessage($paiement->error, 'errors');
+	            $error++;
+	        }
+	    }
+
+	    if (! $error)
+	    {
+	        $db->commit();
+
+	        // If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
+	        $invoiceid=0;
+	        foreach ($paiement->amounts as $key => $amount)
+	        {
+	            $facid = $key;
+	            if (is_numeric($amount) && $amount <> 0)
+	            {
+	                if ($invoiceid != 0) $invoiceid=-1; // There is more than one invoice payed by this payment
+	                else $invoiceid=$facid;
+	            }
+	        }
+	        if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/compta/facture.php?facid='.$invoiceid;
+	        else $loc = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id;
+	        header('Location: '.$loc);
+	        exit;
+	    }
+	    else
+	    {
+	        $db->rollback();
+	    }
+	}
 }
 
 
@@ -469,7 +474,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         $sql.= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
         if ($facture->type != 2)
         {
-            $sql .= ' AND type IN (0,1,3)';	// Standard invoice, replacement, deposit
+            $sql .= ' AND type IN (0,1,3,5)';	// Standard invoice, replacement, deposit, situation
         }
         else
         {
@@ -509,7 +514,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
-                $var=True;
+                $var=true;
                 $total=0;
                 $totalrecu=0;
                 $totalrecucreditnote=0;
@@ -626,7 +631,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         	$buttontitle=$langs->trans('ToMakePayment');
         	if ($facture->type == 2) $buttontitle=$langs->trans('ToMakePaymentBack');
 
-        	print '<center><br>';
+        	print '<br><div class="center">';
         	print '<input type="checkbox" checked="checked" name="closepaidinvoices"> '.$checkboxlabel;
             /*if (! empty($conf->prelevement->enabled))
             {
@@ -634,7 +639,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 if (! empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
             }*/
             print '<br><input type="submit" class="button" value="'.dol_escape_htmltag($buttontitle).'"><br><br>';
-            print '</center>';
+            print '</div>';
         }
 
         // Form to confirm payment
@@ -687,7 +692,7 @@ if (! GETPOST('action'))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=True;
+        $var=true;
 
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
         print '<table class="noborder" width="100%">';

@@ -163,21 +163,40 @@ class MouvementStock extends CommonObject
 			{
 				$newpmp=0;
 				$newpmpwarehouse=0;
-				// Note: PMP is calculated on stock input only (type = 0 or 3). If type == 0 or 3, qty should be > 0.
+				// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
 				// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
 				if (($type == 0 || $type == 3) && $price > 0)
 				{
+					// If we will change PMP for the warehouse we edit and the product, we must first check/clean that PMP is defined
+					// on every stock entry with old value (so global updated value will match recalculated value from product_stock)
+					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".($oldpmp?$oldpmp:'0');
+					$sql.= " WHERE pmp = 0 AND fk_product = ".$fk_product;
+					dol_syslog(get_class($this)."::_create", LOG_DEBUG);
+					$resql=$this->db->query($sql);
+					if (! $resql)
+					{
+						$this->error=$this->db->lasterror();
+						$error = -4;
+					}
+					
 					$oldqtytouse=($oldqty >= 0?$oldqty:0);
 					// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
 					if ($oldpmp > 0) $newpmp=price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
-					else $newpmp=$price;
-					$oldqtywarehousetouse=($oldqtywarehouse >= 0?$oldqtywarehouse:0);
+					else 
+					{
+						$newpmp=$price; // For this product, PMP was not yet set. We will set it later.
+					}
+					$oldqtywarehousetouse=$oldqtywarehouse;
 					if ($oldpmpwarehouse > 0) $newpmpwarehouse=price2num((($oldqtywarehousetouse * $oldpmpwarehouse) + ($qty * $price)) / ($oldqtywarehousetouse + $qty), 'MU');
 					else $newpmpwarehouse=$price;
 
-					//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." oldpmpwarehouse=".$oldpmpwarehouse." ";
-					//print "qty=".$qty." newpmp=".$newpmp." newpmpwarehouse=".$newpmpwarehouse;
-					//exit;
+					/*print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." oldpmpwarehouse=".$oldpmpwarehouse." ";
+					print "qty=".$qty." newpmp=".$newpmp." newpmpwarehouse=".$newpmpwarehouse;
+					exit;*/
+				}
+				else if ($type == 1 || $type == 2)
+				{
+					// After a stock decrease, we don't change value of PMP for product.					
 				}
 				else
 				{
@@ -207,14 +226,17 @@ class MouvementStock extends CommonObject
 				{
 					$this->error=$this->db->lasterror();
 					$error = -3;
-				} else if(empty($fk_product_stock)){
+				} 
+				else if(empty($fk_product_stock))
+				{
 					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
 
-				}
+			}
 
 			// Update detail stock for sell-by date
-			if (($product->hasbatch()) && (! $error) && (! $skip_sellby)){
+			if (($product->hasbatch()) && (! $error) && (! $skip_sellby))
+			{
 				$param_batch=array('fk_product_stock' =>$fk_product_stock, 'eatby'=>$eatby,'sellby'=>$sellby,'batchnumber'=>$batch);
 				$result=$this->_create_batch($param_batch, $qty);
 				if ($result<0) $error++;
@@ -245,7 +267,6 @@ class MouvementStock extends CommonObject
 
 		if ($movestock && ! $error)
 		{
-
 			$this->product_id = $fk_product;
 			$this->entrepot_id = $entrepot_id;
 			$this->qty = $qty;
@@ -474,7 +495,14 @@ class MouvementStock extends CommonObject
 		}
 
 	}
-	
+
+    /**
+     * Get origin
+     *
+     * @param   variant $fk_origin  id of origin
+     * @param   int $origintype     origin type
+     * @return  string              name url
+     */
 	function get_origin($fk_origin, $origintype) {
 		switch ($origintype) {
 			case 'commande':

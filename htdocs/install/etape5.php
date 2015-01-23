@@ -115,7 +115,6 @@ if (empty($versionfrom) && empty($versionto) && ! is_writable($conffile))
 
 if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 {
-    print '<table cellspacing="0" cellpadding="2" width="100%">';
     $error=0;
 
     // If password is encoded, we decode it
@@ -298,12 +297,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
     $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT',1).",".$db->encrypt($setuplang,1).",'chaine',0,'Default language',1)");
     //if (! $resql) dol_print_error($db,'Error in setup program');
 
-    print '</table>';
-
     $db->close();
 }
 
-print "<br>";
 
 
 // Create lock file
@@ -341,9 +337,9 @@ if ($action == "set")
 
         print $langs->trans("YouNeedToPersonalizeSetup")."<br><br>";
 
-        print '<center><a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+        print '<div class="center"><a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
         print $langs->trans("GoToSetupArea");
-        print '</a></center>';
+        print '</a></div>';
     }
     else
     {
@@ -353,9 +349,9 @@ if ($action == "set")
         print $langs->trans("MigrationNotFinished").'<br>';
         print "<br>";
 
-        print '<center><a href="'.$dolibarr_main_url_root .'/install/index.php">';
+        print '<div class="center"><a href="'.$dolibarr_main_url_root .'/install/index.php">';
         print $langs->trans("GoToUpgradePage");
-        print '</a></center>';
+        print '</a></div>';
     }
 }
 // If upgrade
@@ -389,9 +385,9 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
 
         print "<br>";
 
-        print '<center><a href="../index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+        print '<div class="center"><a href="../index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
         print $langs->trans("GoToDolibarr");
-        print '</a></center>';
+        print '</a></div>';
     }
     else
     {
@@ -401,9 +397,9 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
 
         print "<br>";
 
-        print '<center><a href="../install/index.php">';
+        print '<div class="center"><a href="../install/index.php">';
         print $langs->trans("GoToUpgradePage");
-        print '</a></center>';
+        print '</a></div>';
     }
 }
 else

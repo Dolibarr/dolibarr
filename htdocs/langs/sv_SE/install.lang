@@ -207,5 +207,5 @@ MigrationActioncommElement=Uppdatera uppgifter om åtgärder
 MigrationPaymentMode=Datamigrering betalning mode
 MigrationCategorieAssociation=Migreringskategorier
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Visa ej tillgängliga val
+HideNotAvailableOptions=Dölj ej tillgängliga val

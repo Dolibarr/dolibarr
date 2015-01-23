@@ -39,23 +39,36 @@ $langs->load("sendings");
 
 $search_ref=GETPOST('search_ref');
 $search_refsupp=GETPOST('search_refsupp');
-$search_nom=GETPOST('search_nom');
+$search_company=GETPOST('search_company');
 $search_user=GETPOST('search_user');
 $search_ttc=GETPOST('search_ttc');
 $sall=GETPOST('search_all');
 $search_status=GETPOST('search_status','int');
-if ($search_status == '') $search_status=-1;
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
 $sortorder = GETPOST('sortorder','alpha');
 $sortfield = GETPOST('sortfield','alpha');
 
+$viewstatut=GETPOST('viewstatut');
+
 // Security check
 $orderid = GETPOST('orderid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $search_ref='';
+    $search_refsupp='';
+    $search_company='';
+	$search_user='';
+	$search_ttc='';
+	$search_status='';
+}
+
+if ($search_status == '') $search_status=-1;
 
 /*
  *	View
@@ -66,7 +79,7 @@ if ($socid > 0)
 {
 	$fourn = new Fournisseur($db);
 	$fourn->fetch($socid);
-	$title .= ' ('.$fourn->nom.')';
+	$title .= ' ('.$fourn->name.')';
 }
 
 llxHeader('',$title);
@@ -85,7 +98,7 @@ $offset = $conf->liste_limit * $page ;
  * Mode Liste
  */
 
-$sql = "SELECT s.rowid as socid, s.nom, cf.date_commande as dc,";
+$sql = "SELECT s.rowid as socid, s.nom as name, cf.date_commande as dc,";
 $sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ttc, cf.fk_user_author,cf.date_livraison,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s,";
@@ -100,9 +113,9 @@ if ($search_ref)
 {
 	$sql .= natural_search('cf.ref', $search_ref);
 }
-if ($search_nom)
+if ($search_company)
 {
-	$sql .= natural_search('s.nom', $search_nom);
+	$sql .= natural_search('s.nom', $search_company);
 }
 if ($search_user)
 {
@@ -110,7 +123,7 @@ if ($search_user)
 }
 if ($search_ttc)
 {
-	$sql .= " AND total_ttc = ".price2num($search_ttc);
+	$sql .= " AND total_ttc = '".$db->escape(price2num($search_ttc))."'";
 }
 if ($sall)
 {
@@ -152,13 +165,14 @@ if ($resql)
 	$i = 0;
 
 	$param="";
-	if ($search_ref)	$param.="&search_ref=".$search_ref;
-	if ($search_nom)	$param.="&search_nom=".$search_nom;
-	if ($search_user)	$param.="&search_user=".$search_user;
-	if ($search_ttc)	$param.="&search_ttc=".$search_ttc;
-	if ($search_refsupp) $param.="&search_refsupp=".$search_refsupp;
-	if ($socid)			$param.="&socid=".$socid;
-	if ($search_status >= 0)  $param.="&search_status=".$search_status;
+	if ($search_ref)			$param.="&search_ref=".$search_ref;
+	if ($search_company)		$param.="&search_company=".$search_company;
+	if ($search_user)			$param.="&search_user=".$search_user;
+	if ($search_ttc)			$param.="&search_ttc=".$search_ttc;
+	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
+	if ($socid)					$param.="&socid=".$socid;
+	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
+	
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<table class="noborder" width="100%">';
@@ -178,7 +192,7 @@ if ($resql)
 
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$search_ref.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_refsupp" value="'.$search_refsupp.'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'.$search_company.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$search_user.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$search_ttc.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -186,10 +200,9 @@ if ($resql)
 	print '<td class="liste_titre" align="right">';
 	$formorder->selectSupplierOrderStatus($search_status,1,'search_status');
 	print '</td>';
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
-	print '</tr>';
+	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print "</td></tr>\n";
 
 	$var=true;
 
@@ -216,7 +229,7 @@ if ($resql)
 
 		// Company
 		print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
-		print $obj->nom.'</a></td>'."\n";
+		print $obj->name.'</a></td>'."\n";
 
 		// Author
 		$userstatic->id=$obj->fk_user_author;
@@ -255,6 +268,8 @@ if ($resql)
 	}
 	print "</table>\n";
 	print "</form>\n";
+	
+	print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';
 
 	$db->free($resql);
 }

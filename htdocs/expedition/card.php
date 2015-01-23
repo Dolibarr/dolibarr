@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		Francis Appels			<francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,488 +82,339 @@ if ($id > 0 || ! empty($ref))
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('expeditioncard'));
+$hookmanager->initHooks(array('expeditioncard','globalcard'));
+
 
 /*
  * Actions
  */
+
+$warehousecanbeselectedlater=1;
+if (($action == 'create') || ($action == 'add'))
+{
+	if (! empty($conf->productbatch->enabled))
+	{
+		if (! (GETPOST('entrepot_id','int') > 0))
+		{
+			$langs->load("errors");
+			setEventMessage($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
+			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$id);
+			exit;
+		}
+	}
+}
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if ($action == 'add')
+if (empty($reshook))
 {
-    $error=0;
-
-    $db->begin();
-
-    $object->note				= GETPOST('note','alpha');
-    $object->origin				= $origin;
-    $object->origin_id			= $origin_id;
-    $object->weight				= GETPOST('weight','int')==''?"NULL":GETPOST('weight','int');
-    $object->sizeH				= GETPOST('sizeH','int')==''?"NULL":GETPOST('sizeH','int');
-    $object->sizeW				= GETPOST('sizeW','int')==''?"NULL":GETPOST('sizeW','int');
-    $object->sizeS				= GETPOST('sizeS','int')==''?"NULL":GETPOST('sizeS','int');
-    $object->size_units			= GETPOST('size_units','int');
-    $object->weight_units		= GETPOST('weight_units','int');
-
-    $date_delivery = dol_mktime(GETPOST('date_deliveryhour','int'), GETPOST('date_deliverymin','int'), 0, GETPOST('date_deliverymonth','int'), GETPOST('date_deliveryday','int'), GETPOST('date_deliveryyear','int'));
-
-    // On va boucler sur chaque ligne du document d'origine pour completer objet expedition
-    // avec info diverses + qte a livrer
-    $classname = ucfirst($object->origin);
-    $objectsrc = new $classname($db);
-    $objectsrc->fetch($object->origin_id);
-
-    $object->socid					= $objectsrc->socid;
-    $object->ref_customer			= $objectsrc->ref_client;
-    $object->date_delivery			= $date_delivery;	// Date delivery planed
-    $object->fk_delivery_address	= $objectsrc->fk_delivery_address;
-    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
-    $object->tracking_number		= GETPOST('tracking_number','alpha');
-    $object->ref_int				= GETPOST('ref_int','alpha');
-    $object->note_private			= GETPOST('note_private');
-    $object->note_public			= GETPOST('note_public');
-
-    $num=count($objectsrc->lines);
-    $totalqty=0;
-    for ($i = 0; $i < $num; $i++)
-    {
-        $qty = "qtyl".$i;
-		$j=0;
-		$sub_qty=array();
-		$subtotalqty=0;
-		$idl="idl".$i;
-		$batch="batchl".$i."_0";
-		if (isset($_POST[$batch])) {
-			//shipment line with batch-enable product
-			$qty .= '_'.$j;
-			while (isset($_POST[$batch])) {
-				$sub_qty[$j]['q']=GETPOST($qty,'int');
-				$sub_qty[$j]['id_batch']=GETPOST($batch,'int');
-				$subtotalqty+=$sub_qty[$j]['q'];
-				$j++;
-				$batch="batchl".$i."_".$j;
-				$qty = "qtyl".$i.'_'.$j;
-
-			}
-			$batch_line[$i]['detail']=$sub_qty;
-			$batch_line[$i]['qty']=$subtotalqty;
-			$batch_line[$i]['ix_l']=GETPOST($idl,'int');
-			$totalqty+=$subtotalqty;
-		} else {
-			//Standard product
-			if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
-		}
-    }
-
-    if ($totalqty > 0)
-    {
-        //var_dump($_POST);exit;
-        for ($i = 0; $i < $num; $i++)
-        {
-            $qty = "qtyl".$i;
-			if (! isset($batch_line[$i])) {
-				if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
-				{
-					$ent = "entl".$i;
-					$idl = "idl".$i;
-					$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
-					if ($entrepot_id < 0) $entrepot_id='';
-
-					$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
-					if ($ret < 0)
-					{
-						$mesg='<div class="error">'.$object->error.'</div>';
-						$error++;
-					}
-				}
-			} else {
-				if ($batch_line[$i]['qty']>0) {
-					$ret=$object->addline_batch($batch_line[$i]);
-					if ($ret < 0)
-					{
-						$mesg='<div class="error">'.$object->error.'</div>';
-						$error++;
-					}
-				}
-			}
-        }
-
-        if (! $error)
-        {
-            $ret=$object->create($user);
-            if ($ret <= 0)
-            {
-                $mesg='<div class="error">'.$object->error.'</div>';
-                $error++;
-            }
-        }
-    }
-    else
-    {
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Qty")).'</div>';
-        $error++;
-    }
-
-    if (! $error)
-    {
-        $db->commit();
-        header("Location: card.php?id=".$object->id);
-        exit;
-    }
-    else
-    {
-        $db->rollback();
-        $_GET["commande_id"]=GETPOST('commande_id','int');
-        $action='create';
-    }
-}
-
-/*
- * Build a receiving receipt
- */
-else if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
-{
-    $result = $object->create_delivery($user);
-    if ($result > 0)
-    {
-        header("Location: ".DOL_URL_ROOT.'/livraison/card.php?id='.$result);
-        exit;
-    }
-    else
-    {
-        $mesg=$object->error;
-    }
-}
-
-else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition->valider)
-{
-    $object->fetch_thirdparty();
-
-    $result = $object->valid($user);
-
-    if ($result < 0)
-    {
-		$langs->load("errors");
-        setEventMessage($langs->trans($object->error),'errors');
-    }
-    else
-    {
-        // Define output language
-        $outputlangs = $langs;
-        $newlang='';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-        if (! empty($newlang))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($newlang);
-        }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-        {
-            $ret=$object->fetch($id);    // Reload to get new records
-            $result = $object->generateDocument($object->modelpdf, $outputlangs);
-        }
-        if ($result < 0)
-        {
-            dol_print_error($db,$result);
-            exit;
-        }
-    }
-}
-
-else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
-{
-    $result = $object->delete();
-    if ($result > 0)
-    {
-        header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
-        exit;
-    }
-    else
+	if ($action == 'add')
 	{
-		$langs->load("errors");
-        setEventMessage($langs->trans($object->error),'errors');
-    }
-}
+	    $error=0;
 
-else if ($action == 'reopen' && $user->rights->expedition->valider)
-{
-    $result = $object->setStatut(0);
-    if ($result < 0)
-    {
-        $mesg = $object->error;
-    }
-}
+	    $db->begin();
 
-else if ($action == 'setdate_livraison' && $user->rights->expedition->creer)
-{
-    //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-    $datedelivery=dol_mktime(GETPOST('liv_hour','int'), GETPOST('liv_min','int'), 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'), GETPOST('liv_year','int'));
+	    $object->note				= GETPOST('note','alpha');
+	    $object->origin				= $origin;
+	    $object->origin_id			= $origin_id;
+	    $object->weight				= GETPOST('weight','int')==''?"NULL":GETPOST('weight','int');
+	    $object->sizeH				= GETPOST('sizeH','int')==''?"NULL":GETPOST('sizeH','int');
+	    $object->sizeW				= GETPOST('sizeW','int')==''?"NULL":GETPOST('sizeW','int');
+	    $object->sizeS				= GETPOST('sizeS','int')==''?"NULL":GETPOST('sizeS','int');
+	    $object->size_units			= GETPOST('size_units','int');
+	    $object->weight_units		= GETPOST('weight_units','int');
 
-    $object->fetch($id);
-    $result=$object->set_date_livraison($user,$datedelivery);
-    if ($result < 0)
-    {
-        $mesg='<div class="error">'.$object->error.'</div>';
-    }
-}
+	    $date_delivery = dol_mktime(GETPOST('date_deliveryhour','int'), GETPOST('date_deliverymin','int'), 0, GETPOST('date_deliverymonth','int'), GETPOST('date_deliveryday','int'), GETPOST('date_deliveryyear','int'));
 
-// Action update description of emailing
-else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
-|| $action == 'settrueWeight'
-|| $action == 'settrueWidth'
-|| $action == 'settrueHeight'
-|| $action == 'settrueDepth'
-|| $action == 'setshipping_method_id')
-{
-    $error=0;
+	    // On va boucler sur chaque ligne du document d'origine pour completer objet expedition
+	    // avec info diverses + qte a livrer
+	    $classname = ucfirst($object->origin);
+	    $objectsrc = new $classname($db);
+	    $objectsrc->fetch($object->origin_id);
 
-    if ($action == 'settrackingnumber')		$object->tracking_number = trim(GETPOST('trackingnumber','alpha'));
-    if ($action == 'settrackingurl')		$object->tracking_url = trim(GETPOST('trackingurl','int'));
-    if ($action == 'settrueWeight')	{
-    	$object->trueWeight = trim(GETPOST('trueWeight','int'));
-		$object->weight_units = GETPOST('weight_units','int');
-    }
-    if ($action == 'settrueWidth')			$object->trueWidth = trim(GETPOST('trueWidth','int'));
-    if ($action == 'settrueHeight'){
-    				$object->trueHeight = trim(GETPOST('trueHeight','int'));
-					$object->size_units = GETPOST('size_units','int');
+	    $object->socid					= $objectsrc->socid;
+	    $object->ref_customer			= $objectsrc->ref_client;
+	    $object->date_delivery			= $date_delivery;	// Date delivery planed
+	    $object->fk_delivery_address	= $objectsrc->fk_delivery_address;
+	    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
+	    $object->tracking_number		= GETPOST('tracking_number','alpha');
+	    $object->ref_int				= GETPOST('ref_int','alpha');
+	    $object->note_private			= GETPOST('note_private');
+	    $object->note_public			= GETPOST('note_public');
+
+	    $num=count($objectsrc->lines);
+	    $totalqty=0;
+	    for ($i = 0; $i < $num; $i++)
+	    {
+	        $qty = "qtyl".$i;
+			$j=0;
+			$sub_qty=array();
+			$subtotalqty=0;
+			$idl="idl".$i;
+			$batch="batchl".$i."_0";
+			if (isset($_POST[$batch])) {
+				//shipment line with batch-enable product
+				$qty .= '_'.$j;
+				while (isset($_POST[$batch])) {
+					$sub_qty[$j]['q']=GETPOST($qty,'int');
+					$sub_qty[$j]['id_batch']=GETPOST($batch,'int');
+					$subtotalqty+=$sub_qty[$j]['q'];
+					$j++;
+					$batch="batchl".$i."_".$j;
+					$qty = "qtyl".$i.'_'.$j;
+
+				}
+				$batch_line[$i]['detail']=$sub_qty;
+				$batch_line[$i]['qty']=$subtotalqty;
+				$batch_line[$i]['ix_l']=GETPOST($idl,'int');
+				$totalqty+=$subtotalqty;
+			} else {
+				//Standard product
+				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
+			}
+	    }
+
+	    if ($totalqty > 0)
+	    {
+	        //var_dump($_POST);exit;
+	        for ($i = 0; $i < $num; $i++)
+	        {
+	            $qty = "qtyl".$i;
+				if (! isset($batch_line[$i])) {
+					if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
+					{
+						$ent = "entl".$i;
+						$idl = "idl".$i;
+						$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+						if ($entrepot_id < 0) $entrepot_id='';
+
+						$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
+						if ($ret < 0)
+						{
+							$mesg='<div class="error">'.$object->error.'</div>';
+							$error++;
+						}
+					}
+				} else {
+					if ($batch_line[$i]['qty']>0) {
+						$ret=$object->addline_batch($batch_line[$i]);
+						if ($ret < 0)
+						{
+							$mesg='<div class="error">'.$object->error.'</div>';
+							$error++;
+						}
+					}
+				}
+	        }
+
+	        if (! $error)
+	        {
+	            $ret=$object->create($user);
+	            if ($ret <= 0)
+	            {
+	                $mesg='<div class="error">'.$object->error.'</div>';
+	                $error++;
+	            }
+	        }
+	    }
+	    else
+	    {
+	        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Qty")).'</div>';
+	        $error++;
+	    }
+
+	    if (! $error)
+	    {
+	        $db->commit();
+	        header("Location: card.php?id=".$object->id);
+	        exit;
+	    }
+	    else
+	    {
+	        $db->rollback();
+	        $_GET["commande_id"]=GETPOST('commande_id','int');
+	        $action='create';
+	    }
 	}
-    if ($action == 'settrueDepth')			$object->trueDepth = trim(GETPOST('trueDepth','int'));
-    if ($action == 'setshipping_method_id')	$object->shipping_method_id = trim(GETPOST('shipping_method_id','int'));
 
-    if (! $error)
-    {
-        if ($object->update($user) >= 0)
-        {
-            header("Location: card.php?id=".$object->id);
-            exit;
-        }
-        setEventMessage($object->error,'errors');
-    }
+	/*
+	 * Build a receiving receipt
+	 */
+	else if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
+	{
+	    $result = $object->create_delivery($user);
+	    if ($result > 0)
+	    {
+	        header("Location: ".DOL_URL_ROOT.'/livraison/card.php?id='.$result);
+	        exit;
+	    }
+	    else
+	    {
+	        $mesg=$object->error;
+	    }
+	}
 
-    $action="";
-}
+	else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition->valider)
+	{
+	    $object->fetch_thirdparty();
 
-// Build document
-else if ($action == 'builddoc')	// En get ou en post
-{
+	    $result = $object->valid($user);
 
-	// Save last template used to generate document
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+	    if ($result < 0)
+	    {
+			$langs->load("errors");
+	        setEventMessage($langs->trans($object->error),'errors');
+	    }
+	    else
+	    {
+	    	// Define output language
+	    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+	    	{
+	    		$outputlangs = $langs;
+	    		$newlang = '';
+	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+	    		if (! empty($newlang)) {
+	    			$outputlangs = new Translate("", $conf);
+	    			$outputlangs->setDefaultLang($newlang);
+	    		}
+	    		$model=$object->modelpdf;
+	    		$ret = $object->fetch($id); // Reload to get new records
 
-    // Define output language
-    $outputlangs = $langs;
-    $newlang='';
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$shipment->client->default_lang;
-    if (! empty($newlang))
-    {
-        $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang($newlang);
-    }
-	$result = $object->generateDocument($object->modelpdf, $outputlangs);
-    if ($result <= 0)
-    {
-        dol_print_error($db,$result);
-        exit;
-    }
-}
+	    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	    		if ($result < 0) dol_print_error($db,$result);
+	    	}
+	    }
+	}
 
-// Delete file in doc form
-elseif ($action == 'remove_file')
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
+	{
+	    $result = $object->delete();
+	    if ($result > 0)
+	    {
+	        header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
+	        exit;
+	    }
+	    else
+		{
+			$langs->load("errors");
+	        setEventMessage($langs->trans($object->error),'errors');
+	    }
+	}
 
-	$upload_dir =	$conf->expedition->dir_output . "/sending";
-	$file =	$upload_dir	. '/' .	GETPOST('file');
-	$ret=dol_delete_file($file,0,0,0,$object);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-}
+	else if ($action == 'reopen' && $user->rights->expedition->valider)
+	{
+	    $result = $object->setStatut(0);
+	    if ($result < 0)
+	    {
+	        $mesg = $object->error;
+	    }
+	}
 
-/*
- * Add file in email form
-*/
-if (GETPOST('addfile','alpha'))
-{
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	else if ($action == 'setdate_livraison' && $user->rights->expedition->creer)
+	{
+	    //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+	    $datedelivery=dol_mktime(GETPOST('liv_hour','int'), GETPOST('liv_min','int'), 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'), GETPOST('liv_year','int'));
 
-    // Set tmp user directory TODO Use a dedicated directory for temp mails files
-    $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir_tmp = $vardir.'/temp';
+	    $object->fetch($id);
+	    $result=$object->set_date_livraison($user,$datedelivery);
+	    if ($result < 0)
+	    {
+	        $mesg='<div class="error">'.$object->error.'</div>';
+	    }
+	}
 
-    dol_add_file_process($upload_dir_tmp,0,0);
-    $action ='presend';
-}
+	// Action update description of emailing
+	else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
+	|| $action == 'settrueWeight'
+	|| $action == 'settrueWidth'
+	|| $action == 'settrueHeight'
+	|| $action == 'settrueDepth'
+	|| $action == 'setshipping_method_id')
+	{
+	    $error=0;
 
-/*
- * Remove file in email form
-*/
-if (GETPOST('removedfile','alpha'))
-{
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	    if ($action == 'settrackingnumber')		$object->tracking_number = trim(GETPOST('trackingnumber','alpha'));
+	    if ($action == 'settrackingurl')		$object->tracking_url = trim(GETPOST('trackingurl','int'));
+	    if ($action == 'settrueWeight')	{
+	    	$object->trueWeight = trim(GETPOST('trueWeight','int'));
+			$object->weight_units = GETPOST('weight_units','int');
+	    }
+	    if ($action == 'settrueWidth')			$object->trueWidth = trim(GETPOST('trueWidth','int'));
+	    if ($action == 'settrueHeight'){
+	    				$object->trueHeight = trim(GETPOST('trueHeight','int'));
+						$object->size_units = GETPOST('size_units','int');
+		}
+	    if ($action == 'settrueDepth')			$object->trueDepth = trim(GETPOST('trueDepth','int'));
+	    if ($action == 'setshipping_method_id')	$object->shipping_method_id = trim(GETPOST('shipping_method_id','int'));
 
-    // Set tmp user directory
-    $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir_tmp = $vardir.'/temp';
+	    if (! $error)
+	    {
+	        if ($object->update($user) >= 0)
+	        {
+	            header("Location: card.php?id=".$object->id);
+	            exit;
+	        }
+	        setEventMessage($object->error,'errors');
+	    }
 
-    // TODO Delete only files that was uploaded from email form
-    dol_remove_file_process(GETPOST('removedfile','int'),0);
-    $action ='presend';
-}
+	    $action="";
+	}
 
-/*
- * Send mail
-*/
-if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile','alpha') && ! GETPOST('cancel','alpha'))
-{
-    $langs->load('mails');
+	// Build document
+	else if ($action == 'builddoc')	// En get ou en post
+	{
+		// Save last template used to generate document
+		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
-//        $ref = dol_sanitizeFileName($object->ref);
-//        $file = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
+	    // Define output language
+	    $outputlangs = $langs;
+	    $newlang='';
+	    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
+	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$shipment->client->default_lang;
+	    if (! empty($newlang))
+	    {
+	        $outputlangs = new Translate("",$conf);
+	        $outputlangs->setDefaultLang($newlang);
+	    }
+		$result = $object->generateDocument($object->modelpdf, $outputlangs);
+	    if ($result <= 0)
+	    {
+	        dol_print_error($db,$result);
+	        exit;
+	    }
+	}
 
-//        if (is_readable($file))
-//        {
-            if (GETPOST('sendto','alpha'))
-            {
-                // Le destinataire a ete fourni via le champ libre
-                $sendto = GETPOST('sendto','alpha');
-                $sendtoid = 0;
-            }
-            elseif (GETPOST('receiver','alpha') != '-1')
-            {
-                // Recipient was provided from combo list
-                if (GETPOST('receiver','alpha') == 'thirdparty') // Id of third party
-                {
-                    $sendto = $object->client->email;
-                    $sendtoid = 0;
-                }
-                else	// Id du contact
-                {
-                    $sendto = $object->client->contact_get_property(GETPOST('receiver','alpha'),'email');
-                    $sendtoid = GETPOST('receiver','alpha');
-                }
-            }
+	// Delete file in doc form
+	elseif ($action == 'remove_file')
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-            if (dol_strlen($sendto))
-            {
-                $langs->load("commercial");
+		$upload_dir =	$conf->expedition->dir_output . "/sending";
+		$file =	$upload_dir	. '/' .	GETPOST('file');
+		$ret=dol_delete_file($file,0,0,0,$object);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	}
 
-                $from = GETPOST('fromname','alpha') . ' <' . GETPOST('frommail','alpha') .'>';
-                $replyto = GETPOST('replytoname','alpha'). ' <' . GETPOST('replytomail','alpha').'>';
-                $message = GETPOST('message');
-                $sendtocc = GETPOST('sendtocc','alpha');
-                $deliveryreceipt = GETPOST('deliveryreceipt','alpha');
+	elseif ($action == 'classifybilled')
+	{
+	    $object->fetch($id);
+	    $object->set_billed();
+	}
 
-                if ($action == 'send')
-                {
-                    if (dol_strlen(GETPOST('subject','alpha'))) $subject=GETPOST('subject','alpha');
-                    else $subject = $langs->transnoentities('Shipping').' '.$object->ref;
-                    $actiontypecode='AC_SHIP';
-                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
-                    if ($message)
-                    {
-                        $actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
-                        $actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
-                        $actionmsg.=$message;
-                    }
-                    $actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
-                }
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
-                // Create form object
-                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-                $formmail = new FormMail($db);
+	// Actions to send emails
+	if (empty($id)) $id=$facid;
+	$actiontypecode='AC_SHIP';
+	$trigger_name='SHIPPING_SENTBYMAIL';
+	$paramname='id';
+	$mode='emailfromshipment';
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-                $attachedfiles=$formmail->get_attached_files();
-                $filepath = $attachedfiles['paths'];
-                $filename = $attachedfiles['names'];
-                $mimetype = $attachedfiles['mimes'];
-
-                // Send mail
-                require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
-                if ($mailfile->error)
-                {
-                    $mesg='<div class="error">'.$mailfile->error.'</div>';
-                }
-                else
-                {
-                    $result=$mailfile->sendfile();
-                    if ($result)
-                    {
-                        $error=0;
-
-                        // Initialisation donnees
-                        $object->sendtoid		= $sendtoid;
-                        $object->actiontypecode	= $actiontypecode;
-                        $object->actionmsg		= $actionmsg;
-                        $object->actionmsg2		= $actionmsg2;
-                        $object->fk_element		= $object->id;
-                        $object->elementtype	= $object->element;
-
-                        // Appel des triggers
-                        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                        $interface=new Interfaces($db);
-                        $result=$interface->run_triggers('SHIPPING_SENTBYMAIL',$object,$user,$langs,$conf);
-                        if ($result < 0) {
-                            $error++; $object->errors=$interface->errors;
-                        }
-                        // Fin appel triggers
-
-                        if ($error)
-                        {
-                            dol_print_error($db);
-                        }
-                        else
-                        {
-                            // Redirect here
-                            // This avoid sending mail twice if going out and then back to page
-                        	$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-                            setEventMessage($mesg);
-                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-                            exit;
-                        }
-                    }
-                    else
-                    {
-                        $langs->load("other");
-                        $mesg='<div class="error">';
-                        if ($mailfile->error)
-                        {
-                            $mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
-                            $mesg.='<br>'.$mailfile->error;
-                        }
-                        else
-                        {
-                            $mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
-                        }
-                        $mesg.='</div>';
-                    }
-                }
-            }
-            else
-            {
-                $langs->load("other");
-                $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-                $action='presend';
-                dol_syslog('Recipient email is empty');
-            }
-/*        }
-        else
-        {
-            $langs->load("errors");
-            $mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
-            dol_syslog('Failed to read file: '.$file);
-        }*/
-}
-
-else if ($action == 'classifybilled')
-{
-    $object->fetch($id);
-    $object->set_billed();
 }
 
 
@@ -592,7 +444,7 @@ if ($action == 'create')
     print_fiche_titre($langs->trans("CreateASending"));
     if (! $origin)
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorBadParameters").'</div>';
+        setEventMessage($langs->trans("ErrorBadParameters"),'errors');
     }
 
     dol_htmloutput_mesg($mesg);
@@ -663,7 +515,8 @@ if ($action == 'create')
             print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
             print '<td colspan="3">';
             //print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
-            print $form->select_date($object->date_livraison?$object->date_livraison:-1,'date_delivery',1,1);
+            $date_delivery = ($date_delivery?$date_delivery:$object->date_livraison); // $date_delivery comes from GETPOST
+            print $form->select_date($date_delivery?$date_delivery:-1,'date_delivery',1,1);
             print "</td>\n";
             print '</tr>';
 
@@ -770,10 +623,13 @@ if ($action == 'create')
                 print '</td>';
                 if (! empty($conf->stock->enabled))
                 {
-					if (empty($conf->productbatch->enabled)) {
-                    print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Stock").'</td>';
-					} else {
-						print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' / '.$langs->trans("Stock").'</td>';
+					if (empty($conf->productbatch->enabled))
+					{
+                    	print '<td align="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
+					}
+					else
+					{
+						print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' ('.$langs->trans("Stock").')</td>';
 					}
                 }
                 print "</tr>\n";
@@ -827,7 +683,7 @@ if ($action == 'create')
                     print '</td>';
                 }
                 else
-                {
+				{
                     print "<td>";
                     if ($type==1) $text = img_object($langs->trans('Service'),'service');
                     else $text = img_object($langs->trans('Product'),'product');
@@ -860,17 +716,19 @@ if ($action == 'create')
                 $quantityAsked = $line->qty;
                 $quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 
+                $warehouse_id = GETPOST('entrepot_id','int');
+
                 $defaultqty=0;
-                if (GETPOST('entrepot_id','int') > 0)
+                if ($warehouse_id > 0)
                 {
                     //var_dump($product);
-                    $stock = $product->stock_warehouse[GETPOST('entrepot_id','int')]->real;
+                    $stock = $product->stock_warehouse[$warehouse_id]->real;
                     $stock+=0;  // Convertit en numerique
                     $defaultqty=min($quantityToBeDelivered, $stock);
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-                if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_object($product->stock_warehouse[GETPOST('entrepot_id','int')])))
+                if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() and is_object($product->stock_warehouse[$warehouse_id])))
 				{
 	                // Quantity to send
 	                print '<td align="center">';
@@ -891,14 +749,14 @@ if ($action == 'create')
 	                        // Show warehouse combo list
 	                    	$ent = "entl".$indiceAsked;
 	                    	$idl = "idl".$indiceAsked;
-	                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+	                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):$warehouse_id;
 	                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
-	                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == GETPOST('entrepot_id','int'))
+	                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id)
 	                        {
 	                            //print $stock.' '.$quantityToBeDelivered;
 	                            if ($stock < $quantityToBeDelivered)
 	                            {
-	                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for entrepot_id but we may have change warehouse
+	                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for this $warehouse_id but you can change warehouse
 	                            }
 	                        }
 	                    }
@@ -933,11 +791,14 @@ if ($action == 'create')
 							}
 						}
 					}
-				} else {
+				}
+				else
+				{
 					print '<td></td><td></td></tr>';
 					$subj=0;
 					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-					foreach ($product->stock_warehouse[GETPOST('entrepot_id','int')]->detail_batch as $dbatch) {
+					foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch)
+					{
 						//var_dump($dbatch);
 						$substock=$dbatch->qty +0 ;
 						print '<tr><td colspan="3" ></td><td align="center">';
@@ -945,8 +806,13 @@ if ($action == 'create')
 						print '</td>';
 
 						print '<td align="left">';
+
+						$staticwarehouse=new Entrepot($db);
+						$staticwarehouse->fetch($warehouse_id);
+						print $staticwarehouse->getNomUrl(0).' / ';
+
 						print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
-						print $langs->trans("DetailBatchFormat", dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->batch, $dbatch->qty);
+						print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
 						if ($defaultqty<=0) {
 							$defaultqty=0;
 						} else {
@@ -961,7 +827,7 @@ if ($action == 'create')
 
             print "</table>";
 
-            print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+            print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
             print '</form>';
 
@@ -1041,7 +907,7 @@ else if ($id || $ref)
 		}
 		/*
 		 * Confirmation de l'annulation
-		*/
+		 */
 		if ($action == 'annuler')
 		{
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
@@ -1434,16 +1300,30 @@ else if ($id || $ref)
 					$entrepot->fetch($lines[$i]->entrepot_id);
 					print $entrepot->getNomUrl(1);
 				}
+				else if (count($lines[$i]->details_entrepot) > 1)
+				{
+					$detail = '';
+					foreach ($lines[$i]->details_entrepot as $detail_entrepot) {
+						if ($detail_entrepot->entrepot_id > 0) {
+							$entrepot = new Entrepot($db);
+							$entrepot->fetch($detail_entrepot->entrepot_id);
+							$detail.= $langs->trans("DetailWarehouseFormat",$entrepot->libelle,$detail_entrepot->qty_shipped).'<br/>';
+						}
+					}
+					print $form->textwithtooltip($langs->trans("DetailWarehouseNumber"),$detail);
+				}
 				print '</td>';
 			}
 
 			// Batch number managment
-			if (! empty($conf->productbatch->enabled)) {
-				if (isset($lines[$i]->detail_batch) ) {
-					print '<td align="center">';
+			if (! empty($conf->productbatch->enabled))
+			{
+				if (isset($lines[$i]->detail_batch))
+				{
+					print '<td>';
 					$detail = '';
 					foreach ($lines[$i]->detail_batch as $dbatch) {
-						$detail.= $langs->trans("DetailBatchFormat",dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->batch,$dbatch->dluo_qty).'<br/>';
+						$detail.= $langs->trans("DetailBatchFormat",$dbatch->batch,dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->dluo_qty).'<br/>';
 					}
 					print $form->textwithtooltip($langs->trans("DetailBatchNumber"),$detail);
 					print '</td>';

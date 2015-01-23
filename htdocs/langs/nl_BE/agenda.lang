@@ -20,4 +20,3 @@ AgendaUrlOptions1=U kan ook de volgende parameters toevoegen voor de uitkomst va
 AgendaUrlOptions2=<b>login=%s</b> om de uitkomst van de acties te beperken:  gemaakt door, beïnvloed door of gedaan door gebruiker <b>%s</b>
 AgendaUrlOptions3=<b>logina=%s</b> om de uitkomst van de acties te beperken:  gemaakt door gebruiker <b>%s</b>
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions affected to user <b>%s</b>.
-AgendaUrlOptions5=<b>logind=%s</b> om de uitkomst van de acties te beperken: gedaan door gebruiker <b>%s</b>

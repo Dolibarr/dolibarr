@@ -1,22 +1,14 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
-#
 About = Πληροφορίες
 CronAbout = Σχετικά με το Cron
 CronAboutPage = Σχετικά με τη σελίδα Cron
-
-#
 # Right
-#
 Permission23101 = Διαβάστε την προγραμματισμένη εργασία
 Permission23102 = Δημιουργία / ενημέρωση προγραμματισμένης εργασίας
 Permission23103 = Διαγραφή προγραμματισμένης εργασίας
 Permission23104 = Εκτέλεση Προγραμματισμένης εργασίας
-
-#
 # Admin
-#
 CronSetup= Προγραμματισμένη ρύθμιση διαχείρισης των εργασιών
 URLToLaunchCronJobs=URL για να ελέγξετε και να ξεκινήσει μια περιοδική εργασία, εφόσον απαιτείται
 OrToLaunchASpecificJob=Ή να ελέγξετε και να ξεκινήσει μία συγκεκριμένη εργασία
@@ -24,20 +16,11 @@ KeyForCronAccess=Κλειδί ασφαλείας για το URL για να ξ�
 FileToLaunchCronJobs=Γραμμής εντολών για να ξεκινήσει τις εργασίες
 CronExplainHowToRunUnix=Σχετικά με το περιβάλλον Unix θα πρέπει να χρησιμοποιήσετε crontab να τρέχει γραμμή εντολών κάθε λίγα λεπτά
 CronExplainHowToRunWin=Στο Microsoft (tm) των Windows environement, μπορείτε να χρησιμοποιήσετε τα εργαλεία Προγραμματισμένη εργασία ώστε να εκτελεστεί μια γραμμή εντολών κάθε λιγα λεπτά
-
-
-#
 # Menu
-#
 CronJobs=Προγραμματισμένες εργασίες
-CronListActive= Κατάλογος των ενεργών εργασιών
-CronListInactive= Λίστα με τις απενεργοποιημένες εργασίες
-CronListActive= Κατάλογος των ενεργών εργασιών
-
-
-#
+CronListActive=Λίστα ενεργών/προγραμματισμένων εργασιών
+CronListInactive=Λίστα με τις απενεργοποιημένες εργασίες
 # Page list
-#
 CronDateLastRun=Τελευταία εκτέλεση
 CronLastOutput=Τελευταία εκτέλεση εξόδου
 CronLastResult=Τελευταίος κωδικός αποτελέσματος
@@ -70,10 +53,7 @@ CronLabel=Περιγραφή
 CronNbRun=Nb. έναρξης
 CronEach=Κάθε
 JobFinished=Ξεκίνησε και τελείωσε
-
-#
 #Page card
-#
 CronAdd= Προσθήκη εργασίας
 CronHourStart= Έναρξη ώρας και ημερομηνία αποστολής
 CronEvery= Εκτέλεση εργασίας κάθε
@@ -95,20 +75,12 @@ CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Doli
 CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
 CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
 CronCommandHelp=Γραμμή εντολών του συστήματος προς εκτέλεση.
-
-#
 # Info
-#
 CronInfoPage=Πληροφορίες
-
-
-#
 # Common
-#
 CronType=Τύπος εργασίας
 CronType_method=Καλέστε τη μέθοδο της κατηγορίας Dolibarr
 CronType_command=Εντολή Shell
 CronMenu=Μενού
 CronCannotLoadClass=Cannot load class %s or object %s
-
 UseMenuModuleToolsToAddCronJobs=Πηγαίνετε στο μενού "Home - Modules εργαλεία - Λίστα εργασιών" για να δείτε και να επεξεργαστείτε τις προγραμματισμένες εργασίες.

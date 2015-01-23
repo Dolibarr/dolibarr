@@ -234,7 +234,7 @@ $server->register(
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
- * @param	ref_ext		$ref_ext			Ref external of object
+ * @param	string		$ref_ext			Ref external of object
  * @return	mixed
  */
 function getContact($authentication,$id,$ref='',$ref_ext='')
@@ -655,6 +655,7 @@ function updateContact($authentication,$contact)
 			$object->province_id=$contact['province_id'];
 
 
+			$object->phone_pro=$contact['phone_pro'];
 			$object->phone_perso=$contact['phone_perso'];
 			$object->phone_mobile=$contact['phone_mobile'];
 			$object->fax=$contact['fax'];

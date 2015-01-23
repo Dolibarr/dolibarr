@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2006	Roman Ozana			<ozana@omdesign.cz>
- * Copyright (C) 2011	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2013	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2006      Roman Ozana			<ozana@omdesign.cz>
+ * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -261,6 +261,7 @@ class ICal
      */
     function ical_rrule($value)
     {
+    	$result=aray();
         $rrule = explode(';',$value);
         foreach ($rrule as $line)
         {
@@ -299,6 +300,7 @@ class ICal
      */
     function ical_dt_date($key, $value)
     {
+    	$return_value=array();
         $value = $this->ical_date_to_unix($value);
 
         // Analyse TZID
@@ -309,8 +311,8 @@ class ICal
             $value = str_replace('T', '', $value);
             return array($key,$value);
         }
-        // adding $value and $tzid
-        $key =     $temp[0];
+
+        $key = $temp[0];
         $temp = explode("=", $temp[1]);
         $return_value[$temp[0]] = $temp[1];
         $return_value['unixtime'] = $value;
@@ -330,8 +332,9 @@ class ICal
         {
             usort($temp, array(&$this, "ical_dtstart_compare"));
             return $temp;
-        } else
-        {
+        }
+        else
+       {
             return false;
         }
     }

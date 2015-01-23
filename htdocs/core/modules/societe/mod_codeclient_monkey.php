@@ -28,12 +28,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 
 
 /**
- *	\class 		mod_codeclient_monkey
- *	\brief 		Classe permettant la gestion monkey des codes tiers
+ *	Classe permettant la gestion monkey des codes tiers
  */
 class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
 	var $nom='Monkey';					// Nom du modele
+	var $name='Monkey';					// Nom du modele
 	var $code_modifiable;				// Code modifiable
 	var $code_modifiable_invalide;		// Code modifiable si il est invalide
 	var $code_modifiable_null;			// Code modifiables si il est null
@@ -52,6 +52,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	function __construct()
 	{
 		$this->nom = "Monkey";
+		$this->name = "Monkey";
 		$this->version = "dolibarr";
 		$this->code_null = 1;
 		$this->code_modifiable = 1;

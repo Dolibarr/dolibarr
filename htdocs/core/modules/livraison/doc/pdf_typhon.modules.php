@@ -100,8 +100,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->posxcomm=112;
 		//$this->posxtva=112;
 		//$this->posxup=126;
-		$this->posxqty=174;
-		$this->posxremainingqty=165;
+		$this->posxqty=165;
+		$this->posxremainingqty=185;
 		//$this->posxdiscount=162;
 		//$this->postotalht=174;
 		if ($this->page_largeur < 210) // To work with US executive format
@@ -825,12 +825,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			{
 				// On peut utiliser le nom de la societe du contact
 				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
-				else $socname = $object->client->nom;
+				else $socname = $object->client->name;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
 			else
 			{
-				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 			}
 
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');

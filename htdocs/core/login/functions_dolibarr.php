@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  *
@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/core/login/functions_dolibarr.php
  *      \ingroup    core
- *      \brief      Authentication functions for Dolibarr mode
+ *      \brief      Authentication functions for Dolibarr mode (check user on login or email and check pass)
  */
 
 
@@ -50,13 +50,15 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 	{
 		// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
 		$table = MAIN_DB_PREFIX."user";
-		$usernamecol = 'login';
+		$usernamecol1 = 'login';
+		$usernamecol2 = 'email';
 		$entitycol = 'entity';
 
-		$sql ='SELECT rowid, entity, pass, pass_crypted';
+		$sql ='SELECT rowid, login, entity, pass, pass_crypted';
 		$sql.=' FROM '.$table;
-		$sql.=' WHERE '.$usernamecol." = '".$db->escape($usertotest)."'";
-		$sql.=' AND '.$entitycol." IN (0," . ($entity ? $entity : 1) . ")";
+		$sql.=' WHERE ('.$usernamecol1." = '".$db->escape($usertotest)."'";
+		if (preg_match('/@/',$usertotest)) $sql.=' OR '.$usernamecol2." = '".$db->escape($usertotest)."'";
+		$sql.=') AND '.$entitycol." IN (0," . ($entity ? $entity : 1) . ")";
 
 		dol_syslog("functions_dolibarr::check_user_password_dolibarr", LOG_DEBUG);
 		$resql=$db->query($sql);
@@ -106,7 +108,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				// Password ok ?
 				if ($passok)
 				{
-					$login=$usertotest;
+					$login=$obj->login;
 				}
 				else
 				{

@@ -3,10 +3,11 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +35,19 @@
  */
 abstract class CommonObject
 {
-    protected $db;
+    public $db;
+
+    /**
+     * @var error 	Error string
+     * @deprecated	Use instead the array of error strings
+     */
     public $error;
+
+    /**
+     * @var errors	Aray of error string
+     */
     public $errors;
+
     public $canvas;                // Contains canvas name if it is
 
     public $name;
@@ -47,12 +58,21 @@ abstract class CommonObject
 
     public $array_options=array();
 
+    /**
+     * @var Societe
+     */
     public $thirdparty;
 
     public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
     public $linkedObjects;		// Loaded by ->fetchObjectLinked
 
     // No constructor as it is an abstract class
+
+    /**
+     * Column name of the ref field.
+     * @var string
+     */
+    protected $table_ref_field = '';
 
 
     /**
@@ -156,7 +176,7 @@ abstract class CommonObject
      *  Add a link between element $this->element and a contact
      *
      *  @param	int		$fk_socpeople       Id of contact to link
-     *  @param 	int		$type_contact 		Type of contact (code or id)
+     *  @param 	int		$type_contact 		Type of contact (code or id). For example: SALESREPFOLL
      *  @param  int		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
      *  @param  int		$notrigger			Disable all triggers
      *  @return int                 		<0 if KO, >0 if OK
@@ -192,9 +212,10 @@ abstract class CommonObject
             // On recherche id type_contact
             $sql = "SELECT tc.rowid";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
-            $sql.= " WHERE element='".$this->element."'";
-            $sql.= " AND source='".$source."'";
-            $sql.= " AND code='".$type_contact."' AND active=1";
+            $sql.= " WHERE tc.element='".$this->element."'";
+            $sql.= " AND tc.source='".$source."'";
+            $sql.= " AND tc.code='".$type_contact."' AND tc.active=1";
+			//print $sql;
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -337,12 +358,14 @@ abstract class CommonObject
     /**
      *    Delete all links between an object $this and all its contacts
      *
-     *    @return     int	>0 if OK, <0 if KO
+     *	  @param	string	$source		'' or 'internal' or 'external'
+     *	  @param	string	$code		Type of contact (code or id)
+     *    @return   int					>0 if OK, <0 if KO
      */
-    function delete_linked_contact()
+    function delete_linked_contact($source='',$code='')
     {
         $temp = array();
-        $typeContact = $this->liste_type_contact('');
+        $typeContact = $this->liste_type_contact($source,'',0,0,$code);
 
         foreach($typeContact as $key => $value)
         {
@@ -351,7 +374,7 @@ abstract class CommonObject
         $listId = implode(",", $temp);
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
-        $sql.= " WHERE element_id =".$this->id;
+        $sql.= " WHERE element_id = ".$this->id;
         $sql.= " AND fk_c_type_contact IN (".$listId.")";
 
         dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
@@ -360,7 +383,7 @@ abstract class CommonObject
             return 1;
         }
         else
-        {
+		{
             $this->error=$this->db->lasterror();
             return -1;
         }
@@ -478,21 +501,23 @@ abstract class CommonObject
      *      @param	string	$source     'internal', 'external' or 'all'
      *      @param	string	$order		Sort order by : 'code' or 'rowid'
      *      @param  string	$option     0=Return array id->label, 1=Return array code->label
-     *      @param  string	$activeonly    0=all type of contact, 1=only the active
+     *      @param  string	$activeonly 0=all status of contact, 1=only the active
+     *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
      *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
      */
-    function liste_type_contact($source='internal', $order='code', $option=0, $activeonly=0)
+    function liste_type_contact($source='internal', $order='', $option=0, $activeonly=0, $code='')
     {
         global $langs;
+
+        if (empty($order)) $order='code';
 
         $tab = array();
         $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE tc.element='".$this->element."'";
-        if ($activeonly == 1)
-        	$sql.= " AND tc.active=1"; // only the active type
-
-        if (! empty($source)) $sql.= " AND tc.source='".$source."'";
+        if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active type
+        if (! empty($source) && $source != 'all') $sql.= " AND tc.source='".$source."'";
+        if (! empty($code)) $sql.= " AND tc.code='".$code."'";
         $sql.= " ORDER by tc.".$order;
 
         //print "sql=".$sql;
@@ -577,11 +602,15 @@ abstract class CommonObject
     /**
      *		Charge le contact d'id $id dans this->contact
      *
-     *		@param	int		$contactid      Id du contact
+     *		@param	int		$contactid      Id du contact. Use this->contactid if empty.
      *		@return	int						<0 if KO, >0 if OK
      */
-    function fetch_contact($contactid)
+    function fetch_contact($contactid='')
     {
+    	if (empty($contactid)) $contactid=$this->contactid;
+
+    	if (empty($contactid)) return 0;
+
         require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
         $contact = new Contact($this->db);
         $result=$contact->fetch($contactid);
@@ -592,16 +621,22 @@ abstract class CommonObject
     /**
      *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdparty
      *
-     *		@return		int					<0 if KO, >0 if OK
+     *		@param		int		$force_thirdparty_id	Force thirdparty id
+     *		@return		int								<0 if KO, >0 if OK
      */
-    function fetch_thirdparty()
+    function fetch_thirdparty($force_thirdparty_id=0)
     {
         global $conf;
 
-        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty)) return 0;
+        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id)) return 0;
+
+	    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+	    $idtofetch=isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty);
+		if ($force_thirdparty_id) $idtofetch=$force_thirdparty_id;
 
         $thirdparty = new Societe($this->db);
-        $result=$thirdparty->fetch(isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty));
+        $result=$thirdparty->fetch($idtofetch);
         $this->client = $thirdparty;  // deprecated
         $this->thirdparty = $thirdparty;
 
@@ -617,8 +652,34 @@ abstract class CommonObject
 
 
     /**
+     * Looks for an object with ref matching the wildcard provided
+     * It does only work when $this->table_ref_field is set
+     *
+     * @param string $ref Wildcard
+     * @return int >1 = OK, 0 = Not found or table_ref_field not defined, <0 = KO
+     */
+    public function fetchOneLike($ref)
+    {
+        if (!$this->table_ref_field) {
+            return 0;
+        }
+
+        $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE '.$this->table_ref_field.' LIKE "'.$this->db->escape($ref).'" LIMIT 1';
+
+        $query = $this->db->query($sql);
+
+        if (!$this->db->num_rows($query)) {
+            return 0;
+        }
+
+        $result = $this->db->fetch_object($query);
+
+        return $this->fetch($result->rowid);
+    }
+
+    /**
      *	Load data for barcode into properties ->barcode_type*
-     *	Properties ->barcode_type that is id of barcode type is used to find other properties, but
+     *	Properties ->barcode_type that is id of barcode. Type is used to find other properties, but
      *  if it is not defined, ->element must be defined to know default barcode type.
      *
      *	@return		int			<0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
@@ -1683,6 +1744,19 @@ abstract class CommonObject
             // Add revenue stamp to total
             $this->total_ttc       += isset($this->revenuestamp)?$this->revenuestamp:0;
 
+			// Situations totals
+			if ($this->situation_cycle_ref && $this->situation_counter > 1) {
+				$prev_sits = $this->get_prev_sits();
+
+				foreach ($prev_sits as $sit) {
+					$this->total_ht -= $sit->total_ht;
+					$this->total_tva -= $sit->total_tva;
+					$this->total_localtax1 -= $sit->total_localtax1;
+					$this->total_localtax2 -= $sit->total_localtax2;
+					$this->total_ttc -= $sit->total_ttc;
+				}
+			}
+
             $this->db->free($resql);
 
             // Now update global field total_ht, total_ttc and tva
@@ -1738,6 +1812,7 @@ abstract class CommonObject
      *	@param		string	$origin		Linked element type
      *	@param		int		$origin_id	Linked element id
      *	@return		int					<=0 if KO, >0 if OK
+     *	@see		fetchObjectLinked, updateObjectLinked, deleteObjectLinked
      */
     function add_object_linked($origin=null, $origin_id=null)
     {
@@ -1781,6 +1856,7 @@ abstract class CommonObject
      *	@param  string	$targettype		Object target type
      *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
      *	@return	void
+     *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
      */
 	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
     {
@@ -1810,6 +1886,12 @@ abstract class CommonObject
         $sourcetype = (! empty($sourcetype) ? $sourcetype : $this->element);
         $targettype = (! empty($targettype) ? $targettype : $this->element);
 
+        if (empty($sourceid) && empty($targetid))
+        {
+        	dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERROR);
+        	return -1;
+        }
+
         // Links beetween objects are stored in this table
         $sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
@@ -1828,7 +1910,7 @@ abstract class CommonObject
             }
         }
         else
-        {
+		{
             $sql.= "(fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
             $sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
         }
@@ -1935,6 +2017,7 @@ abstract class CommonObject
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
      *	@return							int	>0 if OK, <0 if KO
+     *	@see	add_object_linked, fetObjectLinked, deleteObjectLinked
      */
     function updateObjectLinked($sourceid='', $sourcetype='', $targetid='', $targettype='')
     {
@@ -1980,6 +2063,7 @@ abstract class CommonObject
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
 	 *	@return     int	>0 if OK, <0 if KO
+	 *	@see	add_object_linked, updateObjectLinked, fetchObjectLinked
 	 */
 	function deleteObjectLinked($sourceid='', $sourcetype='', $targetid='', $targettype='')
 	{
@@ -2052,23 +2136,23 @@ abstract class CommonObject
         dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
         if ($this->db->query($sql))
         {
-        	if (! $error)
-			{
-				$trigkey='';
-				if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFYBILLED';
+            $error = 0;
 
-				if ($trigkey)
-				{
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers($trigkey,$this,$user,$langs,$conf);
-		 			if ($result < 0) {
-		 				$error++; $this->errors=$interface->errors;
-		 			}
-					// Fin appel triggers
-				}
-			}
+            $trigkey='';
+            if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
+            if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
+
+            if ($trigkey)
+            {
+                // Appel des triggers
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers($trigkey,$this,$user,$langs,$conf);
+                if ($result < 0) {
+                    $error++; $this->errors=$interface->errors;
+                }
+                // Fin appel triggers
+            }
 
 			if (! $error)
 			{
@@ -2121,7 +2205,6 @@ abstract class CommonObject
             $obj = $this->db->fetch_object($resql);
             if ($obj)
             {
-                $this->id       = $obj->rowid;
                 $this->canvas   = $obj->canvas;
                 return 1;
             }
@@ -2477,7 +2560,7 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf,$langs,$user,$object,$hookmanager;
+		global $conf, $hookmanager, $inputalsopricewithtax, $langs, $user;
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
@@ -2500,17 +2583,21 @@ abstract class CommonObject
 		// Reduction short
 		print '<td align="right" width="50"><label for="remise_percent">'.$langs->trans('ReductionShort').'</label></td>';
 
+		if ($this->situation_cycle_ref) {
+			print '<td align="right" width="50"><label for="progress">' . $langs->trans('Progress') . '</label></td>';
+		}
+
 		if (! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
-				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
+				print '<td align="right" class="margininfos" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
-				print '<td align="right" width="80">'.$langs->trans('CostPrice').'</td>';
+				print '<td align="right" class="margininfos" width="80">'.$langs->trans('CostPrice').'</td>';
 
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
+				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
-				print '<td align="right" width="50">'.$langs->trans('MarkRate').'</td>';
+				print '<td align="right" class="margininfos" width="50">'.$langs->trans('MarkRate').'</td>';
 		}
 
 		// Total HT
@@ -2546,6 +2633,11 @@ abstract class CommonObject
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
 					$reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				}
+				else
+				{
+					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'extrafieldsline'=>$extrafieldsline);
+					$reshook=$hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
 			else
@@ -2985,25 +3077,33 @@ abstract class CommonObject
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		if (! empty($conf->global->MARGININFO_HIDE_SHOW))
+		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// FIXME Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
 		{
-			print "<img onclick=\"$('.margininfos').toggle();\" src='".img_picto($langs->trans("Hide")."/".$langs->trans("Show"),'object_margin.png','','',1)."'>";
-			if ($conf->global->MARGININFO_HIDE_SHOW == 2) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';	// hide by default
+			print $langs->trans('ShowMarginInfos').' : ';
+	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
+	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'':'hideobject').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
+	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'hideobject':'').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
+
+    	    print '<script>$(document).ready(function() {
+        	    $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
+        	    $("span#hideMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
+      	        });</script>';
+    	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
 		}
 
-		print '<table class="nobordernopadding margintable" width="100%">';
+		print '<table class="noborder margintable" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td width="30%">'.$langs->trans('Margins').'</td>';
-		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
+		print '<td class="liste_titre">'.$langs->trans('Margins').'</td>';
+		print '<td class="liste_titre" align="right">'.$langs->trans('SellingPrice').'</td>';
 		if ($conf->global->MARGIN_TYPE == "1")
-			print '<td width="20%" align="right">'.$langs->trans('BuyingPrice').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('BuyingPrice').'</td>';
 		else
-			print '<td width="20%" align="right">'.$langs->trans('CostPrice').'</td>';
-		print '<td width="20%" align="right">'.$langs->trans('Margin').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('CostPrice').'</td>';
+		print '<td class="liste_titre" align="right">'.$langs->trans('Margin').'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.$langs->trans('MarginRate').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('MarginRate').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.$langs->trans('MarkRate').'</td>';
+			print '<td class="liste_titre" align="right">'.$langs->trans('MarkRate').'</td>';
 		print '</tr>';
 
 		if (! empty($conf->product->enabled))
@@ -3564,7 +3664,7 @@ abstract class CommonObject
 						break;
 					}
 
-					$out .= '</td>'."\n";
+					$out .= '</td>';
 
 					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
 					else $out .= '</tr>';
@@ -3572,7 +3672,6 @@ abstract class CommonObject
 				}
 			}
 			$out .= "\n";
-			$out .= '<!-- /showOptionalsInput --> ';
 			$out .= '
 				<script type="text/javascript">
 				    jQuery(document).ready(function() {
@@ -3601,7 +3700,8 @@ abstract class CommonObject
 
 						setListDependencies();
 				    });
-				</script>';
+				</script>'."\n";
+			$out .= '<!-- /showOptionalsInput --> '."\n";
 		}
 		return $out;
 	}

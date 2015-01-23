@@ -92,6 +92,8 @@ class LangTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -163,10 +165,10 @@ class LangTest extends PHPUnit_Framework_TestCase
 			// Test java string contains only d,M,y,/,-,. and not m,...
 			$result=$tmplangs->trans("FormatDateShortJava");
 			print __METHOD__." FormatDateShortJava=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/',$result,'FormatDateShortJava');
+			$this->assertRegExp('/^[dMy\/\-\.]+$/',$result,'FormatDateShortJava KO for lang code '.$code);
 			$result=$tmplangs->trans("FormatDateShortJavaInput");
 			print __METHOD__." FormatDateShortJavaInput=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/',$result,'FormatDateShortJavaInput');
+			$this->assertRegExp('/^[dMy\/\-\.]+$/',$result,'FormatDateShortJavaInput KO for lang code '.$code);
 
 			unset($tmplangs);
 		}

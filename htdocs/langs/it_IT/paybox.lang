@@ -35,3 +35,6 @@ MessageKO=Messaggio sulla pagina di pagamento annullato
 NewPayboxPaymentReceived=Nuovo pagamento Paybox ricevuto
 NewPayboxPaymentFailed=Nuovo tentativo di pagamento Paybox ma fallito
 PAYBOX_PAYONLINE_SENDEMAIL=Email di avviso dopo il pagamento (a buon fine o no)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2014 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,12 +191,10 @@ if ($result > 0)
     print '</td></tr>';
     print '</table>';
 
-    // Help
-    print '<br>'.$langs->trans("NotificationsDesc").'<br>';
-
-
     dol_fiche_end();
 
+    // Help
+    print $langs->trans("NotificationsDesc").'<br><br>';
 
     print "\n";
 
@@ -212,7 +210,7 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('');
@@ -265,13 +263,40 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('','','');
     print '</tr>';
 
-    // List of notifications for contacts
+    // List of notifications enabled for fixed email
+    foreach($conf->global as $key => $val)
+    {
+    	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
+    	//print $key.' - '.$val.' - '.$reg[1].'<br>';
+		print '<tr '.$bc[$var].'><td>'.$val;
+		if (isValidEmail($val))
+		{
+			print ' &lt;'.$val.'&gt;';
+		}
+		else
+		{
+			$langs->load("errors");
+			print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail",$val);
+		}
+		print '</td>';
+		print '<td>';
+		$label=($langs->trans("Notify_".$reg[1])!="Notify_".$reg[1]?$langs->trans("Notify_".$reg[1]):$reg[1]);
+		print $label;
+		print '</td>';
+		print '<td>';
+		print $langs->trans("Email");
+		print '</td>';
+		print '<td align="right">'.$langs->trans("SeeModuleSetup").'</td>';
+		print '</tr>';
+    }
+
+    // List of notifications enabled for contacts
     $sql = "SELECT n.rowid, n.type,";
     $sql.= " a.code, a.label,";
     $sql.= " c.rowid as contactid, c.lastname, c.firstname, c.email";
@@ -343,21 +368,22 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname",'',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.titre",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder);
+    //print_liste_field_titre($langs->trans("Object"),$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.daten",'',$param,'align="right"',$sortfield,$sortorder);
     print '</tr>';
 
     // List
-    $sql = "SELECT n.rowid, n.daten, n.email, n.objet_type, n.objet_id,";
-    $sql.= " c.rowid as id, c.lastname, c.firstname, c.email,";
+    $sql = "SELECT n.rowid, n.daten, n.email, n.objet_type as object_type, n.objet_id as object_id, n.type,";
+    $sql.= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail,";
     $sql.= " a.code, a.label";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
-    $sql.= " ".MAIN_DB_PREFIX."notify as n, ";
-    $sql.= " ".MAIN_DB_PREFIX."socpeople as c";
+    $sql.= " ".MAIN_DB_PREFIX."notify as n ";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as c ON n.fk_contact = c.rowid";
     $sql.= " WHERE a.rowid = n.fk_action";
-    $sql.= " AND c.rowid = n.fk_contact";
-    $sql.= " AND c.fk_soc = ".$object->id;
+    $sql.= " AND n.fk_soc = ".$object->id;
 
     $resql=$db->query($sql);
     if ($resql)
@@ -373,17 +399,37 @@ if ($result > 0)
 
             $obj = $db->fetch_object($resql);
 
-            $contactstatic->id=$obj->id;
-            $contactstatic->lastname=$obj->lastname;
-            $contactstatic->firstname=$obj->firstname;
-            print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
-            print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
+            print '<tr '.$bc[$var].'><td>';
+            if ($obj->id > 0)
+            {
+	            $contactstatic->id=$obj->id;
+	            $contactstatic->lastname=$obj->lastname;
+	            $contactstatic->firstname=$obj->firstname;
+	            print $contactstatic->getNomUrl(1);
+	            print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
+            }
+            else
+			{
+				print $obj->email;
+            }
             print '</td>';
             print '<td>';
             $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
             print $label;
             print '</td>';
-            // TODO Add link to object here
+            print '<td>';
+            if ($obj->type == 'email') print $langs->trans("Email");
+            if ($obj->type == 'sms') print $langs->trans("Sms");
+            print '</td>';
+            // TODO Add link to object here for other types
+            /*print '<td>';
+            if ($obj->object_type == 'order')
+            {
+				$orderstatic->id=$obj->object_id;
+				$orderstatic->ref=...
+				print $orderstatic->getNomUrl(1);
+            }
+           	print '</td>';*/
             // print
             print'<td align="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
             print '</tr>';
@@ -400,7 +446,7 @@ if ($result > 0)
 }
 else dol_print_error('','RecordNotFound');
 
-$db->close();
 
 llxFooter();
 
+$db->close();

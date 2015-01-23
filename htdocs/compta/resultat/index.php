@@ -103,8 +103,8 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_soc = s.rowid";
 	$sql.= " AND f.fk_statut IN (1,2)";
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-	else $sql.= " AND f.type IN (0,1,2,3)";
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+	else $sql.= " AND f.type IN (0,1,2,3,5)";
 }
 else
 {
@@ -246,8 +246,8 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut IN (1,2)";
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-	else $sql.= " AND f.type IN (0,1,2,3)";
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+	else $sql.= " AND f.type IN (0,1,2,3,5)";
 	$sql.= " AND f.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
@@ -560,7 +560,7 @@ print '<tr class="liste_titre"><td class="liste_titre">&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="center" colspan="2">';
+	print '<td align="center" colspan="2" class="borderrightlight">';
 	print '<a href="clientfourn.php?year='.$annee.'">';
 	print $annee;
 	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee+1);
@@ -571,7 +571,7 @@ print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	print '<td align="right">'.$langs->trans("Outcome").'</td>';
-	print '<td align="right">'.$langs->trans("Income").'</td>';
+	print '<td align="right" class="borderrightlight">'.$langs->trans("Income").'</td>';
 }
 print '</tr>';
 
@@ -601,7 +601,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		}
 		print "</td>";
 
-		print '<td align="right">&nbsp;';
+		print '<td align="right" class="borderrightlight">&nbsp;';
 		//if (isset($encaiss_ttc[$case]) && $encaiss_ttc[$case] != 0)
 		if (isset($encaiss_ttc[$case]))
 		{
@@ -623,7 +623,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	$nbcols+=2;
 	print '<td align="right">'.(isset($totsorties[$annee])?price(price2num($totsorties[$annee],'MT')):'&nbsp;').'</td>';
-	print '<td align="right">'.(isset($totentrees[$annee])?price(price2num($totentrees[$annee],'MT')):'&nbsp;').'</td>';
+	print '<td align="right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee])?price(price2num($totentrees[$annee],'MT')):'&nbsp;').'</td>';
 }
 print "</tr>\n";
 
@@ -637,7 +637,7 @@ $var=!$var;
 print '<tr class="liste_total"><td>'.$langs->trans("Profit").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="right" colspan="2"> ';
+	print '<td align="right" colspan="2" class="borderrightlight"> ';
 	if (isset($totentrees[$annee]) || isset($totsorties[$annee]))
 	{
 		$in=(isset($totentrees[$annee])?price2num($totentrees[$annee], 'MT'):0);

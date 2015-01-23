@@ -1,10 +1,8 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
 About = About
 CronAbout = About Cron
 CronAboutPage = Cron about page
-
 # Right
 Permission23101 = Read Scheduled task
 Permission23102 = Create/update Scheduled task
@@ -20,9 +18,8 @@ CronExplainHowToRunUnix=On Unix environment you should use crontab to run Comman
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run Command line each minutes
 # Menu
 CronJobs=Scheduled jobs
-CronListActive= List of active jobs
-CronListInactive= List of disabled jobs
-CronListActive= List of active jobs
+CronListActive=List of active/scheduled jobs
+CronListInactive=List of disabled jobs
 # Page list
 CronDateLastRun=Last run
 CronLastOutput=Last run output

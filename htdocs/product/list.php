@@ -69,7 +69,7 @@ $limit = $conf->liste_limit;
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas=GETPOST("canvas");
-$objcanvas='';
+$objcanvas=null;
 if (! empty($canvas))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
@@ -87,12 +87,14 @@ else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
  * Actions
  */
 
-if (isset($_POST["button_removefilter_x"]))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$sref="";
 	$sbarcode="";
 	$snom="";
 	$search_categ=0;
+	$tosell="";
+	$tobuy="";
 }
 
 
@@ -127,28 +129,27 @@ else
 	{
 		$texte = $langs->trans("ProductsAndServices");
 	}
+    // Add what we are searching for
+    if (! empty($sall)) $texte.= " - ".$sall;
 
     $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
     $sql.= ' p.fk_product_type, p.tms as datem,';
-    $sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte,';
+    $sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
-    $sql .= ', p.desiredstock';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
     if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 	// multilang
-	if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-	{
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
-	}
+	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
 	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 	if ($sall)
 	{
 		// For natural search
 		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
 		// multilang
-		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
+			$params[] = 'pl.label';
 			$params[] = 'pl.description';
 			$params[] = 'pl.note';
 		}
@@ -169,7 +170,7 @@ else
 	{
 		$params = array('p.label');
 		// multilang
-		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
 			$params[] = 'pl.label';
 		}
@@ -199,7 +200,6 @@ else
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
-    dol_syslog("product:list.php:", LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -383,7 +383,7 @@ else
 
     		print '<td class="liste_titre nowrap" align="right">';
     		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     		print '</td>';
     		print '</tr>';
 
@@ -462,7 +462,7 @@ else
     			}
 
     			// Better buy price
-    			if ($user->rights->produit->creer)
+    			if ($user->rights->fournisseur->lire)
     			{
         			print  '<td align="right">';
         			if ($objp->minsellprice != '')
@@ -507,11 +507,25 @@ else
     				}
     			}
 
-    			// Status (to buy)
-    			print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tosell,5,0).'</td>';
-
+                $product_static->status_buy = $objp->tobuy;
+                $product_static->status     = $objp->tosell;
                 // Status (to sell)
-                print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
+                print '<td align="center" nowrap="nowrap">';
+                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+                    print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+                } else {
+                    print $product_static->LibStatut($objp->tosell,5,0);
+                }
+                print '</td>';
+
+                // Status (to buy)
+                print '<td align="center" nowrap="nowrap">';
+                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+                    print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+                } else {
+                    print $product_static->LibStatut($objp->tobuy,5,1);
+                }
+                print '</td>';
 
                 print '<td>&nbsp;</td>';
 

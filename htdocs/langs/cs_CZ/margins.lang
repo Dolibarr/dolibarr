@@ -10,24 +10,18 @@ MarkRate=Mark rychlost
 DisplayMarginRates=Zobrazení okrajů ceny
 DisplayMarkRates=Zobrazit ceny značek
 InputPrice=Vstupní cena
-
 margin=Ziskové marže řízení
 margesSetup=Ziskové marže Nastavení řízení
-
 MarginDetails=Margin detaily
-
 ProductMargins=Produktové marže
 CustomerMargins=Zákazníků marže
 SalesRepresentativeMargins=Sales representative margins
-
 ProductService=Produkt nebo služba
 AllProducts=Všechny produkty a služby
 ChooseProduct/Service=Zvolte produkt nebo službu
-
 StartDate=Datum zahájení
 EndDate=Datum ukončení
 Launch=Začátek
-
 ForceBuyingPriceIfNull=Force nákupu cena, pokud null
 ForceBuyingPriceIfNullDetails=pokud je &quot;ON&quot;, bude marže rovnat nule na lince (nákupní cena = prodejní cena), v opačném případě (&quot;OFF&quot;), bude Marge se rovná prodejní ceně (nákupní cena = 0)
 MARGIN_METHODE_FOR_DISCOUNT=Marže metoda pro globální slevy
@@ -35,16 +29,16 @@ UseDiscountAsProduct=Jako produkt
 UseDiscountAsService=Jako služba
 UseDiscountOnTotal=Na mezisoučet
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definuje, zda globální sleva je považován za výrobek, služba, nebo pouze na mezisoučet pro výpočet marže.
-
 MARGIN_TYPE=Marže typ
 MargeBrute=Raw marže
 MargeNette=Čistá marže
 MARGIN_TYPE_DETAILS=Raw margin: Konečná cena - nákupní cenou <br/> Čistá marže: Prodejní cena - pořizovací ceny,
-
 CostPrice=Velkoobchodní cena
 BuyingCost=Velkoobchodní cena
 UnitCharges=Jednotkové náklady
 Charges=Poplatky
-
 AgentContactType=Commercial agent contact type
-AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per sale representative
+rateMustBeNumeric=Rate must be a numeric value
+markRateShouldBeLesserThan100=Mark rate should be lower than 100
+ShowMarginInfos=Show margin infos

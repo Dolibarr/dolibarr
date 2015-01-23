@@ -680,7 +680,7 @@ if ($id > 0 || ! empty($ref))
 					if ($links[$key]['type']=='company')
 					{
 						$societestatic->id=$links[$key]['url_id'];
-						$societestatic->nom=$links[$key]['label'];
+						$societestatic->name=$links[$key]['label'];
 						print $societestatic->getNomUrl(1,'',16);
 					}
 					else if ($links[$key]['type']=='user')

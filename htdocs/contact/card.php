@@ -74,7 +74,7 @@ if (! empty($canvas))
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('contactcard'));
+$hookmanager->initHooks(array('contactcard','globalcard'));
 
 
 /*
@@ -241,13 +241,20 @@ if (empty($reshook))
         $result = $object->delete();
         if ($result > 0)
         {
-            header("Location: ".DOL_URL_ROOT.'/contact/list.php');
-            exit;
+        	if ($backtopage)
+        	{
+        		header("Location: ".$backtopage);
+        		exit;
+        	}
+        	else
+        	{
+        		header("Location: ".DOL_URL_ROOT.'/contact/list.php');
+        		exit;
+        	}
         }
         else
         {
-            setEventMessage($object->error,'errors');
-            setEventMessage($object->errors,'errors');
+            setEventMessage($object->error,$object->errors,'errors');
         }
     }
 
@@ -360,13 +367,14 @@ else
     {
         if ($action == 'delete')
         {
-            print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
+            print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage?'&backtopage='.$backtopage:''),$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
         }
     }
 
     /*
      * Onglets
      */
+    $head=array();
     if ($id > 0)
     {
         // Si edition contact deja existant
@@ -379,9 +387,6 @@ else
         $head = contact_prepare_head($object);
 
         $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-        dol_fiche_head($head, 'card', $title, 0, 'contact');
-
-        dol_htmloutput_events();
     }
 
     if ($user->rights->societe->contact->creer)
@@ -431,12 +436,15 @@ else
 				print '</script>'."\n";
             }
 
-            print '<br>';
             print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+
+            dol_fiche_head($head, 'card', '', 0, '');
+
             print '<table class="border" width="100%">';
+
 
             // Name
             print '<tr><td width="20%" class="fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
@@ -449,7 +457,7 @@ else
             {
                 if ($socid > 0)
                 {
-                    print '<tr><td><label for="socid">'.$langs->trans("Company").'</label></td>';
+                    print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
                     print '<td colspan="3" class="maxwidthonsmartphone">';
                     print $objsoc->getNomUrl(1);
                     print '</td>';
@@ -457,7 +465,7 @@ else
                     print '</td></tr>';
                 }
                 else {
-                    print '<tr><td><label for="socid">'.$langs->trans("Company").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+                    print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                     print $form->select_company($socid,'socid','',1);
                     print '</td></tr>';
                 }
@@ -604,17 +612,18 @@ else
             }
             print '</tr>';
 
-            print "</table><br><br>";
+            print "</table>";
 
+            print dol_fiche_end();
 
-            print '<center>';
+            print '<div class="center">';
             print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
             if (! empty($backtopage))
             {
                 print ' &nbsp; &nbsp; ';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
             }
-            print '</center>';
+            print '</div>';
 
             print "</form>";
         }
@@ -667,6 +676,8 @@ else
             print '<input type="hidden" name="old_firstname" value="'.$object->firstname.'">';
             if (! empty($backtopage)) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
+            dol_fiche_head($head, 'card', $title, 0, 'contact');
+
             print '<table class="border" width="100%">';
 
             // Ref
@@ -683,7 +694,7 @@ else
             // Company
             if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
             {
-                print '<tr><td><label for="socid">'.$langs->trans("Company").'</label></td>';
+                print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
                 print '<td colspan="3" class="maxwidthonsmartphone">';
                 print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):($object->socid?$object->socid:-1),'socid','',1);
                 print '</td>';
@@ -849,13 +860,15 @@ else
             else print $langs->trans("NoDolibarrAccess");
             print '</td></tr>';
 
-            print '</table><br>';
+            print '</table>';
 
-            print '<center>';
+            print dol_fiche_end();
+
+            print '<div class="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-            print ' &nbsp; ';
+            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-            print '</center>';
+            print '</div>';
 
             print "</form>";
         }
@@ -870,6 +883,8 @@ else
          */
 
         dol_htmloutput_errors($error,$errors);
+
+        dol_fiche_head($head, 'card', $title, 0, 'contact');
 
         if ($action == 'create_user')
         {
@@ -917,7 +932,7 @@ else
         // Company
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
-            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
             if ($object->socid > 0)
             {
                 $objsoc->fetch($object->socid);
@@ -1071,7 +1086,7 @@ else
 
         print "</table>";
 
-        print "</div>";
+        print dol_fiche_end();
 
         // Barre d'actions
         print '<div class="tabsAction">';
@@ -1082,35 +1097,51 @@ else
 		{
         	if ($user->rights->societe->contact->creer)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+                print '<a class="butAction" href="card.php?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
             }
 
             if (! $object->user_id && $user->rights->user->user->creer)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+                print '<a class="butAction" href="card.php?id='.$object->id.'&action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
             }
 
             if ($user->rights->societe->contact->supprimer)
             {
-                print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete'.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.$langs->trans('Delete').'</a>';
             }
             // Activer
             if ($object->statut == 0 && $user->rights->societe->contact->creer)
             {
-                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
+                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable">'.$langs->trans("Reactivate").'</a>';
             }
             // Desactiver
             if ($object->statut == 1 && $user->rights->societe->contact->creer)
             {
-                print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a>';
+                print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'">'.$langs->trans("DisableUser").'</a>';
             }
         }
 
-        print "</div><br>";
+        print "</div>";
+        print "<br>";
 
 		if (! empty($conf->agenda->enabled))
 		{
-        	print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),'','');
+			$objthirdparty=$objsoc;
+			$objcon=$object;
+
+		    $out='';
+		    $permok=$user->rights->agenda->myactions->create;
+		    if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
+		    {
+		        $out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
+		        if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
+		        $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
+		    	$out.=$langs->trans("AddAnAction").' ';
+		    	$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+		    	$out.="</a>";
+			}
+
+        	print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),$out,'');
 
         	print show_actions_todo($conf,$langs,$db,$objsoc,$object);
 

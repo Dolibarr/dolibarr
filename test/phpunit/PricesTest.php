@@ -1,20 +1,20 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
-*/
+ */
 
 /**
  *      \file       test/phpunit/PricesTest.php
@@ -81,6 +81,8 @@ class PricesTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -213,9 +215,9 @@ class PricesTest extends PHPUnit_Framework_TestCase
         $newlocalobject=new Facture($this->savdb);
         $newlocalobject->fetch($invoiceid);
 
-        $this->assertEquals(2.48,$newlocalobject->total_ht);
-        $this->assertEquals(0.24,$newlocalobject->total_tva);
-        $this->assertEquals(2.72,$newlocalobject->total_ttc);
+        $this->assertEquals(2.48,$newlocalobject->total_ht, "testUpdatePrice test1");
+        $this->assertEquals(0.24,$newlocalobject->total_tva, "testUpdatePrice test2");
+        $this->assertEquals(2.72,$newlocalobject->total_ttc, "testUpdatePrice test3");
 
 
         // Two lines of 1.24 give 2.48 HT and 2.73 TTC with global vat rounding mode
@@ -229,7 +231,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
         $newlocalobject=new Facture($this->savdb);
         $newlocalobject->fetch($invoiceid);
 
-        $this->assertEquals(2.48,$newlocalobject->total_ht);
+        $this->assertEquals(2.48,$newlocalobject->total_ht, "testUpdatePrice test4");
         //$this->assertEquals(0.25,$newlocalobject->total_tva);
         //$this->assertEquals(2.73,$newlocalobject->total_ttc);
     }

@@ -149,7 +149,8 @@ $vatcust=$langs->transcountry($local==1?"LT1":"LT2",$mysoc->country_code);
 $vatsup=$langs->transcountry($local==1?"LT1":"LT2",$mysoc->country_code);
 
 // IRPF that the customer has retained me
-if($conf->global->$calc ==0 || $conf->global->$calc == 2){
+if($conf->global->$calc ==0 || $conf->global->$calc == 2)
+{
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print '<td align="left">'.$langs->trans("Num")."</td>";
@@ -160,7 +161,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2){
 	print "</tr>\n";
 
 	$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
-	
+
 	$action = "tvaclient";
 	$object = &$coll_list;
 	$parameters["mode"] = $modetax;
@@ -170,7 +171,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2){
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-	
+
 	if (is_array($coll_list))
 	{
 		$var=true;
@@ -196,7 +197,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2){
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">'.$i."</td>";
 				$company_static->id=$coll->socid;
-				$company_static->nom=$coll->nom;
+				$company_static->name=$coll->name;
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ','.');
 				$replace = array('','');
@@ -210,7 +211,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2){
 			}
 		}
 	    $x_coll_sum = $total;
-	
+
 		print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
 	    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
 		print '<td class="nowrap" align="right">'.price($total).'</td>';
@@ -240,7 +241,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 	print "</tr>\n";
 
 	$company_static=new Societe($db);
-	
+
 	$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
 	$parameters["direction"] = 'buy';
 	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -269,7 +270,7 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">'.$i."</td>";
 				$company_static->id=$coll->socid;
-				$company_static->nom=$coll->nom;
+				$company_static->name=$coll->name;
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ','.');
 				$replace = array('','');
@@ -283,14 +284,14 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 			}
 		}
 	    $x_paye_sum = $total;
-	
+
 		print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
 	    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
 		print '<td class="nowrap" align="right">'.price($total).'</td>';
 		print '</tr>';
-	
+
 		print '</table>';
-	
+
 	}
 	else
 	{

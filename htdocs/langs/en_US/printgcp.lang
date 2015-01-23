@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - printgccp
+PRINTGCP=Google Cloud Print
+PrintGCPDesc=This driver allow to send documents directly to a printer with Google Cloud Print.
+PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cloud Print.
+PrintTestDescprintgcp=List of Printers for Google Cloud Print.
+PRINTGCP_LOGIN=Google Account Login
+PRINTGCP_PASSWORD=Google Account Password
+STATE_ONLINE=Online
+STATE_UNKNOWN=Unknown
+STATE_OFFLINE=Offline
+STATE_DORMANT=Offline for quite a while
+TYPE_GOOGLE=Google
+TYPE_HP=HP Printer
+TYPE_DOCS=DOCS
+TYPE_DRIVE=Google Drive
+TYPE_FEDEX=Fedex
+TYPE_ANDROID_CHROME_SNAPSHOT=Android
+TYPE_IOS_CHROME_SNAPSHOT=IOS
+GCP_Name=Name
+GCP_displayName=Display Name
+GCP_Id=Printer Id
+GCP_OwnerName=Owner Name
+GCP_State=Printer State
+GCP_connectionStatus=Online State
+GCP_Type=Printer Type

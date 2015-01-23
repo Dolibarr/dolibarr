@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -48,6 +49,10 @@ $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
 
+$account = new Account($db);
+$extrafields = new ExtraFields($db);
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($account->table_element);
 
 /*
  * Actions
@@ -100,6 +105,9 @@ if ($_POST["action"] == 'add')
     	$error++;
     }
 
+    // Fill array 'array_options' with data from add form
+    $ret = $extrafields->setOptionalsFromPost($extralabels,$account);
+
     if (! $error)
     {
         $id = $account->create($user);
@@ -135,7 +143,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->number          = trim($_POST["number"]);
     $account->cle_rib         = trim($_POST["cle_rib"]);
     $account->bic             = trim($_POST["bic"]);
-    $account->iban_prefix     = trim($_POST["iban_prefix"]);
+    $account->iban            = trim($_POST["iban"]);
     $account->domiciliation   = trim($_POST["domiciliation"]);
 
     $account->proprio 	      = trim($_POST["proprio"]);
@@ -171,6 +179,9 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     	$action='edit';       // Force chargement page en mode creation
     	$error++;
     }
+
+    // Fill array 'array_options' with data from add form
+    $ret = $extrafields->setOptionalsFromPost($extralabels,$account);
 
     if (! $error)
     {
@@ -306,6 +317,15 @@ if ($action == 'create')
 	$doleditor=new DolEditor('account_comment',$account->comment,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
 	$doleditor->Create();
 	print '</td></tr>';
+    
+ 	// Other attributes
+	$parameters=array('colspan' => 3);
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$account,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $account->showOptionals($extrafields,'edit',$parameters);
+	}
+
 
 	print '</table>';
 
@@ -346,12 +366,15 @@ if ($action == 'create')
     }
 
 	// Accountancy journal
-	print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
-    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.$account->accountancy_journal.'"></td></tr>';
+	if (! empty($conf->accounting->enabled))
+	{
+		print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
+	    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.$account->accountancy_journal.'"></td></tr>';
+	}
 
 	print '</table>';
 
-	print '<center><br><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></center>';
+	print '<br><div class="center"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></div>';
 
 	print '</form>';
 }
@@ -461,6 +484,14 @@ else
 		print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 		print '<td colspan="3">'.$account->comment.'</td></tr>';
 
+		// Other attributes
+		$parameters=array('colspan' => 3);
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$account,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+			print $account->showOptionals($extrafields);
+		}
+
 		print '</table>';
 
 		print '<br>';
@@ -470,8 +501,11 @@ else
 		print '<td colspan="3">'.$account->account_number.'</td></tr>';
 
 		// Accountancy journal
-		print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
-		print '<td colspan="3">'.$account->accountancy_journal.'</td></tr>';
+		if (! empty($conf->accounting->enabled))
+		{
+			print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
+			print '<td colspan="3">'.$account->accountancy_journal.'</td></tr>';
+		}
 
 		print '</table>';
 
@@ -615,6 +649,15 @@ else
 		$doleditor->Create();
 		print '</td></tr>';
 
+		// Other attributes
+		$parameters=array('colspan' => 3);
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$account,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+			print $account->showOptionals($extrafields,'edit');
+		}
+
+
 		print '</table>';
 
 		print '<br>';
@@ -633,13 +676,19 @@ else
         }
 
 		// Accountancy journal
-        print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
-        print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$account->accountancy_journal).'"></td></tr>';
+		if (! empty($conf->accounting->enabled))
+		{
+	        print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
+	        print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$account->accountancy_journal).'"></td></tr>';
+		}
 
 		print '</table>';
 
-		print '<center><br><input value="'.$langs->trans("Modify").'" type="submit" class="button">';
-		print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button"></center>';
+		print '<br><div class="center">';
+		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';
+		print '</div>';
 
 		print '</form>';
 	}

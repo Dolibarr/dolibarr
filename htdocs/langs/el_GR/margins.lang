@@ -5,29 +5,23 @@ Margins=Περιθώρια
 TotalMargin=Συνολικό Περιθώριο
 MarginOnProducts=Περιθώριο / Προϊόντα
 MarginOnServices=Περιθώριο / Υπηρεσίες
-MarginRate=Τιμή Περιθωρίου
-MarkRate=Σημειώστε ποσοστό
+MarginRate=Περιθώριο επί της %
+MarkRate=Ποσοστό Κέρδους
 DisplayMarginRates=Εμφάνιση ποσοστό κέρδους
-DisplayMarkRates=Εμφάνιση σημειωμένες τιμές
+DisplayMarkRates=Εμφάνιση σημειωμένων τιμών
 InputPrice=Εισαγωγή τιμής
-
 margin=Διαχείριση των ποσοστών κέρδους
 margesSetup=Ρύθμιση της διαχείρισης ποσοστών κέρδους
-
 MarginDetails=Λεπτομέρειες Περιθωρίων
-
 ProductMargins=Περιθώρια προϊόντος
 CustomerMargins=Περιθώρια πελατών
-SalesRepresentativeMargins=Sales representative margins
-
+SalesRepresentativeMargins=Περιθώρια αντιπρόσωπου πωλήσεων
 ProductService=Προϊόν ή Υπηρεσία
 AllProducts=Όλα τα προϊόντα και οι υπηρεσίες
 ChooseProduct/Service=Επιλέξτε προϊόν ή υπηρεσία
-
 StartDate=Ημερ. έναρξης
 EndDate=Ημερ. λήξης
 Launch=Έναρξη
-
 ForceBuyingPriceIfNull=Υποχρεωτική τιμή αγοράς, αν η τιμή είναι μηδενική
 ForceBuyingPriceIfNullDetails=Αν είναι "ON", το περιθώριο θα είναι μηδενικό στη γραμμή (τιμή αγοράς = τιμή πώλησης), αν ειναι ("OFF"), θα είναι ίση με την τιμή πώλησης (τιμή αγοράς = 0)
 MARGIN_METHODE_FOR_DISCOUNT=Μέθοδος ποσοστού για της γενικές εκπτώσεις
@@ -35,16 +29,16 @@ UseDiscountAsProduct=Ως προϊόν
 UseDiscountAsService=Ως υπηρεσία
 UseDiscountOnTotal=Στο υποσύνολο
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Καθορίζει αν η συνολική έκπτωση που θεωρείται ως ένα προϊόν, μια υπηρεσία, ή μόνον επί του υποσυνόλου για τον υπολογισμό του περιθωρίου κέρδους.
-
 MARGIN_TYPE=Τύπος περιθωρίου
 MargeBrute=Αρχικό περιθώριο
 MargeNette=Το καθαρό περιθώριο
 MARGIN_TYPE_DETAILS=Αρχικό περιθώριο: τιμή πώλησης - τιμή αγοράς<br/>Το καθαρό περιθώριο: τιμή πώλησης - τιμή κόστους
-
 CostPrice=Τιμή κόστους
 BuyingCost=Τιμή κόστους
 UnitCharges=Χρεώσεων
 Charges=Επιβαρύνσεις
-
 AgentContactType=Εμπορικός αντιπρόσωπος τύπο επαφής
-AgentContactTypeDetails=Ορίστε ποιο τύπο επαφής (που συνδέεται στα τιμολόγια) θα χρησιμοποιηθεί για την αναφορά του περιθωρίου των εμπορικών αντιπροσώπων
+AgentContactTypeDetails=Ορίστε τι τύπος επαφής (που συνδέεται στα τιμολόγια)  θα χρησιμοποιηθεί για την έκθεση περιθώριο κέρδους ανά πώληση εκπρόσωπου
+rateMustBeNumeric=Βαθμολογήστε πρέπει να είναι μια αριθμητική τιμή
+markRateShouldBeLesserThan100=Το ποσοστό πρέπει να είναι χαμηλότερη από 100
+ShowMarginInfos=Δείτε πληροφορίες για τα περιθώρια

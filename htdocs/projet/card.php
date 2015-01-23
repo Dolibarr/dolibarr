@@ -45,7 +45,7 @@ $mine = GETPOST('mode')=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('projectcard'));
+$hookmanager->initHooks(array('projectcard','globalcard'));
 
 $object = new Project($db);
 $extrafields = new ExtraFields($db);
@@ -260,7 +260,7 @@ if (empty($reshook))
 		{
 	    	$db->commit();
 
-			if (GETPOST('socid','int') > 0) $object->thirdparty->fetch(GETPOST('socid','int'));
+			if (GETPOST('socid','int') > 0) $object->fetch_thirdparty(GETPOST('socid','int'));
 			else unset($object->thirdparty);
 	    }
 	}
@@ -353,7 +353,8 @@ if (empty($reshook))
 		$clone_project_files = GETPOST('clone_project_files') ? 1 : 0;
 		$clone_task_files = GETPOST('clone_task_files') ? 1 : 0;
 	    $clone_notes=GETPOST('clone_notes')?1:0;
-	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes);
+	    $move_date=GETPOST('move_date')?1:0;
+	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes,$move_date);
 	    if ($result <= 0)
 	    {
 		    setEventMessage($object->error, 'errors');
@@ -434,9 +435,13 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Customer
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    $text=$form->select_company(GETPOST('socid','int'),'socid','',1,1);
-    $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-    print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+   	$text=$form->select_company(GETPOST('socid','int'),'socid','',1,1);
+    if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
+    {
+    	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+    	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+    }
+    else print $text;
     print '</td></tr>';
 
     // Public
@@ -471,14 +476,14 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     print '</table>';
 
-    print '<br><center>';
+    print '<br><div class="center">';
     print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
     if (! empty($backtopage))
     {
         print ' &nbsp; &nbsp; ';
 	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     }
-    print '</center>';
+    print '</div>';
 
     print '</form>';
 
@@ -534,6 +539,7 @@ else
     		'text' => $langs->trans("ConfirmClone"),
             array('type' => 'checkbox', 'name' => 'clone_contacts',		'label' => $langs->trans("CloneContacts"), 			'value' => true),
             array('type' => 'checkbox', 'name' => 'clone_tasks',   		'label' => $langs->trans("CloneTasks"), 			'value' => true),
+        	array('type' => 'checkbox', 'name' => 'move_date',   		'label' => $langs->trans("CloneMoveDate"), 			'value' => true),
             array('type' => 'checkbox', 'name' => 'clone_notes',   		'label' => $langs->trans("CloneNotes"), 			'value' => true),
         	array('type' => 'checkbox', 'name' => 'clone_project_files','label' => $langs->trans("CloneProjectFiles"),	    'value' => false),
         	array('type' => 'checkbox', 'name' => 'clone_task_files',	'label' => $langs->trans("CloneTaskFiles"),         'value' => false)

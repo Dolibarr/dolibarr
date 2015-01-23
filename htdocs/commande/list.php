@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 
 $langs->load('orders');
 $langs->load('deliveries');
@@ -42,9 +43,9 @@ $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
 $deliveryyear=GETPOST("deliveryyear","int");
 $deliverymonth=GETPOST("deliverymonth","int");
-$sref=GETPOST('sref','alpha');
-$sref_client=GETPOST('sref_client','alpha');
-$snom=GETPOST('snom','alpha');
+$search_ref=GETPOST('search_ref','alpha');
+$search_ref_customer=GETPOST('search_ref_customer','alpha');
+$search_company=GETPOST('search_company','alpha');
 $sall=GETPOST('sall');
 $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
@@ -68,6 +69,20 @@ $limit = $conf->liste_limit;
 
 $viewstatut=GETPOST('viewstatut');
 
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $search_categ='';
+    $search_user='';
+    $search_sale='';
+    $search_ref='';
+    $search_ref_customer='';
+    $search_company='';
+    $orderyear='';
+    $ordermonth='';
+    $deliverymonth='';
+    $deliveryyear='';
+}
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('orderlist'));
@@ -79,24 +94,6 @@ $hookmanager->initHooks(array('orderlist'));
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hook
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-// Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
-{
-    $search_categ='';
-    $search_user='';
-    $search_sale='';
-    $search_ref='';
-    $search_refcustomer='';
-    $search_societe='';
-    $search_montant_ht='';
-    $orderyear='';
-    $ordermonth='';
-    $deliverymonth='';
-    $deliveryyear='';
-}
-
-
 
 /*
  * View
@@ -112,7 +109,7 @@ $companystatic = new Societe($db);
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 llxHeader('',$langs->trans("Orders"),$help_url);
 
-$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
+$sql = 'SELECT s.nom as name, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
 $sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
@@ -127,8 +124,8 @@ $sql.= ' WHERE c.fk_soc = s.rowid';
 $sql.= ' AND c.entity = '.$conf->entity;
 if ($socid)	$sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($sref) {
-	$sql .= natural_search('c.ref', $sref);
+if ($search_ref) {
+	$sql .= natural_search('c.ref', $search_ref);
 }
 if ($sall)
 {
@@ -156,8 +153,9 @@ if ($viewstatut <> '')
 	}
 	if ($viewstatut == -3)	// To bill
 	{
-		$sql.= ' AND c.fk_statut in (1,2,3)';
-		$sql.= ' AND c.facture = 0'; // invoice not created
+		//$sql.= ' AND c.fk_statut in (1,2,3)';
+		//$sql.= ' AND c.facture = 0'; // invoice not created
+		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
 	}
 }
 if ($ordermonth > 0)
@@ -186,13 +184,13 @@ else if ($deliveryyear > 0)
 {
     $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($deliveryyear,1,false))."' AND '".$db->idate(dol_get_last_day($deliveryyear,12,false))."'";
 }
-if (!empty($snom))
+if (!empty($search_company))
 {
-	$sql .= natural_search('s.nom', $snom);
+	$sql .= natural_search('s.nom', $search_company);
 }
-if (!empty($sref_client))
+if (!empty($search_ref_customer))
 {
-	$sql.= ' AND c.ref_client LIKE \'%'.$db->escape($sref_client).'%\'';
+	$sql.= ' AND c.ref_client LIKE \'%'.$db->escape($search_ref_customer).'%\'';
 }
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
@@ -220,7 +218,7 @@ if ($resql)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($socid);
-		$title = $langs->trans('ListOfOrders') . ' - '.$soc->nom;
+		$title = $langs->trans('ListOfOrders') . ' - '.$soc->name;
 	}
 	else
 	{
@@ -231,7 +229,7 @@ if ($resql)
 	if ($viewstatut == 1)
 	$title.=' - '.$langs->trans('StatusOrderValidatedShort');
 	if ($viewstatut == 2)
-	$title.=' - '.$langs->trans('StatusOrderOnProcessShort');
+	$title.=' - '.$langs->trans('StatusOrderSentShort');
 	if ($viewstatut == 3)
 	$title.=' - '.$langs->trans('StatusOrderToBillShort');
 	if ($viewstatut == 4)
@@ -244,15 +242,15 @@ if ($resql)
 	$title.=' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled)?'':$langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
-	if ($ordermonth)      $param.='&ordermonth='.$ordermonth;
-	if ($orderyear)       $param.='&orderyear='.$orderyear;
-	if ($deliverymonth)   $param.='&deliverymonth='.$deliverymonth;
-	if ($deliveryyear)    $param.='&deliveryyear='.$deliveryyear;
-	if ($sref)            $param.='&sref='.$sref;
-	if ($snom)            $param.='&snom='.$snom;
-	if ($sref_client)     $param.='&sref_client='.$sref_client;
-	if ($search_user > 0) $param.='&search_user='.$search_user;
-	if ($search_sale > 0) $param.='&search_sale='.$search_sale;
+	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
+	if ($orderyear)       		$param.='&orderyear='.$orderyear;
+	if ($deliverymonth)   		$param.='&deliverymonth='.$deliverymonth;
+	if ($deliveryyear)    		$param.='&deliveryyear='.$deliveryyear;
+	if ($search_ref)      		$param.='&search_ref='.$search_ref;
+	if ($search_company)  		$param.='&search_company='.$search_company;
+	if ($search_ref_customer)	$param.='&search_ref_customer='.$search_ref_customer;
+	if ($search_user > 0) 		$param.='&search_user='.$search_user;
+	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
 
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
@@ -292,54 +290,111 @@ if ($resql)
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'c.ref','',$param,'width="25%"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomerOrder'),$_SERVER["PHP_SELF"],'c.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
 	print '</tr>';
+
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="sref" value="'.$sref.'">';
+	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="6" name="sref_client" value="'.$sref_client.'">';
+	print '<input class="flat" type="text" size="6" name="search_ref_customer" value="'.$search_ref_customer.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
+	print '<input class="flat" type="text" name="search_company" value="'.$search_company.'">';
 	print '</td>';
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="orderday" value="'.$orderday.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="ordermonth" value="'.$ordermonth.'">';
     $formother->select_year($orderyear?$orderyear:-1,'orderyear',1, 20, 5);
-	print '</td><td class="liste_titre">';
+	print '</td><td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="deliveryday" value="'.$deliveryday.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="deliverymonth" value="'.$deliverymonth.'">';
     $formother->select_year($deliveryyear?$deliveryyear:-1,'deliveryyear',1, 20, 5);
-	print '</td><td class="liste_titre">&nbsp;';
-	print '</td><td align="right" class="liste_titre">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td></tr>';
+	print '</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print "</td></tr>\n";
 
 	$var=true;
 	$total=0;
 	$subtotal=0;
 
-	$generic_commande = new Commande($db);
-	while ($i < min($num,$limit))
-	{
-		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
-		print '<td class="nowrap">';
+    $generic_commande = new Commande($db);
+    $generic_product = new Product($db);
+    while ($i < min($num,$limit)) {
+        $objp = $db->fetch_object($resql);
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td class="nowrap">';
 
-		$generic_commande->id=$objp->rowid;
-		$generic_commande->ref=$objp->ref;
+        $generic_commande->id=$objp->rowid;
+        $generic_commande->ref=$objp->ref;
+        $generic_commande->lines=array();
+        $generic_commande->getLinesArray();
 
-		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-		print '<td class="nobordernopadding nowrap">';
-		print $generic_commande->getNomUrl(1,($viewstatut != 2?0:$objp->fk_statut));
-		print '</td>';
+        print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+        print '<td class="nobordernopadding nowrap">';
+        print $generic_commande->getNomUrl(1,($viewstatut != 2?0:$objp->fk_statut));
+        print '</td>';
 
+        // Shippable Icon
+        if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && ! empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
+            $notshippable=0;
+            $text_info='';
+            $nbprod=0;
+            for ($lig=0; $lig<(count($generic_commande->lines)); $lig++) {
+                if ($generic_commande->lines[$lig]->product_type==0) {
+                    $nbprod++; // order contains real products
+                    $generic_product->id = $generic_commande->lines[$lig]->fk_product;
+                    $generic_product->load_stock();
+                    // stock order and stock order_supplier
+                    $stock_order=0;
+                    $stock_order_supplier=0;
+                    if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+                        if (! empty($conf->commande->enabled)) {
+                            $generic_product->load_stats_commande(0,'1,2');
+                            $stock_order=$generic_product->stats_commande['qty'];
+                        }
+                        if (! empty($conf->fournisseur->enabled)) {
+                            $generic_product->load_stats_commande_fournisseur(0,'3');
+                            $stock_order_supplier=$generic_product->stats_commande_fournisseur['qty'];
+                        }
+                    }
+                    $text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
+                    $text_stock_reel = $generic_product->stock_reel.'/'.$stock_order;
+                    if ($generic_product->stock_reel<$generic_commande->lines[$lig]->qty) {
+                        $notshippable++;
+                        $text_info.='<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
+                    } else {
+                        $text_info.='<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
+                    }
+                    if ($stock_order_supplier>0) {
+                        $text_info.= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier.'<br>';
+                    } else {
+                        $text_info.= '<br>';
+                    }
+                }
+            }
+            if ($notshippable==0) {
+                $text_icon = img_picto('', 'object_sending');
+                $text_info = $langs->trans('Shippable').'<br>'.$text_info;
+            } else {
+                $text_icon = img_picto('', 'error');
+                $text_info = $langs->trans('NonShippable').'<br>'.$text_info;
+            }
+            if ($nbprod>0) {
+                print '<td>';
+                print $form->textwithtooltip('',$text_info,2,1,$text_icon,'',2);
+                print '</td>';
+            }
+        }
+
+        // warning late icon
 		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
 		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && max($db->jdate($objp->date_commande),$db->jdate($objp->date_livraison)) < ($now - $conf->commande->client->warning_delay))
 			print img_picto($langs->trans("Late"),"warning");
@@ -366,7 +421,7 @@ if ($resql)
 
 		// Company
 		$companystatic->id=$objp->socid;
-		$companystatic->nom=$objp->nom;
+		$companystatic->name=$objp->name;
 		$companystatic->client=$objp->client;
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
@@ -379,19 +434,19 @@ if ($resql)
 				if (($objp->fk_statut > 0 && $objp->fk_statut < 3) || ($objp->fk_statut == 3 && $objp->facturee == 0))
 				{
 					print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic->id.'">';
-					print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->nom, 'object_bill', 'hideonsmartphone').'</a>';
+					print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->name, 'object_bill', 'hideonsmartphone').'</a>';
 				}
 			}
 		}
 		print '</td>';
 
 		// Order date
-		print '<td align="right">';
+		print '<td align="center">';
 		print dol_print_date($db->jdate($objp->date_commande), 'day');
 		print '</td>';
 
 		// Delivery date
-		print '<td align="right">';
+		print '<td align="center">';
 		print dol_print_date($db->jdate($objp->date_livraison), 'day');
 		print '</td>';
 

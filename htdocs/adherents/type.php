@@ -70,7 +70,7 @@ if (GETPOST('button_removefilter'))
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('membertypecard'));
+$hookmanager->initHooks(array('membertypecard','globalcard'));
 
 /*
  *	Actions
@@ -271,9 +271,11 @@ if ($action == 'create')
 	}
 	print "</table>\n";
 
-	print '<br>';
-	print '<center><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp; &nbsp; ';
-	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
+	print '<br><div class="center">';
+	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Add").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print "</form>\n";
 }
@@ -678,8 +680,11 @@ if ($rowid > 0)
 			print '</table><br><br>';
 		}
 
-		print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp;';
-		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
 		print "</form>";
 	}

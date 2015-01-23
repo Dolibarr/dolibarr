@@ -55,11 +55,19 @@ $object = new Product($db);
 
 $error=0;
 
+
 /*
  * Actions
  */
 
-if ($action == 'update_price' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+if ($action == 'update_price' && GETPOST("cancel"))
+{
+
+	$action='';
+}
+
+if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit->creer || $user->rights->service->creer))
+{
 	$result = $object->fetch($id);
 
 	$error=0;
@@ -341,45 +349,49 @@ if ($isphoto) {
 print '</tr>';
 
 // MultiPrix
-if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
-	if (! empty($socid)) {
+if (! empty($conf->global->PRODUIT_MULTIPRICES))
+{
+	// Price and min price are variable (depends on level of company).
+	if (! empty($socid))
+	{
 		$soc = new Societe($db);
 		$soc->id = $socid;
 		$soc->fetch($socid);
 
+		// Selling price
 		print '<tr><td>' . $langs->trans("SellingPrice") . '</td>';
-
-		if ($object->multiprices_base_type ["$soc->price_level"] == 'TTC') {
-			print '<td>' . price($object->multiprices_ttc ["$soc->price_level"]);
+		print '<td>';
+		if ($object->multiprices_base_type["$soc->price_level"] == 'TTC') {
+			print price($object->multiprices_ttc["$soc->price_level"]);
 		} else {
-			print '<td>' . price($object->multiprices ["$soc->price_level"]);
+			print price($object->multiprices["$soc->price_level"]);
 		}
-
-		if ($object->multiprices_base_type ["$soc->price_level"]) {
-			print ' ' . $langs->trans($object->multiprices_base_type ["$soc->price_level"]);
+		if ($object->multiprices_base_type["$soc->price_level"]) {
+			print ' ' . $langs->trans($object->multiprices_base_type["$soc->price_level"]);
 		} else {
 			print ' ' . $langs->trans($object->price_base_type);
 		}
 		print '</td></tr>';
 
-		// Prix mini
+		// Price min
 		print '<tr><td>' . $langs->trans("MinPrice") . '</td><td>';
-		if ($object->multiprices_base_type ["$soc->price_level"] == 'TTC') {
-			print price($object->multiprices_min_ttc ["$soc->price_level"]) . ' ' . $langs->trans($object->multiprices_base_type ["$soc->price_level"]);
+		if ($object->multiprices_base_type["$soc->price_level"] == 'TTC')
+		{
+			print price($object->multiprices_min_ttc["$soc->price_level"]) . ' ' . $langs->trans($object->multiprices_base_type["$soc->price_level"]);
 		} else {
-			print price($object->multiprices_min ["$soc->price_level"]) . ' ' . $langs->trans($object->multiprices_base_type ["$soc->price_level"]);
+			print price($object->multiprices_min["$soc->price_level"]) . ' ' . $langs->trans(empty($object->multiprices_base_type["$soc->price_level"])?'HT':$object->multiprices_base_type["$soc->price_level"]);
 		}
 		print '</td></tr>';
 
 		// TVA
-		print '<tr><td>' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->multiprices_tva_tx ["$soc->price_level"], true) . '</td></tr>';
+		print '<tr><td>' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->multiprices_tva_tx["$soc->price_level"], true) . '</td></tr>';
 	}
 	else
 	{
 		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
 		{
 			// TVA
-			if ($i == 1) 			// We show only price for level 1
+			if ($i == 1) 			// We show only vat for level 1
 			{
 				print '<tr><td>' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->multiprices_tva_tx [1], true) . '</td></tr>';
 			}
@@ -393,12 +405,12 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 			print '</td>';
 
 			if ($object->multiprices_base_type ["$i"] == 'TTC') {
-				print '<td>' . price($object->multiprices_ttc ["$i"]);
+				print '<td>' . price($object->multiprices_ttc["$i"]);
 			} else {
-				print '<td>' . price($object->multiprices ["$i"]);
+				print '<td>' . price($object->multiprices["$i"]);
 			}
 
-			if ($object->multiprices_base_type ["$i"]) {
+			if ($object->multiprices_base_type["$i"]) {
 				print ' ' . $langs->trans($object->multiprices_base_type ["$i"]);
 			} else {
 				print ' ' . $langs->trans($object->price_base_type);
@@ -407,20 +419,25 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 
 			// Prix mini
 			print '<tr><td>' . $langs->trans("MinPrice") . ' ' . $i . '</td><td>';
-			if ($object->multiprices_base_type ["$i"] == 'TTC') {
-				print price($object->multiprices_min_ttc ["$i"]) . ' ' . $langs->trans($object->multiprices_base_type ["$i"]);
-			} else {
-				print price($object->multiprices_min ["$i"]) . ' ' . $langs->trans($object->multiprices_base_type ["$i"]);
+			if (empty($object->multiprices_base_type["$i"])) $object->multiprices_base_type["$i"]="HT";
+			if ($object->multiprices_base_type["$i"] == 'TTC')
+			{
+				print price($object->multiprices_min_ttc["$i"]) . ' ' . $langs->trans($object->multiprices_base_type["$i"]);
+			}
+			else
+			{
+				print price($object->multiprices_min["$i"]) . ' ' . $langs->trans($object->multiprices_base_type["$i"]);
 			}
 			print '</td></tr>';
 
 			// Price by quantity
-			if ($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) {
+			if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+			{
 				print '<tr><td>' . $langs->trans("PriceByQuantity") . ' ' . $i;
 				print '</td><td>';
 
 				if ($object->prices_by_qty [$i] == 1) {
-					print '<table width="50%" class="noborder">';
+					print '<table width="50%" class="border" summary="List of quantities">';
 
 					print '<tr class="liste_titre">';
 					print '<td>' . $langs->trans("PriceByQuantityRange") . ' ' . $i . '</td>';
@@ -430,30 +447,30 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 					print '<td>&nbsp;</td>';
 					print '</tr>';
 					foreach ($object->prices_by_qty_list [$i] as $ii => $prices) {
-						if ($action == 'edit_price_by_qty' && $rowid == $prices ['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+						if ($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
 							print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 							print '<input type="hidden" name="action" value="update_price_by_qty">';
-							print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id [$i] . '">';
-							print '<input type="hidden" value="' . $prices ['rowid'] . '" name="rowid">';
+							print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id[$i] . '">';
+							print '<input type="hidden" value="' . $prices['rowid'] . '" name="rowid">';
 							print '<tr class="' . ($ii % 2 == 0 ? 'pair' : 'impair') . '">';
-							print '<td><input size="5" type="text" value="' . $prices ['quantity'] . '" name="quantity"></td>';
-							print '<td align="right" colspan="2"><input size="10" type="text" value="' . $prices ['price'] . '" name="price">&nbsp;' . $object->price_base_type . '</td>';
+							print '<td><input size="5" type="text" value="' . $prices['quantity'] . '" name="quantity"></td>';
+							print '<td align="right" colspan="2"><input size="10" type="text" value="' . price2num($prices['price'], 'MU') . '" name="price">&nbsp;' . $object->price_base_type . '</td>';
 							// print '<td align="right">&nbsp;</td>';
-							print '<td align="right"><input size="5" type="text" value="' . $prices ['remise_percent'] . '" name="remise_percent">&nbsp;%</td>';
+							print '<td align="right"><input size="5" type="text" value="' . $prices['remise_percent'] . '" name="remise_percent">&nbsp;%</td>';
 							print '<td align="center"><input type="submit" value="' . $langs->trans("Modify") . '" class="button"></td>';
 							print '</tr>';
 							print '</form>';
 						} else {
 							print '<tr class="' . ($ii % 2 == 0 ? 'pair' : 'impair') . '">';
 							print '<td>' . $prices ['quantity'] . '</td>';
-							print '<td align="right">' . price($prices ['price']) . '</td>';
-							print '<td align="right">' . price($prices ['unitprice']) . '</td>';
-							print '<td align="right">' . price($prices ['remise_percent']) . ' %</td>';
+							print '<td align="right">' . price($prices['price']) . '</td>';
+							print '<td align="right">' . price($prices['unitprice']) . '</td>';
+							print '<td align="right">' . price($prices['remise_percent']) . ' %</td>';
 							print '<td align="center">';
 							if (($user->rights->produit->creer || $user->rights->service->creer)) {
-								print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
+								print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit_price_by_qty&amp;rowid=' . $prices["rowid"] . '">';
 								print img_edit() . '</a>';
-								print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
+								print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete_price_by_qty&amp;rowid=' . $prices["rowid"] . '">';
 								print img_delete() . '</a>';
 							} else {
 								print '&nbsp;';
@@ -465,7 +482,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 					if ($action != 'edit_price_by_qty' && ($user->rights->produit->creer || $user->rights->service->creer)) {
 						print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 						print '<input type="hidden" name="action" value="update_price_by_qty">';
-						print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id [$i] . '">';
+						print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id[$i] . '">';
 						print '<input type="hidden" value="0" name="rowid">';
 						print '<tr class="' . ($ii % 2 == 0 ? 'pair' : 'impair') . '">';
 						print '<td><input size="5" type="text" value="1" name="quantity"></td>';
@@ -509,7 +526,8 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 	print '</td></tr>';
 
 	// Price by quantity
-	if ($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) {
+	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+	{
 		print '<tr><td>' . $langs->trans("PriceByQuantity");
 		if ($object->prices_by_qty [0] == 0) {
 			print '&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=1">' . $langs->trans("Activate");
@@ -517,7 +535,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 		print '</td><td>';
 
 		if ($object->prices_by_qty [0] == 1) {
-			print '<table width="50%" class="noborder">';
+			print '<table width="50%" class="border" summary="List of quantities">';
 			print '<tr class="liste_titre">';
 			print '<td>' . $langs->trans("PriceByQuantityRange") . '</td>';
 			print '<td align="right">' . $langs->trans("HT") . '</td>';
@@ -525,31 +543,33 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 			print '<td align="right">' . $langs->trans("Discount") . '</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
-			foreach ($object->prices_by_qty_list [0] as $ii => $prices) {
-				if ($action == 'edit_price_by_qty' && $rowid == $prices ['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+			foreach ($object->prices_by_qty_list [0] as $ii => $prices)
+			{
+				if ($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer))
+				{
 					print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 					print '<input type="hidden" name="action" value="update_price_by_qty">';
-					print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id [0] . '">';
-					print '<input type="hidden" value="' . $prices ['rowid'] . '" name="rowid">';
+					print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id[0] . '">';
+					print '<input type="hidden" value="' . $prices['rowid'] . '" name="rowid">';
 					print '<tr class="' . ($ii % 2 == 0 ? 'pair' : 'impair') . '">';
-					print '<td><input size="5" type="text" value="' . $prices ['quantity'] . '" name="quantity"></td>';
-					print '<td align="right" colspan="2"><input size="10" type="text" value="' . $prices ['price'] . '" name="price">&nbsp;' . $object->price_base_type . '</td>';
+					print '<td><input size="5" type="text" value="' . $prices['quantity'] . '" name="quantity"></td>';
+					print '<td align="right" colspan="2"><input size="10" type="text" value="' . price2num($prices['price'], 'MU') . '" name="price">&nbsp;' . $object->price_base_type . '</td>';
 					// print '<td align="right">&nbsp;</td>';
-					print '<td align="right"><input size="5" type="text" value="' . $prices ['remise_percent'] . '" name="remise_percent">&nbsp;%</td>';
+					print '<td align="right"><input size="5" type="text" value="' . $prices['remise_percent'] . '" name="remise_percent">&nbsp;%</td>';
 					print '<td align="center"><input type="submit" value="' . $langs->trans("Modify") . '" class="button"></td>';
 					print '</tr>';
 					print '</form>';
 				} else {
 					print '<tr class="' . ($ii % 2 == 0 ? 'pair' : 'impair') . '">';
-					print '<td>' . $prices ['quantity'] . '</td>';
-					print '<td align="right">' . price($prices ['price']) . '</td>';
-					print '<td align="right">' . price($prices ['unitprice']) . '</td>';
-					print '<td align="right">' . price($prices ['remise_percent']) . ' %</td>';
+					print '<td>' . $prices['quantity'] . '</td>';
+					print '<td align="right">' . price($prices['price']) . '</td>';
+					print '<td align="right">' . price($prices['unitprice']) . '</td>';
+					print '<td align="right">' . price($prices['remise_percent']) . ' %</td>';
 					print '<td align="center">';
 					if (($user->rights->produit->creer || $user->rights->service->creer)) {
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit_price_by_qty&amp;rowid=' . $prices["rowid"] . '">';
 						print img_edit() . '</a>';
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete_price_by_qty&amp;rowid=' . $prices["rowid"] . '">';
 						print img_delete() . '</a>';
 					} else {
 						print '&nbsp;';
@@ -662,8 +682,11 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 
 		print '</table>';
 
-		print '<center><br><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></center>';
+		print '<br><div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
+		print '</div>';
 
 		print '<br></form>';
 	} else {
@@ -788,7 +811,8 @@ if ($result) {
 				print '<td align="center">' . $objp->price_level . "</td>";
 			}
 			// Price by quantity
-			if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
+			if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+			{
 				$type = ($objp->price_by_qty == 1) ? 'PriceByQuantity' : 'Standard';
 				print '<td align="center">' . $langs->trans($type) . "</td>";
 			}
@@ -923,8 +947,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '</table>';
 
-		print '<center><br><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></center>';
+		print '<br><div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
+		print '</div>';
 
 		print '<br></form>';
 	} elseif ($action == 'edit_customer_price') {
@@ -1005,8 +1032,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '</table>';
 
-		print '<center><br><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></center>';
+		print '<br><div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
+		print '</div>';
 
 		print '<br></form>';
 	} elseif ($action == 'showlog_customer_price') {

@@ -59,7 +59,7 @@ class mailing_framboise extends MailingTargets
 		global $conf, $langs;
 		$langs->load("members");
 		$langs->load("companies");
-		
+
 		$cibles = array();
 
 		// Select the members from category
@@ -229,10 +229,6 @@ class mailing_framboise extends MailingTargets
 	 */
 	function url($id)
 	{
-		//$companystatic=new Societe($this->db);
-		//$companystatic->id=$id;
-		//$companystatic->nom='';
-		//return $companystatic->getNomUrl(1);	// Url too long
 		return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$id.'">'.img_object('',"user").'</a>';
 	}
 

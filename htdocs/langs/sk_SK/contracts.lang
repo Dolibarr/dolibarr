@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Zákazky oblasť
 ListOfContracts=Prehľad zmlúv
-LastContracts=Posledné %s upravenej zmluvy
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Všetky zmluvy
 ContractCard=Zmluva karty
 ContractStatus=Stav zmluvy
@@ -27,7 +27,7 @@ MenuRunningServices=Spustené služby
 MenuExpiredServices=Prepadnuté služby
 MenuClosedServices=Uzavreté služby
 NewContract=Nová zmluva
-AddContract=Pridať zákazku
+AddContract=Create contract
 SearchAContract=Hľadať zmluvu
 DeleteAContract=Odstránenie zmluvu
 CloseAContract=Zavrieť zmluvu
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Zoznam bežiacich zmlúv liniek
 ListOfRunningServices=Zoznam spustených služieb
 NotActivatedServices=Neaktívne služby (u overených zmlúv)
 BoardNotActivatedServices=Služby pre aktiváciu u overených zmlúv
-LastContracts=Posledné %s upravenej zmluvy
+LastContracts=Last %s contracts
 LastActivatedServices=Posledné %s aktiváciu služby
 LastModifiedServices=Posledné %s upravené služby
 EditServiceLine=Upraviť linka
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Zoznam služieb vyprší
 NoteListOfYourExpiredServices=Tento zoznam obsahuje iba služby zmlúv pre tretie strany si sú prepojené ako obchodného zástupcu.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Obchodný zástupca podpise zmluvy

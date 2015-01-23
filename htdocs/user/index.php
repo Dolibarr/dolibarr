@@ -73,7 +73,7 @@ $sql.= " u.tms as datem,";
 $sql.= " u.datelastlogin,";
 $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2,";
-$sql.= " s.nom, s.canvas";
+$sql.= " s.nom as name, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
@@ -114,6 +114,10 @@ if ($result)
     print_liste_field_titre($langs->trans("LastName"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("FirstName"),$_SERVER['PHP_SELF'],"u.firstname",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"u.fk_societe",$param,"","",$sortfield,$sortorder);
+    if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))
+    {
+	    print_liste_field_titre($langs->trans("Entity"),$_SERVER['PHP_SELF'],"u.entity",$param,"","",$sortfield,$sortorder);
+    }
     print_liste_field_titre($langs->trans("DateCreation"),$_SERVER['PHP_SELF'],"u.datec",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("LastConnexion"),$_SERVER['PHP_SELF'],"u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("HierarchicalResponsible"),$_SERVER['PHP_SELF'],"u2.login",$param,"",'align="center"',$sortfield,$sortorder);
@@ -161,13 +165,24 @@ if ($result)
         if ($obj->fk_societe)
         {
             $companystatic->id=$obj->fk_societe;
-            $companystatic->nom=$obj->nom;
+            $companystatic->name=$obj->name;
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
         }
-        // Multicompany enabled
-        else if (! empty($conf->multicompany->enabled))
+        else if ($obj->ldap_sid)
         {
+        	print $langs->trans("DomainUser");
+        }
+        else
+       {
+        	print $langs->trans("InternalUser");
+        }
+        print '</td>';
+
+        // Multicompany enabled
+        if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))
+        {
+        	print '<td>';
         	if (! $obj->entity)
         	{
         		print $langs->trans("AllEntities");
@@ -181,16 +196,8 @@ if ($result)
         			print $mc->label;
         		}
         	}
+        	print '</td>';
         }
-        else if ($obj->ldap_sid)
-        {
-        	print $langs->trans("DomainUser");
-        }
-        else
-        {
-        	print $langs->trans("InternalUser");
-        }
-        print '</td>';
 
         // Date creation
         print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datec),"dayhour").'</td>';

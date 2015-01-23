@@ -229,6 +229,14 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][4] = 'fiscalyear';
 		$this->rights[$r][5] = '';
 		$r++;
+		
+		$this->rights[$r][0] = 50440;
+		$this->rights[$r][1] = 'Manage chart of accounts';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'chartofaccount';
+		$this->rights[$r][5] = '';
+		$r++;
 
 		// Main menu entries
 		$this->menus = array();

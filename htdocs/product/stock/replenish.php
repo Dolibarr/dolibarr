@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013      Cédric Salvador    	<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2014 Laurent Destaileur	<ely@users.sourceforge.net>
+/* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2014	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,9 @@ $type = GETPOST('type','int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
 $mode = GETPOST('mode','alpha');
+
+$fourn_id = GETPOST('fourn_id','int');
+$texte = '';
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -197,7 +201,7 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global
 $usevirtualstock=-1;
 if ($virtualdiffersfromphysical)
 {
-	$usevirtualstock=($conf->global->STOCK_USE_VIRTUAL_STOCK?1:0);
+	$usevirtualstock=(! empty($conf->global->STOCK_USE_VIRTUAL_STOCK)?1:0);
 	if ($mode=='virtual') $usevirtualstock=1;
 	if ($mode=='physical') $usevirtualstock=0;
 }
@@ -426,7 +430,7 @@ print '<tr class="liste_titre">'.
 if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
-	'<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . $alertchecked . '></td>'.
+	'<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
 	'<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">'.

@@ -296,7 +296,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("BillsSetup"),$linkback,'setup');
 print '<br>';
 
-$head = invoice_admin_prepare_head(null);
+$head = invoice_admin_prepare_head();
 dol_fiche_head($head, 'general', $langs->trans("Invoices"), 0, 'invoice');
 
 /*
@@ -393,61 +393,53 @@ foreach ($dirmodels as $reldir)
                             $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
                             $facture->type=0;
                             $nextval=$module->getNextValue($mysoc,$facture);
-                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                            {
+                            if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                                 $htmltooltip.=$langs->trans("NextValueForInvoices").': ';
-                                if ($nextval)
-                                {
+                                if ($nextval) {
+                                    if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                        $nextval = $langs->trans($nextval);
                                     $htmltooltip.=$nextval.'<br>';
-                                }
-                                else
-                                {
+                                } else {
                                     $htmltooltip.=$langs->trans($module->error).'<br>';
                                 }
                             }
                             // Example for remplacement
                             $facture->type=1;
                             $nextval=$module->getNextValue($mysoc,$facture);
-                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                            {
-                            	$htmltooltip.=$langs->trans("NextValueForReplacements").': ';
-                            	if ($nextval)
-                            	{
-                            		$htmltooltip.=$nextval.'<br>';
-                            	}
-                            	else
-                            	{
-                            		$htmltooltip.=$langs->trans($module->error).'<br>';
-                            	}
+                            if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+                                $htmltooltip.=$langs->trans("NextValueForReplacements").': ';
+                                if ($nextval) {
+                                    if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                        $nextval = $langs->trans($nextval);
+                                    $htmltooltip.=$nextval.'<br>';
+                                } else {
+                                    $htmltooltip.=$langs->trans($module->error).'<br>';
+                                }
                             }
                             
                             // Example for credit invoice
                             $facture->type=2;
                             $nextval=$module->getNextValue($mysoc,$facture);
-                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                            {
+                            if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                                 $htmltooltip.=$langs->trans("NextValueForCreditNotes").': ';
-                                if ($nextval)
-                                {
+                                if ($nextval) {
+                                    if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                        $nextval = $langs->trans($nextval);
                                     $htmltooltip.=$nextval.'<br>';
-                                }
-                                else
-                                {
+                                } else {
                                     $htmltooltip.=$langs->trans($module->error).'<br>';
                                 }
                             }
                             // Example for deposit invoice
                             $facture->type=3;
                             $nextval=$module->getNextValue($mysoc,$facture);
-                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                            {
+                            if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                                 $htmltooltip.=$langs->trans("NextValueForDeposit").': ';
-                                if ($nextval)
-                                {
+                                if ($nextval) {
+                                    if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                        $nextval = $langs->trans($nextval);
                                     $htmltooltip.=$nextval;
-                                }
-                                else
-                                {
+                                } else {
                                     $htmltooltip.=$langs->trans($module->error);
                                 }
                             }

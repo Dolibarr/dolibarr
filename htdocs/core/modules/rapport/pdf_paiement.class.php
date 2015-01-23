@@ -91,7 +91,7 @@ class pdf_paiement
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-		global $user,$langs,$conf;
+		global $conf, $hookmanager, $langs, $user;
 
 		$socid=0;
 		if ($user->societe_id) $socid=$user->societe_id;
@@ -126,7 +126,7 @@ class pdf_paiement
 			$hookmanager=new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+		$parameters=array('file'=>$file,'outputlangs'=>$outputlangs);
 		global $action;
 		$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 

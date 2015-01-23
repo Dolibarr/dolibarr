@@ -1,16 +1,16 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2014      Cédric Gross         <c.gross@kreiz-it.fr>
- * Copyright (C) 2014	   Ferran Marcet		<fmarcet@2byte.es>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2011-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ $langs->load("products");
 $langs->load("other");
 if (! empty($conf->stock->enabled)) $langs->load("stocks");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
-if ($conf->productbatch->enabled) $langs->load("productbatch");
+if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $mesg=''; $error=0; $errors=array(); $_error=0;
 
@@ -74,7 +74,7 @@ if ($id > 0 || ! empty($ref))
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = !empty($object->canvas)?$object->canvas:GETPOST("canvas");
-$objcanvas='';
+$objcanvas=null;
 if (! empty($canvas))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
@@ -88,7 +88,7 @@ $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype,$objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('productcard'));
+$hookmanager->initHooks(array('productcard','globalcard'));
 
 
 
@@ -124,7 +124,7 @@ if (empty($reshook))
     // Barcode value
     if ($action ==	'setbarcode' && $createbarcode)
     {
-    	$result=$object->check_barcode(GETPOST('barcode'),GETPOT('barcode_type_code'));
+    	$result=$object->check_barcode(GETPOST('barcode'),GETPOST('barcode_type_code'));
 
 		if ($result >= 0)
 		{
@@ -422,11 +422,10 @@ if (empty($reshook))
                             $_error++;
                             $action = "";
 
-                            $mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$object->ref);
+                            $mesg=$langs->trans("ErrorProductAlreadyExists",$object->ref);
                             $mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$object->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
-                            $mesg.='</div>';
                             setEventMessage($mesg, 'errors');
-                            //dol_print_error($object->db);
+                            $object->fetch($id);
                         }
                         else
                         {
@@ -840,7 +839,7 @@ else
         print '<tr>';
         $tmpcode='';
 		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
-        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
+        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="32" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
         if ($_error)
         {
             print $langs->trans("RefAlreadyExists");
@@ -863,9 +862,9 @@ else
         print '</td></tr>';
 
 	    // Batch number management
-		if ($conf->productbatch->enabled)
+		if (! empty($conf->productbatch->enabled))
 		{
-			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Batch").')</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
 			$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
 			print $form->selectarray('status_batch',$statutarray,GETPOST('status_batch'));
 			print '</td></tr>';
@@ -1054,7 +1053,7 @@ else
             print '<br>';
         //}
 
-        print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+        print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
         print '</form>';
     }
@@ -1084,7 +1083,7 @@ else
             print '<table class="border allwidth">';
 
             // Ref
-            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
+            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="32" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
 
             // Label
             print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
@@ -1123,7 +1122,7 @@ else
 
 			// Batch number managment
 			if ($conf->productbatch->enabled) {
-				print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Lot").')</td><td colspan="2">';
+				print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
 				$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
 				print $form->selectarray('status_batch',$statutarray,$object->status_batch);
 				print '</td></tr>';
@@ -1290,8 +1289,11 @@ else
                 print '<br>';
             //}
 
-            print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
-            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+            print '<div class="center">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '</div>';
 
             print '</form>';
         }
@@ -1420,20 +1422,32 @@ else
 
             // Status (to sell)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
-            print $object->getLibStatut(2,0);
+            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+                print ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+            } else {
+                print $object->getLibStatut(2,0);
+            }
             print '</td></tr>';
 
             // Status (to buy)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
-            print $object->getLibStatut(2,1);
+            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+                print ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+            } else {
+                print $object->getLibStatut(2,1);
+            }
             print '</td></tr>';
 
-			// Batch number management (to batch)
-			if ($conf->productbatch->enabled) {
-				print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Lot").')</td><td colspan="2">';
-				print $object->getLibStatut(2,2);
-				print '</td></tr>';
-			}
+            // Batch number management (to batch)
+            if ($conf->productbatch->enabled) {
+                print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
+                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+                    print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
+                } else {
+                    print $object->getLibStatut(0,2);
+                }
+                print '</td></tr>';
+            }
 
             // Description
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description,1,true)).'</td></tr>';
@@ -1533,7 +1547,9 @@ else
             }
 
             // Note
-            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>';
+            print '<!-- show Note --> '."\n";
+            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>'."\n";
+            print '<!-- End show Note --> '."\n";
 
             print "</table>\n";
 

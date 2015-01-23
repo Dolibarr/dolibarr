@@ -28,8 +28,8 @@ InvoiceAvoir=توجه داشته باشید اعتباری
 InvoiceAvoirAsk=توجه داشته باشید اعتباری برای اصلاح صورت حساب
 InvoiceAvoirDesc=<b>توجه داشته باشید اعتباری</b> فاکتور منفی استفاده می شود برای حل این واقعیت است که فاکتور دارای مقدار است که از مقدار واقعا پرداخت می شود، متفاوت است (به دلیل مشتری های خطا بیش از حد پرداخت می شود، و یا به طور کامل پرداخت می شود چرا که او بازگشت برخی از محصولات به عنوان مثال) است.
 invoiceAvoirWithLines=ایجاد اعتبار توجه با خطوط از فاکتور مبدا
-invoiceAvoirWithPaymentRestAmount=ایجاد اعتبار توجه با مقدار دریاچه منشاء فاکتور پرداخت در
-invoiceAvoirLineWithPaymentRestAmount=مقدار اعتبار توجه از دریاچه پرداخت صورتحساب در
+invoiceAvoirWithPaymentRestAmount=Create Credit Note with remaining unpaid of origin invoice
+invoiceAvoirLineWithPaymentRestAmount=Credit Note for remaining unpaid amount
 ReplaceInvoice=به جای صورتحساب از٪ s
 ReplacementInvoice=فاکتور تعویض
 ReplacedByInvoice=به جای صورتحساب از٪ s
@@ -87,7 +87,7 @@ ClassifyCanceled=طبقه بندی 'رها'
 ClassifyClosed=طبقه بندی »بسته '
 ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=ایجاد فاکتور
-AddBill=اضافه کردن فاکتور و یا اعتباری توجه داشته باشید
+AddBill=Create invoice or credit note
 AddToDraftInvoices=اضافه کردن به پیش نویس فاکتور
 DeleteBill=حذف فاکتور
 SearchACustomerInvoice=جستجو برای یک صورتحساب مشتری
@@ -99,7 +99,7 @@ DoPaymentBack=آیا پرداخت به عقب
 ConvertToReduc=تبدیل به تخفیف آینده
 EnterPaymentReceivedFromCustomer=پرداخت های دریافت شده از مشتری را وارد کنید
 EnterPaymentDueToCustomer=پرداخت با توجه به مشتری
-DisabledBecauseRemainderToPayIsZero=غیر فعال به دلیل باقی مانده به پرداخت صفر است
+DisabledBecauseRemainderToPayIsZero=Disabled because remaining unpaid is zero
 Amount=مقدار
 PriceBase=پایه قیمت
 BillStatus=وضعیت فاکتور
@@ -137,8 +137,6 @@ BillFrom=از
 BillTo=به
 ActionsOnBill=عملیات در فاکتور
 NewBill=صورت حساب جدید
-Prélèvements=نظام نامه
-Prélèvements=نظام نامه
 LastBills=تاریخ و زمان آخرین٪ s را فاکتورها
 LastCustomersBills=تاریخ و زمان آخرین٪ مشتریان فاکتورها
 LastSuppliersBills=تاریخ و زمان آخرین٪ بازدید کنندگان تامین کنندگان فاکتورها
@@ -156,9 +154,9 @@ ConfirmCancelBill=آیا مطمئن هستید که می خواهید برای �
 ConfirmCancelBillQuestion=چرا شما می خواهید برای طبقه بندی این فاکتور "رها"؟
 ConfirmClassifyPaidPartially=آیا مطمئن هستید که می خواهید به تغییر صورت <b>حساب٪ s به</b> وضعیت پرداخت می شود؟
 ConfirmClassifyPaidPartiallyQuestion=این فاکتور به طور کامل پرداخت نشده است. دلایل شما برای بستن این فاکتور ها چه هستند؟
-ConfirmClassifyPaidPartiallyReasonAvoir=باقی مانده به پرداخت <b>(٪ S٪ بازدید کنندگان)</b> تخفیف داده است به دلیل پرداخت قبل از واژه ساخته شده است. I تنظیم مالیات بر ارزش افزوده با توجه داشته باشید اعتباری.
-ConfirmClassifyPaidPartiallyReasonDiscountNoVat=باقی مانده به پرداخت <b>(٪ S٪ بازدید کنندگان)</b> تخفیف داده است به دلیل پرداخت قبل از واژه ساخته شده است. من قبول می کنم به از دست دادن مالیات بر ارزش افزوده در این تخفیف.
-ConfirmClassifyPaidPartiallyReasonDiscountVat=باقی مانده به پرداخت <b>(٪ S٪ بازدید کنندگان)</b> تخفیف داده است به دلیل پرداخت قبل از واژه ساخته شده است. I مالیات بر ارزش افزوده در این تخفیف بهبود می یابند بدون توجه داشته باشید اعتباری.
+ConfirmClassifyPaidPartiallyReasonAvoir=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I regularise the VAT with a credit note.
+ConfirmClassifyPaidPartiallyReasonDiscountNoVat=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I accept to lose the VAT on this discount.
+ConfirmClassifyPaidPartiallyReasonDiscountVat=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I recover the VAT on this discount without a credit note.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=مشتری بد
 ConfirmClassifyPaidPartiallyReasonProductReturned=محصولات نیمه بازگشت
 ConfirmClassifyPaidPartiallyReasonOther=میزان دلیل دیگر رها
@@ -191,9 +189,9 @@ AlreadyPaid=در حال حاضر پرداخت می شود
 AlreadyPaidBack=در حال حاضر باز پرداخت
 AlreadyPaidNoCreditNotesNoDeposits=در حال حاضر (بدون یادداشت های اعتباری و سپرده) پرداخت می شود
 Abandoned=متروک
-RemainderToPay=باقی مانده به پرداخت
-RemainderToTake=باقی مانده را به
-RemainderToPayBack=باقی مانده به پرداخت
+RemainderToPay=Remaining unpaid
+RemainderToTake=Remaining amount to take
+RemainderToPayBack=Remaining amount to pay back
 Rest=در انتظار
 AmountExpected=مقدار ادعا
 ExcessReceived=اضافی دریافت
@@ -219,19 +217,18 @@ NoInvoice=بدون فاکتور
 ClassifyBill=طبقه بندی صورت حساب
 SupplierBillsToPay=تولید کنندگان فاکتورها به پرداخت
 CustomerBillsUnpaid=صورت حساب مشتریان پرداخت نشده
-DispenseMontantLettres=این لایحه پیش نویس توسط mechanographical از نظم در نامه معاف هستند
-DispenseMontantLettres=این لایحه پیش نویس توسط mechanographical از نظم در نامه معاف هستند
+DispenseMontantLettres=The written invoices through mecanographic procedures are dispensed by the order in letters
 NonPercuRecuperable=غیر قابل بازیابی
 SetConditions=تنظیم شرایط پرداخت
 SetMode=تنظیم حالت پرداخت
 Billed=ثبت شده در صورتحساب یا لیست
-RepeatableInvoice=فاکتور از پیش تعریف شده
-RepeatableInvoices=فاکتورها از پیش تعریف شده
-Repeatable=از پیش تعریف شده
-Repeatables=از پیش تعریف شده
-ChangeIntoRepeatableInvoice=تبدیل به از پیش تعریف شده
-CreateRepeatableInvoice=فاکتور ایجاد از پیش تعریف شده
-CreateFromRepeatableInvoice=ایجاد از فاکتور از پیش تعریف شده
+RepeatableInvoice=Template invoice
+RepeatableInvoices=Template invoices
+Repeatable=Template
+Repeatables=Templates
+ChangeIntoRepeatableInvoice=Convert into template invoice
+CreateRepeatableInvoice=Create template invoice
+CreateFromRepeatableInvoice=Create from template invoice
 CustomersInvoicesAndInvoiceLines=صورت حساب مشتری و خطوط صورت حساب را
 CustomersInvoicesAndPayments=صورت حساب مشتری و پرداخت
 ExportDataset_invoice_1=فهرست فاکتورها مشتری و خطوط صورت حساب را

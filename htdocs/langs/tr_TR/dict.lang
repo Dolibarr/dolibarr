@@ -248,11 +248,11 @@ CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
 
 ##### Civilities #####
-CivilityMME=Mrs.
-CivilityMR=Mr.
-CivilityMLE=Ms.
+CivilityMME=Bn.
+CivilityMR=Bay
+CivilityMLE=Bn.
 CivilityMTRE=Master
-CivilityDR=Doctor
+CivilityDR=Doktor
 ##### Currencies #####
 Currencyeuros=Euro
 CurrencyAUD=AU Doları
@@ -290,6 +290,8 @@ CurrencySingXOF=CFA Frangı BCEAO
 CurrencyXPF=CFP Frangı
 CurrencySingXPF=CFP Frangı
 CurrencyCentSingEUR=cent
+CurrencyCentINR=paisa
+CurrencyCentSingINR=paise
 CurrencyThousandthSingTND=thousandth
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
@@ -297,7 +299,7 @@ DemandReasonTypeSRC_CAMP_MAIL=Posta kampanyası
 DemandReasonTypeSRC_CAMP_EMAIL=Eposta kampanyası
 DemandReasonTypeSRC_CAMP_PHO=Telefon kampanyası
 DemandReasonTypeSRC_CAMP_FAX=Faks kampanyası
-DemandReasonTypeSRC_COMM=Ticari görüşme
+DemandReasonTypeSRC_COMM=Ticari ilgili
 DemandReasonTypeSRC_SHOP=İş yerinde görüşme
 DemandReasonTypeSRC_WOM=Başkasından duyarak
 DemandReasonTypeSRC_PARTNER=İş Ortağı
@@ -316,7 +318,7 @@ PaperFormatEUA6=Biçim A6
 PaperFormatUSLETTER=Mektup Biçimi US
 PaperFormatUSLEGAL=Yasal Biçim US
 PaperFormatUSEXECUTIVE=İş Biçimi US
-PaperFormatUSLEDGER=Defter/Tablet
+PaperFormatUSLEDGER=Defter/Tablet Biçimi
 PaperFormatCAP1=Biçim P1 Kanada
 PaperFormatCAP2=Biçim P2 Kanada
 PaperFormatCAP3=Biçim P3 Kanada

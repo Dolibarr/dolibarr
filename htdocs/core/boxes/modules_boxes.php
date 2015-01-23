@@ -181,6 +181,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		global $langs,$conf;
 
 		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
+		$bcx=array();
 		$bcx[0] = 'class="box_pair"';
 		$bcx[1] = 'class="box_impair"';
 		$var = false;
@@ -227,7 +228,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 				print '</td><td class="nocellnopadd boxclose nowrap">';
 				// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 				print img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone" style="cursor:move;"');
-				print img_picto($langs->trans("Close",$this->box_id),'close_title','class="boxclose" rel="x:y" style="cursor:pointer;" id="imgclose'.$this->box_id.'"');
+				print img_picto($langs->trans("Close2",$this->box_id),'close_title','class="boxclose" rel="x:y" style="cursor:pointer;" id="imgclose'.$this->box_id.'"');
 				$label=$head['text'];
 				if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
 				print '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
@@ -256,8 +257,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 
 					// Loop on each TD
 					$nbcolthisline=count($contents[$i]);
-					for ($j=0; $j < $nbcolthisline; $j++)
-					{
+                    for ($j=0; $j < $nbcolthisline; $j++) {
 						// Define tdparam
 						$tdparam='';
 						if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
@@ -269,13 +269,15 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 						$text2withnotags=preg_replace('/<([^>]+)>/i','',$text2);
 						$textnoformat=isset($contents[$i][$j]['textnoformat'])?$contents[$i][$j]['textnoformat']:'';
 						//print "xxx $textwithnotags y";
+                        if (empty($contents[$i][$j]['tooltip'])) $contents[$i][$j]['tooltip']="";
+                        $tooltip=isset($contents[$i][$j]['tooltip'])?$contents[$i][$j]['tooltip']:'';
 
-						print '<td'.$tdparam.'>';
+						print '<td'.$tdparam.'>'."\n";
 
 						// Url
-						if (! empty($contents[$i][$j]['url']))
+						if (! empty($contents[$i][$j]['url']) && empty($contents[$i][$j]['logo']))
 						{
-							print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textwithnotags.'"';
+							print '<a href="'.$contents[$i][$j]['url'].'" title="'.dol_escape_htmltag($langs->trans("Show").' '.$tooltip, 1).'" class="classfortooltip"';
 							//print ' alt="'.$textwithnotags.'"';      // Pas de alt sur un "<a href>"
 							print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
 							print '>';
@@ -285,7 +287,8 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 						if (! empty($contents[$i][$j]['logo']))
 						{
 							$logo=preg_replace("/^object_/i","",$contents[$i][$j]['logo']);
-							print img_object($langs->trans("Show"),$logo);
+                            print '<a href="'.$contents[$i][$j]['url'].'">';
+							print img_object($langs->trans("Show").' '.$tooltip, $logo, 'class="classfortooltip"');
 						}
 
 						$maxlength=$MAXLENGTHBOX;
@@ -303,7 +306,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 
 						if (! empty($textnoformat)) print "\n".$textnoformat."\n";
 
-						print "</td>";
+						print "</td>\n";
 					}
 
 					print "</tr>\n";

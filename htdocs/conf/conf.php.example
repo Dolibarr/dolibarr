@@ -43,10 +43,10 @@ $dolibarr_main_document_root='';
 // You can put several values, separated by a coma, but number of entries must match 
 // number of entries into $dolibarr_main_document_root_alt.
 // Examples:
-// $dolibarr_main_url_root_alt='/extensions';
+// $dolibarr_main_url_root_alt='/custom';
 // $dolibarr_main_url_root_alt='/extensions1,/extensions2';
 //
-$dolibarr_main_url_root_alt='';
+//$dolibarr_main_url_root_alt='/custom';
 
 
 // dolibarr_main_document_root_alt
@@ -55,10 +55,10 @@ $dolibarr_main_url_root_alt='';
 // You can put several values, separated by a coma, but number of entries must match 
 // number of entries into $dolibarr_main_url_root_alt.
 // Examples:
-// $dolibarr_main_document_root_alt='/var/www/dolibarr/htdocs/extensions';
+// $dolibarr_main_document_root_alt='/var/www/dolibarr/htdocs/custom';
 // $dolibarr_main_document_root_alt='C:/My web sites/dolibarr/htdocs/extensions1,C:/My web sites/dolibarr/htdocs/extensions2';
 //
-$dolibarr_main_document_root_alt='';
+//$dolibarr_main_document_root_alt='/var/www/dolibarr/htdocs/custom';
 
 
 // dolibarr_main_data_root

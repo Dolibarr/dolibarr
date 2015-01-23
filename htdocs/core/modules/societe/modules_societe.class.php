@@ -184,7 +184,7 @@ abstract class ModeleThirdPartyCode
         $langs->load("admin");
 
         $s='';
-        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->nom.'</b><br>';
+        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
         if ($type == -1) $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
         if ($type == 0)  $s.=$langs->trans("CustomerCodeDesc").'<br>';
         if ($type == 1)  $s.=$langs->trans("SupplierCodeDesc").'<br>';

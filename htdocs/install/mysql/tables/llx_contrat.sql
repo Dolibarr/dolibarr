@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ create table llx_contrat
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   ref						varchar(30),		            -- contrat reference
   ref_supplier				varchar(30),		            -- suplier contract ref
+  ref_ext				varchar(30),		            -- external contract ref
   entity					integer DEFAULT 1 NOT NULL,	-- multi company id
   tms						timestamp,
   datec						datetime,                   -- creation date
@@ -33,13 +34,14 @@ create table llx_contrat
   date_cloture				datetime,
   fk_soc					integer NOT NULL,
   fk_projet					integer,
-  fk_commercial_signature	integer NOT NULL, -- obsolete
-  fk_commercial_suivi 		integer NOT NULL,	-- obsolete
+  fk_commercial_signature	integer, -- obsolete
+  fk_commercial_suivi 		integer, -- obsolete
   fk_user_author			integer NOT NULL default 0,
   fk_user_mise_en_service	integer,
   fk_user_cloture			integer,
   note_private				text,
   note_public				text,
+  model_pdf					varchar(255),
   import_key				varchar(14),
   extraparams				varchar(255)
 

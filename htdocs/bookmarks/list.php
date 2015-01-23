@@ -25,6 +25,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 $langs->load("bookmarks");
+$langs->load("admin");
 
 // Security check
 if (! $user->rights->bookmark->lire) {
@@ -58,7 +59,7 @@ if ($_GET["action"] == 'delete')
     }
     else
     {
-        $setEventMessage($bookmark->error, 'errors');
+        setEventMessage($bookmark->error, 'errors');
     }
 }
 

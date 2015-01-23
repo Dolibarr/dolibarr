@@ -38,6 +38,7 @@ $type=GETPOST('type');
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
 $removeelem = GETPOST('removeelem','int');
+$elemid=GETPOST('elemid');
 
 if ($id == "")
 {
@@ -120,6 +121,33 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 	}
 }
 
+if ($type==0 && $elemid && $action == 'addintocategory' && ($user->rights->produit->creer || $user->rights->service->creer))
+{
+	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+	$newobject = new Product($db);
+	$result = $newobject->fetch($elemid);
+	$elementtype = 'product';
+	
+	// TODO Add into categ
+	$result=$object->add_type($newobject,$elementtype);
+	if ($result >= 0)
+	{
+		setEventMessage($langs->trans("WasAddedSuccessfully",$newobject->ref));
+	}
+	else
+	{
+		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		{
+			setEventMessage($langs->trans("ObjectAlreadyLinkedToCategory"),'warnings');
+		}
+		else
+		{
+			setEventMessages($object->error,$object->errors,'errors');
+		}
+	}
+	
+}
+
 
 
 /*
@@ -144,6 +172,7 @@ dol_fiche_head($head, 'card', $title, 0, 'category');
 /*
  * Confirmation suppression
  */
+
 if ($action == 'delete')
 {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
@@ -251,10 +280,9 @@ else
 	print "</table>\n";
 }
 
-// List of products
+// List of products or services (type is type of category)
 if ($object->type == 0)
 {
-
 	$prods = $object->getObjectsInCateg("product");
 	if ($prods < 0)
 	{
@@ -262,6 +290,29 @@ if ($object->type == 0)
 	}
 	else
 	{
+		$showclassifyform=1; $typeid=0;
+		
+		// Form to add record into a category
+		if ($showclassifyform)
+		{
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre"><td width="40%">';
+			print $langs->trans("AddProductServiceIntoCategory").' &nbsp;';
+			print $form->select_produits('','elemid','',0,0,-1,2,'',1);
+			print '</td><td>';
+			print '<input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+		
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
 		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ProductsAndServices")."</td></tr>\n";

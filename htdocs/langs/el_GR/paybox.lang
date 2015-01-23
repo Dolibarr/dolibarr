@@ -35,3 +35,6 @@ MessageKO=Μήνυμα για την ακύρωση σελίδα επιστρο�
 NewPayboxPaymentReceived=Νέα πληρωμή Paybox που λήφθηκε
 NewPayboxPaymentFailed=Νέα πληρωμή Paybox προσπάθησαν αλλά απέτυχαν
 PAYBOX_PAYONLINE_SENDEMAIL=Στείλτε e-mail προειδοποιήσεις μετά από πληρωμή (επιτυχία ή όχι)
+PAYBOX_PBX_SITE=Τιμή για PBX SITE
+PAYBOX_PBX_RANG=Τιμή για PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Τιμή για PBX ID

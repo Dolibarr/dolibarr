@@ -89,7 +89,7 @@ if ($resql) {
 	print '<td align="left">' . $langs->trans("Accountancy_code_sell") . '</td>';
 	print '<td align="left">' . $langs->trans("Accountancy_code_sell_suggest") . '</td>';
 
-	$var = True;
+	$var = true;
 
 	while ( $i < min($num, 250) ) {
 		$obj = $db->fetch_object($resql);

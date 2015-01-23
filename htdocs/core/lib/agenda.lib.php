@@ -70,35 +70,12 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		print '<tr>';
 		print '<td class="nowrap">';
-		//print $langs->trans("ActionsAskedBy");
-		//print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
-		//print $form->select_dolusers($filtera, 'userasked', 1, '', ! $canedit);
-		//print ' &nbsp; '.$langs->trans("or") . ' ';
-		print $langs->trans("ActionAffectedTo").' &nbsp; ';
+		print $langs->trans("ActionsToDoBy").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone">';
-		//print $langs->trans("User");
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
-		if (! empty($conf->use_javascript_ajax))
-		{
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-			print ajax_combobox('usertodo');
-		}
-		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' ';
-		else print '<br>';
-		print $langs->trans("Group").' &nbsp; ';
+		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("Group").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
-		if (! empty($conf->use_javascript_ajax))
-		{
-			print ajax_combobox('usergroup');
-		}
 		print '</td></tr>';
-
-		/*print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("or") . ' ' . $langs->trans("ActionsDoneBy");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
-		print $form->select_dolusers($filterd, 'userdone', 1, '', ! $canedit);
-		print '</td></tr>';*/
 
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
@@ -147,16 +124,18 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap">'.$langs->trans("WorkingTimeRange").'</td>';
 		print "<td class='nowrap maxwidthonsmartphone'>";
-		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23"> - ';
+		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
+		if (empty($conf->dol_use_jmobile)) print ' - ';
 		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
-		print ' '.$langs->trans("H");
+		if (empty($conf->dol_use_jmobile)) print ' '.$langs->trans("H");
 		print '</td></tr>';
 
 		// Filter on days
 		print '<tr>';
 		print '<td class="nowrap">'.$langs->trans("WorkingDaysRange").'</td>';
 		print "<td class='nowrap maxwidthonsmartphone'>";
-		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7"> - ';
+		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
+		if (empty($conf->dol_use_jmobile)) print ' - ';
 		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
 		print '</td></tr>';
 	}
@@ -170,7 +149,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (! empty($conf->browser->phone)) print '</div>';
 	else print '</td>';
 
-	if (! empty($conf->browser->phone)) print '<div class="fichehalfright" valign="middle">';
+	if (! empty($conf->browser->phone)) print '<div class="fichehalfright">';
 	else print '<td align="center" valign="middle" class="nowrap">';
 
 	print '<table><tr><td align="center">';
@@ -206,7 +185,7 @@ function show_array_actions_to_do($max=5)
 	include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent,";
-	$sql.= " c.code, c.libelle,";
+	$sql.= " c.code, c.libelle as type_label,";
 	$sql.= " s.nom as sname, s.rowid, s.client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c LEFT JOIN ";
 	$sql.= " ".MAIN_DB_PREFIX."actioncomm as a ON c.id = a.fk_action";
@@ -243,7 +222,7 @@ function show_array_actions_to_do($max=5)
             print '<tr '.$bc[$var].'>';
 
             $staticaction->type_code=$obj->code;
-            $staticaction->libelle=$obj->label;
+            $staticaction->label=($obj->label?$obj->label:$obj->type_label);
             $staticaction->id=$obj->id;
             print '<td>'.$staticaction->getNomUrl(1,34).'</td>';
 
@@ -440,21 +419,13 @@ function actions_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (! empty($conf->global->AGENDA_USE_SEVERAL_CONTACTS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/action/contact.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Contacts");
-		$head[$h][2] = 'contact';
-		$h++;
-	}
-
     // Attached files
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     $upload_dir = $conf->agenda->dir_output . "/" . $object->id;
     $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if ($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
     $head[$h][2] = 'documents';
     $h++;
 

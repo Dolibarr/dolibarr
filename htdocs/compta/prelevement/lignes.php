@@ -106,7 +106,7 @@ if ($prev_id)
 		print '</td></tr></table>';
 
 		dol_fiche_end();
-		
+
 	}
 	else
 	{
@@ -124,11 +124,9 @@ $pagenext = $page + 1;
 
 /*
  * Liste des lignes de prelevement
- *
- *
  */
 $sql = "SELECT pl.rowid, pl.statut, pl.amount";
-$sql.= ", s.rowid as socid, s.nom";
+$sql.= ", s.rowid as socid, s.nom as name";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -175,7 +173,11 @@ if ($result)
 		print substr('000000'.$obj->rowid, -6);
 		print '</a></td>';
 
-		print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
+		$thirdparty=new Societe($db);
+		$thirdparty->fetch($obj->socid);
+		print '<td>';
+		print $thirdparty->getNomUrl(1);
+		print "</td>\n";
 
 		print '<td align="center">'.price($obj->amount)."</td>\n";
 

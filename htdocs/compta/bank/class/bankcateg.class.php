@@ -30,9 +30,7 @@
 
 
 /**
- *      \class      BankCateg
- *      \brief      Class to manage bank categories
- *		\remarks	Initialy built by build_class_from_table on 2009-01-02 15:26
+ *	Class to manage bank categories
  */
 class BankCateg // extends CommonObject
 {
@@ -172,7 +170,7 @@ class BankCateg // extends CommonObject
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
      *  @return int         			<0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
         global $conf, $langs;
         $error=0;
@@ -300,7 +298,7 @@ class BankCateg // extends CommonObject
 
         $error=0;
 
-        $object=new Bank_categ($this->db);
+        $object=new BankCateg($this->db);
 
         $this->db->begin();
 

@@ -62,7 +62,7 @@ class box_services_contracts extends ModeleBoxes
 
 		if ($user->rights->service->lire && $user->rights->contrat->lire)
 		{
-			$sql = "SELECT s.nom, s.rowid as socid,";
+			$sql = "SELECT s.nom as name, s.rowid as socid,";
 			$sql.= " c.rowid,";
 			$sql.= " cd.rowid as cdid, cd.tms as datem, cd.statut,";
 			$sql.= " p.rowid as pid, p.label, p.fk_product_type";
@@ -125,7 +125,7 @@ class box_services_contracts extends ModeleBoxes
                     'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $objp->nom,
+                    'text' => $objp->name,
                     'maxlength' => 28,
                     'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 

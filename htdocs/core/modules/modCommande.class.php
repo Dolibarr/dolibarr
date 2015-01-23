@@ -98,8 +98,10 @@ class modCommande extends DolibarrModules
 		$this->const[$r][4] = 0;
 
 		// Boxes
-		$this->boxes = array();
-		$this->boxes = array(0=>array('file'=>'box_commandes.php','enabledbydefaulton'=>'Home'),2=>array('file'=>'box_graph_orders_permonth.php','enabledbydefaulton'=>'Home'));
+		$this->boxes = array(
+			0=>array('file'=>'box_commandes.php','enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_graph_orders_permonth.php','enabledbydefaulton'=>'Home')
+		);
 
 		// Permissions
 		$this->rights = array();

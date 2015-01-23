@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - printing
+PrintingSetup=Setup of Printing System
+PrintingDesc=This module adds a Print button to send documents directly to a printer with various module.
+ModuleDriverSetup=Setup Module Driver
+PrintingDriverDesc=Configuration variables for printing driver.
+ListDrivers=List of drivers
+PrintTestDesc=List of Printers.
+FileWasSentToPrinter=File %s was sent to printer
+NoActivePrintingModuleFound=No active module to print document
+PleaseSelectaDriverfromList=Please select a driver from list.

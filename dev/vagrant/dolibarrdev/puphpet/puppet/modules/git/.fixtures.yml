@@ -1,5 +1,0 @@
-fixtures:
-  repositories:
-    vcsrepo: git://github.com/puppetlabs/puppetlabs-vcsrepo.git
-  symlinks:
-    git: "#{source_dir}"

@@ -249,7 +249,7 @@ if ($resql)
         $objp = $db->fetch_object($resql);
 
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bc[$var].">\n";
 //         print '<form method="post" action="rappro.php?account='.$_GET["account"].'">';
 //         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
@@ -261,9 +261,9 @@ if ($resql)
         // Date value
 		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 		{
-			print '<td align="center" class="nowrap">';
+			print '<td align="center" class="nowrap">'."\n";
 			print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv),"day")."</span>";
-			print ' &nbsp';
+			print '&nbsp;';
 			print '<span>';
 			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";

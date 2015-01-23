@@ -130,24 +130,28 @@ if ($action == 'search')
 {
 	$current_lang = $langs->getDefaultLang();
 
-	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.price, p.fk_product_type as type';
+    $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
+    $sql.= ' p.fk_product_type, p.tms as datem';
 	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ', pl.label as labelm, pl.description as descriptionm';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
 	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
-	$sql.= ' WHERE p.entity IN ('.getEntity("product", 1).')';
+	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 	if ($key != "")
 	{
+		// For natural search
+		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
+		// multilang
 		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
-			$sql.= " AND (p.ref LIKE '%".$key."%'";
-			$sql.= " OR pl.label LIKE '%".$key."%')";
+			$params[] = 'pl.label';
+			$params[] = 'pl.description';
+			$params[] = 'pl.note';
 		}
-		else
-		{
-			$sql.= " AND (p.ref LIKE '%".$key."%'";
-			$sql.= " OR p.label LIKE '%".$key."%')";
+		if (! empty($conf->barcode->enabled)) {
+			$params[] = 'p.barcode';
 		}
+		$sql .= natural_search($params, $key);
 	}
 	if (! empty($conf->categorie->enabled) && ! empty($parent) && $parent != -1)
 	{
@@ -295,7 +299,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				print price($object->price).' '.$langs->trans($object->price_base_type);
+				print price($object->price).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
 			}
 			print '</td></tr>';
 
@@ -307,7 +311,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				print price($object->price_min).' '.$langs->trans($object->price_base_type);
+				print price($object->price_min).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
 			}
 			print '</td></tr>';
 		}
@@ -533,9 +537,11 @@ if ($id > 0 || ! empty($ref))
 
 			if($num > 0)
 			{
-				print '<br><center><input type="submit" class="button" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
-				print ' &nbsp; &nbsp; <input type="submit" class="button" value="'.$langs->trans("Cancel").'">';
-				print '</center>';
+				print '<br><div class="center">';
+				print '<input type="submit" class="button" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
+				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'">';
+				print '</div>';
 			}
 
 			print '</form>';

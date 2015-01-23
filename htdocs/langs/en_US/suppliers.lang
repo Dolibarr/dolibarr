@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Suppliers
 Supplier=Supplier
-AddSupplier=Add a supplier
+AddSupplier=Create a supplier
 SupplierRemoved=Supplier removed
 SuppliersInvoice=Suppliers invoice
 NewSupplier=New supplier
@@ -40,3 +40,5 @@ AddSupplierInvoice=Create supplier invoice
 ListOfSupplierProductForSupplier=List of products and prices for supplier <b>%s</b>
 NoneOrBatchFileNeverRan=None or batch <b>%s</b> not ran recently
 SentToSuppliers=Sent to suppliers
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice

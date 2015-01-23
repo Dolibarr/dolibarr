@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 if (! empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (! empty($conf->commande->enabled))  require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 if (! $user->rights->societe->lire) accessforbidden();
 
@@ -62,6 +63,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $companystatic=new Societe($db);
 if (! empty($conf->propal->enabled)) $propalstatic=new Propal($db);
+if (! empty($conf->commande->enabled)) $orderstatic=new Commande($db);
 
 llxHeader();
 
@@ -90,15 +92,15 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$var=false;
-	print '<table class="noborder nohover" width="100%">';
 	print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchACustomerOrder").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
 	print '<label for="sref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="sref" id="sref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="sall" id="sall" size="18"></td>';
 	print '</tr>';
-	print "</form></table><br>\n";
+	print "</table></form><br>\n";
 }
 
 // Search contract
@@ -118,12 +120,29 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	print "<br>";
 }
 
+// Search contract
+if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
+{
+	$var=false;
+	print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover" width="100%">';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAnIntervention").'</td></tr>';
+	print '<tr '.$bc[$var].'>';
+	print '<td class="nowrap"><label for="search_contract">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_inter" id="search_inter" size="18"></td>';
+	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print '<tr '.$bc[$var].'><td class="nowrap"><label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="sall" id="sall" size="18"></td>';
+	print '</tr>';
+	print "</table></form>\n";
+	print "<br>";
+}
+
 /*
  * Draft proposals
  */
 if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
-	$sql = "SELECT p.rowid, p.ref, p.total_ht, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -153,6 +172,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				print '<tr '.$bc[$var].'><td  class="nowrap">';
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
+                $propalstatic->ref_client=$obj->ref_client;
 				print $propalstatic->getNomUrl(1);
 				print '</td>';
 				print '<td class="nowrap">';
@@ -190,7 +210,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$langs->load("orders");
 
-	$sql = "SELECT c.rowid, c.ref, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -217,7 +237,12 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td class="nowrap"><a href="../commande/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
+				print '<tr '.$bc[$var].'><td class="nowrap">';
+                $orderstatic->id=$obj->rowid;
+                $orderstatic->ref=$obj->ref;
+                $orderstatic->ref_client=$obj->ref_client;
+                print $orderstatic->getNomUrl(1);
+                print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
@@ -444,7 +469,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
 	$langs->load("propal");
 
-	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql = "SELECT s.nom as name, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -466,7 +491,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			$var=true;
 
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1">('.$num.')</td></tr>';
+			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></td></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
@@ -480,6 +505,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 
 				$propalstatic->id=$obj->propalid;
 				$propalstatic->ref=$obj->ref;
+                $propalstatic->ref_client=$obj->ref_client;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td class="nobordernopadding nowrap">';
@@ -497,7 +523,13 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 
 				print "</td>";
 
-				print '<td align="left"><a href="card.php?socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,44).'</a></td>'."\n";
+                print '<td class="nowrap">';
+                $companystatic->id=$obj->rowid;
+                $companystatic->name=$obj->name;
+                $companystatic->client=$obj->client;
+                $companystatic->canvas=$obj->canvas;
+                print $companystatic->getNomUrl(1, 'company', 44);
+                print '</td>';
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
 				print '<td align="right">'.price($obj->total_ttc).'</td>';

@@ -27,6 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load('projects');
 
@@ -39,7 +40,7 @@ if ($socid > 0)
 {
 	$soc = new Societe($db);
 	$soc->fetch($socid);
-	$title .= ' (<a href="list.php">'.$soc->nom.'</a>)';
+	$title .= ' (<a href="list.php">'.$soc->name.'</a>)';
 }
 if (!$user->rights->projet->lire) accessforbidden();
 
@@ -61,8 +62,18 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
+$search_year=GETPOST("search_year");
 $search_all=GETPOST("search_all");
 
+// Purge criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_ref="";
+	$search_label="";
+	$search_societe="";
+	$search_year="";
+	$search_all=0;
+}
 
 /*
  * View
@@ -78,7 +89,7 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$min
 
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
-$sql.= ", s.nom, s.rowid as socid";
+$sql.= ", s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
@@ -97,6 +108,10 @@ if ($search_label)
 if ($search_societe)
 {
 	$sql .= natural_search('s.nom', $search_societe);
+}
+if ($search_year) {
+	$sql .= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day($search_year,12,false)).")";
+	$sql .= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day($search_year,1,false)).")";
 }
 if ($search_all)
 {
@@ -147,8 +162,10 @@ if ($resql)
 	print '<input type="text" class="flat" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
-	print "</tr>\n";
+	print '<td class="liste_titre nowrap" align="right">';
+    print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print '</td>';
 
 	while ($i < $num)
 	{
@@ -181,7 +198,7 @@ if ($resql)
 			if ($objp->socid)
 			{
 				$socstatic->id=$objp->socid;
-				$socstatic->nom=$objp->nom;
+				$socstatic->name=$objp->name;
 				print $socstatic->getNomUrl(1);
 			}
 			else

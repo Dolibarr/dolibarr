@@ -631,7 +631,7 @@ function hideMessage(fieldId,message) {
 
 
 /*
- * TODO Used by admin page only ? 
+ * Used by button to set on/off 
  */
 function setConstant(url, code, input, entity, strict) {
 	$.get( url, {
@@ -689,7 +689,7 @@ function setConstant(url, code, input, entity, strict) {
 }
 
 /*
- * TODO Used by admin page only ? 
+ * Used by button to set on/off  
  */
 function delConstant(url, code, input, entity, strict) {
 	$.get( url, {
@@ -743,7 +743,7 @@ function delConstant(url, code, input, entity, strict) {
 }
 
 /*
- * TODO Used by admin page only ? 
+ * Used by button to set on/off  
  */
 function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict) {
 	var boxConfirm = box;

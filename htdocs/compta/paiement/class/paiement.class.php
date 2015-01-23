@@ -2,6 +2,8 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -212,16 +214,17 @@ class Paiement extends CommonObject
 
                             //Invoice types that are eligible for changing status to paid
 							$affected_types = array(
-								0,
-								1,
-								2,
-								3
+								Facture::TYPE_STANDARD,
+								Facture::TYPE_REPLACEMENT,
+								Facture::TYPE_CREDIT_NOTE,
+								Facture::TYPE_DEPOSIT,
+								Facture::TYPE_SITUATION
 							);
 
-                            if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice. We do nothing more.");
+                            if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice, nor situation invoice. We do nothing more.");
                             else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
-                            else 
+                            else
                             {
                                 $result=$invoice->set_paid($user,'','');
                                 if ($result<0)
@@ -360,8 +363,8 @@ class Paiement extends CommonObject
 			{
 				// Appel des triggers
 				$result=$this->call_trigger('PAYMENT_DELETE', $user);
-				if ($result < 0) 
-				{ 
+				if ($result < 0)
+				{
 				    $this->db->rollback();
 				    return -1;
 				 }
@@ -422,7 +425,6 @@ class Paiement extends CommonObject
 
             $totalamount=$this->amount;
             if (empty($totalamount)) $totalamount=$this->total; // For backward compatibility
-            if ($mode == 'payment') $totalamount=$totalamount;
             if ($mode == 'payment_supplier') $totalamount=-$totalamount;
 
             // Insert payment into llx_bank
@@ -483,7 +485,7 @@ class Paiement extends CommonObject
                                     $bank_line_id,
                                     $fac->thirdparty->id,
                                     DOL_URL_ROOT.'/comm/card.php?socid=',
-                                    $fac->thirdparty->nom,
+                                    $fac->thirdparty->name,
                                     'company'
                                 );
                                 if ($result <= 0) dol_print_error($this->db);
@@ -501,7 +503,7 @@ class Paiement extends CommonObject
                                     $bank_line_id,
                                     $fac->thirdparty->id,
                                     DOL_URL_ROOT.'/fourn/card.php?socid=',
-                                    $fac->thirdparty->nom,
+                                    $fac->thirdparty->name,
                                     'company'
                                 );
                                 if ($result <= 0) dol_print_error($this->db);
@@ -746,11 +748,12 @@ class Paiement extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = $langs->trans("ShowPayment").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"),'payment').$lienfin);
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;

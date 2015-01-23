@@ -18,6 +18,24 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (1, '60', 'Entreprise Individuelle à Responsabilité Limitée (EIRL)', 1);
+
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_MODIFY','Intervention modified','Executed when a intervention is modified','ficheinter',19);
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention delete','Executed when a intervention is delete','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLASSIFY_BILLED','Intervention set billed','Executed when a intervention is set to billed (when option FICHINTER_CLASSIFY_BILLED is set)','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLASSIFY_UNBILLED','Intervention set unbilled','Executed when a intervention is set to unbilled (when option FICHINTER_CLASSIFY_BILLED is set)','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_REOPEN','Intervention opened','Executed when a intervention is re-opened','ficheinter',19);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFY_BILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
+
+-- VPGSQL8.2 ALTER TABLE llx_contrat ALTER COLUMN fk_commercial_signature DROP NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_contrat ALTER COLUMN fk_commercial_suivi DROP NOT NULL;
+ALTER TABLE llx_contrat MODIFY fk_commercial_signature integer NULL;
+ALTER TABLE llx_contrat MODIFY fk_commercial_suivi integer NULL;
+
+ALTER TABLE llx_notify ADD COLUMN fk_soc integer NULL after fk_action;
+ALTER TABLE llx_notify ADD COLUMN type varchar(16) DEFAULT 'email' after fk_soc;
+
 ALTER TABLE llx_bank_account ADD COLUMN fk_user_author integer;
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN color varchar(9);
@@ -38,18 +56,16 @@ ALTER TABLE llx_fichinter ADD COLUMN ref_ext 	varchar(255);
 -- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
 ALTER TABLE llx_c_typent ADD COLUMN fk_country integer NULL AFTER libelle;
 
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (29,'FICHINTER_CLASSIFY_BILLED','Classify intervention as billed','Executed when a intervention is classified as billed (when option FICHINTER_DISABLE_DETAILS is set)','ficheinter',19);
-
 INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
 
 ALTER TABLE llx_user ADD COLUMN fk_user_creat integer AFTER tms;
 ALTER TABLE llx_user ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
 
 -- Add module accounting Expert
-ALTER TABLE llx_bookkeeping RENAME TO llx_accounting_bookkeeping; -- To update old user of module Accounting Expert
- 
+--ALTER TABLE llx_bookkeeping RENAME TO llx_accounting_bookkeeping; -- To update old user of module Accounting Expert -> Line should be added into file sql/x.y.z-a.b.c.sql of module. 
 
-CREATE TABLE llx_accounting_bookkeeping 
+
+CREATE TABLE llx_accounting_bookkeeping
 (
   rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   doc_date			date NOT NULL,
@@ -74,12 +90,11 @@ ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL 
 ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT NULL AFTER account_number;
 
 ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
-ALTER TABLE llx_accountingaccount add column datec datetime NOT NULL AFTER entity;
-ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
+ALTER TABLE llx_accountingaccount add column datec datetime AFTER entity;
 ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
 ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;
 
--- Qual 
+-- Qual
 UPDATE llx_const SET name = 'ACCOUNTING_MODE' WHERE name = 'COMPTA_MODE';
 UPDATE llx_const SET name = 'ACCOUNTING_ACCOUNT_CUSTOMER' WHERE name = 'COMPTA_ACCOUNT_CUSTOMER';
 UPDATE llx_const SET name = 'ACCOUNTING_ACCOUNT_SUPPLIER' WHERE name = 'COMPTA_ACCOUNT_SUPPLIER';
@@ -87,6 +102,8 @@ UPDATE llx_const SET name = 'ACCOUNTING_PRODUCT_BUY_ACCOUNT' WHERE name = 'COMPT
 UPDATE llx_const SET name = 'ACCOUNTING_PRODUCT_SOLD_ACCOUNT' WHERE name = 'COMPTA_PRODUCT_SOLD_ACCOUNT';
 UPDATE llx_const SET name = 'ACCOUNTING_SERVICE_BUY_ACCOUNT' WHERE name = 'COMPTA_SERVICE_BUY_ACCOUNT';
 UPDATE llx_const SET name = 'ACCOUNTING_SERVICE_SOLD_ACCOUNT' WHERE name = 'COMPTA_SERVICE_SOLD_ACCOUNT';
+UPDATE llx_const SET name = 'ACCOUNTING_VAT_ACCOUNT' WHERE name = 'COMPTA_VAT_ACCOUNT';
+UPDATE llx_const SET name = 'ACCOUNTING_VAT_BUY_ACCOUNT' WHERE name = 'COMPTA_VAT_BUY_ACCOUNT';
 
 -- Compatibility with module Accounting Expert
 UPDATE llx_const SET name = 'ACCOUNTING_SEPARATORCSV' WHERE name = 'ACCOUNTINGEX_SEPARATORCSV';
@@ -112,6 +129,7 @@ DROP TABLE llx_compta_compte_generaux;
 -- Align size for accounting account
 ALTER TABLE llx_accountingaccount MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN account_parent varchar(32);
+ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
 ALTER TABLE llx_accountingdebcred MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_bank_account MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_c_chargesociales MODIFY COLUMN accountancy_code varchar(32);
@@ -134,6 +152,9 @@ ALTER TABLE llx_user ADD COLUMN weeklyhours double(16,8);
 ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_date;
 
 ALTER TABLE llx_actioncomm_resources CHANGE COLUMN transparent transparency smallint default 1;
+
+ALTER TABLE llx_actioncomm_resources DROP INDEX idx_actioncomm_resources_idx1;
+ALTER TABLE llx_actioncomm_resources ADD UNIQUE INDEX uk_actioncomm_resources(fk_actioncomm, element_type, fk_element);
 
 
 -- Localtaxes by thirds
@@ -172,7 +193,6 @@ ALTER TABLE llx_product MODIFY COLUMN fk_barcode_type INTEGER NULL DEFAULT NULL;
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type NOT IN (SELECT rowid from llx_c_barcode_type);
-ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
 
 
 -- Added missing relations of llx_product_price
@@ -203,8 +223,8 @@ create table llx_accounting_fiscalyear
 	fk_user_modif	integer NULL
 )ENGINE=innodb;
 
-ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref;
-ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30) after ref_ext;
+ALTER TABLE llx_contrat ADD COLUMN ref_supplier varchar(30) after ref;
+ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref_supplier;
 
 ALTER TABLE llx_propal ADD COLUMN fk_shipping_method integer AFTER date_livraison;
 ALTER TABLE llx_commande ADD COLUMN fk_shipping_method integer AFTER date_livraison;
@@ -1011,12 +1031,14 @@ create table llx_c_email_templates
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
   module          varchar(32),                    -- Nom du module en rapport avec le modele
   type_template   varchar(32),  				  -- template for which type of email (send invoice by email, send order, ...)
+  lang            varchar(6),
   private         smallint DEFAULT 0 NOT NULL,    -- Template public or private
   fk_user         integer,                        -- Id utilisateur si modele prive, sinon null
   datec           datetime,
   tms             timestamp,
   label           varchar(255),					  -- Label of predefined email
   position        smallint,					      -- Position
+  active          tinyint DEFAULT 1  NOT NULL,
   topic			  text,                           -- Predefined topic
   content         text                            -- Predefined text
 ) ENGINE=innodb;
@@ -1054,6 +1076,9 @@ ALTER TABLE llx_adherent CHANGE COLUMN civilite civility VARCHAR(6);
 ALTER TABLE llx_socpeople CHANGE COLUMN civilite civility VARCHAR(6);
 ALTER TABLE llx_user CHANGE COLUMN civilite civility VARCHAR(6);
 
+ALTER TABLE llx_societe MODIFY COLUMN nom varchar(128);
+ALTER TABLE llx_adherent MODIFY COLUMN societe varchar(128);
+
 ALTER TABLE llx_c_type_fees CHANGE COLUMN libelle label VARCHAR(30);
 ALTER TABLE llx_c_type_fees ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER label;
 
@@ -1083,3 +1108,45 @@ CREATE TABLE llx_usergroup_extrafields (
 ) ENGINE=innodb;
 
 ALTER TABLE llx_usergroup_extrafields ADD INDEX idx_usergroup_extrafields (fk_object);
+
+ALTER TABLE llx_contrat ADD COLUMN model_pdf varchar(255) DEFAULT NULL AFTER note_public;
+
+ALTER TABLE llx_c_country ADD COLUMN favorite tinyint DEFAULT 0 AFTER active;
+UPDATE llx_c_country SET favorite = '1' WHERE rowid = '0';
+
+ALTER TABLE llx_c_email_templates DROP INDEX uk_c_email_templates;
+ALTER TABLE llx_c_email_templates ADD UNIQUE INDEX uk_c_email_templates(entity, label, lang);
+ALTER TABLE llx_c_email_templates ADD INDEX idx_type(type_template);
+
+-- Remove OSC module
+DELETE FROM llx_const WHERE name = 'MAIN_MODULE_BOUTIQUE';
+DELETE FROM llx_const WHERE name = 'OSC_DB_HOST';
+DELETE FROM llx_menu WHERE module = 'boutique';
+
+-- Add option always editable on extrafield
+ALTER TABLE llx_extrafields ADD alwayseditable INTEGER DEFAULT 0 AFTER pos;
+
+-- add supplier webservice fields
+ALTER TABLE llx_societe ADD webservices_url varchar(255) DEFAULT NULL;
+ALTER TABLE llx_societe ADD webservices_key varchar(128) DEFAULT NULL;
+
+-- changes size of ref in commande_fourn and facture_fourn
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN ref VARCHAR(255);
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN ref_ext VARCHAR(255);
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN ref_supplier VARCHAR(255);
+
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref VARCHAR(255);
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_ext VARCHAR(255);
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_supplier VARCHAR(255);
+
+UPDATE llx_facture_fourn SET ref = rowid WHERE ref IS NULL or ref = '';
+
+ALTER TABLE llx_facture_rec ADD COLUMN revenuestamp double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN tva_tx double(6,3);
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_contract_line integer NULL;
+
+ALTER TABLE llx_resource MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
+
+-- This request make mysql drop (mysql bug, so we add it at end):
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
+

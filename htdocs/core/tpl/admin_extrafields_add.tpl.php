@@ -39,19 +39,20 @@
     		}
     		?>
 
-    		if (type == 'date') { size.val('').attr('disabled','disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); }
-    		else if (type == 'datetime') { size.val('').attr('disabled','disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); }
-    		else if (type == 'double') { size.val('24,8').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); }
-    		else if (type == 'int') { size.val('10').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); }
-    		else if (type == 'text') { size.val('2000').removeAttr('disabled'); unique.attr('disabled','disabled').removeAttr('checked'); jQuery("#value_choice").hide(); }
-    		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); }
-    		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
-    		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
-    		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();}
-    		else if (type == 'sellist') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").show();}
-    		else if (type == 'checkbox') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();}
-    		else if (type == 'radio') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();}
-    		else if (type == 'separate') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  required.val('').attr('disabled','disabled'); default_value.val('').attr('disabled','disabled'); jQuery("#value_choice").hide();}
+    		if (type == 'date') { size.val('').attr('disabled','disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
+    		else if (type == 'datetime') { size.val('').attr('disabled','disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'double') { size.val('24,8').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'int') { size.val('10').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'text') { size.val('2000').removeAttr('disabled'); unique.attr('disabled','disabled').removeAttr('checked'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
+    		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
+    		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'sellist') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").show();jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'checkbox') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'radio') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'separate') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  required.val('').attr('disabled','disabled'); default_value.val('').attr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'chkbxlst') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").hide(); jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").show();}
     		else size.val('').attr('disabled','disabled');
     	}
     	init_typeoffields('<?php echo GETPOST('type'); ?>');
@@ -87,10 +88,11 @@
 </td>
 <td>
 <table class="nobordernopadding">
-<tr><td width="30%">
-	<textarea name="param" id="param"><?php echo GETPOST('param'); ?></textarea>
+<tr><td>
+	<textarea name="param" id="param" cols="80" rwos="<?php echo ROWS_4 ?>"><?php echo GETPOST('param'); ?></textarea>
 </td><td id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></td>
-<td id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></td></tr>
+<td><span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
+<span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span></td></tr>
 </table>
 </td>
 
@@ -101,6 +103,8 @@
 <tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique" <?php echo (GETPOST('unique')?' checked="true"':''); ?>></td></tr>
 <!-- Required -->
 <tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo (GETPOST('required')?' checked="true"':''); ?>></td></tr>
+<!-- Always editable -->
+<tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo (GETPOST('alwayseditable')?' checked="true"':''); ?>></td></tr>
 </table>
 
 <div align="center"><br><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp;

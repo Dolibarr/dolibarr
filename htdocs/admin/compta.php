@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load('admin');
 $langs->load('compta');
+$langs->load('accountancy');
 
 if (!$user->admin)
 accessforbidden();
@@ -134,7 +135,6 @@ print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 print "</td></tr>\n";
 print '<tr '.$bc[true].'><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
-print '</form>';
 
 print "</table>\n";
 
@@ -153,7 +153,7 @@ foreach ($list as $key)
 	print '<tr '.$bc[$var].' class="value">';
 
 	// Param
-	$libelle = $langs->trans($key); 
+	$libelle = $langs->trans($key);
 	print '<td><label for="'.$key.'">'.$libelle.'</label></td>';
 
 	// Value
@@ -162,11 +162,10 @@ foreach ($list as $key)
 	print '</td></tr>';
 }
 
-print '</form>';
 print "</table>\n";
 
 print '<br /><br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
-
+print '</form>';
 $db->close();
 
 llxFooter();

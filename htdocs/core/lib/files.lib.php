@@ -139,6 +139,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 								$level1name=(isset($reg[1])?$reg[1]:'');
 								$file_list[] = array(
 										"name" => $file,
+										"path" => $path,
 										"level1name" => $level1name,
 										"fullname" => $path.'/'.$file,
 										"date" => $filedate,
@@ -166,6 +167,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 							$level1name=(isset($reg[1])?$reg[1]:'');
 							$file_list[] = array(
 									"name" => $file,
+									"path" => $path,
 									"level1name" => $level1name,
 									"fullname" => $path.'/'.$file,
 									"date" => $filedate,
@@ -954,7 +956,7 @@ function dol_meta_create($object)
 		if (is_dir($dir))
 		{
 			$nblignes = count($object->lines);
-			$client = $object->client->nom . " " . $object->client->address . " " . $object->client->zip . " " . $object->client->town;
+			$client = $object->client->name . " " . $object->client->address . " " . $object->client->zip . " " . $object->client->town;
 			$meta = "REFERENCE=\"" . $object->ref . "\"
 			DATE=\"" . dol_print_date($object->date,'') . "\"
 			NB_ITEMS=\"" . $nblignes . "\"
@@ -1636,14 +1638,14 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		else $original_file=$conf->facture->dir_output.'/payments/'.$original_file;
 	}
 
-	// Wrapping pour les exports de compta
+	// Wrapping for accounting exports
 	else if ($modulepart == 'export_compta')
 	{
-		if ($fuser->rights->compta->ventilation->creer || preg_match('/^specimen/i',$original_file))
+		if ($fuser->rights->accounting->ventilation->dispatch || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->compta->dir_output.'/'.$original_file;
+		$original_file=$conf->accounting->dir_output.'/'.$original_file;
 	}
 
 	// Wrapping pour les expedition

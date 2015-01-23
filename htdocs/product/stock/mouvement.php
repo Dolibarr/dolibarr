@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ $offset = $conf->liste_limit * $page;
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $year='';
     $month='';
@@ -332,9 +332,13 @@ if ($resql)
 
         print '</table>';
 
-        print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
-        print '</form>';
+        print '<div class="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
+        
+		print '</form>';
     }
 
     /*
@@ -370,8 +374,11 @@ if ($resql)
 
         print '</table>';
 
-        print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+        print '<div class="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
         print '</form>';
     }
@@ -406,8 +413,8 @@ if ($resql)
     if ($search_product_ref) $param.='&search_product_ref='.urlencode($search_product_ref);
     if ($search_product)   $param.='&search_product='.urlencode($search_product);
     if ($search_warehouse) $param.='&search_warehouse='.urlencode($search_warehouse);
-    if ($sref) $param.='&sref='.urlencode($sref);
-    if ($snom) $param.='&snom='.urlencode($snom);
+    if (!empty($sref)) $param.='&sref='.urlencode($sref); // FIXME $sref is not defined
+    if (!empty($snom)) $param.='&snom='.urlencode($snom); // FIXME $snom is not defined
     if ($search_user)    $param.='&search_user='.urlencode($search_user);
     if ($idproduct > 0)  $param.='&idproduct='.$idproduct;
     if ($id) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,0,'');
@@ -461,7 +468,6 @@ if ($resql)
     print '</td>';
     print '<td class="liste_titre" align="right">';
     print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print '&nbsp; ';
     print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
     print "</tr>\n";

@@ -55,13 +55,13 @@ $date_endyear = GETPOST('date_endyear');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->access)
-	accessforbidden();
 
 $action = GETPOST('action');
 
+
+
 /*
- * View
+ * Actions
  */
 
 $year_current = strftime("%Y", dol_now());
@@ -154,9 +154,6 @@ if ($result) {
 	dol_print_error($db);
 }
 
-/*
- * Actions
-*/
 // Bookkeeping Write
 if ($action == 'writebookkeeping') {
 	$now = dol_now();
@@ -239,9 +236,16 @@ if ($action == 'writebookkeeping') {
 	}
 }
 
-// export csv
 
-if ($action == 'export_csv') {
+/*
+ * View
+ */
+
+$companystatic = new Fournisseur($db);
+
+// export csv
+if ($action == 'export_csv')
+{
 	$sep = $conf->global->ACCOUNTING_SEPARATORCSV;
 
 	header('Content-Type: text/csv');
@@ -402,7 +406,6 @@ if ($action == 'export_csv') {
 	$r = '';
 
 	$invoicestatic = new FactureFournisseur($db);
-	$companystatic = new Fournisseur($db);
 
 	foreach ( $tabfac as $key => $val ) {
 		$invoicestatic->id = $key;

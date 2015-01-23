@@ -214,11 +214,11 @@ print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.d
 print '</tr>';
 print '</table>';
 
-print '<center><br>';
+print '<br><div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="norss" value="'.($lastexternalrss+1).'">';
-print '<br><br>';
+print '</div><br><br>';
 
 print '</form>';
 

@@ -21,6 +21,6 @@ CREATE TABLE IF NOT EXISTS llx_usergroup_extrafields (
   tms                       timestamp,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
-) ENGINE=InnoDB ;
+)ENGINE=innodb;
 
 

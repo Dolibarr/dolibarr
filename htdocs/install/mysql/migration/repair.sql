@@ -115,7 +115,7 @@ ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseu
 -- Fix: deprecated tag to new one
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
-
+update llx_opensurvey_sondage set tms = now();
 
 -- ALTER TABLE llx_facture_fourn ALTER COLUMN fk_cond_reglement DROP NOT NULL;
 
@@ -148,6 +148,8 @@ UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
 UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 and (fk_user_action is null or fk_user_action = 0);
 UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author > 0 and (fk_user_action is null or fk_user_action = 0);
 
+
+UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS NULL and task_date IS NOT NULL;
 
 
 -- Requests to clean old tables or external modules tables
@@ -185,3 +187,30 @@ UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author >
 -- update llx_facturedet set total_tva = total_ttc - total_ht where total_vat = 0;
 -- update llx_facture set total = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
 -- update llx_facture set tva = total_ttc - total where tva = 0;
+
+-- To insert elements into a category
+-- Search idcategory: select rowid from llx_categorie where type=0 and ref like '%xxx%'
+-- Select all products to include: select * from llx_product where ref like '%xxx%'
+-- If ok, insert: insert into llx_categorie_product(fk_categorie, fk_product) select idcategory, rowid from llx_product where ref like '%xxx%'
+-- List of product with a category xxx: select distinct cp.fk_product from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' order by fk_product;
+-- List of product into 2 categories xxx: select cp.fk_product, count(cp.fk_product) as nb from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' group by fk_product having nb > 1;
+-- List of product with no category xxx yet: select rowid, ref from llx_product where rowid not in (select distinct cp.fk_product from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' order by fk_product);
+
+-- Replace xxx with your IP Address 
+-- bind-address        = xxx.xxx.xxx.xxx
+-- CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypass';
+-- CREATE USER 'myuser'@'%' IDENTIFIED BY 'mypass';
+-- GRANT ALL ON *.* TO 'myuser'@'localhost';
+-- GRANT ALL ON *.* TO 'myuser'@'%';
+-- flush privileges;
+
+-- Fix type of product 2 does not exists
+update llx_propaldet set product_type = 1 where product_type = 2;
+update llx_commandedet set product_type = 1 where product_type = 2;
+update llx_facturedet set product_type = 1 where product_type = 2;
+--update llx_propaldet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
+--update llx_commandedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
+--update llx_facturedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
+
+
+

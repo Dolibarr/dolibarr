@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +124,7 @@ if ($id > 0 || ! empty($ref))
 
 
         if ($user->rights->facture->lire) {
-            $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
+            $sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client,";
             $sql.= " f.facnumber, f.total as total_ht,";
             $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
@@ -155,7 +156,7 @@ if ($id > 0 || ! empty($ref))
                 print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
                 print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
                 print_liste_field_titre($langs->trans("Qty"),$_SERVER["PHP_SELF"],"d.qty","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
-                print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
+                print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
                 print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
                 print "</tr>\n";
 
@@ -171,7 +172,7 @@ if ($id > 0 || ! empty($ref))
                         $invoicestatic->ref=$objp->facnumber;
                         print $invoicestatic->getNomUrl(1);
                         print "</td>\n";
-                        print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+                        print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';
                         print "<td>".$objp->code_client."</td>\n";
                         print '<td align="center">';
                         print dol_print_date($db->jdate($objp->datef),'day')."</td>";
