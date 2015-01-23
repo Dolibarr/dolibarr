@@ -594,45 +594,35 @@ function canApplySubtotalOn($tablename)
 }
 
 /**
- * getClientName
- *
- * @param unknown_type $id
- */
-function getClientName($id) {
-   global $db, $classname;
-   $element = new $classname($db);
-   $element->fetch($id);
-   $element->fetch_thirdparty();
-   return $element->thirdparty->name;
-}
-
-/**
- * getClientNameArray
- *
- * @param unknown_type $elementarray
- */
-function getClientNameArray($elementarray) {
-   $clientname = array();
-   foreach ($elementarray as $key => $id) {
-      $clientname[$id] = getClientName($id);
-   }
-   return $clientname;
-}
-
-/**
  * sortElementsByClientName
  *
- * @param unknown_type $elementarray
+ * @param 	array		$elementarray	Element array
+ * @return	array						Element array sorted
  */
-function sortElementsByClientName($elementarray) {
-   $clientname = getClientNameArray($elementarray);
-   asort($clientname);
+function sortElementsByClientName($elementarray)
+{
+	global $db, $classname;
 
-   $elementarray = array();
-   foreach ($clientname as $id => $name) {
-      $elementarray[] = $id;
-   }
+	$element = new $classname($db);
 
-   return $elementarray;
+	$clientname = array();
+	foreach ($elementarray as $key => $id)
+	{
+		if (empty($clientname[$id]))
+		{
+			$element->id = $id;
+			$element->fetch_thirdparty();
+			$clientname[$id] = $element->thirdparty->name;
+		}
+	}
+
+	asort($clientname);
+
+	$elementarray = array();
+	foreach ($clientname as $id => $name) {
+		$elementarray[] = $id;
+	}
+
+	return $elementarray;
 }
 
