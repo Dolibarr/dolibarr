@@ -74,6 +74,11 @@ if ($search_status == '') $search_status=-1;
  *	View
  */
 
+$thirdpartytmp = new Fournisseur($db);
+$commandestatic=new CommandeFournisseur($db);
+$formfile = new FormFile($db);
+$formorder = new FormOrder($db);
+
 $title = $langs->trans("SuppliersOrders");
 if ($socid > 0)
 {
@@ -83,11 +88,6 @@ if ($socid > 0)
 }
 
 llxHeader('',$title);
-
-$commandestatic=new CommandeFournisseur($db);
-$formfile = new FormFile($db);
-$formorder = new FormOrder($db);
-
 
 if ($sortorder == "") $sortorder="DESC";
 if ($sortfield == "") $sortfield="cf.date_creation";
@@ -100,12 +100,13 @@ $offset = $conf->liste_limit * $page ;
 
 $sql = "SELECT s.rowid as socid, s.nom as name, cf.date_commande as dc,";
 $sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author,cf.date_livraison,";
+$sql.= " p.rowid as project_id, p.ref as project_ref,";
 $sql.= " u.login";
-$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= ")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cf.fk_projet";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cf.fk_soc = s.rowid ";
 $sql.= " AND cf.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -172,14 +173,15 @@ if ($resql)
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($socid)					$param.="&socid=".$socid;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
-	
+
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"cf.ref_supplier","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
+	if (empty($conf->global->SUPPLIER_ORDER_HIDE_REF_SUPPLIER)) print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"cf.ref_supplier","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Thirdparty"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
+	if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"total_ttc","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","",$param,'align="center"',$sortfield,$sortorder);
@@ -191,8 +193,13 @@ if ($resql)
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$search_ref.'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_refsupp" value="'.$search_refsupp.'"></td>';
+	if (empty($conf->global->SUPPLIER_ORDER_HIDE_REF_SUPPLIER)) print '<td class="liste_titre"><input type="text" class="flat" name="search_refsupp" value="'.$search_refsupp.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'.$search_company.'"></td>';
+	if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS))
+	{
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$search_user.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$search_ttc.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -231,12 +238,24 @@ if ($resql)
 		print '</td>'."\n";
 
 		// Ref Supplier
-		print '<td>'.$obj->ref_supplier.'</td>'."\n";
+		if (empty($conf->global->SUPPLIER_ORDER_HIDE_REF_SUPPLIER)) print '<td>'.$obj->ref_supplier.'</td>'."\n";
 
+		// Thirdparty
+		print '<td>';
+		$thirdpartytmp->id = $obj->socid;
+		$thirdpartytmp->name = $obj->name;
+		print $thirdpartytmp->getNomUrl(1,'supplier');
+		print '</td>'."\n";
 
-		// Company
-		print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
-		print $obj->name.'</a></td>'."\n";
+		// Project
+		if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS))
+		{
+			$projectstatic->id=$obj->project_id;
+			$projectstatic->ref=$obj->project_ref;
+			print '<td>';
+			if ($obj->project_id > 0) print $projectstatic->getNomUrl(1);
+			print '</td>';
+		}
 
 		// Author
 		$userstatic->id=$obj->fk_user_author;
@@ -275,7 +294,7 @@ if ($resql)
 	}
 	print "</table>\n";
 	print "</form>\n";
-	
+
 	print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';
 
 	$db->free($resql);
