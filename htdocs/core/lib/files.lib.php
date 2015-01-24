@@ -1876,3 +1876,49 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 
 	return $ret;
 }
+
+/**
+ * Store object in file
+ *
+ * @param string $directory Directory of cache
+ * @param string $filename Name of filecache
+ * @param mixed $object Object to store in cachefile
+ * @return void
+ */
+function dol_filecache($directory, $filename, $object)
+{
+    if (! dol_is_dir($directory)) dol_mkdir($directory);
+    $cachefile = $directory . $filename;
+    file_put_contents($cachefile, serialize($object), LOCK_EX);
+    @chmod($cachefile, 0644);
+}
+
+/**
+ * Test if Refresh needed
+ *
+ * @param string $directory Directory of cache
+ * @param string $filename Name of filecache
+ * @param int $cachetime Cachetime delay
+ * @return boolean 0 no refresh 1 if refresh needed
+ */
+function dol_cache_refresh($directory, $filename, $cachetime)
+{
+    $now = dol_now();
+    $cachefile = $directory . $filename;
+    $refresh = !file_exists($cachefile) || ($now-$cachetime) > dol_filemtime($cachefile);
+    return $refresh;
+}
+
+/**
+ * Read object from cachefile
+ *
+ * @param string $directory Directory of cache
+ * @param string $filename Name of filecache
+ * @return mixed Unserialise from file
+ */
+function dol_readcachefile($directory, $filename)
+{
+    $cachefile = $directory . $filename;
+    $object = unserialize(file_get_contents($cachefile));
+    return $object;
+}

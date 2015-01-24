@@ -106,17 +106,18 @@ class box_comptes extends ModeleBoxes
 
                     $solde_total[$objp->currency_code] += $solde;
 
+                    $tooltip = $langs->trans('Account').': '.$objp->label . '<br>' . $langs->trans('AccountNumber').': '.$objp->number;
                     $this->info_box_contents[$i][0] = array(
                         'td' => 'align="left" width="16"',
                         'logo' => $this->boximg,
-                        'tooltip' => $langs->trans('Account').': '.$objp->label,
+                        'tooltip' => $tooltip,
                         'url' => DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid,
                     );
 
                     $this->info_box_contents[$i][1] = array(
                         'td' => 'align="left"',
                         'text' => $objp->label,
-                        'tooltip' => $langs->trans('Account').': '.$objp->label,
+                        'tooltip' => $tooltip,
                         'url' => DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid,
                     );
 
@@ -151,7 +152,7 @@ class box_comptes extends ModeleBoxes
 
                     $this->info_box_contents[$i][3] = array(
                         'td' => 'align="right" class="liste_total"',
-                        'text' => price($solde, 0, $langs, 0, 0, -1, $key)
+                        'text' => price($solde, 0, $langs, 0, -1, -1, $key)
                     );
                     $i++;
                 }

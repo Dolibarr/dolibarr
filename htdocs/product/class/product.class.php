@@ -2814,8 +2814,12 @@ class Product extends CommonObject
 		$result='';
         $newref=$this->ref;
         if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
-        if ($this->type == 0) $label = $langs->trans("ShowProduct").': '.$this->ref.' '.$this->label;
-        if ($this->type == 1) $label = $langs->trans("ShowService").': '.$this->ref.' '.$this->label;
+        if ($this->type == 0) $label = '<u>' . $langs->trans("ShowProduct") . '</u>';
+        if ($this->type == 1) $label = '<u>' . $langs->trans("ShowService") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->label))
+            $label .= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->label;
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if ($option == 'supplier') {

@@ -859,6 +859,8 @@ class Facture extends CommonInvoice
 		if ($this->type == self::TYPE_DEPOSIT) $picto.='d';	// Deposit invoice
 
 		$label=$langs->trans("ShowInvoice").': '.$this->ref;
+        if (! empty($this->ref_client))
+            $label.= '<br>' . $langs->trans('RefCustomer') . $this->ref_client;
 		if ($this->type == self::TYPE_REPLACEMENT) $label=$langs->transnoentitiesnoconv("ShowInvoiceReplace").': '.$this->ref;
 		if ($this->type == self::TYPE_CREDIT_NOTE) $label=$langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
 		if ($this->type == self::TYPE_DEPOSIT) $label=$langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;

@@ -4,6 +4,7 @@ Sending=Shipment
 Sendings=Shipments
 Shipment=Shipment
 Shipments=Shipments
+ShowSending=Show Sending
 Receivings=Receivings
 SendingsArea=Shipments area
 ListOfSendings=List of shipments

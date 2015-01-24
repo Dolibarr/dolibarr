@@ -83,8 +83,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 				$langs->load("stocks");
 				$num = $db->num_rows($result);
 				$i = 0;
-				while ($i < $num)
-				{
+                while ($i < $num) {
 					$objp = $db->fetch_object($result);
 					$datem=$db->jdate($objp->tms);
 
@@ -106,13 +105,20 @@ class box_produits_alerte_stock extends ModeleBoxes
 						}
 					}
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
-                    'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
+                    $tooltip = $langs->trans('Product') . ': ' . $objp->label;
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
+                        'tooltip' => $tooltip,
+                        'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->label,
-                    'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->label,
+                        'tooltip' => $tooltip,
+                        'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid,
+                    );
 
 					if ($objp->price_base_type == 'HT')
 					{
@@ -124,33 +130,49 @@ class box_produits_alerte_stock extends ModeleBoxes
 						$price=price($objp->price_ttc);
 						$price_base_type=$langs->trans("TTC");
 					}
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-                    'text' => $price);
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="right"',
+                        'text' => $price,
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left" class="nowrap"',
-                    'text' => $price_base_type);
+                    $this->info_box_contents[$i][3] = array(
+                        'td' => 'align="left" class="nowrap"',
+                        'text' => $price_base_type,
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="center"',
-                    'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
-					'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit")));
+                    $this->info_box_contents[$i][4] = array(
+                        'td' => 'align="center"',
+                        'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
+                        'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit")),
+                    );
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
-                    'text' => $productstatic->LibStatut($objp->tosell,3,0));
+                    $this->info_box_contents[$i][5] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $productstatic->LibStatut($objp->tosell,3,0),
+                    );
 
-                    $this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
-                    'text' => $productstatic->LibStatut($objp->tobuy,3,1));
+                    $this->info_box_contents[$i][6] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $productstatic->LibStatut($objp->tobuy,3,1),
+                    );
 
                     $i++;
-				}
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoTooLowStockProducts"));
+                }
+                if ($num==0)
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoTooLowStockProducts"),
+                    );
 
 				$db->free($result);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
+				$this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
 			}
 		}
 		else {

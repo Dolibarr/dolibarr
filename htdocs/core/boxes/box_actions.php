@@ -95,10 +95,11 @@ class box_actions extends ModeleBoxes
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
 					$label=empty($objp->label)?$objp->type_label:$objp->label;
 
+                    $tooltip = $langs->trans('Action'.$objp->code).': '.$label;
                     $this->info_box_contents[$i][0] = array(
                         'td' => 'align="left" width="16"',
                         'logo' => ("action"),
-                        'tooltip' => $langs->trans('Action'.$objp->code).': '.$label,
+                        'tooltip' => $tooltip,
                         'url' => DOL_URL_ROOT."/comm/action/card.php?id=".$objp->id,
                     );
 
@@ -106,21 +107,22 @@ class box_actions extends ModeleBoxes
                         'td' => 'align="left"',
                         'text' => dol_trunc($label,32),
                         'text2'=> $late,
-                        'tooltip' => $langs->trans('Action'.$objp->code).': '.$label,
+                        'tooltip' => $tooltip,
                         'url' => DOL_URL_ROOT."/comm/action/card.php?id=".$objp->id,
                     );
 
+                    $tooltip = $langs->trans('Customer').': '.$objp->name;
                     $this->info_box_contents[$i][2] = array(
                         'td' => 'align="left" width="16"',
                         'logo' => ($objp->socid?'company':''),
-                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'tooltip' => $tooltip,
                         'url' => ($objp->socid?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid:''),
                     );
 
                     $this->info_box_contents[$i][3] = array(
                         'td' => 'align="left"',
                         'text' => dol_trunc($objp->name,24),
-                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'tooltip' => $tooltip,
                         'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid,
                     );
 
@@ -142,9 +144,13 @@ class box_actions extends ModeleBoxes
                     $i++;
                 }
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoActionsToDo"));
+                if ($num==0)
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoActionsToDo"),
+                    );
 
-				$db->free($result);
+                $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => 'align="left"',
@@ -171,8 +177,7 @@ class box_actions extends ModeleBoxes
 	{
 		global $langs, $conf;
 		parent::showBox($this->info_box_head, $this->info_box_contents);
-				if ($conf->global->SHOW_DIALOG_HOMEPAGE)
-		{
+        if ($conf->global->SHOW_DIALOG_HOMEPAGE) {
 			$actioncejour=false;
 			$contents=$this->info_box_contents;
 			$nblines=count($contents);

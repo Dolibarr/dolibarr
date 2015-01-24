@@ -187,13 +187,12 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		$bcx[0] = 'class="box_pair"';
 		$bcx[1] = 'class="box_impair"';
 		$var = false;
-        $now = dol_now();
+
         $cachetime = 900;   // 900 : 15mn
-        $fileid = get_class($this).'id-'.$this->box_id.'-e'.$conf->entity.'-u'.$user->id.'-s'.$user->societe_id.'.cache';
         $cachedir = DOL_DATA_ROOT.'/cache/boxes';
-        if (! dol_is_dir($cachedir)) dol_mkdir($cachedir);
-        $cachefile = $cachedir.'/box-'.$fileid;
-        $refresh = !file_exists($cachefile) || ($now-$cachetime) > dol_filemtime($cachefile);
+        $fileid = get_class($this).'id-'.$this->box_id.'-e'.$conf->entity.'-u'.$user->id.'-s'.$user->societe_id.'.cache';
+        $filename = '/box-'.$fileid;
+        $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
         $out = '';
 
         if ($refresh) {
@@ -335,10 +334,12 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 
             $out.= "</div>\n";
             $out.= "<!-- Box ".get_class($this)." end -->\n\n";
-            file_put_contents($cachefile,serialize($out),LOCK_EX);
+            if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+                dol_filecache($cachedir, $filename, $out);
+            }
         } else {
             dol_syslog(get_class($this).'::showBoxCached');
-            $out = unserialize(file_get_contents($cachefile));
+            $out = dol_readcachefile($cachedir, $filename);
             print "<!-- Box ".get_class($this)." from cache -->";
 
         }

@@ -75,6 +75,7 @@ class box_activity extends ModeleBoxes
         $totalnb = 0;
         $i = 0;
         $cachetime = 3600;
+        $cachedir = DOL_DATA_ROOT.'/cache/boxes';
         $fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->societe_id.'-r'.($user->rights->societe->client->voir?'1':'0').'.cache';
         $now = dol_now();
         $nbofyears=2;
@@ -94,8 +95,9 @@ class box_activity extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $facturestatic=new Facture($db);
 
-            $cachefile = DOL_DATA_ROOT.'/cache/boxes/boxactivity-invoice'.$fileid;
-            $refresh = !file_exists($cachefile) || ($now-$cachetime) > dol_filemtime($cachefile);
+            $filename = '/boxactivity-invoice'.$fileid;
+
+            $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
             $data = array();
             if ($refresh) {
                 $sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
@@ -118,13 +120,15 @@ class box_activity extends ModeleBoxes
                         $data[$j]=$db->fetch_object($result);
                         $j++;
                     }
-                    file_put_contents($cachefile,serialize($data),LOCK_EX);
+                    if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+                        dol_filecache($cachedir, $filename, $data);
+                    }
                     $db->free($result);
                 } else {
                     dol_print_error($db);
                 }
             } else {
-                $data = unserialize(file_get_contents($cachefile));
+                $data = dol_readcachefile($cachedir, $filename);
             }
             if (! empty($data)) {
                 $j=0;
@@ -173,8 +177,9 @@ class box_activity extends ModeleBoxes
                     );
             }
 
-            $cachefile = DOL_DATA_ROOT.'/cache/boxes/boxactivity-invoice2'.$fileid;
-            $refresh = !file_exists($cachefile) || ($now-$cachetime) > dol_filemtime($cachefile);
+            $filename = '/boxactivity-invoice2'.$fileid;
+
+            $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
 
             if ($refresh) {
                 $sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
@@ -193,13 +198,15 @@ class box_activity extends ModeleBoxes
                         $data[$j]=$db->fetch_object($result);
                         $j++;
                     }
-                    file_put_contents($cachefile,serialize($data),LOCK_EX);
+                    if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+                        dol_filecache($cachedir, $filename, $data);
+                    }
                     $db->free($result);
                 } else {
                     dol_print_error($db);
                 }
             } else {
-                $data = unserialize(file_get_contents($cachefile));
+                $data = dol_readcachefile($cachedir, $filename);
             }
             if (! empty($data)) {
                 $j=0;
@@ -255,9 +262,10 @@ class box_activity extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
             $commandestatic=new Commande($db);
 
-            $cachefile = DOL_DATA_ROOT.'/cache/boxes/boxactivity-order'.$fileid;
-            $refresh = !file_exists($cachefile) || ($now-$cachetime) > dol_filemtime($cachefile);
+            $filename = '/boxactivity-order'.$fileid;
+            $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
             $data = array();
+
             if ($refresh) {
 
                 $sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
@@ -282,13 +290,15 @@ class box_activity extends ModeleBoxes
                         $data[$j]=$db->fetch_object($result);
                         $j++;
                     }
-                    file_put_contents($cachefile,serialize($data),LOCK_EX);
+                    if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+                        dol_filecache($cachedir, $filename, $data);
+                    }
                     $db->free($result);
                 } else {
                     dol_print_error($db);
                 }
             } else {
-                $data = unserialize(file_get_contents($cachefile));
+                $data = dol_readcachefile($cachedir, $filename);
             }
             if (! empty($data)) {
                 $j=0;
@@ -334,8 +344,8 @@ class box_activity extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $propalstatic=new Propal($db);
 
-            $cachefile = DOL_DATA_ROOT.'/cache/boxes/boxactivity-propal'.$fileid;
-            $refresh = !file_exists($cachefile) || ($now-$cachetime) > dol_filemtime($cachefile);
+            $filename = '/boxactivity-propal'.$fileid;
+            $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
             $data = array();
             if ($refresh) {
                 $sql = "SELECT p.fk_statut, SUM(p.total) as Mnttot, COUNT(*) as nb";
@@ -360,13 +370,15 @@ class box_activity extends ModeleBoxes
                         $data[$j]=$db->fetch_object($result);
                         $j++;
                     }
-                    file_put_contents($cachefile,serialize($data),LOCK_EX);
+                    if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+                        dol_filecache($cachedir, $filename, $data);
+                    }
                     $db->free($result);
                 } else {
                     dol_print_error($db);
                 }
             } else {
-                $data = unserialize(file_get_contents($cachefile));
+                $data = dol_readcachefile($cachedir, $filename);
             }
             if (! empty($data)) {
                 $j=0;

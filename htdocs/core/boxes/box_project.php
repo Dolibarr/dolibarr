@@ -90,21 +90,24 @@ class box_project extends ModeleBoxes
                 while ($i < $num) {
                     $objp = $db->fetch_object($result);
 
+                    $tooltip = $langs->trans('Project') . ': ' . $objp->ref;
                     $this->info_box_contents[$i][0] = array(
                         'td' => 'align="left" width="16"',
                         'logo' => 'object_project',
-                        'url' => DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid
+                        'tooltip' => $tooltip,
+                        'url' => DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid,
                     );
 
                     $this->info_box_contents[$i][1] = array(
                         'td' => 'align="left"',
                         'text' => $objp->ref,
-                        'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid
+                        'tooltip' => $tooltip,
+                        'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid,
                     );
 
                     $this->info_box_contents[$i][2] = array(
                         'td' => 'align="left"',
-                        'text' => $objp->title
+                        'text' => $objp->title,
                     );
 
 					$sql ="SELECT count(*) as nb, sum(progress) as totprogress";
@@ -114,9 +117,15 @@ class box_project extends ModeleBoxes
 					$resultTask = $db->query($sql);
 					if ($resultTask) {
 						$objTask = $db->fetch_object($resultTask);
-						$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => number_format($objTask->nb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
+                        $this->info_box_contents[$i][3] = array(
+                            'td' => 'align="right"',
+                            'text' => number_format($objTask->nb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"),
+                        );
 						if ($objTask->nb  > 0 )
-							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => number_format(($objTask->totprogress/$objTask->nb), 0, ',', ' ')."%");
+                            $this->info_box_contents[$i][4] = array(
+                                'td' => 'align="right"',
+                                'text' => number_format(($objTask->totprogress/$objTask->nb), 0, ',', ' ')."%",
+                            );
 						else
 							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => "N/A&nbsp;");
 						$totalnbTask += $objTask->nb;
@@ -132,11 +141,28 @@ class box_project extends ModeleBoxes
 
 
 		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][1] = array('td' => '', 'text' => "");
-		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => number_format($num, 0, ',', ' ')."&nbsp;".$langs->trans("Projects"));
-		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => number_format($totalnbTask, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-		$this->info_box_contents[$i][4] = array('td' => '', 'text' => "");
+        $this->info_box_contents[$i][0] = array(
+            'tr' => 'class="liste_total"',
+            'td' => 'align="left" ',
+            'text' => "&nbsp;",
+       );
+        $this->info_box_contents[$i][1] = array(
+            'td' => '',
+            'text' => $langs->trans("Total")."&nbsp;".$textHead,
+             'text' => "&nbsp;",
+        );
+        $this->info_box_contents[$i][2] = array(
+            'td' => 'align="right" ',
+            'text' => number_format($num, 0, ',', ' ')."&nbsp;".$langs->trans("Projects"),
+        );
+        $this->info_box_contents[$i][3] = array(
+            'td' => 'align="right" ',
+            'text' => number_format($totalnbTask, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"),
+        );
+        $this->info_box_contents[$i][4] = array(
+            'td' => '',
+            'text' => "&nbsp;",
+        );
 
 	}
 

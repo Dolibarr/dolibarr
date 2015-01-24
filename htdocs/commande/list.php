@@ -109,7 +109,7 @@ $companystatic = new Societe($db);
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 llxHeader('',$langs->trans("Orders"),$help_url);
 
-$sql = 'SELECT s.nom as name, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
+$sql = 'SELECT s.nom as name, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client,';
 $sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
@@ -334,6 +334,10 @@ if ($resql)
 
         $generic_commande->id=$objp->rowid;
         $generic_commande->ref=$objp->ref;
+        $generic_commande->ref_client = $objp->ref_client;
+        $generic_commande->total_ht = $objp->total_ht;
+        $generic_commande->total_tva = $objp->total_tva;
+        $generic_commande->total_ttc = $objp->total_ttc;
         $generic_commande->lines=array();
         $generic_commande->getLinesArray();
 

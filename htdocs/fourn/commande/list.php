@@ -99,7 +99,7 @@ $offset = $conf->liste_limit * $page ;
  */
 
 $sql = "SELECT s.rowid as socid, s.nom as name, cf.date_commande as dc,";
-$sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ttc, cf.fk_user_author,cf.date_livraison,";
+$sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author,cf.date_livraison,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
@@ -213,11 +213,18 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
+        $objectstatic->id=$obj->rowid;
+        $objectstatic->ref=$obj->ref;
+        $objectstatic->ref_supplier = $obj->ref_supplier;
+        $objectstatic->total_ht = $obj->total_ht;
+        $objectstatic->total_tva = $obj->total_tva;
+        $objectstatic->total_ttc = $obj->total_ttc;
 
 		print "<tr ".$bc[$var].">";
 
 		// Ref
-		print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a>';
+        print '<td class="nobordernopadding nowrap">';
+        print $objectstatic->getNomUrl(1);
 		$filename=dol_sanitizeFileName($obj->ref);
 		$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);

@@ -104,41 +104,58 @@ class box_prospect extends ModeleBoxes
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-			            'logo' => $this->boximg,
-			            'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => $this->boximg,
+                        'tooltip' => $objp->name,
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-			            'text' => $objp->name,
-			            'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->name,
+                        'tooltip' => $objp->name,
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
- 			           'text' => dol_print_date($datem, "day"));
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($datem, "day"),
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
-     			       'text' => str_replace('img ','img height="14" ',$prospectstatic->LibProspStatut($objp->fk_stcomm,3)));
+                    $this->info_box_contents[$i][3] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => str_replace('img ','img height="14" ',$prospectstatic->LibProspStatut($objp->fk_stcomm,3)),
+                    );
 
-                    $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
-                    'text' => $thirdpartystatic->LibStatut($objp->status,3));
+                    $this->info_box_contents[$i][4] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $thirdpartystatic->LibStatut($objp->status,3),
+                    );
 
                     $i++;
-				}
+                }
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProspects"));
+                if ($num==0)
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoRecordedProspects"),
+                );
 
-				$db->free($resql);
-			}
-			else
-			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else {
+                $db->free($resql);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
+        } else {
 			dol_syslog("box_prospect::loadBox not allowed de read this box content",LOG_ERR);
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-        'text' => $langs->trans("ReadPermissionNotAllowed"));
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
 		}
 	}
 
