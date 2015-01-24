@@ -1,16 +1,16 @@
 # Dolibarr language file - Source file is en_US - bills
 Bill=Invoice
 Bills=Invoices
-BillsCustomers=Customer's invoices
-BillsCustomer=Customer's invoice
-BillsSuppliers=Supplier's invoices
-BillsCustomersUnpaid=Unpaid customer's invoices
+BillsCustomers=Customers invoices
+BillsCustomer=Customers invoice
+BillsSuppliers=Suppliers invoices
+BillsCustomersUnpaid=Unpaid customers invoices
 BillsCustomersUnpaidForCompany=Unpaid customer's invoices for %s
 BillsSuppliersUnpaid=Unpaid supplier's invoices
 BillsSuppliersUnpaidForCompany=Unpaid supplier's invoices for %s
 BillsLate=Late payments
-BillsStatistics=Customer's invoices statistics
-BillsStatisticsSuppliers=Supplier's invoices statistics
+BillsStatistics=Customers invoices statistics
+BillsStatisticsSuppliers=Suppliers invoices statistics
 DisabledBecauseNotErasable=Disabled because can not be erased
 InvoiceStandard=Standard invoice
 InvoiceStandardAsk=Standard invoice
