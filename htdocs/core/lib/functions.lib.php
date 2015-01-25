@@ -3338,7 +3338,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			$sql.= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
 			$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 			$sql.= $db->plimit(1);
-
+print $sql;
 			$resql=$db->query($sql);
 			if ($resql)
 			{
@@ -3464,7 +3464,7 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
 	// we use the buyer VAT.
 	if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))
 	{
-		if (! $seller_in_cee && $buyer_in_cee && ! $thirdparty_buyer->isACompany())
+		if ($seller_in_cee && $buyer_in_cee && ! $thirdparty_buyer->isACompany())
 		{
 			//print 'VATRULE 0';
 			return get_product_vat_for_country($idprod,$thirdparty_buyer,$idprodfournprice);
