@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2013  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,13 +184,13 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
         require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
-		$bcx=array();
+		$bcx = array();
 		$bcx[0] = 'class="box_pair"';
 		$bcx[1] = 'class="box_impair"';
 		$var = false;
 
         $cachetime = 900;   // 900 : 15mn
-        $cachedir = DOL_DATA_ROOT.'/cache/boxes';
+        $cachedir = DOL_DATA_ROOT.'/boxes/temp';
         $fileid = get_class($this).'id-'.$this->box_id.'-e'.$conf->entity.'-u'.$user->id.'-s'.$user->societe_id.'.cache';
         $filename = '/box-'.$fileid;
         $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);

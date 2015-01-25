@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2013 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2014      Frederic France        <frederic.france@free.fr>
+ * Copyright (C) 2014-2015 Frederic France        <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,6 @@ class box_activity extends ModeleBoxes
         $totalnb = 0;
         $i = 0;
         $cachetime = 3600;
-        $cachedir = DOL_DATA_ROOT.'/cache/boxes';
         $fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->societe_id.'-r'.($user->rights->societe->client->voir?'1':'0').'.cache';
         $now = dol_now();
         $nbofyears=2;
@@ -95,6 +94,7 @@ class box_activity extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $facturestatic=new Facture($db);
 
+            $cachedir = DOL_DATA_ROOT.'/facture/temp';
             $filename = '/boxactivity-invoice'.$fileid;
 
             $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
@@ -177,6 +177,7 @@ class box_activity extends ModeleBoxes
                     );
             }
 
+            $cachedir = DOL_DATA_ROOT.'/facture/temp';
             $filename = '/boxactivity-invoice2'.$fileid;
 
             $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
@@ -262,6 +263,7 @@ class box_activity extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
             $commandestatic=new Commande($db);
 
+            $cachedir = DOL_DATA_ROOT.'/commande/temp';
             $filename = '/boxactivity-order'.$fileid;
             $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
             $data = array();
@@ -344,6 +346,7 @@ class box_activity extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $propalstatic=new Propal($db);
 
+            $cachedir = DOL_DATA_ROOT.'/propale/temp';
             $filename = '/boxactivity-propal'.$fileid;
             $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
             $data = array();
@@ -383,7 +386,7 @@ class box_activity extends ModeleBoxes
             if (! empty($data)) {
                 $j=0;
                 while ($i < count($data)) {
-                    $this->info_box_contents[$i][0] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="left" width="16"',
                         'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
                         'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
@@ -391,12 +394,12 @@ class box_activity extends ModeleBoxes
                     );
 
                     $objp = $db->fetch_object($result);
-                    $this->info_box_contents[$i][1] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="left"',
                         'text' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
                     );
 
-                    $this->info_box_contents[$i][2] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="right"',
                         'text' => $data[$j]->nb,
                         'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
@@ -404,12 +407,12 @@ class box_activity extends ModeleBoxes
                     );
                     $totalnb += $data[$j]->nb;
 
-                    $this->info_box_contents[$i][3] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="right"',
                         'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
                     );
                     $totalMnt += $data[$j]->Mnttot;
-                    $this->info_box_contents[$i][4] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $propalstatic->LibStatut($data[$j]->fk_statut,3),
                     );

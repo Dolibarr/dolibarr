@@ -98,10 +98,14 @@ $offset = $conf->liste_limit * $page ;
  * Mode Liste
  */
 
-$sql = "SELECT s.rowid as socid, s.nom as name, cf.date_commande as dc,";
-$sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author,cf.date_livraison,";
-$sql.= " p.rowid as project_id, p.ref as project_ref,";
-$sql.= " u.login";
+$sql = "SELECT s.rowid as socid, s.nom as name, cf.date_commande as dc";
+$sql.= ", cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author,cf.date_livraison";
+$sql.= ", p.rowid as project_id";
+$sql.= ", p.ref as project_ref";
+$sql.= ", u.firstname";
+$sql.= ", u.lastname";
+$sql.= ", u.photo";
+$sql.= ", u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
@@ -257,11 +261,14 @@ if ($resql)
 			print '</td>';
 		}
 
-		// Author
-		$userstatic->id=$obj->fk_user_author;
-		$userstatic->login=$obj->login;
+        // Author
+        $userstatic->id = $obj->fk_user_author;
+        $userstatic->lastname = $obj->lastname;
+        $userstatic->firstname = $obj->firstname;
+        $userstatic->login = $obj->login;
+        $userstatic->photo = $obj->photo;
 		print "<td>";
-		if ($userstatic->id) print $userstatic->getLoginUrl(1);
+		if ($userstatic->id) print $userstatic->getNomUrl(1);
 		else print "&nbsp;";
 		print "</td>";
 

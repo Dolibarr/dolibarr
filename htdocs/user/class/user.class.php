@@ -1781,12 +1781,58 @@ class User extends CommonObject
 	 *	@param	string	$option			On what the link point to
 	 *	@return	string					String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0, $option='', $infologin=0)
 	{
-		global $langs;
+		global $langs, $conf, $db;
+        global $dolibarr_main_authentication, $dolibarr_main_demo;
 
-		$result='';
-        $label = $langs->trans("ShowUser").': '.$this->getFullName($langs,'','',24);
+
+        $result = '';
+        $companylink = '';
+
+        $label = '<u>' . $langs->trans("User") . '</u>';
+        $label.= '<table class="login" width="100%">';
+        $label.= '<tr>';
+        $label.= '<td valign="top">';
+        $label .= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','',24);
+        if (! empty($this->login))
+        $label .= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
+        if (! empty($this->email))
+        $label .= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
+        if (! empty($this->admin))
+        $label .= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
+        if (! empty($this->societe_id)) {
+            $thirdpartystatic = new Societe($db);
+            $thirdpartystatic->fetch($this->societe_id);
+            $companylink = ' ('.$thirdpartystatic->getNomUrl('','').')';
+            $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
+        }
+        $type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
+        $label .= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
+        if (! empty($this->photo)) {
+            $form = new Form($db);
+            $label .= '<td>&nbsp;&nbsp;</td><td align="right">' . $form->showphoto('userphoto', $this, 80) . '</td>';
+        }
+        $label.= '</tr></table>';
+
+        // Info Login
+        if ($infologin) {
+            $label.= '<br>';
+            $label.= '<br><u>'.$langs->trans("Connection").'</u>';
+            $label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
+            if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
+            $label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
+            $label.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin,"dayhour");
+            $label.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin,"dayhour");
+            $label.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
+            $label.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
+            $s=picto_from_langcode($langs->getDefaultLang());
+            $label.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($s?$s.' ':'').$langs->getDefaultLang();
+            $label.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
+            if (! empty($conf->browser->phone)) $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
+            if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
+        }
+
 
         $lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
@@ -1795,7 +1841,7 @@ class User extends CommonObject
             $result.=($lien.img_object($label, 'user', 'class="classfortooltip"').$lienfin);
             if ($withpicto != 2) $result.=' ';
 		}
-		$result.=$lien.$this->getFullName($langs,'','',24).$lienfin;
+		$result.= $lien . $this->getFullName($langs,'','',24) . $companylink . $lienfin;
 		return $result;
 	}
 

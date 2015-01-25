@@ -142,7 +142,7 @@ if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
  */
 if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
-	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -173,6 +173,9 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
                 $propalstatic->ref_client=$obj->ref_client;
+                $propalstatic->total_ht = $obj->total_ht;
+                $propalstatic->total_tva = $obj->total_tva;
+                $propalstatic->total_ttc = $obj->total_ttc;
 				print $propalstatic->getNomUrl(1);
 				print '</td>';
 				print '<td class="nowrap">';
@@ -210,7 +213,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$langs->load("orders");
 
-	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -241,6 +244,9 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 $orderstatic->id=$obj->rowid;
                 $orderstatic->ref=$obj->ref;
                 $orderstatic->ref_client=$obj->ref_client;
+                $orderstatic->total_ht = $obj->total_ht;
+                $orderstatic->total_tva = $obj->total_tva;
+                $orderstatic->total_ttc = $obj->total_ttc;
                 print $orderstatic->getNomUrl(1);
                 print '</td>';
 				print '<td class="nowrap">';
@@ -469,7 +475,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
 	$langs->load("propal");
 
-	$sql = "SELECT s.nom as name, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql = "SELECT s.nom as name, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.tva as total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -506,6 +512,9 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				$propalstatic->id=$obj->propalid;
 				$propalstatic->ref=$obj->ref;
                 $propalstatic->ref_client=$obj->ref_client;
+                $propalstatic->total_ht = $obj->total_ht;
+                $propalstatic->total_tva = $obj->total_tva;
+                $propalstatic->total_ttc = $obj->total_ttc;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td class="nobordernopadding nowrap">';

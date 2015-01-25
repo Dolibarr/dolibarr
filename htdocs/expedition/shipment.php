@@ -380,7 +380,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " cd.qty,";
 		$sql.= ' cd.date_start,';
 		$sql.= ' cd.date_end,';
-		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
+		$sql.= ' p.label as product_label, p.entity, p.ref, p.fk_product_type, p.rowid as prodid,';
 		$sql.= ' p.description as product_desc, p.fk_product_type as product_type';
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
@@ -436,7 +436,8 @@ if ($id > 0 || ! empty($ref))
 						$commande->fetch_thirdparty();
 
 						$prod = new Product($db);
-						$prod->id=$objp->fk_product;
+                        $prod->id = $objp->fk_product;
+                        $prod->entity = $objp->entity;
 						$prod->getMultiLangs();
 
 						$outputlangs = $langs;
@@ -461,9 +462,11 @@ if ($id > 0 || ! empty($ref))
 					$product_static->type=$objp->fk_product_type;
 					$product_static->id=$objp->fk_product;
 					$product_static->ref=$objp->ref;
+                    $product_static->entity = $objp->entity;
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$label;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description)).'<br>';
+                    $description.= $product_static->show_photos($conf->product->multidir_output[$product_static->entity],1,1,0,0,0,80);
 					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range

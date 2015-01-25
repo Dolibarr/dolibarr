@@ -751,7 +751,7 @@ if ( (! empty($conf->productbatch->enabled)) && $product->hasbatch()) {
 	print '</tr>';
 }
 
-$sql = "SELECT e.rowid, e.label, ps.reel, ps.pmp, ps.rowid as product_stock_id";
+$sql = "SELECT e.rowid, e.label, e.lieu, ps.reel, ps.pmp, ps.rowid as product_stock_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."product_stock as ps";
 $sql.= " WHERE ps.reel != 0";
@@ -775,6 +775,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$entrepotstatic->id=$obj->rowid;
 		$entrepotstatic->libelle=$obj->label;
+		$entrepotstatic->lieu=$obj->lieu;
 		print '<tr '.$bc[$var].'>';
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';

@@ -233,6 +233,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy,";
+$sql.= " p.entity,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
@@ -288,7 +289,9 @@ if ($result)
 			print '<td class="nowrap">';
 			$product_static->id=$objp->rowid;
 			$product_static->ref=$objp->ref;
+			$product_static->label = $objp->label;
 			$product_static->type=$objp->fk_product_type;
+            $product_static->entity = $objp->entity;
 			print $product_static->getNomUrl(1,'',16);
 			print "</td>\n";
 			print '<td>'.dol_trunc($objp->label,32).'</td>';

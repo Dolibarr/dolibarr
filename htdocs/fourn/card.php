@@ -336,7 +336,7 @@ if ($object->id > 0)
 		}
 
 		// TODO move to DAO class
-		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut";
+		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 		$sql.= " WHERE p.fk_soc =".$object->id;
 		$sql.= " AND p.entity =".$conf->entity;
@@ -368,8 +368,11 @@ if ($object->id > 0)
 
 				print "<tr ".$bc[$var].">";
                 print '<td class="nowrap">';
-                $orderstatic->id=$obj->rowid;
-                $orderstatic->ref=$obj->ref;
+                $orderstatic->id = $obj->rowid;
+                $orderstatic->ref = $obj->ref;
+                $orderstatic->total_ht = $obj->total_ht;
+                $orderstatic->total_tva = $obj->total_tva;
+                $orderstatic->total_ttc = $obj->total_ttc;
                 print $orderstatic->getNomUrl(1);
                 print '</td>';
 				print '<td align="center" width="80">';
@@ -407,7 +410,7 @@ if ($object->id > 0)
 	if ($user->rights->fournisseur->facture->lire)
 	{
 		// TODO move to DAO class
-		$sql = 'SELECT f.rowid,f.libelle,f.ref,f.ref_supplier,f.fk_statut,f.datef as df,f.total_ttc as amount,f.paye,';
+		$sql = 'SELECT f.rowid,f.libelle,f.ref,f.ref_supplier,f.fk_statut,f.datef as df, f.total_ht, f.total_tva, f.total_ttc as amount,f.paye,';
 		$sql.= ' SUM(pf.amount) as am';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn';
@@ -440,6 +443,10 @@ if ($object->id > 0)
 				print '<a href="facture/card.php?facid='.$obj->rowid.'">';
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->ref=($obj->ref?$obj->ref:$obj->rowid).($obj->ref_supplier?' - '.$obj->ref_supplier:'');
+                $facturestatic->ref_supplier = $obj->ref_supplier;
+                $facturestatic->total_ht = $obj->total_ht;
+                $facturestatic->total_tva = $obj->total_tva;
+                $facturestatic->total_ttc = $obj->total_ttc;
 				//$facturestatic->ref_supplier=$obj->ref_supplier;
 				print $facturestatic->getNomUrl(1);
 				//print img_object($langs->trans('ShowBill'),'bill').' '.($obj->ref?$obj->ref:$obj->rowid).' - '.$obj->ref_supplier.'</a>';

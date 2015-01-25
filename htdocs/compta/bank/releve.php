@@ -391,10 +391,9 @@ else
 					}
 				}
 				elseif ($links[$key]['type']=='company') {
-					print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('ShowCustomer'),'company').' ';
-					print dol_trunc($links[$key]['label'],24);
-					print '</a>';
+                    $societestatic->id = $links[$key]['url_id'];
+                    $societestatic->name = $links[$key]['label'];
+                    print $societestatic->getNomUrl(1, 'company', 24);
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='member') {

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014 	   Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,15 +56,20 @@ class box_actions extends ModeleBoxes
 
 		$this->max=$max;
 
-		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-		$actionstatic=new ActionComm($db);
+        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+        $societestatic = new Societe($db);
+        $actionstatic = new ActionComm($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo",$max));
 
         if ($user->rights->agenda->myactions->read) {
-			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage,";
-			$sql.= " ta.code, ta.libelle as type_label,";
-			$sql.= " s.nom as name, s.rowid as socid";
+			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
+            $sql.= ", ta.code";
+            $sql.= ", ta.libelle as type_label";
+            $sql.= ", s.nom as name";
+            $sql.= ", s.rowid as socid";
+            $sql.= ", s.code_client";
 			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
 			$sql.= MAIN_DB_PREFIX."actioncomm AS a)";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -81,62 +87,52 @@ class box_actions extends ModeleBoxes
 			$result = $db->query($sql);
             if ($result) {
 				$now=dol_now();
-				$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
 				$num = $db->num_rows($result);
 				$i = 0;
                 while ($i < $num) {
 					$late = '';
 					$objp = $db->fetch_object($result);
-					$datelimite=$db->jdate($objp->dp);
+					$datelimite = $db->jdate($objp->dp);
+                    $actionstatic->label = $objp->label;
+                    $actionstatic->type_label = $objp->type_label;
+                    $actionstatic->code = $objp->code;
+                    $societestatic->id = $objp->socid;
+                    $societestatic->name = $objp->name;
+                    $societestatic->code_client = $objp->code_client;
 
-					if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite  < ($now - $delay_warning)) $late=img_warning($langs->trans("Late"));
+                    if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite  < ($now - $delay_warning))
+                        $late=img_warning($langs->trans("Late"));
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
-					$label=empty($objp->label)?$objp->type_label:$objp->label;
+					$label = empty($objp->label)?$objp->type_label:$objp->label;
 
                     $tooltip = $langs->trans('Action'.$objp->code).': '.$label;
-                    $this->info_box_contents[$i][0] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => ("action"),
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/comm/action/card.php?id=".$objp->id,
-                    );
-
-                    $this->info_box_contents[$i][1] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="left"',
-                        'text' => dol_trunc($label,32),
+                        'text' => $actionstatic->getNomUrl(1),
                         'text2'=> $late,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/comm/action/card.php?id=".$objp->id,
+                        'asis' => 1,
                     );
 
-                    $tooltip = $langs->trans('Customer').': '.$objp->name;
-                    $this->info_box_contents[$i][2] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => ($objp->socid?'company':''),
-                        'tooltip' => $tooltip,
-                        'url' => ($objp->socid?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid:''),
-                    );
-
-                    $this->info_box_contents[$i][3] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="left"',
-                        'text' => dol_trunc($objp->name,24),
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid,
+                        'text' => $societestatic->getNomUrl(1),
+                        'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][4] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="left" class="nowrap"',
                         'text' => dol_print_date($datelimite, "dayhour"),
                     );
 
-                    $this->info_box_contents[$i][5] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="right"',
                         'text' => ($objp->percentage>= 0?$objp->percentage.'%':''),
                     );
 
-                    $this->info_box_contents[$i][6] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $actionstatic->LibStatut($objp->percentage,3),
                     );
