@@ -151,7 +151,7 @@ else {
 		
 		print $formventilation->select_bookkeeping_importkey('importkey', GETPOST('importkey'));
 		
-		print '<div class="inline-block divButAction"><input type="submit" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" />';
+		print '<div class="inline-block divButAction"><input type="submit" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
 		
 		print '</form>';
 		
@@ -171,7 +171,7 @@ else {
 		print_liste_field_titre($langs->trans("Numerocompte"), $_SERVER['PHP_SELF'], "bk.numero_compte", "", "", "", $sortfield, $sortorder);
 		print_liste_field_titre($langs->trans("Code_tiers"), $_SERVER['PHP_SELF'], "bk.code_tiers", "", "", "", $sortfield, $sortorder);
 		print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "bk_label_compte", "", "", "", $sortfield, $sortorder);
-		print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "bk.debit", "", "", 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "bk.debit", "", "", align="center"', $sortfield, $sortorder);
 		print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "bk.credit", "", "", 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "bk.montant", "", "", 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre($langs->trans("Sens"), $_SERVER['PHP_SELF'], "bk.sens", "", "", 'align="center"', $sortfield, $sortorder);

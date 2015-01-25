@@ -404,14 +404,14 @@ if ($action == 'writeBookKeeping')
 // export csv
 if ($action == 'export_csv')
 {
-	$sep = $conf->global->ACCOUNTING_SEPARATORCSV;
+	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=journal_banque.csv');
 
 	$companystatic = new Client($db);
 
-	if ($conf->global->ACCOUNTING_MODELCSV == 1) 	// Modèle Export Cegid Expert
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) 	// Modèle Export Cegid Expert
 	{
 		foreach ( $tabpay as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
