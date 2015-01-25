@@ -136,7 +136,7 @@ else if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
 }
 
 // bank account
-else if ($action == 'setbankaccount' && $user->rights->fournisseur->commande->creer) 
+else if ($action == 'setbankaccount' && $user->rights->fournisseur->commande->creer)
 {
      $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 }
@@ -506,7 +506,10 @@ else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->r
     }
 }
 
-else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseur->commande->valider)
+else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->commande->creer))
+    || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
+	)
 {
     $object->date_commande=dol_now();
     $result = $object->valid($user);
@@ -1280,7 +1283,7 @@ if ($action=="create")
 	    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
 	    print '</td></tr>';
     }
-    
+
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 	$doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
@@ -1566,7 +1569,7 @@ elseif (! empty($object->id))
 	    print '</td>';
 	    print '</tr>';
 	}
-	
+
 	// Delivery date planed
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1993,7 +1996,7 @@ elseif (! empty($object->id))
 		$ws_key      = $object->thirdparty->webservices_key;
 		$ws_user     = GETPOST('ws_user','alpha');
 		$ws_password = GETPOST('ws_password','alpha');
-        
+
         // NS and Authentication parameters
         $ws_ns = 'http://www.dolibarr.org/ns/';
         $ws_authentication = array(
@@ -2012,11 +2015,11 @@ elseif (! empty($object->id))
             $mode = "init";
             $error_occurred = true; //Don't allow to set the user/pass if thirdparty fields are not filled
         } else if ($mode != "init" && (empty($ws_user) || empty($ws_password))) {
-            setEventMessage($langs->trans("ErrorFieldsRequired"), 'errors'); 
+            setEventMessage($langs->trans("ErrorFieldsRequired"), 'errors');
             $mode = "init";
         }
 
-        if ($mode == "init") 
+        if ($mode == "init")
         {
             //Table/form header
             print '<table class="border" width="100%">';
@@ -2124,7 +2127,7 @@ elseif (! empty($object->id))
                             }
                         }
 
-                        
+
                         // Ensure that price is equal and warn user if it's not
                         $supplier_price = price($result_product["product"]["price_net"]); //Price of client tab in supplier dolibarr
                         $local_price = NULL; //Price of supplier as stated in product suppliers tab on this dolibarr, NULL if not found
@@ -2212,7 +2215,8 @@ elseif (! empty($object->id))
 				// Validate
 				if ($object->statut == 0 && $num > 0)
 				{
-					if ($user->rights->fournisseur->commande->valider)
+			        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->commande->creer))
+			       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
 					{
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid"';
 						print '>'.$langs->trans('Validate').'</a>';

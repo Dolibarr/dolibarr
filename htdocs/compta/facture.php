@@ -363,7 +363,10 @@ if (empty($reshook))
 	}
 
 	// Classify to validated
-	else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->valider)
+	else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->validate)))
+	)
 	{
 		$idwarehouse = GETPOST('idwarehouse');
 
@@ -436,7 +439,10 @@ if (empty($reshook))
 	}
 
 	// Go back to draft status (unvalidate)
-	else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate))
+	else if ($action == 'confirm_modif' &&
+		((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
+	)
 	{
 		$idwarehouse = GETPOST('idwarehouse');
 
@@ -2097,7 +2103,7 @@ if ($action == 'create')
 		print $desc;
 		print '</td></tr>' . "\n";
 		}
-		
+
 		// Replacement
 		print '<tr height="18"><td valign="middle">';
 		print '<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOST('type') == 1 ? ' checked="checked"' : '');
@@ -3233,7 +3239,7 @@ if ($action == 'create')
 	// Situations
 	if (! empty($conf->global->INVOICE_US_SITUATION))
 	{
-	if ($object->type == 5 && ($object->situation_counter > 1)) 
+	if ($object->type == 5 && ($object->situation_counter > 1))
 	{
 		$prevsits = $object->get_prev_sits();
 		print '<tr><td>';
@@ -3277,7 +3283,7 @@ if ($action == 'create')
 		}
 	}
 	}
-	
+
 	// Amount
 	print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
 	print '<td align="right" colspan="3" nowrap>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
@@ -3436,7 +3442,7 @@ if ($action == 'create')
 		print '</form>';
 	}
 	}
-	
+
 	// Show object lines
 	if (! empty($object->lines))
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
@@ -3480,7 +3486,9 @@ if ($action == 'create')
 
 				if ($resteapayer == $object->total_ttc && $object->paye == 0 && $ventilExportCompta == 0) {
 					if (! $objectidnext && $object->is_last_in_cycle()) {
-						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate) {
+					    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
+       						|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->invoice_advance->unvalidate)))
+						{
 							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
 						} else {
 							print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("NotEnoughPermissions") . '">' . $langs->trans('Modify') . '</span></div>';
@@ -3510,7 +3518,9 @@ if ($action == 'create')
 
 			// Validate
 			if ($object->statut == 0 && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) && (! empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
-				if ($user->rights->facture->valider) {
+				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
+          	    || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->validate)))
+				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=valid">' . $langs->trans('Validate') . '</a></div>';
 				}
 			}

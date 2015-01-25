@@ -639,10 +639,8 @@ class User extends CommonObject
 		}
 
 		// For backward compatibility
-		if (isset($this->rights->propale))
-		{
-			$this->rights->propal = $this->rights->propale;
-		}
+		if (isset($this->rights->propale) && ! isset($this->rights->propal)) $this->rights->propal = $this->rights->propale;
+		if (isset($this->rights->propal) && ! isset($this->rights->propale)) $this->rights->propale = $this->rights->propal;
 
 		if (! $moduletag)
 		{

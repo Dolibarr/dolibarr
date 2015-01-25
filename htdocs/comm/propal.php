@@ -100,6 +100,7 @@ $hookmanager->initHooks(array('propalcard','globalcard'));
 
 $permissionnote = $user->rights->propale->creer; // Used by the include of actions_setnotes.inc.php
 
+
 /*
  * Actions
  */
@@ -172,7 +173,10 @@ if (empty($reshook))
 	}
 
 	// Validation
-	else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->propal->valider)
+	else if ($action == 'confirm_validate' && $confirm == 'yes' &&
+        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate)))
+	)
 	{
 		$result = $object->valid($user);
 		if ($result >= 0)
@@ -2082,19 +2086,21 @@ if ($action == 'create')
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 		                                                                                               // modified by hook
-		if (empty($reshook)) {
-			if ($action != 'statut' && $action != 'editline') {
+		if (empty($reshook))
+		{
+			if ($action != 'statut' && $action != 'editline')
+			{
 				// Validate
-				if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 && $user->rights->propal->valider) {
+				if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 &&
+			        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
+       				|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate)))
+				) {
 					if (count($object->lines) > 0)
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=validate">' . $langs->trans('Validate') . '</a></div>';
 					// else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
 				}
 				// Create event
-				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
-				                                                                                      // "workflow" action so should appears somewhere
-				                                                                                      // else on
-				                                                                                      // page.
+				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 				{
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
 				}

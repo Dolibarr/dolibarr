@@ -83,7 +83,10 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 	}
 }
 
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->fournisseur->facture->valider)
+if ($action == 'confirm_valide' && $confirm == 'yes' &&
+    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
+    || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
+)
 {
 	$db->begin();
 
@@ -312,7 +315,8 @@ if ($result > 0)
 	{
 		if ($user->societe_id == 0 && $object->statut == 0 && $action == '')
 		{
-			if ($user->rights->fournisseur->facture->valider)
+        	if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
+	       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 

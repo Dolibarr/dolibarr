@@ -137,7 +137,8 @@ class modFacture extends DolibarrModules
 		$this->rights[$r][1] = 'Valider les factures';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'valider';
+		$this->rights[$r][4] = 'invoice_advance';
+		$this->rights[$r][5] = 'validate';
 
 		$r++;
 		$this->rights[$r][0] = 15;

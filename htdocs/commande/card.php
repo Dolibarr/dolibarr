@@ -883,7 +883,11 @@ if (empty($reshook))
 		exit();
 	}
 
-	else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->commande->valider) {
+	else if ($action == 'confirm_validate' && $confirm == 'yes' &&
+        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate)))
+	)
+	{
 		$idwarehouse = GETPOST('idwarehouse');
 
 	    $qualified_for_stock_change=0;
@@ -987,7 +991,11 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider) {
+	else if ($action == 'confirm_cancel' && $confirm == 'yes' &&
+        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate)))
+	)
+	{
 		$idwarehouse = GETPOST('idwarehouse');
 
 	    $qualified_for_stock_change=0;
@@ -2121,7 +2129,11 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			                                                                                          // modified by hook
 			if (empty($reshook)) {
 				// Valid
-				if ($object->statut == 0 && $object->total_ttc >= 0 && $numlines > 0 && $user->rights->commande->valider) {
+				if ($object->statut == 0 && $object->total_ttc >= 0 && $numlines > 0 &&
+				    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
+			       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate)))
+				)
+				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=validate">' . $langs->trans('Validate') . '</a></div>';
 				}
 				// Edit

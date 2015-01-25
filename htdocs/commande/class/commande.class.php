@@ -205,7 +205,8 @@ class Commande extends CommonOrder
             return 0;
         }
 
-        if (! $user->rights->commande->valider)
+        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate))))
         {
             $this->error='Permission denied';
             dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -361,7 +362,8 @@ class Commande extends CommonOrder
             return 0;
         }
 
-        if (! $user->rights->commande->valider)
+        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate))))
         {
             $this->error='Permission denied';
             return -1;
@@ -494,7 +496,8 @@ class Commande extends CommonOrder
 
         $error=0;
 
-        if ($user->rights->commande->valider)
+        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate)))
         {
             $this->db->begin();
 

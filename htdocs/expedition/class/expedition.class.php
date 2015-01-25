@@ -530,7 +530,8 @@ class Expedition extends CommonObject
 			return 0;
 		}
 
-		if (! $user->rights->expedition->valider)
+        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate))))
 		{
 			$this->error='Permission denied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);

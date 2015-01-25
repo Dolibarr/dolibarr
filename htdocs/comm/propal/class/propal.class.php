@@ -1334,7 +1334,8 @@ class Propal extends CommonObject
         $error=0;
         $now=dol_now();
 
-        if ($user->rights->propale->valider)
+        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate)))
         {
             $this->db->begin();
 
@@ -1443,7 +1444,7 @@ class Propal extends CommonObject
             return -1;
         }
 
-        if ($user->rights->propale->creer)
+        if (! empty($user->rights->propal->creer))
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = '".$this->db->idate($date)."'";
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
@@ -1472,7 +1473,7 @@ class Propal extends CommonObject
      */
     function set_echeance($user, $date_fin_validite)
     {
-        if ($user->rights->propale->creer)
+        if (! empty($user->rights->propal->creer))
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".($date_fin_validite!=''?"'".$this->db->idate($date_fin_validite)."'":'null');
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
@@ -1498,7 +1499,7 @@ class Propal extends CommonObject
      */
     function set_date_livraison($user, $date_livraison)
     {
-        if ($user->rights->propale->creer)
+        if (! empty($user->rights->propal->creer))
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
             $sql.= " SET date_livraison = ".($date_livraison!=''?"'".$this->db->idate($date_livraison)."'":'null');
@@ -1527,7 +1528,7 @@ class Propal extends CommonObject
      */
     function set_availability($user, $id)
     {
-        if ($user->rights->propale->creer)
+        if (! empty($user->rights->propal->creer))
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
             $sql.= " SET fk_availability = '".$id."'";
@@ -1556,7 +1557,7 @@ class Propal extends CommonObject
      */
     function set_demand_reason($user, $id)
     {
-        if ($user->rights->propale->creer)
+        if (! empty($user->rights->propal->creer))
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
             $sql.= " SET fk_input_reason = '".$id."'";
@@ -1585,7 +1586,7 @@ class Propal extends CommonObject
      */
     function set_ref_client($user, $ref_client)
     {
-        if ($user->rights->propale->creer)
+        if (! empty($user->rights->propal->creer))
         {
             dol_syslog('Propale::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
 
@@ -1620,7 +1621,7 @@ class Propal extends CommonObject
     {
         $remise=trim($remise)?trim($remise):0;
 
-        if ($user->rights->propale->creer)
+        if (! empty($user->rights->propal->creer))
         {
             $remise = price2num($remise);
 
@@ -1653,7 +1654,7 @@ class Propal extends CommonObject
     {
         $remise=trim($remise)?trim($remise):0;
 
-        if ($user->rights->propale->creer)
+        if (! empty($user->rights->propal->creer))
         {
             $remise = price2num($remise);
 

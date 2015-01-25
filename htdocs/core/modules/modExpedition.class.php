@@ -151,7 +151,8 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Valider les expeditions';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'valider';
+		$this->rights[$r][4] = 'shipping_advance';
+		$this->rights[$r][5] = 'validate';
 
 		$r++;
 		$this->rights[$r][0] = 105; // id de la permission
@@ -197,8 +198,8 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Valider les bons de livraison';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'livraison';
-		$this->rights[$r][5] = 'valider';
+		$this->rights[$r][4] = 'livraison_advance';
+		$this->rights[$r][5] = 'validate';
 
 		$r++;
 		$this->rights[$r][0] = 1109;
