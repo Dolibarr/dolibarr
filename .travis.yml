@@ -8,6 +8,9 @@ notifications:
     on_success: never # [always|never|change] default: change
     on_failure: change # [always|never|change] default: always
     
+addons:
+  postgresql: "9.3"
+
 services:
  - memcached # will start memcached
 
