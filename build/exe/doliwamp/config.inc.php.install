@@ -376,7 +376,7 @@ $cfg['DefaultConnectionCollation'] = 'utf8_unicode_ci';
 //        libraries/select_lang.lib.php
 // $cfg['Lang']     = 'en-iso-8859-1';
 
-// Regullar expression to limit listed languages, eg. '^(cs|en)' for Czech and
+// Regular expression to limit listed languages, eg. '^(cs|en)' for Czech and
 // English only
 $cfg['FilterLanguages'] = '';
 

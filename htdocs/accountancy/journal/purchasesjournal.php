@@ -185,8 +185,8 @@ if ($action == 'writebookkeeping') {
 		foreach ( $tabht[$key] as $k => $mt ) {
 			if ($mt) {
 				// get compte id and label
-				$compte = new AccountingAccount($db);
-				if ($compte->fetch(null, $k)) {
+				$accountingaccount = new AccountingAccount($db);
+				if ($accountingaccount->fetch(null, $k)) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->doc_ref = $val["ref"];
@@ -195,7 +195,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 					$bookkeeping->code_tiers = '';
-					$bookkeeping->label_compte = dol_trunc($val["description"], 128);
+					$bookkeeping->label_compte = $accountingaccount->label;
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -213,7 +213,6 @@ if ($action == 'writebookkeeping') {
 		foreach ( $tabtva[$key] as $k => $mt ) {
 			if ($mt) {
 				// get compte id and label
-
 				$bookkeeping = new BookKeeping($db);
 				$bookkeeping->doc_date = $val["date"];
 				$bookkeeping->doc_ref = $val["ref"];
@@ -246,12 +245,12 @@ $companystatic = new Societe($db);
 // export csv
 if ($action == 'export_csv')
 {
-	$sep = $conf->global->ACCOUNTING_SEPARATORCSV;
+	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=journal_achats.csv');
 
-	if ($conf->global->ACCOUNTING_MODELCSV == 1) 	// Modèle Export Cegid Expert
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) 	// Modèle Export Cegid Expert
 	{
 		foreach ( $tabfac as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
@@ -314,11 +313,13 @@ if ($action == 'export_csv')
 
 			// Product / Service
 			foreach ( $tabht[$key] as $k => $mt ) {
+			$accountingaccount = new AccountingAccount($db);
+		    $accountingaccount->fetch(null, $k);	
 				if ($mt) {
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-					print '"' . dol_trunc($val["description"], 32) . '"' . $sep;
+					print '"' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
 					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 					print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
 					print "\n";
@@ -418,12 +419,15 @@ if ($action == 'export_csv')
 
 		// Product / Service
 		foreach ( $tabht[$key] as $k => $mt ) {
+		$accountingaccount = new AccountingAccount($db);
+		$accountingaccount->fetch(null, $k);
+
 			if ($mt) {
 				print "<tr " . $bc[$var] . " >";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";
-				print "<td>" . $invoicestatic->description . "</td>";
+				print "<td>" . $accountingaccount->label . "</td>";
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";

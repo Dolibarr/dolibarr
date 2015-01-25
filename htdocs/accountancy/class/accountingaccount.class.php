@@ -53,7 +53,6 @@ class AccountingAccount
 	 * @param 	DoliDB	$db		Database handle
 	 */
 	function __construct($db)
-
 	{
 		$this->db = $db;
 	}
