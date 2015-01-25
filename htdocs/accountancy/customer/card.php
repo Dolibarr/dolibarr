@@ -45,8 +45,7 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) 
-{
+if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
 	if (! GETPOST('cancel', 'alpha'))
 	{
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
@@ -127,8 +126,8 @@ if (! empty($id)) {
 			print '</td></tr>';
 			print '</table>';
 			
-			print '<br><center><input class="button" type="submit" value="' . $langs->trans("Save") . '"> &nbsp; &nbsp; ';
-			print '<input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '"></center';
+			print '<br><div align="center"><input class="button" type="submit" value="' . $langs->trans("Save") . '">&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 	
 			print '</form>';
 		} else {
