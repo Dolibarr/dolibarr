@@ -339,7 +339,7 @@ dol_fiche_end();
 
 $showextcals=$listofextcals;
 // Legend
-if ($conf->use_javascript_ajax)
+if (! empty($conf->use_javascript_ajax))
 {
 	$s='';
 	$s.='<script type="text/javascript">' . "\n";
@@ -349,29 +349,27 @@ if ($conf->use_javascript_ajax)
 	$s.='jQuery(".family_birthday").toggle();' . "\n";
 	if ($action=="show_week" || $action=="show_month" || empty($action))
 	{
-    	$s.='jQuery( "td.sortable" ).sortable({connectWith: ".sortable",placeholder: "ui-state-highlight",items: "div:not(.unsortable)", receive: function( event, ui ) {';
+    	$s.='jQuery( "td.sortable" ).sortable({connectWith: ".sortable", placeholder: "ui-state-highlight", items: "div.movable", receive: function( event, ui ) {';
     	$s.='var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
 	}
   	$s.='});' . "\n";
 	$s.='</script>' . "\n";
-	if (! empty($conf->use_javascript_ajax))
+
+	$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+	if (is_array($showextcals) && count($showextcals) > 0)
 	{
-		$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
-		if (is_array($showextcals) && count($showextcals) > 0)
+		foreach ($showextcals as $val)
 		{
-			foreach ($showextcals as $val)
-			{
-				$htmlname = dol_string_nospecial($val['name']);
-				$s.='<script type="text/javascript">' . "\n";
-				$s.='jQuery(document).ready(function () {' . "\n";
-				$s.='		jQuery("#check_' . $htmlname . '").click(function() {';
-				$s.=' 		/* alert("'.$htmlname.'"); */';
-				$s.=' 		jQuery(".family_' . $htmlname . '").toggle();';
-				$s.='		});' . "\n";
-				$s.='});' . "\n";
-				$s.='</script>' . "\n";
-				$s.='<div class="nowrap float"><input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
-			}
+			$htmlname = dol_string_nospecial($val['name']);
+			$s.='<script type="text/javascript">' . "\n";
+			$s.='jQuery(document).ready(function () {' . "\n";
+			$s.='		jQuery("#check_' . $htmlname . '").click(function() {';
+			$s.=' 		/* alert("'.$htmlname.'"); */';
+			$s.=' 		jQuery(".family_' . $htmlname . '").toggle();';
+			$s.='		});' . "\n";
+			$s.='});' . "\n";
+			$s.='</script>' . "\n";
+			$s.='<div class="nowrap float"><input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
 		}
 	}
 	$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
@@ -1092,11 +1090,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     global $theme_datacolor;
     global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
 
-    print '<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">'."\n";
+    print "\n".'<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">';
 
     // Line with title of day
     $curtime = dol_mktime(0, 0, 0, $month, $day, $year);
-    print '<table class="nobordernopadding" width="100%">';
+    print '<table class="nobordernopadding" width="100%">'."\n";
+
     print '<tr><td align="left" class="nowrap">';
     print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?';
     print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
@@ -1116,7 +1115,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
         print img_picto($langs->trans("NewAction"),'edit_add.png');
         print '</a>';
     }
-    print '</td></tr>';
+    print '</td></tr>'."\n";
 
     // Line with td contains all div of each events
     print '<tr height="'.$minheight.'"><td valign="top" colspan="2" class="sortable" style="padding-bottom: 2px;">';
@@ -1171,11 +1170,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     		$numicals[dol_string_nospecial($event->icalname)]++;
                     	}
                     	$color=$event->icalcolor;
-                    	$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unsortable');
+                    	$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unmovable');
                     }
                     else if ($event->type_code == 'BIRTHDAY')
                     {
-                    	$numbirthday++; $colorindex=2; $cssclass='family_birthday unsortable'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
+                    	$numbirthday++; $colorindex=2; $cssclass='family_birthday unmovable'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
                     }
                     else
                  	{
@@ -1213,32 +1212,35 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     $cssclass=$cssclass.' '.$cssclass.'_day_'.$ymd;
 
                     // Defined style to disable drag and drop feature
-                    if ($event->date_end_in_calendar && date('Ymd',$event->date_start_in_calendar) != date('Ymd',$event->date_end_in_calendar))
+                    if ($event->type_code =='AC_OTH_AUTO')
+                    {
+                        $cssclass.= " unmovable";
+                    }
+                    else if ($event->date_end_in_calendar && date('Ymd',$event->date_start_in_calendar) != date('Ymd',$event->date_end_in_calendar))
                     {
                         $tmpyearend    = date('Y',$event->date_end_in_calendar);
                         $tmpmonthend   = date('m',$event->date_end_in_calendar);
                         $tmpdayend     = date('d',$event->date_end_in_calendar);
                         if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
                         {
-                            $cssclass.= " unsortable";
+                            $cssclass.= " unmovable";
                         }
                     }
-                    if ($event->type_code =='AC_OTH_AUTO')
-                    {
-                        $cssclass.= " unsortable";
-                    }
+                    else $cssclass.= " movable";
 
                     $h=''; $nowrapontd=1;
                     if ($action == 'show_day')  { $h='height: 100%; '; $nowrapontd=0; }
                     if ($action == 'show_week') { $h='height: 100%; '; $nowrapontd=0; }
 
                     // Show rect of event
-                    print '<div id="event_'.$ymd.'_'.$i.'" class="event '.$cssclass.'"';
+                    print "\n";
+                    print '<!-- start event '.$i.' --><div id="event_'.$ymd.'_'.$i.'" class="event '.$cssclass.'"';
                     //print ' style="height: 100px;';
                     //print ' position: absolute; top: 40px; width: 50%;';
                     //print '"';
                     print '>';
-                    print '<ul class="cal_event" style="'.$h.'"><li class="cal_event" style="'.$h.'">';
+                    print '<ul class="cal_event" style="'.$h.'">';	// always 1 li per ul, 1 ul per event
+                    print '<li class="cal_event" style="'.$h.'">';
                     print '<table class="cal_event'.(empty($event->transparency)?'':' cal_event_busy').'" style="'.$h;
                     print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
@@ -1369,8 +1371,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     if ($event->type_code != 'BIRTHDAY' && $event->type_code != 'ICALEVENT') print $event->getLibStatut(3,1);
                     else print '&nbsp;';
                     print '</td></tr></table>';
-                    print '</li></ul>';
-                    print '</div>';
+                    print '</li>';
+                    print '</ul>';
+                    print '</div><!-- end event '.$i.' -->'."\n";
                     $i++;
                 }
                 else
@@ -1413,8 +1416,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
     print '</div>';
     print '</td></tr>';
-    print '</table>';
-    print '</div>'."\n";
+
+    print '</table></div>'."\n";
 }
 
 
