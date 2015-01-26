@@ -201,9 +201,11 @@ class modAskPriceSupplier extends DolibarrModules
 	{
 		//global $conf,$langs;
 
+  		/*CREATE IF NOT EXISTS llx_askpricesupplier (rowid int auto_increment);*/
+ 
 		$sql = array();
 
-		$result=$this->_load_tables('/mymodule/sql/');
+		//$result=$this->_load_tables('/mymodule/sql/');
 
 		return $this->_init($sql, $options);
 	}
