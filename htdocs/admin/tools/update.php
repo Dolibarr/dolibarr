@@ -105,7 +105,30 @@ llxHeader('',$langs->trans("Upgrade"),$wikihelp);
 print_fiche_titre($langs->trans("Upgrade"),'','setup');
 
 print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
-print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("FeatureNotYetAvailable").'</b><br>';
+if ($sfurl = simplexml_load_file('http://sourceforge.net/projects/dolibarr/rss')) {
+    $title=$sfurl->channel[0]->item[0]->title;
+function word_limiter( $text, $limit = 30, $chars = '0123456789.' ) {
+    if( strlen( $text ) > $limit ) {
+        $words = str_word_count( $text, 2, $chars );
+        $words = array_reverse( $words, TRUE );
+        foreach( $words as $length => $word ) {
+            if( $length + strlen( $word ) >= $limit ) {
+                array_shift( $words );
+            } else {
+                break;
+            }
+        }
+        $words = array_reverse( $words );
+        $text = implode( " ", $words ) . '';
+    }
+    return $text;
+}
+
+$str = $title;
+print $langs->trans("LastStableVersion").' : <b>'. word_limiter( $str ).'</b><br>';
+} else {
+    print $langs->trans("LastStableVersion").' : <b>' .('Update Server Off-Line').'</b><br>';
+}
 print '<br>';
 
 print $langs->trans("Upgrade").'<br>';
