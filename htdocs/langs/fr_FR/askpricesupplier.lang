@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - askpricesupplier
+AskPriceSupplier=Demande de prix fournisseur
+askpricesupplierDESC=Gestion des demandes de prix aux fournisseurs
+askpricesupplierMENU_LEFT_TITLE=Demandes de prix fourn.
+askpricesupplierMENU_LEFT_TITLE_NEW=Nouvelle demande
+askpricesupplierMENU_LEFT_TITLE_LIST=Liste
