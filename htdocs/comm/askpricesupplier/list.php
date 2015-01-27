@@ -33,14 +33,14 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaskpricesupplier.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
 if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('companies');
-$langs->load('propal');
+$langs->load('askpricesupplier');
 $langs->load('compta');
 $langs->load('bills');
 $langs->load('orders');
@@ -57,7 +57,7 @@ $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_author=GETPOST('search_author','alpha');
 $search_town=GETPOST('search_town','alpha');
 $viewstatut=$db->escape(GETPOST('viewstatut'));
-$object_statut=$db->escape(GETPOST('propal_statut'));
+$object_statut=$db->escape(GETPOST('askpricesupplier_statut'));
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -68,7 +68,7 @@ $month=GETPOST("month");
 $NBLINES=4;
 
 // Security check
-$module='propal';
+$module='askpricesupplier';
 $dbtable='';
 $objectid='';
 if (! empty($user->societe_id))	$socid=$user->societe_id;
@@ -121,12 +121,12 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
  * View
  */
 
-llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('',$langs->trans('CommRequest'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$formpropal = new FormPropal($db);
+$formpropal = new FormAskPriceSupplier($db);
 $companystatic=new Societe($db);
 
 $now=dol_now();
@@ -148,8 +148,8 @@ $sql = 'SELECT s.rowid, s.nom as name, s.town, s.client, s.code_client,';
 $sql.= ' p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
-if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'askpricesupplier as p';
+if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'askpricesupplierdet as pd ON p.rowid=pd.fk_askpricesupplier';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -208,7 +208,7 @@ else if ($year > 0)
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
-    $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
+    $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='askpricesupplier' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
 }
 
 
@@ -227,7 +227,7 @@ $result=$db->query($sql);
 
 if ($result)
 {
-	$objectstatic=new Propal($db);
+	$objectstatic=new AskPriceSupplier($db);
 	$userstatic=new User($db);
 	$num = $db->num_rows($result);
 
@@ -248,7 +248,7 @@ if ($result)
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
 	if ($search_town)		 $param.='&search_town='.$search_town;
-	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($langs->trans('ListOfAskPriceSupplier').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -344,7 +344,7 @@ if ($result)
 		print '<tr '.$bc[$var].'>';
 		print '<td class="nowrap">';
 
-		$objectstatic->id=$objp->propalid;
+		$objectstatic->id=$objp->askpricesupplierid;
 		$objectstatic->ref=$objp->ref;
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -353,11 +353,11 @@ if ($result)
 		print '</td>';
 
 		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-		if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+		if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->askpricesupplier->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 		if (! empty($objp->note_private))
 		{
 			print ' <span class="note">';
-			print '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$objp->propalid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$objp->askpricesupplierid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
 			print '</span>';
 		}
 		print '</td>';

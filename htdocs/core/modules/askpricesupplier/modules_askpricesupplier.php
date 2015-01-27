@@ -64,7 +64,7 @@ abstract class ModelePDFAskPriceSupplier extends CommonDocGenerator
 /**
  *	Classe mere des modeles de numerotation des references de propales
  */
-abstract class ModeleNumRefPropales
+abstract class ModeleNumRefAskPriceSupplier
 {
 	var $error='';
 
@@ -158,7 +158,7 @@ abstract class ModeleNumRefPropales
  * 	@return     int         				0 if KO, 1 if OK
  * @deprecated Use the new function generateDocument of Propal class
  */
-function propale_pdf_create(DoliDB $db, Propal $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+function askpricesupplier_pdf_create(DoliDB $db, Propal $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }

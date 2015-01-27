@@ -250,6 +250,11 @@ class modAskPriceSupplier extends DolibarrModules
 
 /*
  * 
+DROP TABLE llx_askpricesupplier_extrafields;
+DROP TABLE llx_askpricesupplierdet_extrafields;
+DROP TABLE llx_askpricesupplierdet;
+DROP TABLE llx_askpricesupplier;
+ * 
  * CREATE TABLE IF NOT EXISTS llx_askpricesupplier (
 	rowid INT AUTO_INCREMENT,
 	fk_statut INT NOT NULL,

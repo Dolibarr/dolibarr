@@ -80,6 +80,7 @@ ConfirmReOpenAsk=Êtes-vous sûr de vouloir réouvrir la demande de prix <b>%s</
 SendAskByMail=Envoyer demande de prix par email
 SendAskRef=Envoi de la demande de prix %s
 
+ListOfAskPriceSupplier=Liste des devis/propositions commerciales
 
 ##### Types de contacts #####
 TypeContact_askpricesupplier_internal_SALESREPFOLL=Commercial suivi demande
@@ -89,7 +90,6 @@ TypeContact_askpricesupplier_external_CUSTOMER=Contact client suivi demande
 # #
 
 
-ListOfProposals=Liste des devis/propositions commerciales
 ActionsOnPropal=Événements sur la proposition
 NoOpenedPropals=Pas de proposition ouverte
 NoOtherOpenedPropals=Pas d'autre proposition brouillon
