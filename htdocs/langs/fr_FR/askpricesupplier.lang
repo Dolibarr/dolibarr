@@ -4,3 +4,126 @@ askpricesupplierDESC=Gestion des demandes de prix aux fournisseurs
 askpricesupplierMENU_LEFT_TITLE=Demandes de prix fourn.
 askpricesupplierMENU_LEFT_TITLE_NEW=Nouvelle demande
 askpricesupplierMENU_LEFT_TITLE_LIST=Liste
+
+# Dolibarr language file - Source file is en_US - propal
+Proposals=Propositions commerciales
+Proposal=Proposition commerciale
+ProposalShort=Proposition
+ProposalsDraft=Propositions commerciales brouillons
+ProposalDraft=Proposition commerciale brouillon
+ProposalsOpened=Propositions commerciales ouvertes
+Prop=Propositions commerciales
+CommercialProposal=Proposition commerciale
+CommercialProposals=Propositions commerciales
+ProposalCard=Fiche proposition
+NewProp=Nouvelle proposition commerciale
+NewProposal=Nouvelle proposition commerciale
+NewPropal=Nouvelle proposition
+Prospect=Prospect
+ProspectList=Liste des prospects
+ConfirmDeleteProp=Êtes-vous sûr de vouloir effacer cette proposition commerciale ?
+ConfirmValidateProp=Êtes-vous sûr de vouloir valider cette proposition commerciale sous la référence <b>%s</b> ?
+LastPropals=Les %s dernières propales
+LastClosedProposals=Les %s dernières propositions commerciales fermées
+LastModifiedProposals=Les %s dernières propositions commerciales modifiées
+AllPropals=Toutes les propales
+LastProposals=Dernières propositions
+SearchAProposal=Rechercher une proposition commerciale
+ProposalsStatistics=Statistiques des propositions commerciales
+NumberOfProposalsByMonth=Nombre par mois
+AmountOfProposalsByMonthHT=Montant par mois (HT)
+NbOfProposals=Nombre de propositions commerciales
+
+
+# # Ajout
+ShowAskpricesupplier=Afficher demande
+CommRequest=Demande de prix
+CommRequests=Demandes de prix
+SearchRequest=Rechercher une demande
+DraftRequests=Demandes brouillons
+LastModifiedRequests=Les %s dernières demandes de prix modifiées
+RequestsOpened=Demandes de prix ouvertes
+AskPriceSupplierArea=Espace des demandes de prix fournisseurs
+NewAskPrice=Nouvelle demande de prix
+NewAsk=Nouvelle demande
+# # Modifié
+DateAsk=Date de demande
+DateEndAsk=Date de fin de validité
+DateEndAskShort=Date de fin
+DeleteAsk=Supprimer demande
+ValidateAsk=Valider demande
+AddAsk=Créer une demande
+AskpricesupplierDraft=Brouillons
+AskpricesupplierOpened=Ouvertes
+AskpricesupplierNotBilled=Non facturées
+AskpricesupplierStatusDraft=Brouillon (à valider)
+AskpricesupplierStatusValidated=Validée (demande ouverte)
+AskpricesupplierStatusOpened=Validée (demande ouverte)
+AskpricesupplierStatusClosed=Fermée
+AskpricesupplierStatusSigned=Signée (à facturer)
+AskpricesupplierStatusNotSigned=Non signée (fermée)
+AskpricesupplierStatusBilled=Facturée
+AskpricesupplierStatusDraftShort=Brouillon
+AskpricesupplierStatusValidatedShort=Validée
+AskpricesupplierStatusOpenedShort=Ouverte
+AskpricesupplierStatusClosedShort=Fermée
+AskpricesupplierStatusSignedShort=Signée
+AskpricesupplierStatusNotSignedShort=Non signée
+AskpricesupplierStatusBilledShort=Facturée
+AskpricesupplierToClose=Demandes de prix à fermer
+AskpricesupplierToBill=Demandes de prix signées à facturer
+CopyAskFrom=Créer demande/devis par recopie d'une demande existante
+CreateEmptyAsk=Créer demande/devis vierge
+CloneAsk=Cloner demande de prix
+ConfirmCloneAsk=Êtes-vous sûr de vouloir cloner la demande de prix <b>%s</b> ?
+ConfirmReOpenAsk=Êtes-vous sûr de vouloir réouvrir la demande de prix <b>%s</b> ?
+SendAskByMail=Envoyer demande de prix par email
+SendAskRef=Envoi de la demande de prix %s
+
+
+##### Types de contacts #####
+TypeContact_askpricesupplier_internal_SALESREPFOLL=Commercial suivi demande
+TypeContact_askpricesupplier_external_BILLING=Contact client facturation demande
+TypeContact_askpricesupplier_external_CUSTOMER=Contact client suivi demande
+
+# #
+
+
+ListOfProposals=Liste des devis/propositions commerciales
+ActionsOnPropal=Événements sur la proposition
+NoOpenedPropals=Pas de proposition ouverte
+NoOtherOpenedPropals=Pas d'autre proposition brouillon
+RefProposal=Réf. proposition commerciale
+AssociatedDocuments=Documents associés à la proposition :
+ErrorCantOpenDir=Impossible d'ouvrir le répertoire
+
+ValidityDuration=Durée de validité
+CloseAs=Clôturer au statut
+ClassifyBilled=Classer facturée
+BuildBill=Créer facture
+ErrorPropalNotFound=Propale %s inexistante
+Estimate=Devis :
+EstimateShort=Devis
+OtherPropals=Autres propositions
+AddToDraftProposals=Ajouter à proposition brouillon
+NoDraftProposals=Pas de propositions brouillons
+DefaultProposalDurationValidity=Délai de validité par défaut (en jours)
+UseCustomerContactAsPropalRecipientIfExist=Utiliser l'adresse de contact suivi client si définie plutôt que l'adresse du tiers comme destinataire des propositions
+
+ProposalsAndProposalsLines=Propositions commerciales clients et lignes de propositions
+ProposalLine=Ligne de proposition
+AvailabilityPeriod=Délai de livraison
+SetAvailability=Définir le délai de livraison
+AfterOrder=après commande
+##### Availability #####
+AvailabilityTypeAV_NOW=Immédiate
+AvailabilityTypeAV_1W=1 semaine
+AvailabilityTypeAV_2W=2 semaines
+AvailabilityTypeAV_3W=3 semaines
+AvailabilityTypeAV_1M=1 mois
+# Document models
+DocModelAzurDescription=Modèle de proposition commerciale complet (logo…)
+DocModelJauneDescription=Modèle de proposition Jaune
+DefaultModelPropalCreate=Modèle par défaut à la création
+DefaultModelPropalToBill=Modèle par défaut lors de la clôture d'une proposition commerciale (à facturer)
+DefaultModelPropalClosed=Modèle par défaut lors de la clôture d'une proposition commerciale (non facturée)

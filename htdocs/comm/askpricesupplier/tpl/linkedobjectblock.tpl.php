@@ -52,11 +52,11 @@ foreach($linkedObjectBlock as $object)
 	$var=!$var;
 ?>
 <tr <?php echo $bc[$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/comm/propal.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowPropal"),"propal").' '.$object->ref; ?></a></td>
+	<a href="<?php echo DOL_URL_ROOT.'/comm/askpricesupplier.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowAskPriceSupplier"),"askpricesupplier").' '.$object->ref; ?></a></td>
 	<td><?php echo $object->ref_client; ?></td>
 	<td align="center"><?php echo dol_print_date($object->date,'day'); ?></td>
 	<td align="right"><?php
-		if ($user->rights->propale->lire) {
+		if ($user->rights->askpricesupplier->lire) {
 			$total = $total + $object->total_ht;
 			echo price($object->total_ht);
 		} ?></td>
@@ -69,7 +69,7 @@ foreach($linkedObjectBlock as $object)
 <tr class="liste_total">
 	<td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
 	<td align="right"><?php
-		if ($user->rights->propale->lire) {
+		if ($user->rights->askpricesupplier->lire) {
 			echo price($total);
 		} ?></td>
 	<td>&nbsp;</td>

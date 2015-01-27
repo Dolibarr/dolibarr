@@ -25,9 +25,9 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT .'/comm/askpricesupplier/class/askpricesupplier.class.php';
 
-$langs->load("propal");
+$langs->load("askpricesupplier");
 $langs->load("companies");
 
 // Security check
@@ -37,22 +37,22 @@ if (isset($user->societe_id) && $user->societe_id  > 0)
 	$action = '';
 	$socid = $user->societe_id;
 }
-$result = restrictedArea($user, 'propal');
+$result = restrictedArea($user, 'askpricesupplier');
 
 
 /*
  * View
  */
 $now=dol_now();
-$propalstatic=new Propal($db);
+$askpricesupplierstatic=new AskPriceSupplier($db);
 $companystatic=new Societe($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|ES:Módulo_Presupuestos";
 
-llxHeader("",$langs->trans("ProspectionArea"),$help_url);
+llxHeader("",$langs->trans("AskPriceSupplierArea"),$help_url);
 
-print_fiche_titre($langs->trans("ProspectionArea"));
+print_fiche_titre($langs->trans("AskPriceSupplierArea"));
 
 //print '<table width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -64,9 +64,9 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  */
 $var=false;
 print '<table class="noborder nohover" width="100%">';
-print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/comm/askpricesupplier/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchPropal").'</td></tr>';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchRequest").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
@@ -80,7 +80,7 @@ print "</form></table><br>\n";
 
 $sql = "SELECT count(p.rowid), p.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."propal as p";
+$sql.= ", ".MAIN_DB_PREFIX."askpricesupplier as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE p.fk_soc = s.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
@@ -116,17 +116,17 @@ if ($resql)
     $db->free($resql);
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Proposals").'</td></tr>'."\n";
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</td></tr>'."\n";
     $var=true;
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$propalstatic->LibStatut($status,1),'data'=>(isset($vals[$status])?(int) $vals[$status]:0));
+        $dataseries[]=array('label'=>$askpricesupplierstatic->LibStatut($status,1),'data'=>(isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
             $var=!$var;
             print "<tr ".$bc[$var].">";
-            print '<td>'.$propalstatic->LibStatut($status,0).'</td>';
+            print '<td>'.$askpricesupplierstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
         }
@@ -155,7 +155,7 @@ else
 if (! empty($conf->propal->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
+	$sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
@@ -169,8 +169,8 @@ if (! empty($conf->propal->enabled))
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("DraftPropals").'</td></tr>';
-		$langs->load("propal");
+		print '<td colspan="2">'.$langs->trans("DraftRequests").'</td></tr>';
+		$langs->load("askpricesupplier");
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
@@ -182,9 +182,9 @@ if (! empty($conf->propal->enabled))
 				$obj = $db->fetch_object($resql);
 				print "<tr ".$bc[$var].">";
 
-				$propalstatic->id=$obj->rowid;
-				$propalstatic->ref=$obj->ref;
-				print '<td class="nowrap">'.$propalstatic->getNomUrl(1).'</td>';
+				$askpricesupplierstatic->id=$obj->rowid;
+				$askpricesupplierstatic->ref=$obj->ref;
+				print '<td class="nowrap">'.$askpricesupplierstatic->getNomUrl(1).'</td>';
 
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->socname;
@@ -213,7 +213,7 @@ $max=5;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
 $sql.= " date_cloture as datec";
-$sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
+$sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
@@ -229,7 +229,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastModifiedProposals",$max).'</td></tr>';
+	print '<td colspan="4">'.$langs->trans("LastModifiedRequests",$max).'</td></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -244,12 +244,12 @@ if ($resql)
 			print "<tr ".$bc[$var].">";
 			print '<td width="20%" class="nowrap">';
 
-			$propalstatic->id=$obj->rowid;
-			$propalstatic->ref=$obj->ref;
+			$askpricesupplierstatic->id=$obj->rowid;
+			$askpricesupplierstatic->ref=$obj->ref;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding nowrap">';
-			print $propalstatic->getNomUrl(1);
+			print $askpricesupplierstatic->getNomUrl(1);
 			print '</td>';
 
 			print '<td width="16" class="nobordernopadding nowrap">';
@@ -260,7 +260,7 @@ if ($resql)
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
+			print $formfile->getDocumentsLink($askpricesupplierstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
 
 			print '</td>';
@@ -272,7 +272,7 @@ if ($resql)
 			print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
 
 			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
-			print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,5).'</td>';
+			print '<td align="right">'.$askpricesupplierstatic->LibStatut($obj->fk_statut,5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -285,15 +285,15 @@ else dol_print_error($db);
 /*
  * Opened proposals
  */
-if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
+if (! empty($conf->askpricesupplier->enabled) && $user->rights->askpricesupplier->lire)
 {
-	$langs->load("propal");
+	$langs->load("askpricesupplier");
 
 	$now=dol_now();
 
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
+	$sql.= ", ".MAIN_DB_PREFIX."askpricesupplier as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_soc = s.rowid";
 	$sql.= " AND p.entity = ".$conf->entity;
@@ -313,7 +313,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			$var=true;
 
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
@@ -325,21 +325,21 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				// Ref
 				print '<td class="nowrap" width="140">';
 
-				$propalstatic->id=$obj->propalid;
-				$propalstatic->ref=$obj->ref;
+				$askpricesupplierstatic->id=$obj->propalid;
+				$askpricesupplierstatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
+				print $askpricesupplierstatic->getNomUrl(1);
 				print '</td>';
 				print '<td width="18" class="nobordernopadding nowrap">';
-				if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($db->jdate($obj->dfv) < ($now - $conf->askpricesupplier->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->propalid;
-				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
+				$filedir=$conf->askpricesupplier->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->askpricesupplierid;
+				print $formfile->getDocumentsLink($askpricesupplierstatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print "</td>";
@@ -353,7 +353,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
+				print '<td align="center" width="14">'.$askpricesupplierstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;
 				$total += $obj->total_ttc;
@@ -412,12 +412,12 @@ if (! empty($conf->propal->enabled))
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 
-				$propalstatic->id=$obj->rowid;
-				$propalstatic->ref=$obj->ref;
+				$askpricesupplierstatic->id=$obj->rowid;
+				$askpricesupplierstatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="96" class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
+				print $askpricesupplierstatic->getNomUrl(1);
 				print '</td>';
 
 				print '<td width="16" class="nobordernopadding nowrap">';
@@ -428,14 +428,14 @@ if (! empty($conf->propal->enabled))
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
+				print $formfile->getDocumentsLink($askpricesupplierstatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print '</td>';
 
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
 
-				print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '<td align="right">'.$askpricesupplierstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
 				print '</tr>';
 				$i++;
@@ -484,12 +484,12 @@ if (! empty($conf->propal->enabled))
 				print "<tr ".$bc[$var].">";
 				print '<td width="20%" class="nowrap">';
 
-				$propalstatic->id=$obj->rowid;
-				$propalstatic->ref=$obj->ref;
+				$askpricesupplierstatic->id=$obj->rowid;
+				$askpricesupplierstatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="96" class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
+				print $askpricesupplierstatic->getNomUrl(1);
 				print '</td>';
 
 				print '<td width="16" class="nobordernopadding nowrap">';
@@ -500,14 +500,14 @@ if (! empty($conf->propal->enabled))
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
+				print $formfile->getDocumentsLink($askpricesupplierstatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print '</td>';
 
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
 
-				print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '<td align="right">'.$askpricesupplierstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
 				print '</tr>';
 				$i++;

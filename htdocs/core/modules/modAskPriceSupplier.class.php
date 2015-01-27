@@ -73,12 +73,32 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->const = array();
 		$r=0;
 
-		/*$this->const[$r][0] = "PROPALE_ADDON_PDF";
+		$this->const[$r][0] = "ASKPRICESUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "azur";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des propales en PDF';
+		$this->const[$r][3] = 'Nom du gestionnaire de generation des demandes de prix fournisseurs en PDF';
 		$this->const[$r][4] = 0;
-		$r++;*/
+		$r++;
+
+		$this->const[$r][0] = "ASKPRICESUPPLIER_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_propale_marbre";
+		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des demandes de prix fournisseurs';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "ASKPRICESUPPLIER_VALIDITY_DURATION";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "15";
+		$this->const[$r][3] = 'Durée de validitée des demandes de prix fournisseurs';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "ASKPRICESUPPLIER_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/askpricesupplier";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
 
 		// Boxes
 		$this->boxes = array();
@@ -90,35 +110,36 @@ class modAskPriceSupplier extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
-		$this->rights[$r][1] = 'Créer/modifier les demandes fournisseurs'; // libelle de la permission
+		$this->rights[$r][1] = 'Lire les demandes fournisseurs'; // libelle de la permission
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'create';
+		$this->rights[$r][4] = 'lire';
 		
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
-		$this->rights[$r][1] = 'Lire les demandes fournisseurs'; // libelle de la permission
+		$this->rights[$r][1] = 'Créer/modifier les demandes fournisseurs'; // libelle de la permission
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'read';
+		$this->rights[$r][4] = 'creer';
+		
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Valider les demandes fournisseurs'; // libelle de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'read';
+		$this->rights[$r][4] = '';
 		$this->rights[$r][5] = 'validate';
 		
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Envoyer les demandes fournisseurs'; // libelle de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'read';
+		$this->rights[$r][4] = '';
         $this->rights[$r][5] = 'send';
 		
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les demandes fournisseurs'; // libelle de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'delete';
+		$this->rights[$r][4] = 'supprimer';
 
 		// Exports
 		//--------
@@ -155,10 +176,10 @@ class modAskPriceSupplier extends DolibarrModules
 			'type'=>'left',			                // This is a Left menu entry
 			'titre'=>'askpricesupplierMENU_LEFT_TITLE',
 			'leftmenu'=>'askpricesuppliersubmenu',
-			'url'=>'/askpricesupplier/index.php',
+			'url'=>'/comm/askpricesupplier/index.php',
 			'langs'=>'askpricesupplier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'enabled'=>'$conf->askpricesupplier->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->askpricesupplier->read',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->askpricesupplier->lire',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 			'user'=>2 // 0=Menu for internal users, 1=external users, 2=both
 		);				                
 		$r++;
@@ -167,10 +188,10 @@ class modAskPriceSupplier extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=askpricesuppliersubmenu',
 			'type'=>'left',
 			'titre'=>'askpricesupplierMENU_LEFT_TITLE_NEW',
-			'url'=>'/askpricesupplier/card.php?action=create',
+			'url'=>'/comm/askpricesupplier.php?action=create',
 			'langs'=>'askpricesupplier',
 			'enabled'=>'$conf->askpricesupplier->enabled',
-			'perms'=>'$user->rights->askpricesupplier->create',
+			'perms'=>'$user->rights->askpricesupplier->creer',
 			'user'=>2
 		);
 		$r++;
@@ -179,10 +200,10 @@ class modAskPriceSupplier extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=askpricesuppliersubmenu',
 			'type'=>'left',
 			'titre'=>'askpricesupplierMENU_LEFT_TITLE_LIST',
-			'url'=>'/askpricesupplier/list.php',
+			'url'=>'/comm/askpricesupplier/list.php',
 			'langs'=>'askpricesupplier',
 			'enabled'=>'$conf->askpricesupplier->enabled',
-			'perms'=>'$user->rights->askpricesupplier->read',
+			'perms'=>'$user->rights->askpricesupplier->lire',
 			'user'=>2
 		);
 		$r++;		
@@ -205,8 +226,7 @@ class modAskPriceSupplier extends DolibarrModules
  
 		$sql = array();
 
-		//$result=$this->_load_tables('/mymodule/sql/');
-
+		$result=$this->_load_tables('/comm/askpricesupplier/sql/');
 		return $this->_init($sql, $options);
 	}
 
@@ -226,3 +246,22 @@ class modAskPriceSupplier extends DolibarrModules
     }
 
 }
+
+
+/*
+ * 
+ * CREATE TABLE IF NOT EXISTS llx_askpricesupplier (
+	rowid INT AUTO_INCREMENT,
+	fk_statut INT NOT NULL,
+	fk_soc INT NOT NULL,
+	price DOUBLE(24,8),
+	date_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	date_send TIMESTAMP,
+	PRIMARY KEY pk_rowid (rowid),
+	CONSTRAINT fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid)
+);
+ * 
+ * 
+ * 
+ * 
+ */
