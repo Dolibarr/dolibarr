@@ -4905,3 +4905,105 @@ function natural_search($fields, $value)
     }
     return " AND " . ($end > 1? '(' : '') . $res;
 }
+
+/**
+ * Function to return text in currency mexican of a 
+ * number less than 1 million and more than zero.
+ *
+ * @param	float 	$numero		Number to convert
+ * @return 	string  $entexto        Text of the number
+ * 
+ * Víctor Ortiz Pérez	23 Enero 2015	victor@accett.com.mx
+ */
+function float2text_moneda($numero){
+    $veintis = array("VEINTE","VEINTIUN","VEINTID&OacuteS","VEINTITR&EacuteS","VEINTICUATRO","VEINTICINCO","VEINTIS&EacuteIS","VEINTISIETE","VEINTIOCHO","VEINTINUEVE");
+    $unidades = array("UN","DOS","TRES","CUATRO","CINCO","SEIS","SIETE","OCHO","NUEVE");
+    $decenas = array("","","TREINTA ","CUARENTA ","CINCUENTA ","SESENTA ","SETENTA ","OCHENTA ","NOVENTA ");
+    $centenas = array("CIENTO","DOSCIENTOS","TRESCIENTOS","CUATROCIENTOS","QUINIENTOS","SEISCIENTOS","SETECIENTOS","OCHOCIENTOS","NOVECIENTOS");
+    $number = $numero;
+    $parte_decimal = $numero - (int) $numero;
+    $parte_decimal = (int) round($parte_decimal*100);
+    if ($parte_decimal < 10)
+	$parte_decimal = "0".$parte_decimal;
+    $entexto ="";
+    if ($numero>=1 && $numero<2) {
+	$entexto .= " UN PESO ".$parte_decimal." / 100 M.N.";
+    }
+    elseif ($numero>=0 && $numero<1){
+	$entexto .= " CERO PESOS ".$parte_decimal." / 100 M.N.";
+    }
+    elseif ($numero>=100 && $numero<101){
+	$entexto .= " CIEN PESOS ".$parte_decimal." / 100 M.N.";
+    }
+    else {
+	$cdm = (int) ($numero / 100000);
+	$numero = $numero - $cdm * 100000;
+	$ddm = (int) ($numero / 10000);
+	$numero = $numero - $ddm * 10000;
+	$udm = (int) ($numero / 1000);
+	$numero = $numero - $udm * 1000;
+	$c = (int) ($numero / 100);
+	$numero = $numero - $c * 100;
+	$d = (int) ($numero / 10);
+	$u = (int) $numero - $d * 10;
+	$completo=FALSE;
+	if ($cdm==1 && $ddm==0 && $udm==0){
+            $entexto .= "CIEN";
+            $completo = TRUE;
+	}
+	if ($cdm!=0 && !$completo){
+            $entexto .= $centenas[$cdm-1]." ";
+	}
+	$completo=FALSE;
+        if ($ddm>2){
+            $entexto .= " ".$decenas[$ddm-1];
+            if ($udm!=0){
+		$entexto .= " Y ";
+            }
+	}
+	elseif ($ddm!=0){
+            $completo=TRUE;
+            if ($ddm==1){
+		$entexto .= " ".$diecis[$udm];
+            }
+            else{
+		$entexto .= " ".$veintis[$udm];
+            }
+	}
+	if ($udm!=0 && !$completo){
+            $entexto .= $unidades[$udm-1];
+	}
+	$completo=FALSE;
+	if ($number>=1000){
+            $entexto .= " MIL ";
+	}
+	
+        if ($c==1 && $d==0 && $u==0){
+            $entexto .= "CIEN";
+            $completo = TRUE;
+	}
+	if ($c!=0 && !$completo){
+            $entexto .= $centenas[$c-1]." ";
+	}
+        if ($d>2){
+            $entexto .= " ".$decenas[$d-1];
+            if ($u!=0){
+		$entexto .= " Y ";
+            }
+        }
+	elseif ($d!=0){
+            $completo=TRUE;
+            if ($d==1){
+		$entexto .= " ".$diecis[$u];
+            }
+            else{
+		$entexto .= " ".$veintis[$u];
+            }
+	}
+	if ($u!=0 && !$completo){
+            $entexto .= $unidades[$u-1];
+	}
+	$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
+    }
+    return $entexto;
+}
