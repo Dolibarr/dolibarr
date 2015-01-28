@@ -264,6 +264,7 @@ MAIN_MAIL_EMAIL_FROM=Adresse email de l'émetteur pour l'envoi d'emails automati
 MAIN_MAIL_ERRORS_TO=Adresse email utilisée pour les retours d'erreurs des emails envoyés
 MAIN_MAIL_AUTOCOPY_TO= Envoyer systématiquement une copie cachée des emails envoyés à
 MAIN_MAIL_AUTOCOPY_PROPOSAL_TO= Envoyer systématiquement une copie cachée des propositions envoyées par email à
+MAIN_MAIL_AUTOCOPY_ASKPRICESUPPLIER_TO= Envoyer systématiquement une copie cachée des demandes de prix envoyées par email à
 MAIN_MAIL_AUTOCOPY_ORDER_TO= Envoyer systématiquement une copie cachée des commandes envoyées par emails à
 MAIN_MAIL_AUTOCOPY_INVOICE_TO= Envoyer systématiquement une copie cachée des factures envoyées par email à
 MAIN_DISABLE_ALL_MAILS=Désactiver globalement tout envoi d'emails (pour mode test ou démos)

@@ -22,7 +22,7 @@ NewPropal=Nouvelle proposition
 Prospect=Prospect
 ProspectList=Liste des prospects
 ConfirmDeleteProp=Êtes-vous sûr de vouloir effacer cette proposition commerciale ?
-ConfirmValidateProp=Êtes-vous sûr de vouloir valider cette proposition commerciale sous la référence <b>%s</b> ?
+
 LastPropals=Les %s dernières propales
 LastClosedProposals=Les %s dernières propositions commerciales fermées
 LastModifiedProposals=Les %s dernières propositions commerciales modifiées
@@ -36,7 +36,6 @@ NbOfProposals=Nombre de propositions commerciales
 
 
 # # Ajout
-ShowAskpricesupplier=Afficher demande
 CommRequest=Demande de prix
 CommRequests=Demandes de prix
 SearchRequest=Rechercher une demande
@@ -47,6 +46,7 @@ AskPriceSupplierArea=Espace des demandes de prix fournisseurs
 NewAskPrice=Nouvelle demande de prix
 NewAsk=Nouvelle demande
 # # Modifié
+ConfirmValidateAsk=Êtes-vous sûr de vouloir valider cette demande de prix sous la référence <b>%s</b> ?
 DateAsk=Date de demande
 DateEndAsk=Date de fin de validité
 DateEndAskShort=Date de fin
@@ -86,11 +86,11 @@ ListOfAskPriceSupplier=Liste des devis/propositions commerciales
 TypeContact_askpricesupplier_internal_SALESREPFOLL=Commercial suivi demande
 TypeContact_askpricesupplier_external_BILLING=Contact client facturation demande
 TypeContact_askpricesupplier_external_CUSTOMER=Contact client suivi demande
+ActionsOnAskPriceSupplier=Événements sur la demande
 
 # #
 
 
-ActionsOnPropal=Événements sur la proposition
 NoOpenedPropals=Pas de proposition ouverte
 NoOtherOpenedPropals=Pas d'autre proposition brouillon
 RefProposal=Réf. proposition commerciale
