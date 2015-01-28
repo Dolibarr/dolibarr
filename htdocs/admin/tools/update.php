@@ -127,7 +127,7 @@ function word_limiter( $text, $limit = 30, $chars = '0123456789.' ) {
 $str = $title;
 print $langs->trans("LastStableVersion").' : <b>'. word_limiter( $str ).'</b><br>';
 } else {
-    print $langs->trans("LastStableVersion").' : <b>' .('Update Server Off-Line').'</b><br>';
+    print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
 }
 print '<br>';
 
