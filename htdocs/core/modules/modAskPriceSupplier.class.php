@@ -75,7 +75,7 @@ class modAskPriceSupplier extends DolibarrModules
 
 		$this->const[$r][0] = "ASKPRICESUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "azur";
+		$this->const[$r][2] = "aurore";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des demandes de prix fournisseurs en PDF';
 		$this->const[$r][4] = 0;
 		$r++;

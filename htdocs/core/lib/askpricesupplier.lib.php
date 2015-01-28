@@ -29,7 +29,7 @@
  * @param   object	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function propal_prepare_head($object)
+function askpricesupplier_prepare_head($object)
 {
 	global $langs, $conf, $user;
 	$langs->load("askpricesupplier");
@@ -112,7 +112,7 @@ function propal_prepare_head($object)
  *
  *  @return	array   	        head array with tabs
  */
-function propal_admin_prepare_head()
+function askpricesupplier_admin_prepare_head()
 {
 	global $langs, $conf, $user;
 

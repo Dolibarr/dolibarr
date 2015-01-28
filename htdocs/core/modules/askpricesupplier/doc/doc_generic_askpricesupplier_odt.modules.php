@@ -23,7 +23,7 @@
  *	\brief      File of class to build ODT documents for third parties
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/askpricesupplier/modules_askpricesupplier.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class doc_generic_proposal_odt extends ModelePDFPropales
+class doc_generic_askpricesupplier_odt extends ModelePDFAskPriceSupplier
 {
 	var $emetteur;	// Objet societe qui emet
 
@@ -57,7 +57,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$this->db = $db;
 		$this->name = "ODT templates";
 		$this->description = $langs->trans("DocumentModelOdt");
-		$this->scandir = 'PROPALE_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
+		$this->scandir = 'ASKPRICESUPPLIER_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
 		// Dimension page pour format A4
 		$this->type = 'odt';
@@ -105,19 +105,19 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
-		$texte.= '<input type="hidden" name="param1" value="PROPALE_ADDON_PDF_ODT_PATH">';
-		if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0)
+		$texte.= '<input type="hidden" name="param1" value="ASKPRICESUPPLIER_ADDON_PDF_ODT_PATH">';
+		if ($conf->global->MAIN_ASKPRICESUPPLIER_CHOOSE_ODT_DOCUMENT > 0)
 		{
-			$texte.= '<input type="hidden" name="param2" value="PROPALE_ADDON_PDF_ODT_DEFAULT">';
-			$texte.= '<input type="hidden" name="param3" value="PROPALE_ADDON_PDF_ODT_TOBILL">';
-			$texte.= '<input type="hidden" name="param4" value="PROPALE_ADDON_PDF_ODT_CLOSED">';
+			$texte.= '<input type="hidden" name="param2" value="ASKPRICESUPPLIER_ADDON_PDF_ODT_DEFAULT">';
+			$texte.= '<input type="hidden" name="param3" value="ASKPRICESUPPLIER_ADDON_PDF_ODT_TOBILL">';
+			$texte.= '<input type="hidden" name="param4" value="ASKPRICESUPPLIER_ADDON_PDF_ODT_CLOSED">';
 		}
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		// List of directories area
 		$texte.= '<tr><td>';
 		$texttitle=$langs->trans("ListOfDirectories");
-		$listofdir=explode(',',preg_replace('/[\r\n]+/',',',trim($conf->global->PROPALE_ADDON_PDF_ODT_PATH)));
+		$listofdir=explode(',',preg_replace('/[\r\n]+/',',',trim($conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_PATH)));
 		$listoffiles=array();
 		foreach($listofdir as $key=>$tmpdir)
 		{
@@ -141,7 +141,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
 		$texte.= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
-		$texte.=$conf->global->PROPALE_ADDON_PDF_ODT_PATH;
+		$texte.=$conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_PATH;
 		$texte.= '</textarea>';
 		$texte.= '</div><div style="display: inline-block; vertical-align: middle;">';
 		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
@@ -152,27 +152,27 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		{
 			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
-			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0)
+			if ($conf->global->MAIN_ASKPRICESUPPLIER_CHOOSE_ODT_DOCUMENT > 0)
 			{
 				// Model for creation
-				$liste=ModelePDFPropales::liste_modeles($this->db);
+				$liste=ModelePDFAskPriceSupplier::liste_modeles($this->db);
 				$texte.= '<table width="50%;">';
 				$texte.= '<tr>';
-				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalCreate").'</td>';
+				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelAskPriceSupplierCreate").'</td>';
 				$texte.= '<td colspan="">';
-				$texte.= $form->selectarray('value2',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT);
+				$texte.= $form->selectarray('value2',$liste,$conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_DEFAULT);
 				$texte.= "</td></tr>";
 
 				$texte.= '<tr>';
-				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalToBill").'</td>';
+				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelAskPriceSupplierToBill").'</td>';
 				$texte.= '<td colspan="">';
-				$texte.= $form->selectarray('value3',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL);
+				$texte.= $form->selectarray('value3',$liste,$conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_TOBILL);
 				$texte.= "</td></tr>";
 				$texte.= '<tr>';
 
-				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalClosed").'</td>';
+				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelAskPriceSupplierClosed").'</td>';
 				$texte.= '<td colspan="">';
-				$texte.= $form->selectarray('value4',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED);
+				$texte.= $form->selectarray('value4',$liste,$conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_CLOSED);
 				$texte.= "</td></tr>";
 				$texte.= '</table>';
 			}
@@ -236,7 +236,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			if (! is_object($object))
 			{
 				$id = $object;
-				$object = new Propale($this->db);
+				$object = new AskPriceSupplier($this->db);
 				$result=$object->fetch($id);
 				if ($result < 0)
 				{
@@ -285,7 +285,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				//print "file=".$file;
 				//print "conf->propal->dir_temp=".$conf->propal->dir_temp;
 
-				dol_mkdir($conf->propal->dir_temp);
+				dol_mkdir($conf->askpricesupplier->dir_temp);
 
 
 				// If BILLING contact defined on invoice, we use it
@@ -324,7 +324,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 				// Line of free text
 				$newfreetext='';
-				$paramfreetext='PROPALE_FREE_TEXT';
+				$paramfreetext='ASKPRICESUPPLIER_FREE_TEXT';
 				if (! empty($conf->global->$paramfreetext))
 				{
 					$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
@@ -336,7 +336,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->propal->dir_temp,
+						'PATH_TO_TMP'	  => $conf->askpricesupplier->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}'

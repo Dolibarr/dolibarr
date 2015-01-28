@@ -13,8 +13,6 @@ ProposalsDraft=Propositions commerciales brouillons
 ProposalDraft=Proposition commerciale brouillon
 ProposalsOpened=Propositions commerciales ouvertes
 Prop=Propositions commerciales
-CommercialProposal=Proposition commerciale
-CommercialProposals=Propositions commerciales
 ProposalCard=Fiche proposition
 NewProp=Nouvelle proposition commerciale
 NewProposal=Nouvelle proposition commerciale
@@ -88,6 +86,15 @@ TypeContact_askpricesupplier_external_BILLING=Contact client facturation demande
 TypeContact_askpricesupplier_external_CUSTOMER=Contact client suivi demande
 ActionsOnAskPriceSupplier=Événements sur la demande
 
+DefaultModelAskPriceSupplierCreate=Modèle par défaut à la création
+DefaultModelAskPriceSupplierToBill=Modèle par défaut lors de la clôture d'une proposition commerciale (à facturer)
+DefaultModelAskPriceSupplierClosed=Modèle par défaut lors de la clôture d'une proposition commerciale (non facturée)
+DefaultAskDurationValidity=Délai de validité par défaut (en jours)
+
+DocModelAuroreDescription=Modèle de demande de prix fournisseur complet (logo…)
+
+CommercialAsk=Demande commerciale
+CommercialAsks=Demandes commerciales
 # #
 
 
@@ -107,7 +114,6 @@ EstimateShort=Devis
 OtherPropals=Autres propositions
 AddToDraftProposals=Ajouter à proposition brouillon
 NoDraftProposals=Pas de propositions brouillons
-DefaultProposalDurationValidity=Délai de validité par défaut (en jours)
 UseCustomerContactAsPropalRecipientIfExist=Utiliser l'adresse de contact suivi client si définie plutôt que l'adresse du tiers comme destinataire des propositions
 
 ProposalsAndProposalsLines=Propositions commerciales clients et lignes de propositions
@@ -122,8 +128,4 @@ AvailabilityTypeAV_2W=2 semaines
 AvailabilityTypeAV_3W=3 semaines
 AvailabilityTypeAV_1M=1 mois
 # Document models
-DocModelAzurDescription=Modèle de proposition commerciale complet (logo…)
 DocModelJauneDescription=Modèle de proposition Jaune
-DefaultModelPropalCreate=Modèle par défaut à la création
-DefaultModelPropalToBill=Modèle par défaut lors de la clôture d'une proposition commerciale (à facturer)
-DefaultModelPropalClosed=Modèle par défaut lors de la clôture d'une proposition commerciale (non facturée)

@@ -1578,7 +1578,7 @@ if ($action == 'create')
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
 
-	$head = propal_prepare_head($object);
+	$head = askpricesupplier_prepare_head($object);
 	dol_fiche_head($head, 'comm', $langs->trans('CommRequest'), 0, 'askpricesupplier');
 
 	$formconfirm = '';
