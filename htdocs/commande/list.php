@@ -365,20 +365,20 @@ if ($resql)
                         if (! empty($conf->commande->enabled)) {
                             if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'])) {
                                 $generic_product->load_stats_commande(0,'1,2',true);
-                                $stock_order=$generic_product->stats_commande['qty'];
                                 $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
                             } else {
                                 $generic_product->stats_commande['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'];
                             }
+                            $stock_order=$generic_product->stats_commande['qty'];
                         }
                         if (! empty($conf->fournisseur->enabled)) {
                             if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
                                 $generic_product->load_stats_commande_fournisseur(0,'3',true);
-                                $stock_order_supplier=$generic_product->stats_commande_fournisseur['qty'];
                                 $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
                             } else {
                                 $generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'];
                             }
+                            $stock_order_supplier=$generic_product->stats_commande_fournisseur['qty'];
                         }
                     }
                     $text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
