@@ -126,7 +126,7 @@ llxHeader('',$langs->trans('CommRequest'),'EN:Commercial_Proposals|FR:Propositio
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$formpropal = new FormAskPriceSupplier($db);
+$formaskpricesupplier = new FormAskPriceSupplier($db);
 $companystatic=new Societe($db);
 
 $now=dol_now();
@@ -145,7 +145,7 @@ $limit = $conf->liste_limit;
 
 
 $sql = 'SELECT s.rowid, s.nom as name, s.town, s.client, s.code_client,';
-$sql.= ' p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
+$sql.= ' p.rowid as askpricesupplierid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'askpricesupplier as p';
@@ -322,7 +322,7 @@ if ($result)
 	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
-	$formpropal->selectProposalStatus($viewstatut,1);
+	$formaskpricesupplier->selectAskPriceSupplierStatus($viewstatut,1);
 	print '</td>';
 
 	print '<td class="liste_titre" align="right">';
@@ -366,7 +366,7 @@ if ($result)
 		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 		$filename=dol_sanitizeFileName($objp->ref);
 		$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
-		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->propalid;
+		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->askpricesupplierid;
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		print '</td></tr></table>';
 

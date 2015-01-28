@@ -1190,7 +1190,7 @@ llxHeader('', $langs->trans('CommRequests'), 'EN:Commercial_Proposals|FR:Proposi
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$formpropal = new FormPropal($db);
+$formaskpricesupplier = new FormAskPriceSupplier($db);
 $companystatic = new Societe($db);
 
 $now = dol_now();

@@ -25,10 +25,10 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/askpricesupplier.lib.php';
 
-$langs->load('propal');
+$langs->load('askpricesupplier');
 $langs->load('compta');
 
 $id=GETPOST('id','int');
@@ -36,21 +36,21 @@ $socid=GETPOST('socid','int');
 
 // Security check
 if (! empty($user->societe_id)) $socid=$user->societe_id;
-$result = restrictedArea($user, 'propal', $id);
+$result = restrictedArea($user, 'askpricesupplier', $id);
 
 
 /*
  *	View
  */
 
-llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('',$langs->trans('CommRequest'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
-$object = new Propal($db);
+$object = new AskPriceSupplier($db);
 $object->fetch($id);
 $object->fetch_thirdparty();
 
 $head = propal_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans('Proposal'), 0, 'propal');
+dol_fiche_head($head, 'info', $langs->trans('CommRequest'), 0, 'askpricesupplier');
 
 $object->info($object->id);
 

@@ -26,10 +26,10 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/askpricesupplier.lib.php';
 
-$langs->load('propal');
+$langs->load('askpricesupplier');
 $langs->load('compta');
 $langs->load('bills');
 
@@ -39,7 +39,7 @@ $action=GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'propale', $id, 'propal');
+$result = restrictedArea($user, 'askpricesupplier', $id, 'askpricesupplier');
 
 $object = new Propal($db);
 
@@ -59,7 +59,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
 /* Affichage fiche                                                            */
 /******************************************************************************/
 
-llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('',$langs->trans('CommRequest'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $form = new Form($db);
 
@@ -75,11 +75,11 @@ if ($id > 0 || ! empty($ref))
 		if ( $societe->fetch($object->socid) )
 		{
 			$head = propal_prepare_head($object);
-			dol_fiche_head($head, 'note', $langs->trans('Proposal'), 0, 'propal');
+			dol_fiche_head($head, 'note', $langs->trans('CommRequest'), 0, 'askpricesupplier');
 
 			print '<table class="border" width="100%">';
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans('BackToList').'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans('BackToList').'</a>';
 
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -122,7 +122,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Date fin propal
 			print '<tr>';
-			print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
+			print '<td>'.$langs->trans('DateEndAsk').'</td><td colspan="3">';
 			if ($object->fin_validite)
 			{
 				print dol_print_date($object->fin_validite,'daytext');

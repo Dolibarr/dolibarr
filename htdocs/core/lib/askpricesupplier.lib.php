@@ -32,13 +32,13 @@
 function propal_prepare_head($object)
 {
 	global $langs, $conf, $user;
-	$langs->load("propal");
+	$langs->load("askpricesupplier");
 	$langs->load("compta");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/askpricesupplier.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('ProposalCard');
 	$head[$h][2] = 'comm';
 	$h++;
@@ -47,7 +47,7 @@ function propal_prepare_head($object)
 	|| (! empty($conf->livraison_bon->enabled) && $user->rights->expedition->livraison->lire))))
 	{
 		$langs->load("sendings");
-		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/expedition/askpricesupplier.php?id='.$object->id;
 		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipment");
 		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
 		$head[$h][1] = $text;
@@ -56,7 +56,7 @@ function propal_prepare_head($object)
 	}
 	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/comm/askpricesupplier/apercu.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Preview");
 		$head[$h][2] = 'preview';
 		$h++;
@@ -64,7 +64,7 @@ function propal_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/comm/askpricesupplier/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		$head[$h][2] = 'contact';
 		$h++;
@@ -74,14 +74,14 @@ function propal_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'propal');
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'askpricesupplier');
 
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
     	$nbNote = 0;
         if(!empty($object->note_private)) $nbNote++;
 		if(!empty($object->note_public)) $nbNote++;
-	    $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?id='.$object->id;
+	    $head[$h][0] = DOL_URL_ROOT.'/comm/askpricesupplier/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
@@ -91,18 +91,18 @@ function propal_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/askpricesupplier/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'document';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/askpricesupplier/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'propal','remove');
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'askpricesupplier','remove');
 
 	return $head;
 }
@@ -119,7 +119,7 @@ function propal_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/propal.php';
+	$head[$h][0] = DOL_URL_ROOT.'/admin/askpricesupplier.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
@@ -128,19 +128,19 @@ function propal_admin_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf,$langs,null,$head,$h,'propal_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'askpricesupplier_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propal_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/askpricesupplier_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/admin/propaldet_extrafields.php';
+    $head[$h][0] = DOL_URL_ROOT.'/comm/admin/askpricesupplierdet_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFieldsLines");
     $head[$h][2] = 'attributeslines';
     $h++;
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'propal_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'askpricesupplier_admin','remove');
 
 	return $head;
 }

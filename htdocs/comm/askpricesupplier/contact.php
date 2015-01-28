@@ -25,9 +25,9 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/askpricesupplier.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
@@ -43,9 +43,9 @@ $action=GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'propal', $id);
+$result = restrictedArea($user, 'askpricesupplier', $id);
 
-$object = new Propal($db);
+$object = new AskPriceSupplier($db);
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -69,7 +69,7 @@ if (! $error)
 }
 else
 {
-	header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
+	header('Location: '.DOL_URL_ROOT.'/comm/askpricesupplier/list.php');
 	exit;
 }
 
@@ -78,7 +78,7 @@ else
  * Ajout d'un nouveau contact
  */
 
-if ($action == 'addcontact' && $user->rights->propale->creer)
+if ($action == 'addcontact' && $user->rights->askpricesupplier->creer)
 {
     if ($object->id > 0)
     {
@@ -106,7 +106,7 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 }
 
 // Bascule du statut d'un contact
-else if ($action == 'swapstatut' && $user->rights->propale->creer)
+else if ($action == 'swapstatut' && $user->rights->askpricesupplier->creer)
 {
 	if ($object->id > 0)
 	{
@@ -115,7 +115,7 @@ else if ($action == 'swapstatut' && $user->rights->propale->creer)
 }
 
 // Efface un contact
-else if ($action == 'deletecontact' && $user->rights->propale->creer)
+else if ($action == 'deletecontact' && $user->rights->askpricesupplier->creer)
 {
 	$result = $object->delete_contact($lineid);
 
@@ -130,7 +130,7 @@ else if ($action == 'deletecontact' && $user->rights->propale->creer)
 	}
 }
 
-else if ($action == 'setaddress' && $user->rights->propale->creer)
+else if ($action == 'setaddress' && $user->rights->askpricesupplier->creer)
 {
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
@@ -141,7 +141,7 @@ else if ($action == 'setaddress' && $user->rights->propale->creer)
  * View
  */
 
-llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('',$langs->trans('CommRequest'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $form = new Form($db);
 $formcompany= new FormCompany($db);
@@ -150,14 +150,14 @@ $formother = new FormOther($db);
 if ($object->id > 0)
 {
 	$head = propal_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Proposal"), 0, 'propal');
+	dol_fiche_head($head, 'contact', $langs->trans("CommRequest"), 0, 'askpricesupplier');
 
 	/*
 	 * Propal synthese pour rappel
 	 */
 	print '<table class="border" width="100%">';
 
-	$linkback='<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback='<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -194,7 +194,7 @@ if ($object->id > 0)
 
 		if ($action == 'editdelivery_address')
 		{
-			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'fk_address','propal',$object->id);
+			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'fk_address','askpricesupplier',$object->id);
 		}
 		else
 		{

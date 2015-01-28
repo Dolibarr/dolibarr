@@ -488,7 +488,7 @@ if (empty($reshook))
 							setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
 						}
 					}
-
+					
 					if (! $error)
 					{
 						$db->commit();
