@@ -25,13 +25,13 @@
  * \brief      File that contains the numbering module rules Saphir
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
+require_once DOL_DOCUMENT_ROOT .'/core/modules/askpricesupplier/modules_propale.php';
 
 
 /**
  * Class of file that contains the numbering module rules Saphir
  */
-class mod_propale_saphir extends ModeleNumRefPropales
+class mod_propale_saphir extends ModeleNumRefAskPriceSupplier
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
@@ -55,18 +55,18 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstpropal" value="PROPALE_SAPHIR_MASK">';
+		$texte.= '<input type="hidden" name="maskconstaskpricesupplier" value="ASKPRICESUPPLIER_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Proposal"),$langs->transnoentities("Proposal"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("CommRequest"),$langs->transnoentities("CommRequest"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Proposal"),$langs->transnoentities("Proposal"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("CommRequest"),$langs->transnoentities("CommRequest"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskpropal" value="'.$conf->global->PROPALE_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskaskpricesupplier" value="'.$conf->global->ASKPRICESUPPLIER_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -106,14 +106,14 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	 * 	@param	Propal		$propal		Object commercial proposal
 	 *  @return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$propal)
+	function getNextValue($objsoc,$askpricesupplier)
 	{
 		global $db,$conf;
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask=$conf->global->PROPALE_SAPHIR_MASK;
+		$mask=$conf->global->ASKPRICESUPPLIER_SAPHIR_MASK;
 
 		if (! $mask)
 		{
@@ -121,7 +121,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 			return 0;
 		}
 
-		$date=$propal->datep;
+		$date=$askpricesupplier->datep;
 		$customercode=$objsoc->code_client;
 		$numFinal=get_next_value($db,$mask,'propal','ref','',$customercode,$date);
 

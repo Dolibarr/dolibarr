@@ -86,7 +86,7 @@ abstract class ModeleNumRefAskPriceSupplier
 	function info()
 	{
 		global $langs;
-		$langs->load("propale");
+		$langs->load("askpricesupplier");
 		return $langs->trans("NoDescription");
 	}
 
@@ -98,7 +98,7 @@ abstract class ModeleNumRefAskPriceSupplier
 	function getExample()
 	{
 		global $langs;
-		$langs->load("propale");
+		$langs->load("askpricesupplier");
 		return $langs->trans("NoExample");
 	}
 

@@ -82,7 +82,7 @@ class modAskPriceSupplier extends DolibarrModules
 
 		$this->const[$r][0] = "ASKPRICESUPPLIER_ADDON";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_propale_marbre";
+		$this->const[$r][2] = "mod_askpricesupplier_marbre";
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des demandes de prix fournisseurs';
 		$this->const[$r][4] = 0;
 		$r++;

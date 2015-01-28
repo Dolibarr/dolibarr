@@ -433,7 +433,7 @@ if (! empty($conf->propal->enabled))
 
 				print '</td>';
 
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowAskPriceSupplier"),"askpricesupplier").' '.dol_trunc($obj->name,24).'</a></td>';
 
 				print '<td align="right">'.$askpricesupplierstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
@@ -505,7 +505,7 @@ if (! empty($conf->propal->enabled))
 
 				print '</td>';
 
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowAskPriceSupplier"),"askpricesupplier").' '.$obj->name.'</a></td>';
 
 				print '<td align="right">'.$askpricesupplierstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 

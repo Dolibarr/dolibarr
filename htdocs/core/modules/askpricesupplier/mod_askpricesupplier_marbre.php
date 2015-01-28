@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
 /**
  *	Class to manage customer order numbering rules Marbre
  */
-class mod_propale_marbre extends ModeleNumRefPropales
+class mod_askpricesupplier_marbre extends ModeleNumRefAskPriceSupplier
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='PR';
@@ -74,7 +74,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
+		$sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -111,7 +111,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		// D'abord on recupere la valeur max
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
-		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
+		$sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 

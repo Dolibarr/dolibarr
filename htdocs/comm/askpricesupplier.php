@@ -33,7 +33,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formpropal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaskpricesupplier.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/askpricesupplier/class/askpricesupplier.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/askpricesupplier/modules_askpricesupplier.php';
@@ -1497,8 +1497,8 @@ if ($action == 'create')
 			$i = 0;
 			while ($i < $num) {
 				$row = $db->fetch_row($resql);
-				$propalRefAndSocName = $row [1] . " - " . $row [2];
-				$liste_ask [$row [0]] = $propalRefAndSocName;
+				$askPriceSupplierRefAndSocName = $row [1] . " - " . $row [2];
+				$liste_ask [$row [0]] = $askPriceSupplierRefAndSocName;
 				$i ++;
 			}
 			print $form->selectarray("copie_askpricesupplier", $liste_ask, 0);
@@ -1579,7 +1579,7 @@ if ($action == 'create')
 	$soc->fetch($object->socid);
 
 	$head = propal_prepare_head($object);
-	dol_fiche_head($head, 'comm', $langs->trans('CommRequest'), 0, 'CommRequest');
+	dol_fiche_head($head, 'comm', $langs->trans('CommRequest'), 0, 'askpricesupplier');
 
 	$formconfirm = '';
 
@@ -2308,7 +2308,7 @@ if ($action == 'create')
 
 		// Tableau des parametres complementaires
 		$formmail->param['action'] = 'send';
-		$formmail->param['models'] = 'propal_send';
+		$formmail->param['models'] = 'askpricesupplier_send';
 		$formmail->param['id'] = $object->id;
 		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 		// Init list of files
