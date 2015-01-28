@@ -48,7 +48,7 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->db = $db;
 		$this->numero = 999999;
 
-		$this->family = "products";
+		$this->family = "crm";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "askpricesupplierDESC";
@@ -220,11 +220,33 @@ class modAskPriceSupplier extends DolibarrModules
 	 */
 	function init($options='')
 	{
-		//global $conf,$langs;
+		global $conf,$langs;
 
-  		/*CREATE IF NOT EXISTS llx_askpricesupplier (rowid int auto_increment);*/
- 
-		$sql = array();
+		// Remove permissions and default values
+		$this->remove($options);
+
+		//ODT template
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/askpricesupplier/template_askpricesupplier.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/askpricesupplier';
+		$dest=$dirodt.'/template_askpricesupplier.odt';
+
+		if (file_exists($src) && ! file_exists($dest))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result=dol_copy($src,$dest,0,0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				return 0;
+			}
+		}
+
+		$sql = array(
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','askpricesupplier',".$conf->entity.")",
+		);
 
 		$result=$this->_load_tables('/comm/askpricesupplier/sql/');
 		return $this->_init($sql, $options);

@@ -1285,7 +1285,7 @@ if ($action == 'create')
 
 	// Third party
 	print '<tr>';
-	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
+	print '<td class="fieldrequired">' . $langs->trans('Supplier') . '</td>';
 	if ($socid > 0) {
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
@@ -1293,7 +1293,7 @@ if ($action == 'create')
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 2 OR s.client = 3', 1);
+		print $form->select_company('', 'socid', 's.fournisseur = 1', 1);
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -2186,14 +2186,14 @@ if ($action == 'create')
 		 * Documents generes
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
+		$filedir = $conf->askpricesupplier->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 		$genallowed = $user->rights->askpricesupplier->creer;
 		$delallowed = $user->rights->askpricesupplier->supprimer;
 
 		$var = true;
 
-		$somethingshown = $formfile->show_documents('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+		$somethingshown = $formfile->show_documents('askpricesupplier', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 		/*
 		 * Linked object block
