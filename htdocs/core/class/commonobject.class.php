@@ -1768,7 +1768,7 @@ abstract class CommonObject
             // Specific code for backward compatibility with old field names
             if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldht='total';
             if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
-            if ($this->element == 'propal')                                                $fieldttc='total';
+            if ($this->element == 'propal' || $this->element == 'askpricesupplier')        $fieldttc='total';
 
             if (empty($nodatabaseupdate))
             {
@@ -1957,6 +1957,9 @@ abstract class CommonObject
                     }
                     else if ($objecttype == 'propal')			{
                         $classpath = 'comm/propal/class';
+                    }
+                    else if ($objecttype == 'askpricesupplier')			{
+                        $classpath = 'comm/askpricesupplier/class';
                     }
                     else if ($objecttype == 'shipping')			{
                         $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
@@ -2472,6 +2475,10 @@ abstract class CommonObject
         		else if ($objecttype == 'propal')           {
         			$tplpath = 'comm/'.$element;
         			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
+        		}
+        		else if ($objecttype == 'askpricesupplier')           {
+        			$tplpath = 'comm/'.$element;
+        			if (empty($conf->askpricesupplier->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'shipping')         {
         			$tplpath = 'expedition';
