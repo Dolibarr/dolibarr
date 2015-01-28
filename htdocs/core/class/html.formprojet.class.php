@@ -51,7 +51,7 @@ class FormProjets
 	 *	@param	int		$maxlength		Maximum length of label
 	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
-	 *  @param	int		$discard_closed Discard closed projects
+	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
 	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
 	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0)
@@ -105,7 +105,7 @@ class FormProjets
 					}
 					else
 					{
-						if ($discard_closed && $obj->fk_statut == 2)
+						if ($discard_closed == 1 && $obj->fk_statut == 2)
 						{
 							$i++;
 							continue;
@@ -114,30 +114,31 @@ class FormProjets
 						$labeltoshow=dol_trunc($obj->ref,18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
+						$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
+
+						$disabled=0;
+						if ($obj->fk_statut == 0)
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("Draft");
+						}
+						else if ($obj->fk_statut == 2)
+						{
+							if ($discard_close == 2) $disabled=1;
+							$labeltoshow.=' - '.$langs->trans("Closed");
+						}
+						else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+						}
+						
 						if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.' '.dol_trunc($obj->title,$maxlength).'</option>';
+							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
 						}
 						else
 						{
-							$disabled=0;
-							$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
-							if ($obj->fk_statut == 0)
-							{
-								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("Draft");
-							}
-							else if ($obj->fk_statut == 2)
-							{
-								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("Closed");
-							}
-							else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
-							{
-								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
-							}
-
 							if ($hideunselectables && $disabled)
 							{
 								$resultat='';

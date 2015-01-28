@@ -114,7 +114,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap">';
 		print $langs->trans("Project").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone">';
-		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 64);
+		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid');
 		print '</td></tr>';
 	}
 
