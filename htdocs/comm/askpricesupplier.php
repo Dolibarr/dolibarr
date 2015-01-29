@@ -696,8 +696,13 @@ if (empty($reshook))
 				// If prices fields are update
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
-					$pu_ht = $prod->price;
-					$pu_ttc = $prod->price_ttc;
+					
+					//On garde le prix indiqué dans l'input pour la demande de prix fournisseur
+					//$pu_ht = $prod->price;
+					$pu_ht = price2num($price_ht, 'MU');
+					//$pu_ttc = $prod->price_ttc;
+					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+					
 					$price_min = $prod->price_min;
 					$price_base_type = $prod->price_base_type;
 
