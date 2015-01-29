@@ -149,7 +149,7 @@ $formother = new FormOther($db);
 
 if ($object->id > 0)
 {
-	$head = propal_prepare_head($object);
+	$head = askpricesupplier_prepare_head($object);
 	dol_fiche_head($head, 'contact', $langs->trans("CommRequest"), 0, 'askpricesupplier');
 
 	/*
@@ -198,7 +198,7 @@ if ($object->id > 0)
 		}
 		else
 		{
-			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'none','propal',$object->id);
+			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'none','askpricesupplier',$object->id);
 		}
 		print '</td></tr>';
 	}

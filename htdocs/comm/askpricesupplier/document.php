@@ -85,9 +85,9 @@ $form = new Form($db);
 
 if ($object->id > 0)
 {
-	$upload_dir = $conf->propal->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->askpricesupplier->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-	$head = propal_prepare_head($object);
+	$head = askpricesupplier_prepare_head($object);
 	dol_fiche_head($head, 'document', $langs->trans('CommRequest'), 0, 'askpricesupplier');
 
 	// Construit liste des fichiers

@@ -49,7 +49,7 @@ $object = new AskPriceSupplier($db);
 $object->fetch($id);
 $object->fetch_thirdparty();
 
-$head = propal_prepare_head($object);
+$head = askpricesupplier_prepare_head($object);
 dol_fiche_head($head, 'info', $langs->trans('CommRequest'), 0, 'askpricesupplier');
 
 $object->info($object->id);

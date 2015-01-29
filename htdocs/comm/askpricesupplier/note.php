@@ -41,7 +41,7 @@ $action=GETPOST('action','alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'askpricesupplier', $id, 'askpricesupplier');
 
-$object = new Propal($db);
+$object = new AskPriceSupplier($db);
 
 
 
@@ -49,7 +49,7 @@ $object = new Propal($db);
 /*                     Actions                                                */
 /******************************************************************************/
 
-$permissionnote=$user->rights->propale->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->askpricesupplier->creer;	// Used by the include of actions_setnotes.inc.php
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
@@ -74,7 +74,7 @@ if ($id > 0 || ! empty($ref))
 		$societe = new Societe($db);
 		if ( $societe->fetch($object->socid) )
 		{
-			$head = propal_prepare_head($object);
+			$head = askpricesupplier_prepare_head($object);
 			dol_fiche_head($head, 'note', $langs->trans('CommRequest'), 0, 'askpricesupplier');
 
 			print '<table class="border" width="100%">';
@@ -126,7 +126,7 @@ if ($id > 0 || ! empty($ref))
 			if ($object->fin_validite)
 			{
 				print dol_print_date($object->fin_validite,'daytext');
-				if ($object->statut == 1 && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($object->statut == 1 && $object->fin_validite < ($now - $conf->askpricesupplier->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 			}
 			else
 			{
