@@ -52,6 +52,7 @@ $langs->load('sendings');
 $langs->load('companies');
 $langs->load('bills');
 $langs->load('propal');
+$langs->load('askpricesupplier');
 $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
