@@ -1335,7 +1335,7 @@ class AskPriceSupplier extends CommonObject
         $now=dol_now();
 
         if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->propal_advance->validate)))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->validate)))
         {
             $this->db->begin();
 

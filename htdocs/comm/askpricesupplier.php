@@ -2028,7 +2028,7 @@ if ($action == 'create')
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->propal->creer)
+	if ($object->statut == 0 && $user->rights->askpricesupplier->creer)
 	{
 		if ($action != 'editline')
 		{
@@ -2117,7 +2117,7 @@ if ($action == 'create')
 
 				// Send
 				if ($object->statut == 1 || $object->statut == 2) {
-					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->askpricesupplier->propal_advance->send) {
+					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->askpricesupplier->send) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=presend&amp;mode=init">' . $langs->trans('SendByMail') . '</a></div>';
 					} else
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
