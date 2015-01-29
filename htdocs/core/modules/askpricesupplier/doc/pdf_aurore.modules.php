@@ -102,8 +102,8 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=112;
-		$this->posxup=126;
+		$this->posxtva=102;
+		$this->posxup=116;
 		$this->posxqty=145;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
@@ -425,7 +425,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 					{
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-0.8, 3, $vat_rate, 0, 'R');
+						$pdf->MultiCell($this->posxup-$this->posxtva-3, 3, $vat_rate, 0, 'R');
 					}
 
 					// Unit price before discount
@@ -1124,19 +1124,20 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
-			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
+			//$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
+			$pdf->line($this->posxtva-2, $tab_top, $this->posxtva-2, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{
-				$pdf->SetXY($this->posxtva-3, $tab_top+1);
+				$pdf->SetXY($this->posxtva-5, $tab_top+1);
 				$pdf->MultiCell($this->posxup-$this->posxtva+3,2, $outputlangs->transnoentities("VAT"),'','C');
 			}
 		}
 
-		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
+		$pdf->line($this->posxup-3, $tab_top, $this->posxup-3, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxup-1, $tab_top+1);
-			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
+			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("AskPriceSupplierUHT"),'','C');
 		}
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
@@ -1181,7 +1182,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 
 		$outputlangs->load("main");
 		$outputlangs->load("bills");
-		$outputlangs->load("propal");
+		$outputlangs->load("askpricesupplier");
 		$outputlangs->load("companies");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1228,7 +1229,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		$pdf->SetFont('','B',$default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$title=$outputlangs->transnoentities("CommercialProposal");
+		$title=$outputlangs->transnoentities("CommercialAsk");
 		$pdf->MultiCell(100, 4, $title, '', 'R');
 
 		$pdf->SetFont('','B',$default_font_size);
