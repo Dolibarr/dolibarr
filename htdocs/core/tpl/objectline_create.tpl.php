@@ -31,7 +31,7 @@
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal', 'askpricesupplier','commande'))) $usemargins=1;
 
 global $forceall, $senderissupplier, $inputalsopricewithtax;
 if (empty($dateSelector)) $dateSelector=0;
@@ -43,7 +43,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
+if (in_array($object->element,array('propal', 'askpricesupplier','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
@@ -211,7 +211,7 @@ else {
 	</td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
 	<td align="right">
-	<?php if (GETPOST('prod_entry_mode') != 'predef') { ?>
+	<?php if ($object->element == 'askpricesupplier' || GETPOST('prod_entry_mode') != 'predef') { ?>
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?$_POST["price_ttc"]:''); ?>">
 	<?php } ?>
 	</td>
@@ -270,6 +270,9 @@ else {
 		elseif ($this->table_element_line=='propaldet') {
 			$newline = new PropaleLigne($this->db);
 		}
+		elseif ($this->table_element_line=='askpricesupplierdet') {
+			$newline = new AskPriceSupplierLigne($this->db);
+		}
 		elseif ($this->table_element_line=='facturedet') {
 			$newline = new FactureLigne($this->db);
 		}
@@ -287,7 +290,7 @@ if (! empty($conf->service->enabled) && $dateSelector && GETPOST('type') != '0')
 	else $colspan = 9;
 	if($this->situation_cycle_ref) $colspan++;
 	if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-	if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
+	if (in_array($object->element,array('propal', 'askpricesupplier','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
 
 	if (! empty($usemargins))
 	{
@@ -562,12 +565,14 @@ function setforpredef() {
 	jQuery("#select_type").val(-1);
 	jQuery("#prod_entry_mode_free").attr('checked',false);
 	jQuery("#prod_entry_mode_predef").attr('checked',true);
-	jQuery("#price_ht").hide();
+	<?php if ($object->element != 'askpricesupplier') { ?>
+		jQuery("#price_ht").hide();
+		jQuery("#title_up_ht").hide();
+	<?php } ?>
 	jQuery("#price_ttc").hide();	// May no exists
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();
 	jQuery("#title_vat").hide();
-	jQuery("#title_up_ht").hide();
 	jQuery("#title_up_ttc").hide();
 	jQuery("#np_marginRate").hide();	// May no exists
 	jQuery("#np_markRate").hide();	// May no exists
