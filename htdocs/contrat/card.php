@@ -1237,7 +1237,7 @@ else
          * Lines of contracts
          */
 
-	    if ($conf->product->enabled) {
+	    if ($conf->product->enabled || $conf->service->enabled) {
 			$productstatic=new Product($db);
 	    }
 
