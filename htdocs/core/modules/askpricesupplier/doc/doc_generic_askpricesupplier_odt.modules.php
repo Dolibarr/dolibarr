@@ -230,7 +230,7 @@ class doc_generic_askpricesupplier_odt extends ModelePDFAskPriceSupplier
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 
-		if ($conf->propal->dir_output)
+		if ($conf->askpricesupplier->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
@@ -245,7 +245,7 @@ class doc_generic_askpricesupplier_odt extends ModelePDFAskPriceSupplier
 				}
 			}
 
-			$dir = $conf->propal->dir_output;
+			$dir = $conf->askpricesupplier->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";

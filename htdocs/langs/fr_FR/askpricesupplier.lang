@@ -13,7 +13,6 @@ ProposalsDraft=Propositions commerciales brouillons
 ProposalDraft=Proposition commerciale brouillon
 ProposalsOpened=Propositions commerciales ouvertes
 Prop=Propositions commerciales
-ProposalCard=Fiche proposition
 NewProp=Nouvelle proposition commerciale
 NewProposal=Nouvelle proposition commerciale
 NewPropal=Nouvelle proposition
@@ -77,6 +76,7 @@ ConfirmReOpenAsk=Êtes-vous sûr de vouloir réouvrir la demande de prix <b>%s</
 SendAskByMail=Envoyer demande de prix par email
 SendAskRef=Envoi de la demande de prix %s
 
+AskPriceSupplierCard=Fiche demande
 ConfirmDeleteAsk=Êtes-vous sûr de vouloir effacer cette demande de prix ?
 ListOfAskPriceSupplier=Liste des devis/propositions commerciales
 
@@ -93,8 +93,7 @@ DefaultAskDurationValidity=Délai de validité par défaut (en jours)
 
 DocModelAuroreDescription=Modèle de demande de prix fournisseur complet (logo…)
 
-CommercialAsk=Demande commerciale
-CommercialAsks=Demandes commerciales
+CommercialAsk=Demande de prix
 # #
 
 
