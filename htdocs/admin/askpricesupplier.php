@@ -31,11 +31,11 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/askpricesupplier.lib.php';
 $langs->load("admin");
 $langs->load("errors");
 $langs->load('other');
-$langs->load('propal');
+$langs->load('askpricesupplier');
 
 if (! $user->admin) accessforbidden();
 
@@ -324,7 +324,7 @@ foreach ($dirmodels as $reldir)
                         print '</td>'."\n";
 
 						print '<td align="center">';
-						if ($conf->global->PROPALE_ADDON == "$file")
+						if ($conf->global->ASKPRICESUPPLIER_ADDON == "$file")
 						{
 							print img_picto($langs->trans("Activated"),'switch_on');
 						}
