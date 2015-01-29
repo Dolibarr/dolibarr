@@ -48,13 +48,13 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->db = $db;
 		$this->numero = 999999;
 
-		$this->family = "crm";
+		$this->family = "products";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "askpricesupplierDESC";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '0.1';
+		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
@@ -140,6 +140,12 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->rights[$r][1] = 'Supprimer les demandes fournisseurs'; // libelle de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
+		
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r; // id de la permission
+		$this->rights[$r][1] = 'Cloturer les demandes de prix fournisseurs'; // libelle de la permission
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'cloturer';
 
 		// Exports
 		//--------
