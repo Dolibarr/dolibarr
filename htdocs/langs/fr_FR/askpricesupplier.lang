@@ -19,7 +19,6 @@ NewProposal=Nouvelle proposition commerciale
 NewPropal=Nouvelle proposition
 Prospect=Prospect
 ProspectList=Liste des prospects
-ConfirmDeleteProp=Êtes-vous sûr de vouloir effacer cette proposition commerciale ?
 
 LastPropals=Les %s dernières propales
 LastClosedProposals=Les %s dernières propositions commerciales fermées
@@ -78,6 +77,7 @@ ConfirmReOpenAsk=Êtes-vous sûr de vouloir réouvrir la demande de prix <b>%s</
 SendAskByMail=Envoyer demande de prix par email
 SendAskRef=Envoi de la demande de prix %s
 
+ConfirmDeleteAsk=Êtes-vous sûr de vouloir effacer cette demande de prix ?
 ListOfAskPriceSupplier=Liste des devis/propositions commerciales
 
 ##### Types de contacts #####
