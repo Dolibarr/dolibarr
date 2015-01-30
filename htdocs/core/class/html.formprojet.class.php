@@ -43,7 +43,7 @@ class FormProjets
 	}
 
 	/**
-	 *	Show a combo list with projects qualified for a third party
+	 *	Output a combo list with projects qualified for a third party
 	 *
 	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
 	 *	@param  int		$selected   	Id project preselected
@@ -54,7 +54,7 @@ class FormProjets
 	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
 	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0)
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0)
 	{
 		global $user,$conf,$langs;
 
@@ -132,7 +132,7 @@ class FormProjets
 							$disabled=1;
 							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
 						}
-						
+
 						if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
 						{
 							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
@@ -163,6 +163,12 @@ class FormProjets
 				$out.= '</select>';
 			}
 			print $out;
+
+			// Use select2 selector
+			if (! empty($conf->use_javascript_ajax))
+			{
+
+			}
 
 			$this->db->free($resql);
 			return $num;
