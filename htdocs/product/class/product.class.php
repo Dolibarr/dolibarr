@@ -2965,9 +2965,10 @@ class Product extends CommonObject
 	 *  @param  	int		$movement       0 = add, 1 = remove
 	 * 	@param		string	$label			Label of stock movement
 	 * 	@param		double	$price			Price to use for stock eval
+	 *  @param		string	$inventorycode	Inventory code
 	 * 	@return     int     				<0 if KO, >0 if OK
 	 */
-	function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0)
+	function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
 	{
 		if ($id_entrepot)
 		{
@@ -2979,7 +2980,7 @@ class Product extends CommonObject
 			$op[1] = "-".trim($nbpiece);
 
 			$movementstock=new MouvementStock($this->db);
-			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label);
+			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label,$inventorycode);
 
 			if ($result >= 0)
 			{
@@ -3581,9 +3582,10 @@ class Product extends CommonObject
 	 * 	@param		date	$dlc			eat-by date
 	 * 	@param		date	$dluo			sell-by date
 	 * 	@param		string	$lot			Lot number
+	 *  @param		string	$inventorycode	Inventory code
 	 * 	@return     int     				<0 if KO, >0 if OK
 	 */
-	function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='')
+	function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='', $inventorycode='')
 	{
 		if ($id_entrepot)
 		{
@@ -3595,7 +3597,7 @@ class Product extends CommonObject
 			$op[1] = "-".trim($nbpiece);
 
 			$movementstock=new MouvementStock($this->db);
-			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label,'',$dlc,$dluo,$lot);
+			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label,$inventorycode,'',$dlc,$dluo,$lot);
 
 			if ($result >= 0)
 			{

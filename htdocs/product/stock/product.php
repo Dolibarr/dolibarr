@@ -135,11 +135,12 @@ if ($action == "correct_stock" && ! $cancel)
 					GETPOST("id_entrepot"),
 					GETPOST("nbpiece"),
 					GETPOST("mouvement"),
-					GETPOST("label"),
+					GETPOST("label"),		// label movement
 					$priceunit,
 					$d_eatby,
 					$d_sellby,
-					GETPOST('batch_number')
+					GETPOST('batch_number'),
+					GETPOST('inventorycode')
 				);		// We do not change value of stock for a correction
 			}
 			else
@@ -150,7 +151,8 @@ if ($action == "correct_stock" && ! $cancel)
 		    		GETPOST("nbpiece"),
 		    		GETPOST("mouvement"),
 		    		GETPOST("label"),
-		    		$priceunit
+		    		$priceunit,
+					GETPOST('inventorycode')
 				);		// We do not change value of stock for a correction
 			}
 
@@ -564,7 +566,7 @@ if ($id > 0 || $ref)
 		print '<tr>';
 		print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Warehouse").'</td>';
 		print '<td width="20%">';
-		print $formproduct->selectWarehouses(($_GET["dwid"]?$_GET["dwid"]:GETPOST('id_entrepot')),'id_entrepot','',1);
+		print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOT("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')),'id_entrepot','',1);
 		print '</td>';
 		print '<td width="20%">';
 		print '<select name="mouvement" id="mouvement" class="flat">';
@@ -576,11 +578,8 @@ if ($id > 0 || $ref)
 
 		// Label
 		print '<tr>';
-		print '<td width="20%" colspan="2">'.$langs->trans("Label").'</td>';
-		print '<td colspan="2">';
-		print '<input type="text" name="label" size="40" value="'.GETPOST("label").'">';
-		print '</td>';
-		print '<td width="20%">'.$langs->trans("UnitPurchaseValue").'</td><td width="20%"><input class="flat" name="price" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
+		print '<td width="20%" colspan="2">'.$langs->trans("UnitPurchaseValue").'</td>';
+		print '<td colspan="4"><input class="flat" name="price" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
 		print '</tr>';
 
 		//eat-by date
@@ -599,8 +598,18 @@ if ($id > 0 || $ref)
 			print '</td>';
 			print '</tr>';
 		}
-		print '</table>';
 
+		// Label of mouvement of id of inventory
+		print '<tr>';
+		print '<td width="20%" colspan="2">'.$langs->trans("MovementLabel").'</td>';
+		print '<td colspan="2">';
+		print '<input type="text" name="label" size="40" value="'.GETPOST("label").'">';
+		print '</td>';
+		print '<td width="20%">'.$langs->trans("InventoryCode").'</td><td width="20%"><input class="flat" name="inventorycode" id="inventorycode" size="10" value="'.GETPOST("inventorycode").'"></td>';
+		print '</tr>';
+		
+		print '</table>';
+		
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -649,7 +658,7 @@ if ($id > 0 || $ref)
 		}
 		else
 		{
-            print $formproduct->selectWarehouses(($_GET["dwid"]?$_GET["dwid"]:GETPOST('id_entrepot_source')),'id_entrepot_source','',1);
+            print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOT("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot_source','int'):'ifone')),'id_entrepot_source','',1);
 		}
 		print '</td>';
 		print '<td width="20%" class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
