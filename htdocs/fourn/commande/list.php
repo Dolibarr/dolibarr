@@ -123,7 +123,7 @@ if ($search_user)
 }
 if ($search_ttc)
 {
-	$sql .= " AND total_ttc = '".$db->escape(price2num($search_ttc))."'";
+	$sql .= " AND cf.total_ttc = '".$db->escape(price2num($search_ttc))."'";
 }
 if ($sall)
 {
@@ -134,7 +134,7 @@ if ($socid) $sql.= " AND s.rowid = ".$socid;
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'int') !== '')
 {
-	$sql .= " AND fk_statut IN (".GETPOST('statut').")";
+	$sql .= " AND cf.fk_statut IN (".GETPOST('statut').")";
 }
 if ($search_refsupp)
 {
@@ -142,8 +142,8 @@ if ($search_refsupp)
 }
 if ($search_status >= 0)
 {
-	if ($search_status == 6 || $search_status == 7) $sql.=" AND fk_statut IN (6,7)";
-	else $sql.=" AND fk_statut = ".$search_status;
+	if ($search_status == 6 || $search_status == 7) $sql.=" AND cf.fk_statut IN (6,7)";
+	else $sql.=" AND cf.fk_statut = ".$search_status;
 }
 
 $sql.= $db->order($sortfield,$sortorder);
@@ -172,7 +172,7 @@ if ($resql)
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($socid)					$param.="&socid=".$socid;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
-	
+
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<table class="noborder" width="100%">';
@@ -268,7 +268,7 @@ if ($resql)
 	}
 	print "</table>\n";
 	print "</form>\n";
-	
+
 	print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';
 
 	$db->free($resql);
