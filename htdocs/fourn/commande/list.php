@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load("orders");
 $langs->load("sendings");
