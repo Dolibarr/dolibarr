@@ -47,6 +47,7 @@ if (! empty($conf->facture->enabled))  	$langs->load("bills");
 if (! empty($conf->commande->enabled)) 	$langs->load("orders");
 if (! empty($conf->propal->enabled))   	$langs->load("propal");
 if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
+if (! empty($conf->deplacement->enabled))	$langs->load("trips");
 
 $projectid=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -164,21 +165,21 @@ dol_fiche_end();
 
 $listofreferent=array(
 'propal'=>array(
-	'name'=>"Proposalq",
+	'name'=>"Proposals",
 	'title'=>"ListProposalsAssociatedProject",
 	'class'=>'Propal',
 	'table'=>'propal',
     'datefieldname'=>'datep',
 	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
 'order'=>array(
-	'name'=>"CustomerOrderq",
+	'name'=>"CustomersOrders",
 	'title'=>"ListOrdersAssociatedProject",
 	'class'=>'Commande',
 	'table'=>'commande',
 	'datefieldname'=>'date_commande',
 	'test'=>$conf->commande->enabled && $user->rights->commande->lire),
 'invoice'=>array(
-	'name'=>"CustomerInvoiceq",
+	'name'=>"CustomersInvoices",
 	'title'=>"ListInvoicesAssociatedProject",
 	'class'=>'Facture',
 	'margin'=>'add',
@@ -193,7 +194,7 @@ $listofreferent=array(
 	'datefieldname'=>'datec',
 	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'order_supplier'=>array(
-	'name'=>"SuplierOrders",
+	'name'=>"SuppliersOrders",
 	'title'=>"ListSupplierOrdersAssociatedProject",
 	'class'=>'CommandeFournisseur',
 	'table'=>'commande_fournisseur',
@@ -223,7 +224,7 @@ $listofreferent=array(
 	'disableamount'=>1,
 	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
 'trip'=>array(
-	'name'=>"TripAndExpenses",
+	'name'=>"TripsAndExpenses",
 	'title'=>"ListTripAssociatedProject",
 	'class'=>'Deplacement',
 	'table'=>'deplacement',

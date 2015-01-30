@@ -3145,10 +3145,11 @@ class Form
      *    @param	int		$socid       		Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
      *    @param    int		$selected    		Id pre-selected project
      *    @param    string	$htmlname    		Name of select field
-     *    @param	int		$discard_closed		Hide all closed projects
+     *    @param	int		$discard_closed		Discard closed projects (0=Keep,1=hide completely,2=Disable)
+     *    @param	int		$maxlength			Max length
      *    @return	void
      */
-    function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0)
+    function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0, $maxlength=20)
     {
         global $langs;
 
@@ -3165,7 +3166,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $formproject->select_projects($socid,$selected,$htmlname,20,0,1,$discard_closed);
+            $formproject->select_projects($socid,$selected,$htmlname,$maxlength,0,1,$discard_closed);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';

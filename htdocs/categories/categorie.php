@@ -289,7 +289,8 @@ if ($socid)
 	if ($soc->country)
 	{
 		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-		$img=picto_from_langcode($soc->country_code);
+		//$img=picto_from_langcode($soc->country_code);
+		$img='';
 		print ($img?$img.' ':'');
 		print $soc->country;
 		print '</td></tr>';

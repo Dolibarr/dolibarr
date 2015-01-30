@@ -341,7 +341,8 @@ class Livraison extends CommonObject
 
 		$error = 0;
 
-		if ($user->rights->expedition->livraison->valider)
+        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
 		{
 			if (! empty($conf->global->LIVRAISON_ADDON_NUMBER))
 			{

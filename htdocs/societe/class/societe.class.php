@@ -2671,7 +2671,7 @@ class Societe extends CommonObject
     {
         global $conf;
 
-        // Define if third party is treated as company of not when nature is unknown
+        // Define if third party is treated as company (or not) when nature is unknown
         $isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1; // 0 by default
         if (! empty($this->tva_intra)) $isacompany=1;
         else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_PRIVATE'))) $isacompany=0;

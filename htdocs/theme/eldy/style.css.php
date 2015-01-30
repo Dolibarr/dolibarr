@@ -428,6 +428,9 @@ th .button {
 	background-color: #777;
 	border-radius: 10px;
 }
+.movable {
+	cursor: move;
+}
 
 .borderrightlight
 {
