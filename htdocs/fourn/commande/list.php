@@ -124,7 +124,7 @@ if ($search_user)
 }
 if ($search_ttc)
 {
-	$sql .= " AND total_ttc = '".$db->escape(price2num($search_ttc))."'";
+	$sql .= " AND cf.total_ttc = '".$db->escape(price2num($search_ttc))."'";
 }
 if ($sall)
 {
