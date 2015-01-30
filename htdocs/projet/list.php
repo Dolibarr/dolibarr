@@ -68,6 +68,8 @@ $search_year=GETPOST("search_year");
 $search_all=GETPOST("search_all");
 $search_status=GETPOST("search_status",'int');
 $search_public=GETPOST("search_public",'int');
+$search_user=GETPOST('search_user','int');
+$search_sale=GETPOST('search_sale','int');
 
 $day		= GETPOST('day','int');
 $month	= GETPOST('month','int');
@@ -85,6 +87,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_all=0;
 	$search_status=1;
 	$search_public="";
+	$search_sale="";
+	$search_user='';
 	$day="";
 	$month="";
 	$year="";
@@ -109,6 +113,15 @@ $sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+
+// We'll need this table joined to the select in order to filter by sale
+if ($search_sale || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_user > 0)
+{
+	$sql.=", ".MAIN_DB_PREFIX."element_contact as c";
+	$sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
+}
+
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
@@ -149,6 +162,13 @@ if ($search_status!='') $sql .= " AND p.fk_statut = ".$db->escape($search_status
 
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 
+if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
+if ($search_user > 0)
+{
+	$sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='project' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
+}
+
+
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
@@ -168,12 +188,19 @@ if ($resql)
 	if ($search_societe != '') 	$param.='&amp;search_societe='.$search_societe;
 	if ($search_status != '') 	$param.='&amp;search_status='.$search_status;
 	if ($search_public != '') 	$param.='&amp;search_public='.$search_public;
+	if ($search_user > 0)    		$param.='&search_user='.$search_user;
+	if ($search_sale > 0)    		$param.='&search_sale='.$search_sale;
 	
 
 	$text=$langs->trans("Projects");
 	if ($mine) $text=$langs->trans('MyProjects');
 	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
+	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+	
+	print '<table class="noborder" width="100%">';
+	
+	
 	// Show description of content
 	if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
 	else
@@ -181,14 +208,36 @@ if ($resql)
 		if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
 		else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 	}
+	
+	// If the user can view prospects other than his'
+	if ($user->rights->societe->client->voir || $socid)
+	{
+		$langs->load("commercial");
+		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+	}
+	// If the user can view prospects other than his'
+	
+	if (($user->rights->societe->client->voir || $socid) && !$mine)
+	{
+		$moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
+		$moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+	}
+	if (! empty($moreforfilter))
+	{
+		print '<tr class="liste_titre">';
+		print '<td class="liste_titre" colspan="10">';
+		print $moreforfilter;
+		print '</td></tr>';
+	}
+	
 
-	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
-
-	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("SalesRepresentative"),$_SERVER["PHP_SELF"],"","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"p.datee","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"",$param,'align="right"',$sortfield,$sortorder);
@@ -205,6 +254,8 @@ if ($resql)
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	
 	print '<td class="liste_titre">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
@@ -265,6 +316,41 @@ if ($resql)
 			}
 			print '</td>';
 
+			
+			// Sales Rapresentatives
+			print '<td>';
+			if($objp->socid)
+			{
+				$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
+        $nbofsalesrepresentative=count($listsalesrepresentatives);
+        if ($nbofsalesrepresentative > 3)   // We print only number
+        {
+            print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$socstatic->id.'">';
+            print $nbofsalesrepresentative;
+            print '</a>';
+        }
+        else if ($nbofsalesrepresentative > 0)
+        {
+            $userstatic=new User($db);
+            $j=0;
+            foreach($listsalesrepresentatives as $val)
+            {
+                $userstatic->id=$val['id'];
+                $userstatic->lastname=$val['lastname'];
+                $userstatic->firstname=$val['firstname'];
+                print $userstatic->getNomUrl(1);
+                $j++;
+                if ($j < $nbofsalesrepresentative) print ', ';
+            }
+        }
+        else print $langs->trans("NoSalesRepresentativeAffected");
+			}
+			else
+			{
+				print '&nbsp';
+			}
+			print '</td>';
+			
 			// Date end
 			print '<td align="left">';
 			print dol_print_date($db->jdate($objp->date_end),'day');
