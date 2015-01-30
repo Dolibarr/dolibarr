@@ -947,7 +947,7 @@ class FactureFournisseur extends CommonInvoice
             }
 
             // Triggers call
-            if (! $error && $notrigger)
+            if (! $error && empty($notrigger))
             {
                 // Call trigger
                 $result=$this->call_trigger('BILL_SUPPLIER_VALIDATE',$user);

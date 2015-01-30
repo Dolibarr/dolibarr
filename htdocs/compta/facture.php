@@ -2399,7 +2399,8 @@ if ($action == 'create')
 	}
 
 	// Confirmation de la validation
-	if ($action == 'valid') {
+	if ($action == 'valid')
+	{
 		// on verifie si l'objet est en numerotation provisoire
 		$objectref = substr($object->ref, 1, 4);
 		if ($objectref == 'PROV') {
@@ -2430,7 +2431,8 @@ if ($action == 'create')
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
+		{
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';

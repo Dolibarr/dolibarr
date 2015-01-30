@@ -154,8 +154,7 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
         $result = $object->validate($user,'',$idwarehouse);
         if ($result < 0)
         {
-            setEventMessage($object->error,'errors');
-            setEventMessage($object->errors,'errors');
+            setEventMessages($object->error,$object->errors,'errors');
         }
     }
 }
@@ -300,13 +299,13 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         $_GET['socid']=$_POST['socid'];
         $error++;
     }
-    
+
     // Fill array 'array_options' with data from add form
-    
+
     if (! $error)
     {
         $db->begin();
-        
+
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 		if ($ret < 0) $error ++;
@@ -1183,7 +1182,7 @@ if ($action == 'create')
 {
 	$facturestatic = new FactureFournisseur($db);
 	$extralabels = $extrafields->fetch_name_optionals_label($facturestatic->table_element);
-	
+
     print_fiche_titre($langs->trans('NewBill'));
 
     dol_htmloutput_events();
@@ -1424,7 +1423,7 @@ if ($action == 'create')
     print '</td>';
     // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
     print '</tr>';
-    
+
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		print $object->showOptionals($extrafields, 'edit');
@@ -1540,7 +1539,7 @@ else
         $societe = new Fournisseur($db);
         $result=$societe->fetch($object->socid);
         if ($result < 0) dol_print_error($db);
-        
+
         // fetch optionals attributes and labels
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
