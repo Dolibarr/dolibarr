@@ -31,6 +31,7 @@
  *	\brief      File of class to manage proposals
  */
 
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';
@@ -1784,6 +1785,10 @@ class AskPriceSupplier extends CommonObject
                     $this->db->rollback();
                     return -2;
                 }
+				else 
+				{
+					$this->updatePriceFournisseur();	
+				}
             }
             if ($statut == 4)
             {
@@ -1827,6 +1832,31 @@ class AskPriceSupplier extends CommonObject
             return -1;
         }
     }
+
+	function updatePriceFournisseur() 
+	{
+		$productsupplier = new ProductFournisseur($this->db);
+		
+		dol_syslog(get_class($this)."::updatePriceFournisseur", LOG_DEBUG);
+		foreach ($this->lines as $product) {
+			$idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
+			$res = $productsupplier->fetch($idProductFourn);
+			
+			$price=price2num($product->subprice*$product->qty,'MU');
+	        //$qty=price2num($product->qty);
+			$unitPrice = price2num($product->subprice,'MU');
+				
+			//$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET price ='.$price.', quantity ='.$qty.', unitprice ='.$unitPrice.' WHERE rowid = '.$productsupplier->product_fourn_price_id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$productsupplier->product_fourn_price_id;
+			
+			$resql=$this->db->query($sql);
+			if (!resql) {
+				$this->error=$this->db->error();
+	            $this->db->rollback();
+	            return -1;
+			}
+		}
+	}
 
     /**
      *	Class invoiced the Propal

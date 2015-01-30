@@ -152,7 +152,7 @@ else
 /*
  * Draft proposals
  */
-if (! empty($conf->propal->enabled))
+if (! empty($conf->askpricesupplier->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplier as c";
@@ -258,7 +258,7 @@ if ($resql)
 
 			print '<td width="16" align="right" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->askpricesupplier->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($askpricesupplierstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
@@ -291,7 +291,7 @@ if (! empty($conf->askpricesupplier->enabled) && $user->rights->askpricesupplier
 
 	$now=dol_now();
 
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as askpricesupplierid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."askpricesupplier as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -325,7 +325,7 @@ if (! empty($conf->askpricesupplier->enabled) && $user->rights->askpricesupplier
 				// Ref
 				print '<td class="nowrap" width="140">';
 
-				$askpricesupplierstatic->id=$obj->propalid;
+				$askpricesupplierstatic->id=$obj->askpricesupplierid;
 				$askpricesupplierstatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';

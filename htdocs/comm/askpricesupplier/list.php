@@ -357,7 +357,7 @@ if ($result)
 		if (! empty($objp->note_private))
 		{
 			print ' <span class="note">';
-			print '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$objp->askpricesupplierid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/note.php?id='.$objp->askpricesupplierid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
 			print '</span>';
 		}
 		print '</td>';
@@ -365,7 +365,7 @@ if ($result)
 		// Ref
 		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 		$filename=dol_sanitizeFileName($objp->ref);
-		$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
+		$filedir=$conf->askpricesupplier->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->askpricesupplierid;
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		print '</td></tr></table>';

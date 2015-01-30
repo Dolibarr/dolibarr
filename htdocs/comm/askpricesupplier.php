@@ -177,7 +177,7 @@ if (empty($reshook))
         ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->creer))
        	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->validate)))
 	)
-	{
+	{		
 		$result = $object->valid($user);
 		if ($result >= 0)
 		{
@@ -540,19 +540,6 @@ if (empty($reshook))
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == 2 || $object->statut == 3 || $object->statut == 4) {
 			$object->reopen($user, 1);
-		}
-	}
-
-	// Close proposal
-	else if ($action == 'setstatut' && $user->rights->askpricesupplier->cloturer && ! GETPOST('cancel')) {
-		if (! GETPOST('statut')) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
-			$action = 'statut';
-		} else {
-			// prevent browser refresh from closing proposal several times
-			if ($object->statut == 1) {
-				$object->cloture($user, GETPOST('statut'), GETPOST('note'));
-			}
 		}
 	}
 
@@ -1284,9 +1271,11 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans("Draft") . '</td></tr>';
 
 	// Ref customer
+	/* PHFAVRE retrait en temporaire
 	print '<tr><td>' . $langs->trans('RefCustomer') . '</td><td colspan="2">';
 	print '<input type="text" name="ref_client" value=""></td>';
 	print '</tr>';
+	*/
 
 	// Third party
 	print '<tr>';
@@ -1355,15 +1344,19 @@ if ($action == 'create')
     }
 
 	// What trigger creation
+	/* PHFAVRE retrait en temporaire
 	print '<tr><td>' . $langs->trans('Source') . '</td><td>';
 	$form->selectInputReason('', 'demand_reason_id', "SRC_PROP", 1);
 	print '</td></tr>';
-
+	*/
+	
 	// Delivery delay
+	/* PHFAVRE retrait en temporaire
 	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
 	$form->selectAvailabilityDelay('', 'availability_id', '', 1);
 	print '</td></tr>';
-
+	*/
+	
     // Shipping Method
     if (! empty($conf->expedition->enabled)) {
         print '<tr><td>' . $langs->trans('SendingMethod') . '</td><td colspan="2">';
@@ -1372,6 +1365,7 @@ if ($action == 'create')
     }
 
 	// Delivery date (or manufacturing)
+	/* PHFAVRE retrait en temporaire
 	print '<tr><td>' . $langs->trans("DeliveryDate") . '</td>';
 	print '<td colspan="2">';
 	if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "") {
@@ -1384,7 +1378,8 @@ if ($action == 'create')
 		$form->select_date(-1, 'liv_', '', '', '', "addask", 1, 1);
 	}
 	print '</td></tr>';
-
+	*/
+	
 	// Model
 	print '<tr>';
 	print '<td>' . $langs->trans("DefaultModel") . '</td>';
