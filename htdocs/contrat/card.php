@@ -1306,7 +1306,7 @@ else
                         	$productstatic->ref=$objp->label;
                         	print $productstatic->getNomUrl(0,'',16);
                         }
-                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM) and $objp->description)
+                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM) && !empty($objp->description))
                             print '<br>'.dol_nl2br($objp->description);
                         print '</td>';
                     }
