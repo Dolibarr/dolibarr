@@ -1523,7 +1523,7 @@ class Expedition extends CommonObject
     }
 
 	/**
-	 * Get tracking url status
+	 * Forge an set tracking url
 	 *
 	 * @param	string	$value		Value
 	 * @return	void

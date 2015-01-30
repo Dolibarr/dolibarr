@@ -265,7 +265,8 @@ if ($id > 0)
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
 	if (! empty($object->country_code))
 	{
-		$img=picto_from_langcode($object->country_code);
+		//$img=picto_from_langcode($object->country_code);
+		$img='';
 		if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
 		else print ($img?$img.' ':'').$object->country;
 	}

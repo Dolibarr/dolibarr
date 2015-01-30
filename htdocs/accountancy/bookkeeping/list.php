@@ -151,7 +151,7 @@ else {
 		
 		print $formventilation->select_bookkeeping_importkey('importkey', GETPOST('importkey'));
 		
-		print '<div class="inline-block divButAction"><input type="submit" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" />';
+		print '<div class="inline-block divButAction"><input type="submit" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
 		
 		print '</form>';
 		
