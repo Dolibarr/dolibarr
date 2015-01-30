@@ -135,7 +135,7 @@ if ($socid) $sql.= " AND s.rowid = ".$socid;
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'int') !== '')
 {
-	$sql .= " AND fk_statut IN (".GETPOST('statut').")";
+	$sql .= " AND cf.fk_statut IN (".GETPOST('statut').")";
 }
 if ($search_refsupp)
 {
@@ -143,8 +143,8 @@ if ($search_refsupp)
 }
 if ($search_status >= 0)
 {
-	if ($search_status == 6 || $search_status == 7) $sql.=" AND fk_statut IN (6,7)";
-	else $sql.=" AND fk_statut = ".$search_status;
+	if ($search_status == 6 || $search_status == 7) $sql.=" AND cf.fk_statut IN (6,7)";
+	else $sql.=" AND cf.fk_statut = ".$search_status;
 }
 
 $sql.= $db->order($sortfield,$sortorder);
