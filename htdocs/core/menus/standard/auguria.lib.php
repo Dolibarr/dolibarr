@@ -149,7 +149,7 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 	if ($showmode == 1)
 	{
 		print '<a class="tmenuimage" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
-		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
 		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
 		print '<span class="mainmenuaspan">';
@@ -273,7 +273,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		else dol_print_error($db);
 		$db->free($resql);
 	}
-	
+
 	if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
 		$newmenu->add('/accountancy/journal/index.php?leftmenu=journal',$langs->trans("Journaux"),0,$user->rights->banque->lire);
