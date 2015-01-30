@@ -3340,7 +3340,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			$sql.= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
 			$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 			$sql.= $db->plimit(1);
-print $sql;
+
 			$resql=$db->query($sql);
 			if ($resql)
 			{
