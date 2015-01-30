@@ -215,6 +215,7 @@ if ($resql)
 
 	$userstatic = new User($db);
 	$objectstatic=new CommandeFournisseur($db);
+	$projectstatic=new Project($db);
 
 	while ($i < min($num,$conf->liste_limit))
 	{

@@ -52,9 +52,10 @@ class FormProjets
 	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
 	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+     *  @param	int		$forcefocus		Force focus on field (works with javascript only)
 	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0)
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0)
 	{
 		global $user,$conf,$langs;
 
@@ -85,8 +86,17 @@ class FormProjets
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			// Use select2 selector
+			$nodatarole='';
+			if (! empty($conf->use_javascript_ajax))
+			{
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	           	$out.= ajax_combobox($htmlname, '', 0, $forcefocus);
+            	$nodatarole=' data-role="none"';
+			}
+
 			if (empty($option_only)) {
-				$out.= '<select class="flat" name="'.$htmlname.'">';
+				$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
 			}
 			if (!empty($show_empty)) {
 				$out.= '<option value="0">&nbsp;</option>';
@@ -162,13 +172,8 @@ class FormProjets
 			if (empty($option_only)) {
 				$out.= '</select>';
 			}
+
 			print $out;
-
-			// Use select2 selector
-			if (! empty($conf->use_javascript_ajax))
-			{
-
-			}
 
 			$this->db->free($resql);
 			return $num;

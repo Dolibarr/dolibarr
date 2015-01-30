@@ -1975,7 +1975,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			print '</td><td colspan="3">';
 			// print "$object->id, $object->socid, $object->fk_project";
 			if ($action == 'classify') {
-				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0);
+				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
 			} else {
 				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0);
 			}

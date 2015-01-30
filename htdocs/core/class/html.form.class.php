@@ -1226,12 +1226,13 @@ class Form
             if ($num)
             {
            		// Enhance with select2
-		        if ($conf->use_javascript_ajax)
+           		$nodatarole='';
+		        /*if ($conf->use_javascript_ajax)
 		        {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-		           	$out.= ajax_combobox($htmlname);
+		           $out.= ajax_combobox($htmlname);
 	            	$nodatarole=' data-role="none"';
-	            }
+	            }*/
 
                 $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
                 if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected="selected"':'').'>&nbsp;</option>'."\n";
@@ -3147,9 +3148,10 @@ class Form
      *    @param    string	$htmlname    		Name of select field
      *    @param	int		$discard_closed		Discard closed projects (0=Keep,1=hide completely,2=Disable)
      *    @param	int		$maxlength			Max length
+     *    @param	int		$forcefocus			Force focus on field (works with javascript only)
      *    @return	void
      */
-    function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0, $maxlength=20)
+    function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0, $maxlength=20, $forcefocus=0)
     {
         global $langs;
 
@@ -3161,12 +3163,13 @@ class Form
         $langs->load("project");
         if ($htmlname != "none")
         {
+            print "\n";
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="action" value="classin">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $formproject->select_projects($socid,$selected,$htmlname,$maxlength,0,1,$discard_closed);
+            $formproject->select_projects($socid,$selected,$htmlname,$maxlength,0,1,$discard_closed, $forcefocus);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
