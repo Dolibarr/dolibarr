@@ -534,8 +534,8 @@ if ($action == 'confirm_valid' && $confirm == 'yes' &&
     	}
     }
     else
-    {
-        setEventMessage($object->error, 'errors');
+	{
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 
     // If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step

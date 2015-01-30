@@ -157,8 +157,7 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
         $result = $object->validate($user,'',$idwarehouse);
         if ($result < 0)
         {
-            setEventMessage($object->error,'errors');
-            setEventMessage($object->errors,'errors');
+            setEventMessages($object->error,$object->errors,'errors');
         }
     }
 }
