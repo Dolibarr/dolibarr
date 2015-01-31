@@ -1,13 +1,11 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
 --------------------------------------------------------------
-***** ChangeLog for 3.8 compared to 3.7.* *****
-- New: Add Option to not change date on cloning project
-- New: Add check list from table for extrafield type
-
 
 ***** ChangeLog for 3.8 compared to 3.7.* *****
 For users:
+- New: Add Option to not change date on cloning project
+- New: Add check list from table for extrafield type
 - New: Use new combobox.
 - New: Add hidden option MAXTABS_IN_CARD.
 - Fix / Improve : [ bug #1747 ] Remove creation of batch 'Undefined'
@@ -16,6 +14,7 @@ For users:
 - Introduce option MAIN_HTML_TITLE to start to control format of html title content.
 - Add extrafields on bank account cards.
 - Added delay between mails in Newsletter module
+- [ task #1793 ] Create new permission to restrict commercial agent margin to logged user
 
 For translators:
 - Update language files.
