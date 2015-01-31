@@ -38,6 +38,7 @@ create table llx_product_price
   fk_user_author	integer,
   tosell			tinyint DEFAULT 1,
   price_by_qty		integer NOT NULL DEFAULT 0,
+  fk_price_expression integer,                     -- Link to the rule for dynamic price calculation
   import_key 		varchar(14)
 )ENGINE=innodb;
 

@@ -63,7 +63,7 @@ class box_produits extends ModeleBoxes
 
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
-			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy";
+			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.fk_price_expression";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element, 1).')';
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
@@ -106,17 +106,37 @@ class box_produits extends ModeleBoxes
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->label,
                     'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
-
-					if ($objp->price_base_type == 'HT')
-					{
-						$price=price($objp->price);
-						$price_base_type=$langs->trans("HT");
-					}
-					else
-					{
-						$price=price($objp->price_ttc);
-						$price_base_type=$langs->trans("TTC");
-					}
+	                if (empty($objp->fk_price_expression)) {
+						if ($objp->price_base_type == 'HT')
+						{
+							$price=price($objp->price);
+							$price_base_type=$langs->trans("HT");
+						}
+						else
+						{
+							$price=price($objp->price_ttc);
+							$price_base_type=$langs->trans("TTC");
+						}
+	                }
+	                else //Parse the dinamic price
+	               	{
+						$product = new Product($this->db);
+						$product->fetch($objp->rowid, '', '', 1);
+	                    $priceparser = new PriceParser($this->db);
+	                    $price_result = $priceparser->parseProduct($product);
+	                    if ($price_result >= 0) {
+							if ($objp->price_base_type == 'HT')
+							{
+								$price_base_type=$langs->trans("HT");
+							}
+							else
+							{
+								$price_result = $price_result * (1 + ($product->tva_tx / 100));
+								$price_base_type=$langs->trans("TTC");
+							}
+							$price=price($price_result);
+	                    }
+	               	}
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
                     'text' => $price);
 

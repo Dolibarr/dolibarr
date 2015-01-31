@@ -7,6 +7,7 @@
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014 	    Philippe Grand 		    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014		Ion agorria				<ion@agorria.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/priceexpression.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/priceparser.class.php';
 
 if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
@@ -72,6 +75,7 @@ if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit-
 
 	$error=0;
 	$maxpricesupplier = $object->min_recommended_price();
+	$object->fk_price_expression = empty(GETPOST('eid', 'int')) ? 0 : GETPOST('eid', 'int'); //0 discards expression
 
 	// MultiPrix
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
@@ -114,9 +118,34 @@ if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit-
 		$action='edit_price';
 	}
 
+	if ($newprice < $newprice_min && ! empty($object->fk_price_expression)) {
+		$newprice = $newprice_min; //Set price same as min, the user will not see the 
+	}
+
 	if ($object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0) {
-		$action = '';
-		setEventMessage($langs->trans("RecordSaved"));
+		if ($object->fk_price_expression != 0) {
+			//Check the expression validity by parsing it
+			$priceparser = new PriceParser($db);
+			$price_result = $priceparser->parseProduct($object);
+			if ($price_result < 0) { //Expression is not valid
+				$error++;
+				$action='edit_price';
+				setEventMessage($priceparser->translatedError(), 'errors');
+			}
+		}
+		if (empty($error) && ! empty($conf->dynamicprices->enabled)) {
+			$ret=$object->setPriceExpression($object->fk_price_expression);
+			if ($ret < 0)
+			{
+				$error++;
+				$action='edit_price';
+				setEventMessage($object->error, 'errors');
+			}
+		}
+		if (empty($error)) {
+			$action = '';
+			setEventMessage($langs->trans("RecordSaved"));
+		}
 	} else {
 		$action = 'edit_price';
 		setEventMessage($object->error, 'errors');
@@ -652,16 +681,52 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print $form->select_PriceBaseType($object->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
+ 		
+ 		//Only show price mode and expression selector if module is enabled
+		if (! empty($conf->dynamicprices->enabled)) {
+			// Price mode selector
+			print '<tr><td>'.$langs->trans("PriceMode").'</td><td>';
+			$price_expression = new PriceExpression($db);
+			$price_expression_list = array(0 => $langs->trans("PriceNumeric")); //Put the numeric mode as first option
+			foreach ($price_expression->list_price_expression() as $entry) {
+				$price_expression_list[$entry->id] = $entry->title;
+			}
+			$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($object->fk_price_expression ? $object->fk_price_expression : '0');
+			print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
+			print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
+			print '</td></tr>';
+			// This code hides the numeric price input if is not selected, loads the editor page if editor button is pressed
+			print '<script type="text/javascript">
+				jQuery(document).ready(run);
+				function run() {
+					jQuery("#expression_editor").click(on_click);
+					jQuery("#eid").change(on_change);
+					on_change();
+				}
+				function on_click() {
+					window.location = "'.DOL_URL_ROOT.'/product/expression.php?id='.$id.'&tab=price&eid=" + $("#eid").attr("value");
+				}
+				function on_change() {
+					if ($("#eid").attr("value") == 0) {
+						jQuery("#price_numeric").show();
+					} else {
+						jQuery("#price_numeric").hide();
+					}
+				}
+			</script>';
+		}
 
 		// Price
-		print '<tr><td width="20%">';
+		$product = new Product($db);
+		$product->fetch($id, $ref, '', 1); //Ignore the math expression when getting the price
+		print '<tr id="price_numeric"><td width="20%">';
 		$text = $langs->trans('SellingPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
-			print '<input name="price" size="10" value="' . price($object->price_ttc) . '">';
+			print '<input name="price" size="10" value="' . price($product->price_ttc) . '">';
 		} else {
-			print '<input name="price" size="10" value="' . price($object->price) . '">';
+			print '<input name="price" size="10" value="' . price($product->price) . '">';
 		}
 		print '</td></tr>';
 
@@ -745,7 +810,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 // Liste des evolutions du prix
 $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.recuperableonly,";
 $sql .= " p.price_level, p.price_min, p.price_min_ttc,p.price_by_qty,";
-$sql .= " p.date_price as dp, u.rowid as user_id, u.login";
+$sql .= " p.date_price as dp, p.fk_price_expression, u.rowid as user_id, u.login";
 $sql .= " FROM " . MAIN_DB_PREFIX . "product_price as p,";
 $sql .= " " . MAIN_DB_PREFIX . "user as u";
 $sql .= " WHERE fk_product = " . $object->id;
@@ -790,6 +855,9 @@ if ($result) {
 		print '<td align="right">' . $langs->trans("VAT") . '</td>';
 		print '<td align="right">' . $langs->trans("HT") . '</td>';
 		print '<td align="right">' . $langs->trans("TTC") . '</td>';
+		if (! empty($conf->dynamicprices->enabled)) {
+			print '<td align="right">' . $langs->trans("PriceExpressionSelected") . '</td>';
+		}
 		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
 		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
 		print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
@@ -819,8 +887,25 @@ if ($result) {
 
 			print '<td align="center">' . $langs->trans($objp->price_base_type) . "</td>";
 			print '<td align="right">' . vatrate($objp->tva_tx, true, $objp->recuperableonly) . "</td>";
-			print '<td align="right">' . price($objp->price) . "</td>";
-			print '<td align="right">' . price($objp->price_ttc) . "</td>";
+
+			//Price
+			if (! empty($objp->fk_price_expression) && ! empty($conf->dynamicprices->enabled))
+			{
+				$price_expression = new PriceExpression($db);
+				$res = $price_expression->fetch($objp->fk_price_expression);
+				$title = $price_expression->title;
+				print '<td align="right"></td>';
+				print '<td align="right"></td>';
+				print '<td align="right">' . $title . "</td>";
+			}
+			else
+			{
+				print '<td align="right">' . price($objp->price) . "</td>";
+				print '<td align="right">' . price($objp->price_ttc) . "</td>";
+				if (! empty($conf->dynamicprices->enabled)) { //Only if module is enabled
+					print '<td align="right"></td>';
+				}
+			}
 			print '<td align="right">' . price($objp->price_min) . '</td>';
 			print '<td align="right">' . price($objp->price_min_ttc) . '</td>';
 
