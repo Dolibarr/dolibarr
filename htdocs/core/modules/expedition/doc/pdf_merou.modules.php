@@ -560,7 +560,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetXY($blSocX-80,$blSocY+17);
 		$pdf->SetFont('','B', $default_font_size - 2);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_delivery,'day',false,$outputlangs,true), '', 'L');
+		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("DateDelivery")." : " . dol_print_date($object->date_delivery,'day',false,$outputlangs,true), '', 'L');
 
 		$pdf->SetXY($blSocX-80,$blSocY+20);
 		$pdf->SetFont('','B', $default_font_size - 2);
@@ -568,7 +568,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("TrackingNumber")." : " . $object->tracking_number, '', 'L');
 
 		// Deliverer
-		$pdf->SetXY($blSocX-80,$blSocY+24);
+		$pdf->SetXY($blSocX-80,$blSocY+23);
 		$pdf->SetFont('','', $default_font_size - 2);
 		$pdf->SetTextColor(0,0,0);
 
@@ -581,8 +581,16 @@ class pdf_merou extends ModelePdfExpedition
 				{
 					// Get code using getLabelFromKey
 					$code=$outputlangs->getLabelFromKey($this->db,$object->shipping_method_id,'c_shipment_mode','rowid','code');
-					$label=$outputlangs->trans("SendingMethod".strtoupper($code))." :";
-					$pdf->writeHTMLCell(50, 8, '', '', $label." ".$object->tracking_url, '', 'L');
+					$label='';
+					$label.=$outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
+					//var_dump($object->tracking_url != $object->tracking_number);exit;
+					if ($object->tracking_url != $object->tracking_number)
+					{
+						$label.=" : ";
+						$label.=$object->tracking_url;
+					}
+					$pdf->SetFont('','B', $default_font_size - 2);
+					$pdf->writeHTMLCell(50, 8, '', '', $label, '', 'L');
 				}
 			}
 		}
