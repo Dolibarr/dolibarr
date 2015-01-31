@@ -897,9 +897,11 @@ class ActionComm extends CommonObject
         global $conf,$langs;
 
         $result='';
-        $label=$this->label;
+        $tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
+        $tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->label;
+        $label = $this->label;
         if (empty($label)) $label=$this->libelle;   // For backward compatibility
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkclose = '" title="'.dol_escape_htmltag($tooltip, 1).'" class="classfortooltip">';
         if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.$linkclose;
         else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.$linkclose;
         $lienfin='</a>';
@@ -912,7 +914,7 @@ class ActionComm extends CommonObject
             $libelleshort='';
         }
         else
-       {
+        {
             $libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
             if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
             $libelleshort=dol_trunc($libelle,$maxlength);

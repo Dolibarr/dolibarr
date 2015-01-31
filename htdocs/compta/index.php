@@ -144,8 +144,12 @@ if (! empty($conf->don->enabled) && $user->rights->don->lire)
  */
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
-	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
-	$sql.= " s.nom as name, s.rowid as socid";
+    $sql = "SELECT f.facnumber";
+    $sql.= ", f.rowid, f.total as total_ht, f.tva as total_tva, f.total_ttc";
+    $sql.= ", f.type";
+    $sql.= ", s.nom as name";
+    $sql.= ", s.rowid as socid";
+    $sql.= ",s.code_client";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -180,13 +184,18 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<tr '.$bc[$var].'><td class="nowrap">';
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
+                $facturestatic->total_ht=$obj->total_ht;
+                $facturestatic->total_tva=$obj->total_tva;
+                $facturestatic->total_ttc=$obj->total_ttc;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
-				$companystatic->client=1;
+                $companystatic->client = 1;
+                $companystatic->code_client = $obj->code_client;
+                $companystatic->code_fournisseur = $obj->code_fournisseur;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td>';
@@ -218,8 +227,10 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
  */
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
-	$sql  = "SELECT f.ref, f.rowid, f.total_ttc, f.type,";
-	$sql.= " s.nom as name, s.rowid as socid";
+	$sql  = "SELECT f.ref, f.rowid, f.total_ht, f.tva as total_tva, f.total_ttc, f.type";
+	$sql.= ", s.nom as name";
+    $sql.= ", s.rowid as socid";
+    $sql.= ", s.code_fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.rowid = f.fk_soc AND f.fk_statut = 0";
@@ -249,14 +260,19 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print '<tr '.$bc[$var].'><td class="nowrap">';
 				$facturesupplierstatic->ref=$obj->ref;
 				$facturesupplierstatic->id=$obj->rowid;
+                $facturesupplierstatic->total_ht=$obj->total_ht;
+                $facturesupplierstatic->total_tva=$obj->total_tva;
+                $facturesupplierstatic->total_ttc=$obj->total_ttc;
 				$facturesupplierstatic->type=$obj->type;
 				print $facturesupplierstatic->getNomUrl(1,'',16);
 				print '</td>';
 				print '<td>';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
-				$companystatic->client=1;
-				print $companystatic->getNomUrl(1,'',16);
+				$companystatic->fournisseur = 1;
+                $companystatic->code_client = $obj->code_client;
+                $companystatic->code_fournisseur = $obj->code_fournisseur;
+				print $companystatic->getNomUrl(1,'supplier',16);
 				print '</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
@@ -292,10 +308,12 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$langs->load("boxes");
 	$facstatic=new Facture($db);
 
-	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, f.paye, f.tms,";
-	$sql.= " f.date_lim_reglement as datelimite,";
-	$sql.= " s.nom as name, s.rowid as socid,";
-	$sql.= " sum(pf.amount) as am";
+	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
+	$sql.= ", f.date_lim_reglement as datelimite";
+	$sql.= ", s.nom as name";
+    $sql.= ", s.rowid as socid";
+    $sql.= ", s.code_client";
+	$sql.= ", sum(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -335,6 +353,9 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td width="110" class="nobordernopadding nowrap">';
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
+                $facturestatic->total_ht=$obj->total_ht;
+                $facturestatic->total_tva=$obj->total_tva;
+                $facturestatic->total_ttc=$obj->total_ttc;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
@@ -353,9 +374,11 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$thirdpartystatic->id=$obj->socid;
 				$thirdpartystatic->name=$obj->name;
 				$thirdpartystatic->client=1;
+                $thirdpartystatic->code_client = $obj->code_client;
+                $thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
 				print $thirdpartystatic->getNomUrl(1,'customer',44);
 				print '</td>';
-				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total).'</td>';
+				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye,$obj->fk_statut,3,$obj->am).'</td>';
@@ -391,8 +414,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$langs->load("boxes");
 	$facstatic=new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms, ff.paye";
-	$sql.= ", s.nom as name, s.rowid as socid";
+	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.tms, ff.paye";
+	$sql.= ", s.nom as name";
+    $sql.= ", s.rowid as socid";
+    $sql.= ", s.code_fournisseur";
 	$sql.= ", SUM(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
@@ -401,7 +426,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$sql.= " AND ff.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
-	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms, ff.paye, s.nom, s.rowid";
+	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_ttc, ff.tms, ff.paye, s.nom, s.rowid";
 	$sql.= " ORDER BY ff.tms DESC ";
 	$sql.= $db->plimit($max, 0);
 
@@ -427,13 +452,18 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td>';
 				$facstatic->ref=$obj->ref;
-				$facstatic->id=$obj->rowid;
+                $facstatic->id = $obj->rowid;
+                $facstatic->total_ht = $obj->total_ht;
+                $facstatic->total_tva = $obj->total_tva;
+                $facstatic->total_ttc = $obj->total_ttc;
 				print $facstatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td>';
 				$thirdpartystatic->id=$obj->socid;
 				$thirdpartystatic->name=$obj->name;
 				$thirdpartystatic->fournisseur=1;
+                $thirdpartystatic->code_client = $obj->code_client;
+                $thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
 				print $thirdpartystatic->getNomUrl(1,'supplier',44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
@@ -612,9 +642,11 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 	$commandestatic=new Commande($db);
 	$langs->load("orders");
 
-	$sql = "SELECT sum(f.total) as tot_fht, sum(f.total_ttc) as tot_fttc,";
-	$sql.= " s.nom as name, s.rowid as socid,";
-	$sql.= " c.rowid, c.ref, c.facture, c.fk_statut, c.total_ht, c.total_ttc";
+	$sql = "SELECT sum(f.total) as tot_fht, sum(f.total_ttc) as tot_fttc";
+	$sql.= ", s.nom as name";
+    $sql.= ", s.rowid as socid";
+    $sql.= ", s.code_client";
+	$sql.= ", c.rowid, c.ref, c.facture, c.fk_statut, c.total_ht, c.tva as total_tva, c.total_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= ", ".MAIN_DB_PREFIX."commande as c";
@@ -677,6 +709,8 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
                 $societestatic->id=$obj->socid;
                 $societestatic->name=$obj->name;
                 $societestatic->client=1;
+                $societestatic->code_client = $obj->code_client;
+                $societestatic->code_fournisseur = $obj->code_fournisseur;
                 print $societestatic->getNomUrl(1,'customer',44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
@@ -715,10 +749,12 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$facstatic=new Facture($db);
 
-	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.datef, f.type, f.total, f.total_ttc, f.paye, f.tms,";
-	$sql.= " f.date_lim_reglement as datelimite,";
-	$sql.= " s.nom as name, s.rowid as socid,";
-	$sql.= " sum(pf.amount) as am";
+	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.datef, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
+	$sql.= ", f.date_lim_reglement as datelimite";
+	$sql.= ", s.nom as name";
+    $sql.= ", s.rowid as socid";
+    $sql.= ", s.code_client";
+	$sql.= ", sum(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -758,6 +794,9 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td width="110" class="nobordernopadding nowrap">';
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
+                $facturestatic->total_ht=$obj->total_ht;
+                $facturestatic->total_tva=$obj->total_tva;
+                $facturestatic->total_ttc=$obj->total_ttc;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
@@ -776,9 +815,11 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $societestatic->id=$obj->socid;
                 $societestatic->name=$obj->name;
                 $societestatic->client=1;
+                $societestatic->code_client = $obj->code_client;
+                $societestatic->code_fournisseur = $obj->code_fournisseur;
 				print $societestatic->getNomUrl(1,'customer',44);
 				print '</td>';
-				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total).'</td>';
+				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye,$obj->fk_statut,3,$obj->am).'</td>';
@@ -820,9 +861,12 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 {
 	$facstatic=new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.paye,";
-	$sql.= " s.nom as name, s.rowid as socid,";
-	$sql.= " sum(pf.amount) as am";
+	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
+	$sql.= ", s.nom as name";
+    $sql.= ", s.rowid as socid";
+    $sql.= ", s.code_client";
+    $sql.= ", s.code_fournisseur";
+	$sql.= ", sum(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -832,7 +876,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$sql.= " AND ff.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
-	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.paye,";
+	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_ttc, ff.paye,";
 	$sql.= " s.nom, s.rowid";
 
 	$resql=$db->query($sql);
@@ -859,12 +903,17 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 
 				print '<tr '.$bc[$var].'><td>';
 				$facstatic->ref=$obj->ref;
-				$facstatic->id=$obj->rowid;
+				$facstatic->id = $obj->rowid;
+                $facstatic->total_ht = $obj->total_ht;
+                $facstatic->total_tva = $obj->total_tva;
+                $facstatic->total_ttc = $obj->total_ttc;
 				print $facstatic->getNomUrl(1,'');
 				print '</td>';
                 $societestatic->id=$obj->socid;
                 $societestatic->name=$obj->name;
                 $societestatic->client=0;
+                $societestatic->code_client = $obj->code_client;
+                $societestatic->code_fournisseur = $obj->code_fournisseur;
 				print '<td>'.$societestatic->getNomUrl(1, 'supplier', 44).'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';

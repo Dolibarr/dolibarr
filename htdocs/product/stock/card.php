@@ -435,7 +435,8 @@ else
 					print "<tr ".$bc[$var].">";
 					print "<td>";
 					$productstatic->id=$objp->rowid;
-					$productstatic->ref=$objp->ref;
+                    $productstatic->ref = $objp->ref;
+                    $productstatic->label = $objp->produit;
 					$productstatic->type=$objp->type;
 					print $productstatic->getNomUrl(1,'stock',16);
 					print '</td>';

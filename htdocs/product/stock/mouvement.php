@@ -119,7 +119,7 @@ $formother=new FormOther($db);
 $formproduct=new FormProduct($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type,";
-$sql.= " e.label as stock, e.rowid as entrepot_id,";
+$sql.= " e.label as stock, e.rowid as entrepot_id, e.lieu,";
 $sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label, m.fk_origin, m.origintype,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."entrepot as e,";
@@ -501,6 +501,7 @@ if ($resql)
         print '<td>';
         $productstatic->id=$objp->rowid;
         $productstatic->ref=$objp->product_ref;
+        $productstatic->label=$objp->produit;
         $productstatic->type=$objp->type;
         print $productstatic->getNomUrl(1,'',16);
         print "</td>\n";
@@ -515,6 +516,7 @@ if ($resql)
         print '<td>';
         $warehousestatic->id=$objp->entrepot_id;
         $warehousestatic->libelle=$objp->stock;
+        $warehousestatic->lieu=$objp->lieu;
         print $warehousestatic->getNomUrl(1);
         print "</td>\n";
         // Author

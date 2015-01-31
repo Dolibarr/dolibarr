@@ -1720,39 +1720,62 @@ class Societe extends CommonObject
 
         $result='';
         $lien=$lienfin='';
+        $label = '<table width="100%">';
+        $label.= '<tr>';
+        $label.= '<td valign="top">';
 
         if ($option == 'customer' || $option == 'compta')
         {
+           $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
            $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
         {
+            $label.= '<u>' . $langs->trans("ShowProspect") . '</u>';
             $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'supplier')
         {
+            $label.= '<u>' . $langs->trans("ShowSupplier") . '</u>';
             $lien = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
         }
         else if ($option == 'category')
         {
+            $label.= '<u>' . $langs->trans("ShowCategory") . '</u>';
         	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=2';
         }
         else if ($option == 'category_supplier')
         {
+            $label.= '<u>' . $langs->trans("ShowCategorySupplier") . '</u>';
         	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
         }
 
         // By default
         if (empty($lien))
         {
+            $label.= '<u>' . $langs->trans("ShowCompany") . '</u>';
             $lien = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
         }
 
+        if (! empty($this->name))
+            $label.= '<br><b>' . $langs->trans('Name') . ':</b> '. $this->name;
+        if (! empty($this->code_client))
+            $label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
+        if (! empty($this->code_fournisseur))
+            $label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
+
+        $label.= '</td>';
+        if (! empty($this->logo)) {
+            $form = new Form($db);
+            $label .= '<td>&nbsp;&nbsp;</td><td align="right">' . $form->showphoto('societe', $this, 80) . '</td>';
+        }
+        $label.= '</tr></table>';
+
         // Add type of canvas
-        $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'" title="'.dol_escape_htmltag($name, 1).'" class="classfortooltip">';
+        $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name, 'company', 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, 'company', 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($name,$maxlen):$name).$lienfin;
 

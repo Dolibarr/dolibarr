@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,35 +93,19 @@ class box_contacts extends ModeleBoxes
                     $societestatic->id=$objp->fk_soc;
                     $societestatic->name=$objp->socname;
 
-                    $this->info_box_contents[$i][0] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => $this->boximg,
-                        'tooltip' => $langs->trans('Contact').': '.$contactstatic->getFullName($langs,0),
-                        'url' => DOL_URL_ROOT."/contact/card.php?id=".$objp->rowid,
-                    );
-
-                    $this->info_box_contents[$i][1] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="left"',
-                        'text' => $contactstatic->getFullName($langs,0),
-                        'tooltip' => $langs->trans('Contact').': '.$contactstatic->getFullName($langs,0),
-                        'url' => DOL_URL_ROOT."/contact/card.php?id=".$objp->rowid,
+                        'text' => $contactstatic->getNomUrl(1),
+                        'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][2] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => ($objp->fk_soc > 0?'company':''),
-                        'tooltip' => $societestatic->name,
-                        'url' => ($objp->fk_soc > 0?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->fk_soc:''),
-                    );
-
-                    $this->info_box_contents[$i][3] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="left"',
-                        'text' => $societestatic->name,
-                        'tooltip' => $societestatic->name,
-                        'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->fk_soc,
+                        'text' => $societestatic->getNomUrl(1),
+                        'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][4] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'align="right"',
                         'text' => dol_print_date($datem, "day"),
                     );
