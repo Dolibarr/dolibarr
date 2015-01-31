@@ -1709,6 +1709,8 @@ class Societe extends CommonObject
 
         $name=$this->name?$this->name:$this->nom;
 
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;
+
 		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto))) {
 			if (($this->client) && (! empty ( $this->code_client ))) {
 				$code = $this->code_client . ' - ';
@@ -1766,7 +1768,7 @@ class Societe extends CommonObject
 
         if (! empty($this->logo))
         {
-        	$label.= '<br><br>';
+        	$label.= '</div><div style="padding: 10px">';
         	//if (! is_object($form)) $form = new Form($db);
             $label.= Form::showphoto('societe', $this, 80);
         }
