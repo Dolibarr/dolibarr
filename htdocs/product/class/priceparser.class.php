@@ -237,9 +237,8 @@ class PriceParser
 	 *	Calculates product price based on product id and expression id
 	 *
 	 *	@param	Product				$product    	The Product object to get information
-	 *	@param	int 				$expression_id  The expression to parse
 	 *	@param	array 				$extra_values   Any aditional values for expression
-     *  @return int 				> 0 if OK, < 1 if KO
+     *  @return int 								> 0 if OK, < 1 if KO
 	 */
 	public function parseProduct($product, $extra_values = array())
 	{
