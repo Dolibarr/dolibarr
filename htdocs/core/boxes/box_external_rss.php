@@ -109,10 +109,11 @@ class box_external_rss extends ModeleBoxes
 
 		// INFO on items
 		$items=$rssparser->getItems();
+        //print '<pre>'.print_r($items,true).'</pre>';
 		$nbitems=count($items);
-        for($i = 0; $i < $max && $i < $nbitems; $i++)
+        for($line = 0; $line < $max && $line < $nbitems; $line++)
         {
-            $item = $items[$i];
+            $item = $items[$line];
 
 			// Feed common fields
             $href  = $item['link'];
@@ -139,28 +140,38 @@ class box_external_rss extends ModeleBoxes
 	        if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $title=utf8_encode($title);
 	        elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $title=utf8_decode($title);
 
-	        $title=preg_replace("/([[:alnum:]])\?([[:alnum:]])/","\\1'\\2",$title);   // Gere probleme des apostrophes mal codee/decodee par utf8
+            $title=preg_replace("/([[:alnum:]])\?([[:alnum:]])/","\\1'\\2",$title);   // Gere probleme des apostrophes mal codee/decodee par utf8
             $title=preg_replace("/^\s+/","",$title);                                  // Supprime espaces de debut
             $this->info_box_contents["$href"]="$title";
 
-            $this->info_box_contents[$i][0] = array(
+            $tooltip = $title;
+            $description = ! empty($item['description'])?$item['description']:'';
+            $isutf8 = utf8_check($description);
+            if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $description=utf8_encode($description);
+            elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $description=utf8_decode($description);
+            $description=preg_replace("/([[:alnum:]])\?([[:alnum:]])/","\\1'\\2",$description);
+            $description=preg_replace("/^\s+/","",$description);
+            $description=str_replace("\r\n","",$description);
+            $tooltip.= '<br>'.$description;
+
+            $this->info_box_contents[$line][0] = array(
                 'td' => 'align="left" width="16"',
                 'logo' => $this->boximg,
                 'url' => $href,
-                'tooltip' => $title,
+                'tooltip' => $tooltip,
                 'target' => 'newrss',
             );
 
-            $this->info_box_contents[$i][1] = array(
+            $this->info_box_contents[$line][1] = array(
                 'td' => 'align="left"',
                 'text' => $title,
                 'url' => $href,
-                'tooltip' => $title,
+                'tooltip' => $tooltip,
                 'maxlength' => 64,
                 'target' => 'newrss',
             );
 
-            $this->info_box_contents[$i][2] = array(
+            $this->info_box_contents[$line][2] = array(
                 'td' => 'align="right" nowrap="1"',
                 'text' => $date,
             );
