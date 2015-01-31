@@ -2861,14 +2861,21 @@ class Product extends CommonObject
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$result='';
         $newref=$this->ref;
         if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
-        if ($this->type == 0) $label = $langs->trans("ShowProduct").': '.$this->ref.' '.$this->label;
-        if ($this->type == 1) $label = $langs->trans("ShowService").': '.$this->ref.' '.$this->label;
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        if ($this->type == 0) $label = '<u>' . $langs->trans("ShowProduct") . '</u>';
+        if ($this->type == 1) $label = '<u>' . $langs->trans("ShowService") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('ProductRef') . ':</b> ' . $this->ref;
+        if (! empty($this->label))
+            $label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
+        if (! empty($this->entity))
+            $label .= '<br>' . $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
+
+        $linkclose = '" title="'.str_replace('\n', '', dol_escape_htmltag($label, 1)).'" class="classfortooltip">';
 
         if ($option == 'supplier') {
             $lien = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;

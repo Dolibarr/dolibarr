@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,8 +84,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 				$langs->load("stocks");
 				$num = $db->num_rows($result);
 				$i = 0;
-				while ($i < $num)
-				{
+                while ($i < $num) {
 					$objp = $db->fetch_object($result);
 					$datem=$db->jdate($objp->tms);
 
@@ -106,15 +106,23 @@ class box_produits_alerte_stock extends ModeleBoxes
 						}
 					}
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
-                    'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
+                    $tooltip = $langs->trans('Product') . ': ' . $objp->label;
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
+                        'tooltip' => $tooltip,
+                        'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->label,
-                    'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->label,
+                        'tooltip' => $tooltip,
+                        'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid,
+                    );
 
-	                if (empty($objp->fk_price_expression)) {
+	                if (empty($objp->fk_price_expression))
+	                {
 						if ($objp->price_base_type == 'HT')
 						{
 							$price=price($objp->price);
@@ -162,16 +170,22 @@ class box_produits_alerte_stock extends ModeleBoxes
                     'text' => $productstatic->LibStatut($objp->tobuy,3,1));
 
                     $i++;
-				}
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoTooLowStockProducts"));
+                }
+                if ($num==0)
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoTooLowStockProducts"),
+                    );
 
 				$db->free($result);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
+				$this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
 			}
 		}
 		else {

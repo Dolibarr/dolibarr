@@ -512,7 +512,10 @@ class Entrepot extends CommonObject
 		global $langs;
 
 		$result='';
-        $label = $langs->trans("ShowStock").': '.$this->libelle;
+        $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';
+        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->libelle;
+        if (! empty($this->lieu))
+            $label.= '<br><b>' . $langs->trans('LocationSummary').':</b> '.$this->lieu;
 
         $lien='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';

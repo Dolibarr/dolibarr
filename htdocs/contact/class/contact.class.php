@@ -887,7 +887,8 @@ class Contact extends CommonObject
 		global $langs;
 
 		$result='';
-        $label = $langs->trans("ShowContact").': '.$this->getFullName($langs);
+        $label = '<u>' . $langs->trans("ShowContact") . '</u>';
+        $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
 
         $lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';

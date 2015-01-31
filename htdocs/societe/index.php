@@ -245,7 +245,9 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * Last third parties modified
  */
 $max=15;
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur, s.canvas, s.tms as datem, s.status as status";
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur";
+$sql.= ", s.logo";
+$sql.= ", s.canvas, s.tms as datem, s.status as status";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
@@ -289,29 +291,49 @@ if ($result)
             $thirdparty_static->name=$objp->name;
             $thirdparty_static->client=$objp->client;
             $thirdparty_static->fournisseur=$objp->fournisseur;
+            $thirdparty_static->logo = $objp->logo;
             $thirdparty_static->datem=$db->jdate($objp->datem);
             $thirdparty_static->status=$objp->status;
             $thirdparty_static->canvas=$objp->canvas;
-            print $thirdparty_static->getNomUrl(1);
-            print "</td>\n";
+            //print $thirdparty_static->getNomUrl(1);
+            //print "</td>\n";
             // Type
-            print '<td align="center">';
+            //print '<td align="center">';
             if ($thirdparty_static->client==1 || $thirdparty_static->client==3)
             {
-            	$thirdparty_static->name=$langs->trans("Customer");
-            	print $thirdparty_static->getNomUrl(0,'customer');
+                print $thirdparty_static->getNomUrl(1, 'customer');
+                print "</td>\n";
+                // Type
+                print '<td align="center">';
+                print $langs->trans("Customer");
             }
-            if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
+            if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+                print $thirdparty_static->getNomUrl(1);
+                print "</td>\n";
+                // Type
+                print '<td align="center">';
+                print " / ";
+            }
             if (($thirdparty_static->client==2 || $thirdparty_static->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
             {
-            	$thirdparty_static->name=$langs->trans("Prospect");
-            	print $thirdparty_static->getNomUrl(0,'prospect');
+                print $thirdparty_static->getNomUrl(1, 'prospect');
+                print "</td>\n";
+                // Type
+                print '<td align="center">';
+                print $langs->trans("Prospect");
             }
             if (! empty($conf->fournisseur->enabled) && $thirdparty_static->fournisseur)
             {
-                if ($thirdparty_static->client) print " / ";
-            	$thirdparty_static->name=$langs->trans("Supplier");
-            	print $thirdparty_static->getNomUrl(0,'supplier');
+                if (! $thirdparty_static->client) {
+                    print $thirdparty_static->getNomUrl(1, 'supplier');
+                    print "</td>\n";
+                    print '<td align="center">';
+                    print $langs->trans("Supplier");
+                } else {
+                    // Type
+                    print " / ";
+                    print $langs->trans("Supplier");
+                }
             }
             print '</td>';
             // Last modified date
