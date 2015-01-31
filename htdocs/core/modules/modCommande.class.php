@@ -128,7 +128,8 @@ class modCommande extends DolibarrModules
 		$this->rights[$r][1] = 'Valider les commandes clients';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'valider';
+		$this->rights[$r][4] = 'order_advance';
+		$this->rights[$r][5] = 'validate';
 
 		$r++;
 		$this->rights[$r][0] = 86;

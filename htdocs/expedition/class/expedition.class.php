@@ -530,7 +530,8 @@ class Expedition extends CommonObject
 			return 0;
 		}
 
-		if (! $user->rights->expedition->valider)
+        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate))))
 		{
 			$this->error='Permission denied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -1217,16 +1218,16 @@ class Expedition extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowSending").': '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
 		if ($short) return $url;
 
-		$linkstart = '<a href="'.$url.'">';
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='sending';
-		$label=$langs->trans("ShowSending").': '.$this->ref;
 
 		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
@@ -1522,7 +1523,7 @@ class Expedition extends CommonObject
     }
 
 	/**
-	 * Get tracking url status
+	 * Forge an set tracking url
 	 *
 	 * @param	string	$value		Value
 	 * @return	void

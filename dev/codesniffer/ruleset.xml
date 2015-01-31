@@ -287,14 +287,80 @@
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
         <severity>0</severity>
     </rule>
-    <rule ref="PEAR.Commenting.ClassComment.Missing" />
 
-    <rule ref="PEAR.Commenting.FunctionComment.MissingReturn" />
+    <!-- TODO Remove this and fix reported errors -->
+    <rule ref="PEAR.Commenting.ClassComment.Missing">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.Missing">
+        <severity>0</severity>
+    </rule>
+    
+    <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@categoryTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@licenseTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@linkTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag">
+        <severity>0</severity>
+    </rule>
 
-    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired" />
-
-    <rule ref="PEAR.Commenting.FunctionComment.Missing" />
-
+    <rule ref="PEAR.Commenting.ClassComment.MissingAuthorTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.MissingCategoryTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.MissingLicenseTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.MissingLinkTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.MissingPackageTag">
+        <severity>0</severity>
+    </rule>
+    
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
+        <severity>0</severity>
+    </rule>
+    <!-- TODO Remove this and fix reported errors -->
+    <rule ref="PEAR.Commenting.ClassComment.Missing">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.Missing">
+        <severity>0</severity>
+    </rule>
+        
+>>>>>>> refs/remotes/origin/3.7
     <!-- 
     <rule ref="PEAR.Commenting.FileComment" />
     <rule ref="PEAR.Commenting.FileComment.WrongStyle">

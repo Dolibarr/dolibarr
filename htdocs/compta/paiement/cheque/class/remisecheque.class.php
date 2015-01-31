@@ -769,11 +769,12 @@ class RemiseCheque extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = $langs->trans("ShowCheckReceipt").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"), 'payment', 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, 'payment', 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 

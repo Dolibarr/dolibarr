@@ -221,7 +221,7 @@ class BookKeeping extends CommonObject
 	 * Insert line into bookkeeping
 	 *
 	 * @param 	User	$user		User who inserted operation
-	 * @return			$result		Result
+	 * @return	int <0 KO >0 OK
 	 */
 	function create($user='')
 	{
@@ -276,8 +276,9 @@ class BookKeeping extends CommonObject
 				}
 
 				$now = dol_now();
-				if (empty($this->date_create))
-					$this->date_create = $now();
+				if (empty($this->date_create)) {
+					$this->date_create = $now;
+				}
 
 				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (doc_date, ";
 				$sql .= "doc_type, doc_ref,fk_doc,fk_docdet,code_tiers,numero_compte,label_compte,";
@@ -330,23 +331,19 @@ class BookKeeping extends CommonObject
 		$sql .= " WHERE import_key = '" . $importkey . "'";
 
 		$resql = $this->db->query($sql);
-		if (! $resql) {
-			$error ++;
-			$this->errors[] = "Error " . $this->db->lasterror();
-		}
 
-		// Commit or rollback
-		if ($error) {
+		if (! $resql) {
+			$this->errors[] = "Error " . $this->db->lasterror();
 			foreach ( $this->errors as $errmsg ) {
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return - 1 * $error;
-		} else {
-			$this->db->commit();
-			return 1;
+			return - 1;
 		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 	/**
@@ -595,16 +592,13 @@ class BookKeeping extends CommonObject
 
 		$this->db->begin();
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Call trigger
-				$result=$this->call_trigger('ACCOUNTING_NUMPIECE_DELETE',$user);
-				if ($result < 0) $error++;
-                // End call triggers
-			}
-		}
+//		if (! $notrigger)
+//		{
+//			// Call trigger
+//			$result=$this->call_trigger('ACCOUNTING_NUMPIECE_DELETE',$user);
+//			if ($result < 0) $error++;
+//            // End call triggers
+//		}
 
 		if (! $error) {
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";

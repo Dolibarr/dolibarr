@@ -1118,17 +1118,18 @@ class BonPrelevement extends CommonObject
         global $langs;
 
         $result='';
+        $label = $langs->trans("ShowWithdraw").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
         if ($option == 'xxx')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $lienfin='</a>';
         }
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowWithdraw"), 'payment', 'class="classfortooltip"').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($label, 'payment', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.$this->ref.$lienfin;
         return $result;
     }

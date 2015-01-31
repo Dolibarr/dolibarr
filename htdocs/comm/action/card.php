@@ -881,15 +881,15 @@ if ($id > 0)
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $form->select_date($object->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
-		else if (GETPOST("afaire") == 2) $form->select_date($object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
-		else $form->select_date($object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		if (GETPOST("afaire") == 1) $form->select_date($datep?$datep:$object->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
+		else if (GETPOST("afaire") == 2) $form->select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		else $form->select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $form->select_date($object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		else if (GETPOST("afaire") == 2) $form->select_date($object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		else $form->select_date($object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		if (GETPOST("afaire") == 1) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else if (GETPOST("afaire") == 2) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		print '</td></tr>';
 
 		// Status

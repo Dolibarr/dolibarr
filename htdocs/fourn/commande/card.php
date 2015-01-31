@@ -130,13 +130,13 @@ if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
 }
 
 // mode de reglement
-else if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
+if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
 {
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
 
 // bank account
-else if ($action == 'setbankaccount' && $user->rights->fournisseur->commande->creer) 
+if ($action == 'setbankaccount' && $user->rights->fournisseur->commande->creer)
 {
      $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 }
@@ -154,17 +154,17 @@ if ($action == 'setdate_livraison' && $user->rights->fournisseur->commande->cree
 }
 
 // Set project
-else if ($action ==	'classin' && $user->rights->fournisseur->commande->creer)
+if ($action ==	'classin' && $user->rights->fournisseur->commande->creer)
 {
     $object->setProject($projectid);
 }
 
-else if ($action == 'setremisepercent' && $user->rights->fournisseur->commande->creer)
+if ($action == 'setremisepercent' && $user->rights->fournisseur->commande->creer)
 {
     $result = $object->set_remise($user, $_POST['remise_percent']);
 }
 
-else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
+if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
 {
     if (in_array($object->statut, array(1, 2, 5, 6, 7, 9)))
     {
@@ -191,7 +191,7 @@ else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
 /*
  *	Add a line into product
  */
-else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
+if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 {
     $langs->load('errors');
     $error = 0;
@@ -402,7 +402,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 /*
  *	Mise a jour	d'une ligne	dans la	commande
  */
-else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel'))
+if ($action == 'update_line' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel'))
 {
     if ($_POST["elrowid"])
     {
@@ -473,7 +473,7 @@ else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer
     }
 }
 
-else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->rights->fournisseur->commande->creer)
+if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->rights->fournisseur->commande->creer)
 {
 
     $result = $object->deleteline(GETPOST('lineid'));
@@ -506,7 +506,10 @@ else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->r
     }
 }
 
-else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseur->commande->valider)
+if ($action == 'confirm_valid' && $confirm == 'yes' &&
+    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->commande->creer))
+    || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
+	)
 {
     $object->date_commande=dol_now();
     $result = $object->valid($user);
@@ -531,8 +534,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
     	}
     }
     else
-    {
-        setEventMessage($object->error, 'errors');
+	{
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 
     // If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
@@ -542,7 +545,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
     }
 }
 
-else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
+if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
     $idwarehouse=GETPOST('idwarehouse', 'int');
 
@@ -593,7 +596,7 @@ else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fou
     }
 }
 
-else if ($action == 'confirm_refuse' &&	$confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
+if ($action == 'confirm_refuse' &&	$confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
     $result = $object->refuse($user);
     if ($result > 0)
@@ -607,7 +610,7 @@ else if ($action == 'confirm_refuse' &&	$confirm == 'yes' && $user->rights->four
     }
 }
 
-else if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fournisseur->commande->commander)
+if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 {
     $result	= $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
     if ($result > 0)
@@ -625,7 +628,7 @@ else if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fo
 }
 
 
-else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->commande->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->commande->supprimer)
 {
     $result=$object->delete($user);
     if ($result > 0)
@@ -640,7 +643,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->four
 }
 
 // Action clone object
-else if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->fournisseur->commande->creer)
+if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->fournisseur->commande->creer)
 {
 	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
 	{
@@ -666,7 +669,7 @@ else if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->fourn
 }
 
 // Receive
-else if ($action == 'livraison' && $user->rights->fournisseur->commande->receptionner)
+if ($action == 'livraison' && $user->rights->fournisseur->commande->receptionner)
 {
 
     if ($_POST["type"])
@@ -695,7 +698,7 @@ else if ($action == 'livraison' && $user->rights->fournisseur->commande->recepti
     }
 }
 
-else if ($action == 'confirm_cancel' && $confirm == 'yes' &&	$user->rights->fournisseur->commande->commander)
+if ($action == 'confirm_cancel' && $confirm == 'yes' &&	$user->rights->fournisseur->commande->commander)
 {
     $result	= $object->cancel($user);
     if ($result > 0)
@@ -710,7 +713,7 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' &&	$user->rights->four
 }
 
 // Line ordering
-else if ($action == 'up'	&& $user->rights->fournisseur->commande->creer)
+if ($action == 'up'	&& $user->rights->fournisseur->commande->creer)
 {
     $object->line_up($_GET['rowid']);
 
@@ -726,7 +729,7 @@ else if ($action == 'up'	&& $user->rights->fournisseur->commande->creer)
     header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#'.$_GET['rowid']));
     exit;
 }
-else if ($action == 'down' && $user->rights->fournisseur->commande->creer)
+if ($action == 'down' && $user->rights->fournisseur->commande->creer)
 {
     $object->line_down($_GET['rowid']);
 
@@ -743,7 +746,7 @@ else if ($action == 'down' && $user->rights->fournisseur->commande->creer)
     exit;
 }
 
-else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	// En get ou en	post
+if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	// En get ou en	post
 {
     // Build document
 
@@ -765,7 +768,7 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
 }
 
 // Delete file in doc form
-else if ($action == 'remove_file' && $object->id > 0 && $user->rights->fournisseur->commande->creer)
+if ($action == 'remove_file' && $object->id > 0 && $user->rights->fournisseur->commande->creer)
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     $langs->load("other");
@@ -776,7 +779,7 @@ else if ($action == 'remove_file' && $object->id > 0 && $user->rights->fournisse
     else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 }
 
-elseif ($action == 'update_extras')
+if ($action == 'update_extras')
 {
 	// Fill array 'array_options' with data from add form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
@@ -818,7 +821,7 @@ elseif ($action == 'update_extras')
 /*
  * Create an order
  */
-else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
+if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 {
  	$error=0;
 
@@ -1280,7 +1283,7 @@ if ($action=="create")
 	    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
 	    print '</td></tr>';
     }
-    
+
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 	$doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
@@ -1364,17 +1367,24 @@ elseif (! empty($object->id))
 		if (preg_match('/^[\(]?PROV/i',$object->ref)) $newref = $object->getNextNumRef($object->thirdparty);
 		else $newref = $object->ref;
 
-		$text=$langs->trans('ConfirmValidateOrder',$newref);
-		if (! empty($conf->notification->enabled))
+		if ($newref < 0)
 		{
-			require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
-			$notify=new	Notify($db);
-			$text.='<br>';
-			$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid);
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action='';
 		}
+		else
+		{
+			$text=$langs->trans('ConfirmValidateOrder',$newref);
+			if (! empty($conf->notification->enabled))
+			{
+				require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
+				$notify=new	Notify($db);
+				$text.='<br>';
+				$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid);
+			}
 
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
-
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
+		}
 	}
 
 	/*
@@ -1566,7 +1576,7 @@ elseif (! empty($object->id))
 	    print '</td>';
 	    print '</tr>';
 	}
-	
+
 	// Delivery date planed
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1605,11 +1615,11 @@ elseif (! empty($object->id))
 		//print "$object->id, $object->socid, $object->fk_project";
 		if ($action == 'classify')
 		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1', $object->fk_project, 'projectid');
+			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1'), $object->fk_project, 'projectid', 0, 0, 1);
 		}
 		else
 		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
+			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0);
 		}
 		print '</td>';
 		print '</tr>';
@@ -1993,7 +2003,7 @@ elseif (! empty($object->id))
 		$ws_key      = $object->thirdparty->webservices_key;
 		$ws_user     = GETPOST('ws_user','alpha');
 		$ws_password = GETPOST('ws_password','alpha');
-        
+
         // NS and Authentication parameters
         $ws_ns = 'http://www.dolibarr.org/ns/';
         $ws_authentication = array(
@@ -2012,11 +2022,11 @@ elseif (! empty($object->id))
             $mode = "init";
             $error_occurred = true; //Don't allow to set the user/pass if thirdparty fields are not filled
         } else if ($mode != "init" && (empty($ws_user) || empty($ws_password))) {
-            setEventMessage($langs->trans("ErrorFieldsRequired"), 'errors'); 
+            setEventMessage($langs->trans("ErrorFieldsRequired"), 'errors');
             $mode = "init";
         }
 
-        if ($mode == "init") 
+        if ($mode == "init")
         {
             //Table/form header
             print '<table class="border" width="100%">';
@@ -2124,7 +2134,7 @@ elseif (! empty($object->id))
                             }
                         }
 
-                        
+
                         // Ensure that price is equal and warn user if it's not
                         $supplier_price = price($result_product["product"]["price_net"]); //Price of client tab in supplier dolibarr
                         $local_price = NULL; //Price of supplier as stated in product suppliers tab on this dolibarr, NULL if not found
@@ -2212,7 +2222,8 @@ elseif (! empty($object->id))
 				// Validate
 				if ($object->statut == 0 && $num > 0)
 				{
-					if ($user->rights->fournisseur->commande->valider)
+			        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->commande->creer))
+			       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
 					{
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid"';
 						print '>'.$langs->trans('Validate').'</a>';

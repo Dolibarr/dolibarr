@@ -341,7 +341,8 @@ class Livraison extends CommonObject
 
 		$error = 0;
 
-		if ($user->rights->expedition->livraison->valider)
+        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
 		{
 			if (! empty($conf->global->LIVRAISON_ADDON_NUMBER))
 			{
@@ -660,13 +661,13 @@ class Livraison extends CommonObject
 
 		$result='';
 		$urlOption='';
+        $label=$langs->trans("ShowReceiving").': '.$this->ref;
 
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='sending';
-		$label=$langs->trans("ShowReceiving").': '.$this->ref;
 
 		if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';

@@ -100,6 +100,7 @@ $hookmanager->initHooks(array('propalcard','globalcard'));
 
 $permissionnote = $user->rights->propale->creer; // Used by the include of actions_setnotes.inc.php
 
+
 /*
  * Actions
  */
@@ -172,7 +173,10 @@ if (empty($reshook))
 	}
 
 	// Validation
-	else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->propal->valider)
+	else if ($action == 'confirm_validate' && $confirm == 'yes' &&
+        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate)))
+	)
 	{
 		$result = $object->valid($user);
 		if ($result >= 0)
@@ -1385,8 +1389,8 @@ if ($action == 'create')
 	print "</td></tr>";
 
 	// Project
-	if (! empty($conf->projet->enabled) && $socid > 0) {
-
+	if (! empty($conf->projet->enabled) && $socid > 0)
+	{
 		$formproject = new FormProjets($db);
 
 		$projectid = 0;
@@ -1394,9 +1398,9 @@ if ($action == 'create')
 			$projectid = ($originid ? $originid : 0);
 
 		print '<tr>';
-		print '<td valign="top">' . $langs->trans("Project") . '</td><td colspan="2">';
+		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
 
-		$numprojet = $formproject->select_projects($soc->id, $projectid);
+		$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
 		if ($numprojet == 0) {
 			$langs->load("projects");
 			print ' &nbsp; <a href="../projet/card.php?socid=' . $soc->id . '&action=create">' . $langs->trans("AddProject") . '</a>';
@@ -1680,7 +1684,7 @@ if ($action == 'create')
 	print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="5">' . $soc->getNomUrl(1) . '</td>';
 	print '</tr>';
 
-	// Ligne info remises tiers
+	// Lin for thirdparty discounts
 	print '<tr><td>' . $langs->trans('Discounts') . '</td><td colspan="5">';
 	if ($soc->remise_percent)
 		print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
@@ -1877,20 +1881,22 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Project
-	if (! empty($conf->projet->enabled)) {
+	if (! empty($conf->projet->enabled))
+	{
 		$langs->load("projects");
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Project') . '</td>';
-		if ($user->rights->propal->creer) {
+		if ($user->rights->propal->creer)
+		{
 			if ($action != 'classify')
 				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($action == 'classify') {
-				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid');
+				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
 			} else {
-				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none');
+				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0);
 			}
 			print '</td></tr>';
 		} else {
@@ -1899,7 +1905,7 @@ if ($action == 'create')
 				print '<td colspan="3">';
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				print '<a href="../projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+				print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
 				print $proj->ref;
 				print '</a>';
 				print '</td>';
@@ -2082,19 +2088,21 @@ if ($action == 'create')
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 		                                                                                               // modified by hook
-		if (empty($reshook)) {
-			if ($action != 'statut' && $action != 'editline') {
+		if (empty($reshook))
+		{
+			if ($action != 'statut' && $action != 'editline')
+			{
 				// Validate
-				if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 && $user->rights->propal->valider) {
+				if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 &&
+			        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
+       				|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate)))
+				) {
 					if (count($object->lines) > 0)
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=validate">' . $langs->trans('Validate') . '</a></div>';
 					// else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
 				}
 				// Create event
-				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
-				                                                                                      // "workflow" action so should appears somewhere
-				                                                                                      // else on
-				                                                                                      // page.
+				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 				{
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
 				}

@@ -101,55 +101,76 @@ class box_factures extends ModeleBoxes
 					$late = '';
 					if ($objp->paye == 0 && ($objp->fk_statut != 2 && $objp->fk_statut != 3) && $datelimite < ($now - $conf->facture->client->warning_delay)) { $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));}
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $picto,
-                    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => $picto,
+                        'tooltip' => $langs->trans('CustomerInvoice').': '.$objp->facnumber,
+                        'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->facnumber,
-                    'text2'=> $late,
-                    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->facnumber,
+                        'text2'=> $late,
+                        'tooltip' => $langs->trans('CustomerInvoice').': '.$objp->facnumber,
+                        'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-                    'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => 'company',
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $objp->name,
-                    'maxlength'=>40,
-                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][3] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->name,
+                        'maxlength'=>40,
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-                    'text' => price($objp->total_ht),
-					);
+                    $this->info_box_contents[$i][4] = array(
+                        'td' => 'align="right"',
+                        'text' => price($objp->total_ht),
+                    );
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right"',
-                    'text' => dol_print_date($date,'day'),
-					);
+                    $this->info_box_contents[$i][5] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($date,'day'),
+                    );
 
-					$this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
-                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
+                    $this->info_box_contents[$i][6] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3),
+                    );
 
-					$i++;
-				}
+                    $i++;
+                }
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInvoices"));
+                if ($num==0)
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoRecordedInvoices"),
+                    );
 
-				$db->free($result);
-			}
-			else
-			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
 
-		}
-		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
-		}
-	}
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
+        }
+    }
 
 	/**
 	 *	Method to show box

@@ -60,8 +60,7 @@ class box_actions extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo",$max));
 
-		if ($user->rights->agenda->myactions->read)
-		{
+        if ($user->rights->agenda->myactions->read) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage,";
 			$sql.= " ta.code, ta.libelle as type_label,";
 			$sql.= " s.nom as name, s.rowid as socid";
@@ -80,15 +79,13 @@ class box_actions extends ModeleBoxes
 
 			dol_syslog("Box_actions::loadBox", LOG_DEBUG);
 			$result = $db->query($sql);
-			if ($result)
-			{
+            if ($result) {
 				$now=dol_now();
 				$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
 				$num = $db->num_rows($result);
 				$i = 0;
-				while ($i < $num)
-				{
+                while ($i < $num) {
 					$late = '';
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->dp);
@@ -98,48 +95,68 @@ class box_actions extends ModeleBoxes
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
 					$label=empty($objp->label)?$objp->type_label:$objp->label;
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-					'logo' => ("action"),
-					'url' => DOL_URL_ROOT."/comm/action/card.php?id=".$objp->id);
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => ("action"),
+                        'tooltip' => $langs->trans('Action'.$objp->code).': '.$label,
+                        'url' => DOL_URL_ROOT."/comm/action/card.php?id=".$objp->id,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-					'text' => dol_trunc($label,32),
-					'text2'=> $late,
-					'url' => DOL_URL_ROOT."/comm/action/card.php?id=".$objp->id);
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => dol_trunc($label,32),
+                        'text2'=> $late,
+                        'tooltip' => $langs->trans('Action'.$objp->code).': '.$label,
+                        'url' => DOL_URL_ROOT."/comm/action/card.php?id=".$objp->id,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-                    'logo' => ($objp->socid?'company':''),
-                    'url' => ($objp->socid?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid:''));
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => ($objp->socid?'company':''),
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => ($objp->socid?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid:''),
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-					'text' => dol_trunc($objp->name,24),
-					'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][3] = array(
+                        'td' => 'align="left"',
+                        'text' => dol_trunc($objp->name,24),
+                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
+                        'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid,
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="left" class="nowrap"',
-					'text' => dol_print_date($datelimite, "dayhour"));
+                    $this->info_box_contents[$i][4] = array(
+                        'td' => 'align="left" class="nowrap"',
+                        'text' => dol_print_date($datelimite, "dayhour"),
+                    );
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right"',
-					'text' => ($objp->percentage>= 0?$objp->percentage.'%':''));
+                    $this->info_box_contents[$i][5] = array(
+                        'td' => 'align="right"',
+                        'text' => ($objp->percentage>= 0?$objp->percentage.'%':''),
+                    );
 
-					$this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
-		          	'text' => $actionstatic->LibStatut($objp->percentage,3));
+                    $this->info_box_contents[$i][6] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $actionstatic->LibStatut($objp->percentage,3),
+                    );
 
-					$i++;
-				}
+                    $i++;
+                }
 
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoActionsToDo"));
 
 				$db->free($result);
-			}
-			else {
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else {
-			$this->info_box_contents[0][0] = array('align' => 'left',
-			'text' => $langs->trans("ReadPermissionNotAllowed"));
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'align' => 'left',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
 		}
 	}
 

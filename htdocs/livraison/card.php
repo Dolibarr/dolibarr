@@ -119,7 +119,10 @@ if ($action == 'add')
 	}
 }
 
-else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition->livraison->valider)
+else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
+    || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
+)
 {
 	$result = $object->valid($user);
 

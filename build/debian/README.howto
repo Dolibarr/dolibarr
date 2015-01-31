@@ -299,3 +299,17 @@ http://packages.qa.debian.org
 
 * Package will be into release when test will be moved as stable.
 
+
+##### Send an unblock request 
+Use this to move from unstable to testing.
+reportbug -B debian
+Choose package "release.debian.org"
+Then "unblock"
+Then name of package "dolibarr"
+Fill message, for example:
+"Please unblock package dolibarr
+A security error CVE-2014-7137 was reported and is fixed into package 3.5.5.
+Note that package 3.5.5 was prepared before the CVE was reported and include other fixes, but they are all related to stability or security (other se$
+After discussion with ..., it appears that security holes are enough to request this unblock request."
+
+

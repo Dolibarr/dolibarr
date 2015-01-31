@@ -47,6 +47,7 @@ if (! empty($conf->facture->enabled))  	$langs->load("bills");
 if (! empty($conf->commande->enabled)) 	$langs->load("orders");
 if (! empty($conf->propal->enabled))   	$langs->load("propal");
 if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
+if (! empty($conf->deplacement->enabled))	$langs->load("trips");
 
 $projectid=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -164,21 +165,21 @@ dol_fiche_end();
 
 $listofreferent=array(
 'propal'=>array(
-	'name'=>"Proposalq",
+	'name'=>"Proposals",
 	'title'=>"ListProposalsAssociatedProject",
 	'class'=>'Propal',
 	'table'=>'propal',
     'datefieldname'=>'datep',
 	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
 'order'=>array(
-	'name'=>"CustomerOrderq",
+	'name'=>"CustomersOrders",
 	'title'=>"ListOrdersAssociatedProject",
 	'class'=>'Commande',
 	'table'=>'commande',
 	'datefieldname'=>'date_commande',
 	'test'=>$conf->commande->enabled && $user->rights->commande->lire),
 'invoice'=>array(
-	'name'=>"CustomerInvoiceq",
+	'name'=>"CustomersInvoices",
 	'title'=>"ListInvoicesAssociatedProject",
 	'class'=>'Facture',
 	'margin'=>'add',
@@ -193,7 +194,7 @@ $listofreferent=array(
 	'datefieldname'=>'datec',
 	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'order_supplier'=>array(
-	'name'=>"SuplierOrders",
+	'name'=>"SuppliersOrders",
 	'title'=>"ListSupplierOrdersAssociatedProject",
 	'class'=>'CommandeFournisseur',
 	'table'=>'commande_fournisseur',
@@ -223,7 +224,7 @@ $listofreferent=array(
 	'disableamount'=>1,
 	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
 'trip'=>array(
-	'name'=>"TripAndExpenses",
+	'name'=>"TripsAndExpenses",
 	'title'=>"ListTripAssociatedProject",
 	'class'=>'Deplacement',
 	'table'=>'deplacement',
@@ -275,7 +276,7 @@ foreach ($listofreferent as $key => $value)
 		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
 			print '<input type="hidden" name="tablename" value="'.$tablename.'">';
-			print '<input type="hidden" name="action" value="addelement">';
+			print '<input type="hidden" name="action" value="view">';
 			print '<table><tr>';
 			//print '<td>'.$langs->trans("Filter").':</td>';
 			print '<td>'.$langs->trans("From").' ';
@@ -331,6 +332,15 @@ foreach ($listofreferent as $key => $value)
 			$var=true;
 			$total_ht = 0;
 			$total_ttc = 0;
+
+			$total_ht_by_third = 0;
+			$total_ttc_by_third = 0;
+
+			if (canApplySubtotalOn($tablename)) {
+			   // Appel du mon code de tri :
+			   $elementarray = sortElementsByClientName($elementarray);
+			}
+
 			$num=count($elementarray);
 			for ($i = 0; $i < $num; $i++)
 			{
@@ -356,18 +366,22 @@ foreach ($listofreferent as $key => $value)
 				print "</td>\n";
 
 				// Date
-				$date=$element->date;
-				if (empty($date)) $date=$element->datep;
-				if (empty($date)) $date=$element->date_contrat;
-				if (empty($date)) $date=$element->datev; //Fiche inter
+				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order') $date=$element->date_commande;
+				else
+				{
+					$date=$element->date;
+					if (empty($date)) $date=$element->datep;
+					if (empty($date)) $date=$element->date_contrat;
+					if (empty($date)) $date=$element->datev; //Fiche inter
+				}
 				print '<td align="center">'.dol_print_date($date,'day').'</td>';
 
 				// Third party
                 print '<td align="left">';
-                if (is_object($element->client)) print $element->client->getNomUrl(1,'',48);
+                if (is_object($element->thirdparty)) print $element->thirdparty->getNomUrl(1,'',48);
 				print '</td>';
 
-                // Amount
+                // Amount without tax
 				if (empty($value['disableamount']))
 				{
 					print '<td align="right">';
@@ -378,7 +392,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				else print '<td></td>';
 
-                // Amount
+                // Amount inc tax
 				if (empty($value['disableamount']))
 				{
 					print '<td align="right">';
@@ -398,6 +412,36 @@ foreach ($listofreferent as $key => $value)
 				{
 					$total_ht = $total_ht + $element->total_ht;
 					$total_ttc = $total_ttc + $element->total_ttc;
+
+					$total_ht_by_third += $element->total_ht;
+					$total_ttc_by_third += $element->total_ttc;
+				}
+
+				// Autre partie de mon code :
+				if (canApplySubtotalOn($tablename))
+				{
+					$next_third_id = (isset($elementarray[$i+1])) ? $elementarray[$i+1] : '';
+					$third_id = $element->thirdparty->id;
+					if ($third_id != $next_third_id)
+					{
+						print '<tr class="liste_total">';
+						print     '<td colspan="2">';
+						print    '</td>';
+						print     '<td>';
+						print    '</td>';
+						print    '<td class="right">';
+						print $langs->trans('SubTotal').' : ';
+						if (is_object($element->thirdparty)) print $element->thirdparty->getNomUrl(0,'',48);
+						print    '</td>';
+						print     '<td align="right">'.price($total_ht).'</td>';
+						print     '<td align="right">'.price($total_ttc).'</td>';
+						print     '<td></td>';
+						print '</tr>';
+
+						$total_ht_by_third = 0;
+						$total_ttc_by_third = 0;
+						$var=true;
+					}
 				}
 			}
 
@@ -533,3 +577,53 @@ print "</table>";
 llxFooter();
 
 $db->close();
+
+
+
+/**
+ * Return if we should do a group by customer with sub-total
+ *
+ * @param 	string	$tablename		Name of table
+ * @return	boolean					True to tell to make a group by sub-total
+ */
+function canApplySubtotalOn($tablename)
+{
+	global $conf;
+
+	if (empty($conf->global->PROJECT_ADD_SUBTOTAL_LINES)) return false;
+	return in_array($tablename, array('facture_fourn', 'commande_fournisseur'));
+}
+
+/**
+ * sortElementsByClientName
+ *
+ * @param 	array		$elementarray	Element array
+ * @return	array						Element array sorted
+ */
+function sortElementsByClientName($elementarray)
+{
+	global $db, $classname;
+
+	$element = new $classname($db);
+
+	$clientname = array();
+	foreach ($elementarray as $key => $id)
+	{
+		if (empty($clientname[$id]))
+		{
+			$element->id = $id;
+			$element->fetch_thirdparty();
+			$clientname[$id] = $element->thirdparty->name;
+		}
+	}
+
+	asort($clientname);
+
+	$elementarray = array();
+	foreach ($clientname as $id => $name) {
+		$elementarray[] = $id;
+	}
+
+	return $elementarray;
+}
+

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -44,7 +44,13 @@ $action = GETPOST('action', 'alpha');
 
 // Other parameters ACCOUNTING_*
 $list = array (
-		'ACCOUNTING_SEPARATORCSV'
+		'ACCOUNTING_EXPORT_SEPARATORCSV',
+		'ACCOUNTING_EXPORT_DATE',
+		'ACCOUNTING_EXPORT_PIECE',
+		'ACCOUNTING_EXPORT_GLOBAL_ACCOUNT',
+		'ACCOUNTING_EXPORT_LABEL',
+		'ACCOUNTING_EXPORT_AMOUNT',
+		'ACCOUNTING_EXPORT_DEVISE'
 );
 
 /*
@@ -57,7 +63,7 @@ if ($action == 'update') {
 
 	if (! empty($modelcsv)) {
 
-		if (! dolibarr_set_const($db, 'ACCOUNTING_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
+		if (! dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
 	} else {
@@ -112,12 +118,12 @@ print "<td>" . $langs->trans("Selectmodelcsv") . "</td>";
 print "<td>";
 print '<select class="flat" name="modelcsv" id="modelcsv">';
 print '<option value="0"';
-if ($conf->global->ACCOUNTING_MODELCSV == 0) {
+if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 0) {
 	print ' selected="selected"';
 }
 print '>' . $langs->trans("Modelcsv_normal") . '</option>';
 print '<option value="1"';
-if ($conf->global->ACCOUNTING_MODELCSV == 1) {
+if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) {
 	print ' selected="selected"';
 }
 print '>' . $langs->trans("Modelcsv_CEGID") . '</option>';
@@ -128,8 +134,7 @@ print "</table>";
 print "<br>\n";
 
 /*
- *  Params
- *
+ *  Parameters
  */
 
 $num = count($list);

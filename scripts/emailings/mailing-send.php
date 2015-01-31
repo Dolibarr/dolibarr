@@ -65,18 +65,22 @@ $sql = "SELECT m.rowid, m.titre, m.sujet, m.body,";
 $sql.= " m.email_from, m.email_replyto, m.email_errorsto";
 $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql.= " WHERE m.statut = 1";
-if ($id != 'all') {
+if ($id != 'all')
+{
     $sql.= " AND m.rowid= ".$id;
     $sql.= " LIMIT 1";
 }
 
 $resql=$db->query($sql);
-if ($resql) {
+if ($resql)
+{
     $num = $db->num_rows($resql);
     $j = 0;
 
-    if ($num) {
-        for ($j=0; $j<$num; $j++) {
+    if ($num)
+    {
+        for ($j=0; $j<$num; $j++)
+        {
             $obj = $db->fetch_object($resql);
 
             dol_syslog("Process mailing with id ".$obj->rowid);
@@ -102,25 +106,29 @@ if ($resql) {
             $sql2.= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
 
             $resql2=$db->query($sql2);
-            if ($resql2) {
+            if ($resql2)
+            {
                 $num2 = $db->num_rows($resql2);
                 dol_syslog("Nb of targets = ".$num2, LOG_DEBUG);
                 print "Nb of targets = ".$num2."\n";
 
-                if ($num2) {
+                if ($num2)
+                {
                     $now=dol_now();
 
                     // Positionne date debut envoi
                     $sqlstartdate="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".$id;
                     $resqlstartdate=$db->query($sqlstartdate);
-                    if (! $resqlstartdate) {
+                    if (! $resqlstartdate)
+                    {
                         dol_print_error($db);
                         $error++;
                     }
 
                     // Look on each email and sent message
                     $i = 0;
-                    while ($i < $num2) {
+                    while ($i < $num2)
+                    {
                         $res=1;
                         $now=dol_now();
 
@@ -152,7 +160,8 @@ if ($resql) {
                             '__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
                             '__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj2->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>'
                         );
-                        if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
+                        if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
+                        {
                             $substitutionarray['__SECUREKEYPAYPAL__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
                             if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_MEMBER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
                             else $substitutionarray['__SECUREKEYPAYPAL_MEMBER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $obj->source_id, 2);
@@ -180,20 +189,24 @@ if ($resql) {
                             $errorsto
                         );
 
-                        if ($mail->error) {
+                        if ($mail->error)
+                        {
                             $res=0;
                         }
-                        if (! $substitutionisok) {
+                        if (! $substitutionisok)
+                        {
                             $mail->error='Some substitution failed';
                             $res=0;
                         }
 
                         // Send Email
-                        if ($res) {
+                        if ($res)
+                        {
                             $res=$mail->sendfile();
                         }
 
-                        if ($res) {
+                        if ($res)
+                        {
                             // Mail successful
                             $nbok++;
 
@@ -202,17 +215,22 @@ if ($resql) {
                             $sqlok ="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
                             $sqlok.=" SET statut=1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj2->rowid;
                             $resqlok=$db->query($sqlok);
-                            if (! $resqlok) {
+                            if (! $resqlok)
+                            {
                                 dol_print_error($db);
                                 $error++;
-                            } else {
+                            }
+                            else
+                            {
                                 //if cheack read is use then update prospect contact status
-                                if (strpos($message, '__CHECK_READ__') !== false) {
+                                if (strpos($message, '__CHECK_READ__') !== false)
+                                {
                                     //Update status communication of thirdparty prospect
                                     $sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$obj2->rowid.")";
                                     dol_syslog("card.php: set prospect thirdparty status", LOG_DEBUG);
                                     $resqlx=$db->query($sqlx);
-                                    if (! $resqlx) {
+                                    if (! $resqlx)
+                                    {
                                         dol_print_error($db);
                                         $error++;
                                     }
@@ -222,13 +240,21 @@ if ($resql) {
                                     dol_syslog("card.php: set prospect contact status", LOG_DEBUG);
 
                                     $resqlx=$db->query($sqlx);
-                                    if (! $resqlx) {
+                                    if (! $resqlx)
+                                    {
                                         dol_print_error($db);
                                         $error++;
                                     }
                                 }
+                                
+                                if (!empty($conf->global->MAILING_DELAY)) {
+                                    sleep($conf->global->MAILING_DELAY);
+                                }
+
                             }
-                        } else {
+                        }
+                        else
+                        {
                             // Mail failed
                             $nbko++;
 
@@ -237,7 +263,8 @@ if ($resql) {
                             $sqlerror="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
                             $sqlerror.=" SET statut=-1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj2->rowid;
                             $resqlerror=$db->query($sqlerror);
-                            if (! $resqlerror) {
+                            if (! $resqlerror)
+                            {
                                 dol_print_error($db);
                                 $error++;
                             }
@@ -245,7 +272,9 @@ if ($resql) {
 
                         $i++;
                     }
-                } else {
+                }
+                else
+                {
                     $mesg="Emailing id ".$id." has no recipient to target";
                     print $mesg."\n";
                     dol_syslog($mesg,LOG_ERR);
@@ -260,22 +289,29 @@ if ($resql) {
                 dol_syslog("update global status", LOG_DEBUG);
                 print "Update status of emailing id ".$id." to ".$statut."\n";
                 $resqlenddate=$db->query($sqlenddate);
-                if (! $resqlenddate) {
+                if (! $resqlenddate)
+                {
                     dol_print_error($db);
                     $error++;
                 }
-            } else {
+            }
+            else
+            {
                 dol_print_error($db);
                 $error++;
             }
         }
-    } else {
+    }
+    else
+    {
         $mesg="No validated emailing id to send found.";
         print $mesg."\n";
         dol_syslog($mesg,LOG_ERR);
         $error++;
     }
-} else {
+}
+else
+{
     dol_print_error($db);
     $error++;
 }

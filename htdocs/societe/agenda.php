@@ -121,7 +121,8 @@ if ($socid)
 	// Country
 	if ($object->country) {
 		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-		$img=picto_from_langcode($object->country_code);
+		//$img=picto_from_langcode($object->country_code);
+		$img='';
 		print ($img?$img.' ':'');
 		print $object->country;
 		print '</td></tr>';

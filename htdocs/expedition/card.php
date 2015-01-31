@@ -256,7 +256,10 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition->valider)
+	else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate)))
+	)
 	{
 	    $object->fetch_thirdparty();
 
@@ -304,7 +307,7 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'reopen' && $user->rights->expedition->valider)
+	else if ($action == 'reopen' && (! empty($user->rights->expedition->creer) || ! empty($user->rights->expedition->shipping_advance->validate)))
 	{
 	    $result = $object->setStatut(0);
 	    if ($result < 0)
@@ -1354,7 +1357,8 @@ else if ($id || $ref)
 
 		if ($object->statut == 0 && $num_prod > 0)
 		{
-			if ($user->rights->expedition->valider)
+			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
+  		     || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate)))
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 			}
@@ -1365,7 +1369,7 @@ else if ($id || $ref)
 		}
 
 		// TODO add alternative status
-		/* if ($object->statut == 1 && $user->rights->expedition->valider)
+		/* if ($object->statut == 1 && $user->rights->expedition->creer)
 		{
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 		}*/

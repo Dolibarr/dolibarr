@@ -711,13 +711,13 @@ class Don extends CommonObject
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowDonation").': '.$this->id;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/dons/card.php?rowid='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/dons/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
         $picto='generic';
 
-        $label=$langs->trans("ShowDonation").': '.$this->id;
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';

@@ -334,7 +334,8 @@ class CommandeFournisseur extends CommonOrder
 
         dol_syslog(get_class($this)."::valid");
         $result = 0;
-        if ($user->rights->fournisseur->commande->valider)
+        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->commande->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
         {
             $this->db->begin();
 
@@ -531,12 +532,12 @@ class CommandeFournisseur extends CommonOrder
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowOrder").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
         $picto='order';
-        $label=$langs->trans("ShowOrder").': '.$this->ref;
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
@@ -591,7 +592,6 @@ class CommandeFournisseur extends CommonOrder
             else
 			{
                 $this->error = $obj->error;
-                dol_print_error($db, get_class($this)."::getNextNumRef ".$obj->error);
                 return -1;
             }
         }

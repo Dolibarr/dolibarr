@@ -18,9 +18,9 @@
  */
 
 /**
- *	    \file       htdocs/core/boxes/box_factures_fourn.php
+ *      \file       htdocs/core/boxes/box_factures_fourn.php
  *      \ingroup    supplier
- *		\brief      Fichier de gestion d'une box des factures fournisseurs
+ *      \brief      Fichier de gestion d'une box des factures fournisseurs
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
@@ -89,8 +89,7 @@ class box_factures_fourn extends ModeleBoxes
 				$i = 0;
 				$l_due_date =  $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
 
-				while ($i < $num)
-				{
+                while ($i < $num) {
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
 					$date=$db->jdate($objp->df);
@@ -99,54 +98,79 @@ class box_factures_fourn extends ModeleBoxes
 					$late = '';
 					if ($objp->paye == 0 && $datelimite && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid);
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => $this->boximg,
+                        'tooltip' => $langs->trans('SupplierInvoice').': '.($objp->ref?$objp->ref:$objp->facid).'<br>'.$langs->trans('RefSupplier').': '.$objp->ref_supplier,
+                        'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => ($objp->ref?$objp->ref:$objp->facid),
-                    'text2'=> $late,
-                    'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid);
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => ($objp->ref?$objp->ref:$objp->facid),
+                        'text2'=> $late,
+                        'tooltip' => $langs->trans('SupplierInvoice').': '.($objp->ref?$objp->ref:$objp->facid).'<br>'.$langs->trans('RefSupplier').': '.$objp->ref_supplier,
+                        'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
-                    'text' => $objp->ref_supplier,
-                    'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid);
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->ref_supplier,
+                        'tooltip' => $langs->trans('SupplierInvoice').': '.($objp->ref?$objp->ref:$objp->facid).'<br>'.$langs->trans('RefSupplier').': '.$objp->ref_supplier,
+                        'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left" width="16"',
-                    'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][3] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => 'company',
+                        'tooltip' => $langs->trans('Supplier').': '.$objp->name,
+                        'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid,
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="left"',
-                    'text' => $objp->name,
-                    'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$i][4] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->name,
+                        'tooltip' => $langs->trans('Supplier').': '.$objp->name,
+                        'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid,
+                    );
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right"',
-                    'text' => dol_print_date($date,'day'));
+                    $this->info_box_contents[$i][5] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($date,'day'),
+                    );
 
-					$fac = new FactureFournisseur($db);
-					$fac->fetch($objp->facid);
-					$alreadypaid=$fac->getSommePaiement();
-					$this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
-                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypaid,$objp->type));
+                    $fac = new FactureFournisseur($db);
+                    $fac->fetch($objp->facid);
+                    $alreadypaid=$fac->getSommePaiement();
+                    $this->info_box_contents[$i][6] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypaid,$objp->type),
+                    );
 
-					$i++;
-				}
+                    $i++;
+                }
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoModifiedSupplierBills"));
+                if ($num==0)
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoModifiedSupplierBills"),
+                    );
 
-				$db->free($result);
-			}
-			else {
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-            'text' => $langs->transnoentities("ReadPermissionNotAllowed"));
-		}
-	}
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->transnoentities("ReadPermissionNotAllowed"),
+            );
+        }
+    }
 
 	/**
 	 *	Method to show box
