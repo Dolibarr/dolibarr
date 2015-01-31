@@ -726,7 +726,6 @@ class Contrat extends CommonObject
 
 				// Retreive all extrafield for propal
 				// fetch optionals attributes and labels
-				
 				$line->fetch_optionals($line->id,$extralabelsline);
 				
 				$this->lines[]			= $line;
