@@ -4980,8 +4980,8 @@ function float2text_moneda($numero){
     $decenas = array("","","TREINTA ","CUARENTA ","CINCUENTA ","SESENTA ","SETENTA ","OCHENTA ","NOVENTA ");
     $centenas = array("CIENTO","DOSCIENTOS","TRESCIENTOS","CUATROCIENTOS","QUINIENTOS","SEISCIENTOS","SETECIENTOS","OCHOCIENTOS","NOVECIENTOS");
     $number = $numero;
-    $parte_decimal = $numero - (int)$numero;
-    $parte_decimal = (int)round($parte_decimal*100);
+    $parte_decimal = $numero - (int) $numero;
+    $parte_decimal = (int) round($parte_decimal*100);
     if ($parte_decimal < 10)
 	$parte_decimal = "0".$parte_decimal;
     $entexto ="";
@@ -4995,16 +4995,16 @@ function float2text_moneda($numero){
 	$entexto .= " CIEN PESOS ".$parte_decimal." / 100 M.N.";
     }
     else {
-	$cdm = (int)($numero / 100000);
+	$cdm = (int) ($numero / 100000);
 	$numero = $numero - $cdm * 100000;
-	$ddm = (int)($numero / 10000);
+	$ddm = (int) ($numero / 10000);
 	$numero = $numero - $ddm * 10000;
-	$udm = (int)($numero / 1000);
+	$udm = (int) ($numero / 1000);
 	$numero = $numero - $udm * 1000;
-	$c = (int)($numero / 100);
+	$c = (int) ($numero / 100);
 	$numero = $numero - $c * 100;
-	$d = (int)($numero / 10);
-	$u = (int)$numero - $d * 10;
+	$d = (int) ($numero / 10);
+	$u = (int) $numero - $d * 10;
 	$completo=FALSE;
 	if ($cdm==1 && $ddm==0 && $udm==0){
             $entexto .= "CIEN";
