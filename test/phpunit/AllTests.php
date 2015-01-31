@@ -54,7 +54,7 @@ class AllTests
     /**
      * Function suite to make all PHPUnit tests
      *
-     * @return	void
+     * @return void
      */
     public static function suite()
     {

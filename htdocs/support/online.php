@@ -25,9 +25,9 @@ error_reporting(0);
 
 include_once 'inc.php';
 $uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
-$pos = strstr($uri, '/');      // $pos contient alors url sans nom domaine
+$pos = strstr($uri, '/');       // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
-define('DOL_URL_ROOT', $pos);	// URL racine relative
+define('DOL_URL_ROOT', $pos);   // URL racine relative
 
 
 $langs->load("other");
@@ -55,64 +55,63 @@ print '<br><br>';
 // found in page http://www.nltechno.com/stats/dolibarr/cvschangelogbuilder_dolibarr.html
 $limit=4;
 $arrayofwidgets=array(
-// Widget for Laurent Destailleur
-array('name'=>'Laurent Destailleur',	// id user 4702
-		'sort'=>1,
-		'logo'=>'logoUrl='.urlencode('http://www.nltechno.com/images/logo_nltechno_long.jpg'), // Put your own logo
-		'id'=>'4256,4255',	// Put of list of sparkangels widget id (for each language)
-		'lang'=>'fr,en'),	// Put list of language code of widgets (always english at end)
-// Widget for Auguria
-array('name'=>'Auguria',
-		'sort'=>2,
-		//'logo'=>'logoUrl='.urlencode('http://www.cap-networks.com/images/logo_small.jpg'),
-		'id'=>'7196',
-		'lang'=>'fr'),
-//Widget for Open-Concept
-array('name'=>'Open-Concept.pro',
-		'sort'=>2,
-		'logo'=>'logoUrl='.urlencode('http://www.open-concept.pro/CMS/images/Logo/logosimplecomplet.png'),
-		'id'=>'9340',
-		'lang'=>'fr')
+    // Widget for Laurent Destailleur
+    array(
+        'name'=>'Laurent Destailleur',  // id user 4702
+        'sort'=>1,
+        'logo'=>'logoUrl='.urlencode('http://www.nltechno.com/images/logo_nltechno_long.jpg'), // Put your own logo
+        'id'=>'4256,4255',      // Put of list of sparkangels widget id (for each language)
+        'lang'=>'fr,en'),       // Put list of language code of widgets (always english at end)
+    // Widget for Auguria
+    array(
+        'name'=>'Auguria',
+        'sort'=>2,
+        //'logo'=>'logoUrl='.urlencode('http://www.cap-networks.com/images/logo_small.jpg'),
+        'id'=>'7196',
+        'lang'=>'fr'),
+    //Widget for Open-Concept
+    array(
+        'name'=>'Open-Concept.pro',
+        'sort'=>2,
+        'logo'=>'logoUrl='.urlencode('http://www.open-concept.pro/CMS/images/Logo/logosimplecomplet.png'),
+        'id'=>'9340',
+        'lang'=>'fr')
 );
 $arrayofwidgets=dol_sort_array($arrayofwidgets,'sort','asc',0,0);
 
 $found=0;
 print '* '.$langs->trans("LinkToGoldMember",$langs->defaultlang).'<br><br>';
 print '<table summary="listofgoldcoaches"><tr>';
-foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
-{
-	if ($found >= $limit) break;
-	$listofwidgets=explode(',',$arraywidget['id']);
-	$listoflangs=explode(',',$arraywidget['lang']);
-	$pos=0;
-	foreach($listoflangs as $langcode)		// Loop on each lang of user
-	{
-		$pos++;
-		if (preg_match('/'.$langcode.'/i',$langs->defaultlang) || $langcode == 'en')	// If lang qualified
-		{
-			print '<td align="center">';
-			print $arraywidget['name'].'<br>';
-			print $langs->trans("PossibleLanguages").': ';
-			// All languages of user are shown
-			foreach ($listoflangs as $langcode2)
-			{
-				if (empty($widgetid)) $widgetid=$listoflangs[$pos-1];
-				if (! preg_match('/'.$langcode.'/i',$langs->defaultlang) && $langcode2 != 'en') continue;	// Show only english
-				print $langcode2.' ';
-			}
-			print '<br>';
+foreach ($arrayofwidgets as $arraywidget) {  // Loop on each user
+    if ($found >= $limit) break;
+    $listofwidgets=explode(',',$arraywidget['id']);
+    $listoflangs=explode(',',$arraywidget['lang']);
+    $pos=0;
+    foreach($listoflangs as $langcode) { // Loop on each lang of user
+        $pos++;
+        if (preg_match('/'.$langcode.'/i',$langs->defaultlang) || $langcode == 'en') {   // If lang qualified
+            print '<td align="center">';
+            print $arraywidget['name'].'<br>';
+            print $langs->trans("PossibleLanguages").': ';
+            // All languages of user are shown
+            foreach ($listoflangs as $langcode2) {
+                if (empty($widgetid)) $widgetid=$listoflangs[$pos-1];
+                if (! preg_match('/'.$langcode.'/i',$langs->defaultlang) && $langcode2 != 'en') continue;   // Show only english
+                print $langcode2.' ';
+            }
+            print '<br>';
 
-			// Only first language found is used for widget
-			$widgetid=$listofwidgets[$pos-1];
+            // Only first language found is used for widget
+            $widgetid=$listofwidgets[$pos-1];
 
-			// Widget V3
-			print '<iframe src="http://www.spark-angels.com/static/widget/template-pro3/widgetpro3-iframe.html?widgetId='.$widgetid.'&lgCode='.$langcode.'&'.(isset($arraywidget['logo'])?$arraywidget['logo']:'').'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
+            // Widget V3
+            print '<iframe src="http://www.spark-angels.com/static/widget/template-pro3/widgetpro3-iframe.html?widgetId='.$widgetid.'&lgCode='.$langcode.'&'.(isset($arraywidget['logo'])?$arraywidget['logo']:'').'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
 
-			print '</td>';
-			$found++;
-			break;
-		}
-	}
+            print '</td>';
+            $found++;
+            break;
+        }
+    }
 }
 if (! $found) print '<td>'.$langs->trans("SorryNoHelpForYourLanguage").'</td>';
 print '</tr></table>';

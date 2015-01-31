@@ -42,7 +42,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CommandeTest extends PHPUnit_Framework_TestCase
 {
@@ -144,7 +144,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      * @param   int $id     Id order
      * @return  Commande
      *
-     * @depends	testCommandeCreate
+     * @depends testCommandeCreate
      * The depends says test is run only if previous is ok
      */
     public function testCommandeFetch($id)
@@ -169,7 +169,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      * @param   Object  $localobject    Order
      * @return  void
      *
-     * @depends	testCommandeFetch
+     * @depends testCommandeFetch
      * The depends says test is run only if previous is ok
      */
     public function testCommandeValid($localobject)

@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
 {
@@ -110,7 +110,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
     /**
      * End phpunit tests
      *
-     * @return	void
+     * @return void
      */
     protected function tearDown()
     {
@@ -120,7 +120,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
     /**
      * testCommandeFournisseurCreate
      *
-     * @return	void
+     * @return void
      */
     public function testCommandeFournisseurCreate()
     {

@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class WebservicesProductsTest extends PHPUnit_Framework_TestCase
 {
@@ -194,7 +194,7 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
      * @param   int $id     Id of product or service
      * @return  int         Id of product or service
      *
-     * @depends	testWSProductsCreateProductOrService
+     * @depends testWSProductsCreateProductOrService
      */
     public function testWSProductsGetProductOrService($id)
     {

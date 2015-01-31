@@ -77,7 +77,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin();   // This is to have all actions inside a transaction even if test launched without suite.
 
         print __METHOD__."\n";
     }
@@ -94,7 +94,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     /**
      * Init phpunit tests
      *
-     * @return  void
+     * @return void
      */
     protected function setUp()
     {
@@ -110,7 +110,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     /**
      * End phpunit tests
      *
-     * @return  void
+     * @return void
      */
     protected function tearDown()
     {

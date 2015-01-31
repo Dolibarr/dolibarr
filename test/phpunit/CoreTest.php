@@ -45,7 +45,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CoreTest extends PHPUnit_Framework_TestCase
 {
@@ -121,7 +121,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     /**
      * testDetectURLROOT
      *
-     * @return	void
+     * @return void
      */
     public function testDetectURLROOT()
     {
@@ -193,7 +193,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
             $_SERVER["HTTPS"]='';
             $_SERVER["SERVER_NAME"]='localhostdolibarrnew';
             $_SERVER["SERVER_PORT"]='80';
-            $_SERVER["DOCUMENT_ROOT"]='/var/www/dolibarr';	// This is a link that point to /home/ldestail/workspace/dolibarr/htdocs
+            $_SERVER["DOCUMENT_ROOT"]='/var/www/dolibarr';  // This is a link that point to /home/ldestail/workspace/dolibarr/htdocs
             $_SERVER["SCRIPT_NAME"]='/admin/system/phpinfo.php';
             $expectedresult='';
         }
@@ -279,8 +279,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
                 $sql_inj += preg_match('/vbscript:/i', $val);
             }
             // For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
-            if ($type == 1) $sql_inj += preg_match('/"/i', $val);		// We refused " in GET parameters value
-            if ($type == 2) $sql_inj += preg_match('/[\s;"]/', $val);	// PHP_SELF is an url and must match url syntax
+            if ($type == 1) $sql_inj += preg_match('/"/i', $val);       // We refused " in GET parameters value
+            if ($type == 2) $sql_inj += preg_match('/[\s;"]/', $val);   // PHP_SELF is an url and must match url syntax
             return $sql_inj;
         }
 
