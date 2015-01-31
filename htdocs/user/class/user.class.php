@@ -1777,6 +1777,7 @@ class User extends CommonObject
 	 *
 	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
 	 *	@param	string	$option			On what the link point to
+     *  @param  boolean $infologin      Add connection info to the tooltip
 	 *	@return	string					String with URL
 	 */
 	function getNomUrl($withpicto=0, $option='', $infologin=0)
