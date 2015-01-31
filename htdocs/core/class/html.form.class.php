@@ -832,8 +832,9 @@ class Form
            	if ($conf->use_javascript_ajax && ! $forcecombo)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            	$out.= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
-            	$nodatarole=' data-role="none"';
+            	$comboenhancement =ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+            	$out.= $comboenhancement;
+            	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
 
             // Construct $out and $outarray
@@ -1037,8 +1038,9 @@ class Form
             if ($conf->use_javascript_ajax && ! $forcecombo && ! $options_only)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            	$out.= ajax_combobox($htmlname, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
-            	$nodatarole=' data-role="none"';
+            	$comboenhancement = ajax_combobox($htmlname, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+            	$out.= $comboenhancement;
+            	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
 
             if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
@@ -1230,8 +1232,9 @@ class Form
 		        /*if ($conf->use_javascript_ajax)
 		        {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-		           $out.= ajax_combobox($htmlname);
-	            	$nodatarole=' data-role="none"';
+		            $comboenhancement = ajax_combobox($htmlname);
+                    $out.= $comboenhancement;
+                    $nodatarole=($comboenhancement?' data-role="none"':'');
 	            }*/
 
                 $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
@@ -4288,7 +4291,7 @@ class Form
 
     	// Try also magic suggest
 
-    	// Add data-role="none" to diable jmobile decoration
+    	// Add data-role="none" to disable jmobile decoration
     	$out = '<select data-role="none" id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.($width?' style="width: '.$width.'px"':'').'>'."\n";
     	if (is_array($array) && ! empty($array))
     	{
@@ -4628,8 +4631,9 @@ class Form
 	        if ($conf->use_javascript_ajax)
 	        {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-	           	$out.= ajax_combobox($htmlname);
-            	$nodatarole=' data-role="none"';
+	           	$comboenhancement = ajax_combobox($htmlname);
+                $out.= $comboenhancement;
+                $nodatarole=($comboenhancement?' data-role="none"':'');
             }
 
             $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';

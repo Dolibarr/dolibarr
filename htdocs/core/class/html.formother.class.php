@@ -324,8 +324,9 @@ class FormOther
         if ($conf->use_javascript_ajax)
         {
             include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            $moreforfilter.= ajax_combobox('select_categ_'.$htmlname);
-            $nodatarole=' data-role="none"';
+            $comboenhancement = ajax_combobox('select_categ_'.$htmlname);
+            $moreforfilter.=$comboenhancement;
+            $nodatarole=($comboenhancement?' data-role="none"':'');
         }
 
         // Print a select with each of them
@@ -373,8 +374,9 @@ class FormOther
         if ($conf->use_javascript_ajax)
         {
             include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            $out.= ajax_combobox($htmlname);
-            $nodatarole=' data-role="none"';
+            $comboenhancement = ajax_combobox($htmlname);
+            $out.=$comboenhancement;
+            $nodatarole=($comboenhancement?' data-role="none"':'');
         }
         // Select each sales and print them in a select input
         $out.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
