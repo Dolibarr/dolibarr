@@ -337,11 +337,11 @@ if ($id > 0 || ! empty($ref))
 			print '</td><td colspan="2">';
 			if ($action == 'classify')
 			{
-				$form->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'projectid');
+				$form->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'projectid', 0, 0, 1);
 			}
 			else
 			{
-				$form->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'none');
+				$form->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'none', 0, 0);
 			}
 			print '</td></tr>';
 		}

@@ -534,8 +534,8 @@ if ($action == 'confirm_valid' && $confirm == 'yes' &&
     	}
     }
     else
-    {
-        setEventMessage($object->error, 'errors');
+	{
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 
     // If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
@@ -1615,7 +1615,7 @@ elseif (! empty($object->id))
 		//print "$object->id, $object->socid, $object->fk_project";
 		if ($action == 'classify')
 		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1', $object->fk_project, 'projectid', 0, 0);
+			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1'), $object->fk_project, 'projectid', 0, 0, 1);
 		}
 		else
 		{

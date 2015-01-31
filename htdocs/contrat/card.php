@@ -1192,11 +1192,11 @@ else
             print '</td><td colspan="3">';
             if ($action == "classify")
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"projectid");
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"projectid", 0, 0, 1);
             }
             else
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"none");
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"none", 0, 0);
             }
             print "</td></tr>";
         }
@@ -1730,7 +1730,7 @@ else
         if ($user->societe_id == 0)
         {
             print '<div class="tabsAction">';
-            
+
             $parameters=array();
             $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
