@@ -4506,7 +4506,7 @@ class Form
      * 		@param	int			$width			Width of photo
      * 	  	@return string    					HTML code to output photo
      */
-    function showphoto($modulepart,$object,$width=100)
+    static function showphoto($modulepart,$object,$width=100)
     {
         global $conf;
 
