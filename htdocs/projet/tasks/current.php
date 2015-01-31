@@ -98,7 +98,7 @@ if ($search_user !== '' && $user->rights->projet->all->lire) {
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
-$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, 1, 100);
+$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, 1, 0, 100);
 
 //If searching for user and with enough rights
 if ($search_user !== '' && $user->rights->projet->all->lire) {

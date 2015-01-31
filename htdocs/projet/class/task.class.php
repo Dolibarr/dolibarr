@@ -549,9 +549,10 @@ class Task extends CommonObject
      * @param	string	$filteronprojref	Filter on project ref
      * @param	string	$filteronprojstatus	Filter on project status
      * @param   int     $filter_delay       Filter only due tasks
+     * @param   false|int $filter_progress  Shows only tasks that have less than given progress
      * @return 	array						Array of tasks
      */
-    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $filter_delay = 0)
+    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $filter_delay = 0, $filter_progress = false)
     {
         global $conf;
 
@@ -587,6 +588,11 @@ class Task extends CommonObject
 
             $sql .= ' AND '.$this->db->ifsql('t.fk_task_parent = 0', "t.datee < '".$this->db->idate($range)."'", '1=1');
         }
+
+        if ($filter_progress !== false) {
+            $sql .= ' AND t.progress < '.(int)$filter_progress;
+        }
+
         $sql.= " ORDER BY p.ref, t.rang, t.dateo";
 
         //print $sql;exit;
