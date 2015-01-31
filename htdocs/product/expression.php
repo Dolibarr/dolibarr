@@ -37,6 +37,7 @@ $title = GETPOST('expression_title', 'alpha');
 $expression = GETPOST('expression');
 $tab = GETPOST('tab', 'alpha');
 $tab = (!empty($tab)) ? $tab : 'card';
+$tab = strtolower($tab);
 
 // Security check
 $result=restrictedArea($user,'produit|service&fournisseur',$id,'product&product','','','rowid');
@@ -82,6 +83,7 @@ if ($action == 'add')
 				if ($result > 0) //created successfully, set the eid to newly created entry
 				{
 					$eid = $price_expression->id;
+					setEventMessage($langs->trans("RecordSaved"));
 				}
 				else
 				{
@@ -122,6 +124,10 @@ if ($action == 'update')
 				if ($result < 0)
 				{
 					setEventMessage("update: ".$price_expression->error, 'errors');
+				}
+				else
+				{
+					setEventMessage($langs->trans("RecordSaved"));
 				}
 			}
 		}
@@ -179,7 +185,8 @@ print '<input class="flat" name="expression_title" size="15" value="'.($price_ex
 print '</td></tr>';
 
 //Price expression editor
-print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"),$langs->trans("PriceExpressionEditorHelp"),1).'</td><td>';
+$help_text = $langs->trans("PriceExpressionEditorHelp1").'<br><br>'.$langs->trans("PriceExpressionEditorHelp2").'<br><br>'.$langs->trans("PriceExpressionEditorHelp3").'<br><br>'.$langs->trans("PriceExpressionEditorHelp4");
+print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"),$help_text,1).'</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor=new DolEditor('expression',isset($price_expression->expression)?$price_expression->expression:'','',300,'','',false,false,false,4,80);
 $doleditor->Create();
@@ -202,7 +209,7 @@ print '</center>';
 
 print '</form>';	
 
-// This code reloads the page depending of selected option, goes back in history when back is pressed
+// This code reloads the page depending of selected option, goes to page selected by tab when back is pressed
 print '<script type="text/javascript">
 	jQuery(document).ready(run);
 	function run() {
@@ -210,7 +217,7 @@ print '<script type="text/javascript">
 		jQuery("#expression_selection").change(on_change);
 	}
 	function on_click() {
-		window.location = "'.str_replace('expression.php', $tab.'.php', $_SERVER["PHP_SELF"]).'?id='.$id.'";
+		window.location = "'.str_replace('expression.php', $tab.'.php', $_SERVER["PHP_SELF"]).'?id='.$id.($tab == 'price' ? '&action=edit_price' : '').'";
 	}
 	function on_change() {
 		window.location = "'.$_SERVER["PHP_SELF"].'?id='.$id.'&tab='.$tab.'&eid=" + $("#expression_selection").attr("value");

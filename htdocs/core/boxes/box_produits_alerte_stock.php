@@ -114,16 +114,37 @@ class box_produits_alerte_stock extends ModeleBoxes
                     'text' => $objp->label,
                     'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
 
-					if ($objp->price_base_type == 'HT')
-					{
-						$price=price($objp->price);
-						$price_base_type=$langs->trans("HT");
-					}
-					else
-					{
-						$price=price($objp->price_ttc);
-						$price_base_type=$langs->trans("TTC");
-					}
+	                if (empty($objp->fk_price_expression)) {
+						if ($objp->price_base_type == 'HT')
+						{
+							$price=price($objp->price);
+							$price_base_type=$langs->trans("HT");
+						}
+						else
+						{
+							$price=price($objp->price_ttc);
+							$price_base_type=$langs->trans("TTC");
+						}
+	                }
+	                else //Parse the dinamic price
+	               	{
+						$product = new Product($this->db);
+						$product->fetch($objp->rowid, '', '', 1);
+	                    $priceparser = new PriceParser($this->db);
+	                    $price_result = $priceparser->parseProduct($product);
+	                    if ($price_result >= 0) {
+							if ($objp->price_base_type == 'HT')
+							{
+								$price_base_type=$langs->trans("HT");
+							}
+							else
+							{
+								$price_result = $price_result * (1 + ($product->tva_tx / 100));
+								$price_base_type=$langs->trans("TTC");
+							}
+							$price=price($price_result);
+	                    }
+	               	}
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
                     'text' => $price);
 

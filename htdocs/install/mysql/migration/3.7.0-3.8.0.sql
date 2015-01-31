@@ -18,13 +18,19 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
 --create table for price expressions and add column in product supplier
 create table llx_c_price_expression
 (
-  rowid     integer AUTO_INCREMENT PRIMARY KEY,
-  title     varchar(20) NOT NULL,
-  expression    varchar(80) NOT NULL
+  rowid      integer AUTO_INCREMENT PRIMARY KEY,
+  title      varchar(20) NOT NULL,
+  expression varchar(80) NOT NULL
 )ENGINE=innodb;
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_supplier_price_expression integer DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN fk_price_expression integer DEFAULT NULL;
+ALTER TABLE llx_product_price ADD COLUMN fk_price_expression integer DEFAULT NULL;
+
 
 --create table for user conf of printing driver
 CREATE TABLE llx_printing 
