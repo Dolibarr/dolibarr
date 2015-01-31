@@ -153,21 +153,31 @@ class box_produits_alerte_stock extends ModeleBoxes
 							$price=price($price_result);
 	                    }
 	               	}
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-                    'text' => $price);
+					$this->info_box_contents[$i][2] = array(
+                        'td' => 'align="right"',
+                        'text' => $price,
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left" class="nowrap"',
-                    'text' => $price_base_type);
+					$this->info_box_contents[$i][3] = array(
+                        'td' => 'align="left" class="nowrap"',
+                        'text' => $price_base_type,
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="center"',
-                    'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
-					'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit")));
+					$this->info_box_contents[$i][4] = array(
+                        'td' => 'align="center"',
+                        'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
+                        'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit")),
+                    );
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
-                    'text' => $productstatic->LibStatut($objp->tosell,3,0));
+					$this->info_box_contents[$i][5] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $productstatic->LibStatut($objp->tosell,3,0),
+                    );
 
-                    $this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
-                    'text' => $productstatic->LibStatut($objp->tobuy,3,1));
+                    $this->info_box_contents[$i][6] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $productstatic->LibStatut($objp->tobuy,3,1),
+                    );
 
                     $i++;
                 }
