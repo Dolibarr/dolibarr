@@ -1842,7 +1842,7 @@ class User extends CommonObject
 
         if ($withpicto)
         {
-            $result.=($lien.img_object($label, 'user', 'class="classfortooltip"').$lienfin);
+            $result.=($lien.img_object(($notooltip?'':$label), 'user', ($notooltip?'':'class="classfortooltip"')).$lienfin);
             if ($withpicto != 2) $result.=' ';
 		}
 		$result.= $lien . $this->getFullName($langs,'','',24) . $companylink . $lienfin;

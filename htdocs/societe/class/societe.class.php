@@ -1780,7 +1780,7 @@ class Societe extends CommonObject
         $lien.='>';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($label, 'company', 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($lien.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($name,$maxlen):$name).$lienfin;
 
