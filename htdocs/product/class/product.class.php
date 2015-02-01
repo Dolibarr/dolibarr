@@ -10,7 +10,7 @@
  * Copyright (C) 2011-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2014		Ion agorria			<ion@agorria.com> 
+ * Copyright (C) 2014		Ion agorria			<ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
 
 
 /**
@@ -167,7 +166,7 @@ class Product extends CommonObject
 
 	//note not visible on orders and invoices
 	var $note;
-	
+
     var $fk_price_expression;
 
 	/**
@@ -1175,7 +1174,6 @@ class Product extends CommonObject
 	 */
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
 		$result = 0;
 
 		// We do select by searching with qty and prodfournprice
@@ -1192,8 +1190,10 @@ class Product extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			if ($obj && $obj->quantity > 0)		// If found
 			{
-                if (!empty($obj->fk_supplier_price_expression)) {
-                    $priceparser = new PriceParser($this->db);
+                if (!empty($obj->fk_supplier_price_expression))
+                {
+					require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+                	$priceparser = new PriceParser($this->db);
                     $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_supplier_price_expression, $obj->quantity, $obj->tva_tx);
                     if ($price_result >= 0) {
                     	$obj->price = $price_result;
@@ -1225,8 +1225,10 @@ class Product extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($obj && $obj->quantity > 0)		// If found
 					{
-		                if (!empty($obj->fk_supplier_price_expression)) {
-		                    $priceparser = new PriceParser($this->db);
+		                if (!empty($obj->fk_supplier_price_expression))
+		                {
+							require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+		                	$priceparser = new PriceParser($this->db);
 		                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_supplier_price_expression, $obj->quantity, $obj->tva_tx);
 		                    if ($result >= 0) {
 		                    	$obj->price = $price_result;
@@ -1285,7 +1287,7 @@ class Product extends CommonObject
 		// Clean parameters
 		if (empty($this->tva_tx))  $this->tva_tx=0;
         if (empty($newnpr)) $newnpr=0;
- 
+
 		// Check parameters
 		if ($newvat == '') $newvat=$this->tva_tx;
 		if (! empty($newminprice) && ($newminprice > $newprice))
@@ -1679,11 +1681,12 @@ class Product extends CommonObject
 					}
 				}
 
-                if (!empty($this->fk_price_expression) && empty($ignore_expression)) 
+                if (!empty($this->fk_price_expression) && empty($ignore_expression))
                 {
-                    $priceparser = new PriceParser($this->db);
+					require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+                	$priceparser = new PriceParser($this->db);
                     $price_result = $priceparser->parseProduct($this);
-                    if ($price_result >= 0) 
+                    if ($price_result >= 0)
                     {
                         $this->price = $price_result;
                         //Calculate the VAT

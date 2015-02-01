@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/product/class/priceexpression.class.php
  *	\ingroup    product
- *  \brief      Class for accesing price expression table
+ *  \brief      Class for accessing price expression table
  */
 
 
