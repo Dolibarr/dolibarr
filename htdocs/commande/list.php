@@ -323,6 +323,7 @@ if ($resql)
 	$var=true;
 	$total=0;
 	$subtotal=0;
+    $productstat_cache=array();
 
     $generic_commande = new Commande($db);
     $generic_product = new Product($db);
@@ -351,17 +352,32 @@ if ($resql)
                 if ($generic_commande->lines[$lig]->product_type==0) {
                     $nbprod++; // order contains real products
                     $generic_product->id = $generic_commande->lines[$lig]->fk_product;
-                    $generic_product->load_stock();
+                    if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
+                        $generic_product->load_stock(true);
+                        $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
+                    } else {
+                        $generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
+                    }
                     // stock order and stock order_supplier
                     $stock_order=0;
                     $stock_order_supplier=0;
                     if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
                         if (! empty($conf->commande->enabled)) {
-                            $generic_product->load_stats_commande(0,'1,2');
+                            if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'])) {
+                                $generic_product->load_stats_commande(0,'1,2',true);
+                                $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
+                            } else {
+                                $generic_product->stats_commande['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'];
+                            }
                             $stock_order=$generic_product->stats_commande['qty'];
                         }
                         if (! empty($conf->fournisseur->enabled)) {
-                            $generic_product->load_stats_commande_fournisseur(0,'3');
+                            if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
+                                $generic_product->load_stats_commande_fournisseur(0,'3',true);
+                                $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
+                            } else {
+                                $generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'];
+                            }
                             $stock_order_supplier=$generic_product->stats_commande_fournisseur['qty'];
                         }
                     }
