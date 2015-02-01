@@ -1779,9 +1779,10 @@ class User extends CommonObject
 	 *	@param	string	$option			On what the link point to
      *  @param  boolean $infologin      Add connection info to the tooltip
      *  @param	string	$notooltip		1=Disable tooltip
+     *  @param	int		$maxlen			Max length of visible user name
 	 *	@return	string					String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0)
+	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24)
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1792,7 +1793,7 @@ class User extends CommonObject
 
         $label = '<u>' . $langs->trans("User") . '</u>';
         $label.= '<div width="100%">';
-        $label .= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','',24);
+        $label .= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
         if (! empty($this->login))
         $label .= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
         if (! empty($this->email))
@@ -1845,7 +1846,7 @@ class User extends CommonObject
             $result.=($lien.img_object(($notooltip?'':$label), 'user', ($notooltip?'':'class="classfortooltip"')).$lienfin);
             if ($withpicto != 2) $result.=' ';
 		}
-		$result.= $lien . $this->getFullName($langs,'','',24) . $companylink . $lienfin;
+		$result.= $lien . $this->getFullName($langs,'','',$maxlen) . $companylink . $lienfin;
 		return $result;
 	}
 
