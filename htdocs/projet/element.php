@@ -364,6 +364,7 @@ foreach ($listofreferent as $key => $value)
 					$total_ht_by_third=0;
 					$total_ttc_by_third=0;
 				}
+				$saved_third_id = $element->thirdparty->id;
 
 				$qualifiedfortotal=true;
 				if ($key == 'invoice')
@@ -449,6 +450,8 @@ foreach ($listofreferent as $key => $value)
 					$breakline.='<td></td>';
 					$breakline.='</tr>';
 				}
+
+				//var_dump($element->thirdparty->name.' - '.$saved_third_id.' - '.$element->thirdparty->id);
 			}
 
 			if ($breakline) print $breakline;
