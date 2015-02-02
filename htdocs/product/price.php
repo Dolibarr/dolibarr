@@ -46,6 +46,7 @@ $langs->load("bills");
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
+$eid = GETPOST('eid', 'int');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -75,7 +76,7 @@ if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit-
 
 	$error=0;
 	$maxpricesupplier = $object->min_recommended_price();
-	$object->fk_price_expression = empty(GETPOST('eid', 'int')) ? 0 : GETPOST('eid', 'int'); //0 discards expression
+	$object->fk_price_expression = empty($eid) ? 0 : $eid; //0 discards expression
 
 	// MultiPrix
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
