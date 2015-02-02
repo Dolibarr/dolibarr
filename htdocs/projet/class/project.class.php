@@ -1514,7 +1514,6 @@ class Project extends CommonObject
 	/**
 	 * Is the project having a delay?
 	 * Requires: $this->statut and $this->date_end to be defined.
-	 * Also it requires $conf->projet->warning_delay to be set
 	 *
 	 * @return bool
 	 */
@@ -1522,7 +1521,7 @@ class Project extends CommonObject
 	{
 		global $conf;
 
-		if (!$this->date_end || !$conf->projet->warning_delay) {
+		if (!$this->date_end) {
 			return false;
 		}
 
