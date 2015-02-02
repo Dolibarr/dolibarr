@@ -27,8 +27,9 @@
  * Function to return number or amount in text.
  *
  * @param	float 	$numero			Number to convert
- * @param	Lang	$lang			Language
- * @return 	string  $entexto        Text of the number
+ * @param	Lang	$langs			Language
+ * @param	string	$numorcurrency	'number' or 'amount'
+ * @return 	string  				Text of the number
  */
 function dolNumberToWord($numero, $langs, $numorcurrency='number')
 {
