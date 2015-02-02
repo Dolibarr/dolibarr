@@ -27,7 +27,6 @@ $module = $object->element;
 
 // Special cases
 if ($module == 'propal')				{ $permission=$user->rights->propale->creer; }
-elseif ($module == 'askpricesupplier')				{ $permission=$user->rights->askpricesupplier->creer; }
 elseif ($module == 'fichinter')			{ $permission=$user->rights->ficheinter->creer; }
 elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
 elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
