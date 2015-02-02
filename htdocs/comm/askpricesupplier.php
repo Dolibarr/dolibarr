@@ -1293,6 +1293,7 @@ if ($action == 'create')
 	print '</tr>' . "\n";
 
 	// Contacts (ask contact only if thirdparty already defined). TODO do this also into order and invoice.
+	/* PHFAVRE retrait en temporaire
 	if ($socid > 0)
 	{
 		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td colspan="2">';
@@ -1317,15 +1318,17 @@ if ($action == 'create')
 		print '.';
 		print '</td></tr>';
 	}
-
+	*/
 	// Date
 	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td colspan="2">';
 	$form->select_date('', '', '', '', '', "addask", 1, 1);
 	print '</td></tr>';
 
 	// Validaty duration
+	/* PHFAVRE retrait en temporaire
 	print '<tr><td class="fieldrequired">' . $langs->trans("ValidityDuration") . '</td><td colspan="2"><input name="duree_validite" size="5" value="' . $conf->global->ASKPRICESUPPLIER_VALIDITY_DURATION . '"> ' . $langs->trans("days") . '</td></tr>';
-
+	*/
+	
 	// Terms of payment
 	print '<tr><td class="nowrap fieldrequired">' . $langs->trans('PaymentConditionsShort') . '</td><td colspan="2">';
 	$form->select_conditions_paiements($soc->cond_reglement_id, 'cond_reglement_id');
@@ -1389,6 +1392,7 @@ if ($action == 'create')
 	print "</td></tr>";
 
 	// Project
+	/* PHFAVRE retrait en temporaire
 	if (! empty($conf->projet->enabled) && $socid > 0) {
 
 		$formproject = new FormProjets($db);
@@ -1408,7 +1412,8 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
-
+	*/
+	
 	// Other attributes
 	$parameters = array('colspan' => ' colspan="3"');
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified
