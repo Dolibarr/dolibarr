@@ -1075,10 +1075,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			while ( $obj = $this->db->fetch_object($result) )
+			while ($obj = $this->db->fetch_object($result))
 			{
 				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
-				if( $obj->lang == $current_lang ) // si on a les traduct. dans la langue courante on les charge en infos principales.
+				if ($obj->lang == $current_lang)  // si on a les traduct. dans la langue courante on les charge en infos principales.
 				{
 					$this->label		= $obj->label;
 					$this->description	= $obj->description;
@@ -1093,7 +1093,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$this->error="Error: ".$this->db->error()." - ".$sql;
+			$this->error="Error: ".$this->db->lasterror()." - ".$sql;
 			return -1;
 		}
 	}
@@ -1101,9 +1101,9 @@ class Product extends CommonObject
 
 
 	/**
-	 *  Ajoute un changement de prix en base dans l'historique des prix
+	 *  Insert a track that we changed a customer price
 	 *
-	 *	@param  	User	$user       Objet utilisateur qui modifie le prix
+	 *	@param  	User	$user       User making change
 	 *	@param		int		$level		price level to change
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
@@ -1117,14 +1117,14 @@ class Product extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,tosell,tva_tx,recuperableonly,";
 		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
 		$sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.",".$this->tva_npr.",";
-		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".$this->fk_price_expression;
+		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".($this->fk_price_expression > 0?$this->fk_price_expression:'null');
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."_log_price", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if(! $resql)
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			dol_print_error($this->db);
 			return -1;
 		}
