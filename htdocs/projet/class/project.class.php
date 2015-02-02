@@ -398,7 +398,7 @@ class Project extends CommonObject
      * 	@param		string		$datefieldname	name of table associated of the type
      *  @param		string		$dates			Start date (at 00:00:00)
      *  @param		string		$datee			End date (at 23:00:00)
-     * 	@return		mixed						List of orders linked to project, < 0 or string if error
+     * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
      */
     function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
     {
