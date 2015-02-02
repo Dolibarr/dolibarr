@@ -73,7 +73,7 @@ $object = new Contrat($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-if ($id > 0 || ! empty($ref)) {
+if ($id > 0 || ! empty($ref) && $action!='add') {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0)
 		$ret = $object->fetch_thirdparty();
@@ -201,6 +201,13 @@ if ($action == 'add' && $user->rights->contrat->creer)
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
 		$action='create';
 		$error++;
+	}
+
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	if ($ret < 0) {
+		$error ++;
+		$action = 'create';
 	}
 
 	if (! $error)
@@ -352,10 +359,6 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	    }
 	    else
 	    {
-
-	    	// Fill array 'array_options' with data from add form
-	    	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-
 	        $result = $object->create($user);
 	        if ($result > 0)
 	        {
