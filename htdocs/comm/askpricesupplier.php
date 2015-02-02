@@ -249,15 +249,9 @@ if (empty($reshook))
 
 		$datep = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$date_delivery = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
-		$duration = GETPOST('duree_validite');
 
 		if (empty($datep)) {
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
-			$action = 'create';
-			$error ++;
-		}
-		if (empty($duration)) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ValidityDuration")), 'errors');
 			$action = 'create';
 			$error ++;
 		}
@@ -969,7 +963,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
+	else if ($action == 'updateligne' && $user->rights->askpricesupplier->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
@@ -1664,6 +1658,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Ref customer
+	/* PHFAVRE retrait en temporaire
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 	print $langs->trans('RefCustomer') . '</td>';
@@ -1684,12 +1679,14 @@ if ($action == 'create')
 	}
 	print '</td>';
 	print '</tr>';
-
+	*/
+	
 	// Company
-	print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="5">' . $soc->getNomUrl(1) . '</td>';
+	print '<tr><td>' . $langs->trans('Supplier') . '</td><td colspan="5">' . $soc->getNomUrl(1) . '</td>';
 	print '</tr>';
 
 	// Ligne info remises tiers
+	/* PHFAVRE retrait en temporaire
 	print '<tr><td>' . $langs->trans('Discounts') . '</td><td colspan="5">';
 	if ($soc->remise_percent)
 		print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
@@ -1716,7 +1713,8 @@ if ($action == 'create')
 	if (! $absolute_discount && ! $absolute_creditnote)
 		print $langs->trans("CompanyHasNoAbsoluteDiscount") . '.';
 	print '</td></tr>';
-
+	*/
+	
 	// Date of proposal
 	print '<tr>';
 	print '<td>';
@@ -1744,6 +1742,7 @@ if ($action == 'create')
 	print '</td>';
 
 	// Date end proposal
+	/* PHFAVRE retrait en temporaire
 	print '<tr>';
 	print '<td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1771,7 +1770,8 @@ if ($action == 'create')
 	}
 	print '</td>';
 	print '</tr>';
-
+	*/
+	
 	// Payment term
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1790,6 +1790,7 @@ if ($action == 'create')
 	print '</tr>';
 
 	// Delivery date
+	/* PHFAVRE retrait en temporaire
 	$langs->load('deliveries');
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1811,8 +1812,10 @@ if ($action == 'create')
 	}
 	print '</td>';
 	print '</tr>';
-
+	*/
+	
 	// Delivery delay
+	/* PHFAVRE retrait en temporaire
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('AvailabilityPeriod');
@@ -1831,8 +1834,10 @@ if ($action == 'create')
 
 	print '</td>';
 	print '</tr>';
-
+	*/
+	
     // Shipping Method
+    /* PHFAVRE retrait en temporaire
     if (! empty($conf->expedition->enabled)) {
         print '<tr><td>';
         print '<table width="100%" class="nobordernopadding"><tr><td>';
@@ -1850,8 +1855,10 @@ if ($action == 'create')
         print '</td>';
         print '</tr>';
     }
-
+	*/
+	
 	// Origin of demand
+	/* PHFAVRE retrait en temporaire
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Source');
@@ -1867,7 +1874,8 @@ if ($action == 'create')
 	}
 	print '</td>';
 	print '</tr>';
-
+	*/
+	
 	// Payment mode
 	print '<tr>';
 	print '<td width="25%">';
@@ -1886,6 +1894,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Project
+	/*
 	if (! empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		print '<tr><td>';
@@ -1918,7 +1927,8 @@ if ($action == 'create')
 		}
 		print '</tr>';
 	}
-
+	*/
+	
 	if ($soc->outstanding_limit)
 	{
 		// Outstanding Bill
@@ -1938,7 +1948,7 @@ if ($action == 'create')
 	    print '<table width="100%" class="nobordernopadding"><tr><td>';
 	    print $langs->trans('BankAccount');
 	    print '</td>';
-	    if ($action != 'editbankaccount' && $user->rights->propal->creer)
+	    if ($action != 'editbankaccount' && $user->rights->askpricesupplier->creer)
 	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
 	    print '</tr></table>';
 	    print '</td><td colspan="3">';
@@ -2033,6 +2043,7 @@ if ($action == 'create')
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
 	// Form to add new line
+	/* PHFAVRE retrait en temporaire*/
 	if ($object->statut == 0 && $user->rights->askpricesupplier->creer)
 	{
 		if ($action != 'editline')
@@ -2046,7 +2057,25 @@ if ($action == 'create')
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		}
 	}
+	
+	
+	/*
+	// Form to add new line
+	if ($object->statut == 0 && $user->rights->askpricesupplier->creer)
+	{
+		// Add free products/services form
+		global $forceall, $senderissupplier, $dateSelector;
+		$forceall=1; $senderissupplier=1; $dateSelector=0;
 
+		$var = true;
+
+		// Add free products/services
+		$object->formAddObjectLine(1, $mysoc, $object);
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	}
+*/
 	print '</table>';
 
 	print "</form>\n";
@@ -2065,8 +2094,8 @@ if ($action == 'create')
 		$form_close .= '<input type="hidden" name="action" value="setstatut">';
 		$form_close .= '<select id="statut" name="statut" class="flat">';
 		$form_close .= '<option value="0">&nbsp;</option>';
-		$form_close .= '<option value="2">' . $object->labelstatut [2] . '</option>';
-		$form_close .= '<option value="3">' . $object->labelstatut [3] . '</option>';
+		$form_close .= '<option value="2">' . $langs->trans('AskpricesupplierStatusSigned') . '</option>';
+		$form_close .= '<option value="3">' . $langs->trans('AskpricesupplierStatusNotSigned') . '</option>';
 		$form_close .= '</select>';
 		$form_close .= '</td></tr>';
 		$form_close .= '<tr><td width="150" align="left">' . $langs->trans('Note') . '</td><td align="left"><textarea cols="70" rows="' . ROWS_3 . '" wrap="soft" name="note">';
@@ -2097,7 +2126,7 @@ if ($action == 'create')
 			{
 				// Validate
 				if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 &&
-			        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
+			        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->creer))
        				|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->validate)))
 				) {
 					if (count($object->lines) > 0)
@@ -2211,7 +2240,7 @@ if ($action == 'create')
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'propal', $socid);
+		$somethingshown = $formactions->showactions($object, 'askpricesupplier', $socid);
 
 		// print '</td></tr></table>';
 		print '</div></div></div>';
@@ -2226,7 +2255,7 @@ if ($action == 'create')
 
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/'));
+		$fileparams = dol_most_recent_file($conf->askpricesupplier->dir_output . '/' . $ref, preg_quote($ref, '/'));
 		$file = $fileparams ['fullname'];
 
 		// Define output language

@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/askpricesupplier/modules_askprice
 class mod_askpricesupplier_marbre extends ModeleNumRefAskPriceSupplier
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='PR';
+	var $prefix='DF';
 	var $error='';
 	var $nom = "Marbre";
 
@@ -101,10 +101,10 @@ class mod_askpricesupplier_marbre extends ModeleNumRefAskPriceSupplier
 	 *  Return next value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	Propal		$propal		Object commercial proposal
+	 * 	@param	Propal		$askpricesupplier		Object commercial proposal
 	 *  @return string      			Next value
 	 */
-	function getNextValue($objsoc,$propal)
+	function getNextValue($objsoc,$askpricesupplier)
 	{
 		global $db,$conf;
 

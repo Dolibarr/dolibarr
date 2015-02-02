@@ -25,13 +25,13 @@
  * \brief      File that contains the numbering module rules Saphir
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/askpricesupplier/modules_propale.php';
+require_once DOL_DOCUMENT_ROOT .'/core/modules/askpricesupplier/modules_askpricesupplier.php';
 
 
 /**
  * Class of file that contains the numbering module rules Saphir
  */
-class mod_propale_saphir extends ModeleNumRefAskPriceSupplier
+class mod_askpricesupplier_saphir extends ModeleNumRefAskPriceSupplier
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
@@ -123,7 +123,7 @@ class mod_propale_saphir extends ModeleNumRefAskPriceSupplier
 
 		$date=$askpricesupplier->datep;
 		$customercode=$objsoc->code_client;
-		$numFinal=get_next_value($db,$mask,'propal','ref','',$customercode,$date);
+		$numFinal=get_next_value($db,$mask,'askpricesupplier','ref','',$customercode,$date);
 
 		return  $numFinal;
 	}

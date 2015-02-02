@@ -1787,7 +1787,7 @@ class AskPriceSupplier extends CommonObject
                 }
 				else 
 				{
-					$this->updatePriceFournisseur();	
+					$this->updateOrCreatePriceFournisseur($user);	
 				}
             }
             if ($statut == 4)
@@ -1833,31 +1833,91 @@ class AskPriceSupplier extends CommonObject
         }
     }
 
-	function updatePriceFournisseur() 
-	{
+	/**
+     *	Choose between upate or create ProductFournisseur
+     *
+	 *	@param      User	$user		Object user 
+     *	@return     int         		<0 if KO, >0 if OK
+     */
+	function updateOrCreatePriceFournisseur($user) 
+	{		
 		$productsupplier = new ProductFournisseur($this->db);
 		
-		dol_syslog(get_class($this)."::updatePriceFournisseur", LOG_DEBUG);
+		dol_syslog(get_class($this)."::updateorCreatePriceFournisseur", LOG_DEBUG);
 		foreach ($this->lines as $product) {
 			$idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
 			$res = $productsupplier->fetch($idProductFourn);
 			
-			$price=price2num($product->subprice*$product->qty,'MU');
-	        //$qty=price2num($product->qty);
-			$unitPrice = price2num($product->subprice,'MU');
-				
-			//$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET price ='.$price.', quantity ='.$qty.', unitprice ='.$unitPrice.' WHERE rowid = '.$productsupplier->product_fourn_price_id;
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$productsupplier->product_fourn_price_id;
-			
-			$resql=$this->db->query($sql);
-			if (!resql) {
-				$this->error=$this->db->error();
-	            $this->db->rollback();
-	            return -1;
+			if ($productsupplier->id) {				
+				if ($productsupplier->fourn_qty == $product->qty) {
+					$this->updatePriceFournisseur($productsupplier->product_fourn_price_id, $product, $user);
+				} else {
+					$this->createPriceFournisseur($product, $user);
+				}
+			} else {
+				$this->createPriceFournisseur($product, $user);
 			}
 		}
 	}
 
+	/**
+     *	Upate ProductFournisseur
+     *	
+	 * 	@param		int 	$idProductFournPrice	id of llx_product_fournisseur_price
+	 * 	@param		int 	$product				contain informations to update
+	 *	@param      User	$user					Object user 
+     *	@return     int         					<0 if KO, >0 if OK
+     */
+     function updatePriceFournisseur($idProductFournPrice, $product, $user) {
+		$price=price2num($product->subprice*$product->qty,'MU');
+		$unitPrice = price2num($product->subprice,'MU');
+			
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$idProductFournPrice;
+		
+		$resql = $this->db->query($sql);
+		if (!resql) {
+			$this->error=$this->db->error();
+            $this->db->rollback();
+            return -1;
+		}	
+	 }
+	 
+	 /**
+     *	Create ProductFournisseur
+	 * 
+     *	@param		Product 	$product	Object Product
+	 *	@param      User		$user		Object user 
+     *	@return     int         			<0 if KO, >0 if OK
+     */
+	 function createPriceFournisseur($product, $user) {
+	 	$price=price2num($product->subprice*$product->qty,'MU');
+	    $qty=price2num($product->qty);
+		$unitPrice = price2num($product->subprice,'MU');
+		$now=dol_now();
+		
+		$values = array(
+			'`'.$this->db->idate($now).'`',
+			$product->fk_product,
+			$this->client->id,
+			'`'.$this->db->escape($product->ref).'`', //En attente de récupérer la bonne ref fournisseur sur le form
+			$price,
+			$qty,
+			$unitPrice,
+			$product->tva_tx,
+			$user->id
+		);
+		
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_fournisseur_price ';
+		$sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user) VALUES ('.implode(',', $values).')';
+		
+		$resql = $this->db->query($sql);
+		if (!resql) {
+			$this->error=$this->db->error();
+            $this->db->rollback();
+            return -1;
+		}	
+	 }
+	 
     /**
      *	Class invoiced the Propal
      *

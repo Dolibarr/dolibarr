@@ -283,18 +283,4 @@ DROP TABLE llx_askpricesupplierdet_extrafields;
 DROP TABLE llx_askpricesupplierdet;
 DROP TABLE llx_askpricesupplier;
  * 
- * CREATE TABLE IF NOT EXISTS llx_askpricesupplier (
-	rowid INT AUTO_INCREMENT,
-	fk_statut INT NOT NULL,
-	fk_soc INT NOT NULL,
-	price DOUBLE(24,8),
-	date_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	date_send TIMESTAMP,
-	PRIMARY KEY pk_rowid (rowid),
-	CONSTRAINT fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid)
-);
- * 
- * 
- * 
- * 
  */
