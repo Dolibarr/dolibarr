@@ -104,8 +104,8 @@ class box_clients extends ModeleBoxes
                 if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url= DOL_URL_ROOT."/comm/card.php?socid=";
                 else $url= DOL_URL_ROOT."/societe/soc.php?socid=";
 
-				$i = 0;
-				while ($i < $num)
+				$line = 0;
+				while ($line < $num)
 				{
 					$objp = $db->fetch_object($result);
 					$datec=$db->jdate($objp->datec);
@@ -118,26 +118,26 @@ class box_clients extends ModeleBoxes
                     $thirdpartystatic->fournisseur = $objp->fournisseur;
                     $thirdpartystatic->logo = $objp->logo;
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $thirdpartystatic->getNomUrl(1),
                         'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
                         'text' => dol_print_date($datem, "day")
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $thirdpartystatic->LibStatut($objp->status,3)
                     );
 
-					$i++;
+					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
 
 				$db->free($result);
 			}

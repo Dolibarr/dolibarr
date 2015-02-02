@@ -90,8 +90,8 @@ class box_actions extends ModeleBoxes
 				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
 				$num = $db->num_rows($result);
-				$i = 0;
-                while ($i < $num) {
+				$line = 0;
+                while ($line < $num) {
 					$late = '';
 					$objp = $db->fetch_object($result);
 					$datelimite = $db->jdate($objp->dp);
@@ -109,39 +109,39 @@ class box_actions extends ModeleBoxes
 					$label = empty($objp->label)?$objp->type_label:$objp->label;
 
                     $tooltip = $langs->trans('Action'.$objp->code).': '.$label;
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $actionstatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $societestatic->getNomUrl(1),
                         'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left" class="nowrap"',
                         'text' => dol_print_date($datelimite, "dayhour"),
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
                         'text' => ($objp->percentage>= 0?$objp->percentage.'%':''),
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $actionstatic->LibStatut($objp->percentage,3),
                     );
 
-                    $i++;
+                    $line++;
                 }
 
                 if ($num==0)
-                    $this->info_box_contents[$i][0] = array(
+                    $this->info_box_contents[$line][0] = array(
                         'td' => 'align="center"',
                         'text'=>$langs->trans("NoActionsToDo"),
                     );
@@ -184,23 +184,23 @@ class box_actions extends ModeleBoxes
 			{
 				print '<div id="dialog" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
 				print '<table width=100%>';
-				for ($i=0, $n=$nblines; $i < $n; $i++)
+				for ($line=0, $n=$nblines; $line < $n; $line++)
 				{
-					if (isset($contents[$i]))
+					if (isset($contents[$line]))
 					{
 						// on affiche que les évènement du jours ou passé
 						// qui ne sont pas à 100%
 						$actioncejour=true;
 						$var=!$var;
 						// TR
-						$logo=$contents[$i][0]['logo'];
-						$label=$contents[$i][1]['text'];
-						$urlevent=$contents[$i][1]['url'];
-						$logosoc=$contents[$i][2]['logo'];
-						$nomsoc=$contents[$i][3]['text'];
-						$urlsoc=$contents[$i][3]['url'];
-						$dateligne=$contents[$i][4]['text'];
-						$percentage=$contents[$i][5]['text'];
+						$logo=$contents[$line][0]['logo'];
+						$label=$contents[$line][1]['text'];
+						$urlevent=$contents[$line][1]['url'];
+						$logosoc=$contents[$line][2]['logo'];
+						$nomsoc=$contents[$line][3]['text'];
+						$urlsoc=$contents[$line][3]['url'];
+						$dateligne=$contents[$line][4]['text'];
+						$percentage=$contents[$line][5]['text'];
 						print '<tr '.$bcx[$var].'>';
 						print '<td align=center>';
 						print img_object("",$logo);
