@@ -29,6 +29,7 @@ CREATE TABLE `llx_askpricesupplierdet` (
   `fk_product_fournisseur_price` int(11) DEFAULT NULL,
   `special_code` int(11) DEFAULT '0',
   `rang` int(11) DEFAULT '0',
+  `ref_fourn` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   KEY `idx_askpricesupplierdet_fk_askpricesupplierdet` (`fk_askpricesupplier`),
   KEY `idx_askpricesupplierdet_fk_product` (`fk_product`),

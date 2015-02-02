@@ -100,6 +100,10 @@ $coldisplay=-1; // We remove first td
 	?>
 	</td>
 
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="<?php echo $line->ref_fourn; ?>" size="12"></td>
+	<?php } ?>
+	
 	<?php
 	$coldisplay++;
 	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {

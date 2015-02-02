@@ -52,6 +52,9 @@ if (in_array($object->element,array('propal', 'askpricesupplier','facture','invo
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td align="right"><span id="title_fourn_ref"><?php echo $langs->trans('AskPriceSupplierRefFourn'); ?></span></td>
+	<?php } ?>
 	<td align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
@@ -195,7 +198,11 @@ else {
 	$doleditor->Create();
 	?>
 	</td>
-
+	
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="" size="12"></td>
+	<?php } ?>
+	
 	<td align="right"><?php
 	if (GETPOST('prod_entry_mode') != 'predef')
 	{

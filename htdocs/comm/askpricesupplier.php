@@ -616,6 +616,7 @@ if (empty($reshook))
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$price_ht = GETPOST('price_ht');
+		
 		if (GETPOST('prod_entry_mode') == 'free')
 		{
 			$idprod=0;
@@ -798,7 +799,8 @@ if (empty($reshook))
 				setEventMessage($mesg, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $date_start, $date_end, $array_option);
+				$ref_fourn = GETPOST('fourn_ref');
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $date_start, $date_end, $array_option, $ref_fourn);
 
 				if ($result > 0) {
 					$db->commit();
@@ -925,8 +927,8 @@ if (empty($reshook))
 
 		if (! $error) {
 			$db->begin();
-
-			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_option);
+			$ref_fourn = GETPOST('fourn_ref');
+			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_option, $ref_fourn);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -1040,16 +1042,6 @@ if (empty($reshook))
 	// Mode de reglement
 	else if ($action == 'setmode' && $user->rights->askpricesupplier->creer) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
-	}
-
-	// bank account
-	else if ($action == 'setbankaccount' && $user->rights->askpricesupplier->creer) {
-	    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
-	}
-
-	// shipping method
-	else if ($action == 'setshippingmethod' && $user->rights->askpricesupplier->creer) {
-	    $result=$object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
 	}
 
 	/*
@@ -1894,7 +1886,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Project
-	/*
+	
 	if (! empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		print '<tr><td>';
@@ -1927,7 +1919,7 @@ if ($action == 'create')
 		}
 		print '</tr>';
 	}
-	*/
+	
 	
 	if ($soc->outstanding_limit)
 	{
@@ -2043,7 +2035,6 @@ if ($action == 'create')
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
 	// Form to add new line
-	/* PHFAVRE retrait en temporaire*/
 	if ($object->statut == 0 && $user->rights->askpricesupplier->creer)
 	{
 		if ($action != 'editline')
@@ -2075,7 +2066,7 @@ if ($action == 'create')
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	}
-*/
+	*/
 	print '</table>';
 
 	print "</form>\n";

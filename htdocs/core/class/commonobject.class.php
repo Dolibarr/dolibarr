@@ -2575,7 +2575,11 @@ abstract class CommonObject
 
 		// Description
 		print '<td><label for="">'.$langs->trans('Description').'</label></td>';
-
+		
+		if ($this->element == 'askpricesupplier') { 
+				print '<td align="right"><span id="title_fourn_ref">'.$langs->trans("AskPriceSupplierRefFourn").'</span></td>';
+		} 
+		
 		// VAT
 		print '<td align="right" width="50"><label for="tva_tx">'.$langs->trans('VAT').'</label></td>';
 

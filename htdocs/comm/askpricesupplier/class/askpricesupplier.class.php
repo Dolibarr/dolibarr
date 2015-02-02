@@ -321,7 +321,7 @@ class AskPriceSupplier extends CommonObject
      *
      *    	@see       	add_product
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0, $ref_fourn='')
     {
     	global $mysoc;
 
@@ -420,7 +420,8 @@ class AskPriceSupplier extends CommonObject
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
-
+			$this->line->ref_fourn = $this->db->escape($ref_fourn);
+			
 			// infos marge
 			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
 			    // by external module, take lowest buying price
@@ -499,7 +500,7 @@ class AskPriceSupplier extends CommonObject
 	 *  @param		array		$array_option		extrafields array
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_option=0)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_option=0, $ref_fourn)
     {
         global $conf,$user,$langs, $mysoc;
 
@@ -579,6 +580,7 @@ class AskPriceSupplier extends CommonObject
             $this->line->special_code		= $special_code;
             $this->line->fk_parent_line		= $fk_parent_line;
             $this->line->skip_update_total	= $skip_update_total;
+            $this->line->ref_fourn	= $ref_fourn;
 
             // infos marge
             if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
@@ -1188,7 +1190,7 @@ class AskPriceSupplier extends CommonObject
                 $sql = "SELECT d.rowid, d.fk_askpricesupplier, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,";
                 $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
-                $sql.= ' d.date_start, d.date_end';
+                $sql.= ' d.date_start, d.date_end, d.ref_fourn as ref_produit_fourn';
                 $sql.= " FROM ".MAIN_DB_PREFIX."askpricesupplierdet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
                 $sql.= " WHERE d.fk_askpricesupplier = ".$this->id;
@@ -1246,6 +1248,8 @@ class AskPriceSupplier extends CommonObject
 
                         $line->date_start  		= $objp->date_start;
                         $line->date_end  		= $objp->date_end;
+						
+						$line->ref_fourn		= $objp->ref_produit_fourn;
 
                         $this->lines[$i]        = $line;
                         //dol_syslog("1 ".$line->fk_product);
@@ -1840,14 +1844,14 @@ class AskPriceSupplier extends CommonObject
      *	@return     int         		<0 if KO, >0 if OK
      */
 	function updateOrCreatePriceFournisseur($user) 
-	{		
+	{	
 		$productsupplier = new ProductFournisseur($this->db);
 		
 		dol_syslog(get_class($this)."::updateorCreatePriceFournisseur", LOG_DEBUG);
 		foreach ($this->lines as $product) {
 			$idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
 			$res = $productsupplier->fetch($idProductFourn);
-			
+		
 			if ($productsupplier->id) {				
 				if ($productsupplier->fourn_qty == $product->qty) {
 					$this->updatePriceFournisseur($productsupplier->product_fourn_price_id, $product, $user);
@@ -1872,7 +1876,7 @@ class AskPriceSupplier extends CommonObject
 		$price=price2num($product->subprice*$product->qty,'MU');
 		$unitPrice = price2num($product->subprice,'MU');
 			
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$idProductFournPrice;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET '.(!empty($product->ref_fourn) ? 'ref_fourn = `'.$product->ref_fourn.'`, ' : '').' price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$idProductFournPrice;
 		
 		$resql = $this->db->query($sql);
 		if (!resql) {
@@ -1896,10 +1900,10 @@ class AskPriceSupplier extends CommonObject
 		$now=dol_now();
 		
 		$values = array(
-			'`'.$this->db->idate($now).'`',
+			"'".$this->db->idate($now)."'",
 			$product->fk_product,
 			$this->client->id,
-			'`'.$this->db->escape($product->ref).'`', //En attente de récupérer la bonne ref fournisseur sur le form
+			"'".$product->ref_fourn."'",
 			$price,
 			$qty,
 			$unitPrice,
@@ -2737,7 +2741,7 @@ class AskPriceSupplier extends CommonObject
         $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
         $sql.= ' pt.date_start, pt.date_end, pt.product_type, pt.rang, pt.fk_parent_line,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
-        $sql.= ' p.description as product_desc';
+        $sql.= ' p.description as product_desc, pt.ref_fourn as ref_produit_fourn';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'askpricesupplierdet as pt';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
         $sql.= ' WHERE pt.fk_askpricesupplier = '.$this->id;
@@ -2784,6 +2788,8 @@ class AskPriceSupplier extends CommonObject
                 $this->lines[$i]->rang				= $obj->rang;
                 $this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
                 $this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
+				
+                $this->lines[$i]->ref_fourn				= $obj->ref_produit_fourn;
 
                 $i++;
             }
@@ -2905,6 +2911,8 @@ class AskPriceSupplierLigne  extends CommonObject
 
     var $skip_update_total; // Skip update price total for special lines
 
+	var $ref_fourn;
+	
     /**
      * 	Class line Contructor
      *
@@ -2928,7 +2936,7 @@ class AskPriceSupplierLigne  extends CommonObject
 		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
 		$sql.= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql.= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
-		$sql.= ' pd.date_start, pd.date_end, pd.product_type';
+		$sql.= ' pd.date_start, pd.date_end, pd.product_type, pd.ref_fourn as ref_produit_fourn';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'askpricesupplierdet as pd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
 		$sql.= ' WHERE pd.rowid = '.$rowid;
@@ -2976,6 +2984,8 @@ class AskPriceSupplierLigne  extends CommonObject
 
 			$this->date_start       = $this->db->jdate($objp->date_start);
             $this->date_end         = $this->db->jdate($objp->date_end);
+		
+			$this->ref_fourn		= $objp->ref_produit_forun;
 
 			$this->db->free($result);
 		}
@@ -3035,7 +3045,7 @@ class AskPriceSupplierLigne  extends CommonObject
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
         $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
-        $sql.= ' date_start, date_end)';
+        $sql.= ' date_start, date_end, ref_fourn)';
         $sql.= " VALUES (".$this->fk_askpricesupplier.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
@@ -3062,7 +3072,8 @@ class AskPriceSupplierLigne  extends CommonObject
         $sql.= ' '.$this->special_code.',';
         $sql.= ' '.$this->rang.',';
         $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").',';
-        $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
+        $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null").',';
+        $sql.= " '".$this->db->escape($this->ref_fourn)."'";
         $sql.= ')';
 
         dol_syslog(get_class($this).'::insert', LOG_DEBUG);
@@ -3225,6 +3236,7 @@ class AskPriceSupplierLigne  extends CommonObject
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
         $sql.= " , date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
         $sql.= " , date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
+        $sql.= " , ref_fourn=".(! empty($this->ref_fourn)?"'".$this->db->escape($this->ref_fourn)."'":"null");
         $sql.= " WHERE rowid = ".$this->rowid;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
