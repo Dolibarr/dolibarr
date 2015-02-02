@@ -163,8 +163,8 @@ ALTER TABLE llx_actioncomm_resources ADD UNIQUE INDEX uk_actioncomm_resources(fk
 
 
 -- Localtaxes by thirds
-ALTER TABLE llx_c_tva MODIFY COLUMN localtax1 varchar(10);
-ALTER TABLE llx_c_tva MODIFY COLUMN localtax2 varchar(10);
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax1 varchar(20);
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax2 varchar(20);
 ALTER TABLE llx_localtax ADD COLUMN localtaxtype tinyint after entity;
 ALTER TABLE llx_societe ADD COLUMN localtax1_value double(6,3) after localtax1_assuj;
 ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_assuj;
