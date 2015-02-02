@@ -43,32 +43,6 @@ function askpricesupplier_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) &&	((! empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
-	|| (! empty($conf->livraison_bon->enabled) && $user->rights->expedition->livraison->lire))))
-	{
-		$langs->load("sendings");
-		$head[$h][0] = DOL_URL_ROOT.'/expedition/askpricesupplier.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipment");
-		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
-		$head[$h][1] = $text;
-		$head[$h][2] = 'shipping';
-		$h++;
-	}
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/askpricesupplier/apercu.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Preview");
-		$head[$h][2] = 'preview';
-		$h++;
-	}
-
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/askpricesupplier/contact.php?id='.$object->id;
-		$head[$h][1] = $langs->trans('ContactsAddresses');
-		$head[$h][2] = 'contact';
-		$h++;
-	}
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line

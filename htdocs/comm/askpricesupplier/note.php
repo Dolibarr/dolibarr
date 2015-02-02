@@ -87,6 +87,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Ref client
+			/* PHFAVRE retrait en temporaire
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 			print $langs->trans('RefCustomer').'</td><td align="left">';
@@ -96,7 +97,8 @@ if ($id > 0 || ! empty($ref))
 			print $object->ref_client;
 			print '</td>';
 			print '</tr>';
-
+			*/
+			
 			// Customer
 			if ( is_null($object->client) )
 				$object->fetch_thirdparty();
@@ -104,6 +106,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
 
 			// Ligne info remises tiers
+			/* PHFAVRE retrait en temporaire
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($societe->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_percent);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
@@ -113,7 +116,8 @@ if ($id > 0 || ! empty($ref))
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			print '.';
 			print '</td></tr>';
-
+			*/
+			
 			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
 			print dol_print_date($object->date,'daytext');
@@ -121,6 +125,7 @@ if ($id > 0 || ! empty($ref))
 			print '</tr>';
 
 			// Date fin propal
+			/* PHFAVRE retrait en temporaire
 			print '<tr>';
 			print '<td>'.$langs->trans('DateEndAsk').'</td><td colspan="3">';
 			if ($object->fin_validite)
@@ -134,7 +139,8 @@ if ($id > 0 || ! empty($ref))
 			}
 			print '</td>';
 			print '</tr>';
-
+			*/
+			
 			print "</table>";
 
 			print '<br>';

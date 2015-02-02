@@ -109,6 +109,7 @@ if ($object->id > 0)
 	print '</td></tr>';
 
 	// Ref client
+	/* PHFAVRE retrait en temporaire
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 	print $langs->trans('RefCustomer').'</td><td align="left">';
@@ -118,7 +119,8 @@ if ($object->id > 0)
 	print $object->ref_client;
 	print '</td>';
 	print '</tr>';
-
+	*/
+	
 	// Customer
 	print "<tr><td>".$langs->trans("Company")."</td>";
 	print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
