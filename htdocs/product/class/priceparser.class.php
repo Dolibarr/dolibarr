@@ -21,7 +21,6 @@
  *	\brief      File of class to calculate prices using expression
  */
 require_once DOL_DOCUMENT_ROOT.'/includes/evalmath/evalmath.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/priceexpression.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -267,7 +266,7 @@ class PriceParser
 	public function parseProductSupplierExpression($product_id, $expression, $quantity = null, $tva_tx = null, $extra_values = array())
 	{
 		//Get the product data
-		$product = new Product($this->db);
+		$product = new ProductFournisseur($this->db);
 		$product->fetch($product_id, '', '', 1);
 
 		//Accessible values by expressions

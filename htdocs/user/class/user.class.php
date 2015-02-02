@@ -1778,9 +1778,11 @@ class User extends CommonObject
 	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
 	 *	@param	string	$option			On what the link point to
      *  @param  boolean $infologin      Add connection info to the tooltip
+     *  @param	string	$notooltip		1=Disable tooltip
+     *  @param	int		$maxlen			Max length of visible user name
 	 *	@return	string					String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $infologin=0)
+	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24)
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1790,10 +1792,8 @@ class User extends CommonObject
         $companylink = '';
 
         $label = '<u>' . $langs->trans("User") . '</u>';
-        $label.= '<table class="login" width="100%">';
-        $label.= '<tr>';
-        $label.= '<td valign="top">';
-        $label .= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','',24);
+        $label.= '<div width="100%">';
+        $label .= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
         if (! empty($this->login))
         $label .= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
         if (! empty($this->email))
@@ -1808,14 +1808,17 @@ class User extends CommonObject
         }
         $type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
         $label .= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
-        if (! empty($this->photo)) {
-            $form = new Form($db);
-            $label .= '<td>&nbsp;&nbsp;</td><td align="right">' . $form->showphoto('userphoto', $this, 80) . '</td>';
+        if (! empty($this->photo))
+        {
+        	$label.= '</div><div style="padding: 10px">';
+        	//if (! is_object($form)) $form = new Form($db);
+            $label.= Form::showphoto('userphoto', $this, 80);
         }
-        $label.= '</tr></table>';
+        $label.= '</div>';
 
         // Info Login
-        if ($infologin) {
+        if ($infologin)
+        {
             $label.= '<br>';
             $label.= '<br><u>'.$langs->trans("Connection").'</u>';
             $label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
@@ -1833,14 +1836,17 @@ class User extends CommonObject
         }
 
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
+        $lien.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
+        $lien.= '>';
 		$lienfin='</a>';
 
-        if ($withpicto) {
-            $result.=($lien.img_object($label, 'user', 'class="classfortooltip"').$lienfin);
+        if ($withpicto)
+        {
+            $result.=($lien.img_object(($notooltip?'':$label), 'user', ($notooltip?'':'class="classfortooltip"')).$lienfin);
             if ($withpicto != 2) $result.=' ';
 		}
-		$result.= $lien . $this->getFullName($langs,'','',24) . $companylink . $lienfin;
+		$result.= $lien . $this->getFullName($langs,'','',$maxlen) . $companylink . $lienfin;
 		return $result;
 	}
 

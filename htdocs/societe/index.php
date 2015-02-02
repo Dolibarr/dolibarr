@@ -295,45 +295,26 @@ if ($result)
             $thirdparty_static->datem=$db->jdate($objp->datem);
             $thirdparty_static->status=$objp->status;
             $thirdparty_static->canvas=$objp->canvas;
-            //print $thirdparty_static->getNomUrl(1);
-            //print "</td>\n";
+                    print $thirdparty_static->getNomUrl(1);
+            print "</td>\n";
             // Type
-            //print '<td align="center">';
+            print '<td align="center">';
             if ($thirdparty_static->client==1 || $thirdparty_static->client==3)
             {
-                print $thirdparty_static->getNomUrl(1, 'customer');
-                print "</td>\n";
-                // Type
-                print '<td align="center">';
-                print $langs->trans("Customer");
+            	$thirdparty_static->name=$langs->trans("Customer");
+            	print $thirdparty_static->getNomUrl(0,'customer',0,1);
             }
-            if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
-                print $thirdparty_static->getNomUrl(1);
-                print "</td>\n";
-                // Type
-                print '<td align="center">';
-                print " / ";
-            }
+            if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
             if (($thirdparty_static->client==2 || $thirdparty_static->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
             {
-                print $thirdparty_static->getNomUrl(1, 'prospect');
-                print "</td>\n";
-                // Type
-                print '<td align="center">';
-                print $langs->trans("Prospect");
+            	$thirdparty_static->name=$langs->trans("Prospect");
+            	print $thirdparty_static->getNomUrl(0,'prospect',0,1);
             }
             if (! empty($conf->fournisseur->enabled) && $thirdparty_static->fournisseur)
             {
-                if (! $thirdparty_static->client) {
-                    print $thirdparty_static->getNomUrl(1, 'supplier');
-                    print "</td>\n";
-                    print '<td align="center">';
-                    print $langs->trans("Supplier");
-                } else {
-                    // Type
-                    print " / ";
-                    print $langs->trans("Supplier");
-                }
+                if ($thirdparty_static->client) print " / ";
+            	$thirdparty_static->name=$langs->trans("Supplier");
+            	print $thirdparty_static->getNomUrl(0,'supplier',0,1);
             }
             print '</td>';
             // Last modified date
