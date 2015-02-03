@@ -4,7 +4,7 @@
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2013		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2014  Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015  Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2013-2014  Florian Henry	    <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
  *
@@ -91,10 +91,10 @@ $idpays = $p[0];
 
 $sql = "SELECT b.rowid , b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, soc.code_compta, ba.courant,";
 $sql .= " soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, ba.account_number, bu1.type as typeop";
-$sql .= " FROM " . MAIN_DB_PREFIX . "bank b";
-$sql .= " JOIN " . MAIN_DB_PREFIX . "bank_account ba on b.fk_account=ba.rowid";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe soc on bu1.url_id=soc.rowid";
+$sql .= " FROM " . MAIN_DB_PREFIX . "bank as b";
+$sql .= " JOIN " . MAIN_DB_PREFIX . "bank_account as ba on b.fk_account=ba.rowid";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as soc on bu1.url_id=soc.rowid";
 
 // Code opération type caisse
 $sql .= " WHERE ba.courant = 2";
@@ -365,67 +365,69 @@ if ($action == 'writeBookKeeping') {
 		setEventMessage($langs->trans('Success'), 'mesgs');
 	}
 }
-// export csv
+// Export
 if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	$cash_journal = $conf->global->ACCOUNTING_CASH_JOURNAL;
 
 	header('Content-Type: text/csv');
 	header('Content-Disposition:attachment;filename=journal_caisse.csv');
 
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) 	// Modèle Export Cegid Expert
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 	// Model Cegid Expert Export
 	{
+		$sep = ";";
+
 		foreach ( $tabpay as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
 			// Cash
-			print $date . $sep;
-			print $conf->global->ACCOUNTING_CASH_JOURNAL . $sep;
-
 			foreach ( $tabbq[$key] as $k => $mt ) {
+				print $date . $sep;
+				print $cash_journal . $sep;
 				print length_accountg(html_entity_decode($k)) . $sep;
 				print $sep;
 				print ($mt < 0 ? 'C' : 'D') . $sep;
-				print price($mt) . $sep;
+				print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
+				print $val["type_payment"] . $sep;
+				print $val["ref"] . $sep;
+				print "\n";
 			}
-			print utf8_decode($langs->trans("CashPayment")) . $sep;
-			print $val["ref"] . $sep;
-			print "\n";
 
 			// Third party
 			foreach ( $tabtp[$key] as $k => $mt ) {
 				if ($mt) {
 					print $date . $sep;
-					print $conf->global->ACCOUNTING_CASH_JOURNAL . $sep;
-					if ($obj->label == '(SupplierInvoicePayment)') {
+					print $cash_journal . $sep;
+					if ($val["lib"] == '(SupplierInvoicePayment)') {
 						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
 					} else {
 						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
 					}
 					print length_accounta(html_entity_decode($k)) . $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
-					print price($mt) . $sep;
-					print $langs->trans("ThirdParty") . $sep;
+					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
+					print $val["type_payment"] . $sep;
 					print $val["ref"] . $sep;
 					print "\n";
 				}
 			}
 		}
-	} else 	// Modèle Export Classique
+	} else 	// Model Classic Export
 	{
 		foreach ( $tabpay as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), 'day');
-			print '"' . $date . '"' . $sep;
-			print '"' . $val["ref"] . '"' . $sep;
 
 			// Cash
 			foreach ( $tabbq[$key] as $k => $mt ) {
+				print '"' . $date . '"' . $sep;
+				print '"' . $val["ref"] . '"' . $sep;
 				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
 				print '"' . $langs->trans("Cash") . '"' . $sep;
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
+				print "\n";
 			}
-			print "\n";
-
+			
 			// Third party
 			foreach ( $tabtp[$key] as $k => $mt ) {
 				if ($mt) {
@@ -455,7 +457,7 @@ if ($action == 'export_csv') {
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 	report_header($name, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
 
-	print '<input type="button" class="button" style="float: right;" value="Export CSV" onclick="launch_export();" />';
+	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 
 	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writeBookKeeping();" />';
 
