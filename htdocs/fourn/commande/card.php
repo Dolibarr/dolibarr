@@ -40,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+if (! empty($conf->askpricesupplier->enabled))
+	require DOL_DOCUMENT_ROOT . '/comm/askpricesupplier/class/askpricesupplier.class.php';
 if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (!empty($conf->projet->enabled))
@@ -853,12 +855,14 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 		// If creation from another object of another module (Example: origin=propal, originid=1)
 		if (! empty($origin) && ! empty($originid)) {
 			// Parse element/subelement (ex: project_task)
+			/* PHFAVRE
 			$element = $subelement = $origin;
 			if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 				$element = $regs [1];
 				$subelement = $regs [2];
 			}
-
+			*/
+			
 			$element = 'comm/askpricesupplier';
 			$subelement = 'askpricesupplier';
 
@@ -887,6 +891,10 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 
 					$classname = ucfirst($subelement);
 					$srcobject = new $classname($db);
+					$srcobject->fetch($object->origin_id);
+
+					$object->set_date_livraison($user, $srcobject->date_livraison);
+					$object->set_id_projet($user, $srcobject->fk_project);
 
 					dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
 					$result = $srcobject->fetch($object->origin_id);
@@ -935,10 +943,6 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 								$lines [$i]->fetch_optionals($lines [$i]->rowid);
 								$array_option = $lines [$i]->array_options;
 							}
-/*
-							$idprod=$productsupplier->get_buyprice($lines [$i]->fk_fournprice, $qty);
-							$res = $productsupplier->fetch($idprod);
-						*/
 						
 							$idprod = $productsupplier->find_min_price_product_fournisseur($lines [$i]->fk_product, $qty);
 							$res = $productsupplier->fetch($idProductFourn);
@@ -950,8 +954,8 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 								$lines [$i]->tva_tx, 
 								$lines [$i]->localtax1_tx, 
 								$lines [$i]->localtax2_tx, 
-								$productsupplier->id, 
 								$lines [$i]->fk_product, 
+								$productsupplier->product_fourn_price_id, 
 								$productsupplier->ref_fourn, 
 								$lines [$i]->remise_percent, 
 								'HT', 
