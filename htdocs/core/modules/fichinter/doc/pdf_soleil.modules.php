@@ -258,7 +258,7 @@ class pdf_soleil extends ModelePDFFicheinter
 						$pdf->SetTextColor(0,0,0);
 
 						$pdf->setTopMargin($tab_top_newpage);
-						$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext/*+$heightforinfotot*/);	// The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 						$pageposbefore=$pdf->getPage();
 
 						// Description of product line
@@ -328,7 +328,7 @@ class pdf_soleil extends ModelePDFFicheinter
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 							$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 						}
-						if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
+						/*if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 						{
 							if ($pagenb == 1)
 							{
@@ -343,7 +343,7 @@ class pdf_soleil extends ModelePDFFicheinter
 							$pdf->AddPage();
 							if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 							$pagenb++;
-						}
+						}*/
 					}
 				}
 
@@ -428,9 +428,10 @@ class pdf_soleil extends ModelePDFFicheinter
 		$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
 */
 
+		$pdf->SetDrawColor(128,128,128);
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+1, 0, 0);	// Rect prend une longueur en 3eme param et 4eme param
-
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+5, 0, 0);	// Rect prend une longueur en 3eme param et 4eme param
+		
 		if (empty($hidebottom))
 		{
 			$pdf->SetXY(20,230);
@@ -445,6 +446,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			$pdf->SetXY(110,235);
 			$pdf->MultiCell(80,25, '', 1);
 		}
+		$pdf->SetDrawColor(192,192,192);
 	}
 
 	/**
