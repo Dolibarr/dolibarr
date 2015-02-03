@@ -90,10 +90,10 @@ if ($search_user !== '' && $user->rights->projet->all->lire) {
 	$fake_user->id = $search_user;
 
 	// Get list of project id allowed to user (in a string list separated by coma)
-	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($fake_user,1,1,$socid);
+	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($fake_user,2,1,$socid);
 } else {
 	// Get list of project id allowed to user (in a string list separated by coma)
-	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
+	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,2,1,$socid);
 }
 
 // Get list of tasks in tasksarray and taskarrayfiltered
