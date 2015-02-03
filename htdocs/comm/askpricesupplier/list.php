@@ -282,11 +282,19 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
+	
+	/* PHFAVRE
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);
+	*/
+	
 	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+	
+	/* PHFAVRE
 	print_liste_field_titre($langs->trans('Town'),$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','',$param, 'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
+	*/
+	
+	print_liste_field_titre($langs->trans('AskPriceSupplierDate'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
@@ -297,13 +305,21 @@ if ($result)
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
+	
+	/* PHFAVRE
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
 	print '</td>';
+	*/
+	
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
+	
+	/* PHFAVRE
 	print '<td class="liste_titre"><input class="flat" type="text" size="10" name="search_town" value="'.$search_town.'"></td>';
+	*/
+	
 	// Date
 	print '<td class="liste_titre" colspan="1" align="center">';
 	//print $langs->trans('Month').': ';
@@ -312,9 +328,13 @@ if ($result)
 	$syear = $year;
 	$formother->select_year($syear,'year',1, 20, 5);
 	print '</td>';
+	
+	/* PHFAVRE
 	print '<td class="liste_titre" colspan="1">&nbsp;</td>';
+	*/
+	
 	// Amount
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
 	print '</td>';
 	// Author
@@ -373,9 +393,11 @@ if ($result)
 		print "</td>\n";
 
 		// Customer ref
+		/* PHFAVRE
 		print '<td class="nocellnopadd nowrap">';
 		print $objp->ref_client;
 		print '</td>';
+		*/
 
 		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$objp->rowid;
 
@@ -389,16 +411,19 @@ if ($result)
 		print '</td>';
 
 		// Town
+		/* PHFAVRE
 		print '<td class="nocellnopadd">';
 		print $objp->town;
 		print '</td>';
-
+		*/
+		
 		// Date proposal
 		print '<td align="center">';
 		print dol_print_date($db->jdate($objp->dp), 'day');
 		print "</td>\n";
 
 		// Date end validity
+		/* PHFAVRE
 		if ($objp->dfv)
 		{
 			print '<td align="center">'.dol_print_date($db->jdate($objp->dfv),'day');
@@ -408,7 +433,8 @@ if ($result)
 		{
 			print '<td>&nbsp;</td>';
 		}
-
+		*/
+		
 		print '<td align="right">'.price($objp->total_ht)."</td>\n";
 
 		$userstatic->id=$objp->fk_user_author;
@@ -431,22 +457,22 @@ if ($result)
 	}
 
 	if ($total>0)
-			{
-				if($num<$limit){
-					$var=!$var;
-					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHT").'</td>';
-					print '<td colspan="6" align="right">'.price($total).'</td><td colspan="3"></td>';
-					print '</tr>';
-				}
-				else
-				{
-					$var=!$var;
-					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHTforthispage").'</td>';
-					print '<td colspan="6" align="right">'.price($total).'</td><td colspan="3"></td>';
-					print '</tr>';
-				}
+	{
+		if($num<$limit){
+			$var=!$var;
+			print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHT").'</td>';
+			print '<td colspan="3" align="right">'.price($total).'</td><td colspan="3"></td>';
+			print '</tr>';
+		}
+		else
+		{
+			$var=!$var;
+			print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHTforthispage").'</td>';
+			print '<td colspan="3" align="right">'.price($total).'</td><td colspan="3"></td>';
+			print '</tr>';
+		}
 
-			}
+	}
 
 	print '</table>';
 
