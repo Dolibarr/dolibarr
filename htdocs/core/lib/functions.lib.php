@@ -1046,8 +1046,9 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 /**
  *	Return an array with locale date info.
  *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
- *  WARNING: This function always use PHP server timezone to return locale informations.
+ *  WARNING: This function always use PHP server timezone to return locale informations !!!
  *  Usage must be avoid.
+ *  FIXME: Replace this with PHP date function and a parameter $gm
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode
@@ -1057,7 +1058,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *										'minutes' => $min,
  *										'hours' => $hour,
  *										'mday' => $day,
- *										'wday' => $dow,
+ *										'wday' => $dow,		0=sunday, 6=saturday
  *										'mon' => $month,
  *										'year' => $year,
  *										'yday' => floor($secsInYear/$_day_power),
@@ -1091,7 +1092,7 @@ function dol_getdate($timestamp,$fast=false)
 	{
 		$arrayinfo=getdate($timestamp);
 
-		$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
+		/*$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
 		if($startday==1)
 		{
 			if ($arrayinfo["wday"]==0)
@@ -1102,7 +1103,7 @@ function dol_getdate($timestamp,$fast=false)
 			{
 				$arrayinfo["wday"]=$arrayinfo["wday"]-1;
 			}
-		}
+		}*/
 	}
 
 	return $arrayinfo;
