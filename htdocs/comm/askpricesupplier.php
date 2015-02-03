@@ -211,11 +211,13 @@ if (empty($reshook))
 	{
 		$datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
+		/* PHFAVRE
 		if (empty($datep)) {
 			$error ++;
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
 		}
-
+		*/
+		
 		if (! $error) {
 			$result = $object->set_date($user, $datep);
 			if ($result < 0)
@@ -250,12 +252,14 @@ if (empty($reshook))
 		$datep = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$date_delivery = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
 
+		/* PHFAVRE 
 		if (empty($datep)) {
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
 			$action = 'create';
 			$error ++;
 		}
-
+		*/
+		
 		if ($socid < 1) {
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), 'errors');
 			$action = 'create';
@@ -1305,11 +1309,15 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 	*/
+	
 	// Date
-	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td colspan="2">';
+	
+	/* PHFAVRE retrait en temporaire
+	print '<tr><td class="fieldrequired">' . $langs->trans('AskPriceSupplierDate') . '</td><td colspan="2">';
 	$form->select_date('', '', '', '', '', "addask", 1, 1);
 	print '</td></tr>';
-
+	*/
+	
 	// Validaty duration
 	/* PHFAVRE retrait en temporaire
 	print '<tr><td class="fieldrequired">' . $langs->trans("ValidityDuration") . '</td><td colspan="2"><input name="duree_validite" size="5" value="' . $conf->global->ASKPRICESUPPLIER_VALIDITY_DURATION . '"> ' . $langs->trans("days") . '</td></tr>';
@@ -1354,7 +1362,6 @@ if ($action == 'create')
     }
 
 	// Delivery date (or manufacturing)
-	/* PHFAVRE retrait en temporaire
 	print '<tr><td>' . $langs->trans("DeliveryDate") . '</td>';
 	print '<td colspan="2">';
 	if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "") {
@@ -1367,7 +1374,7 @@ if ($action == 'create')
 		$form->select_date(-1, 'liv_', '', '', '', "addask", 1, 1);
 	}
 	print '</td></tr>';
-	*/
+	
 	
 	// Model
 	print '<tr>';
@@ -1378,7 +1385,6 @@ if ($action == 'create')
 	print "</td></tr>";
 
 	// Project
-	/* PHFAVRE retrait en temporaire
 	if (! empty($conf->projet->enabled) && $socid > 0) {
 
 		$formproject = new FormProjets($db);
@@ -1398,7 +1404,7 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
-	*/
+	
 	
 	// Other attributes
 	$parameters = array('colspan' => ' colspan="3"');
@@ -1708,10 +1714,11 @@ if ($action == 'create')
 	*/
 	
 	// Date of proposal
+	/* PHFAVRE retrait en temporaire
 	print '<tr>';
 	print '<td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('Date');
+	print $langs->trans('AskPriceSupplierDate');
 	print '</td>';
 	if ($action != 'editdate' && ! empty($object->brouillon))
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
@@ -1732,7 +1739,8 @@ if ($action == 'create')
 		}
 	}
 	print '</td>';
-
+	*/
+	
 	// Date end proposal
 	/* PHFAVRE retrait en temporaire
 	print '<tr>';
@@ -1782,7 +1790,6 @@ if ($action == 'create')
 	print '</tr>';
 
 	// Delivery date
-	/* PHFAVRE retrait en temporaire
 	$langs->load('deliveries');
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1804,7 +1811,7 @@ if ($action == 'create')
 	}
 	print '</td>';
 	print '</tr>';
-	*/
+	
 	
 	// Delivery delay
 	/* PHFAVRE retrait en temporaire
@@ -2079,6 +2086,7 @@ if ($action == 'create')
 		 * Form to close proposal (signed or not)
 		 */
 		$form_close = '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
+		$form_close .= '<p class="notice">'.$langs->trans('AskPriceSupplierRefFournNotice').'</p>';
 		$form_close .= '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		$form_close .= '<table class="border" width="100%">';
 		$form_close .= '<tr><td width="150"  align="left">' . $langs->trans("CloseAs") . '</td><td align="left">';

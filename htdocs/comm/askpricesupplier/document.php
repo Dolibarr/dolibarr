@@ -122,7 +122,7 @@ if ($object->id > 0)
 	*/
 	
 	// Customer
-	print "<tr><td>".$langs->trans("Company")."</td>";
+	print "<tr><td>".$langs->trans("Supplier")."</td>";
 	print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';

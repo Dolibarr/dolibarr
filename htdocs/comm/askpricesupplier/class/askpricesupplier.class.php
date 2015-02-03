@@ -712,13 +712,14 @@ class AskPriceSupplier extends CommonObject
 			}
 		}
 
+		/* PHFAVRE
         if (empty($this->date))
         {
             $this->error="Date of proposal is required";
             dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -4;
         }
-
+		*/
 
         $this->db->begin();
 
@@ -829,7 +830,8 @@ class AskPriceSupplier extends CommonObject
 							$this->lines[$i]->label,
                             $this->lines[$i]->date_start,
 							$this->lines[$i]->date_end,
-							$this->lines[$i]->array_options
+							$this->lines[$i]->array_options,
+							$this->lines[$i]->ref_fourn
 						);
 
                         if ($result < 0)
@@ -1018,6 +1020,7 @@ class AskPriceSupplier extends CommonObject
         // Create clone
         $result=$this->create($user);
         if ($result < 0) $error++;
+		/* PHFAVRE retrait en temporaire
         else
         {
 			// copy internal contacts
@@ -1031,7 +1034,8 @@ class AskPriceSupplier extends CommonObject
 					$error++;
             }
         }
-
+		*/
+		
         if (! $error)
         {
             // Hook of thirdparty module
@@ -1847,7 +1851,7 @@ class AskPriceSupplier extends CommonObject
 	{	
 		$productsupplier = new ProductFournisseur($this->db);
 		
-		dol_syslog(get_class($this)."::updateorCreatePriceFournisseur", LOG_DEBUG);
+		dol_syslog(get_class($this)."::updateOrCreatePriceFournisseur", LOG_DEBUG);
 		foreach ($this->lines as $product) {
 			$idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
 			$res = $productsupplier->fetch($idProductFourn);
@@ -1876,7 +1880,7 @@ class AskPriceSupplier extends CommonObject
 		$price=price2num($product->subprice*$product->qty,'MU');
 		$unitPrice = price2num($product->subprice,'MU');
 			
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET '.(!empty($product->ref_fourn) ? 'ref_fourn = `'.$product->ref_fourn.'`, ' : '').' price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$idProductFournPrice;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET '.(!empty($product->ref_fourn) ? 'ref_fourn = "'.$product->ref_fourn.'", ' : '').' price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$idProductFournPrice;
 		
 		$resql = $this->db->query($sql);
 		if (!resql) {
@@ -2198,7 +2202,7 @@ class AskPriceSupplier extends CommonObject
                         $ref = dol_sanitizeFileName($this->ref);
                         if ($conf->propal->dir_output && !empty($this->ref))
                         {
-                            $dir = $conf->propal->dir_output . "/" . $ref ;
+                            $dir = $conf->askpricesupplier->dir_output . "/" . $ref ;
                             $file = $dir . "/" . $ref . ".pdf";
                             if (file_exists($file))
                             {

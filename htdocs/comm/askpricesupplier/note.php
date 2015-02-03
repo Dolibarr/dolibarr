@@ -102,7 +102,7 @@ if ($id > 0 || ! empty($ref))
 			// Customer
 			if ( is_null($object->client) )
 				$object->fetch_thirdparty();
-			print "<tr><td>".$langs->trans("Company")."</td>";
+			print "<tr><td>".$langs->trans("Supplier")."</td>";
 			print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
 
 			// Ligne info remises tiers
@@ -119,8 +119,15 @@ if ($id > 0 || ! empty($ref))
 			*/
 			
 			// Date
-			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
+			/* PHFAVRE retrait en temporaire
+			print '<tr><td>'.$langs->trans('AskPriceSupplierDate').'</td><td colspan="3">';
 			print dol_print_date($object->date,'daytext');
+			print '</td>';
+			print '</tr>';
+			*/
+			
+			print '<tr><td>'.$langs->trans('AskPriceSupplierDate').'</td><td colspan="3">';
+			print dol_print_date($object->date_livraison,'daytext');
 			print '</td>';
 			print '</tr>';
 

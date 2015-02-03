@@ -44,7 +44,9 @@ NewAskPrice=Nouvelle demande de prix
 NewAsk=Nouvelle demande
 ShowAskpricesupplier=Afficher la demande de prix
 AddAskPriceSupplier=Créer une demande de prix
-AskPriceSupplierRefFourn= Réf. fournisseur
+AskPriceSupplierRefFourn=Réf. fournisseur
+AskPriceSupplierDate=Date de livraison
+AskPriceSupplierRefFournNotice=Avant de clôturer à "Acceptée", pensez à saisir les références fournisseurs.
 # # Modifié
 ConfirmValidateAsk=Êtes-vous sûr de vouloir valider cette demande de prix sous la référence <b>%s</b> ?
 DateAsk=Date de demande
