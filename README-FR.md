@@ -1,21 +1,16 @@
 # DOLIBARR ERP & CRM
 
-## INTRODUCTION
-
 Dolibarr ERP & CRM est un logiciel moderne pour gérer votre activité (société, association, auto-entrepreneurs, artisans). 
 Il est simple d'utilisation et modulaire, vous permettant de n'activez que les fonctions dont vous avez besoin (contacts, fournisseurs, factures, commandes, stocks, agenda, ...).
  
 ![ScreenShot](http://www.dolibarr.org/images/dolibarr_screenshot1_640x480.png)
 
---------------------------------
-Documentation démarrage rapide
---------------------------------
 
-1) Installer Dolibarr
-2) Mettre à jour Dolibarr depuis une ancienne version
-3) Ce qui est nouveau dans cette version
-4) Ce que peux faire Dolibarr
-5) Ce que ne peux pas faire Dolibarr (pas encore)
+
+## LICENCE
+
+Dolibarr est distribué sous les termes de la licence GNU General Public License v3+ ou supérieure.
+
 
 
 ## INSTALLER DOLIBARR
