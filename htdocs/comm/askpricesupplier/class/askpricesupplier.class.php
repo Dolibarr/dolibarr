@@ -2187,9 +2187,11 @@ class AskPriceSupplier extends CommonObject
                     if ($res < 0) $error++;
 
                     // Delete linked contacts
+                    /* PHFAVRE retrait en temporaire
                     $res = $this->delete_linked_contact();
                     if ($res < 0) $error++;
-
+					*/
+					
                     if (! $error)
                     {
                         // We remove directory
