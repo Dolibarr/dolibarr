@@ -115,7 +115,9 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	}
 	?>
 	</td>
-
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td align="right"><?php echo $line->ref_fourn; ?></td>
+	<?php } ?>
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
