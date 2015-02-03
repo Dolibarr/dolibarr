@@ -431,7 +431,8 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 					// Unit price before discount
 					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxup, $curY);
-					//$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
+					if ($up_excl_tax > 0)
+						$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
 
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
@@ -449,7 +450,8 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 					// Total HT line
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->postotalht, $curY);
-					//$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
+					if ($total_excl_tax > 0)
+						$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;
@@ -655,7 +657,21 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 
             $posy=$pdf->GetY()+1;
 		}
-        elseif ($object->availability_code || $object->availability)    // Show availability conditions
+		else {
+			$outputlangs->load("sendings");
+			$pdf->SetFont('','B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$titre = $outputlangs->transnoentities("DateDeliveryPlanned").':';
+			$pdf->MultiCell(80, 4, $titre, 0, 'L');
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+			//$dlp=dol_print_date($object->date_livraison,"daytext",false,$outputlangs,true);
+			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
+
+            $posy=$pdf->GetY()+1;
+		}
+        /* PHFAVRE
+		elseif ($object->availability_code || $object->availability)    // Show availability conditions
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -669,7 +685,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 			$pdf->MultiCell(80, 4, $lib_availability, 0, 'L');
 
 			$posy=$pdf->GetY()+1;
-		}
+		}*/
 
 		// Show payments conditions
 		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMCOND) && ($object->cond_reglement_code || $object->cond_reglement))
@@ -1249,17 +1265,13 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), '', 'R');
 		}
-
+/* PHFAVRE
 		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,"day",false,$outputlangs,true), '', 'R');
-
-		$posy+=4;
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : " . dol_print_date($object->fin_validite,"day",false,$outputlangs,true), '', 'R');
-
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("AskPriceSupplierDate")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
+*/
+		
 		if ($object->client->code_client)
 		{
 			$posy+=4;

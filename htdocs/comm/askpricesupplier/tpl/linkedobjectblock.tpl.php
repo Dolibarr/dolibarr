@@ -34,12 +34,12 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 echo '<br>';
-print_titre($langs->trans('RelatedCommercialProposals'));
+print_titre($langs->trans('RelatedAskPriceSupplier'));
 ?>
 <table class="noborder allwidth">
 <tr class="liste_titre">
 	<td><?php echo $langs->trans("Ref"); ?></td>
-	<td><?php echo $langs->trans('RefCustomer'); ?></td>
+	<td></td>
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>
 	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
@@ -53,8 +53,8 @@ foreach($linkedObjectBlock as $object)
 ?>
 <tr <?php echo $bc[$var]; ?> ><td>
 	<a href="<?php echo DOL_URL_ROOT.'/comm/askpricesupplier.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowAskPriceSupplier"),"askpricesupplier").' '.$object->ref; ?></a></td>
-	<td><?php echo $object->ref_client; ?></td>
-	<td align="center"><?php echo dol_print_date($object->date,'day'); ?></td>
+	<td></td>
+	<td align="center"><?php echo dol_print_date($object->datec,'day'); ?></td>
 	<td align="right"><?php
 		if ($user->rights->askpricesupplier->lire) {
 			$total = $total + $object->total_ht;
