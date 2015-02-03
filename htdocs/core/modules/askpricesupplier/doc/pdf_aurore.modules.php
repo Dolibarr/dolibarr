@@ -703,6 +703,20 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 
 			$posy=$pdf->GetY()+3;
 		}
+		else {
+			$pdf->SetFont('','B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$titre = $outputlangs->transnoentities("PaymentConditions").':';
+			$pdf->MultiCell(80, 4, $titre, 0, 'L');
+
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+			
+			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
+			$pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
+
+			$posy=$pdf->GetY()+3;
+		}
 
 		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMCOND))
 		{
@@ -728,11 +742,11 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 			&& $object->mode_reglement_code != 'VIR')
 			{
 				$pdf->SetFont('','B', $default_font_size - 2);
-				$pdf->SetXY($this->marge_gauche, $posy);
+				$pdf->SetXY($this->marge_gauche, $posy-2);
 				$titre = $outputlangs->transnoentities("PaymentMode").':';
 				$pdf->MultiCell(80, 5, $titre, 0, 'L');
 				$pdf->SetFont('','', $default_font_size - 2);
-				$pdf->SetXY($posxval, $posy);
+				$pdf->SetXY($posxval, $posy-2);
 				$lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
 				$pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
 
