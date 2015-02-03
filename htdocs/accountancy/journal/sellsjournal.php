@@ -4,7 +4,7 @@
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
  *
@@ -93,7 +93,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_produc
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva as ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " WHERE fd.fk_code_ventilation > 0 ";
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity = " . $conf->entity;
@@ -245,17 +245,20 @@ if ($action == 'writebookkeeping') {
 		}
 	}
 }
-// export csv
+// Export
 if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	$sell_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=journal_ventes.csv');
 
 	$companystatic = new Client($db);
 
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) 	// Modèle Export Cegid Expert
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 	// Model Cegid Expert Export
 	{
+		$sep = ";";
+		
 		foreach ( $tabfac as $key => $val ) {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
@@ -263,23 +266,23 @@ if ($action == 'export_csv') {
 
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
-			print $date . $sep;
-			print $conf->global->ACCOUNTING_SELL_JOURNAL . $sep;
-			print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
 			foreach ( $tabttc[$key] as $k => $mt ) {
+				print $date . $sep;
+				print $sell_journal . $sep;
+				print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
 				print length_accounta(html_entity_decode($k)) . $sep;
 				print ($mt < 0 ? 'C' : 'D') . $sep;
 				print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
 				print utf8_decode($companystatic->name) . $sep;
+				print $val["ref"];
+				print "\n";
 			}
-			print $val["ref"];
-			print "\n";
 
 			// Product / Service
 			foreach ( $tabht[$key] as $k => $mt ) {
 				if ($mt) {
 					print $date . $sep;
-					print $conf->global->ACCOUNTING_SELL_JOURNAL . $sep;
+					print $sell_journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
@@ -289,11 +292,12 @@ if ($action == 'export_csv') {
 					print "\n";
 				}
 			}
+
 			// TVA
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
 					print $date . $sep;
-					print $conf->global->ACCOUNTING_SELL_JOURNAL . $sep;
+					print $sell_journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
@@ -304,7 +308,7 @@ if ($action == 'export_csv') {
 				}
 			}
 		}
-	} else 	// Modèle Export Classique
+	} else 	// Model Classic Export
 	{
 		foreach ( $tabfac as $key => $val ) {
 			$companystatic->id = $tabcompany[$key]['id'];
@@ -312,15 +316,16 @@ if ($action == 'export_csv') {
 			$companystatic->client = $tabcompany[$key]['code_client'];
 
 			$date = dol_print_date($db->jdate($val["date"]), 'day');
-			print '"' . $date . '"' . $sep;
-			print '"' . $val["ref"] . '"' . $sep;
+
 			foreach ( $tabttc[$key] as $k => $mt ) {
+				print '"' . $date . '"' . $sep;
+				print '"' . $val["ref"] . '"' . $sep;
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 				print '"' . utf8_decode($companystatic->name) . '"' . $sep;
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
+				print "\n";
 			}
-			print "\n";
 
 			// Product / Service
 			foreach ( $tabht[$key] as $k => $mt ) {
@@ -339,7 +344,6 @@ if ($action == 'export_csv') {
 			}
 
 			// VAT
-			// var_dump($tabtva);
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
 					print '"' . $date . '"' . $sep;
@@ -372,7 +376,7 @@ if ($action == 'export_csv') {
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
 
-	print '<input type="button" class="button" style="float: right;" value="Export CSV" onclick="launch_export();" />';
+	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 
 	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 
@@ -420,12 +424,11 @@ if ($action == 'export_csv') {
 
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
-		print "<tr " . $bc[$var] . ">";
-
 		// Third party
-		print "<td>" . $date . "</td>";
-		print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 		foreach ( $tabttc[$key] as $k => $mt ) {
+			print "<tr " . $bc[$var] . ">";
+			print "<td>" . $date . "</td>";
+			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
@@ -455,7 +458,6 @@ if ($action == 'export_csv') {
 		}
 
 		// VAT
-		// var_dump($tabtva);
 		foreach ( $tabtva[$key] as $k => $mt ) {
 			if ($mt) {
 				print "<tr " . $bc[$var] . ">";
@@ -473,8 +475,8 @@ if ($action == 'export_csv') {
 	}
 
 	print "</table>";
+
+	// End of page
+	llxFooter();
 }
-// End of page
-llxFooter();
-	
 $db->close();
