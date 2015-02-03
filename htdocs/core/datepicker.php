@@ -188,7 +188,6 @@ function displayBox($selectedDate,$month,$year)
 	<tr class="dpDayNames">
 	<?php
 	$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
-	print 'xx'.$startday;
 	$day_names = array('ShortSunday', 'ShortMonday', 'ShortTuesday', 'ShortWednesday', 'ShortThursday', 'ShortFriday', 'ShortSaturday');
 	for( $i=0; $i < 7; $i++ )
 	{
