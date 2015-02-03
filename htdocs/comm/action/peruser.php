@@ -205,6 +205,8 @@ if ($action == 'show_day' || $action == 'show_week' || $action == 'show_month' |
 $param.="&maxprint=".$maxprint;
 
 $prev = dol_get_first_day_week($day, $month, $year);
+//print "day=".$day." month=".$month." year=".$year;
+//var_dump($prev); exit;
 $prev_year  = $prev['prev_year'];
 $prev_month = $prev['prev_month'];
 $prev_day   = $prev['prev_day'];
@@ -223,6 +225,7 @@ $next_day   = $next['day'];
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 $firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
 $lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
+//print $firstday.'-'.$first_month.'-'.$first_year;
 //print dol_print_date($firstdaytoshow,'dayhour');
 //print dol_print_date($lastdaytoshow,'dayhour');
 
@@ -534,12 +537,16 @@ echo '<input type="hidden" name="newdate" id="newdate">' ;
 echo '</form>';
 
 
-// Table :
+// Line header with list of days
+
+//print "begin_d=".$begin_d." end_d=".$end_d;
+
+
 echo '<table width="100%" class="nocellnopadd cal_month">';
 
 echo '<tr class="liste_titre">';
 echo '<td></td>';
-$i=0;
+$i=0;	// 0 = sunday,
 while ($i < 7)
 {
 	if (($i + 1) < $begin_d || ($i + 1) > $end_d)
@@ -679,7 +686,7 @@ foreach ($usernames as $username)
 
 	// Lopp on each day of week
 	$i = 0;
-	for ($iter_day = 0; $iter_day < 7; $iter_day++)
+	for ($iter_day = 0; $iter_day < 8; $iter_day++)
 	{
 		if (($i + 1) < $begin_d || ($i + 1) > $end_d)
 		{
