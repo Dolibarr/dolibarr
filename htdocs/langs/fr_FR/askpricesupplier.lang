@@ -4,34 +4,6 @@ askpricesupplierDESC=Gestion des demandes de prix aux fournisseurs
 askpricesupplierMENU_LEFT_TITLE=Demandes de prix fourn.
 askpricesupplierMENU_LEFT_TITLE_NEW=Nouvelle demande
 askpricesupplierMENU_LEFT_TITLE_LIST=Liste
-
-# Dolibarr language file - Source file is en_US - propal
-Proposals=Propositions commerciales
-Proposal=Proposition commerciale
-ProposalShort=Proposition
-ProposalsDraft=Propositions commerciales brouillons
-ProposalDraft=Proposition commerciale brouillon
-ProposalsOpened=Propositions commerciales ouvertes
-Prop=Propositions commerciales
-NewProp=Nouvelle proposition commerciale
-NewProposal=Nouvelle proposition commerciale
-NewPropal=Nouvelle proposition
-Prospect=Prospect
-ProspectList=Liste des prospects
-
-LastPropals=Les %s dernières propales
-LastClosedProposals=Les %s dernières propositions commerciales fermées
-LastModifiedProposals=Les %s dernières propositions commerciales modifiées
-AllPropals=Toutes les propales
-LastProposals=Dernières propositions
-SearchAProposal=Rechercher une proposition commerciale
-ProposalsStatistics=Statistiques des propositions commerciales
-NumberOfProposalsByMonth=Nombre par mois
-AmountOfProposalsByMonthHT=Montant par mois (HT)
-NbOfProposals=Nombre de propositions commerciales
-
-
-# # Ajout
 CommRequest=Demande de prix
 CommRequests=Demandes de prix
 SearchRequest=Rechercher une demande
@@ -48,7 +20,6 @@ AskPriceSupplierRefFourn=Réf. fournisseur
 AskPriceSupplierDate=Date de livraison
 AskPriceSupplierRefFournNotice=Avant de clôturer à "Acceptée", pensez à saisir les références fournisseurs.
 RelatedAskPriceSupplier=Demandes de prix fournisseurs associées
-# # Modifié
 ConfirmValidateAsk=Êtes-vous sûr de vouloir valider cette demande de prix sous la référence <b>%s</b> ?
 DateAsk=Date de demande
 DateEndAsk=Date de fin de validité
@@ -82,56 +53,17 @@ ConfirmCloneAsk=Êtes-vous sûr de vouloir cloner la demande de prix <b>%s</b> ?
 ConfirmReOpenAsk=Êtes-vous sûr de vouloir réouvrir la demande de prix <b>%s</b> ?
 SendAskByMail=Envoyer demande de prix par email
 SendAskRef=Envoi de la demande de prix %s
-
 AskPriceSupplierCard=Fiche demande
-ConfirmDeleteAsk=Êtes-vous sûr de vouloir effacer cette demande de prix ?
+ConfirmDeleteAsk=Êtes-vous sûr de vouloir effacer cette demande de prix <b>%s</b> ?
 ListOfAskPriceSupplier=Liste des devis/propositions commerciales
-
-##### Types de contacts #####
-TypeContact_askpricesupplier_internal_SALESREPFOLL=Commercial suivi demande
-TypeContact_askpricesupplier_external_BILLING=Contact client facturation demande
-TypeContact_askpricesupplier_external_CUSTOMER=Contact client suivi demande
 ActionsOnAskPriceSupplier=Événements sur la demande
+DocModelAuroreDescription=Modèle de demande de prix fournisseur complet (logo…)
+CommercialAsk=Demande de prix
 
 DefaultModelAskPriceSupplierCreate=Modèle par défaut à la création
 DefaultModelAskPriceSupplierToBill=Modèle par défaut lors de la clôture d'une proposition commerciale (à facturer)
 DefaultModelAskPriceSupplierClosed=Modèle par défaut lors de la clôture d'une proposition commerciale (non facturée)
 DefaultAskDurationValidity=Délai de validité par défaut (en jours)
 
-DocModelAuroreDescription=Modèle de demande de prix fournisseur complet (logo…)
-
-CommercialAsk=Demande de prix
-# #
-
-
-NoOpenedPropals=Pas de proposition ouverte
-NoOtherOpenedPropals=Pas d'autre proposition brouillon
-RefProposal=Réf. proposition commerciale
-AssociatedDocuments=Documents associés à la proposition :
-ErrorCantOpenDir=Impossible d'ouvrir le répertoire
-
-ValidityDuration=Durée de validité
-CloseAs=Clôturer au statut
-ClassifyBilled=Classer facturée
-BuildBill=Créer facture
-ErrorPropalNotFound=Propale %s inexistante
-Estimate=Devis :
-EstimateShort=Devis
-OtherPropals=Autres propositions
-AddToDraftProposals=Ajouter à proposition brouillon
-NoDraftProposals=Pas de propositions brouillons
-UseCustomerContactAsPropalRecipientIfExist=Utiliser l'adresse de contact suivi client si définie plutôt que l'adresse du tiers comme destinataire des propositions
-
-ProposalsAndProposalsLines=Propositions commerciales clients et lignes de propositions
-ProposalLine=Ligne de proposition
-AvailabilityPeriod=Délai de livraison
-SetAvailability=Définir le délai de livraison
-AfterOrder=après commande
-##### Availability #####
-AvailabilityTypeAV_NOW=Immédiate
-AvailabilityTypeAV_1W=1 semaine
-AvailabilityTypeAV_2W=2 semaines
-AvailabilityTypeAV_3W=3 semaines
-AvailabilityTypeAV_1M=1 mois
-# Document models
-DocModelJauneDescription=Modèle de proposition Jaune
+##### Types de contacts #####
+TypeContact_askpricesupplier_external_CUSTOMER=Contact client suivi demande
