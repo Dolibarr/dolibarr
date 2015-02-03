@@ -81,19 +81,19 @@ class box_bookmarks extends ModeleBoxes
 			{
 				$num = $db->num_rows($result);
 
-				$i = 0;
+				$line = 0;
 
-                while ($i < $num) {
+                while ($line < $num) {
                     $objp = $db->fetch_object($result);
 
-                    $this->info_box_contents[$i][0] = array(
+                    $this->info_box_contents[$line][0] = array(
                         'td' => 'align="left" width="16"',
                         'logo' => $this->boximg,
                         'url' => $objp->url,
                         'tooltip' => $objp->title,
                         'target' => $objp->target?'newtab':'',
                     );
-                    $this->info_box_contents[$i][1] = array(
+                    $this->info_box_contents[$line][1] = array(
                         'td' => 'align="left"',
                         'text' => $objp->title,
                         'url' => $objp->url,
@@ -101,13 +101,13 @@ class box_bookmarks extends ModeleBoxes
                         'target' => $objp->target?'newtab':'',
                     );
 
-                    $i++;
+                    $line++;
                 }
 
                 if ($num==0) {
                     $mytxt=$langs->trans("NoRecordedBookmarks");
                     if ($user->rights->bookmark->creer) $mytxt.=' '.$langs->trans("ClickToAdd");
-                    $this->info_box_contents[$i][0] = array(
+                    $this->info_box_contents[$line][0] = array(
                         'td' => 'align="center" colspan="2"',
                         'tooltip' => $mytxt,
                         'url'=> DOL_URL_ROOT.'/bookmarks/list.php', 'text'=>$mytxt,

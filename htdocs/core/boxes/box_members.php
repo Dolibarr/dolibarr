@@ -96,8 +96,8 @@ class box_members extends ModeleBoxes
 			{
 				$num = $db->num_rows($result);
 
-				$i = 0;
-				while ($i < $num)
+				$line = 0;
+				while ($line < $num)
 				{
 					$objp = $db->fetch_object($result);
 					$datec=$db->jdate($objp->datec);
@@ -105,6 +105,7 @@ class box_members extends ModeleBoxes
 
 					$memberstatic->lastname=$objp->lastname;
 					$memberstatic->firstname=$objp->firstname;
+                    $memberstatic->ref = $objp->rowid;
 
 					if (! empty($objp->fk_soc)) {
 						$memberstatic->socid = $objp->fk_soc;
@@ -114,35 +115,33 @@ class box_members extends ModeleBoxes
 						$memberstatic->name=$objp->company;
 					}
 
-                    $this->info_box_contents[$i][0] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => $this->boximg,
-                        'tooltip' => $memberstatic->getFullName($langs),
-                        'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid,
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $memberstatic->getNomUrl(1),
+                        'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][1] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $memberstatic->getFullName($langs),
-                        'tooltip' => $memberstatic->getFullName($langs),
                         'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid,
                     );
 
-                    $this->info_box_contents[$i][2] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
                         'text' => dol_print_date($datem, "day"),
                     );
 
-                    $this->info_box_contents[$i][3] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $memberstatic->LibStatut($objp->status,$objp->cotisation,$db->jdate($objp->date_end_subscription),3),
                     );
 
-                    $i++;
+                    $line++;
                 }
 
                 if ($num==0)
-                    $this->info_box_contents[$i][0] = array(
+                    $this->info_box_contents[$line][0] = array(
                         'td' => 'align="center"',
                         'text'=>$langs->trans("NoRecordedCustomers"),
                     );

@@ -57,14 +57,16 @@ class box_propales extends ModeleBoxes
     	$this->max=$max;
 
     	include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
     	$propalstatic=new Propal($db);
+        $societestatic = new Societe($db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."Propals",$max));
 
     	if ($user->rights->propale->lire)
     	{
-    		$sql = "SELECT s.nom as name, s.rowid as socid,";
-    		$sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tms";
+    		$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo,";
+    		$sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
     		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     		$sql.= ", ".MAIN_DB_PREFIX."propal as p";
     		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -82,72 +84,63 @@ class box_propales extends ModeleBoxes
     			$num = $db->num_rows($result);
     			$now=dol_now();
 
-    			$i = 0;
+    			$line = 0;
 
-                while ($i < $num) {
+                while ($line < $num) {
     				$objp = $db->fetch_object($result);
     				$date=$db->jdate($objp->dp);
     				$datec=$db->jdate($objp->datec);
     				$datem=$db->jdate($objp->tms);
     				$dateterm=$db->jdate($objp->fin_validite);
     				$dateclose=$db->jdate($objp->date_cloture);
+                    $propalstatic->id = $objp->rowid;
+                    $propalstatic->ref = $objp->ref;
+                    $propalstatic->total_ht = $objp->total_ht;
+                    $propalstatic->total_tva = $objp->total_tva;
+                    $propalstatic->total_ttc = $objp->total_ttc;
+                    $societestatic->id = $objp->socid;
+                    $societestatic->name = $objp->name;
+                    $societestatic->code_client = $objp->code_client;
+                    $societestatic->logo = $objp->logo;
 
     				$late = '';
     				if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) {
     					$late = img_warning($langs->trans("Late"));
     				}
 
-                    $tooltip = $langs->trans('Proposal') . ': ' . $objp->ref;
-                    $this->info_box_contents[$i][0] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => $this->boximg,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/comm/propal.php?id=".$objp->rowid,
-                    );
-
-                    $this->info_box_contents[$i][1] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => $objp->ref,
+                        'text' => $propalstatic->getNomUrl(1),
                         'text2'=> $late,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/comm/propal.php?id=".$objp->rowid,
+                        'asis' => 1,
                     );
 
-                    $tooltip = $langs->trans('Customer') . ': ' . $objp->name;
-                    $this->info_box_contents[$i][2] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => 'company',
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
-                    );
-
-                    $this->info_box_contents[$i][3] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => dol_trunc($objp->name,40),
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                        'text' => $societestatic->getNomUrl(1,'',40),
+                        'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][4] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
                         'text' => price($objp->total_ht),
                     );
 
-                    $this->info_box_contents[$i][5] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
                         'text' => dol_print_date($date,'day'),
                     );
 
-                    $this->info_box_contents[$i][6] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $propalstatic->LibStatut($objp->fk_statut,3),
                     );
 
-                    $i++;
+                    $line++;
                 }
 
                 if ($num==0)
-                    $this->info_box_contents[$i][0] = array(
+                    $this->info_box_contents[$line][0] = array(
                         'td' => 'align="center"',
                         'text'=>$langs->trans("NoRecordedProposals"),
                     );

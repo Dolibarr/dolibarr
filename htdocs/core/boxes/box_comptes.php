@@ -95,11 +95,11 @@ class box_comptes extends ModeleBoxes
             if ($result) {
                 $num = $db->num_rows($result);
 
-                $i = 0;
+                $line = 0;
                 $solde_total = array();
 
                 $account_static = new Account($db);
-                while ($i < $num) {
+                while ($line < $num) {
                     $objp = $db->fetch_object($result);
 
                     $account_static->id = $objp->rowid;
@@ -109,42 +109,42 @@ class box_comptes extends ModeleBoxes
 
                     $solde_total[$objp->currency_code] += $solde;
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $account_static->getNomUrl(1),
                         'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $objp->number,
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
                         'text' => price($solde, 0, $langs, 0, -1, -1, $objp->currency_code)
                     );
 
-                    $i++;
+                    $line++;
                 }
 
                 // Total
                 foreach ($solde_total as $key=>$solde) {
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'tr' => 'class="liste_total"',
                         'td' => 'align="left" class="liste_total"',
                         'text' => $langs->trans('Total').' '.$key,
                     );
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" class="liste_total"',
                         'text' => '&nbsp;'
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" class="liste_total"',
                         'text' => price($solde, 0, $langs, 0, -1, -1, $key)
                     );
-                    $i++;
+                    $line++;
                 }
 
                 $db->free($result);
