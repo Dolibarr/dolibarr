@@ -18,6 +18,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #1717 ] Sorting unpaid invoices by amount received brings due amount
 - Fix: [ bug #1784 ] MOTD doesn't show up in Amarok theme
 - Fix: Tracking number not visible on shipment pdf
+- Fix: [ bug #1819 ] SQL error when searching for an invoice payment
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
