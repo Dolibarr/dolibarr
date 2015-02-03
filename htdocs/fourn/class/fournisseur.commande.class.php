@@ -88,7 +88,12 @@ class CommandeFournisseur extends CommonOrder
 
     var $extraparams=array();
 
-
+	//Ajout pour askpricesupplier
+	var $origin;
+    var $origin_id;
+    var $linked_objects=array();
+    var $lines = array();
+	
     /**
      * 	Constructor
      *
@@ -958,6 +963,27 @@ class CommandeFournisseur extends CommonOrder
 	            dol_syslog(get_class($this)."::create", LOG_DEBUG);
 	            if ($this->db->query($sql))
 	            {
+	            	
+					//Ajout de la liaison de la demande de prix et la commande fournisseur
+					if ($this->id)
+                    {
+                        $this->ref="(PROV".$this->id.")";
+
+                        // Add object linked
+                        if (is_array($this->linked_objects) && ! empty($this->linked_objects))
+                        {
+                        	foreach($this->linked_objects as $origin => $origin_id)
+                        	{
+                        		$ret = $this->add_object_linked($origin, $origin_id);
+                        		if (! $ret)
+                        		{
+                        			dol_print_error($this->db);
+                        			$error++;
+                        		}
+                        	}
+                        }
+                    }
+					
 	                // On logue creation pour historique
 	                $this->log($user, 0, time());
 
@@ -1472,6 +1498,10 @@ class CommandeFournisseur extends CommonOrder
         	}
         }
 
+		// Delete linked object
+    	$res = $this->deleteObjectLinked();
+    	if ($res < 0) $error++;
+			
         if (! $error)
         {
         	// We remove directory
