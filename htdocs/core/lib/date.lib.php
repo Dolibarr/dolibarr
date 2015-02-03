@@ -479,34 +479,36 @@ function dol_get_last_day($year,$month=12,$gm=false)
 	return $datelim;
 }
 
-/**	Return first day of week for a date
+/**	Return first day of week for a date. First day of week may be monday if option MAIN_START_WEEK is 1.
  *
  *	@param		int		$day		Day
  * 	@param		int		$month		Month
  *  @param		int		$year		Year
  * 	@param		int		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
- *	@return		array				year,month,week,first_day,prev_year,prev_month,prev_day
+ *	@return		array				year,month,week,first_day,first_month,first_year,prev_day,prev_month,prev_year
  */
 function dol_get_first_day_week($day,$month,$year,$gm=false)
 {
 	global $conf;
 
+	//$day=2; $month=2; $year=2015;
 	$date = dol_mktime(0,0,0,$month,$day,$year,$gm);
 
 	//Checking conf of start week
 	$start_week = (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1);
 
-	$tmparray = dol_getdate($date,true);
+	$tmparray = dol_getdate($date,true);	// detail of current day
 
-	//Calculate days to count
+	//Calculate days = offset from current day
 	$days = $start_week - $tmparray['wday'];
  	if ($days>=1) $days=7-$days;
  	$days = abs($days);
     $seconds = $days*24*60*60;
+	//print 'start_week='.$start_week.' tmparray[wday]='.$tmparray['wday'].' day offset='.$days.' seconds offset='.$seconds.'<br>';
 
     //Get first day of week
-    $tmpday = date($tmparray[0])-$seconds;
-	$tmpday = date("d",$tmpday);
+    $tmpdaytms = date($tmparray[0])-$seconds; // $tmparray[0] is day of parameters
+	$tmpday = date("d",$tmpdaytms);
 
 	//Check first day of week is in same month than current day or not
 	if ($tmpday>$day)

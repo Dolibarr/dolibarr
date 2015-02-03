@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -538,6 +539,7 @@ $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('',$langs->trans("Agenda"),$help_url);
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formactions = new FormActions($db);
 
 if ($action == 'create')
@@ -1285,7 +1287,7 @@ if ($id > 0)
 
 		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC))
 		{
-			print '<div style="clear:both;">&nbsp;</div><div class="fichecenter"><div class="fichehalfleft">';
+			print '<div style="clear:both;">&nbsp;<br><br></div><div class="fichecenter"><div class="fichehalfleft">';
             print '<a name="builddoc"></a>'; // ancre
 
             /*
