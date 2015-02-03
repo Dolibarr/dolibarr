@@ -47,6 +47,7 @@ AddAskPriceSupplier=Créer une demande de prix
 AskPriceSupplierRefFourn=Réf. fournisseur
 AskPriceSupplierDate=Date de livraison
 AskPriceSupplierRefFournNotice=Avant de clôturer à "Acceptée", pensez à saisir les références fournisseurs.
+RelatedAskPriceSupplier=Demandes de prix fournisseurs associées
 # # Modifié
 ConfirmValidateAsk=Êtes-vous sûr de vouloir valider cette demande de prix sous la référence <b>%s</b> ?
 DateAsk=Date de demande
