@@ -174,7 +174,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 	if ( isset( $_FILES['NewFile'] ) && !is_null($_FILES['NewFile']['tmp_name'])
        // This is for the QuickUpload tab box
-        or (isset($_FILES['upload']) and !is_null($_FILES['upload']['tmp_name'])))
+        or (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name'])))
 	{
 		global $Config ;
 

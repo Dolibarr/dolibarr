@@ -882,7 +882,7 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-                if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() and is_object($product->stock_warehouse[$warehouse_id])))
+                if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() && is_object($product->stock_warehouse[$warehouse_id])))
 				{
 	                // Quantity to send
 	                print '<td align="center">';
