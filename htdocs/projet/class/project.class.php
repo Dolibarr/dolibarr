@@ -398,7 +398,7 @@ class Project extends CommonObject
      * 	@param		string		$datefieldname	name of table associated of the type
      *  @param		string		$dates			Start date (at 00:00:00)
      *  @param		string		$datee			End date (at 23:00:00)
-     * 	@return		mixed						List of orders linked to project, < 0 or string if error
+     * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
      */
     function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
     {
@@ -789,7 +789,11 @@ class Project extends CommonObject
         $result = '';
         $lien = '';
         $lienfin = '';
-        $label = $langs->trans("ShowProject") . ': ' . $this->ref . ($this->title ? ' - ' . $this->title : '');
+        $label = '<u>' . $langs->trans("ShowProject") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->title))
+            $label .= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->title;
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if ($option != 'nolink') {

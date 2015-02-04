@@ -398,6 +398,8 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
+    print dol_fiche_head();
+
     print '<table class="border" width="100%">';
 
     $defaultref='';
@@ -431,7 +433,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
 
     // Label
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="40" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
 
     // Customer
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
@@ -476,7 +478,9 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     print '</table>';
 
-    print '<br><div class="center">';
+    dol_fiche_end();
+
+    print '<div class="center">';
     print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
     if (! empty($backtopage))
     {
@@ -502,9 +506,6 @@ else
     $userDelete = $object->restrictedProjectArea($user,'delete');
     //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
-
-    $head=project_prepare_head($object);
-    dol_fiche_head($head, 'project', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
 
     // Confirmation validation
     if ($action == 'validate')
@@ -548,14 +549,20 @@ else
         print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloneProject"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 240);
     }
 
+
+
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="id" value="'.$object->id.'">';
+    print '<input type="hidden" name="comefromclone" value="'.$comefromclone.'">';
+
+
+    $head=project_prepare_head($object);
+    dol_fiche_head($head, 'project', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+
     if ($action == 'edit' && $userWrite > 0)
     {
-        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="update">';
-        print '<input type="hidden" name="id" value="'.$object->id.'">';
-        print '<input type="hidden" name="comefromclone" value="'.$comefromclone.'">';
-
         print '<table class="border" width="100%">';
 
         // Ref
@@ -564,7 +571,7 @@ else
 
         // Label
         print '<tr><td>'.$langs->trans("Label").'</td>';
-        print '<td><input size="30" name="title" value="'.$object->title.'"></td></tr>';
+        print '<td><input size="40" name="title" value="'.$object->title.'"></td></tr>';
 
         // Customer
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
@@ -610,12 +617,6 @@ else
         }
 
         print '</table>';
-
-        print '<div align="center"><br>';
-        print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; ';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
-
-        print '</form>';
     }
     else
     {
@@ -679,6 +680,17 @@ else
 
     dol_fiche_end();
 
+	if ($action == 'edit' && $userWrite > 0)
+	{
+	    print '<div align="center">';
+    	print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; &nbsp; ';
+    	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    	print '</div>';
+	}
+
+    print '</form>';
+
+
     /*
      * Boutons actions
      */
@@ -691,11 +703,11 @@ else
         {
             if ($userWrite > 0)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Valid").'</a>';
+                print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
             }
             else
             {
-                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Valid').'</a>';
+                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
             }
         }
 

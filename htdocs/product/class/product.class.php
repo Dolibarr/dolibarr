@@ -10,6 +10,7 @@
  * Copyright (C) 2011-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2014		Ion agorria			<ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@
  *	\ingroup    produit
  *	\brief      File of class to manage predefined products or services
  */
-require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 
@@ -165,6 +166,8 @@ class Product extends CommonObject
 
 	//note not visible on orders and invoices
 	var $note;
+
+    var $fk_price_expression;
 
 	/**
 	 *  Constructor
@@ -1072,10 +1075,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			while ( $obj = $this->db->fetch_object($result) )
+			while ($obj = $this->db->fetch_object($result))
 			{
 				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
-				if( $obj->lang == $current_lang ) // si on a les traduct. dans la langue courante on les charge en infos principales.
+				if ($obj->lang == $current_lang)  // si on a les traduct. dans la langue courante on les charge en infos principales.
 				{
 					$this->label		= $obj->label;
 					$this->description	= $obj->description;
@@ -1090,7 +1093,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$this->error="Error: ".$this->db->error()." - ".$sql;
+			$this->error="Error: ".$this->db->lasterror()." - ".$sql;
 			return -1;
 		}
 	}
@@ -1098,9 +1101,9 @@ class Product extends CommonObject
 
 
 	/**
-	 *  Ajoute un changement de prix en base dans l'historique des prix
+	 *  Insert a track that we changed a customer price
 	 *
-	 *	@param  	User	$user       Objet utilisateur qui modifie le prix
+	 *	@param  	User	$user       User making change
 	 *	@param		int		$level		price level to change
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
@@ -1112,16 +1115,16 @@ class Product extends CommonObject
 
 		// Add new price
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,tosell,tva_tx,recuperableonly,";
-		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc,price_by_qty,entity) ";
+		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
 		$sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.",".$this->tva_npr.",";
-		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity;
+		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".($this->fk_price_expression > 0?$this->fk_price_expression:'null');
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."_log_price", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if(! $resql)
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -1171,12 +1174,11 @@ class Product extends CommonObject
 	 */
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
 		$result = 0;
 
 		// We do select by searching with qty and prodfournprice
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity,";
-		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_price_expression";
+		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
 		if ($qty) $sql.= " AND pfp.quantity <= ".$qty;
@@ -1188,9 +1190,11 @@ class Product extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			if ($obj && $obj->quantity > 0)		// If found
 			{
-                if (!empty($obj->fk_price_expression)) {
-                    $priceparser = new PriceParser($this->db);
-                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_price_expression, $obj->quantity, $obj->tva_tx);
+                if (!empty($obj->fk_supplier_price_expression))
+                {
+					require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+                	$priceparser = new PriceParser($this->db);
+                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_supplier_price_expression, $obj->quantity, $obj->tva_tx);
                     if ($price_result >= 0) {
                     	$obj->price = $price_result;
                     }
@@ -1206,7 +1210,7 @@ class Product extends CommonObject
 			{
 				// We do same select again but searching with qty, ref and id product
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
-				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx, pfp.fk_price_expression";
+				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " WHERE pfp.ref_fourn = '".$fourn_ref."'";
 				$sql.= " AND pfp.fk_product = ".$product_id;
@@ -1221,9 +1225,11 @@ class Product extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($obj && $obj->quantity > 0)		// If found
 					{
-		                if (!empty($obj->fk_price_expression)) {
-		                    $priceparser = new PriceParser($this->db);
-		                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_price_expression, $obj->quantity, $obj->tva_tx);
+		                if (!empty($obj->fk_supplier_price_expression))
+		                {
+							require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+		                	$priceparser = new PriceParser($this->db);
+		                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_supplier_price_expression, $obj->quantity, $obj->tva_tx);
 		                    if ($result >= 0) {
 		                    	$obj->price = $price_result;
 		                    }
@@ -1397,16 +1403,50 @@ class Product extends CommonObject
 		return 1;
 	}
 
+    /**
+     *  Sets the supplier price expression
+     *
+     *  @param  int     $expression_id	Expression
+     *  @return int                 	<0 if KO, >0 if OK
+     */
+    function setPriceExpression($expression_id)
+    {
+        global $conf;
+
+        // Clean parameters
+        $this->db->begin();
+        $expression_id = $expression_id != 0 ? $expression_id : 'NULL';
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX."product";
+        $sql.= " SET fk_price_expression = ".$expression_id;
+        $sql.= " WHERE rowid = ".$this->id;
+
+        dol_syslog(get_class($this)."::setPriceExpression", LOG_DEBUG);
+
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error()." sql=".$sql;
+            $this->db->rollback();
+            return -1;
+        }
+    }
 
 	/**
 	 *  Load a product in memory from database
 	 *
-	 *  @param	int		$id      	Id of product/service to load
-	 *  @param  string	$ref     	Ref of product/service to load
-	 *  @param	string	$ref_ext	Ref ext of product/service to load
-	 *  @return int     			<0 if KO, 0 if not found, >0 if OK
+	 *  @param	int		$id      			Id of product/service to load
+	 *  @param  string	$ref     			Ref of product/service to load
+	 *  @param	string	$ref_ext			Ref ext of product/service to load
+     *  @param	int		$ignore_expression  Ignores the math expression for calculating price and uses the db value instead
+	 *  @return int     					<0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id='',$ref='',$ref_ext='')
+	function fetch($id='', $ref='', $ref_ext='', $ignore_expression = 0)
 	{
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -1428,7 +1468,7 @@ class Product extends CommonObject
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch";
-		$sql.= " ,ref_ext";
+		$sql.= " ,ref_ext, fk_price_expression";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
@@ -1505,6 +1545,7 @@ class Product extends CommonObject
 				$this->entity					= $obj->entity;
 
 				$this->ref_ext					= $obj->ref_ext;
+				$this->fk_price_expression		= $obj->fk_price_expression;
 
 				$this->db->free($resql);
 
@@ -1640,9 +1681,22 @@ class Product extends CommonObject
 					}
 				}
 
+                if (!empty($this->fk_price_expression) && empty($ignore_expression))
+                {
+					require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+                	$priceparser = new PriceParser($this->db);
+                    $price_result = $priceparser->parseProduct($this);
+                    if ($price_result >= 0)
+                    {
+                        $this->price = $price_result;
+                        //Calculate the VAT
+						$this->price_ttc = price2num($this->price) * (1 + ($this->tva_tx / 100));
+						$this->price_ttc = price2num($this->price_ttc,'MU');
+                    }
+                }
+
 				// We should not load stock at each fetch. If someone need stock, he must call load_stock after fetch.
 				//$res=$this->load_stock();
-
 				// instead we just init the stock_warehouse array
 				$this->stock_warehouse = array();
 
@@ -2809,14 +2863,21 @@ class Product extends CommonObject
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$result='';
         $newref=$this->ref;
         if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
-        if ($this->type == 0) $label = $langs->trans("ShowProduct").': '.$this->ref.' '.$this->label;
-        if ($this->type == 1) $label = $langs->trans("ShowService").': '.$this->ref.' '.$this->label;
-        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        if ($this->type == 0) $label = '<u>' . $langs->trans("ShowProduct") . '</u>';
+        if ($this->type == 1) $label = '<u>' . $langs->trans("ShowService") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('ProductRef') . ':</b> ' . $this->ref;
+        if (! empty($this->label))
+            $label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
+        if (! empty($this->entity))
+            $label .= '<br>' . $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
+
+        $linkclose = '" title="'.str_replace('\n', '', dol_escape_htmltag($label, 1)).'" class="classfortooltip">';
 
         if ($option == 'supplier') {
             $lien = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;

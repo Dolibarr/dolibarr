@@ -2258,7 +2258,7 @@ if ($action == 'create')
 
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
-		$formproject->select_projects($soc->id, $projectid, 'projectid');
+		$formproject->select_projects($soc->id, $projectid, 'projectid', 0);
 		print '</td></tr>';
 	}
 
@@ -2538,7 +2538,8 @@ if ($action == 'create')
 	}
 
 	// Confirmation de la validation
-	if ($action == 'valid') {
+	if ($action == 'valid')
+	{
 		// on verifie si l'objet est en numerotation provisoire
 		$objectref = substr($object->ref, 1, 4);
 		if ($objectref == 'PROV') {
@@ -2569,7 +2570,8 @@ if ($action == 'create')
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
+		{
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
@@ -3352,9 +3354,9 @@ if ($action == 'create')
 
 		print '</td><td colspan="3">';
 		if ($action == 'classify') {
-			$form->form_project($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'projectid');
+			$form->form_project($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
 		} else {
-			$form->form_project($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'none');
+			$form->form_project($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0);
 		}
 		print '</td>';
 		print '</tr>';

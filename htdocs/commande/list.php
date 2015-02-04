@@ -6,6 +6,7 @@
  * Copyright (C) 2012      Juanjo Menent          <jmenent@2byte.es>
  * Copyright (C) 2013      Christophe Battarel    <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador        <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +110,7 @@ $companystatic = new Societe($db);
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 llxHeader('',$langs->trans("Orders"),$help_url);
 
-$sql = 'SELECT s.nom as name, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
+$sql = 'SELECT s.nom as name, s.rowid as socid, s.client, s.code_client, c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client,';
 $sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
@@ -323,6 +324,7 @@ if ($resql)
 	$var=true;
 	$total=0;
 	$subtotal=0;
+    $productstat_cache=array();
 
     $generic_commande = new Commande($db);
     $generic_product = new Product($db);
@@ -334,6 +336,10 @@ if ($resql)
 
         $generic_commande->id=$objp->rowid;
         $generic_commande->ref=$objp->ref;
+        $generic_commande->ref_client = $objp->ref_client;
+        $generic_commande->total_ht = $objp->total_ht;
+        $generic_commande->total_tva = $objp->total_tva;
+        $generic_commande->total_ttc = $objp->total_ttc;
         $generic_commande->lines=array();
         $generic_commande->getLinesArray();
 
@@ -351,17 +357,32 @@ if ($resql)
                 if ($generic_commande->lines[$lig]->product_type==0) {
                     $nbprod++; // order contains real products
                     $generic_product->id = $generic_commande->lines[$lig]->fk_product;
-                    $generic_product->load_stock();
+                    if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
+                        $generic_product->load_stock(true);
+                        $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
+                    } else {
+                        $generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
+                    }
                     // stock order and stock order_supplier
                     $stock_order=0;
                     $stock_order_supplier=0;
                     if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
                         if (! empty($conf->commande->enabled)) {
-                            $generic_product->load_stats_commande(0,'1,2');
+                            if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'])) {
+                                $generic_product->load_stats_commande(0,'1,2',true);
+                                $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
+                            } else {
+                                $generic_product->stats_commande['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'];
+                            }
                             $stock_order=$generic_product->stats_commande['qty'];
                         }
                         if (! empty($conf->fournisseur->enabled)) {
-                            $generic_product->load_stats_commande_fournisseur(0,'3');
+                            if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
+                                $generic_product->load_stats_commande_fournisseur(0,'3',true);
+                                $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
+                            } else {
+                                $generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'];
+                            }
                             $stock_order_supplier=$generic_product->stats_commande_fournisseur['qty'];
                         }
                     }
@@ -421,6 +442,7 @@ if ($resql)
 
 		// Company
 		$companystatic->id=$objp->socid;
+        $companystatic->code_client = $objp->code_client;
 		$companystatic->name=$objp->name;
 		$companystatic->client=$objp->client;
 		print '<td>';

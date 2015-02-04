@@ -1218,7 +1218,9 @@ class Expedition extends CommonObject
 		global $langs;
 
 		$result='';
-        $label=$langs->trans("ShowSending").': '.$this->ref;
+        $label = '<u>' . $langs->trans("ShowSending") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
@@ -1523,7 +1525,7 @@ class Expedition extends CommonObject
     }
 
 	/**
-	 * Get tracking url status
+	 * Forge an set tracking url
 	 *
 	 * @param	string	$value		Value
 	 * @return	void

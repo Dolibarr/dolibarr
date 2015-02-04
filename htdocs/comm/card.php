@@ -265,7 +265,8 @@ if ($id > 0)
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
 	if (! empty($object->country_code))
 	{
-		$img=picto_from_langcode($object->country_code);
+		//$img=picto_from_langcode($object->country_code);
+		$img='';
 		if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
 		else print ($img?$img.' ':'').$object->country;
 	}
@@ -500,8 +501,11 @@ if ($id > 0)
 	{
 		$propal_static = new Propal($db);
 
-		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
-		$sql.= " p.datep as dp, p.fin_validite as datelimite";
+		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht";
+        $sql.= ", p.tva as total_tva";
+        $sql.= ", p.total as total_ttc";
+        $sql.= ", p.ref, p.ref_client, p.remise";
+		$sql.= ", p.datep as dp, p.fin_validite as datelimite";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql.= " AND s.rowid = ".$object->id;
@@ -532,8 +536,12 @@ if ($id > 0)
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
                 print '<td class="nowrap">';
-                $propal_static->id=$objp->propalid;
-                $propal_static->ref=$objp->ref;
+                $propal_static->id = $objp->propalid;
+                $propal_static->ref = $objp->ref;
+                $propal_static->ref_client = $objp->ref_client;
+                $propal_static->total_ht = $objp->total_ht;
+                $propal_static->total_tva = $objp->total_tva;
+                $propal_static->total_ttc = $objp->total_ttc;
                 print $propal_static->getNomUrl(1);
                 if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 ) {
                     print " ".img_warning();
@@ -560,9 +568,12 @@ if ($id > 0)
 	{
 		$commande_static=new Commande($db);
 
-		$sql = "SELECT s.nom, s.rowid,";
-		$sql.= " c.rowid as cid, c.total_ht, c.ref, c.fk_statut, c.facture,";
-		$sql.= " c.date_commande as dc";
+        $sql = "SELECT s.nom, s.rowid";
+        $sql.= ", c.rowid as cid, c.total_ht";
+        $sql.= ", c.tva as total_tva";
+        $sql.= ", c.total_ttc";
+        $sql.= ", c.ref, c.ref_client, c.fk_statut, c.facture";
+        $sql.= ", c.date_commande as dc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql.= " WHERE c.fk_soc = s.rowid ";
 		$sql.= " AND s.rowid = ".$object->id;
@@ -609,8 +620,12 @@ if ($id > 0)
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
                 print '<td class="nowrap">';
-                $commande_static->id=$objp->cid;
-                $commande_static->ref=$objp->ref;
+                $commande_static->id = $objp->cid;
+                $commande_static->ref = $objp->ref;
+                $commande_static->ref_client=$objp->ref_client;
+                $commande_static->total_ht = $objp->total_ht;
+                $commande_static->total_tva = $objp->total_tva;
+                $commande_static->total_ttc = $objp->total_ttc;
                 print $commande_static->getNomUrl(1);
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
@@ -749,15 +764,18 @@ if ($id > 0)
 	{
 		$facturestatic = new Facture($db);
 
-		$sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
-		$sql.= ' f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut,';
-		$sql.= ' s.nom, s.rowid as socid,';
-		$sql.= ' SUM(pf.amount) as am';
+        $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount';
+        $sql.= ', f.total';
+        $sql.= ', f.tva as total_tva';
+        $sql.= ', f.total_ttc';
+		$sql.= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut';
+		$sql.= ', s.nom, s.rowid as socid';
+		$sql.= ', SUM(pf.amount) as am';
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
 		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
 		$sql.= " AND f.entity = ".$conf->entity;
-		$sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
+		$sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.amount, f.total, f.tva, f.total_ttc,';
 		$sql.= ' f.datef, f.datec, f.paye, f.fk_statut,';
 		$sql.= ' s.nom, s.rowid';
 		$sql.= " ORDER BY f.datef DESC, f.datec DESC";
@@ -786,9 +804,12 @@ if ($id > 0)
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
-				$facturestatic->id=$objp->facid;
-				$facturestatic->ref=$objp->facnumber;
-				$facturestatic->type=$objp->type;
+				$facturestatic->id = $objp->facid;
+				$facturestatic->ref = $objp->facnumber;
+				$facturestatic->type = $objp->type;
+                $facturestatic->total_ht = $objp->total;
+                $facturestatic->total_tva = $objp->total_tva;
+                $facturestatic->total_ttc = $objp->total_ttc;
 				print $facturestatic->getNomUrl(1);
 				print '</td>';
 				if ($objp->df > 0)

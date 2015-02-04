@@ -314,25 +314,28 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * @param	string	$htmlname					Name of html select field
  * @param	array	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
+ * @param	int		$forcefocus					Force focus on field
  * @return	string								Return html string to convert a select field into a combo
  */
-function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
+function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0)
 {
 	global $conf;
 
 	//if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
-	//if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile
+	if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
-	if (empty($conf->use_javascript_ajax)) return ''; 
-	
+	if (empty($conf->use_javascript_ajax)) return '';
+
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
-	
+
 	$msg = '<script type="text/javascript">
 		$(document).ready(function() {
 			$(\'#'.$htmlname.'\').select2({
 				width: \'resolve\',
 				minimumInputLength: '.$minLengthToAutocomplete.',
-			});';
+			})';
+	if ($forcefocus) $msg.= '.select2(\'focus\')';
+	$msg.= ';';
 
 	if (count($event))
 	{
@@ -345,7 +348,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 	    			}
 				});
 			});
-			
+
 			function runJsCodeForEvent'.$htmlname.'(obj) {
 				var id = $("#'.$htmlname.'").val();
 				var method = obj.method;
@@ -383,7 +386,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 				);
 			}';
 	}
-	
+
 	$msg.= '});'."\n";
     $msg.= "</script>\n";
 

@@ -98,8 +98,16 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max=10;
 
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_societe, u.datec, u.statut, u.entity, u.ldap_sid,";
-$sql.= " s.nom as name, s.canvas";
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_societe, u.datec, u.statut";
+$sql.= ", u.entity";
+$sql.= ", u.ldap_sid";
+$sql.= ", u.photo";
+$sql.= ", u.admin";
+$sql.= ", u.email";
+$sql.= ", u.skype";
+$sql.= ", s.nom as name";
+$sql.= ", s.code_client";
+$sql.= ", s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
 if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
@@ -129,7 +137,18 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
-		print '<td><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.dolGetFirstLastname($obj->firstname,$obj->lastname).'</a>';
+		print '<td>';
+        $fuserstatic->id = $obj->rowid;
+        $fuserstatic->statut = $obj->statut;
+        $fuserstatic->lastname = $obj->lastname;
+        $fuserstatic->firstname = $obj->firstname;
+        $fuserstatic->login = $obj->login;
+        $fuserstatic->photo = $obj->photo;
+        $fuserstatic->admin = $obj->admin;
+        $fuserstatic->email = $obj->email;
+        $fuserstatic->skype = $obj->skype;
+        $fuserstatic->societe_id = $obj->fk_societe;
+        print $fuserstatic->getNomUrl(1);
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{
 			print img_picto($langs->trans("SuperAdministrator"),'redstar');
@@ -145,6 +164,7 @@ if ($resql)
 		{
 			$companystatic->id=$obj->fk_societe;
             $companystatic->name=$obj->name;
+            $companystatic->code_client = $obj->code_client;
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
 		}
@@ -175,8 +195,6 @@ if ($resql)
 		print '</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
         print '<td align="right">';
-        $fuserstatic->id=$obj->rowid;
-        $fuserstatic->statut=$obj->statut;
         print $fuserstatic->getLibStatut(3);
         print '</td>';
 

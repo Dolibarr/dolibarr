@@ -395,6 +395,7 @@ print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
+$var=true;
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot,0);
@@ -488,6 +489,7 @@ print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
+$var=true;
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot.'doc/',0);

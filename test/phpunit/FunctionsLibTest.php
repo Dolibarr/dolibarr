@@ -646,6 +646,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $this->savlangs=$langs;
         $this->savdb=$db;
 
+        // Sellers
         $companyfrnovat=new Societe($db);
         $companyfrnovat->country_code='FR';
         $companyfrnovat->tva_assuj=0;
@@ -653,53 +654,88 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $companyfr=new Societe($db);
         $companyfr->country_code='FR';
         $companyfr->tva_assuj=1;
+		$companyfr->tva_intra='FR9999';
 
+        // Buyers
         $companymc=new Societe($db);
         $companymc->country_code='MC';
         $companymc->tva_assuj=1;
+		$companyfr->tva_intra='MC9999';
 
         $companyit=new Societe($db);
         $companyit->country_code='IT';
         $companyit->tva_assuj=1;
         $companyit->tva_intra='IT99999';
 
-        $notcompanyit=new Societe($db);
-        $notcompanyit->country_code='IT';
-        $notcompanyit->tva_assuj=1;
-        $notcompanyit->tva_intra='';
-        $notcompanyit->typent_code='TE_PRIVATE';
+        $companyde=new Societe($db);
+        $companyde->country_code='DE';
+        $companyde->tva_assuj=1;
+        $companyde->tva_intra='DE99999';
+
+        $notcompanyde=new Societe($db);
+        $notcompanyde->country_code='DE';
+        $notcompanyde->tva_assuj=0;
+        $notcompanyde->tva_intra='';
+        $notcompanyde->typent_code='TE_PRIVATE';
 
         $companyus=new Societe($db);
         $companyus->country_code='US';
         $companyus->tva_assuj=1;
         $companyus->tva_intra='';
 
-        // Test RULE 0 (FR-IT)
+
+        // Test RULE 0 (FR-DE)
         // Not tested
 
         // Test RULE 1
         $vat=get_default_tva($companyfrnovat,$companymc,0);
-        $this->assertEquals(0,$vat);
+        $this->assertEquals(0,$vat,'RULE 1');
 
         // Test RULE 2 (FR-FR)
         $vat=get_default_tva($companyfr,$companyfr,0);
-        $this->assertEquals(20,$vat);
+        $this->assertEquals(20,$vat,'RULE 2');
 
         // Test RULE 2 (FR-MC)
         $vat=get_default_tva($companyfr,$companymc,0);
-        $this->assertEquals(20,$vat);
+        $this->assertEquals(20,$vat,'RULE 2');
 
-        // Test RULE 3 (FR-IT)
+        // Test RULE 3 (FR-DE company)
         $vat=get_default_tva($companyfr,$companyit,0);
-        $this->assertEquals(0,$vat);
+        $this->assertEquals(0,$vat,'RULE 3');
 
-        // Test RULE 4 (FR-IT)
-        $vat=get_default_tva($companyfr,$notcompanyit,0);
-        $this->assertEquals(20,$vat);
+        // Test RULE 4 (FR-DE not a company)
+        $vat=get_default_tva($companyfr,$notcompanyde,0);
+        $this->assertEquals(20,$vat,'RULE 4');
 
         // Test RULE 5 (FR-US)
         $vat=get_default_tva($companyfr,$companyus,0);
-        $this->assertEquals(0,$vat);
+        $this->assertEquals(0,$vat,'RULE 5');
+
+
+        // We do same tests but with option SERVICE_ARE_ECOMMERCE_200238EC on.
+        $conf->global->SERVICE_ARE_ECOMMERCE_200238EC = 1;
+
+
+        // Test RULE 1 (FR-US)
+        $vat=get_default_tva($companyfr,$companyus,0);
+        $this->assertEquals(0,$vat,'RULE 1 ECOMMERCE_200238EC');
+
+        // Test RULE 2 (FR-FR)
+        $vat=get_default_tva($companyfr,$companyfr,0);
+        $this->assertEquals(20,$vat,'RULE 2 ECOMMERCE_200238EC');
+
+        // Test RULE 3 (FR-DE company)
+        $vat=get_default_tva($companyfr,$companyde,0);
+        $this->assertEquals(0,$vat,'RULE 3 ECOMMERCE_200238EC');
+
+        // Test RULE 4 (FR-DE not a company)
+        $vat=get_default_tva($companyfr,$notcompanyde,0);
+        $this->assertEquals(19,$vat,'RULE 4 ECOMMERCE_200238EC');
+
+        // Test RULE 5 (FR-US)
+        $vat=get_default_tva($companyfr,$companyus,0);
+        $this->assertEquals(0,$vat,'RULE 5 ECOMMERCE_200238EC');
+
     }
 
     /**
@@ -836,7 +872,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(1000, price2num('1 000.0'));
 		$this->assertEquals(1000, price2num('1 000','MT'));
 		$this->assertEquals(1000, price2num('1 000','MU'));
-		
+
 		$this->assertEquals(1000.123456, price2num('1 000.123456'));
 
 		// Round down
@@ -850,8 +886,36 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 		// Text can't be converted
 		$this->assertEquals('12.4$',price2num('12.4$'));
 		$this->assertEquals('12r.4$',price2num('12r.4$'));
-		
-		return true;		
+
+		return true;
+	}
+
+	/**
+	 * testDolGetDate
+	 *
+	 * @return boolean
+	 */
+	public function testDolGetDate()
+	{
+		global $conf;
+
+		$conf->global->MAIN_START_WEEK = 0;
+
+		$tmp=dol_getdate(1);				// 1/1/1970 and 1 second = thirday
+		$this->assertEquals(4, $tmp['wday']);
+
+		$tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
+		$this->assertEquals(5, $tmp['wday']);
+
+		$conf->global->MAIN_START_WEEK = 1;
+
+		$tmp=dol_getdate(1);				// 1/1/1970 and 1 second = thirday
+		$this->assertEquals(4, $tmp['wday']);
+
+		$tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
+		$this->assertEquals(5, $tmp['wday']);
+
+		return true;
 	}
 
 }
