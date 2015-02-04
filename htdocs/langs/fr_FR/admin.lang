@@ -1158,6 +1158,7 @@ AskPriceSupplierPDFModules=Modèles de documents de demandes de prix fournisseur
 AskPriceSupplierPDFModules=Modèles de documents de demandes de prix fournisseurs
 FreeLegalTextOnAskPriceSupplier=Mention complémentaire sur les demandes de prix fournisseurs
 WatermarkOnDraftAskPriceSupplier=Filigrane sur les brouillons de demandes de prix (aucun si vide)
+BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Saisir le compte bancaire cible lors de la demande de prix
 ##### Orders #####
 OrdersSetup=Configuration du module Commandes
 OrdersNumberingModules=Modèles de numérotation des commandes

@@ -22,12 +22,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- *	    \file       htdocs/admin/propal.php
- *		\ingroup    propale
- *		\brief      Setup page for commercial proposal module
- */
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
@@ -134,22 +128,6 @@ if ($action == 'set_ASKPRICESUPPLIER_FREE_TEXT')
 	$freetext = GETPOST('ASKPRICESUPPLIER_FREE_TEXT');	// No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "ASKPRICESUPPLIER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-	{
-		setEventMessage($langs->trans("SetupSaved"));
-	}
-	else
-	{
-		setEventMessage($langs->trans("Error"),'errors');
-	}
-}
-
-if ($action == 'setdefaultduration')
-{
-	$res = dolibarr_set_const($db, "ASKPRICESUPPLIER_VALIDITY_DURATION",$value,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -282,7 +260,6 @@ print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
-
 foreach ($dirmodels as $reldir)
 {
 	$dir = dol_buildpath($reldir."core/modules/askpricesupplier/");
@@ -296,7 +273,7 @@ foreach ($dirmodels as $reldir)
 
 			while (($file = readdir($handle))!==false)
 			{
-				if (substr($file, 0, 12) == 'mod_askpricesupplier_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+				if (substr($file, 0, 21) == 'mod_askpricesupplier_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
@@ -546,32 +523,6 @@ print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
 print "<td>&nbsp;</td>\n";
 print "</tr>";
 
-$var=!$var;
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";
-print "<tr ".$bc[$var].">";
-print '<td>'.$langs->trans("DefaultAskDurationValidity").'</td>';
-print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->ASKPRICESUPPLIER_VALIDITY_DURATION."\"></td>";
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-print '</tr>';
-print '</form>';
-
-/*
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="setusecustomercontactasrecipient">';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
-print '</td><td width="60" align="center">';
-print $form->selectyesno("value",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
-*/
-
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -622,7 +573,7 @@ else
 {
     $var=!$var;
     print '<tr '.$bc[$var].'><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPLLIER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 
 print '</table>';

@@ -17,11 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- *  \file		htdocs/comm/propal/tpl/linkedobjectblock.tpl.php
- *  \ingroup	propal
- *  \brief		Template to show objects linked to proposals
- */
 ?>
 
 <!-- BEGIN PHP TEMPLATE -->

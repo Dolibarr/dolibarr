@@ -18,12 +18,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- *      \file       htdocs/comm/admin/propal_extrafields.php
- *		\ingroup    propal
- *		\brief      Page to setup extra fields of third party
- */
-
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/askpricesupplier.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -59,7 +53,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("Proposals");
+$textobject=$langs->transnoentitiesnoconv("CommRequests");
 
 
 llxHeader('',$langs->trans("AskPriceSupplierSetup"));
@@ -69,7 +63,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("AskPriceSupplierSetup"),$linkback,'setup');
 
 
-$head = propal_admin_prepare_head();
+$head = askpricesupplier_admin_prepare_head();
 
 dol_fiche_head($head, 'attributes', $langs->trans("CommRequests"), 0, 'askpricesupplier');
 

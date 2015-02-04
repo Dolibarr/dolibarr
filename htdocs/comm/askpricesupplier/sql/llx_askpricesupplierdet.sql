@@ -22,8 +22,6 @@ CREATE TABLE `llx_askpricesupplierdet` (
   `total_localtax2` double(24,8) DEFAULT '0.00000000',
   `total_ttc` double(24,8) DEFAULT '0.00000000',
   `product_type` int(11) DEFAULT '0',
-  `date_start` datetime DEFAULT NULL,
-  `date_end` datetime DEFAULT NULL,
   `info_bits` int(11) DEFAULT '0',
   `buy_price_ht` double(24,8) DEFAULT '0.00000000',
   `fk_product_fournisseur_price` int(11) DEFAULT NULL,

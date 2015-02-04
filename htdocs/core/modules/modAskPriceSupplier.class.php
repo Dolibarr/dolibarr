@@ -21,11 +21,11 @@
  */
 
 /**
- *	\defgroup   propale     Module commercial proposals
- *	\brief      Module pour gerer la tenue de propositions commerciales
- *	\file       htdocs/core/modules/modPropale.class.php
- *	\ingroup    propale
- *	\brief      Fichier de description et activation du module Propale
+ *	\defgroup   askpricesupplier     Module de demandes de prix fournisseurs
+ *	\brief      Module pour gerer la tenue des demandes fournisseurs
+ *	\file       htdocs/core/modules/modAskPriceSupplier.class.php
+ *	\ingroup    askpricesupplier
+ *	\brief      Fichier de description et activation du module AskPriceSupplier
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -49,22 +49,19 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->numero = 999999;
 
 		$this->family = "products";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "askpricesupplierDESC";
 
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto='askpricesupplier';
 
-		// Data directories to create when module is enabled
 		$this->dirs = array();
 
 		// Dependancies
-		$this->depends = array('modFournisseur');
+		$this->depends = array('modFournisseur', 'modPropale');
 		$this->requiredby = array();
 		$this->config_page_url = array("askpricesupplier.php");
 		$this->langfiles = array("askpricesupplier");
@@ -84,13 +81,6 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_askpricesupplier_marbre";
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des demandes de prix fournisseurs';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ASKPRICESUPPLIER_VALIDITY_DURATION";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "15";
-		$this->const[$r][3] = 'Durée de validitée des demandes de prix fournisseurs';
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -146,33 +136,6 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->rights[$r][1] = 'Cloturer les demandes de prix fournisseurs'; // libelle de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'cloturer';
-
-		// Exports
-		//--------
-		$r=0;
-/*
-		$r++;
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='ProposalsAndProposalsLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_permission[$r]=array(array("propale","export"));
-		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','c.rowid'=>"Id",'c.ref'=>"Ref",'c.ref_client'=>"RefCustomer",'c.fk_soc'=>"IdCompany",'c.datec'=>"DateCreation",'c.datep'=>"DatePropal",'c.fin_validite'=>"DateEndPropal",'c.remise_percent'=>"GlobalDiscount",'c.total_ht'=>"TotalHT",'c.total'=>"TotalTTC",'c.fk_statut'=>'Status','c.note_public'=>"Note",'c.date_livraison'=>'DeliveryDate','c.fk_user_author'=>'CreatedById','uc.login'=>'CreatedByLogin','c.fk_user_valid'=>'ValidatedById','uv.login'=>'ValidatedByLogin','cd.rowid'=>'LineId','cd.label'=>"Label",'cd.description'=>"LineDescription",'cd.product_type'=>'TypeOfLineServiceOrProduct','cd.tva_tx'=>"LineVATRate",'cd.qty'=>"LineQty",'cd.total_ht'=>"LineTotalHT",'cd.total_tva'=>"LineTotalVAT",'cd.total_ttc'=>"LineTotalTTC",'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel');
-		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.datec'=>"Date",'c.datep'=>"Date",'c.fin_validite'=>"Date",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",'c.total'=>"Numeric",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','cd.description'=>"Text",'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",'cd.total_tva'=>"Numeric",'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:Product:label','p.ref'=>'Text','p.label'=>'Text');
-		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.datec'=>"Date",'c.datep'=>"Date",'c.fin_validite'=>"Date",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",'c.total'=>"Numeric",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','cd.description'=>"Text",'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",'cd.total_tva'=>"Numeric",'cd.total_ttc'=>"Numeric",'p.ref'=>'Text','p.label'=>'Text');
-		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','co.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.siret'=>'company','c.rowid'=>"propal",'c.ref'=>"propal",'c.ref_client'=>"propal",'c.fk_soc'=>"propal",'c.datec'=>"propal",'c.datep'=>"propal",'c.fin_validite'=>"propal",'c.remise_percent'=>"propal",'c.total_ht'=>"propal",'c.total'=>"propal",'c.fk_statut'=>"propal",'c.note_public'=>"propal",'c.date_livraison'=>"propal",'cd.rowid'=>'propal_line','cd.label'=>"propal_line",'cd.description'=>"propal_line",'cd.product_type'=>'propal_line','cd.tva_tx'=>"propal_line",'cd.qty'=>"propal_line",'cd.total_ht'=>"propal_line",'cd.total_tva'=>"propal_line",'cd.total_ttc'=>"propal_line",'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product');
-		$this->export_dependencies_array[$r]=array('propal_line'=>'cd.rowid','product'=>'cd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s ';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
-		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'propal as c';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'user as uc ON c.fk_user_author = uc.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'user as uv ON c.fk_user_valid = uc.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'propal_extrafields as extra ON c.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .=', '.MAIN_DB_PREFIX.'propaldet as cd';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cd.fk_product = p.rowid)';
-		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_propal';
-		$this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
- */
  
  		// Main menu entries
 		$this->menu = array();			// List of menus to add
@@ -274,13 +237,3 @@ class modAskPriceSupplier extends DolibarrModules
     }
 
 }
-
-
-/*
- * 
-DROP TABLE llx_askpricesupplier_extrafields;
-DROP TABLE llx_askpricesupplierdet_extrafields;
-DROP TABLE llx_askpricesupplierdet;
-DROP TABLE llx_askpricesupplier;
- * 
- */
