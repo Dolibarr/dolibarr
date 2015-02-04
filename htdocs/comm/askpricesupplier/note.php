@@ -59,7 +59,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
 /* Affichage fiche                                                            */
 /******************************************************************************/
 
-llxHeader('',$langs->trans('CommRequest'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
 
 $form = new Form($db);
 
@@ -85,68 +85,17 @@ if ($id > 0 || ! empty($ref))
 			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
 			print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 			print '</td></tr>';
-
-			// Ref client
-			/* PHFAVRE retrait en temporaire
-			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-			print $langs->trans('RefCustomer').'</td><td align="left">';
-			print '</td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			print $object->ref_client;
-			print '</td>';
-			print '</tr>';
-			*/
 			
 			// Customer
 			if ( is_null($object->client) )
 				$object->fetch_thirdparty();
 			print "<tr><td>".$langs->trans("Supplier")."</td>";
 			print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
-
-			// Ligne info remises tiers
-			/* PHFAVRE retrait en temporaire
-			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
-			if ($societe->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_percent);
-			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$absolute_discount=$societe->getAvailableDiscounts();
-			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-			print '.';
-			print '</td></tr>';
-			*/
-			
-			// Date
-			/* PHFAVRE retrait en temporaire
-			print '<tr><td>'.$langs->trans('AskPriceSupplierDate').'</td><td colspan="3">';
-			print dol_print_date($object->date,'daytext');
-			print '</td>';
-			print '</tr>';
-			*/
 			
 			print '<tr><td>'.$langs->trans('AskPriceSupplierDate').'</td><td colspan="3">';
 			print dol_print_date($object->date_livraison,'daytext');
 			print '</td>';
 			print '</tr>';
-
-			// Date fin propal
-			/* PHFAVRE retrait en temporaire
-			print '<tr>';
-			print '<td>'.$langs->trans('DateEndAsk').'</td><td colspan="3">';
-			if ($object->fin_validite)
-			{
-				print dol_print_date($object->fin_validite,'daytext');
-				if ($object->statut == 1 && $object->fin_validite < ($now - $conf->askpricesupplier->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-			}
-			else
-			{
-				print $langs->trans("Unknown");
-			}
-			print '</td>';
-			print '</tr>';
-			*/
 			
 			print "</table>";
 

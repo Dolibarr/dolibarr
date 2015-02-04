@@ -51,11 +51,9 @@ $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
-$search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_author=GETPOST('search_author','alpha');
-$search_town=GETPOST('search_town','alpha');
 $viewstatut=$db->escape(GETPOST('viewstatut'));
 $object_statut=$db->escape(GETPOST('askpricesupplier_statut'));
 
@@ -86,11 +84,9 @@ if (GETPOST("button_removefilter") || GETPOST("button_removefilter_x"))	// Both 
     $search_user='';
     $search_sale='';
     $search_ref='';
-    $search_refcustomer='';
     $search_societe='';
     $search_montant_ht='';
     $search_author='';
-    $search_town='';
     $year='';
     $month='';
 	$viewstatut='';
@@ -121,7 +117,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
  * View
  */
 
-llxHeader('',$langs->trans('CommRequest'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -139,13 +135,13 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (! $sortfield) $sortfield='p.datep';
+if (! $sortfield) $sortfield='p.date_livraison';
 if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
 
 $sql = 'SELECT s.rowid, s.nom as name, s.town, s.client, s.code_client,';
-$sql.= ' p.rowid as askpricesupplierid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
+$sql.= ' p.rowid as askpricesupplierid, p.note_private, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.date_livraison as dp,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'askpricesupplier as p';
@@ -164,14 +160,8 @@ if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
-if ($search_town) {//restriction
-	$sql .= natural_search('s.town', $search_town);
-}
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
-}
-if ($search_refcustomer) {
-	$sql .= natural_search('p.ref_client', $search_refcustomer);
 }
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
@@ -195,15 +185,15 @@ if ($viewstatut <> '')
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
-    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+    $sql.= " AND p.date_livraison BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
     else if ($year > 0 && ! empty($day))
-    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+    $sql.= " AND p.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
     else
-    $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
+    $sql.= " AND date_format(p.date_livraison, '%m') = '".$month."'";
 }
 else if ($year > 0)
 {
-	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+	$sql.= " AND p.date_livraison BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
@@ -241,13 +231,11 @@ if ($result)
 	if ($month)              $param.='&month='.$month;
 	if ($year)               $param.='&year='.$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
-    if ($search_refcustomer) $param.='&search_refcustomer=' .$search_refcustomer;
     if ($search_societe)     $param.='&search_societe=' .$search_societe;
 	if ($search_user > 0)    $param.='&search_user='.$search_user;
 	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
-	if ($search_town)		 $param.='&search_town='.$search_town;
 	print_barre_liste($langs->trans('ListOfAskPriceSupplier').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	// Lignes des champs de filtre
@@ -282,19 +270,8 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
-	
-	/* PHFAVRE
-	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);
-	*/
-	
-	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
-	
-	/* PHFAVRE
-	print_liste_field_titre($langs->trans('Town'),$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','',$param, 'align="center"',$sortfield,$sortorder);
-	*/
-	
-	print_liste_field_titre($langs->trans('AskPriceSupplierDate'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);	
+	print_liste_field_titre($langs->trans('AskPriceSupplierDate'),$_SERVER["PHP_SELF"],'p.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
@@ -304,21 +281,10 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
-	print '</td>';
-	
-	/* PHFAVRE
-	print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
-	print '</td>';
-	*/
-	
+	print '</td>';	
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
-	
-	/* PHFAVRE
-	print '<td class="liste_titre"><input class="flat" type="text" size="10" name="search_town" value="'.$search_town.'"></td>';
-	*/
 	
 	// Date
 	print '<td class="liste_titre" colspan="1" align="center">';
@@ -328,11 +294,7 @@ if ($result)
 	$syear = $year;
 	$formother->select_year($syear,'year',1, 20, 5);
 	print '</td>';
-	
-	/* PHFAVRE
-	print '<td class="liste_titre" colspan="1">&nbsp;</td>';
-	*/
-	
+		
 	// Amount
 	print '<td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
@@ -391,14 +353,7 @@ if ($result)
 		print '</td></tr></table>';
 
 		print "</td>\n";
-
-		// Customer ref
-		/* PHFAVRE
-		print '<td class="nocellnopadd nowrap">';
-		print $objp->ref_client;
-		print '</td>';
-		*/
-
+		
 		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$objp->rowid;
 
 		// Company
@@ -409,31 +364,11 @@ if ($result)
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
 		print '</td>';
-
-		// Town
-		/* PHFAVRE
-		print '<td class="nocellnopadd">';
-		print $objp->town;
-		print '</td>';
-		*/
 		
-		// Date proposal
+		// Date askprice
 		print '<td align="center">';
 		print dol_print_date($db->jdate($objp->dp), 'day');
 		print "</td>\n";
-
-		// Date end validity
-		/* PHFAVRE
-		if ($objp->dfv)
-		{
-			print '<td align="center">'.dol_print_date($db->jdate($objp->dfv),'day');
-			print '</td>';
-		}
-		else
-		{
-			print '<td>&nbsp;</td>';
-		}
-		*/
 		
 		print '<td align="right">'.price($objp->total_ht)."</td>\n";
 

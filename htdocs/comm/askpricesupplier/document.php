@@ -69,17 +69,12 @@ if ($object->id > 0)
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 }
 
-/*
- * Actions
- */
-
-
 
 /*
  * View
  */
 
-llxHeader('',$langs->trans('CommRequest'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
 
 $form = new Form($db);
 
@@ -98,7 +93,6 @@ if ($object->id > 0)
 		$totalsize+=$file['size'];
 	}
 
-
 	print '<table class="border"width="100%">';
 
 	$linkback='<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -107,21 +101,8 @@ if ($object->id > 0)
 	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
 	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 	print '</td></tr>';
-
-	// Ref client
-	/* PHFAVRE retrait en temporaire
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-	print $langs->trans('RefCustomer').'</td><td align="left">';
-	print '</td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	print $object->ref_client;
-	print '</td>';
-	print '</tr>';
-	*/
 	
-	// Customer
+	// Supplier
 	print "<tr><td>".$langs->trans("Supplier")."</td>";
 	print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 

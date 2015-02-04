@@ -43,7 +43,7 @@ $result = restrictedArea($user, 'askpricesupplier', $id);
  *	View
  */
 
-llxHeader('',$langs->trans('CommRequest'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
 
 $object = new AskPriceSupplier($db);
 $object->fetch($id);
