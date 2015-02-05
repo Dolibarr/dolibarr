@@ -607,7 +607,7 @@ class ImportCsv extends ModeleImports
 					    //var_dump($objimport->array_import_convertvalue); exit;
 
 						// Build SQL request
-						if (empty($tablewithentity[$tablename]))
+						if (empty($tablewithentity_cache[$tablename]))
 						{
 							$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key';
 							if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$objimport->array_import_tables_creator[0][$alias];

@@ -213,6 +213,7 @@
     <rule ref="PEAR.Commenting.FunctionComment.Missing">
         <severity>0</severity>
     </rule>
+    
     <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag">
         <severity>0</severity>
     </rule>
@@ -228,6 +229,23 @@
     <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag">
         <severity>0</severity>
     </rule>
+    
+    <rule ref="PEAR.Commenting.ClassComment.MissingAuthorTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.MissingCategoryTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.MissingLicenseTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.MissingLinkTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.MissingPackageTag">
+        <severity>0</severity>
+    </rule>
+    
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
         <severity>0</severity>
     </rule>
