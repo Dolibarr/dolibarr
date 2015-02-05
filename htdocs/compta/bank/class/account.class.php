@@ -1490,7 +1490,7 @@ class AccountLine extends CommonObject
 
         $result='';
         $label=$langs->trans("ShowTransaction").': '.$this->rowid;
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
         if ($withpicto) $result.=($lien.img_object($label, 'account', 'class="classfortooltip"').$lienfin.' ');

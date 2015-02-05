@@ -104,7 +104,7 @@ if ($result)
 
 		print "<tr ".$bc[$var]."><td>";
 		print $ligne->LibStatut($obj->statut,2).'&nbsp;';
-		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
 
 		print substr('000000'.$obj->rowid, -6)."</a></td>";
 

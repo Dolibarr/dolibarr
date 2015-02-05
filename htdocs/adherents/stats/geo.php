@@ -1,4 +1,4 @@
-<?php //ligne 86
+<?php
 /* Copyright (c) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -310,8 +310,6 @@ if ($mode)
 
 
 dol_fiche_end();
-
-
 
 llxFooter();
 

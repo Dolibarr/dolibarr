@@ -113,7 +113,7 @@ if ($_GET["id"]) {
 			print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
 			print '</tr>';
 			
-			print '<tr><td width="20%">Ligne</td>';
+			print '<tr><td width="20%">' . $langs->trans("Line") . '</td>';
 			print '<td>' . stripslashes(nl2br($objp->description)) . '</td></tr>';
 			print '<tr><td width="20%">' . $langs->trans("ProductLabel") . '</td>';
 			print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';

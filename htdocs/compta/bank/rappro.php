@@ -285,7 +285,7 @@ if ($resql)
 		print '<td class="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
 
 		// Description
-        print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
+        print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
 		$reg=array();
 		preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parentheses on tente recherche de traduction
 		if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
@@ -341,7 +341,7 @@ if ($resql)
 				print ' '.$paymentvatstatic->getNomUrl(1);
 			}
 			else if ($links[$key]['type']=='banktransfert') {
-				print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
+				print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$links[$key]['url_id'].'">';
 				print img_object($langs->trans('ShowTransaction'),'payment').' ';
 				print $langs->trans("TransactionOnTheOtherAccount");
 				print '</a>';
@@ -392,7 +392,7 @@ if ($resql)
             {
                 print '<td align="center" width="30" class="nowrap">';
 
-                print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;orig_account='.$acct->id.'">';
+                print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;orig_account='.$acct->id.'">';
                 print img_edit();
                 print '</a>&nbsp; ';
 

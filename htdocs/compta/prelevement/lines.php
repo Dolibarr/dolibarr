@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/compta/prelevement/lignes.php
+ *	\file       htdocs/compta/prelevement/lines.php
  *  \ingroup    prelevement
  *	\brief      Prelevement lines
  */
@@ -169,7 +169,7 @@ if ($result)
 		print $ligne->LibStatut($obj->statut,2);
 		print "&nbsp;";
 
-		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
 		print substr('000000'.$obj->rowid, -6);
 		print '</a></td>';
 

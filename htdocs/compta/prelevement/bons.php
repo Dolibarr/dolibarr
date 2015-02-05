@@ -42,7 +42,7 @@ $page = GETPOST('page','int');
 $sortorder = ((GETPOST('sortorder','alpha')=="")) ? "DESC" : GETPOST('sortorder','alpha');
 $sortfield = ((GETPOST('sortfield','alpha')=="")) ? "p.datec" : GETPOST('sortfield','alpha');
 $statut = GETPOST('statut','int');
-$search_line = GETPOST('search_ligne','int');
+$search_line = GETPOST('search_line','int');
 
 llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
@@ -86,7 +86,7 @@ if ($result)
 
   print '<tr class="liste_titre">';
   print '<form action="bons.php" method="GET">';
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $search_line.'" size="10"></td>';
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_line" value="'. $search_line.'" size="10"></td>';
   print '<td class="liste_titre">&nbsp;</td>';
   print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
   print '</form>';

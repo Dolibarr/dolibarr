@@ -745,7 +745,7 @@ if ($id > 0 || ! empty($ref))
 				if ($objp->rappro && $object->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
 				{
 					print '<td align="center" nowrap>';
-					print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+					print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
 					print img_edit();
 					print '</a>';
 					print "&nbsp; ";
@@ -757,13 +757,13 @@ if ($id > 0 || ! empty($ref))
 					print '<td align="center">';
 					if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 					{
-						print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+						print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
 						print img_edit();
 						print '</a>';
 					}
 					else
 					{
-						print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
+						print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
 						print img_view();
 						print '</a>';
 					}

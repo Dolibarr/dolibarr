@@ -23,6 +23,8 @@ For translators:
 For developers:
 - New: Function yn can show a visual checkbox.
 - New: Introduced select2 jquery plugin.
+- Qual: Renamed all files & links "ligne.php" into "line.php".
+- Qual: Renamed all files & links "lignes.php" into "lines.php".
 
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****

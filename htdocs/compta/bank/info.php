@@ -44,7 +44,7 @@ $line->info($_GET["rowid"]);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$_GET["rowid"];
+$head[$h][0] = DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$_GET["rowid"];
 $head[$h][1] = $langs->trans("Card");
 $h++;
 
