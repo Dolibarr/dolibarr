@@ -1496,7 +1496,15 @@ else if ($id || $ref)
 		// Create bill and Close shipment
 		if (! empty($conf->facture->enabled) && $object->statut > 0)
 		{
-			if ($user->rights->facture->creer)
+			$showbutton = true;
+			if ($objectsrc)
+			{
+				$invoice = 'facture'; // rechercher une facture liée à l'objet d'origine (commande ou propale)
+				$objectsrc->fetchObjectLinked($objectsrc->id, $objectsrc->element, '', $invoice );
+				if (is_array($objectsrc->linkedObjectsIds) && count($objectsrc->linkedObjectsIds['facture']) > 0 ) $showbutton = false;
+			}	
+
+			if ($user->rights->facture->creer && $showbutton)
 			{
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 			}
