@@ -1901,7 +1901,7 @@ if ($action == 'create') {
 				}
 
 				// Create an order
-				if (! empty($conf->commande->enabled) && $object->statut == 2) {
+				if (! empty($conf->commande->enabled) && $object->statut == 2 && (empty($conf->workflow->enabled) || (! empty($conf->workflow->enabled) && empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER)))) {
 					if ($user->rights->commande->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/commande/fiche.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddOrder") . '</a></div>';
 					}
