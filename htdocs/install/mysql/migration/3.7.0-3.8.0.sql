@@ -76,6 +76,14 @@ create table llx_bank_account_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
+
+ALTER TABLE llx_stock_mouvement MODIFY COLUMN label varchar(255);
+ALTER TABLE llx_stock_mouvement ADD COLUMN inventorycode varchar(128);
+
+ALTER TABLE llx_product_association ADD COLUMN incdec integer DEFAULT 1;
+
+
+
 ALTER TABLE llx_bank_account_extrafields ADD INDEX idx_bank_account_extrafields (fk_object);
 
 

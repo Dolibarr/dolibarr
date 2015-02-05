@@ -122,4 +122,6 @@ RuleForStockAvailability=Rules on stock requirements
 StockMustBeEnoughForInvoice=Stock level must be enough to add product/service into invoice 
 StockMustBeEnoughForOrder=Stock level must be enough to add product/service into order
 StockMustBeEnoughForShipment= Stock level must be enough to add product/service into shipment
-
+MovementLabel=Label of movement
+InventoryCode=Inventory code
+IsInPackage=Contained into package

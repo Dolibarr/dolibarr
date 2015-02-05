@@ -623,10 +623,10 @@ class ProductFournisseur extends Product
      */
     function getSocNomUrl($withpicto=0,$option='supplier')
     {
-        $cust = new Fournisseur($this->db);
-        $cust->fetch($this->fourn_id);
+        $thirdparty = new Fournisseur($this->db);
+        $thirdparty->fetch($this->fourn_id);
 
-        return $cust->getNomUrl($withpicto,$option);
+        return $thirdparty->getNomUrl($withpicto,$option);
     }
 
     /**
@@ -640,7 +640,7 @@ class ProductFournisseur extends Product
     {
         global $langs;
         $langs->load("suppliers");
-        $out=($showunitprice?price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
+        $out=($showunitprice?price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier').' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
         return $out;
     }
 

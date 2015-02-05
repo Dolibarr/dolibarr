@@ -50,6 +50,7 @@ $search_movement = GETPOST("search_movement");
 $search_product_ref = trim(GETPOST("search_product_ref"));
 $search_product = trim(GETPOST("search_product"));
 $search_warehouse = trim(GETPOST("search_warehouse"));
+$search_inventorycode = trim(GETPOST("search_inventorycode"));
 $search_user = trim(GETPOST("search_user"));
 $page = GETPOST("page",'int');
 $sortfield = GETPOST("sortfield",'alpha');
@@ -120,7 +121,7 @@ $formproduct=new FormProduct($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type,";
 $sql.= " e.label as stock, e.rowid as entrepot_id, e.lieu,";
-$sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label, m.fk_origin, m.origintype,";
+$sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."product as p,";
@@ -148,6 +149,10 @@ else if ($year > 0)
 if (! empty($search_movement))
 {
     $sql.= " AND m.label LIKE '%".$db->escape($search_movement)."%'";
+}
+if (! empty($search_inventorycode))
+{
+    $sql.= " AND m.inventorycode LIKE '%".$db->escape($search_inventorycode)."%'";
 }
 if (! empty($search_product_ref))
 {
@@ -410,6 +415,7 @@ if ($resql)
     $param='';
     if ($id) $param.='&id='.$id;
     if ($search_movement)   $param.='&search_movement='.urlencode($search_movement);
+    if ($search_inventorycode)   $param.='&search_inventorycode='.urlencode($search_inventorycode);
     if ($search_product_ref) $param.='&search_product_ref='.urlencode($search_product_ref);
     if ($search_product)   $param.='&search_product='.urlencode($search_product);
     if ($search_warehouse) $param.='&search_warehouse='.urlencode($search_warehouse);
@@ -425,7 +431,8 @@ if ($resql)
     //print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"], "m.rowid","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"], "m.datem","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("LabelMovement"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("InventoryCode"),$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ProductRef"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ProductLabel"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
@@ -447,6 +454,10 @@ if ($resql)
     // Label of movement
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="10" name="search_movement" value="'.$search_movement.'">';
+    print '</td>';
+    // Inventory code
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" type="text" size="4" name="search_inventorycode" value="'.$search_inventorycode.'">';
     print '</td>';
     // Origin of movement
     print '<td class="liste_titre" align="left">';
@@ -495,7 +506,9 @@ if ($resql)
         print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
         // Label of movement
         print '<td>'.$objp->label.'</td>';
-		// Origin of movement
+        // Inventory code
+        print '<td>'.$objp->inventorycode.'</td>';
+        // Origin of movement
         print '<td>'.$origin.'</td>';
 		// Product ref
         print '<td>';
