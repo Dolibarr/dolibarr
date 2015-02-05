@@ -28,7 +28,8 @@ create table llx_stock_mouvement
   price           float(13,4) DEFAULT 0,
   type_mouvement  smallint,
   fk_user_author  integer,
-  label           varchar(128),
+  label           varchar(255),
+  inventorycode   varchar(128),
   fk_origin       integer,
   origintype      varchar(32)
 )ENGINE=innodb;
