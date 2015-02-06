@@ -65,8 +65,8 @@ if ($action == 'specimen')
 {
 	$modele=GETPOST('module','alpha');
 
-	$propal = new AskPriceSupplier($db);
-	$propal->initAsSpecimen();
+	$askpricesupplier = new AskPriceSupplier($db);
+	$askpricesupplier->initAsSpecimen();
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
@@ -88,7 +88,7 @@ if ($action == 'specimen')
 
 		$module = new $classname($db);
 
-		if ($module->write_file($propal,$langs) > 0)
+		if ($module->write_file($askpricesupplier,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=askpricesupplier&file=SPECIMEN.pdf");
 			return;
@@ -313,14 +313,14 @@ foreach ($dirmodels as $reldir)
 						}
 						print '</td>';
 
-						$propal=new AskPriceSupplier($db);
-						$propal->initAsSpecimen();
+						$askpricesupplier=new AskPriceSupplier($db);
+						$askpricesupplier->initAsSpecimen();
 
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$propal->type=0;
-						$nextval=$module->getNextValue($mysoc,$propal);
+						$askpricesupplier->type=0;
+						$nextval=$module->getNextValue($mysoc,$askpricesupplier);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
                             if ($nextval) {

@@ -31,5 +31,5 @@ CREATE TABLE `llx_askpricesupplierdet` (
   PRIMARY KEY (`rowid`),
   KEY `idx_askpricesupplierdet_fk_askpricesupplierdet` (`fk_askpricesupplier`),
   KEY `idx_askpricesupplierdet_fk_product` (`fk_product`),
-  CONSTRAINT `fk_askpricesupplierdet_fk_propal` FOREIGN KEY (`fk_askpricesupplier`) REFERENCES `llx_askpricesupplier` (`rowid`)
+  CONSTRAINT `fk_askpricesupplierdet_fk_askpricesupplier` FOREIGN KEY (`fk_askpricesupplier`) REFERENCES `llx_askpricesupplier` (`rowid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8

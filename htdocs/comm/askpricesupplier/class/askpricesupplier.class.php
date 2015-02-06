@@ -812,8 +812,7 @@ class AskPriceSupplier extends CommonObject
                     	$action='update';
 
                     	// Actions on extra fields (by external module or standard code)
-                    	// FIXME le hook fait double emploi avec le trigger !!
-                    	$hookmanager->initHooks(array('propaldao'));
+                    	$hookmanager->initHooks(array('askpricesupplierdao'));
                     	$parameters=array('socid'=>$this->id);
                     	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                     	if (empty($reshook))
@@ -1190,8 +1189,7 @@ class AskPriceSupplier extends CommonObject
     	$action='update';
 
     	// Actions on extra fields (by external module or standard code)
-    	// FIXME le hook fait double emploi avec le trigger !!
-    	$hookmanager->initHooks(array('propaldao'));
+    	$hookmanager->initHooks(array('askpricesupplierdao'));
     	$parameters=array('id'=>$this->id);
     	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
     	if (empty($reshook))
@@ -1336,7 +1334,7 @@ class AskPriceSupplier extends CommonObject
      */
     function set_date_livraison($user, $date_livraison)
     {
-        if (! empty($user->rights->propal->creer))
+        if (! empty($user->rights->askpricesupplier->creer))
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."askpricesupplier ";
             $sql.= " SET date_livraison = ".($date_livraison!=''?"'".$this->db->idate($date_livraison)."'":'null');
@@ -1367,7 +1365,7 @@ class AskPriceSupplier extends CommonObject
     {
         $remise=trim($remise)?trim($remise):0;
 
-        if (! empty($user->rights->propal->creer))
+        if (! empty($user->rights->askpricesupplier->creer))
         {
             $remise = price2num($remise);
 
@@ -1400,7 +1398,7 @@ class AskPriceSupplier extends CommonObject
     {
         $remise=trim($remise)?trim($remise):0;
 
-        if (! empty($user->rights->propal->creer))
+        if (! empty($user->rights->askpricesupplier->creer))
         {
             $remise = price2num($remise);
 
@@ -1739,11 +1737,11 @@ class AskPriceSupplier extends CommonObject
 
                     if ($shortlist == 1)
                     {
-                        $ga[$obj->propalid] = $obj->ref;
+                        $ga[$obj->askpricesupplierid] = $obj->ref;
                     }
                     else if ($shortlist == 2)
                     {
-                        $ga[$obj->propalid] = $obj->ref.' ('.$obj->name.')';
+                        $ga[$obj->askpricesupplierid] = $obj->ref.' ('.$obj->name.')';
                     }
                     else
 					{
@@ -1804,7 +1802,7 @@ class AskPriceSupplier extends CommonObject
                     {
                         // We remove directory
                         $ref = dol_sanitizeFileName($this->ref);
-                        if ($conf->propal->dir_output && !empty($this->ref))
+                        if ($conf->askpricesupplier->dir_output && !empty($this->ref))
                         {
                             $dir = $conf->askpricesupplier->dir_output . "/" . $ref ;
                             $file = $dir . "/" . $ref . ".pdf";

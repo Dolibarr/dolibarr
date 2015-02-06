@@ -31,7 +31,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Classe de description et activation du module Propale
+ *	Classe de description et activation du module AskPriceSupllier
  */
 class modAskPriceSupplier extends DolibarrModules
 {

@@ -91,7 +91,7 @@ if ($id > 0 || ! empty($ref)) {
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('propalcard','globalcard'));
+$hookmanager->initHooks(array('askpricesuppliercard','globalcard'));
 
 $permissionnote = $user->rights->askpricesupplier->creer; // Used by the include of actions_setnotes.inc.php
 
@@ -950,8 +950,7 @@ if (empty($reshook))
 
 		if (! $error) {
 			// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('propaldao'));
+			$hookmanager->initHooks(array('askpricesupplierdao'));
 			$parameters = array('id' => $object->id);
 			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been
 			                                                                                           // modified by

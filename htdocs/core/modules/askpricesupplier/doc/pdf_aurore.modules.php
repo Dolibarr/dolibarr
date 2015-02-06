@@ -688,7 +688,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		}*/
 
 		// Show payments conditions
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMCOND) && ($object->cond_reglement_code || $object->cond_reglement))
+		if (empty($conf->global->ASKPRICESUPPLIER_PDF_HIDE_PAYMENTTERMCOND) && ($object->cond_reglement_code || $object->cond_reglement))
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -718,24 +718,8 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 			$posy=$pdf->GetY()+3;
 		}
 
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMCOND))
+		if (empty($conf->global->ASKPRICESUPPLIER_PDF_HIDE_PAYMENTTERMCOND))
 		{
-			// Check a payment mode is defined
-			/* Not required on a proposal
-			if (empty($object->mode_reglement_code)
-			&& ! $conf->global->FACTURE_CHQ_NUMBER
-			&& ! $conf->global->FACTURE_RIB_NUMBER)
-			{
-				$pdf->SetXY($this->marge_gauche, $posy);
-				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('','B', $default_font_size - 2);
-				$pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
-				$pdf->SetTextColor(0,0,0);
-
-				$posy=$pdf->GetY()+1;
-			}
-			*/
-
 			// Show payment mode
 			if ($object->mode_reglement_code
 			&& $object->mode_reglement_code != 'CHQ'
@@ -1220,9 +1204,9 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//  Show Draft Watermark
-		if($object->statut==0 && (! empty($conf->global->PROPALE_DRAFT_WATERMARK)) )
+		if($object->statut==0 && (! empty($conf->global->ASKPRICESUPPLIER_DRAFT_WATERMARK)) )
 		{
-            pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->PROPALE_DRAFT_WATERMARK);
+            pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->ASKPRICESUPPLIER_DRAFT_WATERMARK);
 		}
 
 		$pdf->SetTextColor(0,0,60);
@@ -1405,7 +1389,7 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
 		$showdetails=0;
-		return pdf_pagefoot($pdf,$outputlangs,'PROPALE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+		return pdf_pagefoot($pdf,$outputlangs,'ASKPRICESUPPLIER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }

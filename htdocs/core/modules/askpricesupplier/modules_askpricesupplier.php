@@ -149,7 +149,7 @@ abstract class ModeleNumRefAskPriceSupplier
  *  Create a document onto disk according to template module.
  *
  * 	@param	    DoliDB		$db  			Database handler
- * 	@param	    object		$object			Object proposal
+ * 	@param	    object		$object			Object askpricesupplier
  * 	@param	    string		$modele			Force model to use ('' to not force)
  * 	@param		Translate	$outputlangs	Object langs to use for output
  *  @param      int			$hidedetails    Hide details of lines
@@ -158,7 +158,7 @@ abstract class ModeleNumRefAskPriceSupplier
  * 	@return     int         				0 if KO, 1 if OK
  * @deprecated Use the new function generateDocument of Propal class
  */
-function askpricesupplier_pdf_create(DoliDB $db, Propal $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+function askpricesupplier_pdf_create(DoliDB $db, AskPriceSupplier $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }
