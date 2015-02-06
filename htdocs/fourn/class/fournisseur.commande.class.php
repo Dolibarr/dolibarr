@@ -2110,8 +2110,8 @@ class CommandeFournisseur extends CommonOrder
      * Return the max number delivery delay in day
      *
      * @return string
-     */
-	function getMaxDelaiLivraisonJours($langs)
+     */ 
+	function getMaxDeliveryTimeDay($langs)
 	{
 		if (empty($this->lines)) return $langs->trans('Undefined');
 		
