@@ -109,6 +109,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
     $tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
     $tva_tx = price2num($tva_tx);
 	$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
+	$delai_livraison_jours = GETPOST('delai_livraison_jours', 'int') ? GETPOST('delai_livraison_jours', 'int') : '';
 
     if ($tva_tx == '')
     {
@@ -181,7 +182,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 				if (isset($_POST['ref_fourn_price_id']))
 					$product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
 
-				$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, $npr);
+				$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delai_livraison_jours);
 				if ($ret < 0)
 				{
 
@@ -322,7 +323,7 @@ if ($id || $ref)
 					$supplier->fetch($socid);
 					print $supplier->getNomUrl(1);
 					print '<input type="hidden" name="id_fourn" value="'.$socid.'">';
-					print '<input type="hidden" name="ref_fourn" value="'.$product->fourn_ref.'">';
+					print '<input type="hidden" name="ref_fourn" value="'.$product->fourn_ref.'">';				
 					print '<input type="hidden" name="ref_fourn_price_id" value="'.$rowid.'">';
 				}
 				else
@@ -379,8 +380,7 @@ if ($id || $ref)
 				{
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
-				print '</td></tr>';
-
+				print '</td></tr>';				
 
 				// Vat rate
 				$default_vat='';
@@ -448,6 +448,13 @@ if ($id || $ref)
 				print '<tr><td>'.$langs->trans("DiscountQtyMin").'</td>';
 				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOST('remise_percent')?vatrate(GETPOST('remise_percent')):(isset($product->fourn_remise_percent)?vatrate($product->fourn_remise_percent):'')).'"> %';
 				print '</td>';
+				print '</tr>';
+
+				
+				// Delai livraison jours
+				print '<tr>';
+				print '<td>'.$langs->trans('NbDaysToDelivery').'</td>';
+				print '<td><input class="flat" name="delai_livraison_jours" size="4" value="'.($rowid ? $product->delai_livraison_jours : '').'">&nbsp;'.$langs->trans('days').'</td>';
 				print '</tr>';
 
 				// Charges ????
