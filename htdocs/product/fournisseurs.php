@@ -109,7 +109,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
     $tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
     $tva_tx = price2num($tva_tx);
 	$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
-	$delai_livraison_jours = GETPOST('delai_livraison_jours', 'int') ? GETPOST('delai_livraison_jours', 'int') : '';
+	$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 
     if ($tva_tx == '')
     {
@@ -182,7 +182,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 				if (isset($_POST['ref_fourn_price_id']))
 					$product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
 
-				$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delai_livraison_jours);
+				$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days);
 				if ($ret < 0)
 				{
 
@@ -454,7 +454,7 @@ if ($id || $ref)
 				// Delai livraison jours
 				print '<tr>';
 				print '<td>'.$langs->trans('NbDaysToDelivery').'</td>';
-				print '<td><input class="flat" name="delai_livraison_jours" size="4" value="'.($rowid ? $product->delai_livraison_jours : '').'">&nbsp;'.$langs->trans('days').'</td>';
+				print '<td><input class="flat" name="delivery_time_days" size="4" value="'.($rowid ? $product->delivery_time_days : '').'">&nbsp;'.$langs->trans('days').'</td>';
 				print '</tr>';
 
 				// Charges ????
