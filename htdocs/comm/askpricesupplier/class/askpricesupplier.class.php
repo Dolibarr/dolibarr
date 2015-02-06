@@ -1485,7 +1485,7 @@ class AskPriceSupplier extends CommonObject
 
 
     /**
-     *	Close the commercial proposal
+     *	Close the askprice
      *
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
@@ -1587,6 +1587,9 @@ class AskPriceSupplier extends CommonObject
 		
 		dol_syslog(get_class($this)."::updateOrCreatePriceFournisseur", LOG_DEBUG);
 		foreach ($this->lines as $product) {
+			if ($product->subprice <= 0)
+				continue;
+			
 			$idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
 			$res = $productsupplier->fetch($idProductFourn);
 		
@@ -2359,6 +2362,48 @@ class AskPriceSupplier extends CommonObject
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
+	
+	
+	function printOriginLinesList()
+    {
+        global $langs, $hookmanager;
+
+        print '<tr class="liste_titre">';
+        print '<td>'.$langs->trans('Ref').'</td>';
+        print '<td>'.$langs->trans('Description').'</td>';
+        print '<td align="right">'.$langs->trans('VAT').'</td>';
+        print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+        print '<td align="right">'.$langs->trans('Qty').'</td>';
+        print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
+
+        $num = count($this->lines);
+        $var = true;
+        $i	 = 0;
+
+        foreach ($this->lines as $line)
+        {
+        	if (empty($line->subprice) || $line->qty <= 0)
+				continue;
+			
+            $var=!$var;
+
+            if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+            {
+                if (empty($line->fk_parent_line))
+                {
+                    $parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
+                    $action='';
+                    $reshook=$hookmanager->executeHooks('printOriginObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                }
+            }
+            else
+            {
+                $this->printOriginLine($line,$var);
+            }
+
+            $i++;
+        }
+    }
 
 
 }

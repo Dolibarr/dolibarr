@@ -854,15 +854,6 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 
 		// If creation from another object of another module (Example: origin=propal, originid=1)
 		if (! empty($origin) && ! empty($originid)) {
-			// Parse element/subelement (ex: project_task)
-			/* PHFAVRE
-			$element = $subelement = $origin;
-			if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-				$element = $regs [1];
-				$subelement = $regs [2];
-			}
-			*/
-			
 			$element = 'comm/askpricesupplier';
 			$subelement = 'askpricesupplier';
 
@@ -914,24 +905,15 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 						
 						for($i = 0; $i < $num; $i ++)
 						{
+							
+							if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
+								continue;
+							
 							$label = (! empty($lines [$i]->label) ? $lines [$i]->label : '');
 							$desc = (! empty($lines [$i]->desc) ? $lines [$i]->desc : $lines [$i]->libelle);
 							$product_type = (! empty($lines [$i]->product_type) ? $lines [$i]->product_type : 0);
 
-							// Dates
-							// TODO mutualiser
-							$date_start = $lines [$i]->date_debut_prevue;
-							if ($lines [$i]->date_debut_reel)
-								$date_start = $lines [$i]->date_debut_reel;
-							if ($lines [$i]->date_start)
-								$date_start = $lines [$i]->date_start;
-							$date_end = $lines [$i]->date_fin_prevue;
-							if ($lines [$i]->date_fin_reel)
-								$date_end = $lines [$i]->date_fin_reel;
-							if ($lines [$i]->date_end)
-								$date_end = $lines [$i]->date_end;
-
-								// Reset fk_parent_line for no child products and special product
+							// Reset fk_parent_line for no child products and special product
 							if (($lines [$i]->product_type != 9 && empty($lines [$i]->fk_parent_line)) || $lines [$i]->product_type == 9) {
 								$fk_parent_line = 0;
 							}
@@ -944,9 +926,9 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 								$array_option = $lines [$i]->array_options;
 							}
 						
-							$idprod = $productsupplier->find_min_price_product_fournisseur($lines [$i]->fk_product, $qty);
+							$idprod = $productsupplier->find_min_price_product_fournisseur($lines [$i]->fk_product, $lines [$i]->qty);
 							$res = $productsupplier->fetch($idProductFourn);
-
+							
 							$result = $object->addline(
 								$desc, 
 								$lines [$i]->subprice, 
@@ -963,8 +945,8 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 								$lines [$i]->product_type, 
 								'', 
 								'', 
-								$date_start, 
-								$date_end
+								null,
+								null
 							);
 
 							if ($result < 0) {
