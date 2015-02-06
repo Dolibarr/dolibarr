@@ -54,3 +54,4 @@ CommercialAsk=Price request
 DefaultModelAskPriceSupplierCreate=Default model creation
 DefaultModelAskPriceSupplierToBill=Default template when closing a price request (accepted)
 DefaultModelAskPriceSupplierClosed=Default template when closing a price request (refused)
+ListOfAskPriceSupplier=Liste des demandes de prix fournisseurs

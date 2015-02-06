@@ -54,3 +54,4 @@ CommercialAsk=Demande de prix
 DefaultModelAskPriceSupplierCreate=Modèle par défaut à la création
 DefaultModelAskPriceSupplierToBill=Modèle par défaut lors de la clôture d'une demande de prix (à accéptée)
 DefaultModelAskPriceSupplierClosed=Modèle par défaut lors de la clôture d'une demande de prix (refusée)
+ListOfAskPriceSupplier=Liste des demandes de prix fournisseurs
