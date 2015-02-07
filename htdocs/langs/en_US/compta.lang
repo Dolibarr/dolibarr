@@ -29,6 +29,7 @@ ReportTurnover=Turnover
 PaymentsNotLinkedToInvoice=Payments not linked to any invoice, so not linked to any third party
 PaymentsNotLinkedToUser=Payments not linked to any user
 Profit=Profit
+AccountingResult=Accounting Result
 Balance=Balance
 Debit=Debit
 Credit=Credit
