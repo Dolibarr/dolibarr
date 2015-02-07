@@ -146,9 +146,14 @@ if (empty($num))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("AccountStatement").'</td></tr>';
+		print '<td>'.$langs->trans("AccountStatement").'</td>';
+		print '<td>'.$langs->trans("InitialBankBalance").'</td>';
+		print '<td>'.$langs->trans("EndBankBalance").'</td>';
+		print '</tr>';
 
-		//while ($i < min($numrows,$conf->liste_limit))   // retrait de la limite tant qu'il n'y a pas de pagination
+		$balancestart=array();
+		$content=array();
+
 		while ($i < min($numrows,$conf->liste_limit))
 		{
 			$objp = $db->fetch_object($result);
@@ -159,7 +164,37 @@ if (empty($num))
 			}
 			else
 			{
-				print '<tr '.$bc[$var].'><td><a href="releve.php?num='.$objp->numr.'&amp;account='.$acct->id.'">'.$objp->numr.'</a></td></tr>'."\n";
+				print '<tr '.$bc[$var].'><td><a href="releve.php?num='.$objp->numr.'&amp;account='.$acct->id.'">'.$objp->numr.'</a></td>';
+
+				// Calculate start amount
+				$sql = "SELECT sum(b.amount) as amount";
+				$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+				$sql.= " WHERE b.num_releve < '".$db->escape($objp->numr)."'";
+				$sql.= " AND b.fk_account = ".$acct->id;
+				$resql=$db->query($sql);
+				if ($resql)
+				{
+					$obj=$db->fetch_object($resql);
+					$balancestart[$objp->numr] = $obj->amount;
+					$db->free($resql);
+				}
+				print '<td>'.price($balancestart[$objp->numr],'',$langs,1,-1,-1,$conf->currency).'</td>';
+
+				// Calculate end amount
+				$sql = "SELECT sum(b.amount) as amount";
+				$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+				$sql.= " WHERE b.num_releve = '".$db->escape($objp->numr)."'";
+				$sql.= " AND b.fk_account = ".$acct->id;
+				$resql=$db->query($sql);
+				if ($resql)
+				{
+					$obj=$db->fetch_object($resql);
+					$content[$objp->numr] = $obj->amount;
+					$db->free($resql);
+				}
+				print '<td>'.price(($balancestart[$objp->numr]+$content[$objp->numr]),'',$langs,1,-1,-1,$conf->currency).'</td>';
+
+				print '</tr>'."\n";
 			}
 			$i++;
 		}
@@ -179,6 +214,7 @@ else
 	 */
 	$ve=$_GET["ve"];
 
+	// Define number of receipt to show (current, previous or next one ?)
 	$found=false;
 	if ($_GET["rel"] == 'prev')
 	{

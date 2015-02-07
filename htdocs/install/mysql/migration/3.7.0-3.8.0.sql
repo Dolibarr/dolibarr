@@ -19,6 +19,9 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_bank ADD INDEX idx_bank_num_releve(num_releve);
+
+
 --create table for price expressions and add column in product supplier
 create table llx_c_price_expression
 (
