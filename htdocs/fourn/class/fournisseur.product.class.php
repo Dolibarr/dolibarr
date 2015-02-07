@@ -42,7 +42,7 @@ class ProductFournisseur extends Product
 
     var $id;                      // product id
     var $fourn_ref;               // deprecated
-    var $delivery_time_days;	  
+    var $delivery_time_days;
     var $ref_supplier;			  // ref supplier (can be set by get_buyprice)
     var $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
 
@@ -154,6 +154,7 @@ class ProductFournisseur extends Product
 	 *    @param  	float		$remise_percent		Discount  regarding qty (percent)
 	 *    @param  	float		$remise				Discount  regarding qty (amount)
 	 *    @param  	int			$newnpr				Set NPR or not
+	 *    @param	int			$delivery_time_days	Delay in days for delivery (max)
      *    @return	int								<0 if KO, >=0 if OK
      */
     function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0)
@@ -528,7 +529,7 @@ class ProductFournisseur extends Product
                 $record_array[]=$record;
             }
 
-            if (count($record_array) == 0) 
+            if (count($record_array) == 0)
             {
                 $this->db->free($resql);
                 return 0;
@@ -537,7 +538,7 @@ class ProductFournisseur extends Product
             {
                 $min = -1;
                 foreach($record_array as $record)
-                { 
+                {
                     $fourn_price = $record["price"];
                     $fourn_unitprice = $record["unitprice"];
                     if (!empty($record["fk_supplier_price_expression"])) {

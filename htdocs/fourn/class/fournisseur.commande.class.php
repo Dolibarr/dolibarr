@@ -2109,12 +2109,13 @@ class CommandeFournisseur extends CommonOrder
 	/**
      * Return the max number delivery delay in day
      *
-     * @return string
-     */ 
+     * @param	Translate	$langs		Language object
+     * @return 							Translated string
+     */
 	function getMaxDeliveryTimeDay($langs)
 	{
 		if (empty($this->lines)) return $langs->trans('Undefined');
-		
+
 		$nb = 0;
 		foreach ($this->lines as $line) {
 			$obj = new ProductFournisseur($this->db);
@@ -2123,9 +2124,9 @@ class CommandeFournisseur extends CommonOrder
 				$obj->fetch($idp);
 				if ($obj->delivery_time_days > $nb) $nb = $obj->delivery_time_days;
 			}
-			
+
 		}
-		
+
 		if ($nb === 0) return $langs->trans('Undefined');
 		else return $nb.' '.$langs->trans('Days');
 	}
@@ -2134,7 +2135,7 @@ class CommandeFournisseur extends CommonOrder
 
 
 /**
- *  Classe de gestion des lignes de commande
+ *  Class to manage line orders
  */
 class CommandeFournisseurLigne extends CommonOrderLine
 {
