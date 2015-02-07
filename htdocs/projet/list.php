@@ -364,7 +364,7 @@ if ($resql)
 
 			// Status
 			$projectstatic->statut = $objp->fk_statut;
-			print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
+			print '<td align="right">'.$projectstatic->getLibStatut(5).'</td>';
 
 			print "</tr>\n";
 
