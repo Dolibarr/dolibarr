@@ -1601,6 +1601,13 @@ elseif (! empty($object->id))
 	}
 	print '</td></tr>';
 
+	
+	// Delai livraison jours
+	print '<tr>';
+	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
+	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
+	print '</tr>';
+	
 	// Project
 	if (! empty($conf->projet->enabled))
 	{

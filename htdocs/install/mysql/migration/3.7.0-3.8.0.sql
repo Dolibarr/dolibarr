@@ -99,3 +99,5 @@ create table llx_contratdet_extrafields
 )ENGINE=innodb;
 
 ALTER TABLE llx_contratdet_extrafields ADD INDEX idx_contratdet_extrafields (fk_object);
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN delivery_time_days integer;
