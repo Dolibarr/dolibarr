@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 $action = GETPOST('action');
 
 $langs->load("companies");
+$langs->load("other");
 
 // Security check
 $id = GETPOST('id','int');

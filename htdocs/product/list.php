@@ -310,7 +310,7 @@ else
     		print_liste_field_titre($langs->trans("DateModification"), $_SERVER["PHP_SELF"], "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
     		if (! empty($conf->service->enabled) && $type != 0) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
     		if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellingPrice"), $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
-    		if ($user->rights->fournisseur->lire) print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
+    		if ($type == 0 && $user->rights->fournisseur->lire) print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("DesiredStock").'</td>';
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
     		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="center"',$sortfield,$sortorder);
@@ -355,7 +355,7 @@ else
             }
 
     		// Minimum buying Price
-    		if ($user->rights->fournisseur->lire) {
+    		if ($type == 0 && $user->rights->fournisseur->lire) {
     			print '<td class="liste_titre">';
     			print '&nbsp;';
     			print '</td>';
@@ -463,7 +463,7 @@ else
     			}
 
     			// Better buy price
-    			if ($user->rights->fournisseur->lire)
+    			if ($type == 0 && $user->rights->fournisseur->lire)
     			{
         			print  '<td align="right">';
         			if ($objp->minsellprice != '')
