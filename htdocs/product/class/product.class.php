@@ -3172,10 +3172,14 @@ class Product extends CommonObject
 	 */
 	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
 	{
+		global $conf;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$result = 0;
-		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/photos";
+
+		$dir = $sdir;
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2) . $this->id ."/photos";
 
 		dol_mkdir($dir);
 
@@ -3227,8 +3231,8 @@ class Product extends CommonObject
 	{
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
-		$pdir = get_exdir($this->id,2) . $this->id ."/photos/";
-		$dir = $sdir . '/'. $pdir;
+		$dir = $sdir;
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2) . $this->id ."/photos";
 
 		$nbphoto=0;
 
@@ -3270,8 +3274,19 @@ class Product extends CommonObject
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 
-		$pdir = get_exdir($this->id,2) . $this->id ."/photos/";
-		$dir = $sdir . '/'. $pdir;
+		$dir = $sdir . '/';
+		$pdir = '/';
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
+		{
+			$dir .= get_exdir($this->id,2) . $this->id ."/photos/";
+			$pdir .= get_exdir($this->id,2) . $this->id ."/photos/";
+		}
+		else
+		{
+			$dir .= $this->ref.'/';
+			$pdir .= $this->ref.'/';
+		}
+
 		$dirthumb = $dir.'thumbs/';
 		$pdirthumb = $pdir.'thumbs/';
 

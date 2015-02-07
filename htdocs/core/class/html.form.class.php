@@ -1229,13 +1229,13 @@ class Form
             {
            		// Enhance with select2
            		$nodatarole='';
-		        /*if ($conf->use_javascript_ajax)
+		        if ($conf->use_javascript_ajax)
 		        {
-					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+		            include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 		            $comboenhancement = ajax_combobox($htmlname);
-                    $out.= $comboenhancement;
-                    $nodatarole=($comboenhancement?' data-role="none"':'');
-	            }*/
+		            $out.=$comboenhancement;
+		            $nodatarole=($comboenhancement?' data-role="none"':'');
+		        }
 
                 $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
                 if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected="selected"':'').'>&nbsp;</option>'."\n";

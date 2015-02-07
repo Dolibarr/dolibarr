@@ -951,7 +951,7 @@ class Fichinter extends CommonObject
 		$this->note_private='Private note';
 		$this->note_public='SPECIMEN';
 		$this->duree = 0;
-		$nbp = 20;
+		$nbp = 25;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{

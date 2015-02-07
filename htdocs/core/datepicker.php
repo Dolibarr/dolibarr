@@ -26,8 +26,8 @@
  *       \brief      File to manage popup date selector
  */
 
-if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// disabled
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled cause need to load global conf for START_WEEK
+if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// disabled
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled cause need to load personalized language
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled cause need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
@@ -188,13 +188,16 @@ function displayBox($selectedDate,$month,$year)
 	<tr class="dpDayNames">
 	<?php
 	$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
-	print 'xx'.$startday;
 	$day_names = array('ShortSunday', 'ShortMonday', 'ShortTuesday', 'ShortWednesday', 'ShortThursday', 'ShortFriday', 'ShortSaturday');
 	for( $i=0; $i < 7; $i++ )
 	{
 		echo '<td width="', (int) (($i+1)*100/7) - (int) ($i*100/7), '%">', $langs->trans($day_names[($i + $startday) % 7]), '</td>', "\n";
 	}
 	?>
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/origin/3.7
 	</tr>
 	<?php
 	//print "x ".$thedate." y";			// $thedate = first day of month

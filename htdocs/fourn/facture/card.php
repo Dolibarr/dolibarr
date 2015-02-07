@@ -1191,10 +1191,10 @@ if ($action == 'create')
     dol_htmloutput_events();
 
     $societe='';
-    if ($_GET['socid'])
+    if (GETPOST('socid') > 0)
     {
         $societe=new Societe($db);
-        $societe->fetch($_GET['socid']);
+        $societe->fetch(GETPOST('socid','int'));
     }
 
     if (GETPOST('origin') && GETPOST('originid'))
@@ -1273,14 +1273,14 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
     print '<td>';
 
-    if ($_REQUEST['socid'] > 0)
+    if (GETPOST('socid') > 0)
     {
         print $societe->getNomUrl(1);
-        print '<input type="hidden" name="socid" value="'.$_GET['socid'].'">';
+        print '<input type="hidden" name="socid" value="'.GETPOST('socid','int').'">';
     }
     else
     {
-        print $form->select_company((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
+        print $form->select_company(GETPOST('socid','int'),'socid','s.fournisseur = 1',1);
     }
     print '</td></tr>';
 
@@ -1401,7 +1401,7 @@ if ($action == 'create')
 
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
-		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1'), $projectid, 'projectid', 0);
+		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$societe->id:'-1'), $projectid, 'projectid', 0);
 		print '</td></tr>';
 	}
 
