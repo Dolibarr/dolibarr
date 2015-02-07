@@ -147,8 +147,8 @@ if (empty($num))
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("AccountStatement").'</td>';
-		print '<td>'.$langs->trans("InitialBankBalance").'</td>';
-		print '<td>'.$langs->trans("EndBankBalance").'</td>';
+		print '<td align="right">'.$langs->trans("InitialBankBalance").'</td>';
+		print '<td align="right">'.$langs->trans("EndBankBalance").'</td>';
 		print '</tr>';
 
 		$balancestart=array();
@@ -178,7 +178,7 @@ if (empty($num))
 					$balancestart[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td>'.price($balancestart[$objp->numr],'',$langs,1,-1,-1,$conf->currency).'</td>';
+				print '<td align="right">'.price($balancestart[$objp->numr],'',$langs,1,-1,-1,$conf->currency).'</td>';
 
 				// Calculate end amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -192,7 +192,7 @@ if (empty($num))
 					$content[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td>'.price(($balancestart[$objp->numr]+$content[$objp->numr]),'',$langs,1,-1,-1,$conf->currency).'</td>';
+				print '<td align="right">'.price(($balancestart[$objp->numr]+$content[$objp->numr]),'',$langs,1,-1,-1,$conf->currency).'</td>';
 
 				print '</tr>'."\n";
 			}
