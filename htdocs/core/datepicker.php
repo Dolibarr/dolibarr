@@ -194,10 +194,6 @@ function displayBox($selectedDate,$month,$year)
 		echo '<td width="', (int) (($i+1)*100/7) - (int) ($i*100/7), '%">', $langs->trans($day_names[($i + $startday) % 7]), '</td>', "\n";
 	}
 	?>
-<<<<<<< HEAD
-=======
-
->>>>>>> refs/remotes/origin/3.7
 	</tr>
 	<?php
 	//print "x ".$thedate." y";			// $thedate = first day of month
@@ -293,4 +289,3 @@ function displayBox($selectedDate,$month,$year)
 </table>
 		<?php
 }//end function
-
