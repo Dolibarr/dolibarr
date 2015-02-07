@@ -2106,7 +2106,29 @@ class CommandeFournisseur extends CommonOrder
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
-
+	/**
+     * Return the max number delivery delay in day
+     *
+     * @return string
+     */ 
+	function getMaxDeliveryTimeDay($langs)
+	{
+		if (empty($this->lines)) return $langs->trans('Undefined');
+		
+		$nb = 0;
+		foreach ($this->lines as $line) {
+			$obj = new ProductFournisseur($this->db);
+			$idp = $obj->find_min_price_product_fournisseur($line->fk_product, $line->qty);
+			if ($idp) {
+				$obj->fetch($idp);
+				if ($obj->delivery_time_days > $nb) $nb = $obj->delivery_time_days;
+			}
+			
+		}
+		
+		if ($nb === 0) return $langs->trans('Undefined');
+		else return $nb.' '.$langs->trans('Days');
+	}
 }
 
 
