@@ -563,10 +563,12 @@ if (empty($reshook))
 			// Boucle sur chaque taux de tva
 			$i = 0;
 			foreach ($object->lines as $line) {
-				$amount_ht [$line->tva_tx] += $line->total_ht;
-				$amount_tva [$line->tva_tx] += $line->total_tva;
-				$amount_ttc [$line->tva_tx] += $line->total_ttc;
-				$i ++;
+				if($line->total_ht>0) { // no need to create discount if amount is null
+					$amount_ht [$line->tva_tx] += $line->total_ht;
+					$amount_tva [$line->tva_tx] += $line->total_tva;
+					$amount_ttc [$line->tva_tx] += $line->total_ttc;
+					$i ++;
+				}
 			}
 
 			// Insert one discount by VAT rate category
@@ -583,6 +585,7 @@ if (empty($reshook))
 			$discount->fk_facture_source = $object->id;
 
 			$error = 0;
+			
 			foreach ($amount_ht as $tva_tx => $xxx) {
 				$discount->amount_ht = abs($amount_ht [$tva_tx]);
 				$discount->amount_tva = abs($amount_tva [$tva_tx]);
