@@ -130,7 +130,7 @@ if ($id > 0 || ! empty($ref))
 
         if ($user->rights->facture->lire) {
             $sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client,";
-            $sql.= " f.facnumber, f.total as total_ht,";
+            $sql.= " f.facnumber, d.total_ht as total_ht,";
             $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
