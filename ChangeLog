@@ -20,6 +20,7 @@ English Dolibarr ChangeLog
 - Fix: Tracking number not visible on shipment pdf
 - Fix: [ bug #1812 ] SQL Error message while sending emailing with PostgreSQL datatabase
 - Fix: [ bug #1819 ] SQL error when searching for an invoice payment
+- Fix: [ bug #1827 ] Tax reports gives incorrect amounts when using external modules that create lines with special codes
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
