@@ -45,11 +45,11 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	/**
 	 * Is the module active ?
 	 *
-	 * @return boolean
+	 * @return int
 	 */
 	public function isActive()
 	{
-		return true;
+		return 1;
 	}
 
 	/**
