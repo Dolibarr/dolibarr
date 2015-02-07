@@ -133,8 +133,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			}
 			else
 			{
-			    setEventMessage($task->error,'errors');
-			    setEventMessage($task->errors,'errors');
+			    setEventMessages($task->error,$task->errors,'errors');
 			}
 		}
 
@@ -150,6 +149,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 				header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
 			}
+			$id = $projectid;
 		}
 	}
 	else
@@ -168,9 +168,10 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	}
 }
 
+
 /*
  * View
-*/
+ */
 
 $form=new Form($db);
 $formother=new FormOther($db);
