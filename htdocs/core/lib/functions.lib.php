@@ -688,7 +688,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	// Show tabs
 	$bactive=false;
 	// if =0 we don't use the feature
-	$limittoshow=($conf->global->MAXTABS_IN_CARD?$conf->global->MAXTABS_IN_CARD:99);
+	$limittoshow=($conf->global->MAIN_MAXTABS_IN_CARD?$conf->global->MAIN_MAXTABS_IN_CARD:99);
 	$displaytab=0;
 
 	for ($i = 0 ; $i <= $maxkey ; $i++)
@@ -1046,8 +1046,9 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 /**
  *	Return an array with locale date info.
  *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
- *  WARNING: This function always use PHP server timezone to return locale informations.
+ *  WARNING: This function always use PHP server timezone to return locale informations !!!
  *  Usage must be avoid.
+ *  FIXME: Replace this with PHP date function and a parameter $gm
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode
@@ -1057,7 +1058,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *										'minutes' => $min,
  *										'hours' => $hour,
  *										'mday' => $day,
- *										'wday' => $dow,
+ *										'wday' => $dow,		0=sunday, 6=saturday
  *										'mon' => $month,
  *										'year' => $year,
  *										'yday' => floor($secsInYear/$_day_power),
@@ -1091,7 +1092,7 @@ function dol_getdate($timestamp,$fast=false)
 	{
 		$arrayinfo=getdate($timestamp);
 
-		$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
+		/*$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
 		if($startday==1)
 		{
 			if ($arrayinfo["wday"]==0)
@@ -1102,7 +1103,7 @@ function dol_getdate($timestamp,$fast=false)
 			{
 				$arrayinfo["wday"]=$arrayinfo["wday"]-1;
 			}
-		}
+		}*/
 	}
 
 	return $arrayinfo;
@@ -2458,7 +2459,7 @@ function dol_print_error($db='',$error='')
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
 		$out.=$langs->trans("DolibarrHasDetectedError").".<br>\n";
-		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $out.="You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n";
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $out.="You use an experimental level of features, so please do NOT report any bugs, except if problem is confirmed moving option MAIN_FEATURES_LEVEL back to 0.<br>\n";
 		$out.=$langs->trans("InformationToHelpDiagnose").":<br>\n";
 
 		$out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";
@@ -2956,7 +2957,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	{
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
-		$listofcurrenciesbefore=array('USD','GBP','AUD');
+		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN');
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
 		else
 		{
@@ -4964,3 +4965,4 @@ function natural_search($fields, $value)
     }
     return " AND " . ($end > 1? '(' : '') . $res;
 }
+

@@ -99,9 +99,16 @@ if ($sortfield == "") $sortfield="cf.date_creation";
 $offset = $conf->liste_limit * $page ;
 
 
+/*
+ * Mode Liste
+ */
+
 $sql = "SELECT s.rowid as socid, s.nom as name, cf.date_commande as dc,";
-$sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ttc, cf.total_ht, cf.fk_user_author,cf.date_livraison,";
+$sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author,cf.date_livraison,";
 $sql.= " p.rowid as project_id, p.ref as project_ref,";
+$sql.= " u.firstname,";
+$sql.= " u.lastname,";
+$sql.= " u.photo,";
 $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
@@ -185,7 +192,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","",$param,'',$sortfield,$sortorder);
 	if (empty($conf->global->SUPPLIER_ORDER_HIDE_REF_SUPPLIER)) print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"cf.ref_supplier","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Thirdparty"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
 	if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"cf.total_ht","",$param,'align="right"',$sortfield,$sortorder);
@@ -228,11 +235,18 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
+        $objectstatic->id=$obj->rowid;
+        $objectstatic->ref=$obj->ref;
+        $objectstatic->ref_supplier = $obj->ref_supplier;
+        $objectstatic->total_ht = $obj->total_ht;
+        $objectstatic->total_tva = $obj->total_tva;
+        $objectstatic->total_ttc = $obj->total_ttc;
 
 		print "<tr ".$bc[$var].">";
 
 		// Ref
-		print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a>';
+        print '<td class="nobordernopadding nowrap">';
+        print $objectstatic->getNomUrl(1);
 		$filename=dol_sanitizeFileName($obj->ref);
 		$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
@@ -258,11 +272,14 @@ if ($resql)
 			print '</td>';
 		}
 
-		// Author
-		$userstatic->id=$obj->fk_user_author;
-		$userstatic->login=$obj->login;
+        // Author
+        $userstatic->id = $obj->fk_user_author;
+        $userstatic->lastname = $obj->lastname;
+        $userstatic->firstname = $obj->firstname;
+        $userstatic->login = $obj->login;
+        $userstatic->photo = $obj->photo;
 		print "<td>";
-		if ($userstatic->id) print $userstatic->getLoginUrl(1);
+		if ($userstatic->id) print $userstatic->getNomUrl(1);
 		else print "&nbsp;";
 		print "</td>";
 

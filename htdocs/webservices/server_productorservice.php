@@ -668,6 +668,25 @@ function updateProductOrService($authentication,$product)
         {
             $error++;
         }
+        if (! $error)
+        {
+            if ($newobject->price_base_type == 'HT')
+            {
+                $result=$newobject->updatePrice($newobject->price, $newobject->price_base_type,$fuser);
+                if ($result <= 0)
+                {
+                    $error++;
+                }
+            }
+            elseif ($newobject->price_base_type == 'TTC')
+            {
+                $result=$newobject->updatePrice($newobject->price_ttc, $newobject->price_base_type);
+                if ($result <= 0)
+                {
+                    $error++;
+                }
+            }
+        }
 
         if (! $error)
         {

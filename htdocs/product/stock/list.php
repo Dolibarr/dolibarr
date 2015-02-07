@@ -103,9 +103,12 @@ if ($result)
 		while ($i < min($num,$limit))
 		{
 			$objp = $db->fetch_object($result);
+            $entrepot->id = $objp->rowid;
+            $entrepot->libelle = $objp->ref;
+            $entrepot->lieu = $objp->lieu;
             print "<tr ".$bc[$var].">";
-            print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
-			// Location
+            print '<td>' . $entrepot->getNomUrl(1) . '</td>';
+            // Location
             print '<td>'.$objp->lieu.'</td>';
             // PMP value
             print '<td align="right">';

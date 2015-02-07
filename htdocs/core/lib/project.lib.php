@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -85,23 +85,19 @@ function project_prepare_head($object)
 	$head[$h][2] = 'document';
 	$h++;
 
-	// Then tab for sub level of projet, i mean tasks
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Tasks");
-	$head[$h][2] = 'tasks';
-	$h++;
+	if (empty($conf->global->PROJECT_HIDE_TASKS))
+	{
+		// Then tab for sub level of projet, i mean tasks
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Tasks");
+		$head[$h][2] = 'tasks';
+		$h++;
 
-	/* Now this is a filter in the Task tab.
-	 $head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&mode=mine';
-	$head[$h][1] = $langs->trans("MyTasks");
-	$head[$h][2] = 'mytasks';
-	$h++;
-	*/
-
-	$head[$h][0] = DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Gantt");
-	$head[$h][2] = 'gantt';
-	$h++;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Gantt");
+		$head[$h][2] = 'gantt';
+		$h++;
+	}
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'project','remove');
 
@@ -502,7 +498,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 				// Ref
 				print '<td>';
 				$taskstatic->id=$lines[$i]->id;
-				$taskstatic->ref=$lines[$i]->id;
+				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
 				print $taskstatic->getNomUrl(1);
 				print '</td>';
 

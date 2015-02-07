@@ -923,7 +923,8 @@ class Contrat extends CommonObject
 				$modCodeContract = new $module();
 			}
 
-			if (!empty($modCodeContract->code_auto)) {
+			//Commerce Efficace - Debut : Modification r�f�rence Contrat
+			/*if (!empty($modCodeContract->code_auto)) {
 				// Mise a jour ref
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 				if ($this->db->query($sql))
@@ -933,7 +934,8 @@ class Contrat extends CommonObject
 						$this->ref="(PROV".$this->id.")";
 					}
 				}
-			}
+			}*/
+			//Commerce Efficace - Fin : Modification r�f�rence Contrat
 
 			// Insert contacts commerciaux ('SALESREPSIGN','contrat')
 			$result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
@@ -1254,9 +1256,10 @@ class Contrat extends CommonObject
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
+	 *  @param	array		$array_option		extrafields array
 	 *  @return int             				<0 si erreur, >0 si ok
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_option=0)
 	{
 		global $user, $langs, $conf, $mysoc;
 
@@ -1364,17 +1367,33 @@ class Contrat extends CommonObject
 				$result=$this->update_statut($user);
 				if ($result > 0)
 				{
-				    // Call trigger
-				    $result=$this->call_trigger('LINECONTRACT_CREATE',$user);
-				    if ($result < 0)
-				    {
-				        $this->db->rollback();
-				        return -1;
-				    }
-				    // End call triggers
-
-					$this->db->commit();
-					return 1;
+					
+					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_option) && count($array_option)>0) // For avoid conflicts if trigger used
+					{
+						$contractline = new ContratLigne($this->db);
+						$contractline->array_options=$array_option;
+						$contractline->id= $this->db->last_insert_id(MAIN_DB_PREFIX.$contractline->table_element);
+						$result=$contractline->insertExtraFields();
+						if ($result < 0)
+						{
+							$this->error[]=$contractline->error;
+							$error++;
+						}
+					}
+					
+					if (empty($error)) {
+					    // Call trigger
+					    $result=$this->call_trigger('LINECONTRACT_CREATE',$user);
+					    if ($result < 0)
+					    {
+					        $this->db->rollback();
+					        return -1;
+					    }
+					    // End call triggers
+	
+						$this->db->commit();
+						return 1;
+					}
 				}
 				else
 				{
@@ -1415,9 +1434,10 @@ class Contrat extends CommonObject
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
+	 *  @param	array		$array_option		extrafields array
 	 *  @return int              				< 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0.0, $localtax2tx=0.0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0.0, $localtax2tx=0.0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_option=0)
 	{
 		global $user, $conf, $langs, $mysoc;
 
@@ -1517,17 +1537,33 @@ class Contrat extends CommonObject
 			$result=$this->update_statut($user);
 			if ($result >= 0)
 			{
-		        // Call trigger
-		        $result=$this->call_trigger('LINECONTRACT_UPDATE',$user);
-		        if ($result < 0)
-		        {
-		            $this->db->rollback();
-		            return -3;
-		        }
-		        // End call triggers
-
-				$this->db->commit();
-				return 1;
+				
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_option) && count($array_option)>0) // For avoid conflicts if trigger used
+				{
+					$contractline = new ContratLigne($this->db);
+					$contractline->array_options=$array_option;
+					$contractline->id= $this->db->last_insert_id(MAIN_DB_PREFIX.$contractline->table_element);
+					$result=$contractline->insertExtraFields();
+					if ($result < 0)
+					{
+						$this->error[]=$contractline->error;
+						$error++;
+					}
+				}
+				
+				if (empty($error)) {
+			        // Call trigger
+			        $result=$this->call_trigger('LINECONTRACT_UPDATE',$user);
+			        if ($result < 0)
+			        {
+			            $this->db->rollback();
+			            return -3;
+			        }
+			        // End call triggers
+	
+					$this->db->commit();
+					return 1;
+				}
 			}
 			else
 			{
@@ -1576,12 +1612,32 @@ class Contrat extends CommonObject
 			if (! $resql)
 			{
 				$this->error="Error ".$this->db->lasterror();
+				$error++;
+			}
+			
+			if (empty($error)) {
+				// Remove extrafields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$contractline = new ContratLigne($this->db);
+					$contractline->id= $idline;
+					$result=$contractline->deleteExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+						$this->error="Error ".get_class($this)."::delete deleteExtraFields error -4 ".$contractline->error;
+					}
+				}
+			}
+
+			if (empty($error)) {
+				$this->db->commit();
+				return 1;
+			} else {
+				dol_syslog(get_class($this)."::delete ERROR:".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
-
-            $this->db->commit();
-			return 1;
 		}
 		else
 		{
@@ -2083,6 +2139,9 @@ class ContratLigne extends CommonObject
 	var $statut;					// 0 inactive, 4 active, 5 closed
 	var $label;
 
+	public $element='contratdet';
+	public $table_element='contratdet';
+
 	/**
 	 * @var string
 	 * @deprecated Use $label instead
@@ -2461,10 +2520,21 @@ class ContratLigne extends CommonObject
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			$this->db->rollback();
-			return -1;
+			$error++;
+			//return -1;
+		}
+		
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+		{
+					
+			$result=$this->insertExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+			}
 		}
 
+		if (empty($error)) {
 		if (! $notrigger)
 		{
             // Call trigger
@@ -2472,9 +2542,16 @@ class ContratLigne extends CommonObject
             if ($result < 0) { $error++; $this->db->rollback(); return -1; }
             // End call triggers
 		}
+		}
 
+		if (empty($error)) {
         $this->db->commit();
 		return 1;
+		} else {
+			$this->db->rollback();
+			$this->errors[]=$this->error;
+			return -1;
+		}
 	}
 
 

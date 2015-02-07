@@ -858,7 +858,17 @@ class Facture extends CommonInvoice
 		if ($this->type == self::TYPE_CREDIT_NOTE) $picto.='a';	// Credit note
 		if ($this->type == self::TYPE_DEPOSIT) $picto.='d';	// Deposit invoice
 
-		$label=$langs->trans("ShowInvoice").': '.$this->ref;
+        $label = '<u>' . $langs->trans("ShowInvoice") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->ref_client))
+            $label .= '<br><b>' . $langs->trans('RefCustomer') . ':</b> ' . $this->ref_client;
+        if (! empty($this->total_ht))
+            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_tva))
+            $label.= '<br><b>' . $langs->trans('TVA') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_ttc))
+            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 		if ($this->type == self::TYPE_REPLACEMENT) $label=$langs->transnoentitiesnoconv("ShowInvoiceReplace").': '.$this->ref;
 		if ($this->type == self::TYPE_CREDIT_NOTE) $label=$langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
 		if ($this->type == self::TYPE_DEPOSIT) $label=$langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
@@ -1681,8 +1691,8 @@ class Facture extends CommonInvoice
 			return 0;
 		}
 
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->validate)))
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->facture->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->facture->invoice_advance->validate)))
 		{
 			$this->error='Permission denied';
 			dol_syslog(get_class($this)."::validate ".$this->error, LOG_ERR);
@@ -3329,7 +3339,8 @@ class Facture extends CommonInvoice
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
 		$sql.= ' l.date_start, l.date_end,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type, p.label as product_label,';
-		$sql.= ' p.description as product_desc';
+		$sql.= ' p.description as product_desc,';
+        $sql.= ' p.entity';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
@@ -3352,6 +3363,7 @@ class Facture extends CommonInvoice
 				$this->lines[$i]->description 		= $obj->description;
 				$this->lines[$i]->fk_product		= $obj->fk_product;
 				$this->lines[$i]->ref				= $obj->product_ref;
+                $this->lines[$i]->entity            = $obj->entity;         // Product entity
 				$this->lines[$i]->product_label		= $obj->product_label;
 				$this->lines[$i]->product_desc		= $obj->product_desc;
 				$this->lines[$i]->fk_product_type	= $obj->fk_product_type;

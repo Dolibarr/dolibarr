@@ -1700,13 +1700,16 @@ class Societe extends CommonObject
      *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
      *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
      *		@param	int		$maxlen			Max length of text
+     *      @param	string	$notooltip		1=Disable tooltip
      *		@return	string					String with URL
      */
-    function getNomUrl($withpicto=0,$option='',$maxlen=0)
+    function getNomUrl($withpicto=0,$option='',$maxlen=0,$notooltip=0)
     {
         global $conf,$langs;
 
         $name=$this->name?$this->name:$this->nom;
+
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;
 
 		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto))) {
 			if (($this->client) && (! empty ( $this->code_client ))) {
@@ -1718,41 +1721,66 @@ class Societe extends CommonObject
 			$name =$code.' '.$name;
 		}
 
-        $result='';
-        $lien=$lienfin='';
+        $result=''; $label='';
+        $lien=''; $lienfin='';
+
+        $label.= '<div width="100%">';
 
         if ($option == 'customer' || $option == 'compta')
         {
+           $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
            $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
         {
+            $label.= '<u>' . $langs->trans("ShowProspect") . '</u>';
             $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'supplier')
         {
+            $label.= '<u>' . $langs->trans("ShowSupplier") . '</u>';
             $lien = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
         }
         else if ($option == 'category')
         {
+            $label.= '<u>' . $langs->trans("ShowCategory") . '</u>';
         	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=2';
         }
         else if ($option == 'category_supplier')
         {
+            $label.= '<u>' . $langs->trans("ShowCategorySupplier") . '</u>';
         	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
         }
 
         // By default
         if (empty($lien))
         {
+            $label.= '<u>' . $langs->trans("ShowCompany") . '</u>';
             $lien = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
         }
 
+        if (! empty($this->name))
+            $label.= '<br><b>' . $langs->trans('Name') . ':</b> '. $this->name;
+        if (! empty($this->code_client))
+            $label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
+        if (! empty($this->code_fournisseur))
+            $label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
+
+        if (! empty($this->logo))
+        {
+        	$label.= '</div><div style="padding: 10px">';
+        	//if (! is_object($form)) $form = new Form($db);
+            $label.= Form::showphoto('societe', $this, 80);
+        }
+        $label.= '</div>';
+
         // Add type of canvas
-        $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'" title="'.dol_escape_htmltag($name, 1).'" class="classfortooltip">';
+        $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
+        $lien.=($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
+        $lien.='>';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name, 'company', 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($lien.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($name,$maxlen):$name).$lienfin;
 

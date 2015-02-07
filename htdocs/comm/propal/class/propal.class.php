@@ -2608,9 +2608,17 @@ class Propal extends CommonObject
         global $langs;
 
         $result='';
-        $label=$langs->trans("ShowPropal").': '.$this->ref;
+        $label = '<u>' . $langs->trans("ShowPropal") . '</u>';
+        if (! empty($this->ref))
+            $label.= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (! empty($this->ref_client))
-            $label.= '<br>'.$langs->trans('RefCustomer').': '.$this->ref_client;
+            $label.= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+        if (! empty($this->total_ht))
+            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_tva))
+            $label.= '<br><b>' . $langs->trans('TVA') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_ttc))
+            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         if ($option == '') {
             $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
@@ -2649,7 +2657,8 @@ class Propal extends CommonObject
         $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
         $sql.= ' pt.date_start, pt.date_end, pt.product_type, pt.rang, pt.fk_parent_line,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
-        $sql.= ' p.description as product_desc';
+        $sql.= ' p.description as product_desc,';
+        $sql.= ' p.entity';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
         $sql.= ' WHERE pt.fk_propal = '.$this->id;
@@ -2673,9 +2682,10 @@ class Propal extends CommonObject
                 $this->lines[$i]->description 		= $obj->description;
                 $this->lines[$i]->fk_product		= $obj->fk_product;
                 $this->lines[$i]->ref				= $obj->ref;
+                $this->lines[$i]->entity            = $obj->entity;             // Product entity
                 $this->lines[$i]->product_label		= $obj->product_label;
                 $this->lines[$i]->product_desc		= $obj->product_desc;
-                $this->lines[$i]->fk_product_type	= $obj->fk_product_type;  // deprecated
+                $this->lines[$i]->fk_product_type	= $obj->fk_product_type;    // deprecated
                 $this->lines[$i]->product_type		= $obj->product_type;
                 $this->lines[$i]->qty				= $obj->qty;
                 $this->lines[$i]->subprice			= $obj->subprice;

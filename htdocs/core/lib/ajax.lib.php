@@ -322,7 +322,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	global $conf;
 
 	//if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
-	//if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile
+	if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';
 

@@ -1563,7 +1563,10 @@ class Adherent extends CommonObject
         global $langs;
 
         $result='';
-        $label=$langs->trans("ShowMember").': '.$this->ref;
+        $label = '<u>' . $langs->trans("ShowMember") . '</u>';
+        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->firstname) || ! empty($this->lastname))
+            $label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if ($option == 'card')

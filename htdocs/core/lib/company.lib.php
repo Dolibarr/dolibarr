@@ -2,11 +2,12 @@
 /* Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		    Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007		    Patrick Raguin			  <patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012	Regis Houssin			    <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012  Regis Houssin			    <regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2014  Florian Henry		  	  <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Juanjo Menent		  	  <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel		<contact@altairis.fr>
- * Copyright (C) 2013       Alexandre Spangaro    <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -988,9 +989,11 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     }
 
                     $out.='<td width="80" class="nowrap">';
-                    $userstatic->id=$obj->fk_user_author;
-                    $userstatic->login=$obj->login;
-                    $out.=$userstatic->getLoginUrl(1);
+                    //$userstatic->id=$obj->fk_user_author;
+                    //$userstatic->login=$obj->login;
+                    //$out.=$userstatic->getLoginUrl(1);
+                    $userstatic->fetch($obj->fk_user_author);
+                    $out.=$userstatic->getNomUrl(1);
                     $out.='</td>';
 
                     // Statut
@@ -1235,22 +1238,36 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             {
             	if ($histo[$key]['elementtype'] == 'propal' && ! empty($conf->propal->enabled))
             	{
-            		$propalstatic->ref=$langs->trans("ProposalShort");
-            		$propalstatic->id=$histo[$key]['fk_element'];
-            		$out.=$propalstatic->getNomUrl(1);
-            	}
+            		//$propalstatic->ref=$langs->trans("ProposalShort");
+            		//$propalstatic->id=$histo[$key]['fk_element'];
+                    if ($propalstatic->fetch($histo[$key]['fk_element'])>0) {
+                        $propalstatic->type=$histo[$key]['ftype'];
+                        $out.=$propalstatic->getNomUrl(1);
+                    } else {
+                        $out.= $langs->trans("ProposalDeleted");
+                    }
+             	}
             	elseif (($histo[$key]['elementtype'] == 'order' || $histo[$key]['elementtype'] == 'commande') && ! empty($conf->commande->enabled))
             	{
-            		$orderstatic->ref=$langs->trans("Order");
-            		$orderstatic->id=$histo[$key]['fk_element'];
-            		$out.=$orderstatic->getNomUrl(1);
-            	}
+            		//$orderstatic->ref=$langs->trans("Order");
+            		//$orderstatic->id=$histo[$key]['fk_element'];
+                    if ($orderstatic->fetch($histo[$key]['fk_element'])>0) {
+                        $orderstatic->type=$histo[$key]['ftype'];
+                        $out.=$orderstatic->getNomUrl(1);
+                    } else {
+                        $out.= $langs->trans("OrderDeleted");
+                    }
+             	}
             	elseif (($histo[$key]['elementtype'] == 'invoice' || $histo[$key]['elementtype'] == 'facture') && ! empty($conf->facture->enabled))
             	{
-            		$facturestatic->ref=$langs->trans("Invoice");
-            		$facturestatic->id=$histo[$key]['fk_element'];
-            		$facturestatic->type=$histo[$key]['ftype'];
-            		$out.=$facturestatic->getNomUrl(1,'compta');
+            		//$facturestatic->ref=$langs->trans("Invoice");
+            		//$facturestatic->id=$histo[$key]['fk_element'];
+                    if ($facturestatic->fetch($histo[$key]['fk_element'])>0) {
+                        $facturestatic->type=$histo[$key]['ftype'];
+                        $out.=$facturestatic->getNomUrl(1,'compta');
+                    } else {
+                        $out.= $langs->trans("InvoiceDeleted");
+                    }
             	}
             	else $out.='&nbsp;';
             }
@@ -1272,9 +1289,11 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
             // Auteur
             $out.='<td class="nowrap" width="80">';
-            $userstatic->id=$histo[$key]['userid'];
-            $userstatic->login=$histo[$key]['login'];
-            $out.=$userstatic->getLoginUrl(1);
+            //$userstatic->id=$histo[$key]['userid'];
+            //$userstatic->login=$histo[$key]['login'];
+            //$out.=$userstatic->getLoginUrl(1);
+            $userstatic->fetch($histo[$key]['userid']);
+            $out.=$userstatic->getNomUrl(1);
             $out.='</td>';
 
             // Statut

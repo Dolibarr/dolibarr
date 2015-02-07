@@ -69,7 +69,7 @@ $shipment=new Expedition($db);
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('',$langs->trans('ListOfSendings'),$helpurl);
 
-$sql = "SELECT e.rowid, e.ref, e.date_delivery as date_expedition, l.date_delivery as date_livraison, e.fk_statut";
+$sql = "SELECT e.rowid, e.ref, e.date_expedition as date_expedition, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut";
 $sql.= ", s.nom as socname, s.rowid as socid";
 $sql.= " FROM (".MAIN_DB_PREFIX."expedition as e";
 if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
@@ -120,8 +120,10 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"],"e.ref","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDeliveryPlanned"), $_SERVER["PHP_SELF"],"e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
-	if($conf->livraison_bon->enabled) {
+	if($conf->expedition_bon->enabled) {
 		print_liste_field_titre($langs->trans("DeliveryOrder"), $_SERVER["PHP_SELF"],"e.date_expedition","",$param, '',$sortfield,$sortorder);
+    }
+        if($conf->livraison_bon->enabled) {
 		print_liste_field_titre($langs->trans("DateReceived"), $_SERVER["PHP_SELF"],"e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
 	}
 	print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"],"e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
@@ -137,10 +139,12 @@ if ($resql)
 	print '<input class="flat" type="text" size="10" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	if($conf->livraison_bon->enabled) {
+	if($conf->expedition_bon->enabled) {
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="10" type="text" name="search_ref_liv" value="'.$search_ref_liv.'"';
 		print '</td>';
+    }
+    if($conf->livraison_bon->enabled) {
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -178,17 +182,22 @@ if ($resql)
 
 		// Date delivery planed
 		print "<td align=\"center\">";
-		print dol_print_date($db->jdate($objp->date_expedition),"day");
+		print dol_print_date($db->jdate($objp->date_livraison),"day");
 		/*$now = time();
 		if ( ($now - $db->jdate($objp->date_expedition)) > $conf->warnings->lim && $objp->statutid == 1 )
 		{
 		}*/
 		print "</td>\n";
-		if($conf->livraison_bon->enabled) {
+		if($conf->expedition_bon->enabled) {
 			// Date real
-			print "<td align=\"center\">";
-			print dol_print_date($db->jdate($objp->date_livraison),"day");
-			print "</td>\n";
+			print '<td align="center">';
+			print dol_print_date($db->jdate($objp->date_expedition),"day");
+			print '</td>'."\n";
+        }
+        if($conf->livraison_bon->enabled) {
+			print '<td align="center">';
+			print dol_print_date($db->jdate($objp->date_reception),"day");
+			print '</td>'."\n";
 		}
 
 		print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';

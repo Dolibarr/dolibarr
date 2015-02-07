@@ -522,7 +522,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	// Get format of bank account according to its country
 	$usedetailedbban=$account->useDetailedBBAN();
 
-	$onlynumber=0; $usedetailedbban=1; // For tests
+	//$onlynumber=0; $usedetailedbban=1; // For tests
 	if ($usedetailedbban)
 	{
 		$savcurx=$curx;

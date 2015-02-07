@@ -935,7 +935,12 @@ class Account extends CommonObject
         global $langs;
 
         $result='';
-        $linkclose = '" title="'.dol_escape_htmltag($this->label, 1).'" class="classfortooltip">';
+        $label = '<u>' . $langs->trans("ShowAccount") . '</u>';
+        if (! empty($this->label))
+            $label .= '<br><b>' . $langs->trans('Account') . ':</b> ' . $this->label;
+        if (! empty($this->number))
+            $label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if (empty($mode))
         {
@@ -948,7 +953,7 @@ class Account extends CommonObject
             $lienfin='</a>';
         }
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAccount").': '.$this->label, 'account', 'class="classfortooltip"').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($label, 'account', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.$this->label.$lienfin;
         return $result;
     }

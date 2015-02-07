@@ -212,10 +212,17 @@ class pdf_rouget extends ModelePdfExpedition
 							{
 								// Get code using getLabelFromKey
 								$code=$outputlangs->getLabelFromKey($this->db,$object->shipping_method_id,'c_shipment_mode','rowid','code');
-								$label=$outputlangs->trans("LinkToTrackYourPackage")."<br>";
-								$label.=$outputlangs->trans("SendingMethod".strtoupper($code))." :";
+								$label='';
+								if ($object->tracking_url != $object->tracking_number) $label.=$outputlangs->trans("LinkToTrackYourPackage")."<br>";
+								$label.=$outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
+								//var_dump($object->tracking_url != $object->tracking_number);exit;
+								if ($object->tracking_url != $object->tracking_number)
+								{
+									$label.=" : ";
+									$label.=$object->tracking_url;
+								}
 								$pdf->SetFont('','B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, 4, $this->posxdesc-1, $tab_top+6, $label." ".$object->tracking_url, 0, 1, false, true, 'L');
+								$pdf->writeHTMLCell(60, 4, $this->posxdesc-1, $tab_top_alt, $label, 0, 1, false, true, 'L');
 
 								$tab_top_alt = $pdf->GetY();
 							}
@@ -537,7 +544,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_creation,"daytext",false,$outputlangs,true), '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_livraison,"daytext",false,$outputlangs,true), '', 'R');
 
 		if (! empty($object->client->code_client))
 		{

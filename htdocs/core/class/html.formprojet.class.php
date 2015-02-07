@@ -91,8 +91,9 @@ class FormProjets
 			if (! empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-	           	$out.= ajax_combobox($htmlname, '', 0, $forcefocus);
-            	$nodatarole=' data-role="none"';
+	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+            	$out.=$comboenhancement;
+            	$nodatarole=($comboenhancement?' data-role="none"':'');
 			}
 
 			if (empty($option_only)) {

@@ -84,6 +84,10 @@ if ($id > 0 || ! empty($ref)) {
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
+// fetch optionals attributes lines and labels 
+$extrafieldsline = new ExtraFields($db);
+$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+
 $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
 
 
@@ -408,6 +412,18 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
     	$error++;
     }
 
+    // Extrafields
+    $extrafieldsline = new ExtraFields($db);
+    $extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+    $array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+    // Unset extrafield
+    if (is_array($extralabelsline)) {
+    	// Get extra fields
+    	foreach ($extralabelsline as $key => $value) {
+    		unset($_POST["options_" . $key]);
+    	}
+    }
+
     if (! $error)
     {
 		// Clean parameters
@@ -520,7 +536,8 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
                 $pu_ttc,
                 $info_bits,
       			$fk_fournprice,
-      			$pa_ht
+      			$pa_ht,
+            	$array_option
             );
         }
 
@@ -617,6 +634,12 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
         $objectline->fk_fournprice=$fk_fournprice;
         $objectline->pa_ht=$pa_ht;
 
+        // Extrafields
+        $extrafieldsline = new ExtraFields($db);
+        $extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
+        $array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+        $objectline->array_options=$array_option;
+        
         // TODO verifier price_min si fk_product et multiprix
 
         $result=$objectline->update($user);
@@ -1237,7 +1260,7 @@ else
          * Lines of contracts
          */
 
-	    if ($conf->product->enabled) {
+	    if ($conf->product->enabled || $conf->service->enabled) {
 			$productstatic=new Product($db);
 	    }
 
@@ -1306,7 +1329,7 @@ else
                         	$productstatic->ref=$objp->label;
                         	print $productstatic->getNomUrl(0,'',16);
                         }
-                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM) and $objp->description)
+                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM) && !empty($objp->description))
                             print '<br>'.dol_nl2br($objp->description);
                         print '</td>';
                     }
@@ -1391,6 +1414,16 @@ else
                         print '</td>';
                         print '</tr>';
                     }
+                    
+                    
+                    //Display lines extrafields
+                    if (is_array($extralabelslines) && count($extralabelslines)>0) {
+                    	print '<tr '.$bc[$var].'>';
+                    	$line = new ContratLigne($db);
+                    	$line->fetch_optionals($objp->rowid,$extralabelslines);
+                    	print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan));
+                    	print '</tr>';
+                    }
                 }
                 // Ligne en mode update
                 else
@@ -1448,6 +1481,15 @@ else
                     print '<br>'.$langs->trans("DateEndPlanned").' ';
                     $form->select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
                     print '</td>';
+                    
+                    if (is_array($extralabelslines) && count($extralabelslines)>0) {
+                    	print '<tr '.$bc[$var].'>';
+                    	$line = new ContratLigne($db);
+                    	$line->fetch_optionals($objp->rowid,$extralabelslines);
+                    	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan));
+                    	print '</tr>';
+                    }
+                    
                     print '</tr>';
                 }
 

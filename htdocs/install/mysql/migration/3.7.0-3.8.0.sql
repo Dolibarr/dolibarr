@@ -18,13 +18,19 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
 --create table for price expressions and add column in product supplier
 create table llx_c_price_expression
 (
-  rowid     integer AUTO_INCREMENT PRIMARY KEY,
-  title     varchar(20) NOT NULL,
-  expression    varchar(80) NOT NULL
+  rowid      integer AUTO_INCREMENT PRIMARY KEY,
+  title      varchar(20) NOT NULL,
+  expression varchar(80) NOT NULL
 )ENGINE=innodb;
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_supplier_price_expression integer DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN fk_price_expression integer DEFAULT NULL;
+ALTER TABLE llx_product_price ADD COLUMN fk_price_expression integer DEFAULT NULL;
+
 
 --create table for user conf of printing driver
 CREATE TABLE llx_printing 
@@ -41,7 +47,7 @@ CREATE TABLE llx_printing
  userid integer
 )ENGINE=innodb;
 
-ALTER TABLE llx_product_fournisseur_price ADD fk_price_expression integer DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_price_expression integer DEFAULT NULL;
 
 -- Taiwan VAT Rates
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213, '5', '0', 'VAT 5%', 1);
@@ -70,3 +76,23 @@ create table llx_bank_account_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
+
+ALTER TABLE llx_stock_mouvement MODIFY COLUMN label varchar(255);
+ALTER TABLE llx_stock_mouvement ADD COLUMN inventorycode varchar(128);
+
+ALTER TABLE llx_product_association ADD COLUMN incdec integer DEFAULT 1;
+
+
+
+ALTER TABLE llx_bank_account_extrafields ADD INDEX idx_bank_account_extrafields (fk_object);
+
+
+create table llx_contratdet_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_contratdet_extrafields ADD INDEX idx_contratdet_extrafields (fk_object);

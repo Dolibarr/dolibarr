@@ -55,6 +55,7 @@ class MouvementStock extends CommonObject
 	 *										2=output (stock decrease), 3=input (stock increase)
 	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string	$label			Label of stock movement
+	 *	@param		string	$inventorycode	Inventory code
 	 *	@param		string	$datem			Force date of movement
 	 *	@param		date	$eatby			eat-by date
 	 *	@param		date	$sellby			sell-by date
@@ -62,21 +63,27 @@ class MouvementStock extends CommonObject
 	 *	@param		boolean	$skip_sellby	If set to true, stock mouvement is done without impacting batch record
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
-	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $datem='',$eatby='',$sellby='',$batch='',$skip_sellby=false)
+	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='', $datem='',$eatby='',$sellby='',$batch='',$skip_sellby=false)
 	{
 		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$error = 0;
-		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price label=$label");
+		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode");
 
 		// Clean parameters
 		if (empty($price)) $price=0;
+		$now=(! empty($datem) ? $datem : dol_now());
 		
+		// Check parameters
 		if (empty($fk_product)) return 0;
 
-		$now=(! empty($datem) ? $datem : dol_now());
-
+		// Set properties of movement
+		$this->product_id = $fk_product;
+		$this->entrepot_id = $entrepot_id;
+		$this->qty = $qty;
+		$this->type = $type;
+		
 		$this->db->begin();
 
 		$product = new Product($this->db);
@@ -94,19 +101,22 @@ class MouvementStock extends CommonObject
 
 		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
-			if(!empty($this->origin)) {
+			if(!empty($this->origin)) {			// This is set by caller for tracking reason
 				$origintype = $this->origin->element;
 				$fk_origin = $this->origin->id;
 			} else {
 				$origintype = '';
 				$fk_origin = 0;
 			}
+
+			$mvid = 0;
 			
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
-			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price, fk_origin, origintype)";
-			$sql.= " VALUES ('".$this->db->idate($now)."', ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.",";
+			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype)";
+			$sql.= " VALUES ('".$this->db->idate($now)."', ".$this->product_id.", ".$this->entrepot_id.", ".$this->qty.", ".$this->type.",";
 			$sql.= " ".$user->id.",";
 			$sql.= " '".$this->db->escape($label)."',";
+			$sql.= " '".$this->db->escape($inventorycode)."',";
 			$sql.= " '".price2num($price)."',";
 			$sql.= " '".$fk_origin."',";
 			$sql.= " '".$origintype."'";
@@ -117,6 +127,7 @@ class MouvementStock extends CommonObject
 			if ($resql)
 			{
 				$mvid = $this->db->last_insert_id(MAIN_DB_PREFIX."stock_mouvement");
+				$this->id = $mvid; 
 			}
 			else
 			{
@@ -159,10 +170,11 @@ class MouvementStock extends CommonObject
 			}
 
 			// Calculate new PMP.
+			$newpmp=0;
+			$newpmpwarehouse=0;
+			/*
 			if (! $error)
 			{
-				$newpmp=0;
-				$newpmpwarehouse=0;
 				// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
 				// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
 				if (($type == 0 || $type == 3) && $price > 0)
@@ -190,9 +202,9 @@ class MouvementStock extends CommonObject
 					if ($oldpmpwarehouse > 0) $newpmpwarehouse=price2num((($oldqtywarehousetouse * $oldpmpwarehouse) + ($qty * $price)) / ($oldqtywarehousetouse + $qty), 'MU');
 					else $newpmpwarehouse=$price;
 
-					/*print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." oldpmpwarehouse=".$oldpmpwarehouse." ";
-					print "qty=".$qty." newpmp=".$newpmp." newpmpwarehouse=".$newpmpwarehouse;
-					exit;*/
+					//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." oldpmpwarehouse=".$oldpmpwarehouse." ";
+					//print "qty=".$qty." newpmp=".$newpmp." newpmpwarehouse=".$newpmpwarehouse;
+					//exit;
 				}
 				else if ($type == 1 || $type == 2)
 				{
@@ -204,7 +216,8 @@ class MouvementStock extends CommonObject
 					$newpmpwarehouse = $oldpmpwarehouse;
 				}
 			}
-
+			*/
+			
 			// Update denormalized value of stock in product_stock and product
 			if (! $error)
 			{
@@ -262,21 +275,15 @@ class MouvementStock extends CommonObject
 		// Add movement for sub products (recursive call)
 		if (! $error && ! empty($conf->global->PRODUIT_SOUSPRODUITS))
 		{
-			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// we use 0 as price, because pmp is not changed for subproduct
+			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode);	// we use 0 as price, because pmp is not changed for subproduct
 		}
 
 		if ($movestock && ! $error)
 		{
-			$this->product_id = $fk_product;
-			$this->entrepot_id = $entrepot_id;
-			$this->qty = $qty;
-
             // Call trigger
             $result=$this->call_trigger('STOCK_MOVEMENT',$user);
             if ($result < 0) $error++;          
             // End call triggers
-            
-            //FIXME: Restore previous value of product_id,  entrepot_id, qty if trigger fail
 		}
 
 		if (! $error)
@@ -303,9 +310,10 @@ class MouvementStock extends CommonObject
 	 * 	@param		int		$type			Type
 	 * 	@param		int		$price			Price
 	 * 	@param		string	$label			Label of movement
+	 *  @param		string	$inventorycode	Inventory code
 	 * 	@return 	int     				<0 if KO, 0 if OK
 	 */
-	function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price=0, $label='')
+	function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='')
 	{
 		$error = 0;
 		$pids = array();
@@ -314,7 +322,9 @@ class MouvementStock extends CommonObject
 		$sql = "SELECT fk_product_pere, fk_product_fils, qty";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere = ".$idProduct;
-
+		// TODO Select only subproduct with incdec tag
+		//$sql.= " AND incdec = 1";
+		
 		dol_syslog(get_class($this)."::_createSubProduct", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -336,7 +346,9 @@ class MouvementStock extends CommonObject
 		// Create movement for each subproduct
 		foreach($pids as $key => $value)
 		{
-			$this->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label);
+			$tmpmove = dol_clone($this);
+			$tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode);		// This will also call _createSubProduct making this recursive
+			unset($tmpmove);
 		}
 
 		return $error;
@@ -357,7 +369,7 @@ class MouvementStock extends CommonObject
 	 */
 	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $datem,'','','',true);
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, '', $datem,'','','',true);
 	}
 
 	/**
@@ -389,7 +401,7 @@ class MouvementStock extends CommonObject
 	 */
 	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $eatby='', $sellby='', $batch='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, '', $eatby, $sellby, $batch);
+		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, '', '', $eatby, $sellby, $batch);
 	}
 
 

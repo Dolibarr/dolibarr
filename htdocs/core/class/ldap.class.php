@@ -176,7 +176,10 @@ class Ldap
 
 			if (is_resource($this->connection))
 			{
+				// Execute the ldap_set_option here (after connect and before bind)
 				$this->setVersion();
+				ldap_set_option($this->connection, LDAP_OPT_SIZELIMIT, 0); // no limit here. should return true.
+
 
 				if ($this->serverType == "activedirectory")
 				{
