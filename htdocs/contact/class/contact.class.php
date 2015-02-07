@@ -140,6 +140,7 @@ class Contact extends CommonObject
 		$sql.= ", statut";
 		$sql.= ", canvas";
 		$sql.= ", entity";
+		$sql.= ",ref_ext";
 		$sql.= ", import_key";
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."',";
@@ -152,6 +153,7 @@ class Contact extends CommonObject
 		$sql.= " ".$this->statut.",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->canvas."'":"null").",";
         $sql.= " ".$conf->entity.",";
+	$sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->import_key."'":"null");
 		$sql.= ")";
 
@@ -496,10 +498,12 @@ class Contact extends CommonObject
 	 *
 	 *  @param      int		$id          id du contact
 	 *  @param      User	$user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
+         *  @param      string          $ref_ext        External reference, not given by Dolibarr
 	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
 	 */
-	function fetch($id, $user=0)
+	function fetch($id, $user=0, $ref_ext='')
 	{
+		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 		global $langs;
 
 		$langs->load("companies");
@@ -521,7 +525,8 @@ class Contact extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		$sql.= " WHERE c.rowid = ". $id;
+		if ($id) $sql.= " WHERE c.rowid = ". $id;
+		elseif ($ref_ext) $sql .= " WHERE c.ref_ext = '".$this->db->escape($ref_ext)."'";
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$resql=$this->db->query($sql);
