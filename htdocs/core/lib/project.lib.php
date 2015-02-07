@@ -498,7 +498,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 				// Ref
 				print '<td>';
 				$taskstatic->id=$lines[$i]->id;
-				$taskstatic->ref=$lines[$i]->id;
+				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
 				print $taskstatic->getNomUrl(1);
 				print '</td>';
 
