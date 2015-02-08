@@ -61,7 +61,7 @@ if (! $sortfield) $sortfield="c.date_commande";
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
-if (GETPOST("button_removefilter_x")) {
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
 	$search_month='';
 	$search_year='';
 }
