@@ -102,9 +102,9 @@ class mod_askpricesupplier_saphir extends ModeleNumRefAskPriceSupplier
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	Propal		$propal		Object commercial proposal
-	 *  @return string      			Value if OK, 0 if KO
+	 *  @param	Societe		$objsoc     		Object third party
+	 * 	@param	Propal		$askpricesupplier	Object askpricesupplier
+	 *  @return string      					Value if OK, 0 if KO
 	 */
 	function getNextValue($objsoc,$askpricesupplier)
 	{

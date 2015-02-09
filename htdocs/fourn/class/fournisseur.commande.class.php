@@ -1693,7 +1693,7 @@ class CommandeFournisseur extends CommonOrder
         if ($user->rights->fournisseur->commande->creer)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-            $sql.= " SET fk_projet = ".($id_projet > 0 ? (int)$id_projet : 'null');
+            $sql.= " SET fk_projet = ".($id_projet > 0 ? (int) $id_projet : 'null');
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::set_id_projet", LOG_DEBUG);
