@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2005           Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2010-2014      Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2010-2015      Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2011-2012      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -23,9 +23,9 @@ create table llx_c_tva
   rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   fk_pays           integer NOT NULL,
   taux              double  NOT NULL,
-  localtax1         varchar(10)  NOT NULL DEFAULT '0',
+  localtax1         varchar(20)  NOT NULL DEFAULT '0',
   localtax1_type	varchar(10)	 NOT NULL DEFAULT '0',
-  localtax2         varchar(10)  NOT NULL DEFAULT '0',
+  localtax2         varchar(20)  NOT NULL DEFAULT '0',
   localtax2_type	varchar(10)  NOT NULL DEFAULT '0',
   recuperableonly   integer NOT NULL DEFAULT 0,
   note              varchar(128),

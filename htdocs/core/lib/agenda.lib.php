@@ -50,6 +50,8 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	global $conf, $user, $langs, $db, $hookmanager;
 	global $begin_h, $end_h, $begin_d, $end_d;
 
+	$langs->load("companies");
+
 	// Filters
 	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -114,7 +116,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap">';
 		print $langs->trans("Project").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone">';
-		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 64);
+		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 0);
 		print '</td></tr>';
 	}
 

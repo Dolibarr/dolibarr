@@ -13,10 +13,25 @@ Issues are tracked at [Doliforge](https://doliforge.org/projects/dolibarr)
 
 Code
 ----
+
+### Basic workflow
+
 1. Fork the [GitHub repository](https://github.com/Dolibarr/dolibarr).
 2. Clone your fork.
-3. Commit and push your changes.
-4. Make a pull request.
+3. Choose a branch(See the Branches section below).
+4. Commit and push your changes.
+5. Make a pull request.
+
+### Branches
+
+Unless you're fixing a bug, all pull request should be made against the *develop* branch.
+
+If you're fixing a bug, it is preferred that you cook your fix and pull request it
+against the oldest version affected that's still supported.
+
+We officially support versions N, N − 1 and N − 2 for N the latest version available.
+
+Choose your base branch accordingly.
 
 ### General rules
 Please don't edit the ChangeLog file. A project manager will update it from your commit messages.
@@ -32,9 +47,9 @@ Long description (Can span accross multiple lines).
 
 Where KEYWORD is one of:
 
-- void: don't put a keyword if the commit is not introducing feature or closing a bug.
-- NEW: for new features (May be followed by the task number i.e: #123)
-- FIXED: for bug fixes (May be followed by the bug number i.e: #456)
+- "FIXED:" for bug fixes (May be followed by the bug number i.e: #456)
+- "NEW:" for new features (May be followed by the task number i.e: #123)
+- void, don't put a keyword if the commit is not introducing feature or closing a bug.
 
 ### Resources
 [Developer documentation](http://wiki.dolibarr.org/index.php/Developer_documentation)

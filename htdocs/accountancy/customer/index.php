@@ -22,7 +22,7 @@
 /**
  * \file		htdocs/accountancy/customer/index.php
  * \ingroup		Accounting Expert
- * \brief		Page accueil clients ventilation comptable
+ * \brief		Home customer ventilation
  */
 
 require '../../main.inc.php';
@@ -75,6 +75,8 @@ if ($action == 'validatehistory') {
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_sell=accnt.account_number";
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
 	}
+	
+	dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
 
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
@@ -93,7 +95,7 @@ if ($action == 'validatehistory') {
 llxHeader('', $langs->trans("CustomersVentilation"));
 
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
-$textnextyear = ' <a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
+$textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
 print_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
 
@@ -105,6 +107,7 @@ $sql .= " , " . MAIN_DB_PREFIX . "facture as f";
 $sql .= " WHERE fd.fk_code_ventilation = 0";
 $sql .= " AND f.rowid = fd.fk_facture AND f.fk_statut = 1;";
 
+dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$row = $db->fetch_row($result);
@@ -160,6 +163,7 @@ if (! empty($conf->multicompany->enabled)) {
 
 $sql .= " GROUP BY fd.fk_code_ventilation";
 
+dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -194,7 +198,7 @@ print "</table>\n";
 
 print "<br>\n";
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("Total") . '</td>';
+print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("TotalVente") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("JanuaryMin") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("FebruaryMin") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("MarchMin") . '</td>';
@@ -232,6 +236,7 @@ if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity = '" . $conf->entity . "'";
 }
 
+dol_syslog('htdocs/accountancy/customer/index.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -303,7 +308,8 @@ if (! empty($conf->margin->enabled)) {
 	if (! empty($conf->multicompany->enabled)) {
 		$sql .= " AND f.entity = '" . $conf->entity . "'";
 	}
-
+	
+	dol_syslog('htdocs/accountancy/customer/index.php:: $sql=' . $sql);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$i = 0;

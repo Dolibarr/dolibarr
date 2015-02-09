@@ -157,8 +157,7 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
         $result = $object->validate($user,'',$idwarehouse);
         if ($result < 0)
         {
-            setEventMessage($object->error,'errors');
-            setEventMessage($object->errors,'errors');
+            setEventMessages($object->error,$object->errors,'errors');
         }
     }
 }
@@ -1192,10 +1191,10 @@ if ($action == 'create')
     dol_htmloutput_events();
 
     $societe='';
-    if ($_GET['socid'])
+    if (GETPOST('socid') > 0)
     {
         $societe=new Societe($db);
-        $societe->fetch($_GET['socid']);
+        $societe->fetch(GETPOST('socid','int'));
     }
 
     if (GETPOST('origin') && GETPOST('originid'))
@@ -1274,14 +1273,14 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
     print '<td>';
 
-    if ($_REQUEST['socid'] > 0)
+    if (GETPOST('socid') > 0)
     {
         print $societe->getNomUrl(1);
-        print '<input type="hidden" name="socid" value="'.$_GET['socid'].'">';
+        print '<input type="hidden" name="socid" value="'.GETPOST('socid','int').'">';
     }
     else
     {
-        print $form->select_company((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
+        print $form->select_company(GETPOST('socid','int'),'socid','s.fournisseur = 1',1);
     }
     print '</td></tr>';
 
@@ -1396,12 +1395,13 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Project
-	if (! empty($conf->projet->enabled)) {
+	if (! empty($conf->projet->enabled))
+	{
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
-		$formproject->select_projects($soc->id, $projectid, 'projectid');
+		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$societe->id:'-1'), $projectid, 'projectid', 0);
 		print '</td></tr>';
 	}
 
@@ -1940,11 +1940,11 @@ else
             print '</td><td colspan="3">';
             if ($action == 'classify')
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1', $object->fk_project, 'projectid');
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1'), $object->fk_project, 'projectid', 0, 0, 1);
             }
             else
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0);
             }
             print '</td>';
             print '</tr>';

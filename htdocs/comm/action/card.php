@@ -36,7 +36,6 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -541,6 +540,7 @@ $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('',$langs->trans("Agenda"),$help_url);
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formactions = new FormActions($db);
 
 if ($action == 'create')
@@ -881,15 +881,15 @@ if ($id > 0)
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $form->select_date($object->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
-		else if (GETPOST("afaire") == 2) $form->select_date($object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
-		else $form->select_date($object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		if (GETPOST("afaire") == 1) $form->select_date($datep?$datep:$object->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
+		else if (GETPOST("afaire") == 2) $form->select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		else $form->select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $form->select_date($object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		else if (GETPOST("afaire") == 2) $form->select_date($object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		else $form->select_date($object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		if (GETPOST("afaire") == 1) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else if (GETPOST("afaire") == 2) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		print '</td></tr>';
 
 		// Status
@@ -1290,7 +1290,7 @@ if ($id > 0)
 
 		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC))
 		{
-			print '<div style="clear:both;">&nbsp;</div><div class="fichecenter"><div class="fichehalfleft">';
+			print '<div style="clear:both;">&nbsp;<br><br></div><div class="fichecenter"><div class="fichehalfleft">';
             print '<a name="builddoc"></a>'; // ancre
 
             /*

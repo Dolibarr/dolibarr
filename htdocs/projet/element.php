@@ -47,6 +47,7 @@ if (! empty($conf->facture->enabled))  	$langs->load("bills");
 if (! empty($conf->commande->enabled)) 	$langs->load("orders");
 if (! empty($conf->propal->enabled))   	$langs->load("propal");
 if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
+if (! empty($conf->deplacement->enabled))	$langs->load("trips");
 
 $projectid=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -164,21 +165,21 @@ dol_fiche_end();
 
 $listofreferent=array(
 'propal'=>array(
-	'name'=>"Proposalq",
+	'name'=>"Proposals",
 	'title'=>"ListProposalsAssociatedProject",
 	'class'=>'Propal',
 	'table'=>'propal',
     'datefieldname'=>'datep',
 	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
 'order'=>array(
-	'name'=>"CustomerOrderq",
+	'name'=>"CustomersOrders",
 	'title'=>"ListOrdersAssociatedProject",
 	'class'=>'Commande',
 	'table'=>'commande',
 	'datefieldname'=>'date_commande',
 	'test'=>$conf->commande->enabled && $user->rights->commande->lire),
 'invoice'=>array(
-	'name'=>"CustomerInvoiceq",
+	'name'=>"CustomersInvoices",
 	'title'=>"ListInvoicesAssociatedProject",
 	'class'=>'Facture',
 	'margin'=>'add',
@@ -193,7 +194,7 @@ $listofreferent=array(
 	'datefieldname'=>'datec',
 	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'order_supplier'=>array(
-	'name'=>"SuplierOrders",
+	'name'=>"SuppliersOrders",
 	'title'=>"ListSupplierOrdersAssociatedProject",
 	'class'=>'CommandeFournisseur',
 	'table'=>'commande_fournisseur',
@@ -223,7 +224,7 @@ $listofreferent=array(
 	'disableamount'=>1,
 	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
 'trip'=>array(
-	'name'=>"TripAndExpenses",
+	'name'=>"TripsAndExpenses",
 	'title'=>"ListTripAssociatedProject",
 	'class'=>'Deplacement',
 	'table'=>'deplacement',
@@ -271,6 +272,8 @@ foreach ($listofreferent as $key => $value)
 
 	if ($qualified)
 	{
+		$element = new $classname($db);
+
 		if (! $showdatefilter)
 		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
@@ -335,6 +338,9 @@ foreach ($listofreferent as $key => $value)
 			$total_ht_by_third = 0;
 			$total_ttc_by_third = 0;
 
+			$saved_third_id = 0;
+			$breakline = '';
+
 			if (canApplySubtotalOn($tablename)) {
 			   // Appel du mon code de tri :
 			   $elementarray = sortElementsByClientName($elementarray);
@@ -343,10 +349,22 @@ foreach ($listofreferent as $key => $value)
 			$num=count($elementarray);
 			for ($i = 0; $i < $num; $i++)
 			{
-				$element = new $classname($db);
 				$element->fetch($elementarray[$i]);
 				$element->fetch_thirdparty();
 				//print $classname;
+
+				if ($breakline && $saved_third_id != $element->thirdparty->id)
+				{
+					print $breakline;
+					$var = true;
+
+					$saved_third_id = $element->thirdparty->id;
+					$breakline = '';
+
+					$total_ht_by_third=0;
+					$total_ttc_by_third=0;
+				}
+				$saved_third_id = $element->thirdparty->id;
 
 				$qualifiedfortotal=true;
 				if ($key == 'invoice')
@@ -416,33 +434,27 @@ foreach ($listofreferent as $key => $value)
 					$total_ttc_by_third += $element->total_ttc;
 				}
 
-				// Autre partie de mon code :
 				if (canApplySubtotalOn($tablename))
 				{
-					$next_third_id = (isset($elementarray[$i+1])) ? $elementarray[$i+1] : '';
-					$third_id = $element->thirdparty->id;
-					if ($third_id != $next_third_id)
-					{
-						print '<tr class="liste_total">';
-						print     '<td colspan="2">';
-						print    '</td>';
-						print     '<td>';
-						print    '</td>';
-						print    '<td class="right">';
-						print $langs->trans('SubTotal').' : ';
-						if (is_object($element->thirdparty)) print $element->thirdparty->getNomUrl(0,'',48);
-						print    '</td>';
-						print     '<td align="right">'.price($total_ht).'</td>';
-						print     '<td align="right">'.price($total_ttc).'</td>';
-						print     '<td></td>';
-						print '</tr>';
-
-						$total_ht_by_third = 0;
-						$total_ttc_by_third = 0;
-						$var=true;
-					}
+					$breakline='<tr class="liste_total">';
+					$breakline.='<td colspan="2">';
+					$breakline.='</td>';
+					$breakline.='<td>';
+					$breakline.='</td>';
+					$breakline.='<td class="right">';
+					$breakline.=$langs->trans('SubTotal').' : ';
+					if (is_object($element->thirdparty)) $breakline.=$element->thirdparty->getNomUrl(0,'',48);
+					$breakline.='</td>';
+					$breakline.='<td align="right">'.price($total_ht_by_third).'</td>';
+					$breakline.='<td align="right">'.price($total_ttc_by_third).'</td>';
+					$breakline.='<td></td>';
+					$breakline.='</tr>';
 				}
+
+				//var_dump($element->thirdparty->name.' - '.$saved_third_id.' - '.$element->thirdparty->id);
 			}
+
+			if ($breakline) print $breakline;
 
 			print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Number").': '.$i.'</td>';
 			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
@@ -523,6 +535,8 @@ foreach ($listofreferent as $key => $value)
 	$margin = $value['margin'];
 	if (isset($margin))
 	{
+		$element = new $classname($db);
+
 		$elementarray = $project->get_element_list($key, $tablename);
 		if (count($elementarray)>0 && is_array($elementarray))
 		{
@@ -532,7 +546,6 @@ foreach ($listofreferent as $key => $value)
 			$num=count($elementarray);
 			for ($i = 0; $i < $num; $i++)
 			{
-				$element = new $classname($db);
 				$element->fetch($elementarray[$i]);
 				$element->fetch_thirdparty();
 				//print $classname;
@@ -606,23 +619,25 @@ function sortElementsByClientName($elementarray)
 	$element = new $classname($db);
 
 	$clientname = array();
-	foreach ($elementarray as $key => $id)
+	foreach ($elementarray as $key => $id)	// id = id of object
 	{
 		if (empty($clientname[$id]))
 		{
-			$element->id = $id;
+			$element->fetch($id);
 			$element->fetch_thirdparty();
+
 			$clientname[$id] = $element->thirdparty->name;
 		}
 	}
 
-	asort($clientname);
+	//var_dump($clientname);
+	asort($clientname);	// sort on name
 
 	$elementarray = array();
-	foreach ($clientname as $id => $name) {
+	foreach ($clientname as $id => $name)
+	{
 		$elementarray[] = $id;
 	}
 
 	return $elementarray;
 }
-

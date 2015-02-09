@@ -155,124 +155,126 @@ print "</table>";
 print '</div></div></div>';
 
 
-// Tasks for all resources of all opened projects and time spent for each task/resource
-print '<div class="fichecenter">';
-
-$max = (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
-
-$sql = "SELECT p.ref, p.title, p.rowid as projectid, t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
-$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tasktime on tasktime.fk_task = t.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on tasktime.fk_user = u.rowid";
-$sql.= " WHERE p.entity = ".$conf->entity;
-if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
-if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-$sql.= " AND p.fk_statut=1";
-$sql.= " GROUP BY p.ref, p.title, p.rowid, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";
-$sql.= " ORDER BY t.rowid, t.dateo, t.datee";
-$sql.= $db->plimit($max+1);	// We want more to know if we have more than limit
-
-$var=true;
-
-dol_syslog('projet:index.php: affectationpercent', LOG_DEBUG);
-$resql = $db->query($sql);
-if ( $resql )
+if (empty($conf->global->PROJECT_HIDE_TASKS))
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+	// Tasks for all resources of all opened projects and time spent for each task/resource
+	print '<div class="fichecenter">';
 
-	print '<br>';
+	$max = (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
 
-	print_fiche_titre($langs->trans("TasksOnOpenedProject"),'','').'<br>';
+	$sql = "SELECT p.ref, p.title, p.rowid as projectid, t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
+	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tasktime on tasktime.fk_task = t.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on tasktime.fk_user = u.rowid";
+	$sql.= " WHERE p.entity = ".$conf->entity;
+	if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
+	if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+	$sql.= " AND p.fk_statut=1";
+	$sql.= " GROUP BY p.ref, p.title, p.rowid, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";
+	$sql.= " ORDER BY t.rowid, t.dateo, t.datee";
+	$sql.= $db->plimit($max+1);	// We want more to know if we have more than limit
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	//print '<th>'.$langs->trans('TaskRessourceLinks').'</th>';
-	print '<th>'.$langs->trans('Projects').'</th>';
-	print '<th>'.$langs->trans('Task').'</th>';
-	print '<th>'.$langs->trans('DateStart').'</th>';
-	print '<th>'.$langs->trans('DateEnd').'</th>';
-	print '<th align="right">'.$langs->trans('PlannedWorkload').'</th>';
-	print '<th align="right">'.$langs->trans("ProgressDeclared").'</td>';
-	print '<th align="right">'.$langs->trans('TimeSpent').'</th>';
-	print '<th align="right">'.$langs->trans("ProgressCalculated").'</td>';
-	print '</tr>';
+	$var=true;
 
-	while ($i < $num && $i < $max)
+	dol_syslog('projet:index.php: affectationpercent', LOG_DEBUG);
+	$resql = $db->query($sql);
+	if ( $resql )
 	{
-		$obj = $db->fetch_object($resql);
-		$var=!$var;
+		$num = $db->num_rows($resql);
+		$i = 0;
 
-		$username='';
-		if ($obj->userid && $userstatic->id != $obj->userid)	// We have a user and it is not last loaded user
-		{
-			$result=$userstatic->fetch($obj->userid);
-			if (! $result) $userstatic->id=0;
-		}
-		if ($userstatic->id) $username = $userstatic->getNomUrl(0,0);
+		print '<br>';
 
-		print "<tr ".$bc[$var].">";
-		//print '<td>'.$username.'</td>';
-		print '<td>';
-		$projectstatic->id=$obj->projectid;
-		$projectstatic->ref=$obj->ref;
-		$projectstatic->title=$obj->title;
-		print $projectstatic->getNomUrl(1,'',16);
-		//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
-		print '</td>';
-		print '<td>';
-		if (! empty($obj->taskid))
+		print_fiche_titre($langs->trans("TasksOnOpenedProject"),'','').'<br>';
+
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		//print '<th>'.$langs->trans('TaskRessourceLinks').'</th>';
+		print '<th>'.$langs->trans('Projects').'</th>';
+		print '<th>'.$langs->trans('Task').'</th>';
+		print '<th>'.$langs->trans('DateStart').'</th>';
+		print '<th>'.$langs->trans('DateEnd').'</th>';
+		print '<th align="right">'.$langs->trans('PlannedWorkload').'</th>';
+		print '<th align="right">'.$langs->trans("ProgressDeclared").'</td>';
+		print '<th align="right">'.$langs->trans('TimeSpent').'</th>';
+		print '<th align="right">'.$langs->trans("ProgressCalculated").'</td>';
+		print '</tr>';
+
+		while ($i < $num && $i < $max)
 		{
-			print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a>';
-		}
-		else print $langs->trans("NoTasks");
-		print '</td>';
-		print '<td>'.dol_print_date($db->jdate($obj->dateo),'day').'</td>';
-		print '<td>'.dol_print_date($db->jdate($obj->datee),'day').'</td>';
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
-		print convertSecondToTime($obj->planned_workload, 'all');
-		print '</a></td>';
-		print '<td align="right">';
-		print ($obj->taskid>0)?$obj->progress.'%':'';
-		print '</td>';
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
-		print convertSecondToTime($obj->timespent, 'all');
-		print '</a></td>';
-		print '<td align="right">';
-		if (! empty($obj->taskid))
-		{
-			if (empty($obj->planned_workload) > 0) {
-				$percentcompletion = $langs->trans("WorkloadNotDefined");
-			} else {
-				$percentcompletion = intval($obj->duration_effective*100/$obj->planned_workload).'%';
+			$obj = $db->fetch_object($resql);
+			$var=!$var;
+
+			$username='';
+			if ($obj->userid && $userstatic->id != $obj->userid)	// We have a user and it is not last loaded user
+			{
+				$result=$userstatic->fetch($obj->userid);
+				if (! $result) $userstatic->id=0;
 			}
+			if ($userstatic->id) $username = $userstatic->getNomUrl(0,0);
+
+			print "<tr ".$bc[$var].">";
+			//print '<td>'.$username.'</td>';
+			print '<td>';
+			$projectstatic->id=$obj->projectid;
+			$projectstatic->ref=$obj->ref;
+			$projectstatic->title=$obj->title;
+			print $projectstatic->getNomUrl(1,'',16);
+			//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
+			print '</td>';
+			print '<td>';
+			if (! empty($obj->taskid))
+			{
+				print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a>';
+			}
+			else print $langs->trans("NoTasks");
+			print '</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->dateo),'day').'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datee),'day').'</td>';
+			print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
+			print convertSecondToTime($obj->planned_workload, 'all');
+			print '</a></td>';
+			print '<td align="right">';
+			print ($obj->taskid>0)?$obj->progress.'%':'';
+			print '</td>';
+			print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
+			print convertSecondToTime($obj->timespent, 'all');
+			print '</a></td>';
+			print '<td align="right">';
+			if (! empty($obj->taskid))
+			{
+				if (empty($obj->planned_workload) > 0) {
+					$percentcompletion = $langs->trans("WorkloadNotDefined");
+				} else {
+					$percentcompletion = intval($obj->duration_effective*100/$obj->planned_workload).'%';
+				}
+			}
+			print $percentcompletion;
+			print '</td>';
+			print "</tr>\n";
+
+			$i++;
 		}
-		print $percentcompletion;
-		print '</td>';
-		print "</tr>\n";
 
-		$i++;
+		if ($num > $max)
+		{
+			print '<tr><td colspan="6">'.$langs->trans("WarningTooManyDataPleaseUseMoreFilters").'</td></tr>';
+		}
+
+		print "</table>";
+
+
+		$db->free($resql);
+	}
+	else
+	{
+		dol_print_error($db);
 	}
 
-	if ($num > $max)
-	{	
-		print '<tr><td colspan="6">'.$langs->trans("WarningTooManyDataPleaseUseMoreFilters").'</td></tr>';		
-	}
-	
-	print "</table>";
-
-	
-	$db->free($resql);
+	print '</div>';
 }
-else
-{
-	dol_print_error($db);
-}
-
-print '</div>';
-
 
 
 llxFooter();

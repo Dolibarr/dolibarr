@@ -737,7 +737,8 @@ abstract class CommonObject
 
         $project = new Project($this->db);
         $result = $project->fetch($this->fk_project);
-        $this->projet = $project;
+        $this->projet = $project;	// deprecated
+        $this->project = $project;
         return $result;
     }
 
@@ -2702,6 +2703,8 @@ abstract class CommonObject
 				$product_static->type=$line->fk_product_type;
 				$product_static->id=$line->fk_product;
 				$product_static->ref=$line->ref;
+                if (! empty($line->entity))
+                    $product_static->entity=$line->entity;
 				$text=$product_static->getNomUrl(1);
 
 				// Define output language and label

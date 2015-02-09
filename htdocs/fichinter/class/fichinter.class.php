@@ -547,7 +547,9 @@ class Fichinter extends CommonObject
 		global $langs;
 
 		$result='';
-        $label=$langs->trans("Show").': '.$this->ref;
+        $label = '<u>' . $langs->trans("ShowIntervention") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
 
         $lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
@@ -949,7 +951,7 @@ class Fichinter extends CommonObject
 		$this->note_private='Private note';
 		$this->note_public='SPECIMEN';
 		$this->duree = 0;
-		$nbp = 20;
+		$nbp = 25;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{

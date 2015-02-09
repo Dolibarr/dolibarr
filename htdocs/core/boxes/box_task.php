@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
+ * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,13 +100,13 @@ class box_task extends ModeleBoxes
                     $objp = $db->fetch_object($result);
                     $this->info_box_contents[$i][1] = array(
                         'td' => 'align="left"',
-                        'text' =>$langs->trans("Task")."&nbsp;".$taskstatic->LibStatut($objp->fk_statut,0)
+                        'text' =>$langs->trans("Task")."&nbsp;".$taskstatic->LibStatut($objp->fk_statut,0),
                     );
 
                     $this->info_box_contents[$i][2] = array(
                         'td' => 'align="right"',
                         'text' => $objp->nb."&nbsp;".$langs->trans("Tasks"),
-                        'url' => DOL_URL_ROOT."/projet/tasks/index.php?leftmenu=projects&viewstatut=".$objp->fk_statut
+                        'url' => DOL_URL_ROOT."/projet/tasks/index.php?leftmenu=projects&viewstatut=".$objp->fk_statut,
                     );
 					$totalnb += $objp->nb;
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->plannedtot,'all',25200,5));

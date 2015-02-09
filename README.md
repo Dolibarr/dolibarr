@@ -58,9 +58,9 @@ You can use a Web server and a supported database (MySQL recommended) to install
 ## UPGRADING
 
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
-- If you're upgrading from version x.y.z to x.y.w (only third number differs), there is no need to run any migration process
+- If you're upgrading from version x.y.z to x.y.w (only third number differs), there is no need to run any migration process.
 - If you're upgrading from a beta version or from any version x.y.z to any other where x or y number differs, you must call the Dolibarr "install/" page in your browser (this should be done automatically at first dolibarr access) and follow the upgrade process.
-- 
+
 *Note: migration process can safely be done multiple times.*
 
 ## NEWS

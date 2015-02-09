@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -282,6 +282,9 @@ else {
 		}
 		elseif ($this->table_element_line=='facturedet') {
 			$newline = new FactureLigne($this->db);
+		}
+		elseif ($this->table_element_line=='contratdet') {
+			$newline = new ContratLigne($this->db);
 		}
 		if (is_object($newline)) {
 			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));

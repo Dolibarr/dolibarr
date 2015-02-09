@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2014      Florian Henry	<florian.henry@open-concept.pro>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,11 +16,10 @@
 --
 -- ===================================================================
 
-ALTER TABLE llx_bank ADD INDEX idx_bank_datev(datev);
-ALTER TABLE llx_bank ADD INDEX idx_bank_dateo(dateo);
-ALTER TABLE llx_bank ADD INDEX idx_bank_fk_account(fk_account);
-ALTER TABLE llx_bank ADD INDEX idx_bank_rappro(rappro);
-ALTER TABLE llx_bank ADD INDEX idx_bank_num_releve(num_releve);
-
-
-
+create table llx_contratdet_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;

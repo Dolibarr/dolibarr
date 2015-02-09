@@ -76,5 +76,6 @@ create table llx_product
   finished					tinyint      DEFAULT NULL,
   hidden					tinyint      DEFAULT 0,			-- Not used. Deprecated.
   import_key				varchar(14),					-- Import key
+  fk_price_expression integer,                     -- Link to the rule for dynamic price calculation
   desiredstock              integer      DEFAULT 0
 )ENGINE=innodb;

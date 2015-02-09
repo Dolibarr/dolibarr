@@ -537,7 +537,17 @@ class CommandeFournisseur extends CommonOrder
         global $langs;
 
         $result='';
-        $label=$langs->trans("ShowOrder").': '.$this->ref;
+        $label = '<u>' . $langs->trans("ShowOrder") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->ref_supplier))
+            $label.= '<br><b>' . $langs->trans('RefSupplier') . ':</b> ' . $this->ref_supplier;
+        if (! empty($this->total_ht))
+            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_tva))
+            $label.= '<br><b>' . $langs->trans('TVA') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_ttc))
+            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 
         $lien = '<a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
@@ -597,7 +607,6 @@ class CommandeFournisseur extends CommonOrder
             else
 			{
                 $this->error = $obj->error;
-                dol_print_error($db, get_class($this)."::getNextNumRef ".$obj->error);
                 return -1;
             }
         }
@@ -2161,13 +2170,36 @@ class CommandeFournisseur extends CommonOrder
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
+	/**
+     * Return the max number delivery delay in day
+     *
+     * @param	Translate	$langs		Language object
+     * @return 							Translated string
+     */
+	function getMaxDeliveryTimeDay($langs)
+	{
+		if (empty($this->lines)) return $langs->trans('Undefined');
 
+		$nb = 0;
+		foreach ($this->lines as $line) {
+			$obj = new ProductFournisseur($this->db);
+			$idp = $obj->find_min_price_product_fournisseur($line->fk_product, $line->qty);
+			if ($idp) {
+				$obj->fetch($idp);
+				if ($obj->delivery_time_days > $nb) $nb = $obj->delivery_time_days;
+			}
+
+		}
+
+		if ($nb === 0) return $langs->trans('Undefined');
+		else return $nb.' '.$langs->trans('Days');
+	}
 }
 
 
 
 /**
- *  Classe de gestion des lignes de commande
+ *  Class to manage line orders
  */
 class CommandeFournisseurLigne extends CommonOrderLine
 {
