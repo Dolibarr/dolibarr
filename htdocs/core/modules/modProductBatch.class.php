@@ -112,8 +112,16 @@ class modProductBatch extends DolibarrModules
 	 */
 	function init($options='')
 	{
+	    global $db,$conf;
+	    
 		$sql = array();
-
+		
+		if(! empty($conf->cashdesk->enabled)) {
+    		if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
+    		    $res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",1,'chaine',0,'',$conf->entity);
+    		}
+		}
+				
 		return $this->_init($sql, $options);
 	}
 
