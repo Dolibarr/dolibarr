@@ -217,7 +217,6 @@ class modAskPriceSupplier extends DolibarrModules
 				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','askpricesupplier',".$conf->entity.")",
 		);
 
-		$result=$this->_load_tables('/comm/askpricesupplier/sql/');
 		return $this->_init($sql, $options);
 	}
 
