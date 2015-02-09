@@ -558,6 +558,77 @@ class Form
         return $out;
     }
 
+	/**
+     *  Return select list of incoterms
+     *
+     *  @param	string	$selected       Id or Code of preselected incoterm
+     *  @param  string	$htmlname       Name of html select object
+     *  @param  string	$htmloption     Options html on select object
+     *  @param	string	$maxlength		Max length for labels (0=no limit)
+     *  @return string           		HTML string with select
+     */
+    function select_incoterms($selected='',$htmlname='incoterm_id',$htmloption='',$maxlength=0)
+    {
+        global $conf,$langs;
+
+        $langs->load("dict");
+
+        $out='';
+        $incotermArray=array();
+
+        $sql = "SELECT rowid, code";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_incoterms";
+        $sql.= " WHERE active = 1";
+        $sql.= " ORDER BY code ASC";
+
+        dol_syslog(get_class($this)."::select_incoterm", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $out.= '<select id="select'.$htmlname.'" class="flat selectincoterm" name="'.$htmlname.'" '.$htmloption.'>';
+			$out.= '<option value=""></option>';
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            if ($num)
+            {
+                $foundselected=false;
+
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $incotermArray[$i]['rowid'] = $obj->rowid;
+                    $incotermArray[$i]['code'] = $obj->code;
+                    $i++;
+                }
+
+                foreach ($incotermArray as $row)
+                {
+                    if ($selected && ($selected == $row['rowid'] || $selected == $row['code']))
+                    {
+                        $out.= '<option value="'.$row['rowid'].'" selected="selected">';
+                    }
+                    else
+					{
+                        $out.= '<option value="'.$row['rowid'].'">';
+                    }
+					
+                    $out.= dol_trunc($row['label'],$maxlength,'middle');
+					
+                    if ($row['code']) $out.= $row['code'];
+					
+					$out.= '</option>';
+                }
+            }
+            $out.= '</select>';
+        }
+        else
+		{
+            dol_print_error($this->db);
+        }
+
+        return $out;
+    }
+
     /**
      *	Return list of types of lines (product or service)
      * 	Example: 0=product, 1=service, 9=other (for external module)
