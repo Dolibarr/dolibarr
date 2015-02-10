@@ -573,7 +573,7 @@ class Paiement extends CommonObject
     /**
      *	Updates the payment date
      *
-     *  @param	timestamp	$date   New date
+     *  @param	int	$date   New date
      *  @return int					<0 if KO, 0 if OK
      */
     function update_date($date)

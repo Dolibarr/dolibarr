@@ -696,7 +696,7 @@ if (($action != 'create' && $action != 'add') || !$error)
 	}
 	else
 	{
-		print dol_print_error($db);
+		dol_print_error($db);
 	}
 
 }

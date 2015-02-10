@@ -821,7 +821,7 @@ abstract class CommonObject
      *	Update a specific field into database
      *
      *	@param	string	$field		Field to update
-     *	@param	mixte	$value		New value
+     *	@param	mixed	$value		New value
      *	@param	string	$table		To force other table element or element line (should not be used)
      *	@param	int		$id			To force other object id (should not be used)
      *	@param	string	$format		Data format ('text', 'date'). 'text' is used if not defined

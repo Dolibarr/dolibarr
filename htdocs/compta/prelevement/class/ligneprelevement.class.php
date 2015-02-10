@@ -61,7 +61,7 @@ class LignePrelevement
 	 *  Recupere l'objet prelevement
 	 *
 	 *  @param	int		$rowid       id de la facture a recuperer
-	 *  @return	void
+	 *  @return	void|int
 	 */
 	function fetch($rowid)
 	{
