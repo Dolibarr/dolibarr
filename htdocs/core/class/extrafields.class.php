@@ -100,7 +100,7 @@ class ExtraFields
 	 *  @param  int		$type               Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
 	 *  @param  int		$pos                Position of attribute
 	 *  @param  int		$size               Size/length of attribute
-	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
+	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
 	 *  @param	string	$default_value		Defaulted value
@@ -112,6 +112,8 @@ class ExtraFields
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
+
+		if ($elementtype == 'thirdparty') $elementtype='societe';
 
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate')
@@ -145,7 +147,7 @@ class ExtraFields
 	 *	@param	string	$attrname			code of attribute
 	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
 	 *  @param	int		$length				Size/length of attribute
-	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', 'contact', ...)
+	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
 	 *  @param  string  $default_value		Default value for field
@@ -155,6 +157,8 @@ class ExtraFields
 	 */
 	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0, $required=0, $default_value='',$param='')
 	{
+		if ($elementtype == 'thirdparty') $elementtype='societe';
+
 		$table=$elementtype.'_extrafields';
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9_]*$/",$attrname) && ! is_numeric($attrname))
@@ -216,7 +220,7 @@ class ExtraFields
 	 *  @param	int				$type			Type of attribute ('int', 'text', 'varchar', 'date', 'datehour', 'float')
 	 *  @param	int				$pos			Position of attribute
 	 *  @param	int				$size			Size/length of attribute
-	 *  @param  string			$elementtype	Element type ('member', 'product', 'company', ...)
+	 *  @param  string			$elementtype	Element type ('member', 'product', 'thirdparty', ...)
 	 *  @param	int				$unique			Is field unique or not
 	 *  @param	int				$required		Is field required or not
 	 *  @param  array||string	$param			Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
@@ -226,6 +230,8 @@ class ExtraFields
 	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0)
 	{
 		global $conf;
+
+		if ($elementtype == 'thirdparty') $elementtype='societe';
 
 		// Clean parameters
 		if (empty($pos)) $pos=0;
@@ -277,11 +283,13 @@ class ExtraFields
 	 *	Delete an optional attribute
 	 *
 	 *	@param	string	$attrname		Code of attribute to delete
-	 *  @param  string	$elementtype    Element type ('member', 'product', 'company', 'contact', ...)
+	 *  @param  string	$elementtype    Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @return int              		< 0 if KO, 0 if nothing is done, 1 if OK
 	 */
 	function delete($attrname, $elementtype='member')
 	{
+		if ($elementtype == 'thirdparty') $elementtype='societe';
+
 		$table=$elementtype.'_extrafields';
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
@@ -307,12 +315,14 @@ class ExtraFields
 	 *	Delete description of an optional attribute
 	 *
 	 *	@param	string	$attrname			Code of attribute to delete
-	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
+	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
 	 *  @return int              			< 0 if KO, 0 if nothing is done, 1 if OK
 	 */
 	private function delete_label($attrname, $elementtype='member')
 	{
 		global $conf;
+
+		if ($elementtype == 'thirdparty') $elementtype='societe';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
@@ -347,7 +357,7 @@ class ExtraFields
 	 *  @param	string	$label				Label of attribute
 	 *  @param	string	$type				Type of attribute
 	 *  @param	int		$length				Length of attribute
-	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', 'contact', ...)
+	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
 	 *  @param	int		$pos				Position of attribute
@@ -357,6 +367,8 @@ class ExtraFields
 	 */
 	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0)
 	{
+		if ($elementtype == 'thirdparty') $elementtype='societe';
+
 		$table=$elementtype.'_extrafields';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
@@ -433,7 +445,7 @@ class ExtraFields
 	 *  @param	string	$label				Label of attribute
 	 *  @param  string	$type               Type of attribute
 	 *  @param  int		$size		        Length of attribute
-	 *  @param  string	$elementtype		Element type ('member', 'product', 'company', ...)
+	 *  @param  string	$elementtype		Element type ('member', 'product', 'thirdparty', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
 	 *  @param	int		$pos				Position of attribute
@@ -445,6 +457,8 @@ class ExtraFields
 	{
 		global $conf;
 		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required);
+
+		if ($elementtype == 'thirdparty') $elementtype='societe';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
@@ -513,13 +527,15 @@ class ExtraFields
 	/**
 	 * 	Load array this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
-	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', societe', 'facture', 'propal', 'product', ...)
+	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', thirdparty', 'facture', 'propal', 'product', ...)
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
 	 * 	@return	array							Array of attributes for all extra fields
 	 */
 	function fetch_name_optionals_label($elementtype,$forceload=false)
 	{
 		global $conf;
+
+		if ($elementtype == 'thirdparty') $elementtype='societe';
 
 		$array_name_label=array();
 

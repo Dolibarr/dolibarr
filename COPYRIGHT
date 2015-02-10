@@ -13,6 +13,7 @@ Component              Version       License                     GPL Compatible 
 -------------------------------------------------------------------------------------
 PHP libraries:
 AdoDb-Date             0.32          Modified BSD License        Yes             Date convertion (not into rpm package)
+ChromePHP              4.3.3         Apache Software License 2.0 Yes             Return server log to chrome browser console
 CKEditor               4.3.3         LGPL-2.1+                   Yes             Editor WYSIWYG
 FPDI                   1.4.2         Apache Software License 2.0 Yes             PDF templates management
 FPDF_TPL               1.2           Apache Software License 2.0 Yes             PDF templates management
