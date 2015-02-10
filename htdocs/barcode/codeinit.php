@@ -210,7 +210,8 @@ if ($conf->societe->enabled)
 {
 	$nbno=$nbtotal=0;
 
-	print_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','').'<br>'."\n";
+	print_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','');
+	print '<br>'."\n";
 	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
 	$resql=$db->query($sql);
 	if ($resql)
@@ -250,7 +251,8 @@ if ($conf->product->enabled || $conf->product->service)
 
 	$nbno=$nbtotal=0;
 
-	print_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','').'<br>'."\n";
+	print_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','');
+	print '<br>'."\n";
 	$sql ="SELECT count(rowid) as nb, fk_product_type";
 	$sql.=" FROM ".MAIN_DB_PREFIX."product";
 	$sql.=" WHERE barcode IS NULL OR barcode = ''";
