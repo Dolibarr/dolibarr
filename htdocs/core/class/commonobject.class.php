@@ -2375,6 +2375,37 @@ abstract class CommonObject
     		return 1;
     	}
     }
+	
+	/**
+     *    Define incoterms values of current object
+     *
+     *    @param	int		$id_incoterm     Id of incoterm to set or '' to remove
+	 * 	  @param 	string  $location		 location of incoterm
+     *    @return	int     		<0 if KO, >0 if OK
+     */
+    function setIncoterms($id_incoterm, $location)
+    {
+        if ($this->id && $this->table_element)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+            $sql.= " SET fk_incoterms = ".($id_incoterm > 0 ? $id_incoterm : "null");
+			$sql.= ", location_incoterms = '".($id_incoterm > 0 ? $this->db->escape($location) : "null")."'";
+            $sql.= " WHERE rowid = " . $this->id;
+			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+            	$this->fk_incoterms = $id_incoterm;
+				$this->location_incoterms = $location;
+                return 1;
+            }
+            else
+			{
+                return -1;
+            }
+        }
+        else return -1;
+    }
 
 
     /**
