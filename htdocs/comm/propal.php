@@ -53,7 +53,7 @@ $langs->load('orders');
 $langs->load('products');
 $langs->load("deliveries");
 $langs->load('sendings');
-if ($conf->incoterm->enabled) $langs->load('incoterm');
+if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 
@@ -243,7 +243,7 @@ if (empty($reshook))
 	}
 	
 	// Set incoterm
-	elseif ($action == 'set_incoterms' && $conf->incoterm->enabled)
+	elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
     {
     	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
     }
@@ -1400,7 +1400,7 @@ if ($action == 'create')
 	print "</td></tr>";
 
 	// Incoterms
-	if ($conf->incoterm->enabled)
+	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->libelle_incoterms, 1).'</label></td>';
@@ -1970,13 +1970,13 @@ if ($action == 'create')
 	}
 
 	// Incoterms
-	if ($conf->incoterm->enabled)
+	if (!empty($conf->incoterm->enabled))
 	{			
 		print '<tr><td>';
         print '<table width="100%" class="nobordernopadding"><tr><td>';
         print $langs->trans('IncotermLabel');
         print '<td><td align="right">';
-        if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+        if ($user->rights->commande->creer) print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
         else print '&nbsp;';
         print '</td></tr></table>';
         print '</td>';
