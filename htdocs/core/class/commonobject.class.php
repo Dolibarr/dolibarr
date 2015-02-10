@@ -2376,6 +2376,32 @@ abstract class CommonObject
     	}
     }
 	
+	
+	/**
+     *    Return incoterms informations
+     *
+     *    @return	string		Bank number
+     */
+    function display_incoterms()
+    {
+        $out = '';
+		$this->incoterms_libelle = '';
+		if (!empty($this->fk_incoterms))
+		{
+			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$res = $this->db->fetch_object($result);
+				$out .= $res->code;
+			}
+		} 
+		
+		$out .= ' - '.$this->location_incoterms;
+		
+		return $out;
+    }
+	
 	/**
      *    Define incoterms values of current object
      *
@@ -2397,6 +2423,14 @@ abstract class CommonObject
             {
             	$this->fk_incoterms = $id_incoterm;
 				$this->location_incoterms = $location;
+				
+				$sql = 'SELECT libelle FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+				$res = $this->db->query($sql);
+				if ($res)
+				{
+					$obj = $this->db->fetch_object($res);
+					$this->libelle_incoterms = $obj->libelle;
+				} 
                 return 1;
             }
             else
