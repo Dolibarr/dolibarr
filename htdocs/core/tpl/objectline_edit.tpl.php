@@ -128,7 +128,7 @@ $coldisplay=-1; // We remove first td
 
 	<?php if (! empty($conf->margin->enabled)) { ?>
 		<td align="right"><?php $coldisplay++; ?>
-			<select id="fournprice" name="fournprice" class="hideobject"></select>
+			<select id="fournprice" name="fournprice"></select>
 			<input type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht,0,'',0); ?>">
 		</td>
 	    <?php if ($user->rights->margins->creer) {
