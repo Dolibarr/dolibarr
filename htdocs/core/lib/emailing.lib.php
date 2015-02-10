@@ -24,10 +24,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Mailing	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function emailing_prepare_head($object)
+function emailing_prepare_head(Mailing $object)
 {
 	global $user, $langs, $conf;
 

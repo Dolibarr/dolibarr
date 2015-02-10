@@ -32,10 +32,10 @@
 /**
  * Return array of tabs to used on pages for third parties cards.
  *
- * @param 	Object	$object		Object company shown
+ * @param 	Societe	$object		Object company shown
  * @return 	array				Array of tabs
  */
-function societe_prepare_head($object)
+function societe_prepare_head(Societe $object)
 {
     global $db, $langs, $conf, $user;
     $h = 0;
@@ -545,7 +545,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
  *		@param	Conf		$conf		Object conf
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Database handler
- * 		@param	Object		$object		Third party object
+ * 		@param	Societe		$object		Third party object
  *      @param  string		$backtopage	Url to go once contact is created
  *      @return	void
  */
@@ -809,7 +809,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
  *		@param	Conf		$conf		Object conf
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Database handler
- * 		@param	Object		$object		Third party object
+ * 		@param	Societe		$object		Third party object
  *      @param  string		$backtopage	Url to go once address is created
  *      @return	void
  */
