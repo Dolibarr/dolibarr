@@ -640,6 +640,7 @@ function createOrder($authentication,$order)
 		$newobject->statut=0;	// We start with status draft
 		$newobject->facturee=$order['facturee'];
 		$newobject->fk_project=$order['project_id'];
+		$newObject->fk_delivery_address=$order['fk_delivery_address'];
 		$newobject->cond_reglement_id=$order['cond_reglement_id'];
 		$newobject->demand_reason_id=$order['demand_reason_id'];
 		$newobject->date_creation=$now;
