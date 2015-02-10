@@ -45,7 +45,7 @@ $langs->load("commercial");
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("users");
-if ($conf->incoterm->enabled && !empty($conf->global->INCOTERM_ACTIVATE)) $langs->load("incoterm");
+if ($conf->incoterm->enabled) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 $mesg=''; $error=0; $errors=array();
@@ -193,7 +193,7 @@ if (empty($reshook))
         $object->webservices_key       = GETPOST('webservices_key', 'san_alpha');
 
 		// Incoterms
-		if ($conf->incoterm->enabled && !empty($conf->global->INCOTERM_ACTIVATE))
+		if ($conf->incoterm->enabled)
 		{
 			$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
@@ -522,7 +522,7 @@ if (empty($reshook))
     }
 
     // Set incoterm
-    if ($action == 'set_incoterms' && $conf->incoterm->enabled && !empty($conf->global->INCOTERM_ACTIVATE))
+    if ($action == 'set_incoterms' && $conf->incoterm->enabled)
     {
     	$object->fetch($socid);
     	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
@@ -1089,7 +1089,7 @@ else
         }
 		
 		// Incoterms
-		if ($conf->incoterm->enabled && !empty($conf->global->INCOTERM_ACTIVATE))
+		if ($conf->incoterm->enabled)
 		{
 			print '<tr>';
 			print '<td><label for="incoterm_id">'.$langs->trans("IncotermLabel").'</label></td>';
@@ -1221,7 +1221,7 @@ else
                 $object->webservices_key        = GETPOST('webservices_key', 'san_alpha');
 
 				//Incoterms
-				if ($conf->incoterm->enabled && !empty($conf->global->INCOTERM_ACTIVATE))
+				if ($conf->incoterm->enabled)
 				{	
 					$object->fk_incoterms			= GETPOST('incoterm_id', 'int');
 					$object->location_incoterms		= GETPOST('lcoation_incoterms', 'alpha');
@@ -1615,7 +1615,7 @@ else
             }
 
 			// Incoterms
-			if ($conf->incoterm->enabled && !empty($conf->global->INCOTERM_ACTIVATE))
+			if ($conf->incoterm->enabled)
 			{
 				print '<tr>';
 				print '<td><label for="incoterm_id">'.$langs->trans("IncotermLabel").'</label></td>';
@@ -2011,7 +2011,7 @@ else
         }
 
 		// Incoterms
-		if ($conf->incoterm->enabled && !empty($conf->global->INCOTERM_ACTIVATE))
+		if ($conf->incoterm->enabled)
 		{			
 			print '<tr><td>';
             print '<table width="100%" class="nobordernopadding"><tr><td>';

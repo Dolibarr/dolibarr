@@ -2090,30 +2090,6 @@ class Societe extends CommonObject
         return $bac->getRibLabel(true);
     }
 	
-	/**
-     *    Return incoterms informations
-     *
-     *    @return	string		Bank number
-     */
-    function display_incoterms()
-    {
-        $out = '';
-		$this->incoterms_libelle = '';
-		if (!empty($this->fk_incoterms))
-		{
-			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
-			$result = $this->db->query($sql);
-			if ($result)
-			{
-				$res = $this->db->fetch_object($result);
-				$out .= $res->code;
-			}
-		} 
-		
-		$out .= ' - '.$this->location_incoterms;
-		
-		return $out;
-    }
 
     /**
      * Return Array of RIB

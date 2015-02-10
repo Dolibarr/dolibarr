@@ -64,7 +64,7 @@ class modIncoterm extends DolibarrModules
 		$this->module_parts = array();
 		$this->dirs = array();
 
-		$this->config_page_url = array('incoterm.php');
+		$this->config_page_url = array();
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -93,7 +93,7 @@ class modIncoterm extends DolibarrModules
             'tabfieldvalue'=>array("code,libelle"),														// List of fields (list of fields to edit a record)
             'tabfieldinsert'=>array("code,libelle"),													// List of fields (list of fields for insert)
             'tabrowid'=>array("rowid"),																	// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->global->INCOTERM_ACTIVATE,$conf->incoterm->enabled)
+            'tabcond'=>array($conf->incoterm->enabled)
 		);
         
         $this->boxes = array();			// List of boxes
