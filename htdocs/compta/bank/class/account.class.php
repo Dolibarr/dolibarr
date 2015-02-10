@@ -36,7 +36,12 @@ class Account extends CommonObject
     public $element='bank_account';
     public $table_element='bank_account';
 
-    var $rowid;	 	// deprecated
+    /**
+     * //TODO: Discuss this. $rowid is preferred over $id
+     * @var
+     * @deprecated
+     */
+    var $rowid;
     var $id;
     var $ref;
     var $label;

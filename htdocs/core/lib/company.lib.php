@@ -904,7 +904,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
  * 		@param	Conf		$conf		Object conf
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Object db
- * 		@param	Object		$object		Object third party or member
+ * 		@param	Adherent|Societe		$object		Object third party or member
  * 		@param	Contact		$objcon		Object contact
  *      @param  int			$noprint	Return string but does not output it
  *      @return	mixed					Return html part or void if noprint is 1
@@ -1067,7 +1067,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
  * 		@param	Conf		$conf		Object conf
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Object db
- * 		@param	Object		$object		Object third party or member
+ * 		@param	Adherent|Societe		$object		Object third party or member
  * 		@param	Contact		$objcon		Object contact
  *      @param  int			$noprint    Return string but does not output it
  *      @return	mixed					Return html part or void if noprint is 1

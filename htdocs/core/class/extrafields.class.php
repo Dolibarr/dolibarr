@@ -590,7 +590,7 @@ class ExtraFields
 	 * @param	string	$value          Value to show (for date type it must be in timestamp format)
 	 * @param	string	$moreparam      To add more parametes on html input tag
 	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @return	void
+	 * @return	string
 	 */
 	function showInputField($key,$value,$moreparam='',$keyprefix='')
 	{

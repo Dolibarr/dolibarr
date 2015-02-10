@@ -4452,7 +4452,7 @@ class Form
      *    	Return HTML code to output a photo
      *
      *    	@param	string		$modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-     *     	@param  Object		$object			Object containing data to retrieve file name
+     *     	@param  object		$object			Object containing data to retrieve file name
      * 		@param	int			$width			Width of photo
      * 	  	@return string    					HTML code to output photo
      */
