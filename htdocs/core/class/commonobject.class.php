@@ -2412,7 +2412,7 @@ abstract class CommonObject
      *  TODO Move this into html.class.php
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *
-     *  @return	void
+     *  @return	int
      */
     function showLinkedObjectBlock()
     {
