@@ -3568,7 +3568,7 @@ class Form
      *
      *  @param	string	$selected    preselected currency code
      *  @param  string	$htmlname    name of HTML select list
-     * 	@return	void
+     * 	@return	string
      */
     function selectCurrency($selected='',$htmlname='currency_id')
     {

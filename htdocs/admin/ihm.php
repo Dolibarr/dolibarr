@@ -117,7 +117,8 @@ if ($action == 'edit')	// Edit
     clearstatcache();
     $var=true;
 
-    print_fiche_titre($langs->trans("Language"),'','').'<br>';
+    print_fiche_titre($langs->trans("Language"),'','');
+    print '<br>';
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 	print '<td width="20">&nbsp;</td>';
@@ -299,7 +300,8 @@ else	// Show
     $var=true;
 
     // Language
-    print_fiche_titre($langs->trans("Language"),'','').'<br>';
+    print_fiche_titre($langs->trans("Language"),'','');
+    print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td><td>&nbsp;</td></tr>';
 

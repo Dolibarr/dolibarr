@@ -1192,7 +1192,7 @@ class BonPrelevement extends CommonObject
      *	Add a notification
      *
      *	@param	DoliDB	$db			database handler
-     *	@param	User	$user		notification user
+     *	@param	int	$user		notification user
      *	@param	string	$action		notification action
      *	@return	int					0 if OK, <0 if KO
      */
