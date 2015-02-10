@@ -68,6 +68,8 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 	$commande = new CommandeFournisseur($db);
 	$commande->fetch($id);
 
+	$error=0;
+
 	$db->begin();
 
 	foreach($_POST as $key => $value)
@@ -81,12 +83,18 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 			if (GETPOST($ent,'int') > 0)
 			{
 				$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"));
+				if ($result < 0)
+				{
+					setEventMessages($commande->error, $commande->errors, 'errors');
+					$error++;
+				}
 			}
 			else
 			{
 				dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
 				$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
 				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
+				$error++;
 			}
 		} else if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
 			//eat-by date dispatch
@@ -103,29 +111,44 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 				dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
 				$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
 				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
-		}
+				$error++;
+			}
 			if (!((GETPOST($qty) > 0 ) && ( $_POST[$lot]  or $dDLUO or $dDLC) ))
 			{
 				dol_syslog('No dispatch for line '.$key.' as qty is not set or eat-by date are not set');
 				$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
 				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
-			} else {
+				$error++;
+			}
+			else
+			{
 				$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), $dDLC, $dDLUO, GETPOST($lot));
-		}
+				if ($result < 0)
+				{
+					setEventMessages($commande->error, $commande->errors, 'errors');
+					$error++;
+				}
+			}
 
 		}
 
 	}
 
-	if (! $notrigger)
+	if (! $notrigger && ! $error)
 	{
 		global $conf, $langs, $user;
         // Call trigger
         $result=$commande->call_trigger('ORDER_SUPPLIER_DISPATCH',$user);
         // End call triggers
+
+		if ($result < 0)
+		{
+			setEventMessages($commande->error, $commande->errors, 'errors');
+			$error++;
+		}
 	}
 
-	if ($result > 0)
+	if ($result > 0 && ! $error)
 	{
 		$db->commit();
 
@@ -135,8 +158,6 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 	else
 	{
 		$db->rollback();
-
-		$mesg='<div class="error">'.$langs->trans($commande->error).'</div>';
 	}
 }
 
