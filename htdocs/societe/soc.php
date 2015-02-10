@@ -521,6 +521,12 @@ if (empty($reshook))
     	$result = $object->set_parent(GETPOST('editparentcompany','int'));
     }
 
+    // Set incoterm
+    if ($action == 'set_incoterms' && $conf->incoterm->enabled && !empty($conf->global->INCOTERM_ACTIVATE))
+    {
+    	$object->fetch($socid);
+    	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+    }
 
     // Actions to send emails
     $id=$socid;
@@ -1088,8 +1094,7 @@ else
 			print '<tr>';
 			print '<td><label for="incoterm_id">'.$langs->trans("IncotermLabel").'</label></td>';
 	        print '<td colspan="3" class="maxwidthonsmartphone">';
-	        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''));
-			print '<input id="location_incoterms" name="location_incoterms" size="14" value="'.(!empty($object->location_incoterms)?$object->location_incoterms:'').'">';
+	        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 			print '</td></tr>';
 		}
 		
@@ -1615,8 +1620,7 @@ else
 				print '<tr>';
 				print '<td><label for="incoterm_id">'.$langs->trans("IncotermLabel").'</label></td>';
 	            print '<td colspan="3" class="maxwidthonsmartphone">';
-	            print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''));
-				print '<input id="location_incoterms" name="location_incoterms" size="14" value="'.$object->location_incoterms.'">';
+	            print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 				print '</td></tr>';
 			}
 			
@@ -2013,12 +2017,19 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans('IncotermLabel');
             print '<td><td align="right">';
-            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=set_incoterms">'.img_edit().'</a>';
+            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
             else print '&nbsp;';
             print '</td></tr></table>';
             print '</td>';
             print '<td colspan="3">';
-			print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			if ($action != 'editincoterm')
+			{
+				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			}
+			else 
+			{
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?socid='.$object->id);
+			}
             print '</td></tr>';
 		}
 
