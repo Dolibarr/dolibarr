@@ -449,7 +449,7 @@ if ($id > 0 || ! empty($ref))
 		// List of already dispatching
 		$sql = "SELECT p.ref, p.label,";
 		$sql.= " e.rowid as warehouse_id, e.label as entrepot,";
-		$sql.= " cfd.fk_product, cfd.qty, cfd.rowid";
+		$sql.= " cfd.rowid, cfd.fk_product, cfd.qty, cfd.comment, cfd.status";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p,";
 		$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
@@ -474,7 +474,10 @@ if ($id > 0 || ! empty($ref))
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Description").'</td>';
 				print '<td align="right">'.$langs->trans("QtyDispatched").'</td>';
-				print '<td align="right">'.$langs->trans("Warehouse").'</td>';
+				print '<td></td>';
+				print '<td>'.$langs->trans("Warehouse").'</td>';
+				print '<td>'.$langs->trans("Comment").'</td>';
+				if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) print '<td align="right">'.$langs->trans("Status").'</td>';
 				print "</tr>\n";
 
 				$var=false;
@@ -488,12 +491,28 @@ if ($id > 0 || ! empty($ref))
 					print ' - '.$objp->label;
 					print "</td>\n";
 
+					// Qty
 					print '<td align="right">'.$objp->qty.'</td>';
-					print '<td align="right">';
+					print '<td>&nbsp;</td>';
+
+					// Warehouse
+					print '<td>';
 					$warehouse_static->id=$objp->warehouse_id;
 					$warehouse_static->libelle=$objp->entrepot;
 					print $warehouse_static->getNomUrl(1);
 					print '</td>';
+
+					// Comment
+					print '<td>'.dol_trunc($objp->comment).'</td>';
+
+					// Status
+					if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS))
+					{
+						print '<td>';
+						print $objp->status;
+						print '</td>';
+					}
+
 					print "</tr>\n";
 
 					$i++;
@@ -516,6 +535,7 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();

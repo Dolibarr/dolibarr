@@ -24,7 +24,7 @@ create table llx_commande_fournisseur_dispatch
   qty            float,              -- qty
   fk_entrepot    integer,
   fk_user        integer,
-  comment		 varchar(255),
+  comment		 varchar(255),		  -- comment on movement
   status         integer,
   datec          datetime,
   tms            timestamp

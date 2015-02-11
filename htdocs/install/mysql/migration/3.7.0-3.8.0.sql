@@ -101,3 +101,10 @@ create table llx_contratdet_extrafields
 ALTER TABLE llx_contratdet_extrafields ADD INDEX idx_contratdet_extrafields (fk_object);
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN delivery_time_days integer;
+
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN comment	varchar(255);
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN status integer;
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN tms timestamp;
+
+
+  

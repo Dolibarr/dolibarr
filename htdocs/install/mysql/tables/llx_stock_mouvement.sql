@@ -28,7 +28,7 @@ create table llx_stock_mouvement
   price           float(13,4) DEFAULT 0,
   type_mouvement  smallint,
   fk_user_author  integer,
-  label           varchar(255),
+  label           varchar(255),		-- comment on movement
   inventorycode   varchar(128),
   fk_origin       integer,
   origintype      varchar(32)
