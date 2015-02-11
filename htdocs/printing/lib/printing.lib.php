@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 /**
  *  Define head array for tabs of printing tools setup pages
  *
- *  @param	$mode	string		Mode
+ *  @param	string	$mode		Mode
  *  @return         			Array of head
  */
 function printingadmin_prepare_head($mode)
