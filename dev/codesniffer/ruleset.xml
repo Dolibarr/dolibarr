@@ -191,15 +191,26 @@
     
     <rule ref="PEAR.Commenting.ClassComment.MissingTag" />
 
-    <rule ref="PEAR.Commenting.ClassComment.Missing@authorTag" />
+    <rule ref="PEAR.Commenting.ClassComment.MissingAuthorTag">
+        <severity>0</severity>
+    </rule>
 
-    <rule ref="PEAR.Commenting.ClassComment.Missing@categoryTag" />
+    <rule ref="PEAR.Commenting.ClassComment.MissingCategoryTag">
+        <severity>0</severity>
+    </rule>
 
-    <rule ref="PEAR.Commenting.ClassComment.Missing@licenseTag" />
+    <rule ref="PEAR.Commenting.ClassComment.MissingLicenseTag">
+        <severity>0</severity>
+    </rule>
 
-    <rule ref="PEAR.Commenting.ClassComment.Missing@linkTag" />
-
-    <rule ref="PEAR.Commenting.ClassComment.Missing@packageTag" />
+    <rule ref="PEAR.Commenting.ClassComment.MissingLinkTag">
+        <severity>0</severity>
+    </rule>
+        
+    <rule ref="PEAR.Commenting.ClassComment.MissingPackageTag">
+        <severity>0</severity>
+    </rule>
+        
 
    
     <!-- 
@@ -230,9 +241,13 @@
     
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
 
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName" />
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
+        <severity>0</severity>
+    </rule>
 
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
+        <severity>0</severity>
+    </rule>
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName" />
 
