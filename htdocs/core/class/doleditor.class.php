@@ -166,6 +166,7 @@ class DolEditor
             $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
             $out.= $this->content;
             $out.= '</textarea>';
+
             if ($this->tool == 'ckeditor')
             {
             	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
@@ -174,6 +175,7 @@ class DolEditor
             	$skin='moono'; 	// default with cdeditor 4
 
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
+
             	$out.= '<script type="text/javascript">
             			$(document).ready(function () {
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
