@@ -1302,8 +1302,8 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->db->begin();
 
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch ";
-            $sql.= " (fk_commande,fk_product, qty, fk_entrepot, fk_user, datec) VALUES ";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
+            $sql.= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec) VALUES ";
             $sql.= " ('".$this->id."','".$product."','".$qty."',".($entrepot>0?"'".$entrepot."'":"null").",'".$user->id."','".$this->db->idate($now)."')";
 
             dol_syslog(get_class($this)."::DispatchProduct", LOG_DEBUG);

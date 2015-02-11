@@ -24,5 +24,8 @@ create table llx_commande_fournisseur_dispatch
   qty            float,              -- qty
   fk_entrepot    integer,
   fk_user        integer,
-  datec          datetime
+  comment		 varchar(255),
+  status         integer,
+  datec          datetime,
+  tms            timestamp
 )ENGINE=innodb;

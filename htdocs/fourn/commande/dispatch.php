@@ -96,7 +96,9 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
 				$error++;
 			}
-		} else if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
+		}
+		else if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))
+		{
 			//eat-by date dispatch
 			$prod = "product_".$reg[1]."_".$reg[2];
 			$qty = "qty_".$reg[1]."_".$reg[2];
@@ -166,10 +168,12 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
  * View
  */
 
- if (!empty($conf->productbatch->enabled)) {
+if (!empty($conf->productbatch->enabled))
+{
 	llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur",'',0,0,array('/core/js/lib_batch.js'));
-
- } else {
+}
+else
+{
 	llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 }
 
@@ -272,6 +276,8 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="dispatch">';
 			print '<table class="noborder" width="100%">';
 
+			// Set $products_dispatched with qty dispatech for each product id
+			$products_dispatched = array();
 			$sql = "SELECT cfd.fk_product, sum(cfd.qty) as qty";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 			$sql.= " WHERE cfd.fk_commande = ".$commande->id;
@@ -280,7 +286,7 @@ if ($id > 0 || ! empty($ref))
 			$resql = $db->query($sql);
 			if ($resql)
 			{
-				while ( $row = $db->fetch_row($resql) )
+				while ($row = $db->fetch_row($resql))
 				{
 					$products_dispatched[$row[0]] = $row[1];
 				}
@@ -338,7 +344,7 @@ if ($id > 0 || ! empty($ref))
 					}
 					else
 					{
-						$remaintodispatch=($objp->qty - $products_dispatched[$objp->fk_product]);	// Calculation of dispatched
+						$remaintodispatch=($objp->qty - (empty($products_dispatched[$objp->fk_product])?0:$products_dispatched[$objp->fk_product]));	// Calculation of dispatched
 						if ($remaintodispatch < 0) $remaintodispatch=0;
 						if ($remaintodispatch)
 						{
