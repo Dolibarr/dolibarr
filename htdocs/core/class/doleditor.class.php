@@ -172,7 +172,7 @@ class DolEditor
 
             	//$skin='kama';
             	$skin='moono'; 	// default with cdeditor 4
-			
+
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
             	$out.= '<script type="text/javascript">
             			$(document).ready(function () {

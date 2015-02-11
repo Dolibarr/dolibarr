@@ -616,7 +616,7 @@ class FormMail
 					$this->substit['__SIGNATURE__'] = dol_nl2br($this->substit['__SIGNATURE__']);
 				} else if(!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__SIGNATURE__'])) {
 					$defaultmessage = dol_nl2br($defaultmessage);
-				} 
+				}
 
 				if (dol_textishtml($defaultmessage) && $from_template) {
 					$allow_content=1;
