@@ -122,4 +122,3 @@ RuleForStockAvailability=Règles d'exigence sur les stocks
 StockMustBeEnoughForInvoice=Le niveau de stock doit être suffisant pour ajouter un produit/service dans une facture
 StockMustBeEnoughForOrder=Le niveau de stock doit être suffisant pour ajouter un produit/service dans une commande
 StockMustBeEnoughForShipment= Le niveau de stock doit être suffisant pour ajouter un produit/service dans une expédition
-

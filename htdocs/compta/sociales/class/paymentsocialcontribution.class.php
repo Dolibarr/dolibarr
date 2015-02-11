@@ -77,7 +77,7 @@ class PaymentSocialContribution extends CommonObject
         // Validate parametres
 		if (! $this->datepaye)
 		{
-			$this->error='ErrorBadValueForParameter';
+			$this->error='ErrorBadValueForParameterCreatePaymentSocialContrib';
 			return -1;
 		}
 

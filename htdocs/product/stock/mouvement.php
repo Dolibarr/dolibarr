@@ -78,10 +78,10 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
  * Actions
  */
 
-if ($cancel) $action='';
+if ($cancel) $action='';	// Protection to avoid action for all cancel buttons
 
 // Correct stock
-if ($action == "correct_stock" && ! $_POST["cancel"])
+if ($action == "correct_stock")
 {
     if (is_numeric($_POST["nbpiece"]) && $product_id)
     {
@@ -342,7 +342,7 @@ if ($resql)
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
         print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
-        
+
 		print '</form>';
     }
 

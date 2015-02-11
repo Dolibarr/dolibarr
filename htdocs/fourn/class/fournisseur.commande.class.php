@@ -1270,7 +1270,7 @@ class CommandeFournisseur extends CommonOrder
 
 
     /**
-     * Add a product into a stock warehouse.
+     * Save a receiving into the tracking table of receiving (commande_fournisseur_dispatch) and add product into stock warehouse.
      *
      * @param 	User		$user		User object making change
      * @param 	int			$product	Id of product to dispatch
@@ -1283,7 +1283,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @param	string		$batch		Lot number
      * @return 	int						<0 if KO, >0 if OK
      */
-    function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='')
+    function dispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='')
     {
         global $conf;
         $error = 0;
@@ -1292,12 +1292,12 @@ class CommandeFournisseur extends CommonOrder
         // Check parameters
         if ($entrepot <= 0 || $qty <= 0)
         {
-            $this->error='BadValueForParameter';
+            $this->error='BadValueForParameterWarehouseOrQty';
             return -1;
         }
 
         $dispatchstatus = 1;
-        if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $dispatchstatus = 0;	// Setting status will be done manually to 1 if this option is on
+        if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $dispatchstatus = 0;	// Setting dispatch status (a validation step after receiving products) will be done manually to 1 if this option is on
 
         $now=dol_now();
 
@@ -1306,10 +1306,12 @@ class CommandeFournisseur extends CommonOrder
             $this->db->begin();
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
-            $sql.= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, status, comment) VALUES";
-            $sql.= " ('".$this->id."','".$product."','".$qty."',".($entrepot>0?"'".$entrepot."'":"null").",'".$user->id."','".$this->db->idate($now)."', ".$dispatchstatus.", '".$this->db->escape($comment)."')";
+            $sql.= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, status, comment, eatby, sellby, batch) VALUES";
+            $sql.= " ('".$this->id."','".$product."','".$qty."',".($entrepot>0?"'".$entrepot."'":"null").",'".$user->id."','".$this->db->idate($now)."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
+            $sql.= ($eatby?"'".$this->db->idate($eatby)."'":"null").", ".($sellby?"'".$this->db->idate($sellby)."'":"null").", ".($batch?"'".$batch."'":"null");
+            $sql.= ")";
 
-            dol_syslog(get_class($this)."::DispatchProduct", LOG_DEBUG);
+            dol_syslog(get_class($this)."::dispatchProduct", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -1329,7 +1331,7 @@ class CommandeFournisseur extends CommonOrder
                 $this->db->commit();
             }
             else
-            {
+			{
                 $this->error=$this->db->lasterror();
                 $error++;
             }
@@ -1337,6 +1339,7 @@ class CommandeFournisseur extends CommonOrder
             // Si module stock gere et que incrementation faite depuis un dispatching en stock
             if (!$error && $entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
             {
+
                 $mouv = new MouvementStock($this->db);
                 if ($product > 0)
                 {
@@ -1346,7 +1349,7 @@ class CommandeFournisseur extends CommonOrder
                     if ($result < 0)
                     {
                         $this->error=$mouv->error;
-                        dol_syslog(get_class($this)."::DispatchProduct ".$this->error, LOG_ERR);
+                        dol_syslog(get_class($this)."::dispatchProduct ".$this->error, LOG_ERR);
                         $error++;
                     }
                 }

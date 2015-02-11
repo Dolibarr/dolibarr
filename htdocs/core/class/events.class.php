@@ -111,7 +111,7 @@ class Events // extends CommonObject
 		$this->description=trim($this->description);
 
 		// Check parameters
-		if (empty($this->description)) { $this->error='ErrorBadValueForParameter'; return -1; }
+		if (empty($this->description)) { $this->error='ErrorBadValueForParameterCreateEventDesc'; return -1; }
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
