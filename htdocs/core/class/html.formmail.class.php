@@ -618,13 +618,11 @@ class FormMail
 					$defaultmessage = dol_nl2br($defaultmessage);
 				} 
 
-				 if (dol_textishtml($defaultmessage) && $from_template) {
+				if (dol_textishtml($defaultmessage) && $from_template) {
 					$allow_content=1;
-					var_dump($allow_content);
 				} else {
 					$allow_content=0;
 				}
-
 
         		if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 				else
