@@ -121,10 +121,10 @@ else
         else  $sql.= " AND f.fk_user_author = ".$userid;
     }
     // Search criteria
-    if ($search_ref)         		$sql .=" AND p.rowid=".$search_ref;
+    if ($search_ref > 0)       		$sql .=" AND p.rowid=".$search_ref;
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
-    if ($search_paymenttype != "")  $sql .=" AND c.code='".$search_paymenttype."'";
-    if ($search_amount)      		$sql .=" AND p.amount='".price2num($search_amount)."'";
+    if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
+    if ($search_amount)      		$sql .=" AND p.amount='".$db->escape(price2num($search_amount))."'";
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
 }
 $sql.= $db->order($sortfield,$sortorder);
@@ -237,7 +237,7 @@ if ($resql)
             if ($objp->statut == 0) print '</a>';
             print '</td>';
         }
-		
+
 		print '<td>&nbsp;</td>';
         print '</tr>';
 

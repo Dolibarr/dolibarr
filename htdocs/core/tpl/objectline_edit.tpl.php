@@ -333,7 +333,7 @@ if (! empty($conf->margin->enabled))
 		var rounding = main_rounding_unit;
 		var pos = amount.indexOf(dec);
 		var decpart = '';
-		if (pos >= 0) decpart = amount.substr(pos+1).replace('/0+$/i','');	// Supprime les 0 de fin de partie decimale
+		if (pos >= 0) decpart = amount.substr(pos+1).replace('/0+$/i','');	// Remove 0 for decimal part
 		var nbdec = decpart.length;
 		if (nbdec > rounding) rounding = nbdec;
 	    // If rounding higher than max shown
