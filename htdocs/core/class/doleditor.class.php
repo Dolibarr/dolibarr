@@ -43,6 +43,7 @@ class DolEditor
 	var $height;
 	var $width;
 	var $readonly;
+	var $allowed_content;
 
 
     /**
@@ -62,8 +63,9 @@ class DolEditor
      *      @param  int		$rows                   Size of rows for textarea tool
 	 *      @param  int		$cols                   Size of cols for textarea tool (textarea number of cols or %)
 	 *      @param	int		$readonly				0=Read/Edit, 1=Read only
+	 *      @param	int		$allowed_content		0=filter input text, 1=render as it is
 	 */
-    function __construct($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0,$readonly=0)
+    function __construct($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0,$readonly=0,$allowed_content=0)
     {
     	global $conf,$langs;
 
@@ -132,6 +134,7 @@ class DolEditor
             $this->cols					= (preg_match('/%/',$cols)?$cols:max(40,$cols));	// If $cols is a percent, we keep it, otherwise, we take max
             $this->height				= $height;
             $this->width				= $width;
+            $this->allowed_content		= $allowed_content;
     	}
 
     }
@@ -163,16 +166,14 @@ class DolEditor
             $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
             $out.= $this->content;
             $out.= '</textarea>';
-
             if ($this->tool == 'ckeditor')
             {
             	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
 
             	//$skin='kama';
             	$skin='moono'; 	// default with cdeditor 4
-
+			
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
-
             	$out.= '<script type="text/javascript">
             			$(document).ready(function () {
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
@@ -181,6 +182,7 @@ class DolEditor
             					{
             						/* property:xxx is same than CKEDITOR.config.property = xxx */
             						customConfig : ckeditorConfig,
+                            		allowedContent :'.($this->allowed_content?'true':'false').',
             						readOnly : '.($this->readonly?'true':'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
             						toolbar: \''.$this->toolbarname.'\',
