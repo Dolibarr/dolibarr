@@ -170,9 +170,12 @@ function usage($path,$script_file)
 	global $conf;
 
 	print "Usage: ".$script_file." securitykey userlogin [cronjobid]\n";
+	print "The script return 0 when everything worked successfully.\n";
 	print "\n";
 	print "On Linux system, you can have cron jobs ran automatically by adding an entry into cron.\n";
 	print "For example, to run pending tasks each day at 3:30, you can add this line:\n";
 	print "30 3 * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
+	print "For example, to run pending tasks every 5mn, you can add this line:\n";
+	print "*/5 * * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
 }
 
