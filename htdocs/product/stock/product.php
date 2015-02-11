@@ -249,7 +249,8 @@ if ($action == "transfert_stock" && ! $cancel)
 						1,
 						GETPOST("label",'san_alpha'),
 						$pricesrc,
-						$eatby,$sellby,$batch
+						$eatby,$sellby,$batch,
+						GETPOST('inventorycode')
 					);
 					// Add stock
 					$result2=$product->correct_stock_batch(
@@ -259,7 +260,8 @@ if ($action == "transfert_stock" && ! $cancel)
 						0,
 						GETPOST("label",'san_alpha'),
 						$pricedest,
-						$eatby,$sellby,$batch
+						$eatby,$sellby,$batch,
+						GETPOST('inventorycode')
 					);
 				}
 			}
@@ -272,7 +274,8 @@ if ($action == "transfert_stock" && ! $cancel)
 					GETPOST("nbpiece"),
 					1,
 					GETPOST("label"),
-					$pricesrc
+					$pricesrc,
+					GETPOST('inventorycode')
 				);
 
 				// Add stock
@@ -282,7 +285,8 @@ if ($action == "transfert_stock" && ! $cancel)
 					GETPOST("nbpiece"),
 					0,
 					GETPOST("label"),
-					$pricedest
+					$pricedest,
+					GETPOST('inventorycode')
 				);
 			}
 			if (! $error && $result1 >= 0 && $result2 >= 0)
@@ -630,20 +634,21 @@ if ($id > 0 || $ref)
 		}
 
 		// Label of mouvement of id of inventory
+		$valformovementlabel=(GETPOST("label")?GETPOST("label"):$langs->trans("MovementCorrectStock", $product->ref));
 		print '<tr>';
 		print '<td width="20%" colspan="2">'.$langs->trans("MovementLabel").'</td>';
 		print '<td colspan="2">';
-		print '<input type="text" name="label" size="40" value="'.GETPOST("label").'">';
+		print '<input type="text" name="label" size="40" value="'.$valformovementlabel.'">';
 		print '</td>';
-		print '<td width="20%">'.$langs->trans("InventoryCode").'</td><td width="20%"><input class="flat" name="inventorycode" id="inventorycode" size="10" value="'.GETPOST("inventorycode").'"></td>';
+		print '<td width="20%">'.$langs->trans("InventoryCode").'</td><td width="20%"><input class="flat" name="inventorycode" id="inventorycode" size="14" value="'.GETPOST("inventorycode").'"></td>';
 		print '</tr>';
 
 		print '</table>';
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+		print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 		print '</div>';
 		print '</form>';
 	}
@@ -717,11 +722,13 @@ if ($id > 0 || $ref)
 		}
 
 		// Label
+		$valformovementlabel=(GETPOST("label")?GETPOST("label"):$langs->trans("MovementTransferStock", $product->ref));
 		print '<tr>';
 		print '<td width="15%">'.$langs->trans("MovementLabel").'</td>';
-		print '<td colspan="5">';
-		print '<input type="text" name="label" size="80" value="'.dol_escape_htmltag(GETPOST("label")).'">';
+		print '<td colspan="3">';
+		print '<input type="text" name="label" size="60" value="'.dol_escape_htmltag($valformovementlabel).'">';
 		print '</td>';
+		print '<td width="20%">'.$langs->trans("InventoryCode").'</td><td width="20%"><input class="flat" name="inventorycode" id="inventorycode" size="14" value="'.GETPOST("inventorycode").'"></td>';
 		print '</tr>';
 
 		print '</table>';

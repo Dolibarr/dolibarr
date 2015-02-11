@@ -430,13 +430,13 @@ if ($resql)
     print "<tr class=\"liste_titre\">";
     //print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"], "m.rowid","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"], "m.datem","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("LabelMovement"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("InventoryCode"),$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ProductRef"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ProductLabel"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("InventoryCode"),$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LabelMovement"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Units"),$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
@@ -451,18 +451,6 @@ if ($resql)
     $syear = GETPOST('year')?GETPOST('year'):-1;
     $formother->select_year($syear,'year',1, 20, 5);
     print '</td>';
-    // Label of movement
-    print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="10" name="search_movement" value="'.$search_movement.'">';
-    print '</td>';
-    // Inventory code
-    print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="4" name="search_inventorycode" value="'.$search_inventorycode.'">';
-    print '</td>';
-    // Origin of movement
-    print '<td class="liste_titre" align="left">';
-    print '&nbsp; ';
-    print '</td>';
     // Product Ref
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="6" name="search_product_ref" value="'.($idproduct?$product->ref:$search_product_ref).'">';
@@ -471,12 +459,27 @@ if ($resql)
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="10" name="search_product" value="'.($idproduct?$product->libelle:$search_product).'">';
     print '</td>';
+    // Warehouse
     print '<td class="liste_titre" align="left">';
-    if (empty($idproduct) || $idproduct < 0) print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';	// We are on a specific warehouse card, no filter on other should be possible
+    print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';
     print '</td>';
+    // Author
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="6" name="search_user" value="'.($search_user).'">';
     print '</td>';
+    // Inventory code
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" type="text" size="4" name="search_inventorycode" value="'.$search_inventorycode.'">';
+    print '</td>';
+    // Label of movement
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" type="text" size="10" name="search_movement" value="'.$search_movement.'">';
+    print '</td>';
+    // Origin of movement
+    print '<td class="liste_titre" align="left">';
+    print '&nbsp; ';
+    print '</td>';
+
     print '<td class="liste_titre" align="right">';
     print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -504,12 +507,6 @@ if ($resql)
         //print '<td>'.$objp->mid.'</td>';	// This is primary not movement id
         // Date
         print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
-        // Label of movement
-        print '<td>'.$objp->label.'</td>';
-        // Inventory code
-        print '<td>'.$objp->inventorycode.'</td>';
-        // Origin of movement
-        print '<td>'.$origin.'</td>';
 		// Product ref
         print '<td>';
         $productstatic->id=$objp->rowid;
@@ -538,6 +535,12 @@ if ($resql)
         $userstatic->lastname=$objp->login;
         print $userstatic->getNomUrl(1);
         print "</td>\n";
+        // Inventory code
+        print '<td>'.$objp->inventorycode.'</td>';
+        // Label of movement
+        print '<td>'.$objp->label.'</td>';
+        // Origin of movement
+        print '<td>'.$origin.'</td>';
         // Value
         print '<td align="right">';
         if ($objp->value > 0) print '+';
