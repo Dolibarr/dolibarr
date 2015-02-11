@@ -586,9 +586,9 @@ class FormMail
         		if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['content']) {
         			$defaultmessage=$arraydefaultmessage['content'];
         			$from_template=true;
-        			
+        		} elseif (! is_numeric($this->withbody)) {
+        			$defaultmessage=$this->withbody;
         		}
-        		elseif (! is_numeric($this->withbody))	$defaultmessage=$this->withbody;
 
         		// Complete substitution array
         		if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
