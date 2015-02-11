@@ -129,7 +129,7 @@ class MouvementStock extends CommonObject
 			$sql.= " VALUES ('".$this->db->idate($now)."', ".$this->product_id.", ".$this->entrepot_id.", ".$this->qty.", ".$this->type.",";
 			$sql.= " ".$user->id.",";
 			$sql.= " '".$this->db->escape($label)."',";
-			$sql.= " '".$this->db->escape($inventorycode)."',";
+			$sql.= " ".($inventorycode?"'".$this->db->escape($inventorycode)."'":"null").",";
 			$sql.= " '".price2num($price)."',";
 			$sql.= " '".$fk_origin."',";
 			$sql.= " '".$origintype."'";
