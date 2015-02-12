@@ -122,6 +122,7 @@ $formproduct=new FormProduct($db);
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type,";
 $sql.= " e.label as stock, e.rowid as entrepot_id, e.lieu,";
 $sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
+$sql.= " m.batch,m.eatby,m.sellby,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."product as p,";
@@ -426,12 +427,22 @@ if ($resql)
     if ($id) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,0,'');
     else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
+    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($id) print '<input type="hidden" name="id" value="'.$id.'">';
+
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
     //print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"], "m.rowid","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"], "m.datem","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ProductRef"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ProductLabel"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
+	if (! empty($conf->productbatch->enabled))
+	{
+		$langs->load("productbatch");
+	    print '<td align="right" width="10%">'.$langs->trans("batch_number").'</td>';
+		print '<td align="center" width="10%">'.$langs->trans("l_eatby").'</td>';
+		print '<td align="center" width="10%">'.$langs->trans("l_sellby").'</td>';
+	}
     print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("InventoryCode"),$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
@@ -441,14 +452,14 @@ if ($resql)
     print "</tr>\n";
 
     // Lignes des champs de filtre
-    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($id) print '<input type="hidden" name="id" value="'.$id.'">';
 
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" valign="right">';
     print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
-    print '&nbsp;'.$langs->trans('Year').': ';
-    $syear = GETPOST('year')?GETPOST('year'):-1;
+    if (empty($conf->productbatch->enabled)) print '&nbsp;';
+    else print '<br>';
+    print $langs->trans('Year').': ';
+    $syear = $year?$year:-1;
     $formother->select_year($syear,'year',1, 20, 5);
     print '</td>';
     // Product Ref
@@ -459,6 +470,13 @@ if ($resql)
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="10" name="search_product" value="'.($idproduct?$product->libelle:$search_product).'">';
     print '</td>';
+    // Batch
+	if (! empty($conf->productbatch->enabled))
+	{
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
+	}
     // Warehouse
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';
@@ -522,6 +540,13 @@ if ($resql)
         $productstatic->type=$objp->type;
         print $productstatic->getNomUrl(1,'',16);
         print "</td>\n";
+        // Batch
+    	if (! empty($conf->productbatch->enabled))
+		{
+	    		print '<td align="right">'.$objp->batch.'</td>';
+	            print '<td align="center">'. dol_print_date($objp->eatby,'day') .'</td>';
+	            print '<td align="center">'. dol_print_date($objp->sellby,'day') .'</td>';
+		}
         // Warehouse
         print '<td>';
         $warehousestatic->id=$objp->entrepot_id;

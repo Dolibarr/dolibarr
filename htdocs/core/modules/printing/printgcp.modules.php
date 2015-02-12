@@ -69,7 +69,7 @@ class printing_printgcp extends PrintingDriver
     function listAvailablePrinters()
     {
         global $bc, $conf, $langs;
-        $langs->load('printgcp');
+        $langs->load('printing');
         $var=true;
 
         $html = '<tr class="liste_titre">';

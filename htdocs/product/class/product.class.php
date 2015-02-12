@@ -1763,7 +1763,7 @@ class Product extends CommonObject
 	 *
 	 *  @param    int	$socid       	Id societe pour filtrer sur une societe
 	 *  @param    int	$filtrestatut   Id statut pour filtrer sur un statut
-	 *  @return   array       			Tableau des stats
+	 *  @return   array       			Array of stats (nb=nb of order, qty=qty ordered)
 	 */
 	function load_stats_commande($socid=0,$filtrestatut='')
 	{

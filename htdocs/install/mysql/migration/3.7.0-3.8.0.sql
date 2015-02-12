@@ -105,8 +105,9 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN delivery_time_days integer;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN comment	varchar(255);
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN status integer;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN tms timestamp;
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN batch varchar(30) DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN eatby date DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN sellby date DEFAULT NULL;
-ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN batch varchar(30) DEFAULT NULL;
-
-  
+ALTER TABLE llx_stock_mouvement ADD COLUMN batch varchar(30) DEFAULT NULL;
+ALTER TABLE llx_stock_mouvement ADD COLUMN eatby date DEFAULT NULL;
+ALTER TABLE llx_stock_mouvement ADD COLUMN sellby date DEFAULT NULL;

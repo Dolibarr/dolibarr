@@ -124,9 +124,15 @@ class MouvementStock extends CommonObject
 
 			$mvid = 0;
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
-			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype)";
-			$sql.= " VALUES ('".$this->db->idate($now)."', ".$this->product_id.", ".$this->entrepot_id.", ".$this->qty.", ".$this->type.",";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement(";
+			$sql.= " datem, fk_product, batch, eatby, sellby,";
+			$sql.= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype";
+			$sql.= ")";
+			$sql.= " VALUES ('".$this->db->idate($now)."', ".$this->product_id.", ";
+			$sql.= " ".($batch?"'".$batch."'":"null").", ";
+			$sql.= " ".($eatby?"'".$this->db->idate($eatby)."'":"null").", ";
+			$sql.= " ".($sellby?"'".$this->db->idate($sellby)."'":"null").", ";
+			$sql.= " ".$this->entrepot_id.", ".$this->qty.", ".$this->type.",";
 			$sql.= " ".$user->id.",";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " ".($inventorycode?"'".$this->db->escape($inventorycode)."'":"null").",";
