@@ -508,24 +508,25 @@ if ($id > 0 || $ref)
         if (! empty($conf->commande->enabled))
         {
             if ($found) print '<br>'; else $found=1;
-            print $langs->trans("CustomersOrdersRunning").': '.$product->stats_commande['qty'];
+            print $langs->trans("ProductQtyInCustomersOrdersRunning").': '.$product->stats_commande['qty'];
             $result=$product->load_stats_commande(0,'0');
             if ($result < 0) dol_print_error($db,$product->error);
             print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
         }
 
         // Number of product from customer order already sent (partial shipping)
-        if (! empty($conf->expedition->enabled)) {
+        if (! empty($conf->expedition->enabled))
+        {
             if ($found) print '<br>'; else $found=1;
             $result=$product->load_stats_sending(0,'2');
-            print $langs->trans("SendingRunning").': '.$product->stats_expedition['qty'];
+            print $langs->trans("ProductQtyInShipmentAlreadySent").': '.$product->stats_expedition['qty'];
         }
 
         // Number of supplier order running
         if (! empty($conf->fournisseur->enabled)) {
             if ($found) print '<br>'; else $found=1;
             $result=$product->load_stats_commande_fournisseur(0,'3,4');
-            print $langs->trans("SuppliersOrdersRunning").': '.$product->stats_commande_fournisseur['qty'];
+            print $langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$product->stats_commande_fournisseur['qty'];
             $result=$product->load_stats_commande_fournisseur(0,'0,1,2');
             if ($result < 0) dol_print_error($db,$product->error);
             print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
@@ -534,7 +535,7 @@ if ($id > 0 || $ref)
 	    // Number of product from supplier order already received (partial receipt)
         if (! empty($conf->fournisseur->enabled)) {
             if ($found) print '<br>'; else $found=1;
-            print $langs->trans("SuppliersReceiptRunning").': '.$product->stats_reception['qty'];
+            print $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$product->stats_reception['qty'];
         }
 
         print '</td></tr>';
@@ -599,7 +600,7 @@ if ($id > 0 || $ref)
 		print '<tr>';
 		print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Warehouse").'</td>';
 		print '<td width="20%">';
-		print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOT("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')),'id_entrepot','',1);
+		print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')),'id_entrepot','',1);
 		print '</td>';
 		print '<td width="20%">';
 		print '<select name="mouvement" id="mouvement" class="flat">';
@@ -688,13 +689,13 @@ if ($id > 0 || $ref)
 
 		print '<tr>';
 		print '<td width="15%" class="fieldrequired">'.$langs->trans("WarehouseSource").'</td><td width="15%">';
-		if ($pdluoid)
+		if ($pdluoid > 0)
 		{
 		    print $formproduct->selectWarehouses($pdluo->warehouseid,'id_entrepot_source','',1,1);
 		}
 		else
 		{
-            print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOT("dwid",'int'):(GETPOST('id_entrepot_source')?GETPOST('id_entrepot_source','int'):'ifone')),'id_entrepot_source','',1);
+            print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot_source')?GETPOST('id_entrepot_source','int'):'ifone')),'id_entrepot_source','',1);
 		}
 		print '</td>';
 		print '<td width="15%" class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td width="15%">';
@@ -812,8 +813,8 @@ if ((! empty($conf->productbatch->enabled)) && $product->hasbatch())
 {
 	print '<tr class="liste_titre"><td width="10%"></td>';
 	print '<td align="right" width="10%">'.$langs->trans("batch_number").'</td>';
-	print '<td align="right" width="10%">'.$langs->trans("l_eatby").'</td>';
-	print '<td align="right" width="10%">'.$langs->trans("l_sellby").'</td>';
+	print '<td align="center" width="10%">'.$langs->trans("l_eatby").'</td>';
+	print '<td align="center" width="10%">'.$langs->trans("l_sellby").'</td>';
 	print '<td align="right" colspan="5"></td>';
 	print '</tr>';
 }
@@ -876,10 +877,10 @@ if ($resql)
 			        print "\n".'<tr><td colspan="9">';
 			        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';
 			        print '<td align="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
-			        print '<td align="right" width="10%">';
+			        print '<td align="center" width="10%">';
 			        $form->select_date($pdluo->eatby,'eatby','','',1,"");
 			        print '</td>';
-			        print '<td align="right" width="10%">';
+			        print '<td align="center" width="10%">';
 			        $form->select_date($pdluo->sellby,'sellby','','',1,"");
 			        print '</td>';
 			        print '<td align="right" width="10%">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
@@ -888,16 +889,17 @@ if ($resql)
 			        print '</table></form>';
 			    }
 			    else
-			    {
+				{
                     print "\n".'<tr><td align="right">';
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("StockMovement").'</a>';
+                    print img_picto($langs->trans("Tranfer"),'uparrow','class="hideonsmartphone"').' ';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("StockMovement").'</a>';
 					// Disabled, because edition of stock content must use the "Correct stock menu".
 					// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
                     //print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
                     //print img_edit().'</a></td>';
                     print '<td align="right">'.$pdluo->batch.'</td>';
-                    print '<td align="right">'. dol_print_date($pdluo->eatby,'day') .'</td>';
-                    print '<td align="right">'. dol_print_date($pdluo->sellby,'day') .'</td>';
+                    print '<td align="center">'. dol_print_date($pdluo->eatby,'day') .'</td>';
+                    print '<td align="center">'. dol_print_date($pdluo->sellby,'day') .'</td>';
                     print '<td align="right">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
                     print '<td colspan="4"></td></tr>';
 			    }
