@@ -435,24 +435,25 @@ if ($id > 0 || $ref)
         if (! empty($conf->commande->enabled))
         {
             if ($found) print '<br>'; else $found=1;
-            print $langs->trans("CustomersOrdersRunning").': '.$product->stats_commande['qty'];
+            print $langs->trans("ProductQtyInCustomersOrdersRunning").': '.$product->stats_commande['qty'];
             $result=$product->load_stats_commande(0,'0');
             if ($result < 0) dol_print_error($db,$product->error);
             print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
         }
 
         // Number of product from customer order already sent (partial shipping)
-        if (! empty($conf->expedition->enabled)) {
+        if (! empty($conf->expedition->enabled))
+        {
             if ($found) print '<br>'; else $found=1;
             $result=$product->load_stats_sending(0,'2');
-            print $langs->trans("SendingRunning").': '.$product->stats_expedition['qty'];
+            print $langs->trans("ProductQtyInShipmentAlreadySent").': '.$product->stats_expedition['qty'];
         }
 
         // Number of supplier order running
         if (! empty($conf->fournisseur->enabled)) {
             if ($found) print '<br>'; else $found=1;
             $result=$product->load_stats_commande_fournisseur(0,'3,4');
-            print $langs->trans("SuppliersOrdersRunning").': '.$product->stats_commande_fournisseur['qty'];
+            print $langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$product->stats_commande_fournisseur['qty'];
             $result=$product->load_stats_commande_fournisseur(0,'0,1,2');
             if ($result < 0) dol_print_error($db,$product->error);
             print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
@@ -461,7 +462,7 @@ if ($id > 0 || $ref)
 	    // Number of product from supplier order already received (partial receipt)
         if (! empty($conf->fournisseur->enabled)) {
             if ($found) print '<br>'; else $found=1;
-            print $langs->trans("SuppliersReceiptRunning").': '.$product->stats_reception['qty'];
+            print $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$product->stats_reception['qty'];
         }
 
         print '</td></tr>';
@@ -526,7 +527,7 @@ if ($id > 0 || $ref)
 		print '<tr>';
 		print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Warehouse").'</td>';
 		print '<td width="20%">';
-		print $formproduct->selectWarehouses(($_GET["dwid"]?$_GET["dwid"]:GETPOST('id_entrepot')),'id_entrepot','',1);
+		print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')),'id_entrepot','',1);
 		print '</td>';
 		print '<td width="20%">';
 		print '<select name="mouvement" id="mouvement" class="flat">';
@@ -580,8 +581,8 @@ if ($id > 0 || $ref)
 		print '<table class="border" width="100%">';
 
 		print '<tr>';
-		print '<td width="20%" class="fieldrequired">'.$langs->trans("WarehouseSource").'</td><td width="20%">';
-		print $formproduct->selectWarehouses(($_GET["dwid"]?$_GET["dwid"]:GETPOST('id_entrepot_source')),'id_entrepot_source','',1);
+		print '<td width="15%" class="fieldrequired">'.$langs->trans("WarehouseSource").'</td><td width="15%">';
+        print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot_source')?GETPOST('id_entrepot_source','int'):'ifone')),'id_entrepot_source','',1);
 		print '</td>';
 		print '<td width="20%" class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
 		print $formproduct->selectWarehouses(GETPOST('id_entrepot_destination'),'id_entrepot_destination','',1);
@@ -673,8 +674,8 @@ print '</tr>';
 if ( (! empty($conf->productbatch->enabled)) && $product->hasbatch()) {
 	print '<tr class="liste_titre"><td width="10%"></td>';
 	print '<td align="right" width="10%">'.$langs->trans("batch_number").'</td>';
-	print '<td align="right" width="10%">'.$langs->trans("l_eatby").'</td>';
-	print '<td align="right" width="10%">'.$langs->trans("l_sellby").'</td>';
+	print '<td align="center" width="10%">'.$langs->trans("l_eatby").'</td>';
+	print '<td align="center" width="10%">'.$langs->trans("l_sellby").'</td>';
 	print '<td align="right" colspan="5"></td>';
 	print '</tr>';
 }
