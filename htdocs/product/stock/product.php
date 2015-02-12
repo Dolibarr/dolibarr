@@ -511,7 +511,7 @@ if ($id > 0 || $ref)
             print $langs->trans("ProductQtyInCustomersOrdersRunning").': '.$product->stats_commande['qty'];
             $result=$product->load_stats_commande(0,'0');
             if ($result < 0) dol_print_error($db,$product->error);
-            print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
+            print ' ('.$langs->trans("ProductQtyInDraft").': '.$product->stats_commande['qty'].')';
         }
 
         // Number of product from customer order already sent (partial shipping)
@@ -529,7 +529,7 @@ if ($id > 0 || $ref)
             print $langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$product->stats_commande_fournisseur['qty'];
             $result=$product->load_stats_commande_fournisseur(0,'0,1,2');
             if ($result < 0) dol_print_error($db,$product->error);
-            print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
+            print ' ('.$langs->trans("ProductQtyInDraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
         }
 
 	    // Number of product from supplier order already received (partial receipt)
