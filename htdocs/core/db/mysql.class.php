@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -614,7 +615,7 @@ class DoliDBMysql extends DoliDB
 	{
 		$infotables=array();
 
-		$sql="SHOW FULL COLUMNS FROM ".$table.";";
+		$sql="SHOW FULL COLUMNS FROM ".$this->EscapeFieldName($database).";";
 
 		dol_syslog($sql,LOG_DEBUG);
 		$result = $this->query($sql);
@@ -645,7 +646,7 @@ class DoliDBMysql extends DoliDB
 		$i=0;
 		foreach($fields as $field_name => $field_desc)
 		{
-			$sqlfields[$i] = $field_name." ";
+			$sqlfields[$i] = $this->EscapeFieldName($field_name)." ";
 			$sqlfields[$i]  .= $field_desc['type'];
 			if( preg_match("/^[^\s]/i",$field_desc['value'])) {
 				$sqlfields[$i]  .= "(".$field_desc['value'].")";
@@ -716,7 +717,10 @@ class DoliDBMysql extends DoliDB
 	 */
 	function DDLDescTable($table,$field="")
 	{
-		$sql="DESC ".$table." ".$field;
+		$sql="DESC ".$this->EscapeFieldName($table);
+		if ($field) {
+		    $sql .= " ".$this->EscapeFieldName($field);
+		}
 
 		dol_syslog(get_class($this)."::DDLDescTable ".$sql,LOG_DEBUG);
 		$this->_results = $this->query($sql);
@@ -736,7 +740,7 @@ class DoliDBMysql extends DoliDB
     {
         // cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
         // ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-        $sql= "ALTER TABLE ".$table." ADD `".$field_name."` ";
+        $sql= "ALTER TABLE ".$this->EscapeFieldName($table)." ADD `".$field_name."` ";
         $sql.= $field_desc['type'];
         if(preg_match("/^[^\s]/i",$field_desc['value']))
         if (! in_array($field_desc['type'],array('date','datetime')))
@@ -779,8 +783,8 @@ class DoliDBMysql extends DoliDB
 	 */
 	function DDLUpdateField($table,$field_name,$field_desc)
 	{
-		$sql = "ALTER TABLE ".$table;
-		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
+		$sql = "ALTER TABLE ".$this->EscapeFieldName($table);
+		$sql .= " MODIFY COLUMN ".$this->EscapeFieldName($field_name)." ".$field_desc['type'];
 		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
 			$sql.="(".$field_desc['value'].")";
 		}
@@ -802,7 +806,7 @@ class DoliDBMysql extends DoliDB
 	 */
 	function DDLDropField($table,$field_name)
 	{
-		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
+		$sql= "ALTER TABLE ".$this->EscapeFieldName($table)." DROP COLUMN `".$field_name."`";
 		dol_syslog(get_class($this)."::DDLDropField ".$sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		{
@@ -1023,5 +1027,16 @@ class DoliDBMysql extends DoliDB
 
 		return $result;
 	}
+	
+	/**
+	 *    Escape a field name according to escape's syntax
+	 *
+	 * @param      string $fieldname   Field's name to escape
+	 * @return     string              field's name escaped
+	 */
+	function EscapeFieldName($fieldname) {
+	    return "`".$fieldname."`";
+	}
+	
 }
 

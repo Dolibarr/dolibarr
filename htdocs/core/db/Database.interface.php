@@ -5,6 +5,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -463,5 +464,13 @@ interface Database
 	 * @return        boolean            true if OK, false if KO
 	 */
 	function select_db($database);
+	
+	/**
+	 *    Escape a field name according to escape's syntax of database systeme
+	 * 
+	 * @param      string $fieldname   Field's name to escape
+	 * @return     string              field's name escaped      
+	 */
+	function EscapeFieldName($fieldname);
 
 }
