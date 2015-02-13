@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Instalacja modułu wygląda na uncomplete. Idź na i
 ErrorBadMask=Błąd na masce
 ErrorBadMaskFailedToLocatePosOfSequence=Błąd, maska ​​bez kolejnego numeru
 ErrorBadMaskBadRazMonth=Błąd, zła wartość zresetowane
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Błąd. Wybierz co najmniej jeden wpis.
 ErrorProductWithRefNotExist=Produkt z <i>'%s</i> &quot;odniesienia nie istnieje
 ErrorDeleteNotPossibleLineIsConsolidated=Usuń nie możliwe, ponieważ zapis jest związany z transation bankowego, który jest conciliated
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

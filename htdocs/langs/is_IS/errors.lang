@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Skipulag á einingu lítur út fyrir að vera uncomp
 ErrorBadMask=Villa á grímu
 ErrorBadMaskFailedToLocatePosOfSequence=Villa, gríma án fjölda röð
 ErrorBadMaskBadRazMonth=Villa, slæmt endurstilla gildi
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Villa. Veldu amk eina færslu.
 ErrorProductWithRefNotExist=Vara við 'á <i>%s'</i> tilvísanir eru ekki til
 ErrorDeleteNotPossibleLineIsConsolidated=Eyða ekki hægt vegna þess að færsla er tengd við banka transation sem er conciliated
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

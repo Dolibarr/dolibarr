@@ -58,8 +58,9 @@ OrderSentByEMail=تم إرسال طلبية العميل %s بواسطة الب�
 InvoiceSentByEMail=تم إرسال فاتروة العميل %s بواسطة البريد الإلكتروني
 SupplierOrderSentByEMail=تم إرسال طلبية المزود %s بواسطة البريد الإلكتروني
 SupplierInvoiceSentByEMail=تم إرسال فاتروة المزود%s بواسطة البريد الإلكتروني
-ShippingSentByEMail=تم إرسال الشحنة %s بواسطة البريد الإلكتروني
-ShippingValidated= Shipping %s validated
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= تم إنشاء طرف ثالث أو خارجي
 DateActionPlannedStart= التاريخ المخطط للبدء
 DateActionPlannedEnd= التاريخ المخطط للإنهاء
@@ -68,7 +69,7 @@ DateActionDoneEnd= تاريخ النهاية الفعلية
 DateActionStart= تاريخ البدء
 DateActionEnd= تاريخ النهاية
 AgendaUrlOptions1=يمكنك أيضا إضافة المعايير التالية لترشيح النتائج:
-AgendaUrlOptions2=<b>login=<b>login=%s</b> لتقييد الانتاج المنشأ أو الذي تم الإنتهاء منه بواسطة المستخدم <b>%s</b>
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=<b>logint=%s</b> لتقييد الانتاج للإجراءات المناطة للمستخدم <b>%s</b>
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.

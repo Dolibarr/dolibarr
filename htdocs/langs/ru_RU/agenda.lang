@@ -58,8 +58,9 @@ OrderSentByEMail=Заказ покупателя %s отправлен по эл
 InvoiceSentByEMail=Счет-фактура клиента %s отправлен по электронной почте
 SupplierOrderSentByEMail=Поставщик порядке %s отправлены по электронной почте
 SupplierInvoiceSentByEMail=Поставщиком счета %s отправлены по электронной почте
-ShippingSentByEMail=Доставка %s отправлены по электронной почте
-ShippingValidated= Shipping %s validated
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Третья группа создала
 DateActionPlannedStart= Планируемая дата начала
 DateActionPlannedEnd= Планируемая дата окончания
@@ -68,7 +69,7 @@ DateActionDoneEnd= Реальная дата окончания
 DateActionStart= Начальная дата
 DateActionEnd= Конечная дата
 AgendaUrlOptions1=Можно также добавить следующие параметры для фильтрации вывода:
-AgendaUrlOptions2=<b>login=<b>логин= %s</b> ограничить выход на действия, созданный, пострадавших или сделали <b>пользователем %s.</b>
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=<b>logint= %s</b> ограничить выход на действия пользователя, <b>пострадавших %s.</b>
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.

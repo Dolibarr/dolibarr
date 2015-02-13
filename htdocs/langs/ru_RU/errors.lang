@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Установка модуля выглядит г�
 ErrorBadMask=Ошибка на маску
 ErrorBadMaskFailedToLocatePosOfSequence=Ошибка, маска без порядкового номера
 ErrorBadMaskBadRazMonth=Ошибка, плохое значение сброса
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Ошибка. Выберите хотя бы одну запись.
 ErrorProductWithRefNotExist=Изделие с <i>%s</i> ссылки не существуют
 ErrorDeleteNotPossibleLineIsConsolidated=Удаление невозможно, потому что запись связана с банком transation, который согласован
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Обязательные параметры не определены

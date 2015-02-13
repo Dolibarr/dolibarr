@@ -109,4 +109,4 @@ CategoriesSetup=Kategori-oppsett
 CategorieRecursiv=Link med overordnet kategori automatisk
 CategorieRecursivHelp=Hvis aktivert, vil produktet også knyttes til overordnet kategori når du legger inn en underkategori
 AddProductServiceIntoCategory=Legg til følgende produkt/tjeneste
-ShowCategory=Show category
+ShowCategory=Vis kategori

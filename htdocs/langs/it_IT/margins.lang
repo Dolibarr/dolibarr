@@ -16,6 +16,7 @@ MarginDetails=Specifiche del margine
 ProductMargins=Margini per prodotto
 CustomerMargins=Margini per cliente
 SalesRepresentativeMargins=Margini di vendita del rappresentante
+UserMargins=User margins
 ProductService=Prodotto o servizio
 AllProducts=Tutti i prodotti e servizi
 ChooseProduct/Service=Scegli prodotto o servizio

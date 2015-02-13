@@ -8,6 +8,7 @@ FinancialAccount=Finanzkonto
 FinancialAccounts=Finanzkonten
 BankAccount=Finanzkontenübersicht
 BankAccounts=Kontenübersicht
+ShowAccount=Zeige Konto
 AccountRef=Konto-Referenz
 AccountLabel=Kontobezeichnung
 CashAccount=Kasse

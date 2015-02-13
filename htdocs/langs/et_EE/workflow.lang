@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Töövoo mooduli seaded
-WorkflowDesc=Selle mooduli eesmärgiks on võimaldada rakenduses automaatseid tegevusi. Vaikimisi on töövoog avatud (st et tegevusi võib teha vabalt valitud järjekorras). Soovi korral võib tegevusi seadistada automaatselt toimuma.
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
 ThereIsNoWorkflowToModify=Hetkel aktiveeritud moodulite jaoks ei ole ühtki muudetavat töövoogu.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Pärast pakkumise allkirjastamast loo automaatselt uus tellimus
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Pärast pakkumise allkirjastamist loo automaatselt uus arve

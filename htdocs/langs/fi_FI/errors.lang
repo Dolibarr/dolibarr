@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Setup moduulin näyttää olevan epätäydellisiä. 
 ErrorBadMask=Virhe naamio
 ErrorBadMaskFailedToLocatePosOfSequence=Virhe, maski ilman järjestysnumeroa
 ErrorBadMaskBadRazMonth=Virhe, huono palautus arvo
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Error. Valitse ainakin yksi merkintä.
 ErrorProductWithRefNotExist=Tuotteen viitaten <i>&quot;%s&quot;</i> ei ole olemassa
 ErrorDeleteNotPossibleLineIsConsolidated=Poistaminen ei ole mahdollista, koska levy on sidottu pankin transation joka sovitelleet
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

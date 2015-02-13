@@ -29,6 +29,7 @@ ReportTurnover=売上高
 PaymentsNotLinkedToInvoice=任意の請求書にリンクされていない支払は、その第三者にリンクされていない
 PaymentsNotLinkedToUser=すべてのユーザーにリンクされていない支払い
 Profit=利益
+AccountingResult=Accounting result
 Balance=バランス
 Debit=借方
 Credit=クレジット

@@ -29,6 +29,7 @@ ReportTurnover=Apgrozījums
 PaymentsNotLinkedToInvoice=Maksājumi, kas nav saistīti ar kādu rēķinu, tāpēc nav saistīts ar trešajām personām
 PaymentsNotLinkedToUser=Maksājumi, kas nav saistīti ar jebkuru lietotāju
 Profit=Peļņa
+AccountingResult=Accounting result
 Balance=Bilance
 Debit=Debets
 Credit=Kredīts

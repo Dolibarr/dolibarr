@@ -58,8 +58,9 @@ OrderSentByEMail=Narudžba kupca %s poslana putem Emaila
 InvoiceSentByEMail=Račun kupca %s poslan Emailom
 SupplierOrderSentByEMail=Narudžba dobavljača %s poslana Emailom
 SupplierInvoiceSentByEMail=Račun dobavljača %s poslan Emailom
-ShippingSentByEMail=Dostava %s poslana putem Emaila
-ShippingValidated= Pošiljka %s je ovjerena
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Treća stranka stvorena
 DateActionPlannedStart= Planirani početni datum
 DateActionPlannedEnd= Planirani završni datum
@@ -68,7 +69,7 @@ DateActionDoneEnd= Stvarni završni datum
 DateActionStart= Datum početka
 DateActionEnd= Datum završetka
 AgendaUrlOptions1=Možete isto dodati sljedeće paramete za filtriranje prikazanog: 
-AgendaUrlOptions2=<b>Prijava=%s</b> za ograničavanje prikaza akcije kreiranja , dodijeljene ili završene od strane korisnika<b>%s</b>.
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>Prijava=%s</b>da se ograniči prikaz na akcije dodijeljene korisniku  <b>%s</b>.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
