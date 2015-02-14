@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Simon Desee          <simon@dedisoft.com>
+ * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +90,6 @@ class DoliDBMssql extends DoliDB
 			// (La base Dolibarr a ete forcee en this->forcecharset a l'install)
 			$this->connected = 1;
 			$this->ok = 1;
-			
 		}
 		else
 		{
@@ -180,10 +180,7 @@ class DoliDBMssql extends DoliDB
 		    "SET QUOTED_IDENTIFIER ON;"
 		);
 		mssql_query(implode(' ',$set_options),$this->db);
-		
-		
-		
-		
+
 		return $this->db;
 	}
 
@@ -455,7 +452,7 @@ class DoliDBMssql extends DoliDB
 			$this->lastquery=$query;
 			$this->_results = $ret;
 		}
-		
+
 		return $ret;
 	}
 
@@ -731,17 +728,10 @@ class DoliDBMssql extends DoliDB
         if (empty($collation)) $collation=$this->forcecollate;
         */
 
-<<<<<<< Updated upstream
-        // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-		$sql = 'CREATE DATABASE '.$database;
-		$sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
-=======
 		$sql = 'CREATE DATABASE '.$this->EscapeFieldName($database);
         //TODO: Check if we need to force a charset
 		//$sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
->>>>>>> Stashed changes
 		$ret=$this->query($sql);
-		
 		    
 		$this->select_db($database);
 		$sql="CREATE USER [$owner] FOR LOGIN [$owner]";
@@ -749,14 +739,12 @@ class DoliDBMssql extends DoliDB
 		$sql="ALTER ROLE [db_owner] ADD MEMBER [$owner]";
 		mssql_query($sql,$this->db);
 				
-	    //For version >=2008
 		$sql="ALTER DATABASE [$database] SET ANSI_NULL_DEFAULT ON;";
 	    @mssql_query($sql,$this->db);
 	    $sql="ALTER DATABASE [$database] SET ANSI_NULL ON;";
 	    @mssql_query($sql,$this->db);
-	    
-				
-		return $ret;
+
+	    return $ret;
 	}
 
 	/**
