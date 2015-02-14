@@ -201,7 +201,7 @@ abstract class DoliDB implements Database
 	 */
 	function getVersionArray()
 	{
-		return explode('.',$this->getVersion());
+		return preg_split("/[\.,-]/",$this->getVersion());
 	}
 
 	/**
