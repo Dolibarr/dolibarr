@@ -270,5 +270,3 @@ INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) v
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 12, 1215, '', 0, 'Laâyoune-Boujdour-Sakia el Hamra', 1);
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 12, 1216, '', 0, 'Oued Ed-Dahab Lagouira', 1);
 
--- Regions Tunisia (id country=10)
-INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 10, 1001, '', 0, 'Algerie', 1);
