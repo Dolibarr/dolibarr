@@ -204,7 +204,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 		}
 		foreach ($dbversion_disallowed as $dbversion_totest)
 		{
-	        print $db->type.' - '.join('.',$versionarray).' - '.versioncompare($dbversion_totest['version'],$versionarray)."<br>\n";
+	        //print $db->type.' - '.join('.',$versionarray).' - '.versioncompare($dbversion_totest['version'],$versionarray)."<br>\n";
 	        if ($dbversion_totest['type'] == $db->type
 	        	&& (versioncompare($dbversion_totest['version'],$versionarray) == 0 || versioncompare($dbversion_totest['version'],$versionarray)<=-4 || versioncompare($dbversion_totest['version'],$versionarray)>=4)
 	        )
