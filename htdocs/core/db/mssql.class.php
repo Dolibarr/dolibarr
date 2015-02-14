@@ -89,6 +89,7 @@ class DoliDBMssql extends DoliDB
 			// (La base Dolibarr a ete forcee en this->forcecharset a l'install)
 			$this->connected = 1;
 			$this->ok = 1;
+			
 		}
 		else
 		{
@@ -146,7 +147,7 @@ class DoliDBMssql extends DoliDB
 	 */
 	function select_db($database)
 	{
-		return mssql_select_db($database, $this->db);
+		return @mssql_select_db($database, $this->db);
 	}
 
 	/**
@@ -171,6 +172,18 @@ class DoliDBMssql extends DoliDB
 		// les nouvelles version de Dolibarr car force par l'install Dolibarr.
 		//$this->query('SET NAMES '.$this->forcecharset);
 		//print "Resultat fonction connect: ".$this->db;
+		$set_options=array('SET ANSI_PADDING ON;',
+		    "SET ANSI_NULLS ON;",
+		    "SET ANSI_WARNINGS ON;",
+		    "SET ARITHABORT ON;",
+		    "SET CONCAT_NULL_YIELDS_NULL ON;",
+		    "SET QUOTED_IDENTIFIER ON;"
+		);
+		mssql_query(implode(' ',$set_options),$this->db);
+		
+		
+		
+		
 		return $this->db;
 	}
 
@@ -224,19 +237,22 @@ class DoliDBMssql extends DoliDB
 	 */
 	function begin()
 	{
-		if (! $this->transaction_opened)
+
+	    $res=mssql_query('select @@TRANCOUNT');
+	    $this->transaction_opened=mssql_result($res, 0, 0);
+	    
+	    if ($this->transaction_opened == 0)
 		{
-			$ret=$this->query("BEGIN TRANSACTION");
+		    //return 1; //There is a mess with auto_commit and 'SET IMPLICIT_TRANSACTIONS ON' generate also a mess 
+			$ret=mssql_query("SET IMPLICIT_TRANSACTIONS OFF;BEGIN TRANSACTION;",$this->db);
 			if ($ret)
 			{
-				$this->transaction_opened++;
 				dol_syslog("BEGIN Transaction",LOG_DEBUG);
 			}
 			return $ret;
 		}
 		else
 		{
-			$this->transaction_opened++;
 			return 1;
 		}
 	}
@@ -249,12 +265,15 @@ class DoliDBMssql extends DoliDB
 	 */
 	function commit($log='')
 	{
-		if ($this->transaction_opened <= 1)
+	    $res=mssql_query('select @@TRANCOUNT');
+	    $this->transaction_opened=mssql_result($res, 0, 0);
+	    	     
+		if ($this->transaction_opened == 1)
 		{
-			$ret=$this->query("COMMIT TRANSACTION");
+		    //return 1; //There is a mess with auto_commit and 'SET IMPLICIT_TRANSACTION ON' generate also a mess
+			$ret=mssql_query("COMMIT TRANSACTION",$this->db);
 			if ($ret)
 			{
-				$this->transaction_opened=0;
 				dol_syslog("COMMIT Transaction",LOG_DEBUG);
 				return 1;
 			}
@@ -263,11 +282,11 @@ class DoliDBMssql extends DoliDB
 				return 0;
 			}
 		}
-		else
+		elseif ($this->transaction_opened > 1)
 		{
-			$this->transaction_opened--;
 			return 1;
-		}
+		} else
+		    trigger_error("Commit requested but no transaction remain");
 	}
 
 	/**
@@ -278,18 +297,20 @@ class DoliDBMssql extends DoliDB
 	 */
 	function rollback($log='')
 	{
-		if ($this->transaction_opened<=1)
+	    $res=mssql_query('select @@TRANCOUNT');
+	    $this->transaction_opened=mssql_result($res, 0, 0);
+	     
+		if ($this->transaction_opened == 1)
 		{
-			$ret=$this->query("ROLLBACK TRANSACTION");
-			$this->transaction_opened=0;
+			$ret=mssql_query("ROLLBACK TRANSACTION",$this->db);
 			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
 			return $ret;
 		}
-		else
+		elseif ($this->transaction_opened > 1)
 		{
-			$this->transaction_opened--;
 			return 1;
-		}
+		} else
+		    trigger_error("Rollback requested but no transaction remain");
 	}
 
 	/**
@@ -304,54 +325,98 @@ class DoliDBMssql extends DoliDB
 	function query($query,$usesavepoint=0,$type='auto')
 	{
 		$query = trim($query);
+		
+		if (preg_match('/^--/',$query)) return true;
 
 		// Conversion syntaxe MySql vers MSDE.
 		$query = str_ireplace("now()", "getdate()", $query);
 		// Erreur SQL: cannot update timestamp field
 		$query = str_ireplace(", tms = tms", "", $query);
-		// Voir si l'on peut directement utiliser $query = str_ireplace("file", "[file]", $query);
-		// au lieu des 3 lignes ci-dessous
-		$query = str_ireplace(".file", ".[file]", $query);
-		$query = str_ireplace(" file ", " [file] ", $query);
-		$query = str_ireplace(" file,", " [file],", $query);
-		// Idem file
-		$query = str_ireplace(".percent", ".[percent]", $query);
-		$query = str_ireplace(" percent ", " [percent] ", $query);
-		$query = str_ireplace("percent,", "[percent],", $query);
-		$query = str_ireplace("percent=", "[percent]=", $query);
-		$query = str_ireplace("\'", "''", $query);
 
-
-		$itemfound = stripos($query, " limit ");
-		if ($itemfound !== false) {
-			// Extraire le nombre limite
-			$number = stristr($query, " limit ");
-			$number = substr($number, 7);
-			// Inserer l'instruction TOP et le nombre limite
-			$query = str_ireplace("select ", "select top ".$number." ", $query);
-			// Supprimer l'instruction MySql
-			$query = str_ireplace(" limit ".$number, "", $query);
+		$query=preg_replace("/([. ,\t(])(percent|file|public)([. ,=\t)])/","$1[$2]$3",$query);
+		
+		if ($type=="auto" || $type='dml')
+		{
+    		$query=preg_replace('/AUTO_INCREMENT/i','IDENTITY',$query);
+    		$query=preg_replace('/double/i','float',$query);
+    		$query=preg_replace('/float\((.*)\)/','numeric($1)',$query);
+    		$query=preg_replace('/([ \t])unsigned|IF NOT EXISTS[ \t]/i','$1',$query);
+    		$query=preg_replace('/([ \t])(MEDIUM|TINY|LONG){0,1}TEXT([ \t,])/i',"$1VARCHAR(MAX)$3",$query);
+    		
+    		$matches=array();
+    		$original_query='';
+    		if (preg_match('/ALTER TABLE\h+(\w+?)\h+ADD\h+(?:(UNIQUE)|INDEX)\h+(?:INDEX)?\h*(\w+?)\h*\((.+)\)/is', $query,$matches))
+    		{
+                $original_query=$query;
+                $query="CREATE ".trim($matches[2])." INDEX [".trim($matches[3])."] ON [".trim($matches[1])."] (".trim($matches[4]).")";
+                if ($matches[2]) {
+                    //check if columun is nullable cause Sql server only allow 1 null value if unique index.
+                    $fields=explode(",",trim($matches[4]));
+                    $fields_clear=array_map('trim',$fields);
+                    $infos=$this->GetFieldInformation(trim($matches[1]), $fields_clear);
+                    $query_comp=array();
+                    foreach($infos as $fld) {
+                        if ($fld->IS_NULLABLE == 'YES') {
+                            $query_comp[]=$fld->COLUMN_NAME." IS NOT NULL";
+                        }
+                    }
+                    if ($query_comp)
+                        $query.=" WHERE ".implode(" AND ",$query_comp);
+                }
+    		} 
+    		else
+    		{
+    		    if (preg_match('/ALTER TABLE\h+(\w+?)\h+ADD\h+PRIMARY\h+KEY\h+(\w+?)\h*\((.+)\)/is', $query, $matches))
+    		    {
+                    $original_query=$query;
+                    $query="ALTER TABLE [".$matches[1]."] ADD CONSTRAINT [".$matches[2]."] PRIMARY KEY CLUSTERED (".$matches[3].")";
+    		    }
+    		}
+    		
 		}
 
-		$itemfound = stripos($query, " week(");
-		if ($itemfound !== false) {
-			// Recreer une requete sans instruction Mysql
-			$positionMySql = stripos($query, " week(");
-			$newquery = substr($query, 0, $positionMySql);
-
-			// Recuperer la date passee en parametre
-			$extractvalue = stristr($query, " week(");
-			$extractvalue = substr($extractvalue, 6);
-			$positionMySql = stripos($extractvalue, ")");
-			// Conserver la fin de la requete
-			$endofquery = substr($extractvalue, $positionMySql);
-			$extractvalue = substr($extractvalue, 0, $positionMySql);
-
-			// Remplacer l'instruction MySql en Sql Server
-			// Inserer la date en parametre et le reste de la requete
-			$query = $newquery." DATEPART(week, ".$extractvalue.$endofquery;
+		if ($type=="auto" || $type='ddl')
+		{
+    		$itemfound = stripos($query, " limit ");
+    		if ($itemfound !== false) {
+    			// Extraire le nombre limite
+    			$number = stristr($query, " limit ");
+    			$number = substr($number, 7);
+    			// Inserer l'instruction TOP et le nombre limite
+    			$query = str_ireplace("select ", "select top ".$number." ", $query);
+    			// Supprimer l'instruction MySql
+    			$query = str_ireplace(" limit ".$number, "", $query);
+    		}
+    
+    		$itemfound = stripos($query, " week(");
+    		if ($itemfound !== false) {
+    			// Recreer une requete sans instruction Mysql
+    			$positionMySql = stripos($query, " week(");
+    			$newquery = substr($query, 0, $positionMySql);
+    
+    			// Recuperer la date passee en parametre
+    			$extractvalue = stristr($query, " week(");
+    			$extractvalue = substr($extractvalue, 6);
+    			$positionMySql = stripos($extractvalue, ")");
+    			// Conserver la fin de la requete
+    			$endofquery = substr($extractvalue, $positionMySql);
+    			$extractvalue = substr($extractvalue, 0, $positionMySql);
+    
+    			// Remplacer l'instruction MySql en Sql Server
+    			// Inserer la date en parametre et le reste de la requete
+    			$query = $newquery." DATEPART(week, ".$extractvalue.$endofquery;
+    		}
+    	   if (preg_match('/^insert\h+(?:INTO)?\h*(\w+?)\h*\(.*\b(?:row)?id\b.*\)\h+VALUES/i',$query,$matches))
+    	   {
+    	       //var_dump($query);
+    	       //var_dump($matches);
+    	       if (stripos($query,'llx_c_departements') !== false) var_dump($query);
+    	       $sql='SET IDENTITY_INSERT ['.trim($matches[1]).'] ON;';
+    	       @mssql_query($sql, $this->db);
+    	       $post_query='SET IDENTITY_INSERT ['.trim($matches[1]).'] OFF;';
+    	       
+    	   }
 		}
-
 		//print "<!--".$query."-->";
 
 		if (! in_array($query,array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
@@ -364,6 +429,11 @@ class DoliDBMssql extends DoliDB
 		else
 		{
 			$ret = mssql_query($query, $this->db);
+		}
+				
+		if (!empty($post_query))
+		{
+		    @mssql_query($post_query, $this->db);
 		}
 
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
@@ -379,12 +449,13 @@ class DoliDBMssql extends DoliDB
 				$this->lasterrno = $row["code"];
 
 				dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+				if ($original_query) dol_syslog(get_class($this)."::query SQL Original query: ".$original_query, LOG_ERR);
 				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
 			}
 			$this->lastquery=$query;
 			$this->_results = $ret;
 		}
-
+		
 		return $ret;
 	}
 
@@ -539,7 +610,8 @@ class DoliDBMssql extends DoliDB
 			1146 => 'DB_ERROR_NOSUCHTABLE',
 			1216 => 'DB_ERROR_NO_PARENT',
 			1217 => 'DB_ERROR_CHILD_EXISTS',
-			1451 => 'DB_ERROR_CHILD_EXISTS'
+			1451 => 'DB_ERROR_CHILD_EXISTS',
+			1913 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
 			);
 
 			if (isset($errorcode_map[$this->lasterrno]))
@@ -563,7 +635,7 @@ class DoliDBMssql extends DoliDB
 			return 'Not connected. Check setup parameters in conf/conf.php file and your mssql client and server versions';
 		}
 		else {
-			return mssql_get_last_message($this->db);
+			return mssql_get_last_message();
 		}
 	}
 
@@ -655,20 +727,35 @@ class DoliDBMssql extends DoliDB
 	 */
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
-        if (empty($charset))   $charset=$this->forcecharset;
+        /*if (empty($charset))   $charset=$this->forcecharset;
         if (empty($collation)) $collation=$this->forcecollate;
+        */
 
+<<<<<<< Updated upstream
         // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
 		$sql = 'CREATE DATABASE '.$database;
 		$sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
+=======
+		$sql = 'CREATE DATABASE '.$this->EscapeFieldName($database);
+        //TODO: Check if we need to force a charset
+		//$sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
+>>>>>>> Stashed changes
 		$ret=$this->query($sql);
-		if (! $ret)
-		{
-			// On reessaie pour compatibilite avec mssql < 5.0
-			$sql = 'CREATE DATABASE '.$database;
-			$ret=$this->query($sql);
-		}
-
+		
+		    
+		$this->select_db($database);
+		$sql="CREATE USER [$owner] FOR LOGIN [$owner]";
+		mssql_query($sql,$this->db);
+		$sql="ALTER ROLE [db_owner] ADD MEMBER [$owner]";
+		mssql_query($sql,$this->db);
+				
+	    //For version >=2008
+		$sql="ALTER DATABASE [$database] SET ANSI_NULL_DEFAULT ON;";
+	    @mssql_query($sql,$this->db);
+	    $sql="ALTER DATABASE [$database] SET ANSI_NULL ON;";
+	    @mssql_query($sql,$this->db);
+	    
+				
 		return $ret;
 	}
 
@@ -884,12 +971,40 @@ class DoliDBMssql extends DoliDB
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
-		// FIXME: Dummy method
-		// TODO: Implement
-		// May help: http://msdn.microsoft.com/fr-fr/library/ms173463.aspx
-
-		// Always fail for now
-		return -1;
+	    $sql = "CREATE LOGIN ".$this->EscapeFieldName($dolibarr_main_db_user)." WITH PASSWORD='$dolibarr_main_db_pass'";
+        dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
+        $resql=$this->query($sql);
+        if (! $resql)
+        {
+            if ($this->lasterrno != '15025')
+            {
+	            return -1;
+            }
+            else
+			{
+            	// If user already exists, we continue to set permissions
+            	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
+            }
+        }
+        $sql="SELECT name from sys.databases where name='".$dolibarr_main_db_name."'";
+        $ressql=$this->query($sql);
+        if (! $ressql) 
+        {
+            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
+            return -1;
+        } 
+        else 
+        {
+            if ($num)
+            {
+                $this->select_db($dolibarr_main_db_name);
+                $sql="CREATE USER [$dolibarr_main_db_user] FOR LOGIN [$dolibarr_main_db_user]";
+                $this->query($sql);
+                $sql="ALTER ROLE [db_owner] ADD MEMBER [$dolibarr_main_db_user]";
+                $this->query($sql);
+            }
+        }
+	    return 1;
 	}
 
     /**
@@ -1003,5 +1118,49 @@ class DoliDBMssql extends DoliDB
 
 		return array();
 	}
+	
+	/**
+	 *    Escape a field name according to escape's syntax
+	 *
+	 * @param      string $fieldname   Field's name to escape
+	 * @return     string              field's name escaped
+	 */
+	function EscapeFieldName($fieldname) {
+	    return "[".$fieldname."]";
+	}
+	
+	
+	/**
+	 * Get information on field
+	 * 
+	 * @param      string  $table      Table name which contains fields
+	 * @param      mixed   $fields     String for one field or array of string for multiple field
+	 * @return boolean|multitype:object
+	 */
+	function GetFieldInformation($table,$fields) {
+	    $sql="SELECT * from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='".$this->escape($table)."' AND COLUMN_NAME";
+	    if (is_array($fields)) 
+	    {
+	        $where=" IN ('".implode("','",$fields)."')";
+	    }
+	    else
+	    {
+	        $where="='".$this->escape($fields)."'";
+	    }
+	    $result=array();
+	    $ret=mssql_query($sql.$where,$this->db);
+	    if ($ret)
+	    {
+	        while($obj=mssql_fetch_object($ret))
+	        {
+	            $result[]=$obj;
+	        }
+	    }
+	    else 
+	        return false;
+
+	    return $result;
+	}
+
 }
 
