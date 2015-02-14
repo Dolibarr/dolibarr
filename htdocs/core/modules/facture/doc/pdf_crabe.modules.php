@@ -68,7 +68,7 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	public $posxprogress;
 
-
+	
 	/**
 	 *	Constructor
 	 *
@@ -293,7 +293,8 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				// Situation invoice handling
-				if ($object->situation_cycle_ref) {
+				if ($object->situation_cycle_ref) 
+				{
 					$this->situationinvoice = True;
 					$progress_width = 14;
 					$this->posxtva -= $progress_width;
@@ -472,16 +473,19 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->MultiCell($this->posxprogress-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
 					}
 
-					// Situation progress
-					$progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
-					$pdf->SetXY($this->posxprogress, $curY);
-					$pdf->MultiCell($this->postotalht-$this->posxprogress, 3, $progress, 0, 'R');	// Enough for 6 chars
+					if ($this->situationinvoice)
+					{
+						// Situation progress
+						$progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
+						$pdf->SetXY($this->posxprogress, $curY);
+						$pdf->MultiCell($this->postotalht-$this->posxprogress, 3, $progress, 0, 'R');
+					}
 
 					// Total HT line
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
-
+					
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress();
 					if ($prev_progress > 0) // Compute progress from previous situation
@@ -948,7 +952,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		// Tableau total
-		$col1x = 120; $col2x = $this->postotalht;
+		$col1x = 120; $col2x = 170;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$col2x-=20;
@@ -958,44 +962,11 @@ class pdf_crabe extends ModelePDFFactures
 		$useborder=0;
 		$index = 0;
 
-		// Previous situations summary
-		if ($object->situation_cycle_ref && $object->situation_counter > 1) {
-			// Situations total w/out VAT
-			$counter = ' 1';
-			for ($i = 2; $i <= $object->situation_counter; $i++) {
-				$counter .= ' + ' . $i;
-			}
-
-			$prevsits = $object->get_prev_sits();
-			$prevsits_total_amount = 0;
-			foreach ($prevsits as $situation) {
-				$prevsits_total_amount += $situation->total_ht;
-			}
-			$prevsits_total_amount += $object->total_ht;
-
-			$pdf->SetFillColor(255, 255, 255);
-			$pdf->SetXY($col1x, $tab2_top + 0);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("SituationAmount") . $counter, 0, 'L', 1);
-			$pdf->SetXY($col2x, $tab2_top + 0);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($prevsits_total_amount), 0, 'R', 1);
-
-			// Previous situations deduction
-			$pdf->Line($col2x, 0, $col2x, 100000);
-			for ($i = 0; $i < count($prevsits); $i++) {
-				$index++;
-				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("SituationDeduction") . ' ' . ($i + 1) . ' (' . $prevsits[$i]->ref . ')', 0, 'L', 1);
-				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, ' - ' . price($prevsits[$i]->total_ht), 0, 'R', 1);
-			}
-			$index++;
-		}
-
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
-		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
-		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($object->total_ht + (! empty($object->remise)?$object->remise:0)), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
@@ -1334,21 +1305,19 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
 			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 		}
+
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
-		if ($this->atleastonediscount) {
-			$pdf->line($this->posxprogress, $tab_top, $this->posxprogress, $tab_top + $tab_height);
-			if (empty($hidetop)) {
-				$pdf->SetXY($this->posxdiscount - 1, $tab_top + 1);
-				$pdf->MultiCell($this->posxprogress - $this->posxdiscount + 1, 2, $outputlangs->transnoentities("ReductionShort"), '', 'C');
+		if (empty($hidetop))
+		{
+			if ($this->atleastonediscount)
+			{
+				$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
+				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 			}
 		}
-
-		if ($this->situationinvoice) {
+		if ($this->atleastonediscount)
+		{
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
-			if (empty($hidetop)) {
-				$pdf->SetXY($this->posxprogress - 1, $tab_top + 1);
-				$pdf->MultiCell($this->postotalht - $this->posxprogress - 1, 2, $outputlangs->transnoentities("Progress"), '', 'C');
-			}
 		}
 		if (empty($hidetop))
 		{
@@ -1424,8 +1393,6 @@ class pdf_crabe extends ModelePDFFactures
 		if ($object->type == 2) $title=$outputlangs->transnoentities("InvoiceAvoir");
 		if ($object->type == 3) $title=$outputlangs->transnoentities("InvoiceDeposit");
 		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProFormat");
-		if ($object->type == 5 && $object->situation_final == 0) $title = $outputlangs->transnoentities("InvoiceSituation").' n°'.$object->situation_counter;
-		if ($object->type == 5 && $object->situation_final == 1) $title = 'Situation n°'.$object->situation_counter.' : '.$outputlangs->transnoentities("InvoiceSituationLast");
 		$pdf->MultiCell(100, 3, $title, '', 'R');
 
 		$pdf->SetFont('','B',$default_font_size);

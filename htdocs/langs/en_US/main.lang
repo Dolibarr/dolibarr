@@ -688,6 +688,7 @@ PublicUrl=Public URL
 AddBox=Add box
 SelectElementAndClickRefresh=Select an element and click Refresh
 PrintFile=Print File %s
+ShowTransaction=Show transaction
 # Week day
 Monday=Monday
 Tuesday=Tuesday
