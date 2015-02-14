@@ -592,7 +592,7 @@ if (empty($reshook))
 			$discount->fk_facture_source = $object->id;
 
 			$error = 0;
-			
+
 			foreach ($amount_ht as $tva_tx => $xxx) {
 				$discount->amount_ht = abs($amount_ht [$tva_tx]);
 				$discount->amount_tva = abs($amount_tva [$tva_tx]);
@@ -3744,7 +3744,7 @@ if ($action == 'create')
 					$i ++;
 				}
 				print '</table>';
-				print '<br><div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
 				print '</form>';
 				$db->free($resqlorderlist);
 			} else {
