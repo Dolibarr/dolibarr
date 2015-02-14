@@ -1,40 +1,38 @@
-# Dolibarr language file - Source file is en_US - trips
-Trip=Expense report
-Trips=Expense reports
-TripsAndExpenses=Expenses reports
-TripsAndExpensesStatistics=Expense reports statistics
-TripCard=Expense report card
-AddTrip=Create expense report
-ListOfTrips=List of expense report
-ListOfFees=List of fees
-NewTrip=New expense report
-CompanyVisited=Company/foundation visited
-Kilometers=Kilometers
-FeesKilometersOrAmout=Amount or kilometers
-DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
-ListTripsAndExpenses=List of expense reports
-ExpensesArea=Expense reports area
-SearchATripAndExpense=Search an expense report
-ClassifyRefunded=Classify 'Refunded'
+# Dolibarr language file - fr_FR - trips
+CHARSET=UTF-8
+Trip=Note de frais
+Trips=Notes de frais
+TripsAndExpenses=Notes de frais
+TripId=Id note de frais
+TripCard=Fiche note de frais
+AddTrip=Ajouter note de frais
+ListOfTrips=Liste des notes de frais
+ListOfFees=Liste des notes de frais
+NewTrip=Nouvelle note de frais
+CancelAddTrip=Annuler
+ExportTripCSV=Exporter en CSV
+AnyOtherInThisListCanValidate=Toute personne dans la liste pourra valider. Le choix détermine qui sera informé. 
+TripSociete=Informations société
+TripSalarie=Informations salarié
+TripNDF=Informations note de frais
 
-TripId=Id expense report
-AnyOtherInThisListCanValidate=Person to inform for validation. 
-TripSociete=Information company
-TripSalarie=Informations user
-TripNDF=Informations expense report
+DeleteTrip=Supprimer note de frais
+ConfirmDeleteTrip=Êtes vous sûr de vouloir supprimer cette note de frais ?
 
-DeleteLine=Delete a ligne of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
+DeleteLine=Supprimer une ligne de la note de frais
+ConfirmDeleteLine=Êtes vous sûr de vouloir supprimer cette ligne ?
 
-TF_OTHER=Other
-TF_LUNCH=Lunch
-TF_METRO=Metro
+TF_OTHER=Autre
+TF_LUNCH=Repas
+TF_METRO=Métro
 TF_TRAIN=Train
+TF_RATP=Ratp
 TF_BUS=Bus
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
-TF_HOTEL=Hostel
+TF_PEAGE=Péage
+TF_ESSENCE=Essence
+TF_SNCF=SNCF (Autre)
+TF_HOTEL=Hôtel
+TF_TRANSPORT=SNCF (Train)
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=ERREUR : Vous avez déclaré au moins une note de frais dans le même intervalle.
@@ -69,11 +67,16 @@ DATE_VALIDE=Date de validation
 DATE_PAIEMENT=Date de paiement
 DATE_SAVE=Date d'enregistrement
 
-REFUSE=Refuse
-TO_PAID=Pay
-BROUILLONNER=Reopen
-SendToValid=Sent to approve
-ModifyInfoGen=Edit
+VALIDATE=Valider
+REFUSE=Refuser
+CANCEL=Annuler
+TO_PAID=Payer
+BROUILLONNER=Remettre en brouillon
+SendToValid=Envoyer en validation
+ModifyInfoGen=Modifier les infos générales
+
+Module20130304Name=Notes de frais
+Module20130304Desc=Gestion des notes de frais et déplacement (par ')
 
 NOT_VALIDATOR=Vous n'êtes pas la personne habilitée à valider cette note de frais!
 NOT_AUTHOR=Vous n'êtes pas l'auteur de cette note de frais, impossible de réaliser l'opération voulue!
@@ -101,6 +104,9 @@ ConfirmSaveTrip=Êtes vous sûr de vouloir enregistrer cette note de frais? (ell
 INFOS_DATES=Infos Workflow
 INFOS_NDF=Infos générales note de frais
 
+EURO=€
+PriceUNITAIRE=Prix U. (TTC)
+
 StatsTrip=Statistiques
 Synchro_Compta=NDF <-> Compte
 
@@ -115,6 +121,10 @@ ndfToAccount=Note de frais - Intégration
 ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
 AccountToNdf=Note de frais - Retrait 
 
+USER_AUTHOR=Auteur
+PU=P.U.
+Q=Q
+
 LINE_NOT_ADDED=Ligne non ajoutée :
 NO_PROJECT=Aucun projet sélectionné.
 NO_DATE=Aucune date sélectionnée.
@@ -124,4 +134,4 @@ TripForValid=à Valider
 TripForPaid=à Payer
 TripPaid=Payée
 
-NoTripsToExportCSV=No expense report to export for this period.
+NoTripsToExportCSV=Il n'y a pas de notes de frais à exporter pour cette période.

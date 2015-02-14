@@ -4172,13 +4172,14 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 /**
  *    Format output for start and end date
  *
- *    @param	timestamp	$date_start    Start date
- *    @param    timestamp	$date_end      End date
- *    @param    string		$format        Output format
- *    @param	Translate	$outputlangs   Output language
- *    @return	string						String
+ *    @param	timestamp	$date_start    		Start date
+ *    @param    timestamp	$date_end      		End date
+ *    @param    string		$format        		Output format
+ *    @param	Translate	$outputlangs   		Output language
+ *    @param	string		$withparenthesis	1=Add parenthesis, 0=non parenthesis
+ *    @return	string							String
  */
-function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
+function get_date_range($date_start,$date_end,$format = '',$outputlangs='', $withparenthesis=1)
 {
 	global $langs;
 
@@ -4188,15 +4189,15 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 
 	if ($date_start && $date_end)
 	{
-		$out.= ' ('.$outputlangs->trans('DateFromTo',dol_print_date($date_start, $format, false, $outputlangs),dol_print_date($date_end, $format, false, $outputlangs)).')';
+		$out.= ($withparenthesis?' (':'').$outputlangs->trans('DateFromTo',dol_print_date($date_start, $format, false, $outputlangs),dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 	if ($date_start && ! $date_end)
 	{
-		$out.= ' ('.$outputlangs->trans('DateFrom',dol_print_date($date_start, $format, false, $outputlangs)).')';
+		$out.= ($withparenthesis?' (':'').$outputlangs->trans('DateFrom',dol_print_date($date_start, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 	if (! $date_start && $date_end)
 	{
-		$out.= ' ('.$outputlangs->trans('DateUntil',dol_print_date($date_end, $format, false, $outputlangs)).')';
+		$out.= ($withparenthesis?' (':'').$outputlangs->trans('DateUntil',dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 
 	return $out;

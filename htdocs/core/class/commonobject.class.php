@@ -1656,6 +1656,10 @@ abstract class CommonObject
         	$fieldtva='tva';
         	$fieldup='pu_ht';
         }
+        if ($this->element == 'expensereport')
+        {
+        	$fieldup='value_unit';
+        }
 
         $sql = 'SELECT rowid, qty, '.$fieldup.' as up, remise_percent, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
         $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
@@ -1770,6 +1774,7 @@ abstract class CommonObject
             if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldht='total';
             if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
             if ($this->element == 'propal')                                                $fieldttc='total';
+            if ($this->element == 'expensereport')                                         $fieldtva='total_tva';
 
             if (empty($nodatabaseupdate))
             {
