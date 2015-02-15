@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Kaže, da nastavitev tega modula ni kompletna. Za do
 ErrorBadMask=Napaka na maski
 ErrorBadMaskFailedToLocatePosOfSequence=Napaka, maska je brez zaporedne številke
 ErrorBadMaskBadRazMonth=Napaka, napačna resetirana vrednost
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Napaka. Izberite vsaj en vnos.
 ErrorProductWithRefNotExist=Proizvod z referenco '<i>%s</i>' ne obstaja
 ErrorDeleteNotPossibleLineIsConsolidated=Brisanje ni možno, ker je zapis vezan na posredovano bančno transakcijo
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

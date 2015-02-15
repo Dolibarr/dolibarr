@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=モジュールのセットアップがuncompleteに
 ErrorBadMask=マスク上でのエラー
 ErrorBadMaskFailedToLocatePosOfSequence=シーケンス番号のないエラー、マスク
 ErrorBadMaskBadRazMonth=エラー、不正なリセット値
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=エラーが発生しました。少なくとも一つのエントリを選択します。
 ErrorProductWithRefNotExist=参照<i>&quot;%s&quot;</i>を持つ製品は存在しません
 ErrorDeleteNotPossibleLineIsConsolidated=レコードがconciliatedされている銀行のトランザクションのにリンクされているのでできませ​​ん削除
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

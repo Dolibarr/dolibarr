@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=De installatie van de module lijkt incompleet te zij
 ErrorBadMask=Fout bij het masker
 ErrorBadMaskFailedToLocatePosOfSequence=Fout, masker zonder het volgnummer
 ErrorBadMaskBadRazMonth=Fout, slechte resetwaarde
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Fout. Kies ten minste een item.
 ErrorProductWithRefNotExist=Product met referentie <i>%s</i> bestaan ​​niet
 ErrorDeleteNotPossibleLineIsConsolidated=Verwijderen niet mogelijk, omdat record is gekoppeld aan een bank transation dat is verzoend
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Verplichte setup parameters zijn nog niet gedefinieerd

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Thiết lập mô-đun công việc
-WorkflowDesc=Module này được thiết kế để thay đổi hành vi của các hành động tự động vào ứng dụng. Theo mặc định, quy trình làm việc được mở ra (bạn thực hiện điều theo thứ tự bạn muốn). Bạn có thể kích hoạt các hành động tự động mà bạn là thú vị trong.
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
 ThereIsNoWorkflowToModify=Không có công việc, bạn có thể thay đổi cho mô-đun bạn đã kích hoạt.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Tạo ra một đơn đặt hàng tự động sau một đề nghị thương mại được ký kết
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Tạo ra một hóa đơn khách hàng tự động sau một đề nghị thương mại được ký kết

@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Setup of module looks to be uncomplete. Go on Setup 
 ErrorBadMask=Error on mask
 ErrorBadMaskFailedToLocatePosOfSequence=Error, mask without sequence number
 ErrorBadMaskBadRazMonth=Error, bad reset value
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Error. Select at least one entry.
 ErrorProductWithRefNotExist=Product with reference '<i>%s</i>' don't exist
 ErrorDeleteNotPossibleLineIsConsolidated=Delete not possible because record is linked to a bank transation that is conciliated
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

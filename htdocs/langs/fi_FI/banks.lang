@@ -8,6 +8,7 @@ FinancialAccount=Tili
 FinancialAccounts=Tilit
 BankAccount=Pankkitili
 BankAccounts=Pankkitilit
+ShowAccount=Show Account
 AccountRef=Rahoitustase ref
 AccountLabel=Rahoitustase etiketti
 CashAccount=Käteistili

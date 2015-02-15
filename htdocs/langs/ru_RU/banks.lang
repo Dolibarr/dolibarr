@@ -8,6 +8,7 @@ FinancialAccount=Учетная запись
 FinancialAccounts=Счета
 BankAccount=Банковский счет
 BankAccounts=Банковские счета
+ShowAccount=Show Account
 AccountRef=Финансовые счета исх
 AccountLabel=Финансовые счета этикетки
 CashAccount=Денежные счета

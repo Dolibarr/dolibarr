@@ -42,5 +42,5 @@ NoneOrBatchFileNeverRan=Aucun ou traitement par lot <b>%s</b> non exécuté réc
 SentToSuppliers=Envoyés aux fournisseurs
 ListOfSupplierOrders=Liste des commandes fournisseurs
 MenuOrdersSupplierToBill=Commandes fournisseurs en facture
-NbDaysToDelivery=Delai de livraison en jours
-DescNbDaysToDelivery=Le délai le plus long est affiché parmis la liste des produits de la commande
+NbDaysToDelivery=Délai de livraison en jours
+DescNbDaysToDelivery=Délai le plus élevé parmi la liste de produit dans la commande

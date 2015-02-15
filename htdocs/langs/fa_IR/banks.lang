@@ -8,6 +8,7 @@ FinancialAccount=حساب
 FinancialAccounts=حسابها
 BankAccount=حساب بانکی
 BankAccounts=حسابهای بانکی
+ShowAccount=Show Account
 AccountRef=نيازمندی های حساب مالی شخص
 AccountLabel=برچسب حساب مالی
 CashAccount=حساب صندوق

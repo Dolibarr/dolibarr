@@ -154,7 +154,8 @@ MigrationShippingDelivery2=Upgrade storage of shipping 2
 MigrationFinished=Миграцията завърши
 LastStepDesc=<strong>Последна стъпка:</strong> Определете тук потребителско име и парола, планирате да използвате, за да се свържете с софтуер. Не губят, тъй като това е акаунт за администриране на всички останали.
 ActivateModule=Активиране на модул %s
-ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Натиснете тук за да покажете/редактирате параметрите за напреднали (експертен режим)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 
 #########
 # upgrade
@@ -205,7 +206,8 @@ MigrationProjectUserResp=Data Migration поле fk_user_resp на llx_projet ll
 MigrationProjectTaskTime=Актуализация на времето, прекарано в секунда
 MigrationActioncommElement=Актуализиране на данни за действия
 MigrationPaymentMode=Миграция на данни за плащане режим
-MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Миграция на категории
+MigrationEvents=Migration of events to add event owner into assignement table
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Показване на не наличните опции
+HideNotAvailableOptions=Скриване на не наличните опции

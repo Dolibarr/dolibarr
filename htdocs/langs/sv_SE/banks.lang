@@ -8,6 +8,7 @@ FinancialAccount=Konto
 FinancialAccounts=Konton
 BankAccount=Bankkonto
 BankAccounts=Bankkonton
+ShowAccount=Show Account
 AccountRef=Finansiell balans ref
 AccountLabel=Finansiell balans etikett
 CashAccount=Cash konto

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 
-Language_ar_AR=아라비아 말
+Language_ar_AR=아랍
 Language_ar_SA=아라비아 말
 Language_bg_BG=불가리아 사람
 Language_bs_BA=Bosniešu
@@ -13,6 +13,7 @@ Language_de_AT=독일어 (오스트리아)
 Language_de_CH=German (Switzerland)
 Language_el_GR=그리스의
 Language_en_AU=영어 (호주)
+Language_en_CA=English (Canada)
 Language_en_GB=영어 (영국)
 Language_en_IN=영어 (인도)
 Language_en_NZ=영어 (뉴질랜드)

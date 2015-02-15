@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Tavarantoimittajat
 Supplier=Toimittaja
-AddSupplier=Lisää toimittaja
+AddSupplier=Create a supplier
 SupplierRemoved=Toimittaja poistettu
 SuppliersInvoice=Tavarantoimittajan lasku
 NewSupplier=Uudsi toimittaja
@@ -42,3 +42,5 @@ NoneOrBatchFileNeverRan=Ei mitään tai <b>erän %s</b> ei juoksi hiljattain
 SentToSuppliers=Sent to suppliers
 ListOfSupplierOrders=List of supplier orders
 MenuOrdersSupplierToBill=Supplier orders to invoice
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list

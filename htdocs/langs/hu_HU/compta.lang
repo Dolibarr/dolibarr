@@ -29,6 +29,7 @@ ReportTurnover=Forgalom
 PaymentsNotLinkedToInvoice=Kifizetések nem kapcsolódik semmilyen számlát, így nem kapcsolódik semmilyen harmadik fél
 PaymentsNotLinkedToUser=Kifizetések nem kapcsolódnak egyetlen felhasználó
 Profit=Nyereség
+AccountingResult=Accounting result
 Balance=Egyenleg
 Debit=Tartozik
 Credit=Hitel

@@ -155,6 +155,7 @@ MigrationFinished=Migracja zakończona
 LastStepDesc=<strong>Ostatni krok:</strong> Zdefiniuj tutaj login i hasło masz zamiar użyć do połączenia z oprogramowaniem. Nie trać tego, ponieważ jest to konto do administrowania wszystkimi innymi.
 ActivateModule=Aktywuj moduł %s
 ShowEditTechnicalParameters=Kliknij tutaj, aby pokazać / edytować zaawansowane parametry (tryb ekspert)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 
 #########
 # upgrade
@@ -206,6 +207,7 @@ MigrationProjectTaskTime=Oppdater tid i sekunder
 MigrationActioncommElement=Aktualizacja danych na temat działań
 MigrationPaymentMode=Migracji danych w trybie płatności
 MigrationCategorieAssociation=Migracja kategorii
+MigrationEvents=Migration of events to add event owner into assignement table
 
 ShowNotAvailableOptions=Show not available options
 HideNotAvailableOptions=Hide not available options

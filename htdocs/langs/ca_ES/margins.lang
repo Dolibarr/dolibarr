@@ -16,6 +16,7 @@ MarginDetails=Detalls de marges realitzats
 ProductMargins=Marges per producte
 CustomerMargins=Marges per client
 SalesRepresentativeMargins=Sales representative margins
+UserMargins=User margins
 ProductService=Producte o servei
 AllProducts=Tots els productes i serveis
 ChooseProduct/Service=Trieu el producte o servei

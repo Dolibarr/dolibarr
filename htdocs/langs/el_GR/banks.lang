@@ -8,6 +8,7 @@ FinancialAccount=Λογαριασμός
 FinancialAccounts=Λογαριασμοί
 BankAccount=Τραπεζικός Λογαριασμός
 BankAccounts=Τραπεζικοί Λογαριασμοί
+ShowAccount=Εμφάνιση λογαριασμού
 AccountRef=Αναγνωριστικό Λογιστικού Λογαριασμού
 AccountLabel=Ετικέτα Λογιστικού Λογαριασμού
 CashAccount=Λογαριασμός Μετρητών

@@ -60,6 +60,7 @@ SupplierOrderSentByEMail=Pedido a proveedor %s enviada por e-mail
 SupplierInvoiceSentByEMail=Factura de proveedor %s enviada por e-mail
 ShippingSentByEMail=Expedición %s enviada por email
 ShippingValidated= Expedición %s validada
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Tercero creado
 DateActionPlannedStart= Fecha de inicio prevista
 DateActionPlannedEnd= Fecha de fin prevista

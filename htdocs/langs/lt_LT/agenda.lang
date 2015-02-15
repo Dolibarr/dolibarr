@@ -58,8 +58,9 @@ OrderSentByEMail=Kliento užsakymas %s atsiųstas e-paštu
 InvoiceSentByEMail=Kliento sąskaita-faktūra %s išsiųsta e-paštu
 SupplierOrderSentByEMail=Tiekėjo užsakymas %s atsiųstas e-paštu
 SupplierInvoiceSentByEMail=Tiekėjo sąskaita-faktūra %s atsiųsta e-paštu
-ShippingSentByEMail=Pakrovimo dokumentas %s atsiųstas e-paštu
-ShippingValidated= Pakrovimas %s pripažintas galiojančiu
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Trečioji šalis sukūrė
 DateActionPlannedStart= Planuojama pradžios data
 DateActionPlannedEnd= Planuojama pabaigos data
@@ -68,7 +69,7 @@ DateActionDoneEnd= Reali pabaigos data
 DateActionStart= Pradžios data
 DateActionEnd= Pabaigos data
 AgendaUrlOptions1=Taip pat galite pridėti šiuos parametrus išvesties filtravimui:
-AgendaUrlOptions2=<b>login=%s</b> ​​apriboti išvedimą veiksmais, sukurtais, priskirtais arba įvykdytais vartotojo <b>%s</b>.
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint =%s</b> ​​apriboti išvedimą veiksmais, priskirtais vartotojui <b>%s</b>.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.

@@ -155,6 +155,7 @@ MigrationFinished=Migraţia terminată
 LastStepDesc=<strong>Ultimul pas:</strong> Definirea aici nume de utilizator şi parola pe care intenţionaţi să îl utilizaţi pentru conectarea la software-ul. Nu pierde aceasta ca este cont pentru a administra toate celelalte.
 ActivateModule=Activaţi modul %s
 ShowEditTechnicalParameters=Click aici pentru a vedea / edita  parametrii avansaţi (mod expert)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 
 #########
 # upgrade
@@ -206,6 +207,7 @@ MigrationProjectTaskTime=Actualizare de timp petrecut în secunde
 MigrationActioncommElement=Actualizare date pe acţiuni
 MigrationPaymentMode=Migrare de date pentru modul de plată
 MigrationCategorieAssociation=Migrarea categoriilor
+MigrationEvents=Migration of events to add event owner into assignement table
 
 ShowNotAvailableOptions=Afişează opţiunile nedisponibile
 HideNotAvailableOptions=Acunde opţiunile nedisponibile
