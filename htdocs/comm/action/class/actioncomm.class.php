@@ -712,18 +712,14 @@ class ActionComm extends CommonObject
     }
 
     /**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
-     *      @param	User	$user   Objet user
-     *      @return int     		<0 if KO, >0 if OK
+     * @param	User	$user   Objet user
+     * @return BoardResponse|int <0 if KO, BoardResponse if OK
      */
     function load_board($user)
     {
-        global $conf, $user;
-
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
+        global $conf, $user, $langs;
 
         $sql = "SELECT a.id, a.datep as dp";
         $sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
@@ -739,13 +735,25 @@ class ActionComm extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+	        $now = dol_now();
+
+	        $response = new BoardResponse();
+	        $response->warning_delay = $conf->actions->warning_delay/60/60/24;
+	        $response->label = $langs->trans("ActionsToDo");
+	        $response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
+	        $response->img = img_object($langs->trans("Actions"),"action");
+
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
-                if (isset($obj->dp) && $this->db->jdate($obj->dp) < ($now - $conf->actions->warning_delay)) $this->nbtodolate++;
+	            $response->nbtodo++;
+
+                if (isset($obj->dp) && $this->db->jdate($obj->dp) < ($now - $conf->actions->warning_delay)) {
+	                $response->nbtodolate++;
+                }
             }
-            return 1;
+
+            return $response;
         }
         else
         {

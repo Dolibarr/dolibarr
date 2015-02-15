@@ -881,17 +881,13 @@ class Account extends CommonObject
      *
      *      @param	User	$user        		Objet user
      *		@param	int		$filteraccountid	To get info for a particular account id
-     *      @return int         				<0 if KO, 0=Nothing to show, >0 if OK
+     *      @return BoardResponse|int <0 if KO, BoardResponse if OK
      */
     function load_board($user,$filteraccountid=0)
     {
-        global $conf;
+        global $conf, $langs;
 
         if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
-
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
 
         $sql = "SELECT b.rowid, b.datev as datefin";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
@@ -902,17 +898,27 @@ class Account extends CommonObject
         $sql.= " AND (ba.rappro = 1 AND ba.courant != 2)";	// Compte rapprochable
         if ($filteraccountid) $sql.=" AND ba.rowid = ".$filteraccountid;
 
-        //print $sql;
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $num=$this->db->num_rows($resql);
+	        $langs->load("banks");
+	        $now=dol_now();
+
+	        $response = new BoardResponse();
+	        $response->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
+	        $response->label=$langs->trans("TransactionsToConciliate");
+	        $response->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank';
+	        $response->img=img_object($langs->trans("TransactionsToConciliate"),"payment");
+
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
-                if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) $this->nbtodolate++;
+                $response->nbtodo++;
+                if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) {
+	                $response->nbtodolate++;
+                }
             }
-            return $num;
+
+            return $response;
         }
         else
         {

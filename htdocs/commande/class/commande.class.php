@@ -106,10 +106,6 @@ class Commande extends CommonOrder
 
     var $lines = array();
 
-    // Pour board
-    var $nbtodo;
-    var $nbtodolate;
-
 
     /**
      *	Constructor
@@ -2729,15 +2725,12 @@ class Commande extends CommonOrder
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param		User	$user   Object user
-     *	@return     int     		<0 if KO, >0 if OK
+     *	@return BoardResponse|int <0 if KO, BoardResponse if OK
      */
     function load_board($user)
     {
-        global $conf, $user;
+        global $conf, $user, $langs;
 
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
         $clause = " WHERE";
 
         $sql = "SELECT c.rowid, c.date_creation as datec, c.date_livraison as delivery_date, c.fk_statut";
@@ -2756,14 +2749,26 @@ class Commande extends CommonOrder
         $resql=$this->db->query($sql);
         if ($resql)
         {
+	        $now=dol_now();
+
+	        $response = new BoardResponse();
+	        $response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
+	        $response->label=$langs->trans("OrdersToProcess");
+	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
+	        $response->img=img_object($langs->trans("Orders"),"order");
+
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
+	            $response->nbtodo++;
 
 				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
-                if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->client->warning_delay)) $this->nbtodolate++;
+
+	            if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->client->warning_delay)) {
+		            $response->nbtodolate++;
+	            }
             }
-            return 1;
+
+            return $response;
         }
         else
         {

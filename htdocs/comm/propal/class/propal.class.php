@@ -116,10 +116,6 @@ class Propal extends CommonObject
     var $labelstatut=array();
     var $labelstatut_short=array();
 
-    // Pour board
-    var $nbtodo;
-    var $nbtodolate;
-
     var $specimen;
 
 
@@ -2349,15 +2345,12 @@ class Propal extends CommonObject
      *
      *      @param          User	$user   Object user
      *      @param          int		$mode   "opened" for proposal to close, "signed" for proposal to invoice
-     *      @return         int     		<0 if KO, >0 if OK
+     *      @return BoardResponse|int <0 if KO, BoardResponse if OK
      */
     function load_board($user,$mode)
     {
-        global $conf, $user;
+        global $conf, $user, $langs;
 
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
         $clause = " WHERE";
 
         $sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin";
@@ -2376,25 +2369,43 @@ class Propal extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ($mode == 'opened') $delay_warning=$conf->propal->cloture->warning_delay;
-            if ($mode == 'signed') $delay_warning=$conf->propal->facturation->warning_delay;
+	        $langs->load("propal");
+	        $now=dol_now();
+
+            if ($mode == 'opened') {
+	            $delay_warning=$conf->propal->cloture->warning_delay;
+	            $statut = 1;
+	            $label = $langs->trans("PropalsToClose");
+            }
+            if ($mode == 'signed') {
+	            $delay_warning=$conf->propal->facturation->warning_delay;
+	            $statut = 2;
+	            $label = $langs->trans("PropalsToBill");
+            }
+
+	        $response = new BoardResponse();
+	        $response->warning_delay = $delay_warning;
+	        $response->label = $label;
+	        $response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut;
+	        $response->img = img_object($langs->trans("Propals"),"propal");
 
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
+                $response->nbtodo++;
                 if ($mode == 'opened')
                 {
                     $datelimit = $this->db->jdate($obj->datefin);
                     if ($datelimit < ($now - $delay_warning))
                     {
-                        $this->nbtodolate++;
+	                    $response->nbtodolate++;
                     }
                 }
                 // TODO Definir regle des propales a facturer en retard
                 // if ($mode == 'signed' && ! count($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
             }
-            return 1;
+
+            return $response;
         }
         else
         {

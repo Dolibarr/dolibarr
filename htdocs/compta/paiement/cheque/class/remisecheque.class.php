@@ -432,17 +432,13 @@ class RemiseCheque extends CommonObject
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *      @param      User	$user       Objet user
-     *      @return     int                 <0 if KO, >0 if OK
+     *      @return BoardResponse|int <0 if KO, BoardResponse if OK
 	 */
 	function load_board($user)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
-
-		$now=dol_now();
-
-		$this->nbtodo=$this->nbtodolate=0;
 
 		$sql = "SELECT b.rowid, b.datev as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -456,12 +452,25 @@ class RemiseCheque extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$langs->load("banks");
+			$now=dol_now();
+
+			$response = new BoardResponse();
+			$response->warning_delay=$conf->bank->cheque->warning_delay/60/60/24;
+			$response->label=$langs->trans("BankChecksToReceipt");
+			$response->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=accountancy';
+			$response->img=img_object($langs->trans("BankChecksToReceipt"),"payment");
+
 			while ($obj=$this->db->fetch_object($resql))
 			{
-				$this->nbtodo++;
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->cheque->warning_delay)) $this->nbtodolate++;
+				$response->nbtodo++;
+
+				if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->cheque->warning_delay)) {
+					$response->nbtodolate++;
+				}
 			}
-			return 1;
+
+			return $response;
 		}
 		else
 		{
