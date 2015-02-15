@@ -433,7 +433,7 @@ class RemiseCheque extends CommonObject
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *      @param      User	$user       Objet user
-     *      @return BoardResponse|int <0 if KO, BoardResponse if OK
+     *      @return WorkBoardResponse|int <0 if KO, WorkBoardResponse if OK
 	 */
 	function load_board($user)
 	{
@@ -456,7 +456,7 @@ class RemiseCheque extends CommonObject
 			$langs->load("banks");
 			$now=dol_now();
 
-			$response = new BoardResponse();
+			$response = new WorkBoardResponse();
 			$response->warning_delay=$conf->bank->cheque->warning_delay/60/60/24;
 			$response->label=$langs->trans("BankChecksToReceipt");
 			$response->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=accountancy';

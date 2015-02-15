@@ -3085,7 +3085,7 @@ class Facture extends CommonInvoice
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param      User	$user    	Object user
-	 *	@return BoardResponse|int <0 if KO, BoardResponse if OK
+	 *	@return WorkBoardResponse|int <0 if KO, WorkBoardResponse if OK
 	 */
 	function load_board($user)
 	{
@@ -3112,7 +3112,7 @@ class Facture extends CommonInvoice
 			$langs->load("bills");
 			$now=dol_now();
 
-			$response = new BoardResponse();
+			$response = new WorkBoardResponse();
 			$response->warning_delay=$conf->facture->client->warning_delay/60/60/24;
 			$response->label=$langs->trans("CustomerBillsUnpaid");
 			$response->url=DOL_URL_ROOT.'/compta/facture/impayees.php';

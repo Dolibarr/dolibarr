@@ -882,7 +882,7 @@ class Account extends CommonObject
      *
      *      @param	User	$user        		Objet user
      *		@param	int		$filteraccountid	To get info for a particular account id
-     *      @return BoardResponse|int <0 if KO, BoardResponse if OK
+     *      @return WorkBoardResponse|int <0 if KO, WorkBoardResponse if OK
      */
     function load_board($user,$filteraccountid=0)
     {
@@ -905,7 +905,7 @@ class Account extends CommonObject
 	        $langs->load("banks");
 	        $now=dol_now();
 
-	        $response = new BoardResponse();
+	        $response = new WorkBoardResponse();
 	        $response->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
 	        $response->label=$langs->trans("TransactionsToConciliate");
 	        $response->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank';

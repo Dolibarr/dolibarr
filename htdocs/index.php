@@ -293,7 +293,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
 
-//Array that contains all BoardResponse classes to process them
+//Array that contains all WorkBoardResponse classes to process them
 $dashboardlines=array();
 
 print '<table class="noborder" width="100%">'."\n";
@@ -311,7 +311,7 @@ print '</tr>'."\n";
 // Do not include sections without management permission
 //
 
-require DOL_DOCUMENT_ROOT.'/core/class/BoardResponse.class.php';
+require DOL_DOCUMENT_ROOT.'/core/class/WorkBoardResponse.class.php';
 
 // Number of actions to do (late)
 if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
@@ -404,8 +404,10 @@ if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $use
 $totallate=0;
 $var=true;
 
+//Remove any invalid response
+//load_board can return an integer if failed or WorkBoardResponse if OK
 $valid_dashboardlines = array_filter($dashboardlines, function ($board) {
-	return $board instanceof BoardResponse;
+	return $board instanceof WorkBoardResponse;
 });
 
 $rowspan = count($valid_dashboardlines);

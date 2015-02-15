@@ -1881,7 +1881,7 @@ class Contrat extends CommonObject
      *
      *      @param	User	$user           Objet user
      *      @param  string	$mode           "inactive" pour services a activer, "expired" pour services expires
-     *      @return BoardResponse|int <0 if KO, BoardResponse if OK
+     *      @return WorkBoardResponse|int <0 if KO, WorkBoardResponse if OK
 	 */
 	function load_board($user,$mode)
 	{
@@ -1929,7 +1929,7 @@ class Contrat extends CommonObject
 				$label = $langs->trans("BoardRunningServices");
 			}
 
-			$response = new BoardResponse();
+			$response = new WorkBoardResponse();
 			$response->warning_delay = $warning_delay/60/60/24;
 			$response->label = $label;
 			$response->url = $url;
