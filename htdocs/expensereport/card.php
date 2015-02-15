@@ -1558,7 +1558,12 @@ else
 
 						// Sélection TVA
 						print '<td style="text-align:right;">';
-						print $form->load_tva('fk_c_tva', (isset($_POST["fk_c_tva"])?$_POST["fk_c_tva"]:-1), $mysoc, '');
+						$defaultvat=-1;
+						if (! empty($conf->global->DEPLACEMENT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
+						print '<select class="flat" name="fk_c_tva">';
+						print '<option name="none" value="" selected="selected">';
+						print $form->load_tva('fk_c_tva', (isset($_POST["fk_c_tva"])?$_POST["fk_c_tva"]:$defaultvat), $mysoc, '', 0, 0, '', true);
+						print '</select>';
 						print '</td>';
 
 						// Prix unitaire

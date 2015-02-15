@@ -397,9 +397,11 @@ class ExpenseReport extends CommonObject
 
 
 	/**
+	 * fetch_line_by_project
 	 *
-	 * @param unknown_type $projectid
-	 * @param unknown_type $user
+	 * @param 	int		$projectid		Project id
+	 * @param 	User	$user			User
+	 * @return	int						<0 if KO, >0 if OK
 	 */
 	function fetch_line_by_project($projectid,$user='')
 	{
@@ -500,7 +502,14 @@ class ExpenseReport extends CommonObject
 
 	}
 
-	function recalculer($id){
+	/**
+	 * recalculer
+	 *
+	 * @param 	int			$id
+	 * @return 	int					<0 if KO, >0 if OK
+	 */
+	function recalculer($id)
+	{
 		$sql = 'SELECT tt.total_ht, tt.total_ttc, tt.total_tva';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as tt';
 		$sql.= ' WHERE tt.'.$this->fk_element.' = '.$id;
@@ -510,7 +519,8 @@ class ExpenseReport extends CommonObject
 		dol_syslog('ExpenseReport::recalculer sql='.$sql,LOG_DEBUG);
 
 		$result = $this->db->query($sql);
-		if($result):
+		if($result)
+		{
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			while ($i < $num):
@@ -535,13 +545,20 @@ class ExpenseReport extends CommonObject
 				dol_syslog('ExpenseReport::recalculer: Error '.$this->error,LOG_ERR);
 				return -3;
 			endif;
-		else:
+		}
+		else
+		{
 				$this->error=$this->db->error();
 				dol_syslog('ExpenseReport::recalculer: Error '.$this->error,LOG_ERR);
 				return -3;
-		endif;
+		}
 	}
 
+	/**
+	 * fetch_lines
+	 *
+	 * @return	int		<0 if OK, >0 if KO
+	 */
 	function fetch_lines()
 	{
 		$sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date,';
@@ -602,11 +619,18 @@ class ExpenseReport extends CommonObject
 		}
 	}
 
+
+	/**
+	 * delete
+	 *
+	 * @param 	int		$rowid		Id to delete (optional)
+	 * @return	int					<0 if KO, >0 if OK
+	 */
 	function delete($rowid=0)
 	{
 		global $user,$langs,$conf;
 
-		if (!$rowid) $rowid=$this->id;
+		if (! $rowid) $rowid=$this->id;
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE '.$this->fk_element.' = '.$rowid;
 		if ($this->db->query($sql))
@@ -635,7 +659,14 @@ class ExpenseReport extends CommonObject
 		}
 	}
 
-	function set_save($user){
+	/**
+	 * set_save
+	 *
+	 * @param 	User	$user		User
+	 * @return	int					<0 if KO, >0 if OK
+	 */
+	function set_save($user)
+	{
 		global $conf,$langs;
 
 		$expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
@@ -655,11 +686,13 @@ class ExpenseReport extends CommonObject
 		$this->date_debut = $expld_date_debut[0].$expld_date_debut[1].$expld_date_debut[2];
 
 		// Création du ref_number suivant
-		if($ref_next):
+		if($ref_next)
+		{
 			$this->ref_number = strtoupper($user->login).$expld_car."NDF".$this->ref_number.$expld_car.$this->date_debut;
-		endif;
+		}
 
-		if ($this->fk_c_expensereport_statuts != 2):
+		if ($this->fk_c_expensereport_statuts != 2)
+		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql.= " SET ref_number = '".$this->ref_number."', fk_c_expensereport_statuts = 2";
 			$sql.= " ,ref_number_int = $ref_number_int";
@@ -667,21 +700,30 @@ class ExpenseReport extends CommonObject
 
 			dol_syslog(get_class($this)."::set_save sql=".$sql, LOG_DEBUG);
 
-			if ($this->db->query($sql)):
+			if ($this->db->query($sql))
+			{
 				return 1;
-			else:
+			}
+			else
+			{
 				$this->error=$this->db->error();
 				return -1;
-			endif;
-
-		else:
-
+			}
+		}
+		else
+		{
 			dol_syslog(get_class($this)."::set_save expensereport already with save status", LOG_WARNING);
-
-		endif;
+		}
 	}
 
-	function set_save_from_refuse($user){
+	/**
+	 * set_to_validate
+	 *
+	 * @param 	User	$user		User
+	 * @return	int					<0 if KO, >0 if OK
+	 */
+	function set_save_from_refuse($user)
+	{
 		global $conf,$langs;
 
 		// Sélection de la date de début de la NDF
@@ -697,31 +739,42 @@ class ExpenseReport extends CommonObject
 		$expld_date_debut = explode("-",$this->date_debut);
 		$this->date_debut = $expld_date_debut[0].$expld_date_debut[1].$expld_date_debut[2];
 
-		if ($this->fk_c_expensereport_statuts != 2):
+		if ($this->fk_c_expensereport_statuts != 2)
+		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql.= " SET fk_c_expensereport_statuts = 2";
 			$sql.= ' WHERE rowid = '.$this->id;
 
 			dol_syslog(get_class($this)."::set_save_from_refuse sql=".$sql, LOG_DEBUG);
 
-			if ($this->db->query($sql)):
+			if ($this->db->query($sql))
+			{
 				return 1;
-			else:
-				$this->error=$this->db->error();
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
 				return -1;
-			endif;
-
-		else:
-
+			}
+		}
+		else
+		{
 			dol_syslog(get_class($this)."::set_save_from_refuse expensereport already with save status", LOG_WARNING);
-
-		endif;
+		}
 	}
 
-	function set_valide($user){
+	/**
+	 * set_valide
+	 *
+	 * @param 	User	$user		User
+	 * @return	int					<0 if KO, >0 if OK
+	 */
+	function set_valide($user)
+	{
 		// date de validation
 		$this->date_valide = $this->db->idate(gmmktime());
-		if ($this->fk_c_expensereport_statuts != 5):
+		if ($this->fk_c_expensereport_statuts != 5)
+		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql.= " SET ref_number = '".$this->ref_number."', fk_c_expensereport_statuts = 5, fk_user_valid = ".$user->id;
 			$sql.= ', date_valide='.$this->date_valide;
@@ -735,13 +788,15 @@ class ExpenseReport extends CommonObject
 				$this->error=$this->db->error();
 				return -1;
 			endif;
-		else:
+		}
+		else
+		{
 			dol_syslog(get_class($this)."::set_valide expensereport already with valide status", LOG_WARNING);
-		endif;
+		}
 	}
 
 	/**
-	 * Refuse
+	 * set_refuse
 	 *
 	 * @param User		$user		User
 	 * @param Details	$details	Details
@@ -750,7 +805,8 @@ class ExpenseReport extends CommonObject
 	{
 		// date de refus
 		$this->date_refuse = $this->db->idate(gmmktime());
-		if ($this->fk_c_expensereport_statuts != 99):
+		if ($this->fk_c_expensereport_statuts != 99)
+		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql.= " SET ref_number = '".$this->ref_number."', fk_c_expensereport_statuts = 99, fk_user_refuse = ".$user->id;
 			$sql.= ', date_refuse='.$this->date_refuse;
@@ -765,14 +821,24 @@ class ExpenseReport extends CommonObject
 				$this->error=$this->db->error();
 				return -1;
 			endif;
-		else:
+		}
+		else
+		{
 			dol_syslog(get_class($this)."::set_refuse expensereport already with refuse status", LOG_WARNING);
-		endif;
+		}
 	}
 
-	function set_paid($user){
+	/**
+	 * set_paid
+	 *
+	 * @param 	User	$user		User
+	 * @return	int					<0 if KO, >0 if OK
+	 */
+	function set_paid($user)
+	{
 		$this->date_paiement = $this->db->idate(gmmktime());
-		if ($this->fk_c_expensereport_statuts != 6):
+		if ($this->fk_c_expensereport_statuts != 6)
+		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql.= " SET fk_c_expensereport_statuts = 6, fk_user_paid = ".$user->id;
 			$sql.= ', date_paiement='.$this->date_paiement;
@@ -780,23 +846,34 @@ class ExpenseReport extends CommonObject
 
 			dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
 
-			if ($this->db->query($sql)):
+			if ($this->db->query($sql))
+			{
 				return 1;
-			else:
+			}
+			else
+			{
 				$this->error=$this->db->error();
 				return -1;
-			endif;
-		else:
+			}
+		}
+		else
+		{
 			dol_syslog(get_class($this)."::set_paid expensereport already with paid status", LOG_WARNING);
-		endif;
+		}
 	}
 
+	/**
+	 * set_unpaid
+	 *
+	 * @param 	User	$user		User
+	 * @return	int					<0 if KO, >0 if OK
+	 */
 	function set_unpaid($user)
 	{
-		if ($this->fk_c_expensereport_statuts != 5)
+		if ($this->fk_c_deplacement_statuts != 5)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET fk_c_expensereport_statuts = 5";
+			$sql.= " SET fk_c_deplacement_statuts = 5";
 			$sql.= ' WHERE rowid = '.$this->id;
 
 			dol_syslog(get_class($this)."::set_unpaid sql=".$sql, LOG_DEBUG);
@@ -810,16 +887,22 @@ class ExpenseReport extends CommonObject
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::set_unpaid expensereport already with unpaid status", LOG_WARNING);
+			dol_syslog(get_class($this)."::set_unpaid deplacement already with unpaid status", LOG_WARNING);
 		}
 	}
 
+	/**
+	 * set_draft
+	 *
+	 * @param 	User	$user		User
+	 * @return	int					<0 if KO, >0 if OK
+	 */
 	function set_draft($user)
 	{
-		if ($this->fk_c_expensereport_statuts != 1)
+		if ($this->fk_c_deplacement_statuts != 1)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET fk_c_expensereport_statuts = 1,";
+			$sql.= " SET fk_c_deplacement_statuts = 1,";
 			//$sql.= " , ref_number = '(PROV".$this->id.")', ref_number_int = 0";
 			$sql.= " ref_number_int = 0";
 			$sql.= ' WHERE rowid = '.$this->id;
@@ -835,53 +918,80 @@ class ExpenseReport extends CommonObject
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::set_draft expensereport already with draft status", LOG_WARNING);
+			dol_syslog(get_class($this)."::set_draft deplacement already with draft status", LOG_WARNING);
 		}
 	}
 
+	/**
+	 * set_to_validate
+	 *
+	 * @param 	User	$user		User
+	 * @return	int					<0 if KO, >0 if OK
+	 */
 	function set_to_valide($user)
 	{
-		if ($this->fk_c_expensereport_statuts != 2):
+		if ($this->fk_c_expensereport_statuts != 2)
+		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql.= " SET fk_c_expensereport_statuts = 2, fk_user_validator = ".$this->fk_user_validator;
 			$sql.= ' WHERE rowid = '.$this->id;
 
 			dol_syslog(get_class($this)."::set_to_valide sql=".$sql, LOG_DEBUG);
 
-			if ($this->db->query($sql)):
+			if ($this->db->query($sql))
+			{
 				return 1;
-			else:
+			}
+			else
+			{
 				$this->error=$this->db->error();
 				return -1;
-			endif;
-		else:
+			}
+		}
+		else
+		{
 			dol_syslog(get_class($this)."::set_to_valide expensereport already with to-valide status", LOG_WARNING);
-		endif;
+		}
 	}
 
-	function set_cancel($user,$detail){
+	/**
+	 * set_cancel
+	 *
+	 * @param 	User	$user		User
+	 * @param	string	$detail		Detail
+	 * @return	int					<0 if KO, >0 if OK
+	 */
+	function set_cancel($user,$detail)
+	{
 		$this->date_cancel = $this->db->idate(gmmktime());
-		if ($this->fk_c_expensereport_statuts != 4):
+		if ($this->fk_c_expensereport_statuts != 4)
+		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql.= " SET fk_c_expensereport_statuts = 4, fk_user_cancel = ".$user->id;
 			$sql.= ', date_cancel='.$this->date_cancel;
-			$sql.= " ,detail_cancel='".addslashes($detail)."'";
+			$sql.= " ,detail_cancel='".$this->db->escape($detail)."'";
 			$sql.= ' WHERE rowid = '.$this->id;
 
 			dol_syslog(get_class($this)."::set_cancel sql=".$sql, LOG_DEBUG);
 
-			if ($this->db->query($sql)):
+			if ($this->db->query($sql))
+			{
 				return 1;
-			else:
+			}
+			else
+			{
 				$this->error=$this->db->error();
 				return -1;
-			endif;
-		else:
+			}
+		}
+		else
+		{
 			dol_syslog(get_class($this)."::set_cancel expensereport already with cancel status", LOG_WARNING);
-		endif;
+		}
 	}
 
-	function getNextNumRef(){
+	function getNextNumRef()
+	{
 		global $conf;
 
 		$expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
