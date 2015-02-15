@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copytight (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

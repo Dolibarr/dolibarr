@@ -9,7 +9,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012-2014 Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2012-2014 Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2015 Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
