@@ -569,11 +569,13 @@ if (empty($reshook))
 
 			// Boucle sur chaque taux de tva
 			$i = 0;
-			foreach ($object->lines as $line) {
-				if($line->total_ht!=0) { // no need to create discount if amount is null
-					$amount_ht [$line->tva_tx] += $line->total_ht;
-					$amount_tva [$line->tva_tx] += $line->total_tva;
-					$amount_ttc [$line->tva_tx] += $line->total_ttc;
+			foreach ($object->lines as $line)
+			{
+				if ($line->total_ht!=0)
+				{ 	// no need to create discount if amount is null
+					$amount_ht[$line->tva_tx] += $line->total_ht;
+					$amount_tva[$line->tva_tx] += $line->total_tva;
+					$amount_ttc[$line->tva_tx] += $line->total_ttc;
 					$i ++;
 				}
 			}
@@ -593,10 +595,11 @@ if (empty($reshook))
 
 			$error = 0;
 
-			foreach ($amount_ht as $tva_tx => $xxx) {
-				$discount->amount_ht = abs($amount_ht [$tva_tx]);
-				$discount->amount_tva = abs($amount_tva [$tva_tx]);
-				$discount->amount_ttc = abs($amount_ttc [$tva_tx]);
+			foreach ($amount_ht as $tva_tx => $xxx)
+			{
+				$discount->amount_ht = abs($amount_ht[$tva_tx]);
+				$discount->amount_tva = abs($amount_tva[$tva_tx]);
+				$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
 				$discount->tva_tx = abs($tva_tx);
 
 				$result = $discount->create($user);

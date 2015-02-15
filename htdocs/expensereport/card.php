@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -927,7 +927,7 @@ else if ($action == 'remove_file')
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("ExpenseReport"));
 
 $html = new Form($db);
 $formfile = new FormFile($db);
@@ -1028,7 +1028,7 @@ else
 		$object = new ExpenseReport($db);
 		$result = $object->fetch($id,$user);
 
-		if($result)
+		if ($result)
 		{
 			if ($object->fk_user_author != $user->id)
 			{
@@ -1237,7 +1237,7 @@ else
 				}
 				print '<tr>';
 				print '<td>'.$langs->trans("Statut").'</td>';
-				print '<td style="font-weight:bold;">'.$object->libelle_statut.'</td>';
+				print '<td style="font-weight:bold;">'.$object->getLibStatut(4).'</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("Note").'</td>';
@@ -1261,9 +1261,12 @@ else
 					print '<tr>';
 					print '<td>'.$langs->trans("VALIDATOR").'</td>';
 					print '<td>';
-					$userfee=new User($db);
-					$userfee->fetch($object->fk_user_validator);
-					print $userfee->getNomUrl(1);
+					if ($object->fk_user_validator > 0)
+					{
+						$userfee=new User($db);
+						$userfee->fetch($object->fk_user_validator);
+						print $userfee->getNomUrl(1);
+					}
 					print '</td></tr>';
 				}
 				elseif($object->fk_c_expensereport_statuts==4)
@@ -1271,9 +1274,12 @@ else
 					print '<tr>';
 					print '<td><span style="font-weight:bold;color:red;">'.$langs->trans("CANCEL_USER").'</span></td>';
 					print '<td><span style="font-weight:bold;color:red;">';
-					$userfee=new User($db);
-					$userfee->fetch($object->fk_user_cancel);
-					print $userfee->getNomUrl(1);
+					if ($object->fk_user_cancel > 0)
+					{
+						$userfee=new User($db);
+						$userfee->fetch($object->fk_user_cancel);
+						print $userfee->getNomUrl(1);
+					}
 					print '</span></td></tr>';
 					print '<tr>';
 					print '<td><span style="font-weight:bold;color:red;">'.$langs->trans("MOTIF_CANCEL").'</span></td>';
@@ -1289,9 +1295,12 @@ else
 					print '<tr>';
 					print '<td>'.$langs->trans("VALIDOR").'</td>';
 					print '<td>';
-					$userfee=new User($db);
-					$userfee->fetch($object->fk_user_valid);
-					print $userfee->getNomUrl(1);
+					if ($object->fk_user_valid > 0)
+					{
+						$userfee=new User($db);
+						$userfee->fetch($object->fk_user_valid);
+						print $userfee->getNomUrl(1);
+					}
 					print '</td></tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_VALIDE").'</td>';
@@ -1302,9 +1311,12 @@ else
 				print '<tr>';
 				print '<td>'.$langs->trans("AUTHOR").'</td>';
 				print '<td>';
-				$userfee=new User($db);
-				$userfee->fetch($object->fk_user_author);
-				print $userfee->getNomUrl(1);
+				if ($object->fk_user_author > 0)
+				{
+					$userfee=new User($db);
+					$userfee->fetch($object->fk_user_author);
+					print $userfee->getNomUrl(1);
+				}
 				print '</td></tr>';
 
 				print '<tr>';
@@ -1351,12 +1363,10 @@ else
 				$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
 				$sql.= ' fde.fk_c_tva, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
 				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
-				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref,';
-				$sql.= ' tva.rowid as tva_id, tva.taux as tva_taux';
+				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det fde';
 				$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees ctf ON fde.fk_c_type_fees=ctf.id';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet pjt ON fde.fk_projet=pjt.rowid';
-				$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_tva tva ON fde.fk_c_tva=tva.rowid';
 				$sql.= ' WHERE fde.fk_expensereport = '.$id;
 
 				$resql = $db->query($sql);
@@ -1503,7 +1513,7 @@ else
 					//print '</div>';
 
 					// Ajouter une ligne
-					if (($object->fk_c_expensereport_statuts==1 || $object->fk_c_expensereport_statuts==99) && $action != 'editline')
+					if (($object->fk_c_expensereport_statuts==0 || $object->fk_c_expensereport_statuts==99) && $action != 'editline')
 					{
 						print_fiche_titre($langs->trans("AddLine"),'','');
 
@@ -1570,6 +1580,10 @@ else
 					} // Fin si c'est payé/validé
 
 				}
+				else
+				{
+					dol_print_error($db);
+				}
 			} // end edit or not edit
 
 			dol_fiche_end();
@@ -1602,9 +1616,9 @@ if ($action != 'create' && $action != 'edit')
 	*	ET fk_user_author == user courant
 	* 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	*/
-	if($user->rights->expensereport->creer AND $object->fk_c_expensereport_statuts==1)
+	if ($user->rights->expensereport->creer AND $object->fk_c_expensereport_statuts==0)
 	{
-		if($object->fk_user_author==$user->id)
+		if ($object->fk_user_author == $user->id)
 		{
 			// Modifier
 			print '<a class="butAction" href="'.$_SEVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('ModifyInfoGen').'</a>';

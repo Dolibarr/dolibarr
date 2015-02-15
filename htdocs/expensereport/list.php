@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -81,7 +81,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT d.rowid, d.ref_number, d.total_ht, d.total_tva, d.total_ttc, d.fk_c_expensereport_statuts,";
+$sql = "SELECT d.rowid, d.ref_number, d.total_ht, d.total_tva, d.total_ttc, d.fk_c_expensereport_statuts as status,";
 $sql.= " d.date_debut, d.date_fin,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport d\n";
@@ -266,8 +266,11 @@ if ($resql)
 			print '<td align="right">'.price($objp->total_tva).'</td>';
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 
-			$expensereporttmp->status=$objp->statut;
-			print '<td align="right" colspan="2">'.$expensereporttmp->getLibStatut(5).'</td>';
+			$expensereporttmp->status=$objp->status;
+			print '<td align="right" colspan="2">';
+			//print $objp->status;
+			print $expensereporttmp->getLibStatut(5);
+			print '</td>';
 			print "</tr>\n";
 
 			$total_total_ht = $total_total_ht + $objp->total_ht;

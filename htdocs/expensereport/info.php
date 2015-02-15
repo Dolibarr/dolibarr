@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -46,15 +47,15 @@ if ($id)
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
 	$object->info($id);
-	
+
 	$head = trip_prepare_head($object);
-	
+
 	dol_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);
     print '</td></tr></table>';
-      
+
     print '</div>';
 }
 

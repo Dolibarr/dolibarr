@@ -1,8 +1,6 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011      Dimitri Mouillard <dmouillard@teclib.com>
+/* Copyright (C) 2011 Dimitri Mouillard   <dmouillard@teclib.com>
+ * Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -329,12 +327,12 @@ class modExpenseReport extends DolibarrModules
 	}
 
 	/**
-	 *	Function called when module is disabled.
+	 *  Function called when module is disabled.
 	 *  Remove from database constants, boxes and permissions from Dolibarr database.
 	 *	Data directories are not deleted.
 	 *
-	 *  @param		string				Options
-	 *  @return     int             	1 if OK, 0 if KO
+	 *  @param		string		$options		Options
+	 *  @return     int             			1 if OK, 0 if KO
 	 */
 	function remove($options='')
 	{

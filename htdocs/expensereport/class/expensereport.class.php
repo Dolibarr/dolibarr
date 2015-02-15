@@ -139,10 +139,10 @@ class ExpenseReport extends CommonObject
 		$sql.= ", '".$this->db->idate($this->date_fin)."'";
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".($user->id > 0 ? $user->id:"null");
-		$sql.= ", ".($this->fk_user_validator > 0 ? $this->fk_user_validator:2);
-		$sql.= ", ".($this->fk_c_expensereport_statuts > 1 ? $this->fk_c_expensereport_statuts:1);
-		$sql.= ", ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement:2);
-		$sql.= ", ".($this->note?"'".$this->note."'":"null");
+		$sql.= ", ".($this->fk_user_validator > 0 ? $this->fk_user_validator:"null");
+		$sql.= ", ".($this->fk_c_expensereport_statuts > 1 ? $this->fk_c_expensereport_statuts:0);
+		$sql.= ", ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement:"null");
+		$sql.= ", ".($this->note?"'".$this->db->escape($this->note)."'":"null");
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
@@ -263,11 +263,10 @@ class ExpenseReport extends CommonObject
 		$sql.= " d.date_refuse, d.date_cancel,";														// ACTIONS
 		$sql.= " d.total_ht, d.total_ttc, d.total_tva,"; 												// TOTAUX (int)
 		$sql.= " d.date_debut, d.date_fin, d.date_create, d.date_valide, d.date_paiement,"; 			// DATES (datetime)
-		$sql.= " d.fk_user_author, d.fk_user_validator, d.fk_c_expensereport_statuts, d.fk_c_paiement,"; 	// FOREING KEY (int)
+		$sql.= " d.fk_user_author, d.fk_user_validator, d.fk_c_expensereport_statuts as status, d.fk_c_paiement,";
 		$sql.= " d.fk_user_valid, d.fk_user_paid,";														// FOREING KEY 2 (int)
 		$sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";								// INNER JOIN paiement
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." d";
-		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement dp ON d.fk_c_paiement = dp.id";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." d LEFT JOIN ".MAIN_DB_PREFIX."c_paiement dp ON d.fk_c_paiement = dp.id";
 		$sql.= " WHERE d.rowid = ".$id;
 		$sql.= $restrict;
 
@@ -276,71 +275,78 @@ class ExpenseReport extends CommonObject
 		if ($result)
 		{
 			$obj = $db->fetch_object($result);
-
-			$this->id       	= $obj->rowid;
-			$this->ref          = $obj->ref_number;
-			$this->ref_number 	= $obj->ref_number;
-			$this->total_ht 	= $obj->total_ht;
-			$this->total_tva 	= $obj->total_tva;
-			$this->total_ttc 	= $obj->total_ttc;
-			$this->note 		= $obj->note;
-			$this->detail_refuse = $obj->detail_refuse;
-			$this->detail_cancel = $obj->detail_cancel;
-
-			$this->date_debut		= $obj->date_debut;
-			$this->date_fin			= $obj->date_fin;
-			$this->date_paiement	= $obj->date_paiement;
-			$this->date_valide		= $obj->date_valide;
-			$this->date_create		= $obj->date_create;
-			$this->date_refuse		= $obj->date_refuse;
-			$this->date_cancel		= $obj->date_cancel;
-
-			$this->fk_user_author			= $obj->fk_user_author;
-			$this->fk_user_validator		= $obj->fk_user_validator;
-			$this->fk_user_valid			= $obj->fk_user_valid;
-			$this->fk_user_paid				= $obj->fk_user_paid;
-			$this->fk_user_refuse			= $obj->fk_user_refuse;
-			$this->fk_user_cancel			= $obj->fk_user_cancel;
-
-			$user_author = new User($this->db);
-			$user_author->fetch($this->fk_user_author);
-			$this->user_author_infos = dolGetFirstLastname($user_author->firstname, $user_author->lastname);
-
-			$user_approver = new User($this->db);
-			$user_approver->fetch($this->fk_user_validator);
-			$this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
-
-			$this->fk_c_expensereport_statuts = $obj->fk_c_expensereport_statuts;
-			$this->fk_c_paiement			  = $obj->fk_c_paiement;
-
-			if ($this->fk_c_expensereport_statuts==5 || $this->fk_c_expensereport_statuts==6)
+			if ($obj)
 			{
-				$user_valid = new User($this->db);
-				$user_valid->fetch($this->fk_user_valid);
-				$this->user_valid_infos = dolGetFirstLastname($user_valid->firstname, $user_valid->lastname);
-			}
+				$this->id       	= $obj->rowid;
+				$this->ref          = $obj->ref_number;
+				$this->ref_number 	= $obj->ref_number;
+				$this->total_ht 	= $obj->total_ht;
+				$this->total_tva 	= $obj->total_tva;
+				$this->total_ttc 	= $obj->total_ttc;
+				$this->note 		= $obj->note;
+				$this->detail_refuse = $obj->detail_refuse;
+				$this->detail_cancel = $obj->detail_cancel;
 
-			if ($this->fk_c_expensereport_statuts==6)
+				$this->date_debut		= $obj->date_debut;
+				$this->date_fin			= $obj->date_fin;
+				$this->date_paiement	= $obj->date_paiement;
+				$this->date_valide		= $obj->date_valide;
+				$this->date_create		= $obj->date_create;
+				$this->date_refuse		= $obj->date_refuse;
+				$this->date_cancel		= $obj->date_cancel;
+
+				$this->fk_user_author			= $obj->fk_user_author;
+				$this->fk_user_validator		= $obj->fk_user_validator;
+				$this->fk_user_valid			= $obj->fk_user_valid;
+				$this->fk_user_paid				= $obj->fk_user_paid;
+				$this->fk_user_refuse			= $obj->fk_user_refuse;
+				$this->fk_user_cancel			= $obj->fk_user_cancel;
+
+				$user_author = new User($this->db);
+				$user_author->fetch($this->fk_user_author);
+				$this->user_author_infos = dolGetFirstLastname($user_author->firstname, $user_author->lastname);
+
+				$user_approver = new User($this->db);
+				$user_approver->fetch($this->fk_user_validator);
+				$this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
+
+				$this->fk_c_expensereport_statuts = $obj->status;
+				$this->status                     = $obj->status;
+				$this->fk_c_paiement			  = $obj->fk_c_paiement;
+
+				if ($this->fk_c_expensereport_statuts==5 || $this->fk_c_expensereport_statuts==6)
+				{
+					$user_valid = new User($this->db);
+					$user_valid->fetch($this->fk_user_valid);
+					$this->user_valid_infos = dolGetFirstLastname($user_valid->firstname, $user_valid->lastname);
+				}
+
+				if ($this->fk_c_expensereport_statuts==6)
+				{
+					$user_paid = new User($this->db);
+					$user_paid->fetch($this->fk_user_paid);
+					$this->user_paid_infos = dolGetFirstLastname($user_paid->firstname, $user_paid->lastname);
+				}
+
+				$this->libelle_statut 	= $obj->libelle_statut;
+				$this->libelle_paiement = $obj->libelle_paiement;
+				$this->code_statut 		= $obj->code_statut;
+				$this->code_paiement 	= $obj->code_paiement;
+
+				$this->lignes = array();
+
+				$result=$this->fetch_lines();
+
+				return 1;
+			}
+			else
 			{
-				$user_paid = new User($this->db);
-				$user_paid->fetch($this->fk_user_paid);
-				$this->user_paid_infos = dolGetFirstLastname($user_paid->firstname, $user_paid->lastname);
+				return 0;
 			}
-
-			$this->libelle_statut 	= $obj->libelle_statut;
-			$this->libelle_paiement = $obj->libelle_paiement;
-			$this->code_statut 		= $obj->code_statut;
-			$this->code_paiement 	= $obj->code_paiement;
-
-			$this->lignes = array();
-
-			$result=$this->fetch_lines();
-
-			return 1;
 		}
 		else
 		{
-			$this->error=$db->error();
+			$this->error=$db->lasterror();
 			return -1;
 		}
 	}
@@ -980,7 +986,7 @@ class ExpenseReport extends CommonObject
 
 	function updateline($rowid, $type_fees_id, $projet_id, $c_tva, $comments, $qty, $value_unit, $date, $expensereport_id)
 	{
-		if ($this->fk_c_expensereport_statuts==1 || $this->fk_c_expensereport_statuts==99)
+		if ($this->fk_c_expensereport_statuts==0 || $this->fk_c_expensereport_statuts==99)
 		{
 			$this->db->begin();
 

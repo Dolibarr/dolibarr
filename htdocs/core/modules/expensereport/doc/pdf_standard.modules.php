@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin          <regis@dolibarr.fr>
- * Copyright (C) 2008      Raphael Bertrand       <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010      Juanjo Menent		  <jmenent@2byte.es>
+/* Copyright (C) 2015 Laurent Destailleur    <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
 /**
- *	\file       htdocs/expensereport/core/modules/expensereport/pdf_.modules.php
- *	\ingroup    facture
- *	\brief      File of class to generate invoices from crab model
- *	\author	    Laurent Destailleur
+ *	\file       htdocs/core/modules/expensereport/doc/pdf_standard.modules.php
+ *	\ingroup    expensereport
+ *	\brief      File of class to generate invoices from standard model
  */
 
 dol_include_once("/expensereport/core/modules/expensereport/modules_expensereport.php");
@@ -664,7 +659,7 @@ class pdf_ extends ModeleExpenseReport
 
 	/**
 	 *   Affiche la grille des lignes de factures
-	 *   
+	 *
 	 *   @param     $pdf     		Objet PDF
 	 *   @param		$tab_top		Tab top
 	 *   @param		$tab_height		Tab height
