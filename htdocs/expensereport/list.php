@@ -53,24 +53,21 @@ llxHeader();
 $max_year = 5;
 $min_year = 5;
 
-$sortorder     = $_GET["sortorder"];
-$sortfield     = $_GET["sortfield"];
-$page          = $_GET["page"];
-
-$search_ref = $_GET['search_ref'];
-
 $month_start   = $_GET['month_start'];
 $year_start    = $_GET['year_start'];
 $month_end     = $_GET['month_end'];
 $year_end      = $_GET['year_end'];
 
-$search_user = $_GET['search_user'];
+$search_ref = GETPOST('search_ref');
+$search_user = GETPOST('search_user','int');
+$search_state = GETPOST('search_state','int');
 
-$search_state = $_GET['search_state'];
-
-
+$sortorder     = $_GET["sortorder"];
+$sortfield     = $_GET["sortfield"];
+$page          = $_GET["page"];
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
+
 
 if ($page == -1) {
 	$page = 0 ;
@@ -81,7 +78,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT d.rowid, d.ref_number, d.total_ht, d.total_tva, d.total_ttc, d.fk_c_expensereport_statuts as status,";
+$sql = "SELECT d.rowid, d.ref, d.total_ht, d.total_tva, d.total_ttc, d.fk_c_expensereport_statuts as status,";
 $sql.= " d.date_debut, d.date_fin,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport d\n";
@@ -89,7 +86,7 @@ $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user u ON d.fk_user_author = u.rowid\n";
 
 // WHERE
 if(!empty($search_ref)){
-	$sql.= " WHERE d.ref_number LIKE '%".$db->escape($search_ref)."%'\n";
+	$sql.= " WHERE d.ref LIKE '%".$db->escape($search_ref)."%'\n";
 }else{
 	$sql.= " WHERE 1 = 1\n";
 }
@@ -152,26 +149,16 @@ if ($month_start > 0) {
 	}
 }
 
-if(!empty($search_user) && $search_user != -1) {
-	$sql.= " AND d.fk_user_author = '$search_user'\n";
-}
-
-if(!empty($search_state)) {
-	$sql.= " AND d.fk_c_expensereport_statuts = '$search_state'\n";
-}
+if (!empty($search_user) && $search_user != -1) $sql.= " AND d.fk_user_author = '$search_user'\n";
+if($search_state != '') $sql.= " AND d.fk_c_expensereport_statuts = '$search_state'\n";
 
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)){
 	$sql.= " AND d.fk_user_author = '{$user->id}'\n";
 }
 
-// ORDER
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
-
-if($_GET['debug']=='ok'){
-	var_dump("<pre>",$sql,"</pre>"); exit();
-}
 
 //print $sql;
 $resql=$db->query($sql);
@@ -254,7 +241,7 @@ if ($resql)
 
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
-			print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->ref_number.'</a></td>';
+			print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->ref.'</a></td>';
 			print '<td align="center">'.($objp->date_debut > 0 ? dol_print_date($objp->date_debut, 'day') : '').'</td>';
 			print '<td align="center">'.($objp->date_fin > 0 ? dol_print_date($objp->date_fin, 'day') : '').'</td>';
 			print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->id_user.'">'.img_object($langs->trans("ShowUser"),"user").' '.dolGetFirstLastname($objp->firstname, $objp->lastname).'</a></td>';

@@ -1792,7 +1792,8 @@ abstract class CommonObject
                 if (! $resql)
                 {
                     $error++;
-                    $this->error=$this->db->error();
+                    $this->error=$this->db->lasterror();
+                    $this->error[]=$this->db->lasterror();
                 }
             }
 

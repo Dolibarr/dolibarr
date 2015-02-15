@@ -424,6 +424,10 @@ class Project extends CommonObject
 			if (empty($datefieldname)) return 'Error this object has no date field defined';
 			$sql.=" AND (".$datefieldname." <= '".$this->db->idate($datee)."' OR ".$datefieldname." IS NULL)";
 		}
+		if ($type == 'expensereport')
+		{
+			$sql ='eeee';
+		}
 		if (! $sql) return -1;
 
         //print $sql;

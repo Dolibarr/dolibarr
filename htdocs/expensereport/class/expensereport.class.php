@@ -14,7 +14,7 @@ class ExpenseReport extends CommonObject
 	var $fk_element = 'fk_expensereport';
 
 	var $id;
-	var $ref_number;
+	var $ref;
 	var $lignes=array();
 	var $total_ht;
 	var $total_tva;
@@ -94,11 +94,11 @@ class ExpenseReport extends CommonObject
 		$this->statuts_short[6]='Paid';
 		$this->statuts_short[99]='Refused';
 		$this->statuts_logo[0]='statut0';
-		$this->statuts_logo[2]='statut4';
-		$this->statuts_logo[4]='statut3';
-		$this->statuts_logo[5]='statut5';
+		$this->statuts_logo[2]='statut1';
+		$this->statuts_logo[4]='statut5';
+		$this->statuts_logo[5]='statut3';
 		$this->statuts_logo[6]='statut6';
-		$this->statuts_logo[99]='statutx';
+		$this->statuts_logo[99]='statut8';
 
 		return 1;
 	}
@@ -118,7 +118,7 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
-		$sql.= "ref_number";
+		$sql.= "ref";
 		$sql.= ",total_ht";
 		$sql.= ",total_ttc";
 		$sql.= ",total_tva";
@@ -150,16 +150,16 @@ class ExpenseReport extends CommonObject
 		if ($result)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-			$this->ref_number='(PROV'.$this->id.')';
+			$this->ref='(PROV'.$this->id.')';
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref_number='".$this->ref_number."' WHERE rowid=".$this->id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->ref."' WHERE rowid=".$this->id;
 			dol_syslog(get_class($this)."::create sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (!$resql) $error++;
 
 			foreach ($this->lignes as $i => $val)
 			{
-				$newndfline=new ExpenseReportLigne($this->db);
+				$newndfline=new ExpenseReportLine($this->db);
 				$newndfline=$this->lignes[$i];
 				$newndfline->fk_expensereport=$this->id;
 				if ($result >= 0)
@@ -217,13 +217,13 @@ class ExpenseReport extends CommonObject
 		$sql.= " total_ht = ".$this->total_ht;
 		$sql.= " , total_ttc = ".$this->total_ttc;
 		$sql.= " , total_tva = ".$this->total_tva;
-		$sql.= " , date_debut = '".$this->date_debut."'";
-		$sql.= " , date_fin = '".$this->date_fin."'";
+		$sql.= " , date_debut = '".$this->db->idate($this->date_debut)."'";
+		$sql.= " , date_fin = '".$this->db->idate($this->date_fin)."'";
 		$sql.= " , fk_user_author = ".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql.= " , fk_user_validator = ".($this->fk_user_validator > 0 ? $this->fk_user_validator:"null");
 		$sql.= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid:"null");
 		$sql.= " , fk_user_paid = ".($this->fk_user_paid > 0 ? $this->fk_user_paid:"null");
-		$sql.= " , fk_c_expensereport_statuts = ".($this->fk_c_expensereport_statuts > 0 ? $this->fk_c_expensereport_statuts:"null");
+		$sql.= " , fk_c_expensereport_statuts = ".($this->fk_c_expensereport_statuts >= 0 ? $this->fk_c_expensereport_statuts:'0');
 		$sql.= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement:"null");
 		$sql.= " , note = ".(!empty($this->note)?"'".$this->db->escape($this->note)."'":"''");
 		$sql.= " , detail_refuse = ".(!empty($this->detail_refuse)?"'".$this->db->escape($this->detail_refuse)."'":"''");
@@ -246,19 +246,14 @@ class ExpenseReport extends CommonObject
 	*	Load an object from database
 	*
 	*	@param	int		$id		Id
-	*	@param	User	$user	User we want expense report for
+	*	@param	string	$ref	Ref
+	*	@return	int				<0 if KO, >0 if OK
 	*/
-	function fetch($id,$user='')
+	function fetch($id, $ref='')
 	{
 		global $conf,$db;
 
-		if (!$user->rights->expensereport->lire):
-			$restrict = " AND fk_user_author = ".$user->id;
-		else:
-			$restrict = "";
-		endif;
-
-		$sql = "SELECT d.rowid, d.ref_number, d.note,"; 												// DEFAULT
+		$sql = "SELECT d.rowid, d.ref, d.note,"; 												// DEFAULT
 		$sql.= " d.detail_refuse, d.detail_cancel, d.fk_user_refuse, d.fk_user_cancel,"; 				// ACTIONS
 		$sql.= " d.date_refuse, d.date_cancel,";														// ACTIONS
 		$sql.= " d.total_ht, d.total_ttc, d.total_tva,"; 												// TOTAUX (int)
@@ -267,7 +262,8 @@ class ExpenseReport extends CommonObject
 		$sql.= " d.fk_user_valid, d.fk_user_paid,";														// FOREING KEY 2 (int)
 		$sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";								// INNER JOIN paiement
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." d LEFT JOIN ".MAIN_DB_PREFIX."c_paiement dp ON d.fk_c_paiement = dp.id";
-		$sql.= " WHERE d.rowid = ".$id;
+		if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
+		else $sql.= " WHERE d.rowid = ".$id;
 		$sql.= $restrict;
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -278,8 +274,7 @@ class ExpenseReport extends CommonObject
 			if ($obj)
 			{
 				$this->id       	= $obj->rowid;
-				$this->ref          = $obj->ref_number;
-				$this->ref_number 	= $obj->ref_number;
+				$this->ref          = $obj->ref;
 				$this->total_ht 	= $obj->total_ht;
 				$this->total_tva 	= $obj->total_tva;
 				$this->total_ttc 	= $obj->total_ttc;
@@ -303,11 +298,12 @@ class ExpenseReport extends CommonObject
 				$this->fk_user_cancel			= $obj->fk_user_cancel;
 
 				$user_author = new User($this->db);
-				$user_author->fetch($this->fk_user_author);
+				if ($this->fk_user_author > 0) $user_author->fetch($this->fk_user_author);
+
 				$this->user_author_infos = dolGetFirstLastname($user_author->firstname, $user_author->lastname);
 
 				$user_approver = new User($this->db);
-				$user_approver->fetch($this->fk_user_validator);
+				if ($this->fk_user_validator > 0) $user_approver->fetch($this->fk_user_validator);
 				$this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
 
 				$this->fk_c_expensereport_statuts = $obj->status;
@@ -317,14 +313,14 @@ class ExpenseReport extends CommonObject
 				if ($this->fk_c_expensereport_statuts==5 || $this->fk_c_expensereport_statuts==6)
 				{
 					$user_valid = new User($this->db);
-					$user_valid->fetch($this->fk_user_valid);
+					if ($this->fk_user_valid > 0) $user_valid->fetch($this->fk_user_valid);
 					$this->user_valid_infos = dolGetFirstLastname($user_valid->firstname, $user_valid->lastname);
 				}
 
 				if ($this->fk_c_expensereport_statuts==6)
 				{
 					$user_paid = new User($this->db);
-					$user_paid->fetch($this->fk_user_paid);
+					if ($this->fk_user_paid > 0) $user_paid->fetch($this->fk_user_paid);
 					$this->user_paid_infos = dolGetFirstLastname($user_paid->firstname, $user_paid->lastname);
 				}
 
@@ -395,6 +391,66 @@ class ExpenseReport extends CommonObject
 	}
 
 
+	/**
+	 * 	Load information on object
+	 *
+	 *	@param	int		$id      Id of object
+	 *	@return	void
+	 */
+	function info($id)
+	{
+		global $conf;
+
+		$sql = "SELECT f.rowid,";
+		$sql.= " f.date_create as datec,";
+		$sql.= " f.tms as date_modification,";
+		$sql.= " f.date_valide as datev,";
+		$sql.= " f.fk_user_author,";
+		$sql.= " f.fk_user_modif as fk_user_modification,";
+		$sql.= " f.fk_user_validator";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as f";
+		$sql.= " WHERE f.rowid = ".$id;
+		$sql.= " AND f.entity = ".$conf->entity;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$this->id                = $obj->rowid;
+
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->date_validation   = $this->db->jdate($obj->datev);
+
+				$cuser = new User($this->db);
+				$cuser->fetch($obj->fk_user_author);
+				$this->user_creation     = $cuser;
+
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
+					$this->user_validation     = $vuser;
+				}
+				if ($obj->fk_user_modification)
+				{
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modification);
+					$this->user_modification   = $muser;
+				}
+
+			}
+			$this->db->free($resql);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
+
 
 	/**
 	 * fetch_line_by_project
@@ -429,7 +485,7 @@ class ExpenseReport extends CommonObject
 
    			   $objp = $db->fetch_object($result);
 
-   				$sql2 = "SELECT d.rowid, d.fk_user_author, d.ref_number, d.fk_c_expensereport_statuts";
+   				$sql2 = "SELECT d.rowid, d.fk_user_author, d.ref, d.fk_c_expensereport_statuts";
    				$sql2.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
    				$sql2.= " WHERE d.rowid = '".$objp->fk_expensereport."'";
 
@@ -437,7 +493,7 @@ class ExpenseReport extends CommonObject
    				$obj = $db->fetch_object($result2);
 
    				$objp->fk_user_author = $obj->fk_user_author;
-   				$objp->ref_num = $obj->ref_number;
+   				$objp->ref = $obj->ref;
    				$objp->fk_c_expensereport_status = $obj->fk_c_expensereport_statuts;
    				$objp->rowid = $obj->rowid;
 
@@ -561,15 +617,15 @@ class ExpenseReport extends CommonObject
 	 */
 	function fetch_lines()
 	{
+		$this->lines=array();
+
 		$sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date,';
 		$sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_projet, de.fk_c_tva,';
 		$sql.= ' de.total_ht, de.total_tva, de.total_ttc,';
 		$sql.= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
-		$sql.= ' ctv.taux as taux_tva,';
 		$sql.= ' p.ref as ref_projet, p.title as title_projet';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees ctf ON de.fk_c_type_fees = ctf.id';
-		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_tva ctv ON de.fk_c_tva = ctv.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet p ON de.fk_projet = p.rowid';
 		$sql.= ' WHERE de.'.$this->fk_element.' = '.$this->id;
 
@@ -582,7 +638,7 @@ class ExpenseReport extends CommonObject
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($result);
-				$deplig = new ExpenseReportLigne($this->db);
+				$deplig = new ExpenseReportLine($this->db);
 
 				$deplig->rowid	    	= $objp->rowid;
 				$deplig->comments		= $objp->comments;
@@ -606,6 +662,8 @@ class ExpenseReport extends CommonObject
 				$deplig->projet_title		= $objp->title_projet;
 
 				$this->lignes[$i] = $deplig;
+				$this->lines[$i] = $deplig;
+
 				$i++;
 			}
 			$this->db->free($result);
@@ -613,7 +671,7 @@ class ExpenseReport extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			dol_syslog('ExpenseReport::fetch_lines: Error '.$this->error,LOG_ERR);
 			return -3;
 		}
@@ -673,7 +731,7 @@ class ExpenseReport extends CommonObject
 
 		// Sélection du numéro de ref suivant
 		$ref_next = $this->getNextNumRef();
-		$ref_number_int = ($this->ref_number+1)-1;
+		$ref_number_int = ($this->ref+1)-1;
 
 		// Sélection de la date de début de la NDF
 		$sql = 'SELECT date_debut';
@@ -688,13 +746,13 @@ class ExpenseReport extends CommonObject
 		// Création du ref_number suivant
 		if($ref_next)
 		{
-			$this->ref_number = strtoupper($user->login).$expld_car."NDF".$this->ref_number.$expld_car.$this->date_debut;
+			$this->ref = strtoupper($user->login).$expld_car."NDF".$this->ref.$expld_car.$this->date_debut;
 		}
 
 		if ($this->fk_c_expensereport_statuts != 2)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET ref_number = '".$this->ref_number."', fk_c_expensereport_statuts = 2";
+			$sql.= " SET ref = '".$this->ref."', fk_c_expensereport_statuts = 2";
 			$sql.= " ,ref_number_int = $ref_number_int";
 			$sql.= ' WHERE rowid = '.$this->id;
 
@@ -776,7 +834,7 @@ class ExpenseReport extends CommonObject
 		if ($this->fk_c_expensereport_statuts != 5)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET ref_number = '".$this->ref_number."', fk_c_expensereport_statuts = 5, fk_user_valid = ".$user->id;
+			$sql.= " SET ref = '".$this->ref."', fk_c_expensereport_statuts = 5, fk_user_valid = ".$user->id;
 			$sql.= ', date_valide='.$this->date_valide;
 			$sql.= ' WHERE rowid = '.$this->id;
 
@@ -808,7 +866,7 @@ class ExpenseReport extends CommonObject
 		if ($this->fk_c_expensereport_statuts != 99)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET ref_number = '".$this->ref_number."', fk_c_expensereport_statuts = 99, fk_user_refuse = ".$user->id;
+			$sql.= " SET ref = '".$this->ref."', fk_c_expensereport_statuts = 99, fk_user_refuse = ".$user->id;
 			$sql.= ', date_refuse='.$this->date_refuse;
 			$sql.= ", detail_refuse='".addslashes($details)."'";
 			$sql.= ' WHERE rowid = '.$this->id;
@@ -903,7 +961,7 @@ class ExpenseReport extends CommonObject
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql.= " SET fk_c_deplacement_statuts = 1,";
-			//$sql.= " , ref_number = '(PROV".$this->id.")', ref_number_int = 0";
+			//$sql.= " , ref = '(PROV".$this->id.")', ref_number_int = 0";
 			$sql.= " ref_number_int = 0";
 			$sql.= ' WHERE rowid = '.$this->id;
 
@@ -1005,15 +1063,15 @@ class ExpenseReport extends CommonObject
 
 		if($this->db->num_rows($result) > 0):
 			$objp = $this->db->fetch_object($result);
-			$this->ref_number = $objp->ref_number_int;
-			$this->ref_number++;
-			while(strlen($this->ref_number) < $num_car):
-				$this->ref_number = "0".$this->ref_number;
+			$this->ref = $objp->ref_number_int;
+			$this->ref++;
+			while(strlen($this->ref) < $num_car):
+				$this->ref = "0".$this->ref;
 			endwhile;
 		else:
-			$this->ref_number = 1;
-			while(strlen($this->ref_number) < $num_car):
-				$this->ref_number = "0".$this->ref_number;
+			$this->ref = 1;
+			while(strlen($this->ref) < $num_car):
+				$this->ref = "0".$this->ref;
 			endwhile;
 		endif;
 
@@ -1119,7 +1177,7 @@ class ExpenseReport extends CommonObject
 			$total_tva = $total_ttc - $total_ht;
 			// fin calculs
 
-			$ligne = new ExpenseReportLigne($this->db);
+			$ligne = new ExpenseReportLine($this->db);
 			$ligne->comments		= $comments;
 			$ligne->qty				= $qty;
 			$ligne->value_unit 		= $value_unit;
@@ -1295,7 +1353,7 @@ class ExpenseReport extends CommonObject
 /**
  * Class of expense report details lines
  */
-class ExpenseReportLigne
+class ExpenseReportLine
 {
 	var $db;
 	var $error;
@@ -1328,7 +1386,7 @@ class ExpenseReportLigne
 	 *
 	 * @param DoliDB	$db		Handlet database
 	 */
-	function ExpenseReportLigne($db)
+	function ExpenseReportLine($db)
 	{
 		$this->db= $db;
 	}
@@ -1354,7 +1412,8 @@ class ExpenseReportLigne
 
 		$result = $this->db->query($sql);
 
-		if($result) {
+		if($result)
+		{
 			$objp = $this->db->fetch_object($result);
 
 			$this->rowid = $objp->rowid;
@@ -1391,7 +1450,9 @@ class ExpenseReportLigne
 	{
 		global $langs,$user,$conf;
 
-		dol_syslog("ExpenseReportLigne::Insert rang=".$this->rang, LOG_DEBUG);
+		$error=0;
+
+		dol_syslog("ExpenseReportLine::Insert rang=".$this->rang, LOG_DEBUG);
 
 		// Clean parameters
 		$this->comments=trim($this->comments);
@@ -1413,23 +1474,39 @@ class ExpenseReportLigne
 		$sql.= " ".$this->total_ht.",";
 		$sql.= " ".$this->total_tva.",";
 		$sql.= " ".$this->total_ttc.",";
-		$sql.= "'".$this->date."'";
+		$sql.= "'".$this->db->idate($this->date)."'";
 		$sql.= ")";
 
-		dol_syslog("ExpenseReportLigne::insert sql=".$sql);
+		dol_syslog("ExpenseReportLine::insert sql=".$sql);
 
 		$resql=$this->db->query($sql);
-
-		if ($resql):
+		if ($resql)
+		{
 			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'expensereport_det');
+
+			$tmpparent=new ExpenseReport($this->db);
+			$tmpparent->fetch($this->fk_expensereport);
+			$result = $tmpparent->update_price();
+			if ($result < 0)
+			{
+				$error++;
+				$this->error = $tmpparent->error;
+				$this->errors = $tmpparent->errors;
+			}
+		}
+
+		if (! $error)
+		{
 			$this->db->commit();
 			return $this->rowid;
-		else:
-			$this->error=$this->db->error();
-			dol_syslog("ExpenseReportLigne::insert Error ".$this->error, LOG_ERR);
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("ExpenseReportLine::insert Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
-		endif;
+		}
 	}
 
 	/**
@@ -1441,6 +1518,8 @@ class ExpenseReportLigne
 	function update($user)
 	{
 		global $user,$langs,$conf;
+
+		$error=0;
 
 		// Clean parameters
 		$this->comments=trim($this->comments);
@@ -1465,18 +1544,31 @@ class ExpenseReportLigne
 		else $sql.= ",fk_c_tva=null";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dol_syslog("ExpenseReportLigne::update sql=".$sql);
+		dol_syslog("ExpenseReportLine::update sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
+		{
+			$tmpparent=new ExpenseReport($db);
+			$tmpparent->fetch($this->fk_expensereport);
+			$result = $tmpparent->update_price();
+			if ($result < 0)
+			{
+				$error++;
+				$this->error = $tmpparent->error;
+				$this->errors = $tmpparent->errors;
+			}
+		}
+
+		if (! $error)
 		{
 			$this->db->commit();
 			return 1;
 		}
 		else
 		{
-			$this->error=$this->db->error();
-			dol_syslog("ExpenseReportLigne::update Error ".$this->error, LOG_ERR);
+			$this->error=$this->db->lasterror();
+			dol_syslog("ExpenseReportLine::update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -1503,7 +1595,7 @@ function select_expensereport_statut($selected='',$htmlname='fk_c_expensereport_
 	if ($useempty) print '<option value="-1">&nbsp;</option>';
 	foreach ($tmpep->statuts as $key => $val)
 	{
-		if ($selected == $key)
+		if ($selected != '' && $selected == $key)
 		{
 			print '<option value="'.$key.'" selected="true">';
 		}
@@ -1597,7 +1689,7 @@ function select_type_fees_id($selected='',$htmlname='type',$showempty=0)
 		print '>&nbsp;</option>';
 	}
 
-	$sql = "SELECT c.code, c.label as type,c.id FROM ".MAIN_DB_PREFIX."c_type_fees as c";
+	$sql = "SELECT c.id, c.code, c.label as type FROM ".MAIN_DB_PREFIX."c_type_fees as c";
 	$sql.= " ORDER BY c.label ASC";
 	$resql=$db->query($sql);
 	if ($resql)
@@ -1609,7 +1701,7 @@ function select_type_fees_id($selected='',$htmlname='type',$showempty=0)
 		{
 			$obj = $db->fetch_object($resql);
 			print '<option value="'.$obj->id.'"';
-			if ($obj->code == $selected) print ' selected="true"';
+			if ($obj->code == $selected || $obj->id == $selected) print ' selected="selected"';
 			print '>';
 			if ($obj->code != $langs->trans($obj->code)) print $langs->trans($obj->code);
 			else print $langs->trans($obj->type);

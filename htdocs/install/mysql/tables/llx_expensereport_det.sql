@@ -18,7 +18,7 @@
 
 CREATE TABLE llx_expensereport_det
 (
-   rowid integer PRIMARY KEY NOT NULL,
+   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
    fk_expensereport integer NOT NULL,
    fk_c_type_fees integer NOT NULL,
    fk_projet integer NOT NULL,

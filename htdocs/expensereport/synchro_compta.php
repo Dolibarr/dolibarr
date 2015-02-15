@@ -38,7 +38,7 @@ if ($_GET["action"] == 'confirm_ndf_to_account' && $_GET["confirm"] == "yes"):
 
 	$dateop 	= dol_mktime(12,0,0,$datePaiement[1],$datePaiement[2],$datePaiement[0]);
 	$operation	= $expensereport->code_paiement;
-	$label		= "Règlement ".$expensereport->ref_number;
+	$label		= "Règlement ".$expensereport->ref;
 	$amount 	= - price2num($expensereport->total_ttc);
 	$num_chq	= '';
 	$cat1		= '';
@@ -73,7 +73,7 @@ if ($_GET["action"] == 'confirm_account_to_ndf' && $_GET["confirm"] == "yes"):
 	$expensereport->fetch($idTrip,$user);
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank";
-	$sql.= " WHERE label LIKE '%".$expensereport->ref_number."%'";
+	$sql.= " WHERE label LIKE '%".$expensereport->ref."%'";
 	$resql=$db->query($sql);
 	if ($resql > 0):
 		$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport d";
@@ -137,7 +137,7 @@ else:
 	print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("ViewAccountSynch").'">';
 	print "</form>";
 
-	$sql = "SELECT d.fk_bank_account, d.ref_number, d.rowid, d.date_valide, d.fk_user_author, d.total_ttc, d.integration_compta, d.fk_c_expensereport_statuts";
+	$sql = "SELECT d.fk_bank_account, d.ref, d.rowid, d.date_valide, d.fk_user_author, d.total_ttc, d.integration_compta, d.fk_c_expensereport_statuts";
 	$sql.= " ,CONCAT(u.firstname,' ',u.lastname) as declarant_NDF";
 	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport d";
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user u ON d.fk_user_author = u.rowid";
@@ -169,24 +169,30 @@ else:
 					$objp = $db->fetch_object($resql);
 					$var=!$var;
 						print "<tr $bc[$var]>";
-							print '<td>'.$objp->ref_number.'</td>';
+							print '<td>'.$objp->ref.'</td>';
 							print '<td>'.dol_print_date($db->jdate($objp->date_valide),'day').'</td>';
 							print '<td><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->declarant_NDF.'</a></td>';
 							print '<td align="center">'.$objp->total_ttc.' '.$langs->trans("EURO").'</td>';
 
-							if($objp->integration_compta):
+							if($objp->integration_compta)
+							{
 								print '<td align="center"><a href="synchro_compta.php?action=accountTOndf&idTrip='.$objp->rowid.'&account='.$idAccount.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" style="border:0px;" alt="Compte vers NDF" title="Compte vers NDF"/></a></td>';
-							else:
+							}
+							else
+							{
 								print '<td align="center"><a href="synchro_compta.php?action=ndfTOaccount&idTrip='.$objp->rowid.'&account='.$idAccount.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" style="border:0px;" alt="NDF vers Compte" title="NDF vers Compte"/></a></td>';
-							endif;
+							}
 
 							print '<td>'.$account->label.'</td>';
 
-							if($objp->integration_compta):
+							if($objp->integration_compta)
+							{
 								print '<td align="center"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" style="border:0px;" alt="Intégration OK" /></td>';
-							else:
+							}
+							else
+							{
 								print '<td align="center"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/off.png" style="border:0px;" alt="Intégration Non OK" /></td>';
-							endif;
+							}
 
 						print "</tr>";
 					$i++;

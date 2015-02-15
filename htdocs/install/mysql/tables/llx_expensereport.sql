@@ -18,7 +18,7 @@
 
 CREATE TABLE llx_expensereport (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  ref_number 		varchar(50) NOT NULL,
+  ref        		varchar(50) NOT NULL,
   entity 			integer DEFAULT 1 NOT NULL,		-- multi company id
   ref_number_int 	integer DEFAULT NULL,
   ref_ext 			integer,
@@ -32,6 +32,7 @@ CREATE TABLE llx_expensereport (
   date_paiement 	datetime,
   date_valide 		datetime,
   date_create 		datetime NOT NULL,
+  tms 		 		timestamp,
   fk_user_author 	integer NOT NULL,
   fk_user_modif 	integer DEFAULT NULL,
   fk_user_validator integer DEFAULT NULL,

@@ -23,12 +23,14 @@
  */
 
 /**
- *       \file       htdocs/compta/expensereport/document.php
+ *       \file       htdocs/expensereport/document.php
  *       \ingroup    expensereport
  *       \brief      Page of linked files onto trip and expenses
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 $langs->load("other");
 $langs->load("trips");
@@ -84,7 +86,7 @@ if ($object->id)
 {
 	$object->fetch_thirdparty();
 
-	$head=trip_prepare_head($object);
+	$head=expensereport_prepare_head($object);
 
 	dol_fiche_head($head, 'documents',  $langs->trans("TripCard"), 0, 'trip');
 

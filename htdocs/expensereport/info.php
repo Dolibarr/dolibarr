@@ -24,9 +24,9 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 $langs->load("trips");
 
@@ -48,7 +48,7 @@ if ($id)
 	$object->fetch($id);
 	$object->info($id);
 
-	$head = trip_prepare_head($object);
+	$head = expensereport_prepare_head($object);
 
 	dol_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
 

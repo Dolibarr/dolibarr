@@ -117,7 +117,7 @@ ALTER TABLE llx_stock_mouvement ADD COLUMN sellby date DEFAULT NULL;
 
 CREATE TABLE llx_expensereport (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  ref_number 		varchar(50) NOT NULL,
+  ref       		varchar(50) NOT NULL,
   entity 			integer DEFAULT 1 NOT NULL,		-- multi company id
   ref_number_int 	integer DEFAULT NULL,
   ref_ext 			integer,
@@ -131,6 +131,7 @@ CREATE TABLE llx_expensereport (
   date_paiement 	datetime,
   date_valide 		datetime,
   date_create 		datetime NOT NULL,
+  tms 		 		timestamp,
   fk_user_author 	integer NOT NULL,
   fk_user_modif 	integer DEFAULT NULL,
   fk_user_validator integer DEFAULT NULL,
@@ -151,12 +152,9 @@ CREATE TABLE llx_expensereport (
   model_pdf 		varchar(50) DEFAULT NULL
 ) ENGINE=innodb;
 
-
-
-
 CREATE TABLE llx_expensereport_det
 (
-   rowid integer PRIMARY KEY NOT NULL,
+   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
    fk_expensereport integer NOT NULL,
    fk_c_type_fees integer NOT NULL,
    fk_projet integer NOT NULL,
@@ -182,6 +180,5 @@ CREATE TABLE llx_expensereport_det
    rang							integer DEFAULT 0,				-- position of line
    import_key					varchar(14)
 ) ENGINE=innodb;
-
 
 
