@@ -747,7 +747,7 @@ if ($action == "addline")
 		$tx_tva	= $tx_tva + 1;
 
 		$object_ligne->total_ht = $object_ligne->total_ttc / $tx_tva;
-		$object_ligne->total_ht = number_format($object_ligne->total_ht,2,'.','');
+		$object_ligne->total_ht = price2num($object_ligne->total_ht,'MT');
 
 		$object_ligne->total_tva = $object_ligne->total_ttc - $object_ligne->total_ht;
 		// Fin calculs des totos

@@ -166,7 +166,8 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 }
 
 // ORDER
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($limit+1, $offset);
 
 if($_GET['debug']=='ok'){
 	var_dump("<pre>",$sql,"</pre>"); exit();

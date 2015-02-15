@@ -244,12 +244,15 @@ class ExpenseReport extends CommonObject
 
    /**
 	*	Load an object from database
+	*
+	*	@param	int		$id		Id
+	*	@param	User	$user	User we want expense report for
 	*/
 	function fetch($id,$user='')
 	{
 		global $conf,$db;
 
-		if(!$user->rights->expensereport->lire):
+		if (!$user->rights->expensereport->lire):
 			$restrict = " AND fk_user_author = ".$user->id;
 		else:
 			$restrict = "";
@@ -299,18 +302,29 @@ class ExpenseReport extends CommonObject
 			$this->fk_user_refuse			= $obj->fk_user_refuse;
 			$this->fk_user_cancel			= $obj->fk_user_cancel;
 
-			$this->user_author_infos = $this->fetch_names($this->fk_user_author);
-			$this->user_validator_infos = $this->fetch_names($this->fk_user_validator);
+			$user_author = new User($this->db);
+			$user_author->fetch($this->fk_user_author);
+			$this->user_author_infos = dolGetFirstLastname($user_author->firstname, $user_author->lastname);
 
-			$this->fk_c_expensereport_statuts	= $obj->fk_c_expensereport_statuts;
-			$this->fk_c_paiement			= $obj->fk_c_paiement;
+			$user_approver = new User($this->db);
+			$user_approver->fetch($this->fk_user_validator);
+			$this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
 
-			if($this->fk_c_expensereport_statuts==5 || $this->fk_c_expensereport_statuts==6){
-			   $this->user_valid_infos = $this->fetch_names($this->fk_user_valid);
+			$this->fk_c_expensereport_statuts = $obj->fk_c_expensereport_statuts;
+			$this->fk_c_paiement			  = $obj->fk_c_paiement;
+
+			if ($this->fk_c_expensereport_statuts==5 || $this->fk_c_expensereport_statuts==6)
+			{
+				$user_valid = new User($this->db);
+				$user_valid->fetch($this->fk_user_valid);
+				$this->user_valid_infos = dolGetFirstLastname($user_valid->firstname, $user_valid->lastname);
 			}
 
-			if($this->fk_c_expensereport_statuts==6){
-			   $this->user_paid_infos = $this->fetch_names($this->fk_user_paid);
+			if ($this->fk_c_expensereport_statuts==6)
+			{
+				$user_paid = new User($this->db);
+				$user_paid->fetch($this->fk_user_paid);
+				$this->user_paid_infos = dolGetFirstLastname($user_paid->firstname, $user_paid->lastname);
 			}
 
 			$this->libelle_statut 	= $obj->libelle_statut;
@@ -375,22 +389,6 @@ class ExpenseReport extends CommonObject
 	}
 
 
-	/**
-	 *
-	 * @param unknown_type $id
-	 * @return unknown
-	 */
-	function fetch_names($id)
-	{
-	   global $db;
-
-		$sql = "SELECT lastname, firstname, email, user_mobile, office_phone ";
-		$sql.= "FROM ".MAIN_DB_PREFIX."user ";
-		$sql.= "WHERE rowid = ".$id;
-		$result = $db->query($sql);
-		$obj = $db->fetch_object($result);
-		return $obj;
-	}
 
 	/**
 	 *
@@ -1056,9 +1054,9 @@ class ExpenseReport extends CommonObject
 	/**
 	 * deleteline
 	 *
-	 * @param unknown_type $rowid
-	 * @param unknown_type $user
-	 * @return number
+	 * @param 	int		$rowid		Row id
+	 * @param 	User	$user		User
+	 * @return 	int					<0 if KO, >0 if OK
 	 */
 	function deleteline($rowid, $user='')
 	{
@@ -1083,23 +1081,12 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 * dumpp
-	 *
-	 * @param unknown_type $value
-	 */
-	function dumpp($value)
-	{
-		echo '<div style="margin-top:10px;width:50%;font-size:8px;background:#CCC;">';
-		var_dump("<pre>",$value,"</pre>");
-		echo '</div>';
-	}
-
-	/**
 	 * periode_existe
 	 *
-	 * @param unknown_type $user
-	 * @param unknown_type $date_debut
-	 * @param unknown_type $date_fin
+	 * @param 	User	$user			User
+	 * @param 	Date	$date_debut		Start date
+	 * @param 	Date	$date_fin		End date
+	 * @return	int						<0 if KO, >0 if OK
 	 */
 	function periode_existe($user,$date_debut,$date_fin)
 	{
@@ -1109,10 +1096,12 @@ class ExpenseReport extends CommonObject
 
 		dol_syslog(get_class($this)."::periode_existe sql=".$sql);
 		$result = $this->db->query($sql);
-		if($result):
+		if($result)
+		{
 			$num_lignes = $this->db->num_rows($result); $i = 0;
 
-			if($num_lignes>0):
+			if ($num_lignes>0)
+			{
 				$date_d_form = explode("-",$date_debut); 	// 1
 				$date_f_form = explode("-",$date_fin);		// 2
 				$date_d_form = mktime(12,0,0,$date_d_form[1],$date_d_form[2],$date_d_form[0]);
@@ -1120,7 +1109,8 @@ class ExpenseReport extends CommonObject
 
 				$existe = false;
 
-				while ($i < $num_lignes):
+				while ($i < $num_lignes)
+				{
 					$objp = $this->db->fetch_object($result);
 
 					$date_d_req = explode("-",$objp->date_debut); // 3
@@ -1131,19 +1121,22 @@ class ExpenseReport extends CommonObject
 					if(!($date_f_form < $date_d_req OR $date_d_form > $date_f_req)) $existe = true;
 
 					$i++;
-				endwhile;
+				}
 
 				if($existe) return 1;
 				else return 0;
-
-			else:
+			}
+			else
+			{
 				return 0;
-			endif;
-		else:
-			$this->error=$this->db->error();
+			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
 			dol_syslog(get_class($this)."::periode_existe  Error ".$this->error, LOG_ERR);
 			return -1;
-		endif;
+		}
 	}
 
 
@@ -1214,12 +1207,22 @@ class ExpenseReportLigne
 	var $total_tva;
 	var $total_ttc;
 
-
-	function ExpenseReportLigne($DB)
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB	$db		Handlet database
+	 */
+	function ExpenseReportLigne($db)
 	{
-		$this->db= $DB ;
+		$this->db= $db;
 	}
 
+	/**
+	 * fetch record
+	 *
+	 * @param	int		$rowid		Row id to fetch
+	 * @return	int					<0 if KO, >0 if OK
+	 */
 	function fetch($rowid)
 	{
 		$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
@@ -1262,6 +1265,12 @@ class ExpenseReportLigne
 		}
 	}
 
+	/**
+	 * insert
+	 *
+	 * @param 	int		$notrigger		1=No trigger
+	 * @return 	int						<0 if KO, >0 if OK
+	 */
 	function insert($notrigger=0)
 	{
 		global $langs,$user,$conf;
@@ -1307,7 +1316,13 @@ class ExpenseReportLigne
 		endif;
 	}
 
-	function update()
+	/**
+	 * update
+	 *
+	 * @param	User	$user		User
+	 * @return 	int					<0 if KO, >0 if OK
+	 */
+	function update($user)
 	{
 		global $user,$langs,$conf;
 
@@ -1318,7 +1333,7 @@ class ExpenseReportLigne
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
-		$sql.= " comments='".addslashes($this->comments)."'";
+		$sql.= " comments='".$this->db->escape($this->comments)."'";
 		$sql.= ",value_unit=".$this->value_unit."";
 		$sql.= ",qty=".$this->qty."";
 		if ($this->date) { $sql.= ",date='".$this->date."'"; }
@@ -1350,16 +1365,8 @@ class ExpenseReportLigne
 			return -2;
 		}
 	}
-
-	function fetch_taux($id){
-		$sql = "SELECT taux";
-		$sql .= " FROM ".MAIN_DB_PREFIX ."c_tva";
-		$sql .= " WHERE rowid = ".$id;
-		$resql=$this->db->query($sql);
-		$objp = $this->db->fetch_object($result);
-		$this->tva_taux = $objp->taux;
-	}
 }
+
 
 /**
  *    Retourne la liste deroulante des differents etats d'une note de frais.
@@ -1395,12 +1402,13 @@ function select_expensereport_statut($selected='',$htmlname='fk_c_expensereport_
 }
 
 /**
- *
- * @param unknown_type $selected
- * @param unknown_type $filter
- * @param unknown_type $htmlname
- *
+ * select_projet
  * TODO Utiliser le select project officiel
+ *
+ * @param 	int		$selected		Id selected
+ * @param 	string	$filter			Filter
+ * @param 	string	$htmlname		Select name
+ * @return	int						<0 if KO, >0 if OK
  */
 function select_projet($selected='',$filter='', $htmlname='fk_projet')
 {
@@ -1455,10 +1463,10 @@ function select_projet($selected='',$filter='', $htmlname='fk_projet')
 /**
  *	Return list of types of notes with select value = id
  *
- *	@param      selected        Preselected type
- *	@param      htmlname        Name of field in form
- * 	@param		showempty		Add an empty field
- *  @return		string			Select html
+ *	@param      int		$selected       Preselected type
+ *	@param      string	$htmlname       Name of field in form
+ * 	@param		int		$showempty		Add an empty field
+ *  @return		string					Select html
  */
 function select_type_fees_id($selected='',$htmlname='type',$showempty=0)
 {
