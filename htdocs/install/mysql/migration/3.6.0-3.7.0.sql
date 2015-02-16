@@ -1155,3 +1155,6 @@ ALTER TABLE llx_resource MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
 -- This request make mysql drop (mysql bug, so we add it at end):
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
 
+-- this update change the old formated url on llx_bank_url
+UPDATE llx_bank_url set url = REPLACE( url, 'fiche.php', 'card.php');
+
