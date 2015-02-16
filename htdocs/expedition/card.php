@@ -98,7 +98,7 @@ if (($action == 'create') || ($action == 'add'))
 		{
 			$langs->load("errors");
 			setEventMessage($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
-			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$id);
+			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$origin_id);
 			exit;
 		}
 	}
@@ -457,7 +457,6 @@ if ($action == 'create')
         $classname = ucfirst($origin);
 
         $object = new $classname($db);
-
         if ($object->fetch($origin_id))	// This include the fetch_lines
         {
             //var_dump($object);
@@ -837,7 +836,7 @@ if ($action == 'create')
             print '<br>';
         }
         else
-        {
+		{
             dol_print_error($db);
         }
     }

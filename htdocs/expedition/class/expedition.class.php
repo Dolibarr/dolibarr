@@ -399,7 +399,7 @@ class Expedition extends CommonObject
 	 * 	@param	string	$ref		Ref of object
 	 * 	@param	string	$ref_ext	External reference of object
      * 	@param	string	$ref_int	Internal reference of other object
-	 *	@return int			        >0 if OK, <0 if KO
+	 *	@return int			        >0 if OK, 0 if not found, <0 if KO
 	 */
 	function fetch($id, $ref='', $ref_ext='', $ref_int='')
 	{
@@ -496,9 +496,9 @@ class Expedition extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this).'::Fetch Error -2', LOG_ERR);
+				dol_syslog(get_class($this).'::Fetch no expedition found', LOG_ERR);
 				$this->error='Delivery with id '.$id.' not found sql='.$sql;
-				return -2;
+				return 0;
 			}
 		}
 		else
@@ -613,7 +613,7 @@ class Expedition extends CommonObject
 					if ($result < 0) { $error++; break; }
 
 					if (! empty($conf->productbatch->enabled)) {
-						$details=ExpeditionLigneBatch::FetchAll($this->db,$obj->rowid);
+						$details=ExpeditionLigneBatch::fetchAll($this->db,$obj->rowid);
 						if (! empty($details)) {
 							foreach ($details as $dbatch) {
 								$result=$mouvS->livraison_batch($dbatch->fk_origin_stock,$dbatch->dluo_qty);
@@ -1175,9 +1175,9 @@ class Expedition extends CommonObject
                      */
                     require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
                     if ($originline != $obj->fk_origin_line) {
-                        $line->detail_batch = ExpeditionLigneBatch::FetchAll($this->db,$obj->line_id);
+                        $line->detail_batch = ExpeditionLigneBatch::fetchAll($this->db,$obj->line_id);
                     } else {
-                        $line->detail_batch = array_merge($line->detail_batch,ExpeditionLigneBatch::FetchAll($this->db,$obj->line_id));
+                        $line->detail_batch = array_merge($line->detail_batch,ExpeditionLigneBatch::fetchAll($this->db,$obj->line_id));
                     }
 				}
 				if ($originline != $obj->fk_origin_line) {

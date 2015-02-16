@@ -42,7 +42,7 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('stocks');
 
-$id=GETPOST('id','int');
+$id=GETPOST('id','int');			// id of order
 $ref= GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 
@@ -634,7 +634,7 @@ if ($id > 0 || ! empty($ref))
 
 				print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/card.php">';
 				print '<input type="hidden" name="action" value="create">';
-				print '<input type="hidden" name="id" value="'.$commande->id.'">';
+				//print '<input type="hidden" name="id" value="'.$commande->id.'">';
                 print '<input type="hidden" name="shipping_method_id" value="'.$commande->shipping_method_id.'">';
 				print '<input type="hidden" name="origin" value="commande">';
 				print '<input type="hidden" name="origin_id" value="'.$commande->id.'">';
