@@ -17,11 +17,11 @@
  */
 
 /**
- *	\file       htdocs/core/class/WorkBoardResponse.class.php
+ *	\file       htdocs/core/class/WorkboardResponse.class.php
  *	\brief      Class that represents response of load_board functions
  */
 
-class WorkBoardResponse
+class WorkboardResponse
 {
 
 	/**

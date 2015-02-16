@@ -2345,7 +2345,7 @@ class Propal extends CommonObject
      *
      *      @param          User	$user   Object user
      *      @param          int		$mode   "opened" for proposal to close, "signed" for proposal to invoice
-     *      @return WorkBoardResponse|int <0 if KO, WorkBoardResponse if OK
+     *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user,$mode)
     {
@@ -2383,7 +2383,7 @@ class Propal extends CommonObject
 	            $label = $langs->trans("PropalsToBill");
             }
 
-	        $response = new WorkBoardResponse();
+	        $response = new WorkboardResponse();
 	        $response->warning_delay = $delay_warning;
 	        $response->label = $label;
 	        $response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut;

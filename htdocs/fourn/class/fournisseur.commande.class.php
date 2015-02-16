@@ -2000,7 +2000,7 @@ class CommandeFournisseur extends CommonOrder
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param          User	$user   Objet user
-     *	@return WorkBoardResponse|int <0 if KO, WorkBoardResponse if OK
+     *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
@@ -2025,7 +2025,7 @@ class CommandeFournisseur extends CommonOrder
         {
 	        $now=dol_now();
 
-	        $response = new WorkBoardResponse();
+	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
 	        $response->url=DOL_URL_ROOT.'/fourn/commande/index.php';

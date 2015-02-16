@@ -1421,7 +1421,7 @@ class FactureFournisseur extends CommonInvoice
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param      User	$user       Object user
-     *	@return WorkBoardResponse|int <0 if KO, WorkBoardResponse if OK
+     *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
@@ -1442,7 +1442,7 @@ class FactureFournisseur extends CommonInvoice
 	        $langs->load("bills");
 	        $now=dol_now();
 
-	        $response = new WorkBoardResponse();
+	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SupplierBillsToPay");
 	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=paye:0';

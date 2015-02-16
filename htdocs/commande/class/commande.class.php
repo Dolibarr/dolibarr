@@ -2725,7 +2725,7 @@ class Commande extends CommonOrder
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param		User	$user   Object user
-     *	@return WorkBoardResponse|int <0 if KO, WorkBoardResponse if OK
+     *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
@@ -2751,7 +2751,7 @@ class Commande extends CommonOrder
         {
 	        $now=dol_now();
 
-	        $response = new WorkBoardResponse();
+	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
 	        $response->label=$langs->trans("OrdersToProcess");
 	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
