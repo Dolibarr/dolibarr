@@ -914,9 +914,14 @@ else
 
         // Country
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-        $img=picto_from_langcode($object->country_code);
-        if ($img) print $img.' ';
-        print $object->country;
+	    if ($object->country_code) {
+		    $img = picto_from_langcode($object->country_code);
+		    if ($img) {
+			    print $img.' ';
+		    }
+
+            print $object->country;
+	    }
         print '</td></tr>';
 
         // State
