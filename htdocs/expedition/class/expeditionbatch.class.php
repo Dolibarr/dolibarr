@@ -17,16 +17,16 @@
  */
 
 /**
- *  \file       expedition/class/productbatch.class.php
+ *  \file       expedition/class/expeditionbatch.class.php
  *  \ingroup    productbatch
- *  \brief      This file implements CRUD method for managing product's shipment
+ *  \brief      This file implements CRUD method for managing shipment batch lines
  *				with batch record
  */
 
 /**
  *	CRUD class for batch number management within shipment
  */
-class ExpeditionLigneBatch extends CommonObject
+class ExpeditionLineBatch extends CommonObject
 {
 	var $element='expeditionlignebatch';			//!< Id that identify managed objects
 	private static $_table_element='expeditiondet_batch';		//!< Name of table without prefix where object is stored
@@ -115,9 +115,9 @@ class ExpeditionLigneBatch extends CommonObject
 		$sql.= ", fk_origin_stock";
 		$sql.= ") VALUES (";
 		$sql.= $id_line_expdet.",";
-		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby))."',";
-		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby))."',";
-		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
+		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':("'".$this->db->idate($this->sellby))."'").",";
+		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':("'".$this->db->idate($this->eatby))."'").",";
+		$sql.= " ".(! isset($this->batch)?'NULL':("'".$this->db->escape($this->batch)."'")).",";
 		$sql.= " ".(! isset($this->dluo_qty)?'NULL':$this->dluo_qty).",";
 		$sql.= " ".(! isset($this->fk_origin_stock)?'NULL':$this->fk_origin_stock);
 		$sql.= ")";
@@ -174,7 +174,7 @@ class ExpeditionLigneBatch extends CommonObject
 	 *
 	 * @param	object	$db					Database object
 	 * @param	int		$id_line_expdet		id of shipment line
-	 * @return	variant						-1 if KO, array of ExpeditionLigneBatch if OK
+	 * @return	variant						-1 if KO, array of ExpeditionLineBatch if OK
 	 */
 	static function fetchAll($db,$id_line_expdet)
 	{

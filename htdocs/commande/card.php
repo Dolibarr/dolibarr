@@ -1232,14 +1232,16 @@ $formorder = new FormOrder($db);
  *
  * *******************************************************************
  */
-if ($action == 'create' && $user->rights->commande->creer) {
+if ($action == 'create' && $user->rights->commande->creer)
+{
 	print_fiche_titre($langs->trans('CreateOrder'));
 
 	$soc = new Societe($db);
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
-	if (! empty($origin) && ! empty($originid)) {
+	if (! empty($origin) && ! empty($originid))
+	{
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
@@ -1353,7 +1355,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 	/*
 	 * Contact de la commande
-	*/
+	 */
 	if ($socid > 0) {
 		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td colspan="2">';
 		$form->select_contacts($soc->id, $setcontact, 'contactid', 1, $srccontactslist);

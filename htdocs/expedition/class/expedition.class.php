@@ -255,13 +255,16 @@ class Expedition extends CommonObject
 				$num=count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
-					if (! isset($this->lines[$i]->detail_batch)) {
-					if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty) > 0)
-					{
-						$error++;
+					if (! isset($this->lines[$i]->detail_batch))
+					{	// no batch management
+						if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty) > 0)
+						{
+							$error++;
+						}
 					}
-					} else {
-						if (! $this->create_line_ext($this->lines[$i]) > 0)
+					else
+					{	// with batch management
+						if (! $this->create_line_batch($this->lines[$i]) > 0)
 						{
 							$error++;
 						}
@@ -366,28 +369,37 @@ class Expedition extends CommonObject
 		if (! $error) return 1;
 		else return -1;
 	}
+
+
 	/**
 	 * Create a expedition line with eat-by date
 	 *
 	 * @param 	object		$line_ext		full line informations
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function create_line_ext($line_ext)
+	function create_line_batch($line_ext)
 	{
 		$error = 0;
 
-		if ( $this->create_line(($line_ext->entrepot_id?$line_ext->entrepot_id:'null'),$line_ext->origin_line_id,$line_ext->qty)<0)
+		if ($this->create_line(($line_ext->entrepot_id?$line_ext->entrepot_id:'null'),$line_ext->origin_line_id,$line_ext->qty) < 0)
 		{
 			$error++;
-		} else {
+		}
+
+		if (! $error)
+		{
 			$line_id= $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
 			$tab=$line_ext->detail_batch;
-			foreach ($tab as $detbatch) {
-				if (! ($detbatch->create($line_id) >0)) {
+			foreach ($tab as $detbatch)
+			{
+				if (! ($detbatch->create($line_id) >0))		// Create an expeditionlinebatch
+				{
 					$error++;
 				}
 			}
 		}
+
+
 		if (! $error) return 1;
 		else return -1;
 	}
@@ -612,10 +624,13 @@ class Expedition extends CommonObject
 					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
 					if ($result < 0) { $error++; break; }
 
-					if (! empty($conf->productbatch->enabled)) {
-						$details=ExpeditionLigneBatch::fetchAll($this->db,$obj->rowid);
-						if (! empty($details)) {
-							foreach ($details as $dbatch) {
+					if (! empty($conf->productbatch->enabled))
+					{
+						$details=ExpeditionLineBatch::fetchAll($this->db,$obj->rowid);
+						if (! empty($details))
+						{
+							foreach ($details as $dbatch)
+							{
 								$result=$mouvS->livraison_batch($dbatch->fk_origin_stock,$dbatch->dluo_qty);
 								if ($result < 0) { $error++; $this->errors[]=$mouvS->$error; break 2; }
 							}
@@ -751,7 +766,8 @@ class Expedition extends CommonObject
 		$line->origin_line_id = $id;
 		$line->qty = $qty;
 
-		if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
+		if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
+		{
 			$orderline = new OrderLine($this->db);
 			$orderline->fetch($id);
 			$fk_product = $orderline->fk_product;
@@ -762,7 +778,8 @@ class Expedition extends CommonObject
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
 
-				if($product_type == 0 && $product->stock_reel < $qty) {
+				if($product_type == 0 && $product->stock_reel < $qty)
+				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
 					$this->db->rollback();
 					return -3;
@@ -777,19 +794,23 @@ class Expedition extends CommonObject
 	 * Add a shipment line with batch record
 	 *
 	 * @param 	array		$dbatch		Array of value (key 'detail' -> Array, key 'qty' total quantity for line, key ix_l : original line index)
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int						<0 if KO, >0 if OK
 	 */
 	function addline_batch($dbatch)
 	{
 		$num = count($this->lines);
-		if ($dbatch['qty']>0) {
+		if ($dbatch['qty']>0)
+		{
 			$line = new ExpeditionLigne($this->db);
 			$tab=array();
-			foreach ($dbatch['detail'] as $key=>$value) {
-				if ($value['q']>0) {
-					$linebatch = new ExpeditionLigneBatch($this->db);
-					$ret=$linebatch->fetchFromStock($value['id_batch']);
-					if ($ret<0) {
+			foreach ($dbatch['detail'] as $key=>$value)
+			{
+				if ($value['q']>0)
+				{
+					$linebatch = new ExpeditionLineBatch($this->db);
+					$ret=$linebatch->fetchFromStock($value['id_batch']);	// load serial, sellby, eatby
+					if ($ret<0)
+					{
 						$this->error=$linebatch->error;
 						return -1;
 					}
@@ -932,10 +953,13 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		if ($conf->productbatch->enabled) {
+		if ($conf->productbatch->enabled)
+		{
             require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-			if ( ExpeditionLigneBatch::deletefromexp($this->db,$this->id)<0)
-			{$error++;$this->errors[]="Error ".$this->db->lasterror();}
+			if (ExpeditionLineBatch::deletefromexp($this->db,$this->id) < 0)
+			{
+				$error++;$this->errors[]="Error ".$this->db->lasterror();
+			}
 		}
 		// Stock control
 		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
@@ -1174,10 +1198,11 @@ class Expedition extends CommonObject
                      * May be conf is not well initialized for dark reason
                      */
                     require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-                    if ($originline != $obj->fk_origin_line) {
-                        $line->detail_batch = ExpeditionLigneBatch::fetchAll($this->db,$obj->line_id);
+                    if ($originline != $obj->fk_origin_line)
+                    {
+                        $line->detail_batch = ExpeditionLineBatch::fetchAll($this->db,$obj->line_id);
                     } else {
-                        $line->detail_batch = array_merge($line->detail_batch,ExpeditionLigneBatch::fetchAll($this->db,$obj->line_id));
+                        $line->detail_batch = array_merge($line->detail_batch,ExpeditionLineBatch::fetchAll($this->db,$obj->line_id));
                     }
 				}
 				if ($originline != $obj->fk_origin_line) {

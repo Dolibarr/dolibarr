@@ -2480,12 +2480,13 @@ abstract class CommonObject
         			$tplpath = 'comm/'.$element;
         			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
         		}
-        		else if ($objecttype == 'shipping')         {
+        		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
         			$tplpath = 'expedition';
         			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'delivery')         {
         			$tplpath = 'livraison';
+        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'invoice_supplier') {
         			$tplpath = 'fourn/facture';
