@@ -130,3 +130,4 @@ IsInPackage=Contained into package
 ShowWarehouse=Show warehouse
 MovementCorrectStock=Stock content correction for product %s
 MovementTransferStock=Stock transfer of product %s into another warehouse
+WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn=Source warehouse must be defined here when batch module is on. It will be used to list wich lot/serial is available for product that required lot/serial data for movement. If you want to send products from different warehouses, just make the shipment into several steps.

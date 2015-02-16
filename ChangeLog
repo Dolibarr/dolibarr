@@ -108,6 +108,8 @@ For users:
 - New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export.
 - New : Option on extrafields to have them always editable regardless of the document status.
 - New : New module PrintIPP to print without opening document is available as stable.
+- New : Introduce hidden option STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS to solve at no risk
+        a missing control on missing warehouse.
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
