@@ -804,6 +804,12 @@ class Expedition extends CommonObject
 					}
 					$linebatch->dluo_qty=$value['q'];
 					$tab[]=$linebatch;
+
+					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
+					{
+						// TODO
+					}
+
 				}
 			}
 			$line->entrepot_id = $linebatch->entrepot_id;
