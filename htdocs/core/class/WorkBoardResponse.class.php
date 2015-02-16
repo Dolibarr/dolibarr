@@ -43,16 +43,16 @@ class WorkBoardResponse
 	public $url;
 
 	/**
+	 * (optional) If set, to do late items will link to this url
+	 * @var string
+	 */
+	public $url_late;
+
+	/**
 	 * Delay time to mark an item as late
 	 * @var int
 	 */
 	public $warning_delay;
-
-	/**
-	 * (optional) If set, to do late items will link to this url
-	 * @var string
-	 */
-	public $lateurl;
 
 	/**
 	 * Number of items to do
