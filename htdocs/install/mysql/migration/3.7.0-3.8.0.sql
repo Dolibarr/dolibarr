@@ -182,3 +182,5 @@ CREATE TABLE llx_expensereport_det
 ) ENGINE=innodb;
 
 
+ALTER TABLE ll_projet ADD COLUMN budget_amount double(24,8);
+
