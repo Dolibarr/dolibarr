@@ -732,10 +732,12 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 * Add a expedition line
+	 * Add a expedition line.
+	 * If STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS is set, you can add a shipment line, with no stock source defined
+	 * If STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT is not set, you can add a shipment line, even if not enough into stock
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
-	 * @param 	int		$id					Id of source line
+	 * @param 	int		$id					Id of source line (order line)
 	 * @param 	int		$qty				Quantity
 	 * @return	int							<0 if KO, >0 if OK
 	 */
@@ -750,18 +752,26 @@ class Expedition extends CommonObject
 		$line->origin_line_id = $id;
 		$line->qty = $qty;
 
-		if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
-			$orderline = new OrderLine($this->db);
-			$orderline->fetch($id);
-			$fk_product = $orderline->fk_product;
+		$orderline = new OrderLine($this->db);
+		$orderline->fetch($id);
+		$fk_product = $orderline->fk_product;
 
-			if (!empty($orderline->fk_product))
+		if (! empty($orderline->fk_product))
+		{
+			if (! ($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS))
+			{
+				$this->error=$langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
+				return -1;
+			}
+
+			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)	// FIXME Check is done for stock of product, it must be done for stock of product into warehouse if $entrepot_id defined
 			{
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
 
-				if($product_type == 0 && $product->stock_reel < $qty) {
+				if ($product_type == 0 && $product->stock_reel < $qty)
+				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
 					$this->db->rollback();
 					return -3;
