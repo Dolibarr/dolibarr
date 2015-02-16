@@ -141,6 +141,7 @@ if (empty($reshook))
 	        $object->socid           = GETPOST('socid','int');
 	        $object->description     = GETPOST('description'); // Do not use 'alpha' here, we want field as it is
 	        $object->public          = GETPOST('public','alpha');
+	        $object->budget_amount   = GETPOST('budget_amount','int');
 	        $object->datec=dol_now();
 	        $object->date_start=$date_start;
 	        $object->date_end=$date_end;
@@ -217,6 +218,7 @@ if (empty($reshook))
 	        $object->socid        = GETPOST('socid','int');
 	        $object->description  = GETPOST('description');	// Do not use 'alpha' here, we want field as it is
 	        $object->public       = GETPOST('public','alpha');
+	        $object->budget_amount= GETPOST('budget_amount','int');
 	        $object->date_start   = empty($_POST["projectstart"])?'':$date_start;
 	        $object->date_end     = empty($_POST["projectend"])?'':$date_end;
 
@@ -433,7 +435,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
 
     // Label
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="40" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="40" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
 
     // Customer
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
@@ -460,6 +462,11 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Date end
     print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
     print $form->select_date(($date_end?$date_end:-1),'projectend');
+    print '</td></tr>';
+
+    // Budget
+    print '<tr><td>'.$langs->trans("Budget").'</td>';
+    print '<td><input size="4" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount'])?price(GETPOST('budget_amount')):'').'"></td></tr>';
     print '</td></tr>';
 
     // Description
@@ -602,6 +609,11 @@ else
         print $form->select_date($object->date_end?$object->date_end:-1,'projectend');
         print '</td></tr>';
 
+	    // Budget
+	    print '<tr><td>'.$langs->trans("Budget").'</td>';
+	    print '<td><input size="4" type="text" name="budget_amount" value="'.(price(isset($_POST['budget_amount'])?GETPOST('budget_amount'):$object->budget_amount)).'"></td></tr>';
+	    print '</td></tr>';
+
         // Description
         print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
         print '<td>';
@@ -661,6 +673,11 @@ else
         // Date end
         print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
         print dol_print_date($object->date_end,'day');
+        print '</td></tr>';
+
+        // Budget
+        print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+        if ($object->budget_amount != '') print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
         print '</td></tr>';
 
         // Description

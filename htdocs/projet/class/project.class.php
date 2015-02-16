@@ -126,6 +126,7 @@ class Project extends CommonObject
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", " . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
         $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
+        $sql.= ", " . $this->budget_amount;
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -420,7 +421,7 @@ class Project extends CommonObject
 		}
     	if ($type == 'expensereport')
 		{
-            $sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE ed.fk_project=" . $this->id;
+            $sql = "SELECT e.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet=" . $this->id;
 		}
 		if ($dates > 0)
 		{
