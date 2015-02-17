@@ -210,6 +210,8 @@ ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_product (fk_produc
 DELETE from llx_product_price where fk_product NOT IN (SELECT rowid from llx_product);
 ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_product FOREIGN KEY (fk_product) REFERENCES  llx_product (rowid);
 
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
+
 ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_account integer AFTER date_livraison;
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_account integer AFTER fk_projet;
 
