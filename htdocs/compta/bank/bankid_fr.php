@@ -256,7 +256,15 @@ if (($_GET["id"] || $_GET["ref"]) && $action != 'edit')
         print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans($bickey).'</td>';
-		print '<td colspan="3">'.$account->bic.'</td></tr>';
+		print '<td colspan="3">'.$account->bic.'&nbsp;';
+        if (! empty($account->bic)) {
+            if (! checkSwiftForAccount($account)) {
+                print img_picto($langs->trans("SwiftNotValid"),'warning');
+            } else {
+                print img_picto($langs->trans("SwiftValid"),'info');
+            }
+        }
+        print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
 		print nl2br($account->domiciliation);

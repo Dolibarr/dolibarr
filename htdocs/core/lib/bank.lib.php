@@ -121,7 +121,24 @@ function bank_admin_prepare_head($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
 
 	return $head;
-		}
+}
+
+/**
+ *      Check SWIFT informations for a bank account
+ *
+ *      @param  Account     $account    A bank account
+ *      @return int                     True if informations are valid, false otherwise
+ */
+function checkSwiftForAccount($account)
+{
+    $swift = $account->bic;
+    if (eregi("^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$", $swift)) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
 
 /**
  *      Check IBAN number informations for a bank account
@@ -134,13 +151,9 @@ function checkIbanForAccount($account)
     require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
     $iban = new Iban($account->iban);
     $check = $iban->Verify();
-    //print '<pre>'.print_r($iban, true).'</pre>';
     if ($check) {
-        //print '<pre>OK</pre>';
         return true;
     } else {
-        //$suggest = $iban->MistranscriptionSuggestions($account->iban);
-        //print '<pre>'.print_r($suggest, true).'</pre>';
         return false;
     }
 

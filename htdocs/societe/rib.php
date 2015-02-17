@@ -304,7 +304,15 @@ if ($socid && $action != 'edit' && $action != "create")
     print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-	print '<td colspan="4">'.$account->bic.'</td></tr>';
+	print '<td colspan="4">'.$account->bic.'&nbsp;';
+    if (! empty($account->bic)) {
+        if (! checkSwiftForAccount($account)) {
+            print img_picto($langs->trans("SwiftNotValid"),'warning');
+        } else {
+            print img_picto($langs->trans("SwiftValid"),'info');
+        }
+    }
+    print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
 	print $account->domiciliation;
