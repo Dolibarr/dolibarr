@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013   Cédric Salvador    	<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013   Laurent Destaileur	<ely@users.sourceforge.net>
+/* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2014	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,10 @@ $sall = GETPOST('sall', 'alpha');
 $type = GETPOST('type','int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
+$mode = GETPOST('mode','alpha');
+
+$fourn_id = GETPOST('fourn_id','int');
+$texte = '';
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -62,6 +67,10 @@ if (!$sortorder) {
 }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
+
+// Force limit to no (currently solution to solve loosing selection when using pagination. No pagination on this page)
+$limit = 0;
+
 
 /*
  * Actions
@@ -81,10 +90,10 @@ if ($action == 'order' && isset($_POST['valid']))
     $linecount = GETPOST('linecount', 'int');
     $box = 0;
     unset($_POST['linecount']);
-    if ($linecount > 0) 
+    if ($linecount > 0)
     {
     	$db->begin();
-    	
+
         $suppliers = array();
         for ($i = 0; $i < $linecount; $i++)
         {
@@ -125,7 +134,6 @@ if ($action == 'order' && isset($_POST['valid']))
 				{
                     $error=$db->lasterror();
                     dol_print_error($db);
-                    dol_syslog('replenish.php: '.$error, LOG_ERR);
                 }
                 $db->free($resql);
                 unset($_POST['fourn' . $i]);
@@ -157,21 +165,21 @@ if ($action == 'order' && isset($_POST['valid']))
             }
             $i++;
         }
-        
-        if (! $fail && $id) 
+
+        if (! $fail && $id)
         {
         	$db->commit();
-        	
+
             setEventMessage($langs->trans('OrderCreated'), 'mesgs');
             header('Location: replenishorders.php');
             exit;
         }
         else
         {
-        	$db->rollback();	
+        	$db->rollback();
         }
     }
-    if ($box == 0) 
+    if ($box == 0)
     {
         setEventMessage($langs->trans('SelectProductWithNotNullQty'), 'warnings');
     }
@@ -182,25 +190,28 @@ if ($action == 'order' && isset($_POST['valid']))
  * View
  */
 
+$form = new Form($db);
+
 $virtualdiffersfromphysical=0;
-if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
-	|| ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
-	) $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
+if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+{
+	$virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
+}
 
 $usevirtualstock=-1;
 if ($virtualdiffersfromphysical)
 {
-	$usevirtualstock=($conf->global->STOCK_USE_VIRTUAL_STOCK?1:0);
-	if (GETPOST('mode')=='virtual') $usevirtualstock=1;
-	if (GETPOST('mode')=='physical') $usevirtualstock=0;
+	$usevirtualstock=(! empty($conf->global->STOCK_USE_VIRTUAL_STOCK)?1:0);
+	if ($mode=='virtual') $usevirtualstock=1;
+	if ($mode=='physical') $usevirtualstock=0;
 }
 
 $title = $langs->trans('Status');
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price,';
 $sql.= ' p.price_ttc, p.price_base_type,p.fk_product_type,';
-$sql.= ' p.tms as datem, p.duration, p.tobuy, p.seuil_stock_alerte,';
-$sql.= ' p.desiredstock,';
+$sql.= ' p.tms as datem, p.duration, p.tobuy,';
+$sql.= ' p.desiredstock, p.seuil_stock_alerte as alertstock,';
 $sql.= ' SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique';
 $sql.= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
 $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s';
@@ -238,25 +249,76 @@ $sql.= ' AND p.tobuy = 1';
 if (!empty($canvas)) $sql .= ' AND p.canvas = "' . $db->escape($canvas) . '"';
 $sql.= ' GROUP BY p.rowid, p.ref, p.label, p.price';
 $sql.= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
-$sql.= ', p.duration, p.tobuy, p.seuil_stock_alerte';
-$sql.= ', p.desiredstock, s.fk_product';
-$sql.= ' HAVING p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
-$sql.= ' AND p.desiredstock > 0';
-if ($salert == 'on')	// Option to see when stock is lower than alert
-{
-    $sql .= ' AND SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') < p.seuil_stock_alerte AND p.seuil_stock_alerte is not NULL';
-    $alertchecked = 'checked="checked"';
-}
-$sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($limit + 1, $offset);
+$sql.= ', p.duration, p.tobuy';
+$sql.= ', p.desiredstock, p.seuil_stock_alerte';
+$sql.= ', s.fk_product';
 
-dol_syslog('Execute request sql='.$sql);
+if ($usevirtualstock)
+{
+	$sqlCommandesCli = "(SELECT ".$db->ifsql("SUM(cd.qty) IS NULL", "0", "SUM(cd.qty)")." as qty";
+	$sqlCommandesCli.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+	$sqlCommandesCli.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON (c.rowid = cd.fk_commande)";
+	$sqlCommandesCli.= " WHERE c.entity = ".$conf->entity;
+	$sqlCommandesCli.= " AND cd.fk_product = p.rowid";
+	$sqlCommandesCli.= " AND c.fk_statut IN (1,2))";
+
+	$sqlExpeditionsCli = "(SELECT ".$db->ifsql("SUM(ed.qty) IS NULL", "0", "SUM(ed.qty)")." as qty";
+	$sqlExpeditionsCli.= " FROM ".MAIN_DB_PREFIX."expedition as e";
+	$sqlExpeditionsCli.= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON (ed.fk_expedition = e.rowid)";
+	$sqlExpeditionsCli.= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd ON (cd.rowid = ed.fk_origin_line)";
+	$sqlExpeditionsCli.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON (c.rowid = cd.fk_commande)";
+	$sqlExpeditionsCli.= " WHERE e.entity = ".$conf->entity;
+	$sqlExpeditionsCli.= " AND cd.fk_product = p.rowid";
+	$sqlExpeditionsCli.= " AND c.fk_statut IN (1,2))";
+
+	$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd.qty) IS NULL", "0", "SUM(cd.qty)")." as qty";
+	$sqlCommandesFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd";
+	$sqlCommandesFourn.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
+	$sqlCommandesFourn.= " WHERE c.rowid = cd.fk_commande";
+	$sqlCommandesFourn.= " AND c.entity = ".$conf->entity;
+	$sqlCommandesFourn.= " AND cd.fk_product = p.rowid";
+	$sqlCommandesFourn.= " AND c.fk_statut IN (3,4))";
+
+	$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd.qty) IS NULL", "0", "SUM(fd.qty)")." as qty";
+	$sqlReceptionFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+	$sqlReceptionFourn.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd ON (fd.fk_commande = cf.rowid)";
+	$sqlReceptionFourn.= " WHERE cf.entity = ".$conf->entity;
+	$sqlReceptionFourn.= " AND fd.fk_product = p.rowid";
+	$sqlReceptionFourn.= " AND cf.fk_statut IN (3,4))";
+
+	$sql.= ' HAVING ((('.$db->ifsql("p.desiredstock IS NULL", "0", "p.desiredstock").' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+	$sql.= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')))';
+	$sql.= ' OR (p.seuil_stock_alerte >= 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+	$sql.= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.'))))';
+
+	if ($salert == 'on')	// Option to see when stock is lower than alert
+	{
+		$sql.= ' AND (p.seuil_stock_alerte > 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+		$sql.= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')))';
+		$alertchecked = 'checked="checked"';
+	}
+} else {
+	$sql.= ' HAVING ((p.desiredstock > 0 AND (p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+	$sql.= ' OR (p.seuil_stock_alerte > 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))))';
+
+	if ($salert == 'on')	// Option to see when stock is lower than alert
+	{
+		$sql.= ' AND (p.seuil_stock_alerte > 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+		$alertchecked = 'checked="checked"';
+	}
+}
+
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($limit, $offset);
+
+//print $sql;
 $resql = $db->query($sql);
 if (empty($resql))
 {
     dol_print_error($db);
     exit;
 }
+//print $sql;
 
 $num = $db->num_rows($resql);
 $i = 0;
@@ -295,6 +357,7 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	$filters = '&sref=' . $sref . '&snom=' . $snom;
 	$filters .= '&sall=' . $sall;
 	$filters .= '&salert=' . $salert;
+	$filters .= '&mode=' . $mode;
 	print_barre_liste(
 		$texte,
 		$page,
@@ -309,7 +372,8 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	$filters = '&sref=' . $sref . '&snom=' . $snom;
 	$filters .= '&fourn_id=' . $fourn_id;
 	$filters .= (isset($type)?'&type=' . $type:'');
-	$filters .=  '&salert=' . $salert;
+	$filters .=  '&=' . $salert;
+	$filters .= '&mode=' . $mode;
 	print_barre_liste(
 		$texte,
 		$page,
@@ -329,138 +393,64 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'
 	'<input type="hidden" name="type" value="' . $type . '">'.
 	'<input type="hidden" name="linecount" value="' . $num . '">'.
 	'<input type="hidden" name="action" value="order">'.
+	'<input type="hidden" name="mode" value="' . $mode . '">'.
 
 	'<table class="liste" width="100%">';
 
 $param = (isset($type)? '&type=' . $type : '');
 $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert;
 $param .= '&sref=' . $sref;
-
-// Lignes des titres
-print '<tr class="liste_titre">'.
-	'<td><input type="checkbox" onClick="toggle(this)" /></td>';
-print_liste_field_titre(
-	$langs->trans('Ref'),
-	$_SERVER["PHP_SELF"],
-	'p.ref',
-	$param,
-	'',
-	'',
-	$sortfield,
-	$sortorder
-);
-print_liste_field_titre(
-	$langs->trans('Label'),
-	$_SERVER["PHP_SELF"],
-	'p.label',
-	$param,
-	'',
-	'',
-	$sortfield,
-	$sortorder
-);
-if (!empty($conf->service->enabled) && $type == 1)
-{
-	print_liste_field_titre(
-		$langs->trans('Duration'),
-		$_SERVER["PHP_SELF"],
-		'p.duration',
-		$param,
-		'',
-		'align="center"',
-		$sortfield,
-		$sortorder
-	);
-}
-print_liste_field_titre(
-	$langs->trans('DesiredStock'),
-	$_SERVER["PHP_SELF"],
-	'p.desiredstock',
-	$param,
-	'',
-	'align="right"',
-	$sortfield,
-	$sortorder
-);
+$param .= '&mode=' . $mode;
 
 $stocklabel = $langs->trans('Stock');
 if ($usevirtualstock == 1) $stocklabel = $langs->trans('VirtualStock');
 if ($usevirtualstock == 0) $stocklabel = $langs->trans('PhysicalStock');
 
-print_liste_field_titre(
-	$stocklabel,
-	$_SERVER["PHP_SELF"],
-	'stock_physique',
-	$param,
-	'',
-	'align="right"',
-	$sortfield,
-	$sortorder
-);
-print_liste_field_titre(
-	$langs->trans('Ordered'),
-	$_SERVER["PHP_SELF"],
-	'',
-	$param,
-	'',
-	'align="right"',
-	$sortfield,
-	$sortorder
-);
-print_liste_field_titre(
-	$langs->trans('StockToBuy'),
-	$_SERVER["PHP_SELF"],
-	'',
-	$param,
-	'',
-	'align="right"',
-	$sortfield,
-	$sortorder
-);
-print_liste_field_titre(
-	$langs->trans('Supplier'),
-	$_SERVER["PHP_SELF"],
-	'',
-	$param,
-	'',
-	'align="right"',
-	$sortfield,
-	$sortorder
-);
+
+// Lines of title
+print '<tr class="liste_titre"><td><input type="checkbox" onClick="toggle(this)" /></td>';
+
+print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
+if (!empty($conf->service->enabled) && $type == 1) print_liste_field_titre($langs->trans('Duration'), $_SERVER["PHP_SELF"], 'p.duration', $param, '', 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('DesiredStock'), $_SERVER["PHP_SELF"], 'p.desiredstock', $param, '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('StockLimitShort'), $_SERVER["PHP_SELF"], 'p.seuil_stock_alerte', $param, '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $param, '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Ordered'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('StockToBuy'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Supplier'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
+
 print '</tr>';
 
 // Lignes des champs de filtre
 print '<tr class="liste_titre">'.
 '<td class="liste_titre">&nbsp;</td>'.
-'<td class="liste_titre">'.
-'<input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'">'.
-'</td>'.
-'<td class="liste_titre">'.
-'<input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'">'.
-'</td>';
-if (!empty($conf->service->enabled) && $type == 1)
-{
-	print '<td class="liste_titre">&nbsp;</td>';
-}
+'<td class="liste_titre"><input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'"></td>'.
+'<td class="liste_titre"><input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
+if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>'.
-	'<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" name="salert" ' . $alertchecked . '></td>'.
+	'<td class="liste_titre" align="right">&nbsp;</td>'.
+	'<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
 	'<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">'.
 	'<input class="liste_titre" name="button_search" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">'.
 	'<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">'.
-	'</td>'.
-	'</tr>';
+	'</td>';
+print '</tr>';
 
 $prod = new Product($db);
 
 $var = True;
-while ($i < min($num, $limit))
+while ($i < ($limit ? min($num, $limit) : $num))
 {
 	$objp = $db->fetch_object($resql);
 
 	if (! empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
 	{
+		$prod->fetch($objp->rowid);
+		$prod->load_stock();
+
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
@@ -479,43 +469,32 @@ while ($i < min($num, $limit))
 		}
 		$form = new Form($db);
 		$var =! $var;
-		$prod->ref = $objp->ref;
-		$prod->id = $objp->rowid;
-		$prod->type = $objp->fk_product_type;
-		$ordered = ordered($prod->id);
 
 		if ($usevirtualstock)
 		{
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
-			$prod->fetch($prod->id);
-			$result=$prod->load_stats_commande(0, '1,2');
-			if ($result < 0) {
-				dol_print_error($db, $prod->error);
-			}
-			$stock_commande_client = $prod->stats_commande['qty'];
-			$result=$prod->load_stats_commande_fournisseur(0, '3');
-			if ($result < 0) {
-				dol_print_error($db,$prod->error);
-			}
-			$stock_commande_fournisseur = $prod->stats_commande_fournisseur['qty'];
-			$stock = $objp->stock_physique - $stock_commande_client + $stock_commande_fournisseur;
+			$stock = $prod->stock_theorique;
 		}
 		else
 		{
-			$stock = $objp->stock_physique;
+			$stock = $prod->stock_reel;
 		}
-		$warning='';
 
-		if ($objp->seuil_stock_alerte && ($stock < $objp->seuil_stock_alerte))
+		$ordered = $prod->stats_commande_fournisseur['qty']-$prod->stats_reception['qty'];
+
+		$warning='';
+		if ($objp->alertstock && ($stock < $objp->alertstock))
 		{
 			$warning = img_warning($langs->trans('StockTooLow')) . ' ';
 		}
+
 		//depending on conf, use either physical stock or
 		//virtual stock to compute the stock to buy value
-		$stocktobuy = max($objp->desiredstock - $stock - $ordered, 0);
+		$stocktobuy = max(max($objp->desiredstock, $objp->alertstock) - $stock - $ordered, 0);
 		$disabled = '';
 		if($ordered > 0) {
-			if($ordered + $stock >= $objp->desiredstock) {
+			$compare = $usevirtualstock ? $stock : $stock + $ordered;
+			if($compare >= $objp->desiredstock) {
 				$picto = img_picto('', './img/yes', '', 1);
 				$disabled = 'disabled="disabled"';
 			}
@@ -532,13 +511,12 @@ while ($i < min($num, $limit))
 		//print '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>';
 		print '<td><input type="checkbox" class="check" name="'.$i.'"></td>';
 
-		print '<td class="nowrap">'.
-			$prod->getNomUrl(1, '', 16).
-			'</td>'.
-			'<td>' . $objp->label . '</td>'.
-			'<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" >';
+		print '<td class="nowrap">'.$prod->getNomUrl(1, '', 16).'</td>';
 
-		if (!empty($conf->service->enabled) && $type == 1) {
+		print '<td>' . $objp->label . '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" ></td>';
+
+		if (!empty($conf->service->enabled) && $type == 1)
+		{
 			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
 				$duration =  $regs[1] . ' ' . $langs->trans('DurationYear');
 			} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
@@ -548,19 +526,20 @@ while ($i < min($num, $limit))
 			} else {
 				$duration = $objp->duration;
 			}
-			print '<td align="center">'.
-				$duration.
-				'</td>';
+			print '<td align="center">'.$duration.'</td>';
 		}
 
-		print '<td align="right">' . $objp->desiredstock . '</td>'.
-			'<td align="right">'.
-			$warning . $stock.
-			'</td>'.
-			'<td align="right">'.
-			'<a href="replenishorders.php?sproduct=' . $prod->id . '">'.
-			$ordered . '</a> ' . $picto.
-			'</td>';
+		// Desired stock
+		print '<td align="right">' . $objp->desiredstock . '</td>';
+
+		// Limit stock for alerr
+		print '<td align="right">' . $objp->alertstock . '</td>';
+
+		// Current stock
+		print '<td align="right">'. $warning . $stock. '</td>';
+
+		// Already ordered
+		print '<td align="right"><a href="replenishorders.php?sproduct=' . $prod->id . '">'. $ordered . '</a> ' . $picto. '</td>';
 
 		// To order
 		//print '<td align="right"><input type="text" name="tobuy'.$i.'" value="'.$stocktobuy.'" '.$disabled.'></td>';
@@ -589,6 +568,7 @@ if ($num > $conf->liste_limit)
 		$filters = '&sref=' . $sref . '&snom=' . $snom;
 		$filters .= '&sall=' . $sall;
 		$filters .= '&salert=' . $salert;
+		$filters .= '&mode=' . $mode;
 		print_barre_liste(
 			'',
 			$page,
@@ -606,6 +586,7 @@ if ($num > $conf->liste_limit)
 		$filters .= '&fourn_id=' . $fourn_id;
 		$filters .= (isset($type)? '&type=' . $type : '');
 		$filters .= '&salert=' . $salert;
+		$filters .= '&mode=' . $mode;
 		print_barre_liste(
 			'',
 			$page,

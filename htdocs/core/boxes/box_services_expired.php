@@ -63,7 +63,7 @@ class box_services_expired extends ModeleBoxes
     	    // Select contracts with at least one expired service
 			$sql = "SELECT ";
     		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat,";
-			$sql.= " s.nom, s.rowid as socid,";
+			$sql.= " s.nom as name, s.rowid as socid,";
 			$sql.= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
     		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -93,19 +93,19 @@ class box_services_expired extends ModeleBoxes
 
     				$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
     				'logo' => $this->boximg,
-    				'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+    				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
 
     				$this->info_box_contents[$i][1] = array('td' => 'align="left"',
     				'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
-    				'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+    				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
 
     				$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
     				'logo' => 'company',
-    				'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+    				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
     				$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-    				'text' => dol_trunc($objp->nom,40),
-    				'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+    				'text' => dol_trunc($objp->name,40),
+    				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
     				$this->info_box_contents[$i][4] = array('td' => 'align="center"',
     				'text' => dol_print_date($dateline,'day'),

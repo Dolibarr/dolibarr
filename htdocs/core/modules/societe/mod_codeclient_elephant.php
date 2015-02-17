@@ -30,12 +30,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 
 
 /**
- *       \class 		mod_codeclient_elephant
- *       \brief 		Class to manage third party code with elephant rule
+ *	Class to manage third party code with elephant rule
  */
 class mod_codeclient_elephant extends ModeleThirdPartyCode
 {
 	var $nom='Elephant';				// Nom du modele
+	var $name='Elephant';				// Nom du modele
 	var $code_modifiable;				// Code modifiable
 	var $code_modifiable_invalide;		// Code modifiable si il est invalide
 	var $code_modifiable_null;			// Code modifiables si il est null
@@ -239,7 +239,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 * 	Check validity of code according to its rules
 	 *
 	 *	@param	DoliDB		$db		Database handler
-	 *	@param	string		&$code	Code to check/correct
+	 *	@param	string		$code	Code to check/correct
 	 *	@param	Societe		$soc	Object third party
 	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
 	 *  @return int					0 if OK

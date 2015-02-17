@@ -1,18 +1,7 @@
-/*
- * Language code: ru_UA
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-Bookmark=Закладка
-Bookmarks=Закладки
+# Dolibarr language file - Source file is en_US - bookmarks
 BookmarkTargetNewWindowShort=В новом окне
-BookmarkTargetReplaceWindowShort=Текущее окно
 BookmarkTitle=Закладка титул
-UrlOrLink=URL
 BehaviourOnClick=Поведение при нажатии URL
-CreateBookmark=Создать закладку
 SetHereATitleForLink=Установить название для закладки
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Используйте внешний HTTP URL или относительный URL Dolibarr
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Выберите, если страница открыта ссылка должна появиться на текущем или новом окне

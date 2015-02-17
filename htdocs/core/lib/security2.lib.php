@@ -286,17 +286,17 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	// Set jquery theme
 	$dol_loginmesg = (! empty($_SESSION["dol_loginmesg"])?$_SESSION["dol_loginmesg"]:'');
-	$favicon=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico';
+	$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
 	if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
 	$jquerytheme = 'smoothness';
 	if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 
 	// Set dol_hide_topmenu, dol_hide_leftmenu, dol_optimize_smallscreen, dol_nomousehover
-	$dol_hide_topmenu=GETPOST('dol_hide_topmenu');
-	$dol_hide_leftmenu=GETPOST('dol_hide_leftmenu');
-	$dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen');
-	$dol_no_mouse_hover=GETPOST('dol_no_mouse_hover');
-	$dol_use_jmobile=GETPOST('dol_use_jmobile');
+	$dol_hide_topmenu=GETPOST('dol_hide_topmenu','int');
+	$dol_hide_leftmenu=GETPOST('dol_hide_leftmenu','int');
+	$dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen','int');
+	$dol_no_mouse_hover=GETPOST('dol_no_mouse_hover','int');
+	$dol_use_jmobile=GETPOST('dol_use_jmobile','int');
 
 	// Include login page template
 	include $template_dir.'login.tpl.php';
@@ -440,7 +440,7 @@ function encodedecode_dbpassconf($level=0)
 /**
  * Return a generated password using default module
  *
- * @param		boolean		$generic		true=Create generic password (a MD5 string), false=Use the configured password generation module
+ * @param		boolean		$generic		true=Create generic password (use default crypt function), false=Use the configured password generation module
  * @return		string						New value for password
  */
 function getRandomPassword($generic=false)

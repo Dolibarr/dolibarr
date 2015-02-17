@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2013 Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -205,13 +205,24 @@ class pdf_azur extends ModelePDFPropales
 			{
 				if (dol_mkdir($dir) < 0)
 				{
-					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
 			}
 
 			if (file_exists($dir))
 			{
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 				// Create pdf instance
                 $pdf=pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
@@ -372,6 +383,7 @@ class pdf_azur extends ModelePDFPropales
 
 						$pageposafter=$pdf->getPage();
 						$posyafter=$pdf->GetY();
+						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
 							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
@@ -458,7 +470,7 @@ class pdf_azur extends ModelePDFPropales
 					if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
 					&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) // and there is local tax
 					{
-						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
+						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$object->thirdparty,$mysoc);
 						$localtax1_type = $localtaxtmp_array[0];
 						$localtax2_type = $localtaxtmp_array[2];
 					}
@@ -540,12 +552,11 @@ class pdf_azur extends ModelePDFPropales
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
-				//$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 				$posy=$this->_tableau_tot($pdf, $object, 0, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
 				/*
-				if ($deja_regle)
+				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
@@ -589,7 +600,7 @@ class pdf_azur extends ModelePDFPropales
 	/**
 	 *  Show payments table
 	 *
-     *  @param	PDF			&$pdf           Object PDF
+     *  @param	PDF			$pdf           Object PDF
      *  @param  Object		$object         Object proposal
      *  @param  int			$posy           Position y in PDF
      *  @param  Translate	$outputlangs    Object langs for output
@@ -604,7 +615,7 @@ class pdf_azur extends ModelePDFPropales
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		PDF			$pdf     		Object PDF
 	 *   @param		Object		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
@@ -630,7 +641,7 @@ class pdf_azur extends ModelePDFPropales
 		$posxval=52;
 
         // Show shipping date
-        if ($object->date_livraison)
+        if (! empty($object->date_livraison))
 		{
             $outputlangs->load("sendings");
 			$pdf->SetFont('','B', $default_font_size - 2);
@@ -718,20 +729,22 @@ class pdf_azur extends ModelePDFPropales
 				// Si mode reglement non force ou si force a CHQ
 				if (! empty($conf->global->FACTURE_CHQ_NUMBER))
 				{
+					$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
+
 					if ($conf->global->FACTURE_CHQ_NUMBER > 0)
 					{
 						$account = new Account($this->db);
 						$account->fetch($conf->global->FACTURE_CHQ_NUMBER);
 
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('','B', $default_font_size - 3);
+						$pdf->SetFont('','B', $default_font_size - $diffsizetitle);
 						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio),0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 			            if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
 			            {
 							$pdf->SetXY($this->marge_gauche, $posy);
-							$pdf->SetFont('','', $default_font_size - 3);
+							$pdf->SetFont('','', $default_font_size - $diffsizetitle);
 							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->owner_address), 0, 'L', 0);
 							$posy=$pdf->GetY()+2;
 			            }
@@ -739,14 +752,14 @@ class pdf_azur extends ModelePDFPropales
 					if ($conf->global->FACTURE_CHQ_NUMBER == -1)
 					{
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('','B', $default_font_size - 3);
+						$pdf->SetFont('','B', $default_font_size - $diffsizetitle);
 						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$this->emetteur->name),0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 			            if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
 			            {
 							$pdf->SetXY($this->marge_gauche, $posy);
-							$pdf->SetFont('','', $default_font_size - 3);
+							$pdf->SetFont('','', $default_font_size - $diffsizetitle);
 							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
 							$posy=$pdf->GetY()+2;
 			            }
@@ -757,10 +770,11 @@ class pdf_azur extends ModelePDFPropales
 			// If payment mode not forced or forced to VIR, show payment with BAN
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
 			{
-				if (! empty($conf->global->FACTURE_RIB_NUMBER))
+				if (! empty($object->fk_bank) || ! empty($conf->global->FACTURE_RIB_NUMBER))
 				{
+					$bankid=(empty($object->fk_bank)?$conf->global->FACTURE_RIB_NUMBER:$object->fk_bank);
 					$account = new Account($this->db);
-					$account->fetch($conf->global->FACTURE_RIB_NUMBER);
+					$account->fetch($bankid);
 
 					$curx=$this->marge_gauche;
 					$cury=$posy;
@@ -779,7 +793,7 @@ class pdf_azur extends ModelePDFPropales
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF			&$pdf           Object PDF
+	 *	@param	PDF			$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
@@ -960,6 +974,7 @@ class pdf_azur extends ModelePDFPropales
 
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
+						    // retrieve global local tax
 							if ($tvakey != 0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
@@ -1050,7 +1065,7 @@ class pdf_azur extends ModelePDFPropales
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		PDF			$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -1080,7 +1095,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 6, 'F', null, explode(',',$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',',$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
 		}
 
 		$pdf->SetDrawColor(128,128,128);
@@ -1091,7 +1106,7 @@ class pdf_azur extends ModelePDFPropales
 
 		if (empty($hidetop))
 		{
-			$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);	// line prend une position y en 2eme param et 4eme param
+			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
 
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
@@ -1154,7 +1169,7 @@ class pdf_azur extends ModelePDFPropales
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param	PDF			$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -1224,11 +1239,11 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
 
 		$posy+=1;
-		$pdf->SetFont('','', $default_font_size - 1);
+		$pdf->SetFont('','', $default_font_size - 2);
 
 		if ($object->ref_client)
 		{
-			$posy+=5;
+			$posy+=4;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), '', 'R');
@@ -1269,7 +1284,7 @@ class pdf_azur extends ModelePDFPropales
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
-		 	$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);
+		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posy=42;
@@ -1313,12 +1328,12 @@ class pdf_azur extends ModelePDFPropales
 			{
 				// On peut utiliser le nom de la societe du contact
 				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
-				else $socname = $object->client->nom;
+				else $socname = $object->client->name;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
 			else
 			{
-				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 			}
 
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
@@ -1354,7 +1369,7 @@ class pdf_azur extends ModelePDFPropales
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			&$pdf     			PDF
+	 *   	@param	PDF			$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
@@ -1362,7 +1377,8 @@ class pdf_azur extends ModelePDFPropales
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'PROPALE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		$showdetails=0;
+		return pdf_pagefoot($pdf,$outputlangs,'PROPALE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }

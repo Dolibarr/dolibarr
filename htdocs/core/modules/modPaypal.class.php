@@ -199,4 +199,3 @@ class modPaypal extends DolibarrModules
 
 }
 
-?>

@@ -43,17 +43,19 @@ class FormProjets
 	}
 
 	/**
-	 *	Show a combo list with projects qualified for a third party
+	 *	Output a combo list with projects qualified for a third party
 	 *
 	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
 	 *	@param  int		$selected   	Id project preselected
 	 *	@param  string	$htmlname   	Nom de la zone html
 	 *	@param	int		$maxlength		Maximum length of label
-	 *	@param	int		$option_only	Option only
+	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
+	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+     *  @param	int		$forcefocus		Force focus on field (works with javascript only)
 	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1)
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0)
 	{
 		global $user,$conf,$langs;
 
@@ -77,14 +79,25 @@ class FormProjets
 		$sql.= " WHERE p.entity = ".$conf->entity;
 		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
-		$sql.= " ORDER BY p.title ASC";
+		if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
+		$sql.= " ORDER BY p.ref ASC";
 
-		dol_syslog(get_class($this)."::select_projects sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_projects", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			// Use select2 selector
+			$nodatarole='';
+			if (! empty($conf->use_javascript_ajax))
+			{
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+            	$out.=$comboenhancement;
+            	$nodatarole=($comboenhancement?' data-role="none"':'');
+			}
+
 			if (empty($option_only)) {
-				$out.= '<select class="flat" name="'.$htmlname.'">';
+				$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
 			}
 			if (!empty($show_empty)) {
 				$out.= '<option value="0">&nbsp;</option>';
@@ -103,27 +116,40 @@ class FormProjets
 					}
 					else
 					{
+						if ($discard_closed == 1 && $obj->fk_statut == 2)
+						{
+							$i++;
+							continue;
+						}
+
 						$labeltoshow=dol_trunc($obj->ref,18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
+						$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
+
+						$disabled=0;
+						if ($obj->fk_statut == 0)
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("Draft");
+						}
+						else if ($obj->fk_statut == 2)
+						{
+							if ($discard_close == 2) $disabled=1;
+							$labeltoshow.=' - '.$langs->trans("Closed");
+						}
+						else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+						}
+
 						if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.' - '.dol_trunc($obj->title,$maxlength).'</option>';
+							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
 						}
 						else
 						{
-							$disabled=0;
-							if (! $obj->fk_statut > 0)
-							{
-								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("Draft");
-							}
-							if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
-							{
-								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
-							}
-
 							if ($hideunselectables && $disabled)
 							{
 								$resultat='';
@@ -134,8 +160,8 @@ class FormProjets
 								if ($disabled) $resultat.=' disabled="disabled"';
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
-								$resultat.='>'.$labeltoshow;
-								if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,$maxlength);
+								$resultat.='>';
+								$resultat.=$labeltoshow;
 								$resultat.='</option>';
 							}
 							$out.= $resultat;
@@ -147,6 +173,7 @@ class FormProjets
 			if (empty($option_only)) {
 				$out.= '</select>';
 			}
+
 			print $out;
 
 			$this->db->free($resql);
@@ -160,13 +187,15 @@ class FormProjets
 	}
 
 	/**
-	 *    Build Select List of element associable to a project
+	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
-	 *    @param	string	$table_element		Table of the element to update
-	 *    @return	string						The HTML select list of element
+	 *    @param	string		$table_element		Table of the element to update
+	 *    @param	int			$socid				socid to filter
+	 *    @return	string							The HTML select list of element
 	 */
-	function select_element($table_element)
+	function select_element($table_element,$socid=0)
 	{
+		global $conf, $langs;
 
 		$projectkey="fk_projet";
 		switch ($table_element)
@@ -175,7 +204,10 @@ class FormProjets
 				$sql = "SELECT rowid, facnumber as ref";
 				break;
 			case "facture_fourn":
-				$sql = "SELECT rowid, ref";
+				$sql = "SELECT rowid, ref, ref_supplier";
+				break;
+			case "commande_fourn":
+				$sql = "SELECT rowid, ref, ref_supplier";
 				break;
 			case "facture_rec":
 				$sql = "SELECT rowid, titre as ref";
@@ -191,12 +223,13 @@ class FormProjets
 
 		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element;
 		$sql.= " WHERE ".$projectkey." is null";
-		if (!empty($this->societe->id)) {
-			$sql.= " AND fk_soc=".$this->societe->id;
+		if (!empty($socid)) {
+			$sql.= " AND fk_soc=".$socid;
 		}
+		$sql.= ' AND entity='.getEntity('project');
 		$sql.= " ORDER BY ref DESC";
 
-		dol_syslog(get_class($this).'::select_element sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::select_element', LOG_DEBUG);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -209,14 +242,26 @@ class FormProjets
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$sellist .='<option value="'.$obj->rowid.'">'.$obj->ref.'</option>';
+					$ref=$obj->ref?$obj->ref:$obj->rowid;
+					if (! empty($obj->ref_supplier)) $ref.=' ('.$obj->ref_supplier.')';
+					$sellist .='<option value="'.$obj->rowid.'">'.$ref.'</option>';
 					$i++;
 				}
 				$sellist .='</select>';
 			}
-			return $sellist ;
-
+			/*else
+			{
+				$sellist = '<select class="flat" name="elementselect">';
+				$sellist.= '<option value="0" disabled="disabled">'.$langs->trans("None").'</option>';
+				$sellist.= '</select>';
+			}*/
 			$this->db->free($resql);
+
+			return $sellist ;
+		}else {
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this) . "::select_element " . $this->error, LOG_ERR);
+			return -1;
 		}
 	}
 

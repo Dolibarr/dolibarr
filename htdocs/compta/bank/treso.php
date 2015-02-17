@@ -49,10 +49,6 @@ $result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fie
 $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
 
-$mesg='';
-
-
-
 /*
  * View
  */
@@ -115,10 +111,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	print '<br>';
 
-
-	if ($mesg) print '<div class="error">'.$mesg.'</div>';
-
-
 	$solde = $acct->solde(0);
 
 	/*
@@ -156,21 +148,23 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// Customer invoices
 	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.facnumber as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
-	$sql.= " s.rowid as socid, s.nom, s.fournisseur";
+	$sql.= " s.rowid as socid, s.nom as name, s.fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 	$sql.= " WHERE f.entity = ".$conf->entity;
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";	// Not paid
-	$sql.= " ORDER BY dlr ASC";
+    $sql.= " AND (f.fk_account IN (0, ".$acct->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
+    $sql.= " ORDER BY dlr ASC";
 
 	// Supplier invoices
-	$sql2= " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.ref_supplier as ref, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
-	$sql2.= " s.rowid as socid, s.nom, s.fournisseur";
+	$sql2= " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.ref as ref, ff.ref_supplier as ref_supplier, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
+	$sql2.= " s.rowid as socid, s.nom as name, s.fournisseur";
 	$sql2.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
 	$sql2.= " WHERE ff.entity = ".$conf->entity;
 	$sql2.= " AND ff.paye = 0 AND fk_statut = 1";	// Not paid
-	$sql2.= " ORDER BY dlr ASC";
+    $sql2.= " AND (ff.fk_account IN (0, ".$acct->id.") OR ff.fk_account IS NULL)"; // Id bank account of supplier invoice
+    $sql2.= " ORDER BY dlr ASC";
 
 	// Social contributions
 	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";
@@ -260,18 +254,19 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 			if ($obj->family == 'invoice_supplier')
 			{
-				// TODO This code is to avoid to count suppliers credit note (ff.type = 2)
-				// Ajouter gestion des avoirs fournisseurs, champ
-				if (($obj->total_ttc < 0 && $obj->type != 2)
-				 || ($obj->total_ttc > 0 && $obj->type == 2))
+				$showline=1;
+				// Uncomment this line to avoid to count suppliers credit note (ff.type = 2)
+				//$showline=(($obj->total_ttc < 0 && $obj->type != 2) || ($obj->total_ttc > 0 && $obj->type == 2))
+				if ($showline)
 				{
-					$facturefournstatic->ref=$obj->ref;
+					$ref=$obj->ref;
+					$facturefournstatic->ref=$ref;
 					$facturefournstatic->id=$obj->objid;
 					$facturefournstatic->type=$obj->type;
 					$ref = $facturefournstatic->getNomUrl(1,'');
 
 					$societestatic->id = $obj->socid;
-					$societestatic->nom = $obj->nom;
+					$societestatic->name = $obj->name;
 					$refcomp=$societestatic->getNomUrl(1,'',24);
 
 					$paiement = -1*$facturefournstatic->getSommePaiement();	// Payment already done
@@ -285,7 +280,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$ref = $facturestatic->getNomUrl(1,'');
 
 				$societestatic->id = $obj->socid;
-				$societestatic->nom = $obj->nom;
+				$societestatic->name = $obj->name;
 				$refcomp=$societestatic->getNomUrl(1,'',24);
 
 				$paiement = $facturestatic->getSommePaiement();	// Payment already done
@@ -304,7 +299,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			if ($paiement) $total_ttc = $obj->total_ttc - $paiement;
 			$solde += $total_ttc;
 
-			// We discard with a remain to pay to 0
+			// We discard lines with a remainder to pay to 0
 			if (price2num($total_ttc) != 0)
 			{
                 $var=!$var;

@@ -198,7 +198,7 @@ print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
 
 print "<br>";
 
-$head = supplierorder_admin_prepare_head(null);
+$head = supplierorder_admin_prepare_head();
 
 dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), 0, 'company');
 
@@ -278,15 +278,13 @@ foreach ($dirmodels as $reldir)
                         $htmltooltip='';
                         $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
                         $nextval=$module->getNextValue($mysoc,$invoice);
-                        if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                        {
+                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
-                            if ($nextval)
-                            {
+                            if ($nextval) {
+                                if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                    $nextval = $langs->trans($nextval);
                                 $htmltooltip.=$nextval.'<br>';
-                            }
-                            else
-                            {
+                            } else {
                                 $htmltooltip.=$langs->trans($module->error).'<br>';
                             }
                         }
@@ -372,9 +370,14 @@ foreach ($dirmodels as $reldir)
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
 
+	                require_once $dir.'/'.$file;
+	                $module = new $classname($db, new FactureFournisseur($db));
+
                     $var=!$var;
                     print "<tr ".$bc[$var].">\n";
-                    print "<td>".$name."</td>\n";
+                    print "<td>";
+	                print (empty($module->name)?$name:$module->name);
+	                print "</td>\n";
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db,$specimenthirdparty);

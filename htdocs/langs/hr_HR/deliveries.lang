@@ -23,4 +23,6 @@ GoodStatusDeclaration=Primljenje su stavke navedene iznad u dobrom stanju,
 Deliverer=Dostavljač:
 Sender=Pošiljatelj
 Recipient=Primatelj
-# ErrorStockIsNotEnough=There's not enough stock
+ErrorStockIsNotEnough=Nema dovoljno robe na skladištu
+Shippable=Dostava je moguća
+NonShippable=Dostava nije moguća

@@ -39,5 +39,3 @@ function check_user_password_empty($usertotest,$passwordtotest,$entitytotest)
 
 	return $login;
 }
-
-?>

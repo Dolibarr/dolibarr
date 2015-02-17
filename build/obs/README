@@ -14,7 +14,7 @@ https://build.opensuse.org
 Packaging rules: http://en.opensuse.org/Portal:Packaging
 
 Add attributes:
-OBS:Screenshots         URL of screenshot
+OBS:Screenshots         URL of screenshot http://www.dolibarr.org/images/dolibarr_screenshot1.png
 OBS:QualityCategory     Development|Testing|Stable|Private
 OBS:Maintained          1
 
@@ -29,12 +29,18 @@ To submit a snapshot for building, we should have a service file with content
 </services>
 
 How to have such a service file created automatically ?
-Click on "Add file", then select mode "Upload From: Remote URL"
-Enter the Remote URL that should looks like this: http://www.dolibarr.org/files/stable/package_rpm_generic/dolibarr-x.y.v-3.src.rpm
 
-Then add into advanded - attributes
+Go into project you want to update. It mught be:
+- openSUSE Build Service > Projects > Application:ERP:Dolibarr > dolibarr
+- or your private project
+
+Once logged, click on "Add file" in section "Source Files", then select mode "Upload From: Remote URL"
+Keep empty for "Filename", choose "Remote URL" and enter into last field, URL that should looks like this:
+http://www.dolibarr.org/files/stable/package_rpm_generic/dolibarr-x.y.v-0.3.src.rpm
+
+Then add into Advanded - Attributes
 OBS:Screenshots http://www.dolibarr.org/images/dolibarr_screenshot1.png
-OBS:QualityCategory Testing
+OBS:QualityCategory Stable|Testing|Development|Private
 
 
 # Move project into official directory

@@ -99,7 +99,7 @@ class pdf_standard
 	 * Methode qui permet de modifier la taille des caracteres
 	 * Cela modiera aussi l'espace entre chaque ligne
 	 *
-	 * @param    PDF    &$pdf      PDF
+	 * @param    PDF    $pdf      PDF
 	 * @param    int    $pt        point
 	 * @return   void
 	 */
@@ -118,7 +118,7 @@ class pdf_standard
 	 * - %LOGO% is replace with company logo
 	 * - %PHOTO% is replace with photo provided as parameter
 	 *
-	 * @param    PDF	    &$pdf		    PDF
+	 * @param    PDF	    $pdf		    PDF
 	 * @param    string     $textleft       Text left
 	 * @param    string     $header         Header
 	 * @param    string     $footer         Footer
@@ -137,7 +137,7 @@ class pdf_standard
 	 	$imgscaleheight=(empty($forceimgscalewidth)?0.5:$forceimgscalewidth);	// Scale of image for height (1=Full height of sticker)
 
 		// We are in a new page, then we must add a page
-		if (($this->_COUNTX ==0) and ($this->_COUNTY==0) and (!$this->_First==1)) {
+		if (($this->_COUNTX ==0) && ($this->_COUNTY==0) and (!$this->_First==1)) {
 			$pdf->AddPage();
 		}
 		$this->_First=0;
@@ -161,9 +161,12 @@ class pdf_standard
 
 		// Define photo
 		$dir=$conf->adherent->dir_output;
-		$file=get_exdir($idmember,2).'photos/'.$photo;
-		$photo=$dir.'/'.$file;
-		if (empty($photo) || ! is_readable($photo)) $photo='';
+		if (! empty($photo))
+		{
+			$file=get_exdir($idmember,2).'photos/'.$photo;
+			$photo=$dir.'/'.$file;
+			if (! is_readable($photo)) $photo='';
+		}
 
 		// Define background image
 		$backgroundimage='';
@@ -297,7 +300,7 @@ class pdf_standard
 	/**
 	 * Print dot line
 	 *
-	 * @param PDF	&$pdf				PDF
+	 * @param PDF	$pdf				PDF
 	 * @param int	$x1					X1
 	 * @param int	$y1					Y1
 	 * @param int	$x2					X2
@@ -338,7 +341,7 @@ class pdf_standard
 	/**
 	 * Fonction realisant une croix aux 4 coins des cartes
 	 *
-	 * @param PDF	&$pdf				PDF
+	 * @param PDF	$pdf				PDF
 	 * @param int	$x1					X1
 	 * @param int	$y1					Y1
 	 * @param int	$x2					X2
@@ -409,7 +412,7 @@ class pdf_standard
 	/**
 	 * Set format
 	 *
-	 * @param    PDF       &$pdf    PDF
+	 * @param    PDF       $pdf    PDF
 	 * @param    string    $format  Format
 	 * @return   void
 	 */

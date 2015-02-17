@@ -27,6 +27,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -37,6 +39,10 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement','','');
 
+$search_ref=GETPOST('search_ref','int');
+$search_name=GETPOST('search_name','alpha');
+$search_company=GETPOST('search_company','alpha');
+// $search_amount=GETPOST('search_amount','alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -48,14 +54,29 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.dated";
 $limit = $conf->liste_limit;
 
-$search_ref=GETPOST('search_ref','alpha');
+$year=GETPOST("year");
+$month=GETPOST("month");
 
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_ref="";
+	$search_name="";
+	$search_company="";
+	// $search_amount="";
+	$year="";
+	$month="";
+}
 
 /*
  * View
  */
 
+$formother = new FormOther($db);
 $tripandexpense_static=new Deplacement($db);
+$userstatic = new User($db);
+
+$childids = $user->getAllChildIds();
+$childids[]=$user->id;
 
 llxHeader();
 
@@ -69,12 +90,34 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= " WHERE d.fk_user = u.rowid";
 $sql.= " AND d.entity = ".$conf->entity;
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-if (trim($search_ref) != '')
+
+if ($search_ref)		$sql.=" AND d.rowid=".$search_ref;
+if ($search_name)
 {
-    $sql.= ' AND d.rowid LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
+    $sql .= natural_search('u.lastname', $search_name);
 }
+if ($search_company)
+{
+    $sql .= natural_search('s.nom', $search_company);
+}
+// if ($search_amount)		$sql.=" AND d.km='".$db->escape(price2num(trim($search_amount)))."'";
+if ($month > 0)
+{
+    if ($year > 0 && empty($day))
+    $sql.= " AND d.dated BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+    else if ($year > 0 && ! empty($day))
+    $sql.= " AND d.dated BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+    else
+    $sql.= " AND date_format(d.dated, '%m') = '".$month."'";
+}
+else if ($year > 0)
+{
+	$sql.= " AND d.dated BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+}
+
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 
@@ -92,7 +135,7 @@ if ($resql)
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"d.type","","&socid=$socid",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.dated","","&socid=$socid",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.dated","","&socid=$socid",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.lastname","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),$_SERVER["PHP_SELF"],"d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
@@ -102,24 +145,27 @@ if ($resql)
     // Filters lines
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
-    print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+    print '<input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
     print '<td class="liste_titre">';
-    //print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
+    print '&nbsp;';
+    print '</td>';
+    print '<td class="liste_titre" align="center">';
+    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+    print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+    $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
     print '<td class="liste_titre">';
-    //print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
+    print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
     print '</td>';
-    print '<td class="liste_titre" align="left">';
-    print '&nbsp;';
-    print '</td>';
-    print '<td class="liste_titre" align="right">';
-    print '&nbsp;';
+    print '<td class="liste_titre">';
+    print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
     print '</td>';
     print '<td class="liste_titre" align="right">';
-    print '&nbsp;';
+    // print '<input class="flat" size="10" type="text" name="search_amount" value="'.$search_amount.'">';
     print '</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print "</td></tr>\n";
 
     $var=true;
@@ -132,12 +178,23 @@ if ($resql)
 
         $var=!$var;
         print '<tr '.$bc[$var].'>';
-        print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$obj->rowid.'</a></td>';
+        // Id
+        print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$obj->rowid.'</a></td>';
+        // Type
         print '<td>'.$langs->trans($obj->type).'</td>';
-        print '<td>'.dol_print_date($db->jdate($obj->dd),'day').'</td>';
-        print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->firstname.' '.$obj->name.'</a></td>';
+        // Date
+        print '<td align="center">'.dol_print_date($db->jdate($obj->dd),'day').'</td>';
+        // User
+        print '<td>';
+        $userstatic->id = $obj->rowid;
+        $userstatic->lastname = $obj->lastname;
+        $userstatic->firstname = $obj->firstname;
+        print $userstatic->getNomUrl(1);
+        print '</td>';
+
         if ($obj->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
         else print '<td>&nbsp;</td>';
+
         print '<td align="right">'.$obj->km.'</td>';
 
         $tripandexpense_static->statut=$obj->fk_statut;
@@ -155,6 +212,7 @@ else
 {
     dol_print_error($db);
 }
-$db->close();
 
 llxFooter();
+
+$db->close();

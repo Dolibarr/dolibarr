@@ -154,6 +154,8 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("orders");
 		$outputlangs->load("deliveries");
 
+		$nblignes = count($object->lines);
+
 		if ($conf->commande->dir_output)
 		{
             $object->fetch_thirdparty();
@@ -184,7 +186,16 @@ class pdf_einstein extends ModelePDFCommandes
 
 			if (file_exists($dir))
 			{
-				$nblignes = count($object->lines);
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
@@ -317,6 +328,7 @@ class pdf_einstein extends ModelePDFCommandes
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc);
+						$pageposafter=$pdf->getPage();
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
@@ -403,7 +415,7 @@ class pdf_einstein extends ModelePDFCommandes
 					if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
 					&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) // and there is local tax
 					{
-						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
+						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$object->thirdparty,$mysoc);
 						$localtax1_type = $localtaxtmp_array[0];
 						$localtax2_type = $localtaxtmp_array[2];
 					}
@@ -500,11 +512,6 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->Output($file,'F');
 
 				// Add pdfgeneration hook
-				if (! is_object($hookmanager))
-				{
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-					$hookmanager=new HookManager($this->db);
-				}
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
@@ -533,7 +540,7 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
 	 *  Show payments table
      *
-	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param	PDF			$pdf     		Object PDF
 	 *  @param  Object		$object			Object order
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
@@ -548,7 +555,7 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		PDF			$pdf     		Object PDF
 	 *   @param		Object		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
@@ -732,7 +739,7 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF			&$pdf           Object PDF
+	 *	@param	PDF			$pdf           Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
@@ -786,7 +793,7 @@ class pdf_einstein extends ModelePDFCommandes
 				//{
 					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
 					{
-						if (in_array((string) $localtax_type, array('1','3','5','7'))) continue;
+						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
 							if ($tvakey!=0)    // On affiche pas taux 0
@@ -817,7 +824,7 @@ class pdf_einstein extends ModelePDFCommandes
 				//{
 					foreach( $this->localtax2 as $localtax_type => $localtax_rate )
 					{
-						if (in_array((string) $localtax_type, array('1','3','5','7'))) continue;
+						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
 							if ($tvakey!=0)    // On affiche pas taux 0
@@ -989,7 +996,7 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		PDF			$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -1084,7 +1091,7 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param	PDF			$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -1177,7 +1184,7 @@ class pdf_einstein extends ModelePDFCommandes
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
+			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posy=42;
@@ -1222,12 +1229,12 @@ class pdf_einstein extends ModelePDFCommandes
 			{
 				// On peut utiliser le nom de la societe du contact
 				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
-				else $socname = $object->client->nom;
+				else $socname = $object->client->name;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
 			else
 			{
-				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 			}
 
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
@@ -1263,7 +1270,7 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			&$pdf     			PDF
+	 *   	@param	PDF			$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
@@ -1271,7 +1278,8 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'COMMANDE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		$showdetails=0;
+		return pdf_pagefoot($pdf,$outputlangs,'COMMANDE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }

@@ -24,3 +24,5 @@ Deliverer=Lieferant:
 Sender=Absender
 Recipient=Empfänger
 ErrorStockIsNotEnough=Nicht genügend Bestand
+Shippable=Versandfertig
+NonShippable=Nicht versandfertig

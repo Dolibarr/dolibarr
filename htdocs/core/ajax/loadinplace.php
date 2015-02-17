@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2011-2014 Regis Houssin  <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 				dol_include_once('/'.$module.'/class/actions_'.$subelement.'.class.php');
 				$classname = 'Actions'.ucfirst($subelement);
 				$object = new $classname($db);
-				$ret = $object->$methodname();
+				$ret = $object->$methodname($fk_element);
 				if ($ret > 0) echo json_encode($object->$cachename);
 			}
 		}
@@ -115,4 +115,3 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	}
 }
 
-?>

@@ -9,4 +9,4 @@ FailedToConnectToFTPServer=Kon geen verbinding maken met de server (FTP-server: 
 FailedToConnectToFTPServerWithCredentials=Inloggen op FTP met ingestelde gebruikernaam / wachtwoord mislukt
 FTPFailedToRemoveFile=Bestand <b>%s</b> kon niet verwijderd worden.
 FTPFailedToRemoveDir=Map <b>%s</b> kon niet verwijderd worden (Controleer de rechten en of de map leeg is).
-# FTPPassiveMode=Passive mode
+FTPPassiveMode=Passive mode

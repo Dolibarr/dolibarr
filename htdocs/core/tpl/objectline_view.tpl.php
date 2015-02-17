@@ -2,6 +2,8 @@
 /* Copyright (C) 2010-2013	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,9 +19,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * To use this template, the following var must be defined
+ * Need to have following variables defined:
+ * $object (invoice, order, ...)
+ * $conf
+ * $langs
+ * $dateSelector
+ * $forceall (0 by default, 1 for supplier invoices/orders)
+ * $senderissupplier (0 by default, 1 for supplier invoices/orders)
+ * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
+ *
  * $type, $text, $description, $line
  */
+ 
+$usemargins=0;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+
+global $forceall, $senderissupplier, $inputalsopricewithtax;
+if (empty($dateSelector)) $dateSelector=0;
+if (empty($forceall)) $forceall=0;
+if (empty($senderissupplier)) $senderissupplier=0;
+if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 // Checked checkboxes
 if (isset($_POST['multiple_delete_lines'])) {
@@ -32,7 +51,8 @@ else {
 	$checked_cbs = array();
 }
 
-$coldisplay=0;?>
+$coldisplay=0;
+?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
 	<?php if ($user->rights->$element->supprimer AND $this->statut == 0): ?>
@@ -43,7 +63,7 @@ $coldisplay=0;?>
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td><?php $coldisplay++; ?><div id="<?php echo $line->rowid; ?>"></div>
+	<td><?php $coldisplay++; ?><div id="row-<?php echo $line->id; ?>"></div>
 	<?php if (($line->info_bits & 2) == 2) { ?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
 		<?php
@@ -116,7 +136,7 @@ $coldisplay=0;?>
 
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 
-	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
+	<?php if ($inputalsopricewithtax) { ?>
 	<td align="right" class="nowrap"><?php $coldisplay++; ?>&nbsp;</td>
 	<?php } ?>
 
@@ -136,16 +156,21 @@ $coldisplay=0;?>
 	<td><?php $coldisplay++; ?>&nbsp;</td>
 	<?php }
 
+	if ($this->situation_cycle_ref) {
+		$coldisplay++;
+		print '<td align="right" nowrap="nowrap">' . $line->situation_percent . '%</td>';
+	}
+
   if (! empty($conf->margin->enabled) && empty($user->societe_id)) {
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   ?>
-  	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
+  	<td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {?>
-  	  <td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
+  	  <td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
   	<?php
   }
   if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
-  	  <td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
+  	  <td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
   <?php } } ?>
 
 	<?php if ($line->special_code == 3)	{ ?>
@@ -165,12 +190,16 @@ $coldisplay=0;?>
 	</td>
 
 	<td align="center"><?php $coldisplay++; ?>
-		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id; ?>">
-		<?php echo img_delete(); ?>
-		</a>
+		<?php
+		if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
+			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
+			print img_delete();
+			print '</a>';
+		}
+		?>
 	</td>
 
-	<?php if ($num > 1 && empty($conf->browser->phone)) { ?>
+	<?php if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref)) { ?>
 	<td align="center" class="tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
@@ -192,7 +221,8 @@ $coldisplay=0;?>
 
 <?php
 //Line extrafield
-if (!empty($extrafieldsline)) {
+if (!empty($extrafieldsline))
+{
 	print $line->showOptionals($extrafieldsline,'view',array('style'=>$bcdd[$var],'colspan'=>$coldisplay));
 }
 ?>

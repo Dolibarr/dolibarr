@@ -1,6 +1,5 @@
-# Dolibarr language file - nl_BE - errors
+# Dolibarr language file - Source file is en_US - errors
 ErrorLoginAlreadyExists=Inloggen %s bestaat reeds.
-ErrorGroupAlreadyExists=Groep %s bestaat reeds.
 ErrorFailToDeleteFile=Mislukt om bestand '<b>%s</b>' te verwijderen
 ErrorFailToCreateFile=Mislukt om bestand '<b>%s</b>' te creëren
 ErrorFailToRenameDir=Mislukt om directory '<b>%s</b>' in '<b>%s</b>' te hernoemen
@@ -17,13 +16,10 @@ ErrorCustomerCodeAlreadyUsed=Klantencode al gebruikt
 ErrorPrefixRequired=Prefix nodig
 ErrorBadSupplierCodeSyntax=Slechte syntaxis voor Leverancierscode
 ErrorSupplierCodeRequired=Leverancierscode nodig
-ErrorSupplierCodeAlreadyUsed=Leverancierscode al gebruikt
 ErrorBadParameters=Slechte parameters
 ErrorFailedToWriteInDir=Mislukt om in de map %s te schrijven
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=User can not be deleted. May be it is associated on Dolibarr entities.
-ErrorUserCannotBeDelete=Gebruiker kan niet worden verwijderd. Mag het is gekoppeld aan Dolibarr entiteiten.
-ErrorFieldsRequired=Enkele verplichte velden zijn niet ingevuld.
 ErrorFailedToCreateDir=Mislukt om een directory te creëren. Check that Web server user has permissions to write into Dolibarr documents directory. If parameter <b>safe_mode</b> is enabled on this PHP, check that Dolibarr php files owns to web server user (or group).
 ErrorNoMailDefinedForThisUser=Geen mail gedefinieerd voor deze gebruiker
 ErrorFeatureNeedJavascript=Javascript moet geactiveerd zijn voor deze functie. Verander dit in de setup - display.
@@ -32,11 +28,6 @@ ErrorLeftMenuMustHaveAParentId=A menu of type 'Left' must have a parent id.
 ErrorFileNotFound=Bestand niet gevonden (Slecht pad, verkeerde permissies of toegang geweigerd door openbasedir parameter)
 ErrorFunctionNotAvailableInPHP=Functie <b>%s</b> is vereist voor deze toepassing, maar is niet beschikbaar in deze versie / setup van PHP.
 ErrorDirAlreadyExists=Een map met deze naam bestaat al.
-ErrorFieldCanNotContainSpecialCharacters=Veld <b>%s</b> mag geen speciale tekens bevat.
-WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> must be set to <b>on</b> in filer <b>php.ini</b> for having this module working completely. U moet dit bestand handmatig wijzigen.
-WarningBuildScriptNotRunned=Script <b>%s</b> was not yet ran to build graphics, or there is no data to show.
-WarningBookmarkAlreadyExists=Een bladwijzer met deze titel of deze URL bestaat al.
-WarningPassIsEmpty=Waarschuwing, database wachtwoord is leeg. Dit is een gat in de beveiliging. You should add a password to your database and change your conf.php file to reflect this.
 ErrorNoAccountancyModuleLoaded=Geen "accountancy" module geactiveerd
 ErrorExportDuplicateProfil=Deze profielnaam bestaat al voor deze export set.
 ErrorLDAPSetupNotComplete=Dolibarr LDAP-matching is niet compleet.
@@ -60,8 +51,9 @@ ErrorLoginDisabled=Uw account is uitgeschakeld
 ErrorFailedToRunExternalCommand=Failed to run external command. Check it is available and runnable by your PHP server. If PHP <b>Safe Mode</b> is enabled, check that command is inside a directory defined by parameter <b>safe_mode_exec_dir</b>.
 ErrorFailedToChangePassword=Mislukt om wachtwoord te wijzigen
 ErrorLoginDoesNotExists=Gebruiker met login <b>%s</b> kon niet worden gevonden.
-ErrorLoginHasNoEmail=Deze gebruiker heeft geen e-mail adres. Proces afgebroken.
 ErrorBadValueForCode=Slechte waarde voor de input-code. Probeer het opnieuw met een nieuwe waarde ...
-ErrorFileIsInfectedWith=Dit bestand is geïnfecteerd met %s
-WarningInstallDirExists=Waarschuwing, install directorie (%s) bestaat nog steeds. Dit is een ernstig beveiligingslek. U moet deze zo spoedig mogelijk verwijderen.
+WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> must be set to <b>on</b> in filer <b>php.ini</b> for having this module working completely. U moet dit bestand handmatig wijzigen.
+WarningBuildScriptNotRunned=Script <b>%s</b> was not yet ran to build graphics, or there is no data to show.
+WarningBookmarkAlreadyExists=Een bladwijzer met deze titel of deze URL bestaat al.
+WarningPassIsEmpty=Waarschuwing, database wachtwoord is leeg. Dit is een gat in de beveiliging. You should add a password to your database and change your conf.php file to reflect this.
 WarningUntilDirRemoved=Deze waarschuwing zal actief blijven zolang deze map aanwezig is (alleen weergegeven voor admin-gebruikers).WarningInstallDirExists=Waarschuwing, install directorie (%s) bestaat nog steeds. Dit is een ernstig beveiligingslek. U moet deze zo spoedig mogelijk verwijderen.

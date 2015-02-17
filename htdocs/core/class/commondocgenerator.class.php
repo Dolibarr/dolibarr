@@ -27,8 +27,7 @@
 
 
 /**
- *	\class      CommonDocGenerator
- *	\brief      Parent class for documents generators
+ *	Parent class for documents generators
  */
 abstract class CommonDocGenerator
 {
@@ -119,10 +118,9 @@ abstract class CommonDocGenerator
             'mycompany_idprof5'=>$mysoc->idprof5,
             'mycompany_idprof6'=>$mysoc->idprof6,
         	'mycompany_vatnumber'=>$mysoc->tva_intra,
-            // Only private not exists for "mysoc"
-        	'mycompany_note'=>$mysoc->note_private
-            //'mycompany_note_private'=>$mysoc->note_private,
-        	//'mycompany_note_public'=>$mysoc->note_public,
+        	// Only private not exists for "mysoc"
+            'mycompany_note_private'=>$mysoc->note_private,
+
         );
     }
 
@@ -167,6 +165,7 @@ abstract class CommonDocGenerator
             'company_customeraccountancycode'=>$object->code_compta,
             'company_supplieraccountancycode'=>$object->code_compta_fournisseur,
             'company_juridicalstatus'=>$object->forme_juridique,
+            'company_outstanding_limit'=>$object->outstanding_limit,
             'company_capital'=>$object->capital,
             'company_idprof1'=>$object->idprof1,
             'company_idprof2'=>$object->idprof2,
@@ -258,14 +257,14 @@ abstract class CommonDocGenerator
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
 		$object->fetch_optionals($object->id, $extralabels);
-		
-		foreach($extrafields->attribute_label as $key => $label) 
+
+		foreach($extrafields->attribute_label as $key => $label)
 		{
-			if ($extrafields->attribute_type[$key] == 'price') 
+			if ($extrafields->attribute_type[$key] == 'price')
 			{
 				$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
 			}
-			elseif($extrafields->attribute_type[$key] == 'select') 
+			elseif($extrafields->attribute_type[$key] == 'select')
 			{
 				$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
 			}
@@ -291,6 +290,10 @@ abstract class CommonDocGenerator
    			'current_datehour'=>dol_print_date($now,'dayhour','tzuser'),
    			'current_server_date'=>dol_print_date($now,'day','tzserver'),
    			'current_server_datehour'=>dol_print_date($now,'dayhour','tzserver'),
+   			'current_date_locale'=>dol_print_date($now,'day','tzuser',$outputlangs),
+   			'current_datehour_locale'=>dol_print_date($now,'dayhour','tzuser',$outputlangs),
+   			'current_server_date_locale'=>dol_print_date($now,'day','tzserver',$outputlangs),
+   			'current_server_datehour_locale'=>dol_print_date($now,'dayhour','tzserver',$outputlangs),
     	);
 
     	return $array_other;
@@ -358,7 +361,8 @@ abstract class CommonDocGenerator
 		$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
 
 		$array_key.'_note_private'=>$object->note,
-		$array_key.'_note'=>$object->note_public,
+		$array_key.'_note_public'=>$object->note_public,
+		$array_key.'_note'=>$object->note_public,			// For backward compatibility
 		// Payments
 		$array_key.'_already_payed_locale'=>price($alreadypayed, 0, $outputlangs),
 		$array_key.'_remain_to_pay_locale'=>price($object->total_ttc - $sumpayed, 0, $outputlangs),
@@ -377,15 +381,14 @@ abstract class CommonDocGenerator
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))
 		{
-			$extrafieldkey=$this->element;
-			'facture';
+			$extrafieldkey=$object->element;
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label('facture',true);
+			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
 			$object->fetch_optionals($object->id,$extralabels);
 
-			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
 		}
 		return $resarray;
 	}
@@ -401,7 +404,7 @@ abstract class CommonDocGenerator
 	{
 		global $conf;
 
-		return array(
+		$resarray= array(
 			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
 			'line_product_ref'=>$line->product_ref,
 			'line_product_label'=>$line->product_label,
@@ -422,6 +425,18 @@ abstract class CommonDocGenerator
 			'line_date_end'=>$line->date_end,
 			'line_date_end_rfc'=>dol_print_date($line->date_end,'rfc')
 		);
+
+		// Retrieve extrafields
+		$extrafieldkey=$line->element;
+		$array_key="line";
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
+		$line->fetch_optionals($line->rowid,$extralabels);
+
+		$resarray = $this->fill_substitutionarray_with_extrafields($line,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+
+		return $resarray;
 	}
 
     /**

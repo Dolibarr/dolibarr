@@ -603,7 +603,7 @@ upload_max_filesize = 2M
 ;;;;;;;;;;;;;;;;;;
 
 ; Whether to allow the treatment of URLs (like http:// or ftp://) as files.
-allow_url_fopen = Off
+allow_url_fopen = On
 
 ; Whether to allow include/require to open URLs (like http:// or ftp://) as files.
 allow_url_include = Off

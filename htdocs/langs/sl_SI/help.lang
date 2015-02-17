@@ -24,5 +24,5 @@ BackToHelpCenter=Sicer kliknite <a href="%s">tukaj za prehod nazaj na domačo st
 LinkToGoldMember=Lahko pokličete enega of inštruktorjev, ki jih je Dolibarr izbral vnaprej za vaš jezik (%s) s kliko na ustrezno ikono (status in maksimalna cena se posodobita avtomatsko):
 PossibleLanguages=Podprti jeziki
 MakeADonation=Pomagajte projektu Dolibarr z vašo donacijo
-# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=POmagajte projektu Dolibarr z včlanitvijo v združenje
+SeeOfficalSupport=Za uradno Dolibarr podporo v vašem jeziku: <br><b><a href="%s" target="_blank">%s</a></b>

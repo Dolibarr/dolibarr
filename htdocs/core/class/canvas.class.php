@@ -67,7 +67,7 @@ class Canvas
 	    $newaction = $action;
 	    if ($newaction == 'add')    $newaction='create';
 	    if ($newaction == 'update') $newaction='edit';
-	    if (empty($newaction) || $newaction == 'delete' || $newaction == 'create_user') $newaction='view';
+	    if (empty($newaction) || $newaction == 'delete' || $newaction == 'create_user' || $newaction == 'presend' || $newaction == 'send') $newaction='view';
 	    return $newaction;
 	}
 
@@ -125,7 +125,7 @@ class Canvas
     /**
 	 * 	Shared method for canvas to assign values for templates
 	 *
-	 * 	@param		string		&$action	Action string
+	 * 	@param		string		$action	Action string
 	 * 	@param		int			$id			Object id (if ref not provided)
 	 * 	@param		string		$ref		Object ref (if id not provided)
 	 * 	@return		void
@@ -181,7 +181,7 @@ class Canvas
 	/**
 	 * 	Shared method for canvas to execute actions
 	 *
-	 * 	@param		string		&$action	Action string
+	 * 	@param		string		$action	Action string
 	 * 	@param		int			$id			Object id
 	 * 	@return		mixed					Return return code of doActions of canvas
 	 * 	@deprecated	This function is called if you add a doActions class inside your canvas. Try to not
@@ -198,4 +198,3 @@ class Canvas
 	}
 
 }
-?>

@@ -4,7 +4,8 @@ Sending=Spedizione
 Sendings=Spedizioni
 Shipment=Spedizione
 Shipments=Spedizioni
-Receivings=Ricezioni
+ShowSending=Show Sending
+Receivings=Receipts
 SendingsArea=Sezione spedizioni
 ListOfSendings=Elenco delle spedizioni
 SendingMethod=Metodo di invio
@@ -14,7 +15,7 @@ SearchASending=Ricerca di una spedizione
 StatisticsOfSendings=Statistiche spedizioni
 NbOfSendings=Numero di spedizioni
 NumberOfShipmentsByMonth=Numero di spedizioni per mese
-SendingCard=Scheda di spedizione
+SendingCard=Shipment card
 NewSending=Nuova spedizione
 CreateASending=Creazione di una spedizione
 CreateSending=Crea una spedizione
@@ -37,7 +38,7 @@ StatusSendingCanceledShort=Annullato
 StatusSendingDraftShort=Bozza
 StatusSendingValidatedShort=Convalidata
 StatusSendingProcessedShort=Processato
-SendingSheet=Documento di Trasporto (D.d.t.)
+SendingSheet=Shipment sheet
 Carriers=Vettori
 Carrier=Vettore
 CarriersArea=Sezione vettori
@@ -54,23 +55,31 @@ StatsOnShipmentsOnlyValidated=Statistiche calcolate solo sulle spedizioni conval
 DateDeliveryPlanned=Data di consegna prevista
 DateReceived=Data di consegna ricevuto
 SendShippingByEMail=Invia spedizione via EMail
-SendShippingRef=Invia %s spedizione
+SendShippingRef=Invio della spedizione %s
 ActionsOnShipping=Acions sulla spedizione
 LinkToTrackYourPackage=Link a monitorare il tuo pacchetto
 ShipmentCreationIsDoneFromOrder=Per il momento, la creazione di una nuova spedizione viene effettuata dalla scheda dell'ordine.
-RelatedShippings=Spedizioni collegate
+RelatedShippings=Related shipments
 ShipmentLine=Filiera di spedizione
 CarrierList=Elenco dei trasportatori
+SendingRunning=Product from ordered customer orders
+SuppliersReceiptRunning=Product from ordered supplier orders
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Ritiro da parte del Cliente
 SendingMethodTRANS=A cura del mittente
 SendingMethodCOLSUI=Corriere espresso
-
 # ModelDocument
 DocumentModelSirocco=Semplice modello di documento per le ricevute di consegna
 DocumentModelTyphon=Modello più completo di documento per le ricevute di consegna (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER costante non definita
 SumOfProductVolumes=Totale volume prodotti
 SumOfProductWeights=Totale peso prodotti
+
+# warehouse details
+DetailWarehouseNumber= Dettagli magazzino
+DetailWarehouseFormat= Peso:%s (Qtà : %d)

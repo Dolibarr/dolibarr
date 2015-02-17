@@ -84,6 +84,8 @@ class ExportTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -265,4 +267,3 @@ class ExportTest extends PHPUnit_Framework_TestCase
         return true;
     }
 }
-?>

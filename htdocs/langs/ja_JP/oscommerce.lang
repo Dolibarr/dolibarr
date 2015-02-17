@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=OSコマース
-OSCommerceSetup=OSコマースモジュールのセットアップ
-OSCommerceSetupSaved=保存されたOSコマースのセットアップ
-OSCommerceServer=OS Commerce Serverのホスト名/ IPアドレス
-OSCommerceDatabaseName=OS Commerceデータベース名
-OSCommercePrefix=OSコマースのテーブルの接頭辞
-OSCommerceUser=OS Commerceデータベースへのログイン

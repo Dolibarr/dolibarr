@@ -25,6 +25,9 @@ if (GETPOST('dol_optimize_smallscreen')) $conf->dol_optimize_smallscreen=1;
 if (GETPOST('dol_no_mouse_hover')) $conf->dol_no_mouse_hover=1;
 if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
 
+// If we force to use jmobile, then we reenable javascript
+if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
+
 print top_htmlhead('',$langs->trans('Login').' '.$title);
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
@@ -40,7 +43,10 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
+
 <center>
+<div class="login_vertical_align">
+
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
@@ -55,15 +61,24 @@ $(document).ready(function () {
 
 <div id="login_line1">
 
+
 <div id="login_left">
 
-<table class="left" summary="Login pass">
+<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
+
+</div>
+
+
+<div id="login_right">
+
+<table summary="Login pass" class="centpercent">
 
 <!-- Login -->
 <tr>
-<td valign="bottom" class="loginfield nowrap"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
-<td valign="bottom" class="nowrap">
-<input type="text" <?php echo $disabled; ?> id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
+<td valign="bottom" class="nowrap center">
+<span class="span-icon-user">
+<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
+</span>
 </td>
 </tr>
 
@@ -79,15 +94,24 @@ if (! empty($hookmanager->resArray['options'])) {
 }
 ?>
 
-<?php if ($captcha) { ?>
+<?php if ($captcha) { 
+		// Add a variable param to force not using cache (jmobile)
+		$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
+		if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
+		else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
+	?>
 	<!-- Captcha -->
-	<tr><td valign="middle" class="loginfield nowrap"><strong><label for="securitycode"><?php echo $langs->trans('SecurityCode'); ?></label></strong></td>
-	<td valign="top" class="nowrap none" align="left">
+	<tr>
+	<td valign="top" class="nowrap none center">
 
-	<table class="login_table_securitycode" style="width: 100px;"><tr>
-	<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
+	<table class="login_table_securitycode centpercent"><tr>
+	<td>
+	<span class="span-icon-security">
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security" type="text" size="12" maxlength="5" name="code" tabindex="3" />
+	</span>
+	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
+	<td><a href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
 
 	</td></tr>
@@ -97,11 +121,9 @@ if (! empty($hookmanager->resArray['options'])) {
 
 </div> <!-- end div left -->
 
-<div id="login_right">
 
-<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
 
-</div>
+
 </div>
 
 <div id="login_line2" style="clear: both">
@@ -110,7 +132,7 @@ if (! empty($hookmanager->resArray['options'])) {
 <br><input id="password" type="submit" <?php echo $disabled; ?> class="button" name="password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
-<div align="center" style="margin-top: 4px;">
+<div align="center" style="margin-top: 8px;">
 	<?php
 	$moreparam='';
 	if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
@@ -129,7 +151,7 @@ if (! empty($hookmanager->resArray['options'])) {
 </form>
 
 
-<div class="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
+<div class="center login_main_home" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
 <?php if ($mode == 'dolibarr' || ! $disabled) { ?>
 	<font style="font-size: 12px;">
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
@@ -145,16 +167,16 @@ if (! empty($hookmanager->resArray['options'])) {
 <br>
 
 <?php if ($message) { ?>
-	<div class="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
+	<div class="center login_main_message" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
 	<?php echo dol_htmloutput_mesg($message,'','',1); ?>
 	</div>
 <?php } ?>
 
+
+</div>
 </center>	<!-- end of center -->
 
-<br>
 
 </body>
 </html>
-
 <!-- END PHP TEMPLATE -->

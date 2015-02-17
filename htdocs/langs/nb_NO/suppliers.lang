@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Leverandører
 Supplier=Leverandør
-AddSupplier=Legg til en leverandør
+AddSupplier=Create a supplier
 SupplierRemoved=Leverandør slettet
 SuppliersInvoice=Leverandørfaktura
 NewSupplier=Ny leverandør
@@ -40,3 +40,7 @@ AddSupplierInvoice=Opprett innkjøpsfaktura
 ListOfSupplierProductForSupplier=Oversikt over produkter og priser for leverandøren <b>%s</b>
 NoneOrBatchFileNeverRan=Ingen eller batch <b>%s</b> ikke løp nylig
 SentToSuppliers=Sendt til leverandører
+ListOfSupplierOrders=Liste over leverandørordre
+MenuOrdersSupplierToBill=Supplier orders to invoice
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list

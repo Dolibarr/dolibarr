@@ -66,9 +66,10 @@ if ($id > 0 || ! empty($ref))
 {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
-	
+
 	$parameters=array('id'=>$id);
 	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
@@ -78,9 +79,9 @@ if ($id > 0 || ! empty($ref))
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==1?'service':'product');
 		dol_fiche_head($head, 'referers', $titre,0,$picto);
-		
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
 
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 		print '<table class="border" width="100%">';
 
@@ -112,8 +113,8 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 
-		$sql = "SELECT DISTINCT s.nom, s.rowid as socid, p.rowid as propalid, p.ref, p.total_ht as amount,";
-		$sql.= "p.datep, p.fk_statut as statut";
+		$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, p.total_ht as amount,";
+		$sql.= "p.datep, p.fk_statut as statut, d.qty";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ",".MAIN_DB_PREFIX."propal as p";
@@ -141,6 +142,7 @@ if ($id > 0 || ! empty($ref))
 			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","&amp;id=".$product->id,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("DatePropal"),$_SERVER["PHP_SELF"],"p.datep","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Qty"),$_SERVER["PHP_SELF"],"d.qty","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"p.total","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
@@ -159,9 +161,10 @@ if ($id > 0 || ! empty($ref))
 					print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
 					print $objp->ref;
 					print '</a></td>'."\n";
-					print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+					print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';
 					print '<td align="center">';
 					print dol_print_date($db->jdate($objp->datep))."</td>";
+					print "<td align=\"center\">".$objp->qty."</td>\n";
 					print '<td align="right">'.price($objp->amount).'</td>'."\n";
 					print '<td align="right">'.$propalstatic->LibStatut($objp->statut,5).'</td>';
 					print '</tr>'."\n";
@@ -186,4 +189,3 @@ else
 
 llxFooter();
 $db->close();
-?>

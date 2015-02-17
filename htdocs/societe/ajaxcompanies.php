@@ -81,10 +81,10 @@ if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
 		if (! empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) $sql.=" OR rowid = '" . $db->escape($socid) . "'";
 		$sql.=")";
 	}
-	if (! empty($_GET["filter"])) $sql.= " AND ".$_GET["filter"]; // Add other filters
+	if (GETPOST("filter")) $sql.= " AND ".GETPOST("filter","alpha"); // Add other filters
 	$sql.= " ORDER BY nom ASC";
 
-	//dol_syslog("ajaxcompanies sql=".$sql);
+	//dol_syslog("ajaxcompanies", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -110,5 +110,3 @@ else
 {
     echo json_encode(array('nom'=>'ErrorBadParameter','label'=>'ErrorBadParameter','key'=>'ErrorBadParameter','value'=>'ErrorBadParameter'));
 }
-
-?>

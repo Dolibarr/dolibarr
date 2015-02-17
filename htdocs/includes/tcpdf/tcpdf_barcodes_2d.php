@@ -1,13 +1,13 @@
 <?php
 //============================================================+
 // File name   : tcpdf_barcodes_2d.php
-// Version     : 1.0.014
+// Version     : 1.0.015
 // Begin       : 2009-04-07
-// Last Update : 2013-03-17
+// Last Update : 2014-05-20
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2009-2013 Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2009-2014 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -37,14 +37,14 @@
  * PHP class to creates array representations for 2D barcodes to be used with TCPDF.
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 1.0.014
+ * @version 1.0.015
  */
 
 /**
  * @class TCPDF2DBarcode
  * PHP class to creates array representations for 2D barcodes to be used with TCPDF (http://www.tcpdf.org).
  * @package com.tecnick.tcpdf
- * @version 1.0.014
+ * @version 1.0.015
  * @author Nicola Asuni
  */
 class TCPDF2DBarcode {
@@ -163,6 +163,26 @@ class TCPDF2DBarcode {
 	}
 
 	/**
+	 * Send a PNG image representation of barcode (requires GD or Imagick library).
+	 * @param $w (int) Width of a single rectangle element in pixels.
+	 * @param $h (int) Height of a single rectangle element in pixels.
+	 * @param $color (array) RGB (0-255) foreground color for bar elements (background is transparent).
+ 	 * @public
+	 */
+	public function getBarcodePNG($w=3, $h=3, $color=array(0,0,0)) {
+		$data = $this->getBarcodePngData($w, $h, $color);
+		// send headers
+		header('Content-Type: image/png');
+		header('Cache-Control: public, must-revalidate, max-age=0'); // HTTP/1.1
+		header('Pragma: public');
+		header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+		//header('Content-Length: '.strlen($data));
+		echo $data;
+
+	}
+
+	/**
 	 * Return a PNG image representation of barcode (requires GD or Imagick library).
 	 * @param $w (int) Width of a single rectangle element in pixels.
 	 * @param $h (int) Height of a single rectangle element in pixels.
@@ -170,7 +190,7 @@ class TCPDF2DBarcode {
  	 * @return image or false in case of error.
  	 * @public
 	 */
-	public function getBarcodePNG($w=3, $h=3, $color=array(0,0,0)) {
+	public function getBarcodePngData($w=3, $h=3, $color=array(0,0,0)) {
 		// calculate image size
 		$width = ($this->barcode_array['num_cols'] * $w);
 		$height = ($this->barcode_array['num_rows'] * $h);
@@ -211,18 +231,15 @@ class TCPDF2DBarcode {
 			}
 			$y += $h;
 		}
-		// send headers
-		header('Content-Type: image/png');
-		header('Cache-Control: public, must-revalidate, max-age=0'); // HTTP/1.1
-		header('Pragma: public');
-		header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 		if ($imagick) {
 			$png->drawimage($bar);
-			echo $png;
+			return $png;
 		} else {
+			ob_start();
 			imagepng($png);
+			$imagedata = ob_get_clean();
 			imagedestroy($png);
+			return $imagedata;
 		}
 	}
 

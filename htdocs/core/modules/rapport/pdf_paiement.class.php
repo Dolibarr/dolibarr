@@ -91,11 +91,11 @@ class pdf_paiement
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-		global $user,$langs,$conf;
+		global $conf, $hookmanager, $langs, $user;
 
 		$socid=0;
 		if ($user->societe_id) $socid=$user->societe_id;
-		
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
@@ -119,6 +119,17 @@ class pdf_paiement
 		$year = sprintf("%04d",$year);
 		$file = $dir . "/payments-".$year."-".$month.".pdf";
 
+		// Add pdfgeneration hook
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('pdfgeneration'));
+		$parameters=array('file'=>$file,'outputlangs'=>$outputlangs);
+		global $action;
+		$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
         $pdf=pdf_getInstance($this->format);
         $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
 
@@ -141,7 +152,7 @@ class pdf_paiement
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
 		$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf,";
 		$sql.= " ".MAIN_DB_PREFIX."societe as s";
-		if (! $user->rights->societe->client->voir && ! $socid) 
+		if (! $user->rights->societe->client->voir && ! $socid)
 		{
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
@@ -149,14 +160,14 @@ class pdf_paiement
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND p.fk_paiement = c.id ";
 		$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
-		if (! $user->rights->societe->client->voir && ! $socid) 
+		if (! $user->rights->societe->client->voir && ! $socid)
 		{
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		}
 		if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
 		$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 
-		dol_syslog(get_class($this)."::write_file sql=".$sql);
+		dol_syslog(get_class($this)."::write_file", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -228,6 +239,18 @@ class pdf_paiement
 		$pdf->Close();
 
 		$pdf->Output($file,'F');
+
+		// Add pdfgeneration hook
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('pdfgeneration'));
+		$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+		global $action;
+		$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -237,7 +260,7 @@ class pdf_paiement
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param	PDF			$pdf     		Object PDF
 	 *  @param  int			$page	     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -296,7 +319,7 @@ class pdf_paiement
 	/**
 	 *	Output body
 	 *
-	 *	@param	PDF			&$pdf			PDF object
+	 *	@param	PDF			$pdf			PDF object
 	 *	@param	string		$page			Page
 	 *	@param	array		$lines			Array of lines
 	 *	@param	Translate	$outputlangs	Object langs

@@ -71,6 +71,7 @@ ActionAC_FAX=Saada faks
 ActionAC_PROP=Saada pakkumine e-postiga
 ActionAC_EMAIL=Saada e-kiri
 ActionAC_RDV=Koosolekud
+ActionAC_INT=Intervention on site
 ActionAC_FAC=Saada kliendi arve posti teel
 ActionAC_REL=Saada kliendi arve posti teel (meeldetuletus)
 ActionAC_CLO=Sulge

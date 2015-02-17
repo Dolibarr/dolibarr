@@ -277,7 +277,7 @@ function limitChars(textarea, limit, infodiv)
             {
                 $defaultmessage=$this->withbody;
             }
-            $defaultmessage=make_substitutions($defaultmessage,$this->substit,$langs);
+            $defaultmessage=make_substitutions($defaultmessage,$this->substit);
             if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
             $defaultmessage=str_replace('\n',"\n",$defaultmessage);
 
@@ -320,15 +320,14 @@ function limitChars(textarea, limit, infodiv)
 
         print "</table>\n";
 
-        print '<center>';
-        print "<input class=\"button\" type=\"submit\" name=\"sendmail\" value=\"".$langs->trans("SendSms")."\"";
-        print ">";
+        print '<div class="center">';
+        print '<input class="button" type="submit" name="sendmail" value="'.$langs->trans("SendSms").'">';
         if ($this->withcancel)
         {
-            print " &nbsp; &nbsp; ";
-            print "<input class=\"button\" type=\"submit\" name=\"cancel\" value=\"".$langs->trans("Cancel")."\">";
+            print '&nbsp;&nbsp;&nbnp;&nbsp;&nbsp;';
+            print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
         }
-        print "</center>\n";
+        print '</div>';
 
         print "</form>\n";
         print "<!-- End form SMS -->\n";

@@ -106,56 +106,41 @@ $server->wsdl->addComplexType(
     'tns:categorie'
 );
 
-/*
- * Tableau des catégories
-
-$server->wsdl->addComplexType(
-    'categories',
-    'complexType',
-    'array',
-    '',
-    'SOAP-ENC:Array',
-    array(),
-    array(
-        array('id'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:categorie[]')
-    ),
-    'tns:categories'
-);
+ /*
+  * Image of product
  */
-
-/*
- * Les photos  de la catégorie (un tableau indéxé qui contient les images avec leur vignette)
+ $server->wsdl->addComplexType(
+ 		'PhotosArray',
+ 		'complexType',
+ 		'array',
+ 		'sequence',
+ 		'',
+ 		array(
+ 				'image' => array(
+ 						'name' => 'image',
+ 						'type' => 'tns:image',
+ 						'minOccurs' => '0',
+ 						'maxOccurs' => 'unbounded'
+ 				)
+ 		)
+ );
+ 
+ /*
+  * An image
  */
-$server->wsdl->addComplexType(
-	'PhotosArray',
-    'complexType',
-    'array',
-    '',
-    'SOAP-ENC:Array',
-    array(),
-    array(
-        array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:image[]')
-    ),
-	''
-);
-
-/*
- * Une photo ( nom image / nom_vignette )
- */
-$server->wsdl->addComplexType(
- 	'image',
- 	'complexType',
- 	'array',
- 	'',
- 	'SOAP-ENC:Array',
- 	array(),
- 	array(
-	 	'photo' => array('name'=>'photo','type'=>'xsd:string'),
-	 	'photo_vignette' => array('name'=>'photo_vignette','type'=>'xsd:string'),
-	 	'imgWidth' => array('name'=>'imgWidth','type'=>'xsd:string'),
-	 	'imgHeight' => array('name'=>'imgHeight','type'=>'xsd:string')
-	)
-);
+ $server->wsdl->addComplexType(
+ 		'image',
+ 		'complexType',
+ 		'struct',
+ 		'all',
+ 		'',
+ 		array(
+ 				'photo' => array('name'=>'photo','type'=>'xsd:string'),
+ 				'photo_vignette' => array('name'=>'photo_vignette','type'=>'xsd:string'),
+ 				'imgWidth' => array('name'=>'imgWidth','type'=>'xsd:string'),
+ 				'imgHeight' => array('name'=>'imgHeight','type'=>'xsd:string')
+ 		)
+ );
 
 /*
  * Retour
@@ -298,8 +283,5 @@ function getCategory($authentication,$id)
 	return $objectresp;
 }
 
-
 // Return the results.
-$server->service($HTTP_RAW_POST_DATA);
-
-?>
+$server->service(file_get_contents("php://input"));

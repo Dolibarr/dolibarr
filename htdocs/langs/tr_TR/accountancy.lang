@@ -1,0 +1,160 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=Muhasebe
+Globalparameters=Genel parametreler
+Chartofaccounts=Hesap planı
+Fiscalyear=Mali yıllar
+Menuaccount=Muhasebe hesapları
+Menuthirdpartyaccount=Üçüncü parti hesapları
+MenuTools=Araçlar
+
+ConfigAccountingExpert=Hesap uzmanı modülü yapılandırması
+Journaux=Günlükler
+JournalFinancial=Mali günlükler
+Exports=Dışaaktarımlar
+Export=Dışaaktar
+Modelcsv=Dışaaktarım modeli
+OptionsDeactivatedForThisExportModel=Bu dışaaktarma modeli için seçenekler etkinleştirilmemiş
+Selectmodelcsv=Bir dışaaktarım modeli seç
+Modelcsv_normal=Klasik dışaaktarım
+Modelcsv_CEGID=CEGID Uzmanına yönelik dışaaktarım
+BackToChartofaccounts=Hesap planı cirosu
+Back=Ciro
+
+Definechartofaccounts=Hesap planı tanımla
+Selectchartofaccounts=Hesap planı seç
+Validate=Doğrula
+Addanaccount=Muhasebe hesabı ekle
+AccountAccounting=Muhasebe hesabı
+Ventilation=Analiz
+ToDispatch=Gönderilecek
+Dispatched=Gönderilmiş
+
+CustomersVentilation=Müşteri analizi
+SuppliersVentilation=Tedarikç analizi
+TradeMargin=Ticaret oranı
+Reports=Raporlar
+ByCustomerInvoice=Müşteri faturalarına göre
+ByMonth=Aya göre
+NewAccount=Yeni muhasebe hesabı
+Update=Güncelle
+List=Liste
+Create=Oluştur
+UpdateAccount=Bir muhasebe hesabının değiştirilmesi
+UpdateMvts=Bir hareketin değiştirilmesi
+WriteBookKeeping=Büyük defter hesap kayıtları
+Bookkeeping=Büyük Defter
+AccountBalanceByMonth=Aylık hesap bakiyesi
+
+AccountingVentilation=Analiz muhasebesi
+AccountingVentilationSupplier=Tedarikçi hesabı analizi
+AccountingVentilationCustomer=Müşteri hesabı analizi
+Line=Satır
+
+CAHTF=Tedarikçi HT toplam sipariş
+InvoiceLines=Analiz edilecek fatura kalemleri
+InvoiceLinesDone=Analiz edilen fatura kalemleri
+IntoAccount=Muhasebe hesabında
+
+Ventilate=Analiz
+VentilationAuto=Otomatik analiz
+
+Processing=İşleme
+EndProcessing=İşleme sonu
+AnyLineVentilate=Analiz edilecek herhangi bir kalem
+SelectedLines=Seçilen satırlar
+Lineofinvoice=Fatura satırı
+VentilatedinAccount=Muhasebe hesabında başarıyla analiz edildi
+NotVentilatedinAccount=Muhasebe hesabında analiz edilmedi.
+
+ACCOUNTING_SEPARATORCSV=Dışaaktarma dosyası sütün ayırıcısı
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Analiz syfasında gösterilecek öğe sayısı (önerilen ençok:50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Analiz sayfalarında "Analiz edileceklerin" sıralandırılmasını en son öğelerden göre başlatın
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Analiz sayfalarında "Analiz edilmişlerin" sıralandırılmasını en son öğelerden göre başlatın
+
+AccountLength=Dolibarr'da gösterilen muhasebe hesapları uzunluğu
+AccountLengthDesc=Boşlukların sıfır figürü ile değiştirilmesiyle muhasebe hesap uzunluğunun uydurulmasını sağlayan işlevdir. Bu işlev yalnızca görüntüyü değiştirir, Dolibarr'da kayıtlı muhasebe hesaplarını değiştirmez. Dışaaktarma için bu fonksiyonun belirli yazılımla uyumlu olması gerekir.
+ACCOUNTING_LENGTH_GACCOUNT=Genel hesapların uzunluğu
+ACCOUNTING_LENGTH_AACCOUNT=Üçüncü parti hesaplarının uzunluğu
+
+ACCOUNTING_SELL_JOURNAL=Satış günlüğü
+ACCOUNTING_PURCHASE_JOURNAL=Satınalma günlüğü
+ACCOUNTING_BANK_JOURNAL=Banka günlüğü
+ACCOUNTING_CASH_JOURNAL=Kasa günlüğü
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Çeşitli günlük
+ACCOUNTING_SOCIAL_JOURNAL=Sosyal günlük
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Transfer hesabı
+ACCOUNTING_ACCOUNT_SUSPENSE=Bekleme hesabı
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Satınalınan ürünler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Satılan ürünler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Satınalınan hizmetler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Satılan hizmetler için varsayılan muhasebe kodu (hizmet sayfasında tanımlanmamışsa)
+
+Doctype=Belge türü
+Docdate=Tarih
+Docref=Referans
+Numerocompte=Hesap
+Code_tiers=Üçüncü parti
+Labelcompte=Hesap etiketi
+Debit=Borç
+Credit=Alacak
+Amount=Tutar
+Sens=Sens (borsa haberleri yayınlama günlüğü)
+Codejournal=Günlük
+
+DelBookKeeping=Büyük defter kayıtlarını sil
+
+SellsJournal=Satış günlüğü
+PurchasesJournal=Satınalma günlüğü
+DescSellsJournal=Satış günlüğü
+DescPurchasesJournal=Satınalma günlüğü
+BankJournal=Banka günlüğü
+DescBankJournal=Nakit dışında her türlü ödemeyi içeren banka günlüğü
+CashJournal=Kasa günlüğü
+DescCashJournal=Nakit ödeme türünü içeren kasa günlüğü
+
+CashPayment=Nakit ödeme
+
+SupplierInvoicePayment=Tedarikçi faturası ödemesi
+CustomerInvoicePayment=Müşteri faturası ödemesi
+
+ThirdPartyAccount=Üçüncü parti hesabı
+
+NewAccountingMvt=Yeni hareket
+NumMvts=Hareket sayısı
+ListeMvts=Hareket listesi
+ErrorDebitCredit=Borç ve Alacak aynı anda bir değere sahip olamaz
+
+ReportThirdParty=Üçüncü parti hesabını listele
+DescThirdPartyReport=Burada üçüncü parti müşterileri ve tedarikçileri ile onların muhasebe hesaplarının listesine bakın
+
+ListAccounts=Muhasebe hesapları listesi
+
+Pcgversion=Plan sürümü
+Pcgtype=Hesap sınıfı
+Pcgsubtype=Hesap sınıfı altında
+Accountparent=Hesabın kökü
+Active=Hesap özeti
+
+NewFiscalYear=Yeni mali yıl
+
+DescVentilCustomer=Müşteri faturalarınızın yıllık hesap analizi için buraya danışın
+TotalVente=Toplam ciro HT
+TotalMarge=Toplam satışlar oranı
+DescVentilDoneCustomer=Burada müşteri faturaları satırlarına ve onların muhasebe hesaplarının listesine bakın.
+DescVentilTodoCustomer=Bir muhasebe hesabıyla müşteri faturanızın kalemlerini analiz edin
+ChangeAccount=Muhasebe hesabını, hesap tarafından seçilen satırlar için değiştirin:
+Vide=-
+DescVentilSupplier=Tedarikçi faturalarınızın yıllık hesap analizi için buraya danışın
+DescVentilTodoSupplier=Bir muhasebe hesabıyla tedarikçi faturanızın kalemlerini analiz edin
+DescVentilDoneSupplier=Burada tedarikçi faturaları ve muhasebe hesapları satırları listesine başvurun
+
+ValidateHistory=Otomatikman doğrula
+
+ErrorAccountancyCodeIsAlreadyUse=Hata, kullanıldığı için bu muhasebe hesabını silemezsiniz
+
+FicheVentilation=Analiz kartı

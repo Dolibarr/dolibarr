@@ -4,7 +4,8 @@ Sending=Verzending
 Sendings=Verzendingen
 Shipment=Verzending
 Shipments=Verzendingen
-Receivings=Ontvangsten
+ShowSending=Show Sending
+Receivings=Receipts
 SendingsArea=Zendingenoverzicht
 ListOfSendings=Verzendlijst
 SendingMethod=Verzendwijze
@@ -14,7 +15,7 @@ SearchASending=Zoek een zending
 StatisticsOfSendings=Verzendingsstatistieken
 NbOfSendings=Aantal zendingen
 NumberOfShipmentsByMonth=Aantal verzendingen per maand
-SendingCard=Verzendbon
+SendingCard=Shipment card
 NewSending=Nieuwe verzending
 CreateASending=Creëer een verzending
 CreateSending=Creëer verzending
@@ -37,7 +38,7 @@ StatusSendingCanceledShort=Geannuleerd
 StatusSendingDraftShort=Concept
 StatusSendingValidatedShort=Gevalideerd
 StatusSendingProcessedShort=Verwerkt
-SendingSheet=Verzendbrief
+SendingSheet=Shipment sheet
 Carriers=Vervoerders
 Carrier=Vervoerder
 CarriersArea=verzendersoverzicht
@@ -54,23 +55,31 @@ StatsOnShipmentsOnlyValidated=Statistiek op verzendingen die bevestigd zijn.  Da
 DateDeliveryPlanned=Geplande leveringsdatum
 DateReceived=Datum leveringsonvangst
 SendShippingByEMail=Stuur verzending per e-mail
-SendShippingRef=Stuur scheepvaart %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Acions op verzendkosten
 LinkToTrackYourPackage=Link naar uw pakket
 ShipmentCreationIsDoneFromOrder=Op dit moment, is oprichting van een nieuwe zending gedaan van de volgorde kaart.
-RelatedShippings=Aanverwante verzendingen
+RelatedShippings=Related shipments
 ShipmentLine=Verzendingslijn
 CarrierList=Lijst van transporteurs
+SendingRunning=Product from ordered customer orders
+SuppliersReceiptRunning=Product from ordered supplier orders
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Afhalen door de afnemer
 SendingMethodTRANS=Vervoerder
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Eenvoudig leveringsbewijs documentmodel
 DocumentModelTyphon=Completer leveringsbewijs documentmodel (logo, etc)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER niet gedefinieerd
 SumOfProductVolumes=Som van alle productvolumes
 SumOfProductWeights=Som van product-gewichten
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

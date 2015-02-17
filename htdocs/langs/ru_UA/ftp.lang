@@ -1,12 +1,4 @@
-/*
- * Language code: ru_UA
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ru_UA
+# Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=FTP-клиент модуль установки
 NewFTPClient=Новое соединение FTP-установки
 FTPArea=FTP Площадь
@@ -14,4 +6,3 @@ FTPAreaDesc=Этот экран покажет вам содержание зр�
 SetupOfFTPClientModuleNotComplete=Установка модуля клиент FTP, кажется, не полная
 FTPFeatureNotSupportedByYourPHP=Ваш PHP не поддерживает FTP-функции
 FailedToConnectToFTPServer=Не удалось подключиться к FTP-сервер (сервер %s, порт %s)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:37:57).

@@ -2,7 +2,7 @@
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,45 +202,51 @@ class Don extends CommonObject
 
 
     /**
-     *	Check params
+     *	Check params and init ->errors array.
+     *  TODO This function seems to not be used by core code.
      *
      *	@param	int	$minimum	Minimum
      *	@return	int				0 if KO, >0 if OK
      */
     function check($minimum=0)
     {
+    	global $langs;
+    	$langs->load('main');
+    	$langs->load('companies');
+
+    	$error_string = array();
         $err = 0;
 
         if (dol_strlen(trim($this->societe)) == 0)
         {
             if ((dol_strlen(trim($this->lastname)) + dol_strlen(trim($this->firstname))) == 0)
             {
-                $error_string[$err] = "Vous devez saisir vos nom et prenom ou le nom de votre societe.";
+                $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Company').'/'.$langs->trans('Firstname').'-'.$langs->trans('Lastname'));
                 $err++;
             }
         }
 
         if (dol_strlen(trim($this->address)) == 0)
         {
-            $error_string[$err] = "L'adresse saisie est invalide";
+            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Address'));
             $err++;
         }
 
         if (dol_strlen(trim($this->zip)) == 0)
         {
-            $error_string[$err] = "Le code postal saisi est invalide";
+            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Zip'));
             $err++;
         }
 
         if (dol_strlen(trim($this->town)) == 0)
         {
-            $error_string[$err] = "La ville saisie est invalide";
+            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Town'));
             $err++;
         }
 
         if (dol_strlen(trim($this->email)) == 0)
         {
-            $error_string[$err] = "L'email saisi est invalide";
+            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('EMail'));
             $err++;
         }
 
@@ -252,7 +258,7 @@ class Don extends CommonObject
         {
             if (!isset($map[substr($this->amount, $i, 1)] ))
             {
-                $error_string[$err] = "Le montant du don contient un/des caractere(s) invalide(s)";
+                $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Amount'));
                 $err++;
                 $amount_invalid = 1;
                 break;
@@ -263,14 +269,14 @@ class Don extends CommonObject
         {
             if ($this->amount == 0)
             {
-                $error_string[$err] = "Le montant du don est null";
+                $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Amount'));
                 $err++;
             }
             else
             {
                 if ($this->amount < $minimum && $minimum > 0)
                 {
-                    $error_string[$err] = "Le montant minimum du don est de $minimum";
+                    $error_string[] = $langs->trans('MinimumAmount',$langs->trans('$minimum'));
                     $err++;
                 }
             }
@@ -278,14 +284,13 @@ class Don extends CommonObject
 
         if ($err)
         {
-            $this->error = $error_string;
+            $this->errors = $error_string;
             return 0;
         }
         else
-        {
+		{
             return 1;
         }
-
     }
 
     /**
@@ -307,6 +312,8 @@ class Don extends CommonObject
         $this->country=($this->country?$this->country:$this->country);
 
         $now=dol_now();
+
+        $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."don (";
         $sql.= "datec";
@@ -354,25 +361,23 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->phone_mobile)."'";
         $sql.= ")";
 
-        dol_syslog("Don::create sql=".$sql, LOG_DEBUG);
+        dol_syslog("Don::create", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
 
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('DON_CREATE',$this,$user,$langs,$conf);
-            if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-            }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('DON_CREATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+            // End call triggers
 
+            $this->db->commit();
             return $this->id;
         }
         else
         {
+            $this->db->rollback();
             dol_print_error($this->db);
             return -1;
         }
@@ -392,6 +397,8 @@ class Don extends CommonObject
         $this->town=($this->town>0?$this->town:$this->town);
         $this->country_id=($this->country_id>0?$this->country_id:$this->country_id);
         $this->country=($this->country?$this->country:$this->country);
+
+        $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
         $sql .= "amount = " . price2num($this->amount);
@@ -414,14 +421,21 @@ class Don extends CommonObject
         $sql .= ",fk_statut=".$this->statut;
         $sql .= " WHERE rowid = $this->id";
 
-        dol_syslog("Don::update sql=".$sql);
+        dol_syslog("Don::update", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
+            // Call trigger
+            $result=$this->call_trigger('DON_UPDATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+            // End call triggers
+
+            $this->db->commit();
             return 1;
         }
         else
         {
+            $this->db->rollback();
             dol_print_error($this->db);
             return -1;
         }
@@ -436,6 +450,8 @@ class Don extends CommonObject
     function delete($rowid)
     {
 
+        $this->db-begin();
+
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
 
         $resql=$this->db->query($sql);
@@ -443,10 +459,17 @@ class Don extends CommonObject
         {
             if ( $this->db->affected_rows($resql) )
             {
+                // Call trigger
+                $result=$this->call_trigger('DON_DELETE',$user);
+                if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+                // End call triggers
+
+                $this->db->commit();
                 return 1;
             }
             else
             {
+                $this->db->rollback();
                 return -1;
             }
         }
@@ -478,7 +501,7 @@ class Don extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_paiement";
         $sql.= " WHERE d.rowid = ".$rowid." AND d.entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -535,7 +558,6 @@ class Don extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0";
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -571,7 +593,6 @@ class Don extends CommonObject
         }
         $sql .=  " WHERE rowid = $rowid AND fk_statut = 1";
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -603,7 +624,6 @@ class Don extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2";
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -633,7 +653,6 @@ class Don extends CommonObject
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$rowid;
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -692,15 +711,15 @@ class Don extends CommonObject
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowDonation").': '.$this->id;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/dons/fiche.php?rowid='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/dons/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
         $picto='generic';
 
-        $label=$langs->trans("ShowDonation").': '.$this->id;
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$lien.$this->id.$lienfin;
         return $result;

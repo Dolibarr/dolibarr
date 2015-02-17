@@ -75,7 +75,8 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 
 llxHeader('',$langs->trans("Categories"),$help_url);
 
-print_fiche_titre($langs->trans("CategoriesSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("CategoriesSetup"),$linkback,'setup');
 
 
 $head=categoriesadmin_prepare_head();

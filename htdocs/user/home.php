@@ -26,7 +26,7 @@ require '../main.inc.php';
 if (! $user->rights->user->user->lire && ! $user->admin)
 {
 	// Redirection vers la page de l'utilisateur
-	header("Location: fiche.php?id=".$user->id);
+	header("Location: card.php?id=".$user->id);
 	exit;
 }
 
@@ -98,8 +98,16 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max=10;
 
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_societe, u.datec, u.statut, u.entity, u.ldap_sid,";
-$sql.= " s.nom as name, s.canvas";
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_societe, u.datec, u.statut";
+$sql.= ", u.entity";
+$sql.= ", u.ldap_sid";
+$sql.= ", u.photo";
+$sql.= ", u.admin";
+$sql.= ", u.email";
+$sql.= ", u.skype";
+$sql.= ", s.nom as name";
+$sql.= ", s.code_client";
+$sql.= ", s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
 if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
@@ -129,7 +137,18 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
-		print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.dolGetFirstLastname($obj->firstname,$obj->lastname).'</a>';
+		print '<td>';
+        $fuserstatic->id = $obj->rowid;
+        $fuserstatic->statut = $obj->statut;
+        $fuserstatic->lastname = $obj->lastname;
+        $fuserstatic->firstname = $obj->firstname;
+        $fuserstatic->login = $obj->login;
+        $fuserstatic->photo = $obj->photo;
+        $fuserstatic->admin = $obj->admin;
+        $fuserstatic->email = $obj->email;
+        $fuserstatic->skype = $obj->skype;
+        $fuserstatic->societe_id = $obj->fk_societe;
+        print $fuserstatic->getNomUrl(1);
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{
 			print img_picto($langs->trans("SuperAdministrator"),'redstar');
@@ -145,34 +164,37 @@ if ($resql)
 		{
 			$companystatic->id=$obj->fk_societe;
             $companystatic->name=$obj->name;
+            $companystatic->code_client = $obj->code_client;
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
-		}
-		else if (! empty($conf->multicompany->enabled))
-        {
-        	if ($obj->admin && ! $obj->entity)
-        	{
-        		print $langs->trans("AllEntities");
-        	}
-        	else
-        	{
-        		$mc->getInfo($obj->entity);
-        		print $mc->label;
-        	}
-        }
-		else if ($obj->ldap_sid)
-		{
-			print $langs->trans("DomainUser");
 		}
 		else
 		{
 			print $langs->trans("InternalUser");
 		}
+		if ($obj->ldap_sid)
+		{
+			print ' ('.$langs->trans("DomainUser").')';
+		}
+        // TODO This should be done with a hook
+        if (is_object($mc))
+        {
+			if (! empty($conf->multicompany->enabled))
+	        {
+	        	if ($obj->admin && ! $obj->entity)
+	        	{
+	        		print ' ('.$langs->trans("AllEntities").')';
+	        	}
+	        	else
+	        	{
+	        		$mc->getInfo($obj->entity);
+	        		print ' ('.$mc->label.')';
+	        	}
+	        }
+        }
 		print '</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
         print '<td align="right">';
-        $fuserstatic->id=$obj->rowid;
-        $fuserstatic->statut=$obj->statut;
         print $fuserstatic->getLibStatut(3);
         print '</td>';
 
@@ -196,7 +218,7 @@ if ($canreadperms)
 {
 	$max=5;
 
-	$sql = "SELECT g.rowid, g.nom, g.note, g.entity, g.datec";
+	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 	if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
 	{
@@ -226,7 +248,7 @@ if ($canreadperms)
 			$var=!$var;
 
 			print "<tr ".$bc[$var].">";
-			print '<td><a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
+			print '<td><a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
 			if (! $obj->entity)
 			{
 				print img_picto($langs->trans("GlobalGroup"),'redstar');

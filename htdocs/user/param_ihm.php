@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
  *
@@ -87,8 +87,6 @@ if ($action == 'update' && ($caneditfield || ! empty($user->admin)))
         if ($_POST["check_MAIN_LANG_DEFAULT"]=="on") $tabparam["MAIN_LANG_DEFAULT"]=$_POST["main_lang_default"];
         else $tabparam["MAIN_LANG_DEFAULT"]='';
 
-        $tabparam["MAIN_MENU_STANDARD"]=$_POST["MAIN_MENU_STANDARD"];
-
         if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["MAIN_SIZE_LISTE_LIMIT"]=$_POST["main_size_liste_limit"];
         else $tabparam["MAIN_SIZE_LISTE_LIMIT"]='';
 
@@ -100,8 +98,6 @@ if ($action == 'update' && ($caneditfield || ! empty($user->admin)))
         $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
 
         $result=dol_set_user_param($db, $conf, $fuser, $tabparam);
-
-        $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
         header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
         exit;
@@ -183,10 +179,10 @@ if ($action == 'edit')
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(! empty($fuser->conf->MAIN_LANG_DEFAULT)?" checked":"");
-    print ! empty($dolibarr_main_demo)?' disabled="disabled"':'';	// Disabled for demo
+    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
-    print $formadmin->select_language((! empty($fuser->conf->MAIN_LANG_DEFAULT)?$fuser->conf->MAIN_LANG_DEFAULT:''),'main_lang_default',1);
+    print $formadmin->select_language((! empty($fuser->conf->MAIN_LANG_DEFAULT)?$fuser->conf->MAIN_LANG_DEFAULT:''),'main_lang_default',1,null,0,0,(! empty($dolibarr_main_demo)));
     print '</td></tr>';
 
     // Taille max des listes
@@ -194,7 +190,7 @@ if ($action == 'edit')
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($fuser->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
-    print ! empty($dolibarr_main_demo)?' disabled="disabled"':'';	// Disabled for demo
+    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td><input class="flat" name="main_size_liste_limit" id="main_size_liste_limit" size="4" value="' . (! empty($fuser->conf->MAIN_SIZE_LISTE_LIMIT)?$fuser->conf->MAIN_SIZE_LISTE_LIMIT:'') . '"></td></tr>';
 
@@ -206,11 +202,11 @@ if ($action == 'edit')
     dol_fiche_end();
 
 
-    print '<center>';
+    print '<div class="center">';
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-    print ' &nbsp; &nbsp; ';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-    print '</center>';
+    print '</div>';
 
     print '</form>';
 

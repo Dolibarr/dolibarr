@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +80,8 @@ class ContratTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -162,37 +164,13 @@ class ContratTest extends PHPUnit_Framework_TestCase
     	return $localobject;
     }
 
-    /**
-     * testContratValid
-     *
-     * @param	Contrat		$localobject		Contract
-     * @return	int
-     *
-     * @depends	testContratFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testContratValid($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-    	$result=$localobject->update_statut($user);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-
-    	$this->assertLessThan($result, 0);
-    	return $localobject;
-    }
-
    /**
-     * testContratValid
+     * testContratOther
      *
      * @param	Object	$localobject	Object contract
      * @return	int
      *
-     * @depends testContratValid
+     * @depends testContratFetch
      * The depends says test is run only if previous is ok
      */
     public function testContratOther($localobject)

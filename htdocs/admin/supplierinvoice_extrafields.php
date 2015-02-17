@@ -38,13 +38,14 @@ if (!$user->admin)
 $langs->load("admin");
 $langs->load("other");
 $langs->load("bills");
+$langs->load("orders");
 $langs->load("suppliers");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=getStaticMember(get_class($extrafields),'type2label');
+$tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
@@ -75,7 +76,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
 print "<br>\n";
 
-$head = supplierorder_admin_prepare_head(null);
+$head = supplierorder_admin_prepare_head();
 
 dol_fiche_head($head, 'supplierinvoice', $langs->trans("Suppliers"), 0, 'company');
 

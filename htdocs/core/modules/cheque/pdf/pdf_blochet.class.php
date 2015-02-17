@@ -85,7 +85,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 */
 	function write_file($_dir, $number, $outputlangs)
 	{
-		global $user,$conf,$langs;
+		global $user,$conf,$langs,$hookmanager;
 
         if (! is_object($outputlangs)) $outputlangs=$langs;
         // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -111,7 +111,18 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			}
 		}
 
-		$_file = $dir . "/bordereau-".$number.".pdf";
+		$file = $dir . "/bordereau-".$number.".pdf";
+
+		// Add pdfgeneration hook
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('pdfgeneration'));
+		$parameters=array('file'=>$file, 'outputlangs'=>$outputlangs);
+		global $action;
+		$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 		// Create PDF instance
         $pdf=pdf_getInstance($this->format);
@@ -141,6 +152,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
 		$nboflines=count($this->lines);
+
 		// Define nb of page
 		$pages = intval($nboflines / $this->line_per_page);
 		if (($nboflines % $this->line_per_page)>0)
@@ -165,9 +177,21 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->Close();
 
-		$pdf->Output($_file,'F');
+		$pdf->Output($file,'F');
+
+		// Add pdfgeneration hook
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('pdfgeneration'));
+		$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+		global $action;
+		$reshook=$hookmanager->executeHooks('adterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 		if (! empty($conf->global->MAIN_UMASK))
-			@chmod($_file, octdec($conf->global->MAIN_UMASK));
+			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
         $outputlangs->charset_output=$sav_charset_output;
 	    return 1;   // Pas d'erreur
@@ -177,7 +201,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *	Generate Header
 	 *
-	 *	@param  PDF			&$pdf        	Pdf object
+	 *	@param  PDF			$pdf        	Pdf object
 	 *	@param  int			$page        	Current page number
 	 *	@param  int			$pages       	Total number of pages
 	 *	@param	Translate	$outputlangs	Object language for output
@@ -283,7 +307,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *	Output array
 	 *
-	 *	@param	PDF			&$pdf			PDF object
+	 *	@param	PDF			$pdf			PDF object
 	 *	@param	int			$pagenb			Page nb
 	 *	@param	int			$pages			Pages
 	 *	@param	Translate	$outputlangs	Object lang
@@ -341,7 +365,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			&$pdf     			PDF
+	 *   	@param	PDF			$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
@@ -352,7 +376,8 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		//return pdf_pagefoot($pdf,$outputlangs,'BANK_CHEQUERECEIPT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
+		//$showdetails=0;
+		//return pdf_pagefoot($pdf,$outputlangs,'BANK_CHEQUERECEIPT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 		$paramfreetext='BANK_CHEQUERECEIPT_FREE_TEXT';
 		$marge_basse=$this->marge_basse;
 		$marge_gauche=$this->marge_gauche;
@@ -403,4 +428,3 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 }
 
-?>

@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,80 +54,120 @@ class box_commandes extends ModeleBoxes
     {
         global $user, $langs, $db, $conf;
 
-		$this->max=$max;
+        $this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-        $commandestatic=new Commande($db);
+        include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerOrders",$max));
+        $commandestatic = new Commande($db);
+        $societestatic = new Societe($db);
+        $userstatic = new User($db);
+
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders",$max));
 
         if ($user->rights->commande->lire)
         {
-
-            $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " c.ref, c.tms, c.rowid,";
-            $sql.= " c.fk_statut, c.facture";
+            $sql = "SELECT s.nom as name";
+            $sql.= ", s.rowid as socid";
+            $sql.= ", s.code_client";
+            $sql.= ", s.logo";
+            $sql.= ", c.ref, c.tms";
+            $sql.= ", c.rowid";
+            $sql.= ", c.date_commande";
+            $sql.= ", c.ref_client";
+            $sql.= ", c.fk_statut";
+            $sql.= ", c.fk_user_valid";
+            $sql.= ", c.facture";
+            $sql.= ", c.total_ht";
+            $sql.= ", c.tva as total_tva";
+            $sql.= ", c.total_ttc";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."commande as c";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE c.fk_soc = s.rowid";
             $sql.= " AND c.entity = ".$conf->entity;
+            if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) $sql.=" AND c.fk_statut = 1";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-            $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
             $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);
-            if ($result)
-            {
+            if ($result) {
                 $num = $db->num_rows($result);
 
-                $i = 0;
+                $line = 0;
 
-                while ($i < $num)
-                {
+                while ($line < $num) {
                     $objp = $db->fetch_object($result);
-					$datem=$db->jdate($objp->tms);
+                    $date=$db->jdate($objp->date_commande);
+                    $datem=$db->jdate($objp->tms);
+                    $commandestatic->id = $objp->rowid;
+                    $commandestatic->ref = $objp->ref;
+                    $commandestatic->ref_client = $objp->ref_client;
+                    $commandestatic->total_ht = $objp->total_ht;
+                    $commandestatic->total_tva = $objp->total_tva;
+                    $commandestatic->total_ttc = $objp->total_ttc;
+                    $societestatic->id = $objp->socid;
+                    $societestatic->name = $objp->name;
+                    $societestatic->code_client = $objp->code_client;
+                    $societestatic->logo = $objp->logo;
 
-                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);
-
-                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->ref,
-                    'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);
-
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-                    'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
-
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $objp->nom,
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
-
-                    $this->info_box_contents[$i][4] = array('td' => 'align="right"',
-                    'text' => dol_print_date($datem,'day'),
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $commandestatic->getNomUrl(1),
+                        'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
-                    'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3));
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $societestatic->getNomUrl(1),
+                        'asis' => 1,
+                    );
 
-                    $i++;
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => price($objp->total_ht),
+                    );
+
+                    if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_SHOW_VALIDATE_USER)) {
+                        if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
+                        $this->info_box_contents[$line][] = array(
+                            'td' => 'align="right"',
+                            'text' => (($objp->fk_user_valid > 0)?$userstatic->getNomUrl(1):''),
+                            'asis' => 1,
+                        );
+                    }
+
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($date,'day'),
+                    );
+
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3),
+                    );
+
+                    $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedOrders"));
+                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedOrders"));
 
-				$db->free($result);
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
             }
-            else {
-                $this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-            }
-        }
-        else {
-            $this->info_box_contents[0][0] = array('align' => 'left',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'align' => 'left',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
         }
     }
 

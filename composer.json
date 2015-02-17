@@ -24,6 +24,8 @@
         "ext-mcrypt": "*",
         "ext-openssl": "*",
         "ext-mbstring": "*",
-        "ext-soap": "*"
+        "ext-soap": "*",
+        "ext-zip": "*",
+        "ext-xml": "*"
     }
 }

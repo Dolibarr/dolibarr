@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
+
 /*
  * Actions
  */
@@ -69,14 +70,14 @@ if ($action == "new")
         $result = $object->demande_prelevement($user);
         if ($result > 0)
         {
-            header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-            exit;
+            setEventMessage($langs->trans("RecordSaved"));
         }
         else
         {
         	setEventMessage($object->error, 'errors');
         }
     }
+    $action='';
 }
 
 if ($action == "delete")
@@ -142,7 +143,7 @@ if ($object->id > 0)
 
 	/*
 	 *   Facture
-	*/
+	 */
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -307,6 +308,31 @@ if ($object->id > 0)
 	print '</td>';
 	print '</tr>';
 
+	// Conditions de reglement
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('PaymentConditionsShort');
+	print '</td>';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE)
+	{
+		if ($action == 'editconditions')
+		{
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
+		}
+		else
+		{
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
+		}
+	}
+	else
+	{
+		print '&nbsp;';
+	}
+	print '</td></tr>';
+
 	// Date payment term
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -333,32 +359,7 @@ if ($object->id > 0)
 	}
 	print '</td></tr>';
 
-	// Conditions de reglement
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('PaymentConditionsShort');
-	print '</td>';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE)
-	{
-		if ($action == 'editconditions')
-		{
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
-		}
-		else
-		{
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
-		}
-	}
-	else
-	{
-		print '&nbsp;';
-	}
-	print '</td></tr>';
-
-	// Mode de reglement
+	// Payment mode
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
@@ -376,6 +377,26 @@ if ($object->id > 0)
 	}
 	print '</td></tr>';
 
+	// Bank Account
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	print $langs->trans('BankAccount');
+	print '<td>';
+	if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
+	    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($action == 'editbankaccount')
+	{
+	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+	}
+	else
+	{
+	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+	}
+	print "</td>";
+	print '</tr>';
+	
 	// Montants
 	print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 	print '<td align="right" colspan="2" nowrap>'.price($object->total_ht).'</td>';
@@ -384,21 +405,19 @@ if ($object->id > 0)
 	print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
-	if ($mysoc->country_code=='ES')
+	if ($mysoc->localtax1_assuj=="1") //Localtax1
 	{
-		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
-		if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
+		print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
+		print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
+	if ($mysoc->localtax2_assuj=="1") //Localtax2
+	{
+		print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
+		print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	}
+
 
 	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
@@ -450,7 +469,7 @@ if ($object->id > 0)
 
 	/*
 	 * Buttons
-	*/
+	 */
 	print "\n<div class=\"tabsAction\">\n";
 
 	// Add a withdraw request
@@ -467,7 +486,11 @@ if ($object->id > 0)
 	}
 	else
 	{
-		if ($num == 0) print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPayed")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+		if ($num == 0)
+		{
+			if ($object->statut > 0) print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPayed")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+		}
 		else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 	}
 
@@ -489,7 +512,7 @@ if ($object->id > 0)
 	print '<td align="center">'.$langs->trans("WithdrawalReceipt").'</td>';
 	print '<td align="center">'.$langs->trans("User").'</td><td>&nbsp;</td><td>&nbsp;</td>';
 	print '</tr>';
-	$var=True;
+	$var=true;
 
 	if ($result_sql)
 	{
@@ -505,7 +528,7 @@ if ($object->id > 0)
 			print '<td align="center">'.$langs->trans("OrderWaiting").'</td>';
 			print '<td align="center">'.price($obj->amount).'</td>';
 			print '<td align="center">-</td>';
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 			print '<td>&nbsp;</td>';
 			print '<td>';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;did='.$obj->rowid.'">';
@@ -561,7 +584,7 @@ if ($object->id > 0)
 			print $withdrawreceipt->getNomUrl(1);
 			print "</td>\n";
 
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
 			print '<td>&nbsp;</td>';
 			print '<td>&nbsp;</td>';

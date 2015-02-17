@@ -25,6 +25,7 @@
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
+require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/keypad.php';
 
 // Test if already logged
 if ( $_SESSION['uid'] <= 0 )
@@ -75,4 +76,3 @@ include_once 'affPied.php';
 
 print '</div></div></div>'."\n";
 print '</body></html>'."\n";
-?>

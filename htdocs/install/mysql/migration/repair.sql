@@ -73,6 +73,18 @@ delete from llx_livraisondet where fk_livraison not in (select fk_target from ll
 delete from llx_livraison    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
 
 
+-- Fix delete element_element orphelins (right side)
+delete from llx_element_element where targettype='shipping' and fk_target not in (select rowid from llx_expedition);
+delete from llx_element_element where targettype='propal' and fk_target not in (select rowid from llx_propal);
+delete from llx_element_element where targettype='facture' and fk_target not in (select rowid from llx_facture);
+delete from llx_element_element where targettype='commande' and fk_target not in (select rowid from llx_commande);
+-- Fix delete element_element orphelins (left side)
+delete from llx_element_element where sourcetype='shipping' and fk_source not in (select rowid from llx_expedition);
+delete from llx_element_element where sourcetype='propal' and fk_source not in (select rowid from llx_propal);
+delete from llx_element_element where sourcetype='facture' and fk_source not in (select rowid from llx_facture);
+delete from llx_element_element where sourcetype='commande' and fk_source not in (select rowid from llx_commande);
+
+
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
 UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 
@@ -108,21 +120,14 @@ UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps
 -- VMYSQL DELETE from llx_menu where module = 'margins' and url = '/margin/index.php' and not exists (select * from llx_const where name = 'MAIN_MODULE_MARGIN' or name = 'MAIN_MODULE_MARGINS');
 
 
--- Requests to clean old tables or fields
-
--- DROP TABLE llx_c_methode_commande_fournisseur;
--- DROP TABLE llx_c_source;
--- DROP TABLE llx_cond_reglement;
--- DROP TABLE llx_expedition_methode;
--- DROP TABLE llx_product_fournisseur;
--- ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
+ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur;
 
 
 -- Fix: deprecated tag to new one
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
-
+update llx_opensurvey_sondage set tms = now();
 
 -- ALTER TABLE llx_facture_fourn ALTER COLUMN fk_cond_reglement DROP NOT NULL;
 
@@ -149,4 +154,75 @@ update llx_societe set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_societe_double;
 
 
-UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid
+UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
+
+
+UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 and (fk_user_action is null or fk_user_action = 0);
+UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author > 0 and (fk_user_action is null or fk_user_action = 0);
+
+
+UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS NULL and task_date IS NOT NULL;
+
+
+-- Requests to clean old tables or external modules tables
+
+-- DROP TABLE llx_c_methode_commande_fournisseur;
+-- DROP TABLE llx_c_source;
+-- DROP TABLE llx_congespayes;
+-- DROP TABLE llx_congespayes_config;
+-- DROP TABLE llx_congespayes_log;
+-- DROP TABLE llx_congespayes_events;
+-- DROP TABLE llx_congespayes_users;
+-- DROP TABLE llx_compta;
+-- DROP TABLE llx_compta_compte_generaux;
+-- DROP TABLE llx_compta_account;
+-- DROP TABLE llx_cabinetmed*;
+-- DROP TABLE llx_cond_reglement;
+-- DROP TABLE llx_expedition_methode;
+-- DROP TABLE llx_product_fournisseur;
+-- DROP TABLE llx_element_rang;
+-- DROP TABLE llx_dolicloud_customers;
+-- DROP TABLE llx_dolicloud_emailstemplates;
+-- DROP TABLE llx_dolicloud_stats;
+-- DROP TABLE llx_submitew_message;
+-- DROP TABLE llx_submitew_targets;
+-- DROP TABLE llx_submitew_targets_param;
+-- DROP TABLE llx_pos_cash;
+-- DROP TABLE llx_pos_control_cash;
+-- DROP TABLE llx_pos_facture;
+-- DROP TABLE llx_pos_moviments;
+-- DROP TABLE llx_pos_ticketdet;
+
+-- To replace amount on all invoice and lines when forgetting to apply a 20% vat
+-- update llx_facturedet set tva_tx = 20 where tva_tx = 0;
+-- update llx_facturedet set total_ht = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
+-- update llx_facturedet set total_tva = total_ttc - total_ht where total_vat = 0;
+-- update llx_facture set total = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
+-- update llx_facture set tva = total_ttc - total where tva = 0;
+
+-- To insert elements into a category
+-- Search idcategory: select rowid from llx_categorie where type=0 and ref like '%xxx%'
+-- Select all products to include: select * from llx_product where ref like '%xxx%'
+-- If ok, insert: insert into llx_categorie_product(fk_categorie, fk_product) select idcategory, rowid from llx_product where ref like '%xxx%'
+-- List of product with a category xxx: select distinct cp.fk_product from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' order by fk_product;
+-- List of product into 2 categories xxx: select cp.fk_product, count(cp.fk_product) as nb from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' group by fk_product having nb > 1;
+-- List of product with no category xxx yet: select rowid, ref from llx_product where rowid not in (select distinct cp.fk_product from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' order by fk_product);
+
+-- Replace xxx with your IP Address 
+-- bind-address        = xxx.xxx.xxx.xxx
+-- CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypass';
+-- CREATE USER 'myuser'@'%' IDENTIFIED BY 'mypass';
+-- GRANT ALL ON *.* TO 'myuser'@'localhost';
+-- GRANT ALL ON *.* TO 'myuser'@'%';
+-- flush privileges;
+
+-- Fix type of product 2 does not exists
+update llx_propaldet set product_type = 1 where product_type = 2;
+update llx_commandedet set product_type = 1 where product_type = 2;
+update llx_facturedet set product_type = 1 where product_type = 2;
+--update llx_propaldet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
+--update llx_commandedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
+--update llx_facturedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
+
+
+

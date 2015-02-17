@@ -83,6 +83,8 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -130,7 +132,7 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * isValidMailDomain
+     * testIsValidMailDomain
      *
      * @return void
      */
@@ -140,19 +142,109 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * isValidURL
+     * testIsValidURL
      *
      * @return	void
      */
     public function testIsValidUrl()
     {
-    	$result=isValidUrl('http://www.google.com',1);
-        print __METHOD__." result=".$result."\n";
-    	$this->assertEquals(1,$result);
-    	$result=isValidUrl('www.google.com',2);
-        print __METHOD__." result=".$result."\n";
-    	$this->assertEquals(0,$result);
+	    //Simple check
+	    $result = isValidUrl('http://google.com');
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('goo=gle');	// This is good, it might be an alias of hostname
+	    $this->assertEquals(1, $result);
+
+	    //With scheme check
+    	$result = isValidUrl('http://www.google.com', 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('ftp://www.google.com', 1);
+	    $this->assertEquals(0, $result);
+
+	    //With password check invalid. This test should be ko but currently it is not
+	    //$result = isValidUrl('http://user:password@http://www.google.com', 1, 1);
+	    //$this->assertEquals(0, $result);
+
+	    //With password check valid
+	    $result = isValidUrl('http://user:password@www.google.com', 1, 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('http://www.google.com', 1, 1);
+	    $this->assertEquals(0, $result);
+
+	    //With port check
+	    $result = isValidUrl('http://google.com:8080', 0, 0, 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('http://google.com', 0, 0, 1);
+	    $this->assertEquals(0, $result);
+
+	    //With path check
+	    $result = isValidUrl('http://google.com/search', 0, 0, 0, 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('http://google.com', 0, 0, 0, 0);
+	    $this->assertEquals(1, $result);
+
+	    //With query check
+	    $result = isValidUrl('http://google.com/search?test=test', 0, 0, 0, 0, 1);
+	    $this->assertEquals(1, $result);
+
+	    //With query check
+	    $result = isValidUrl('http://google.com?test=test', 0, 0, 0, 0, 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('http://google.com', 0, 0, 0, 0, 1);
+	    $this->assertEquals(0, $result);
+
+	    //With anchor check
+	    $result = isValidUrl('http://google.com/search#done', 0, 0, 0, 0, 0, 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('http://google.com/search', 0, 0, 0, 0, 0, 1);
+	    $this->assertEquals(0, $result);
     }
 
+    /**
+     * testIsIP
+     *
+     * @return	void
+     */
+    public function testIsIP()
+    {
+    	// Not valid
+    	$ip='a299.299.299.299';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(0,$result,$ip);
+
+    	// Reserved IP range (not checked by is_ip function)
+    	$ip='169.254.0.0';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(0,$result,$ip);
+
+    	$ip='1.2.3.4';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(1,$result,$ip);
+
+    	// Private IP ranges
+    	$ip='10.0.0.0';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(2,$result,$ip);
+
+    	$ip='172.16.0.0';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(2,$result,$ip);
+
+    	$ip='192.168.0.0';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(2,$result,$ip);
+
+    }
 }
-?>

@@ -116,7 +116,7 @@ foreach ($modulesdir as $dir)
 $db->commit();
 
 // Show warning about external users
-print showModulesExludedForExternal($modules).'<br>'."\n";
+print info_admin(showModulesExludedForExternal($modules)).'<br>'."\n";
 print "<br>\n";
 
 

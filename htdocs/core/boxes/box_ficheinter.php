@@ -1,20 +1,21 @@
 <?php
 /* Copyright (C) 2013 Florian Henry  <florian.henry@open-concept.pro>
  * Copyright (C) 2013 Juanjo Menent  <jmenent@2byte.es>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * 		\file       htdocs/core/boxes/box_ficheinter.php
@@ -65,21 +66,18 @@ class box_ficheinter extends ModeleBoxes
 			$sql.= " f.datec,";
 			$sql.= " f.date_valid as datev,";
 			$sql.= " f.tms as datem,";
-			$sql.= " s.nom, s.rowid as socid, s.client";
+			$sql.= " s.nom as name, s.rowid as socid, s.client";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (! $user->rights->societe->client->voir)
-				$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= ", ".MAIN_DB_PREFIX."fichinter as f";
 			$sql.= " WHERE f.fk_soc = s.rowid ";
 			$sql.= " AND f.entity = ".$conf->entity;
-			if (! $user->rights->societe->client->voir && !$user->societe_id)
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if (! $user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
-
 			$sql.= " ORDER BY f.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog(get_class($this).'::loadBox sql='.$sql,LOG_DEBUG);
+			dol_syslog(get_class($this).'::loadBox', LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql)
 			{
@@ -98,19 +96,19 @@ class box_ficheinter extends ModeleBoxes
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 					'logo' => $this->boximg,
-					'url' => DOL_URL_ROOT."/fichinter/fiche.php?id=".$objp->rowid);
+					'url' => DOL_URL_ROOT."/fichinter/card.php?id=".$objp->rowid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
 					'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some interventions have no ref
-					'url' => DOL_URL_ROOT."/fichinter/fiche.php?id=".$objp->rowid);
+					'url' => DOL_URL_ROOT."/fichinter/card.php?id=".$objp->rowid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
 					'logo' => 'company',
-					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-					'text' => dol_trunc($objp->nom,40),
-					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+					'text' => dol_trunc($objp->name,40),
+					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
 					'text' => dol_print_date($datec,'day'));

@@ -76,7 +76,8 @@ $sql.= " AND pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND pl.fk_soc = s.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ".$db->order($sortfield, $sortorder);
+$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -84,13 +85,13 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	print_barre_liste($langs->trans("WithdrawsRefused"), $page, "rejets.php", $urladd, $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("WithdrawsRefused"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Line"),"rejets.php","p.ref",'',$urladd);
-	print_liste_field_titre($langs->trans("ThirdParty"),"rejets.php","s.nom",'',$urladd);
-	print_liste_field_titre($langs->trans("Reason"),"rejets.php","pr.motif","",$urladd);
+	print_liste_field_titre($langs->trans("Line"),$_SERVER["PHP_SELF"],"p.ref",'',$urladd);
+	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
+	print_liste_field_titre($langs->trans("Reason"),$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
 	print '</tr>';
 
 	$var=True;
@@ -107,7 +108,7 @@ if ($result)
 
 		print substr('000000'.$obj->rowid, -6)."</a></td>";
 
-		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
+		print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
 
 		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 		print "</tr>\n";

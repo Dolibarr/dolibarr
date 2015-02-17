@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2006	Roman Ozana			<ozana@omdesign.cz>
- * Copyright (C) 2011	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2013	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2006      Roman Ozana			<ozana@omdesign.cz>
+ * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,14 +56,13 @@ class ICal
     {
         $this->file = $file;
         $file_text='';
-        
+
         $tmparray=file($file);
         if (is_array($tmparray))
         {
         	$file_text = join("", $tmparray); //load file
-        	$file_text = preg_replace("/[\r\n]{1,} ([:;])/","\\1",$file_text);
+        	$file_text = preg_replace("/[\r\n]{1,} /","",$file_text);
         }
-        
         return $file_text; // return all text
     }
 
@@ -115,6 +114,7 @@ class ICal
             {
                 // get Key and Value VCALENDAR:Begin -> Key = VCALENDAR, Value = begin
                 list($key, $value) = $this->retun_key_value($text);
+				//var_dump($text.' -> '.$key.' - '.$value);
 
                 switch ($text) // search special string
                 {
@@ -165,6 +165,8 @@ class ICal
                 }
             }
         }
+
+        //var_dump($this->cal);
         return $this->cal;
     }
 
@@ -236,6 +238,7 @@ class ICal
      */
     function retun_key_value($text)
     {
+    	/*
         preg_match("/([^:]+)[:]([\w\W]+)/", $text, $matches);
 
         if (empty($matches))
@@ -246,8 +249,8 @@ class ICal
         {
             $matches = array_splice($matches, 1, 2);
             return $matches;
-        }
-
+        }*/
+		return explode(':',$text,2);
     }
 
     /**
@@ -258,6 +261,7 @@ class ICal
      */
     function ical_rrule($value)
     {
+    	$result=aray();
         $rrule = explode(';',$value);
         foreach ($rrule as $line)
         {
@@ -296,6 +300,7 @@ class ICal
      */
     function ical_dt_date($key, $value)
     {
+    	$return_value=array();
         $value = $this->ical_date_to_unix($value);
 
         // Analyse TZID
@@ -306,8 +311,8 @@ class ICal
             $value = str_replace('T', '', $value);
             return array($key,$value);
         }
-        // adding $value and $tzid
-        $key =     $temp[0];
+
+        $key = $temp[0];
         $temp = explode("=", $temp[1]);
         $return_value[$temp[0]] = $temp[1];
         $return_value['unixtime'] = $value;
@@ -327,8 +332,9 @@ class ICal
         {
             usort($temp, array(&$this, "ical_dtstart_compare"));
             return $temp;
-        } else
-        {
+        }
+        else
+       {
             return false;
         }
     }

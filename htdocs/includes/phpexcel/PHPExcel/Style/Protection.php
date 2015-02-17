@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Style
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version    1.4.5, 2007-08-23
  */
@@ -31,7 +31,7 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Style
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Style_Protection implements PHPExcel_IComparable
 {
@@ -77,15 +77,24 @@ class PHPExcel_Style_Protection implements PHPExcel_IComparable
 
     /**
      * Create a new PHPExcel_Style_Protection
+	 *
+	 * @param	boolean	$isSupervisor	Flag indicating if this is a supervisor or not
+	 *									Leave this value at default unless you understand exactly what
+	 *										its ramifications are
+	 * @param	boolean	$isConditional	Flag indicating if this is a conditional style or not
+	 *									Leave this value at default unless you understand exactly what
+	 *										its ramifications are
      */
-    public function __construct($isSupervisor = false)
+    public function __construct($isSupervisor = false, $isConditional = false)
     {
     	// Supervisor?
 		$this->_isSupervisor = $isSupervisor;
 
     	// Initialise values
-    	$this->_locked			= self::PROTECTION_INHERIT;
-    	$this->_hidden			= self::PROTECTION_INHERIT;
+		if (!$isConditional) {
+	    	$this->_locked			= self::PROTECTION_INHERIT;
+	    	$this->_hidden			= self::PROTECTION_INHERIT;
+		}
     }
 
 	/**

@@ -1,24 +1,14 @@
-# Dolibarr language file - nl_BE - interventions
-Intervention=Interventie
-Interventions=Interventies
+# Dolibarr language file - Source file is en_US - interventions
 InterventionCard=Interventie-kaart
-NewIntervention=Nieuwe interventie
 AddIntervention=Toevoegen interventie
 ListOfInterventions=Lijst van interventies
 EditIntervention=Aanpassen interventie
-LastInterventions=Laatste %s interventies
-AllInterventions=Alle interventies
 CreateDraftIntervention=Maak klad
 CustomerDoesNotHavePrefix=Klant heeft geen voorvoegsel
 InterventionContact=Interventie contact
 DeleteIntervention=Verwijderen interventie
 ValidateIntervention=Valideer interventie
 DeleteInterventionLine=Verwijderen interventie lijn
-ConfirmDeleteIntervention=Weet u zeker dat u deze interventie wilt verwijderen?
-ConfirmValidateIntervention=Weet u zeker dat u deze interventie wilt valideren?
-ConfirmModifyIntervention=Weet u zeker dat u deze interventie wilt wijzigen?
-ConfirmDeleteInterventionLine=Weet u zeker dat u deze interventie wilt verwijderen?
-NameAndSignatureOfInternalContact=Naam en handtekening van de uitvoerder:
 NameAndSignatureOfExternalContact=Naam en handtekening van de klant:
 DocumentModelStandard=Standaard document model voor interventies
 TypeContact_fichinter_internal_INTERREPFOLL=Vertegenwoordiger van de opvolging van de interventie

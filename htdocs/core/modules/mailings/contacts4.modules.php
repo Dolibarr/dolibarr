@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011 François Cerbelle <francois@cerbelle.net>
- * Copyright (C) 2013 florian HENRY <florian.henry@open-concept.pro>
+ * Copyright (C) 2013 Florian HENRY     <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 
 
 /**
- *     \class      mailing_contacts4
- *     \brief      Class to manage a list of personalised recipients for mailing feature
+ *     Class to manage a list of personalised recipients for mailing feature
  */
 class mailing_contacts4 extends MailingTargets
 {
@@ -60,7 +59,7 @@ class mailing_contacts4 extends MailingTargets
      */
     function url($id)
     {
-        return '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$id.'">'.img_object('',"contact").'</a>';
+        return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('',"contact").'</a>';
     }
 
     /**
@@ -78,7 +77,7 @@ class mailing_contacts4 extends MailingTargets
 
         // La requete doit retourner: id, email, fk_contact, name, firstname, other
         $sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact,";
-        $sql.= " sp.lastname, sp.firstname, sp.civility_id,";
+        $sql.= " sp.lastname, sp.firstname, sp.civility as civility_id,";
         $sql.= " s.nom as companyname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
         if ($filtersarray[0] <> 'all')$sql.= " INNER JOIN ".MAIN_DB_PREFIX."categorie_contact as cs ON cs.fk_socpeople=sp.rowid";
@@ -90,7 +89,7 @@ class mailing_contacts4 extends MailingTargets
     	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.lastname, sp.firstname";
 
-    	dol_syslog(get_class($this).':: add_to_target sql='.$sql,LOG_DEBUG);
+    	dol_syslog(get_class($this).':: add_to_target',LOG_DEBUG);
     	$resql = $this->db->query($sql);
     	if ($resql)
     	{
@@ -116,7 +115,6 @@ class mailing_contacts4 extends MailingTargets
 			}
 		}else {
 			$this->error=$this->db->lasterrno();
-			dol_syslog(get_class($this)."Error sql=".$sql." ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -216,7 +214,7 @@ class mailing_contacts4 extends MailingTargets
 
         $resql = $this->db->query($sql);
 
-        dol_syslog(get_class($this).':: formFilter sql='.$sql,LOG_DEBUG);
+        dol_syslog(get_class($this).':: formFilter',LOG_DEBUG);
 		if ($resql) {
 	        $s='';
 	        $s.='<select name="filter" class="flat">';
@@ -237,7 +235,6 @@ class mailing_contacts4 extends MailingTargets
 		}
 		else {
 			$this->error=$this->db->lasterrno();
-			dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
 			return -1;
 		}
 

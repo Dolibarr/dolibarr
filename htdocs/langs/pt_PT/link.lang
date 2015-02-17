@@ -1,0 +1,8 @@
+LinkANewFile=Link a novao ficheiro/documento
+LinkedFiles=Ficheiros e documento ligados
+NoLinkFound=sem reigisto de ligações
+LinkComplete=Os ficheiros foram ligados com sucesso
+ErrorFileNotLinked=Os ficheiros não puderam ser ligados
+LinkRemoved=A ligação %s foi removida
+ErrorFailedToDeleteLink= falhou a remoção da ligação '<b>%s</b>'
+ErrorFailedToUpdateLink= Falha na atualização de ligação '<b>%s</b>'

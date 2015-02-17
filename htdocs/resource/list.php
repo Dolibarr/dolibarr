@@ -1,6 +1,5 @@
 <?php
-/* Module to manage resources into Dolibarr ERP/CRM
- * Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,9 +52,6 @@ $object = new Resource($db);
 
 $hookmanager->initHooks(array('resource_list'));
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
 if (empty($sortorder)) $sortorder="DESC";
 if (empty($sortfield)) $sortfield="t.rowid";
 if (empty($arch)) $arch = 0;
@@ -72,12 +68,20 @@ $pagenext = $page + 1;
 if( ! $user->rights->resource->read)
 	accessforbidden();
 
-/***************************************************
- * VIEW
-*
-* Put here all code to build page
-****************************************************/
 
+/*
+ * Action
+ */
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+
+
+/*
+ * View
+ */
 $pagetitle=$langs->trans('ResourcePageIndex');
 llxHeader('',$pagetitle,'');
 
@@ -111,7 +115,7 @@ else
 	print_liste_field_titre($langs->trans('Id'),$_SERVER['PHP_SELF'],'t.rowid','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'t.ref','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('ResourceType'),$_SERVER['PHP_SELF'],'ty.code','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Edit'));
+	print_liste_field_titre($langs->trans('Action'),"","","","",'width="60" align="center"',"","");
 	print '</tr>';
 
 	foreach ($object->lines as $resource)
@@ -123,20 +127,25 @@ else
 			$style='style="background: orange;"';
 
 		print '<tr '.$bc[$var].' '.$style.'><td>';
-		print $resource->id;
+		print '<a href="./card.php?id='.$resource->id.'">'.$resource->id.'</a>';
 		print '</td>';
 
 		print '<td>';
 		print $resource->ref;
 		print '</td>';
-		
+
 		print '<td>';
 		print $resource->type_label;
 		print '</td>';
 
-		print '<td>';
-		print '<a href="card.php?id='.$resource->id.'">'.$langs->trans('View').'</a> ';
-		print '<a href="card.php?action=edit&id='.$resource->id.'">'.$langs->trans('Edit').'</a>';
+		print '<td align="center">';
+		print '<a href="./card.php?action=update&id='.$resource->id.'">';
+		print img_edit();
+		print '</a>';
+		print '&nbsp;';
+		print '<a href="./card.php?action=delete&id='.$resource->id.'">';
+		print img_delete();
+		print '</a>';
 		print '</td>';
 
 		print '</tr>';

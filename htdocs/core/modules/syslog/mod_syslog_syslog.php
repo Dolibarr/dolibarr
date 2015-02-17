@@ -42,15 +42,12 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	/**
 	 * Is the module active ?
 	 *
-	 * @return boolean
+	 * @return int
 	 */
 	public function isActive()
 	{
 		// This function does not exists on some ISP (Ex: Free in France)
-		if (!function_exists('openlog'))
-		{
-			return 0;
-		}
+		if (!function_exists('openlog')) return 0;
 
 		return 1;
 	}
@@ -76,7 +73,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	/**
 	 * 	Return if configuration is valid
 	 *
-	 * 	@return	boolean		True if configuration ok
+	 * 	@return	array		Array of errors. Empty array if ok.
 	 */
 	public function checkConfiguration()
 	{

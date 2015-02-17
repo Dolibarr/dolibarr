@@ -22,3 +22,4 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datea (datea);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_soc (fk_soc);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_contact (fk_contact);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_code (code);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_element (fk_element);

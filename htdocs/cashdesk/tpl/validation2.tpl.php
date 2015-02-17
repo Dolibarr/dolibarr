@@ -18,10 +18,11 @@
  */
 
 $langs->load("main");
+$langs->load("bills");
 
 ?>
 
-<h3 class="titre1"><?php echo $langs->trans("SellFinished"); ?></h3>
+<h3 class="titre1"><?php echo $langs->trans("SellFinished"); ?></h3><br>
 
 <div class="cadre_facturation">
 

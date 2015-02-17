@@ -54,7 +54,7 @@ print "\n";
 
 $var=false;
 
-// Recupere la version de l'OS
+// Recupere la version de PHP
 $phpversion=version_php();
 print "<tr ".$bc[$var].'><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
 
@@ -120,4 +120,3 @@ foreach($phparray as $key => $value)
 llxFooter();
 
 $db->close();
-?>

@@ -49,7 +49,7 @@ if ($actionsave)
     $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_PAST_DELAY',trim(GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY','alpha')),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_CACHE',trim(GETPOST('MAIN_AGENDA_EXPORT_CACHE','alpha')),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'AGENDA_EXPORT_FIX_TZ',trim(GETPOST('AGENDA_EXPORT_FIX_TZ','alpha')),'chaine',0,'',$conf->entity);
-    
+
     if ($i >= 4)
     {
         $db->commit();
@@ -136,13 +136,13 @@ print "</tr>";
 
 print '</table>';
 
-print '<br><center>';
+print '<br><div class="center">';
 print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
-print "</center>";
+print "</div>";
 
 print "</form>\n";
 
-print '</div>';
+dol_fiche_end();
 
 clearstatcache();
 
@@ -171,10 +171,11 @@ $message.='<br>';
 print $message;
 
 $message=$langs->trans("AgendaUrlOptions1",$user->login,$user->login).'<br>';
-$message.=$langs->trans("AgendaUrlOptions2",$user->login,$user->login).'<br>';
+//$message.=$langs->trans("AgendaUrlOptions2",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions3",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
-$message.=$langs->trans("AgendaUrlOptions5",$user->login,$user->login);
+$message.=$langs->trans("AgendaUrlOptionsProject",$user->login,$user->login);
+
 print info_admin($message);
 
 if (! empty($conf->use_javascript_ajax))

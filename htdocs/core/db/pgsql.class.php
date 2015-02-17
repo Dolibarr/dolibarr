@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2001		Fabien Seisen			<seisen@linuxfr.org>
  * Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Yann Droneaud			<yann@droneaud.fr>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,16 +38,16 @@ class DoliDBPgsql extends DoliDB
     //! Database type
 	public $type='pgsql';            // Name of manager
     //! Database label
-	static $label='PostgreSQL';      // Label of manager
+	const LABEL='PostgreSQL';      // Label of manager
 	//! Charset
 	var $forcecharset='UTF8';       // Can't be static as it may be forced with a dynamic value
     //! Collate used to force collate when creating database
     var $forcecollate='';			// Can't be static as it may be forced with a dynamic value
 	//! Version min database
-	static $versionmin=array(8,4,0);	// Version min database
+	const VERSIONMIN='8.4.0';	// Version min database
 	//! Resultset of last query
 	private $_results;
-	
+
 	public $unescapeslashquot;
 	public $standard_conforming_strings;
 
@@ -60,7 +61,6 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string	$pass		Mot de passe
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
-	 *	@return	    int					1 if OK, 0 if not
 	 */
 	function __construct($type, $host, $user, $pass, $name='', $port=0)
 	{
@@ -71,6 +71,8 @@ class DoliDBPgsql extends DoliDB
 		if (! empty($conf->db->dolibarr_main_db_collation))	$this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
 		$this->database_user=$user;
+        $this->database_host=$host;
+        $this->database_port=$port;
 
 		$this->transaction_opened=0;
 
@@ -172,6 +174,8 @@ class DoliDBPgsql extends DoliDB
               else if (preg_match('/DROP TABLE/i',$line)) $type='dml';
 		    }
 
+    		$line=preg_replace('/ as signed\)/i',' as integer)',$line);
+
 		    if ($type == 'dml')
 		    {
                 $line=preg_replace('/\s/',' ',$line);   // Replace tabulation with space
@@ -251,7 +255,7 @@ class DoliDBPgsql extends DoliDB
                     $newreg3=preg_replace('/ NOT NULL/i','',$newreg3);
                     $newreg3=preg_replace('/ NULL/i','',$newreg3);
                     $newreg3=preg_replace('/ DEFAULT 0/i','',$newreg3);
-                    $newreg3=preg_replace('/ DEFAULT \'[0-9a-zA-Z_@]*\'/i','',$newreg3);
+                    $newreg3=preg_replace('/ DEFAULT \'?[0-9a-zA-Z_@]*\'?/i','',$newreg3);
                     $line.= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." TYPE ".$newreg3;
                     // TODO Add alter to set default value or null/not null if there is this in $reg[3]
                 }
@@ -295,6 +299,9 @@ class DoliDBPgsql extends DoliDB
             // To have postgresql case sensitive
             $line=str_replace(' LIKE \'',' ILIKE \'',$line);
             $line=str_replace(' LIKE BINARY \'',' LIKE \'',$line);
+
+            // Replace INSERT IGNORE into INSERT
+            $line=preg_replace('/^INSERT IGNORE/','INSERT',$line);
 
 			// Delete using criteria on other table must not declare twice the deleted table
 			// DELETE FROM tabletodelete USING tabletodelete, othertable -> DELETE FROM tabletodelete USING othertable
@@ -382,7 +389,7 @@ class DoliDBPgsql extends DoliDB
 		if ((! empty($host) && $host == "socket") && ! defined('NOLOCALSOCKETPGCONNECT'))
 		{
 			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";    // $name may be empty
-			$this->db = pg_connect($con_string);
+			$this->db = @pg_connect($con_string);
 		}
 
 		// if local connection failed or not requested, use TCP/IP
@@ -392,7 +399,7 @@ class DoliDBPgsql extends DoliDB
 			if (! $port) $port = 5432;
 
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
-			$this->db = pg_connect($con_string);
+			$this->db = @pg_connect($con_string);
 		}
 
 		// now we test if at least one connect method was a success
@@ -462,7 +469,7 @@ class DoliDBPgsql extends DoliDB
 	function query($query,$usesavepoint=0,$type='auto')
 	{
 		global $conf;
-		
+
 		$query = trim($query);
 
 		// Convert MySQL syntax to PostgresSQL syntax
@@ -483,13 +490,16 @@ class DoliDBPgsql extends DoliDB
 				else $loop=false;
 			}
 		}
-		
+
 		if ($usesavepoint && $this->transaction_opened)
 		{
 			@pg_query($this->db, 'SAVEPOINT mysavepoint');
 		}
 
+		if (! in_array($query,array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+
 		$ret = @pg_query($this->db, $query);
+
 		//print $query;
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query)) // Si requete utilisateur, on la sauvegarde ainsi que son resultset
 		{
@@ -501,9 +511,10 @@ class DoliDBPgsql extends DoliDB
     				$this->lasterror = $this->error();
     				$this->lasterrno = $this->errno();
 			    }
-				dol_syslog(get_class($this)."::query SQL error usesavepoint = ".$usesavepoint." - ".$query." - ".pg_last_error($this->db)." => ".$this->errno(), LOG_WARNING);
-				//print "\n>> ".$query."<br>\n";
-				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
+
+				dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
+				dol_syslog(get_class($this)."::query SQL error usesavepoint = ".$usesavepoint, LOG_ERR);
 
 				if ($usesavepoint && $this->transaction_opened)	// Warning, after that errno will be erased
 				{
@@ -658,7 +669,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Renvoie le code erreur generique de l'operation precedente.
 	 *
-	 * @return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+	 * @return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	function errno()
 	{
@@ -724,7 +735,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Renvoie le texte de l'erreur pgsql de l'operation precedente
 	 *
-	 * @return		error_text
+	 * @return	string		Error text
 	 */
 	function error()
 	{
@@ -827,7 +838,7 @@ class DoliDBPgsql extends DoliDB
 		// Test charset match LC_TYPE (pgsql error otherwise)
 		//print $charset.' '.setlocale(LC_CTYPE,'0'); exit;
 
-		$sql='CREATE DATABASE '.$database.' OWNER '.$owner.' ENCODING \''.$charset.'\'';
+		$sql='CREATE DATABASE "'.$database.'" OWNER "'.$owner.'" ENCODING \''.$charset.'\'';
 		dol_syslog($sql,LOG_DEBUG);
 		$ret=$this->query($sql);
 		return $ret;
@@ -837,8 +848,8 @@ class DoliDBPgsql extends DoliDB
 	 *  List tables into a database
 	 *
 	 *  @param	string		$database	Name of database
-	 *  @param	string		$table		Nmae of table filter ('xxx%')
-	 *  @return	resource				Resource
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
 	 */
 	function DDLListTables($database, $table='')
 	{
@@ -851,7 +862,7 @@ class DoliDBPgsql extends DoliDB
 		{
 			$listtables[] = $row[0];
 		}
-		return  $listtables;
+		return $listtables;
 	}
 
 	/**
@@ -979,7 +990,8 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
-		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."' with password '".$this->escape($dolibarr_main_db_pass)."'";
+		// Note: using ' on user does not works with pgsql
+		$sql = "CREATE USER ".$this->escape($dolibarr_main_db_user)." with password '".$this->escape($dolibarr_main_db_pass)."'";
 
 		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
@@ -1199,11 +1211,14 @@ class DoliDBPgsql extends DoliDB
      */
 	function getPathOfRestore()
 	{
-		$fullpathofdump='/pathtopgrestore/pg_restore';
+		//$tool='pg_restore';
+		$tool='psql';
 
-        if (file_exists('/usr/bin/pg_restore'))
+		$fullpathofdump='/pathtopgrestore/'.$tool;
+
+        if (file_exists('/usr/bin/'.$tool))
         {
-            $fullpathofdump='/usr/bin/pg_restore';
+            $fullpathofdump='/usr/bin/'.$tool;
         }
         else
         {
@@ -1213,7 +1228,7 @@ class DoliDBPgsql extends DoliDB
             {
                 $liste=$this->fetch_array($resql);
                 $basedir=$liste['data_directory'];
-                $fullpathofdump=preg_replace('/data$/','bin',$basedir).'/pg_restore';
+                $fullpathofdump=preg_replace('/data$/','bin',$basedir).'/'.$tool;
             }
         }
 

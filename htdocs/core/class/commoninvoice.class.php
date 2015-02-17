@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,36 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 abstract class CommonInvoice extends CommonObject
 {
+    /**
+     * Standard invoice
+     */
+    const TYPE_STANDARD = 0;
+
+    /**
+     * Replacement invoice
+     */
+    const TYPE_REPLACEMENT = 1;
+
+    /**
+     * Credit note invoice
+     */
+    const TYPE_CREDIT_NOTE = 2;
+
+    /**
+     * Deposit invoice
+     */
+    const TYPE_DEPOSIT = 3;
+
+    /**
+     * Proforma invoice
+     */
+    const TYPE_PROFORMA = 4;
+
+    /**
+     * Situation invoice
+     */
+    const TYPE_SITUATION = 5;
+
 	/**
 	 * 	Return amount of payments already done
 	 *
@@ -47,7 +79,7 @@ abstract class CommonInvoice extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;
 		$sql.= ' WHERE '.$field.' = '.$this->id;
 
-		dol_syslog(get_class($this)."::getSommePaiement sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -143,20 +175,21 @@ abstract class CommonInvoice extends CommonObject
 	function getLibType()
 	{
 		global $langs;
-		if ($this->type == 0) return $langs->trans("InvoiceStandard");
-		if ($this->type == 1) return $langs->trans("InvoiceReplacement");
-		if ($this->type == 2) return $langs->trans("InvoiceAvoir");
-		if ($this->type == 3) return $langs->trans("InvoiceDeposit");
-		if ($this->type == 4) return $langs->trans("InvoiceProForma");
+        if ($this->type == CommonInvoice::TYPE_STANDARD) return $langs->trans("InvoiceStandard");
+        if ($this->type == CommonInvoice::TYPE_REPLACEMENT) return $langs->trans("InvoiceReplacement");
+        if ($this->type == CommonInvoice::TYPE_CREDIT_NOTE) return $langs->trans("InvoiceAvoir");
+        if ($this->type == CommonInvoice::TYPE_DEPOSIT) return $langs->trans("InvoiceDeposit");
+        if ($this->type == CommonInvoice::TYPE_PROFORMA) return $langs->trans("InvoiceProForma");
+        if ($this->type == CommonInvoice::TYPE_SITUATION) return $langs->trans("InvoiceSituation");
 		return $langs->trans("Unknown");
 	}
 
 	/**
 	 *  Return label of object status
 	 *
-	 *  @param      int		$mode            0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
-	 *  @param      double	$alreadypaid     0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
-	 *  @return     string			         Label
+	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+	 *  @param      double	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @return     string			        Label
 	 */
 	function getLibStatut($mode=0,$alreadypaid=-1)
 	{
@@ -288,12 +321,84 @@ abstract class CommonInvoice extends CommonObject
 			}
 		}
 	}
+
+	/**
+	 *	Renvoi une date limite de reglement de facture en fonction des
+	 *	conditions de reglements de la facture et date de facturation
+	 *
+	 *	@param      string	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
+	 *	@return     date     			       	Date limite de reglement si ok, <0 si ko
+	 */
+	function calculate_date_lim_reglement($cond_reglement=0)
+	{
+		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;
+		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_id;
+
+		$cdr_nbjour=0; $cdr_fdm=0; $cdr_decalage=0;
+
+		$sqltemp = 'SELECT c.fdm,c.nbjour,c.decalage';
+		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
+		if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
+		else $sqltemp.= " WHERE c.code='".$this->db->escape($cond_reglement)."'";
+
+		dol_syslog(get_class($this).'::calculate_date_lim_reglement', LOG_DEBUG);
+		$resqltemp=$this->db->query($sqltemp);
+		if ($resqltemp)
+		{
+			if ($this->db->num_rows($resqltemp))
+			{
+				$obj = $this->db->fetch_object($resqltemp);
+				$cdr_nbjour = $obj->nbjour;
+				$cdr_fdm = $obj->fdm;
+				$cdr_decalage = $obj->decalage;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+		$this->db->free($resqltemp);
+
+		/* Definition de la date limite */
+
+		// 1 : ajout du nombre de jours
+		$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+
+		// 2 : application de la regle "fin de mois"
+		if ($cdr_fdm)
+		{
+			$mois=date('m', $datelim);
+			$annee=date('Y', $datelim);
+			if ($mois == 12)
+			{
+				$mois = 1;
+				$annee += 1;
+			}
+			else
+			{
+				$mois += 1;
+			}
+			// On se deplace au debut du mois suivant, et on retire un jour
+			$datelim=dol_mktime(12,0,0,$mois,1,$annee);
+			$datelim -= (3600 * 24);
+		}
+
+		// 3 : application du decalage
+		$datelim += ($cdr_decalage * 3600 * 24);
+
+		return $datelim;
+	}
 }
+
+
+
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 
 /**
  *	Parent class of all other business classes for details of elements (invoices, contracts, proposals, orders, ...)
  */
-abstract class CommonInvoiceLine extends CommonObject
+abstract class CommonInvoiceLine extends CommonObjectLine
 {
 }
 

@@ -93,10 +93,10 @@ function dol_print_cron_urls()
 
 	// Cron launch
 	print '<u>'.$langs->trans("URLToLaunchCronJobs").':</u><br>';
-	$url=$urlwithroot.'/public/cron/cron_run_jobs.php'.(empty($conf->global->CRON_KEY)?'':'?securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login;
+	$url=$urlwithroot.'/public/cron/cron_run_jobs.php?'.(empty($conf->global->CRON_KEY)?'':'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login;
 	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 	print ' '.$langs->trans("OrToLaunchASpecificJob").'<br>';
-	$url=$urlwithroot.'/public/cron/cron_run_jobs.php'.(empty($conf->global->CRON_KEY)?'':'?securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login.'&id=cronjobid';
+	$url=$urlwithroot.'/public/cron/cron_run_jobs.php?'.(empty($conf->global->CRON_KEY)?'':'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login.'&id=cronjobid';
 	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 	print '<br>';
 
@@ -115,6 +115,8 @@ function dol_print_cron_urls()
 	if ($linuxlike)
 	{
 		print $langs->trans("CronExplainHowToRunUnix");
+		print '<br>';
+		print '<textarea rows="'.ROWS_1.'" style="width:80%">*/5 * * * * pathtoscript/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY)?'securitykey':''.$conf->global->CRON_KEY.'').' '.$user->login.' &gt; '.DOL_DOCUMENT_ROOT.'/cron_run_jobs.php.log</textarea><br>';
 	}
 	else
 	{

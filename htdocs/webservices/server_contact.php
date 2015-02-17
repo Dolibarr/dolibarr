@@ -83,6 +83,7 @@ $server->wsdl->addComplexType(
 
 $contact_fields = array(
 	'id' => array('name'=>'id','type'=>'xsd:string'),
+	'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
 	'lastname' => array('name'=>'lastname','type'=>'xsd:string'),
 	'firstname' => array('name'=>'firstname','type'=>'xsd:string'),
 	'address' => array('name'=>'address','type'=>'xsd:string'),
@@ -176,14 +177,14 @@ $styleuse='encoded';   // encoded/literal/literal wrapped
 $server->register(
     'getContact',
     // Entry values
-    array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
+    array('authentication'=>'tns:authentication','id'=>'xsd:string','ref_ext'=>'xsd:string'),
     // Exit values
     array('result'=>'tns:result','contact'=>'tns:contact'),
     $ns,
     $ns.'#getContact',
     $styledoc,
     $styleuse,
-    'WS to get contact'
+    'WS to get a contact'
 );
 
 // Register WSDL
@@ -233,15 +234,14 @@ $server->register(
  *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of object
- * @param	string		$ref				Ref of object
- * @param	ref_ext		$ref_ext			Ref external of object
+ * @param	string		$ref_ext			Ref external of object
  * @return	mixed
  */
-function getContact($authentication,$id,$ref='',$ref_ext='')
+function getContact($authentication,$id,$ref_ext)
 {
     global $db,$conf,$langs;
 
-    dol_syslog("Function: getContact login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+    dol_syslog("Function: getContact login=".$authentication['login']." id=".$id." ref_ext=".$ref_ext);
 
     if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
@@ -251,10 +251,10 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
     // Check parameters
-    if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
+    if (! $error && ($id && $ref_ext))
     {
         $error++;
-        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id and ref_ext can't be both provided. You must choose one or other but not both.";
     }
 
     if (! $error)
@@ -262,7 +262,7 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
         $fuser->getrights();
 
         $contact=new Contact($db);
-        $result=$contact->fetch($id,$ref,$ref_ext);
+        $result=$contact->fetch($id,0,$ref_ext);
         if ($result > 0)
         {
         	// Only internal user who have contact read permission
@@ -273,6 +273,7 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
 	        ){
             	$contact_result_fields =array(
 	            	'id' => $contact->id,
+			'ref_ext' => $contact->ref_ext,
 	            	'lastname' => $contact->lastname,
 	            	'firstname' => $contact->firstname,
 	            	'address' => $contact->address,
@@ -383,6 +384,7 @@ function createContact($authentication,$contact)
 		$newobject=new Contact($db);
 
 		$newobject->id=$contact['id'];
+		$newobject->ref_ext=$contact['ref_ext'];
 		$newobject->civility_id=$contact['civility_id'];
 		$newobject->lastname=$contact['lastname'];
 		$newobject->firstname=$contact['firstname'];
@@ -491,19 +493,19 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 	{
 		$linesinvoice=array();
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civility_id, c.lastname, c.firstname, c.statut,";
+		$sql = "SELECT c.rowid, c.fk_soc, c.civility as civility_id, c.lastname, c.firstname, c.statut,";
 		$sql.= " c.address, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
 		//$sql.= " c.priv, c.note, c.default_lang, c.no_email, c.canvas,";
-		$sql.= " p.libelle as country, p.code as country_code,";
+		$sql.= " co.label as country, co.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
 		$sql.= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_pays = co.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
@@ -655,6 +657,7 @@ function updateContact($authentication,$contact)
 			$object->province_id=$contact['province_id'];
 
 
+			$object->phone_pro=$contact['phone_pro'];
 			$object->phone_perso=$contact['phone_perso'];
 			$object->phone_mobile=$contact['phone_mobile'];
 			$object->fax=$contact['fax'];
@@ -712,6 +715,6 @@ function updateContact($authentication,$contact)
 
 	return $objectresp;
 }
-// Return the results.
-$server->service($HTTP_RAW_POST_DATA);
 
+// Return the results.
+$server->service(file_get_contents("php://input"));

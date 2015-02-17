@@ -4,7 +4,8 @@ Sending=إرسال
 Sendings=الإرسال
 Shipment=إرسال
 Shipments=شحنات
-Receivings=Receivings
+ShowSending=Show Sending
+Receivings=Receipts
 SendingsArea=منطقة الإرسال
 ListOfSendings=قائمة الإرسال
 SendingMethod=طريقة إرسال
@@ -13,8 +14,8 @@ LastSendings=ق الماضي ٪ الإرسال
 SearchASending=البحث المرسلة
 StatisticsOfSendings=إحصاءات الإرسال
 NbOfSendings=عدد الإرسال
-# NumberOfShipmentsByMonth=Number of shipments by month
-SendingCard=إرسال بطاقة
+NumberOfShipmentsByMonth=Number of shipments by month
+SendingCard=Shipment card
 NewSending=ارسال جديدة
 CreateASending=خلق إرسال
 CreateSending=خلق إرسال
@@ -37,7 +38,7 @@ StatusSendingCanceledShort=ألغيت
 StatusSendingDraftShort=مسودة
 StatusSendingValidatedShort=صادق
 StatusSendingProcessedShort=معالجة
-SendingSheet=إرسال ورقة
+SendingSheet=Shipment sheet
 Carriers=شركات الطيران
 Carrier=الناقل
 CarriersArea=ناقلات المنطقة
@@ -50,27 +51,35 @@ Enlevement=حصلت من قبل العميل
 DocumentModelSimple=وثيقة نموذج بسيط
 DocumentModelMerou=Mérou A5 نموذج
 WarningNoQtyLeftToSend=تحذير ، لا تنتظر أن المنتجات المشحونة.
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=مسطح تاريخ التسليم
 DateReceived=تلقى تاريخ التسليم
 SendShippingByEMail=ارسال شحنة عن طريق البريد الالكتروني
-SendShippingRef=ارسال شحنة %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=الأحداث على شحنة
 LinkToTrackYourPackage=رابط لتتبع الحزمة الخاصة بك
 ShipmentCreationIsDoneFromOrder=لحظة، ويتم إنشاء لشحنة جديدة من أجل بطاقة.
-# RelatedShippings=Related shippings
-# ShipmentLine=Shipment line
-# CarrierList=List of transporters
+RelatedShippings=Related shipments
+ShipmentLine=Shipment line
+CarrierList=List of transporters
+SendingRunning=Product from ordered customer orders
+SuppliersReceiptRunning=Product from ordered supplier orders
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
 SendingMethodCATCH=القبض على العملاء
 SendingMethodTRANS=نقل
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=نموذج بسيط لتسليم وثيقة من وثائق وإيصالات
 DocumentModelTyphon=أكمل نموذج لتسليم وثيقة من وثائق الإيصالات (logo...)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER ثابت لم تحدد
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

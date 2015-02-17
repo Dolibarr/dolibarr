@@ -1,13 +1,13 @@
 <?php
 //============================================================+
 // File name   : datamatrix.php
-// Version     : 1.0.004
+// Version     : 1.0.008
 // Begin       : 2010-06-07
-// Last Update : 2013-02-04
+// Last Update : 2014-05-06
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2010-2012  Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2010-2014  Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -40,7 +40,7 @@
 *
 * @package com.tecnick.tcpdf
 * @author Nicola Asuni
-* @version 1.0.004
+* @version 1.0.008
 */
 
 // custom definitions
@@ -256,14 +256,16 @@ class Datamatrix {
 			return false;
 		} elseif ($params[11] > $nd) {
 			// add padding
-			if ($this->last_enc == ENC_EDF) {
-				// switch to ASCII encoding
-				$cw[] = 124;
-				++$nd;
-			} elseif (($this->last_enc != ENC_ASCII) AND ($this->last_enc != ENC_BASE256)) {
-				// switch to ASCII encoding
-				$cw[] = 254;
-				++$nd;
+			if ((($params[11] - $nd) > 1) AND ($cw[($nd - 1)] != 254)) {
+				if ($this->last_enc == ENC_EDF) {
+					// switch to ASCII encoding
+					$cw[] = 124;
+					++$nd;
+				} elseif (($this->last_enc != ENC_ASCII) AND ($this->last_enc != ENC_BASE256)) {
+					// switch to ASCII encoding
+					$cw[] = 254;
+					++$nd;
+				}
 			}
 			if ($params[11] > $nd) {
 				// add first pad
@@ -652,6 +654,9 @@ class Datamatrix {
 		switch ($mode) {
 			case ENC_ASCII: { // ASCII character 0 to 127
 				$cw = 254;
+				if ($this->last_enc == ENC_EDF) {
+					$cw = 124;
+				}
 				break;
 			}
 			case ENC_C40: { // Upper-case alphanumeric
@@ -707,6 +712,8 @@ class Datamatrix {
 		$cw_num = 0; // number of data codewords
 		$data_lenght = strlen($data); // number of chars
 		while ($pos < $data_lenght) {
+			// set last used encoding
+			$this->last_enc = $enc;
 			switch ($enc) {
 				case ENC_ASCII: { // STEP B. While in ASCII encodation
 					if (($data_lenght > 1) AND ($pos < ($data_lenght - 1)) AND ($this->isCharMode(ord($data[$pos]), ENC_ASCII_NUM) AND $this->isCharMode(ord($data[$pos + 1]), ENC_ASCII_NUM))) {
@@ -799,7 +806,13 @@ class Datamatrix {
 							// 1. If the C40 encoding is at the point of starting a new double symbol character and if the look-ahead test (starting at step J) indicates another mode, switch to that mode.
 							$newenc = $this->lookAheadTest($data, $pos, $enc);
 							if ($newenc != $enc) {
+								// switch to new encoding
 								$enc = $newenc;
+								if ($enc != ENC_ASCII) {
+									// set unlatch character
+									$cw[] = $this->getSwitchEncodingCodeword(ENC_ASCII);
+									++$cw_num;
+								}
 								$cw[] = $this->getSwitchEncodingCodeword($enc);
 								++$cw_num;
 								$pos -= $p;
@@ -811,20 +824,26 @@ class Datamatrix {
 					// process last data (if any)
 					if ($p > 0) {
 						// get remaining number of data symbols
-						$cwr = ($this->getMaxDataCodewords($cw_num + 2) - $cw_num);
+						$cwr = ($this->getMaxDataCodewords($cw_num) - $cw_num);
 						if (($cwr == 1) AND ($p == 1)) {
 							// d. If one symbol character remains and one C40 value (data character) remains to be encoded
 							$c1 = array_shift($temp_cw);
 							--$p;
-							$cw[] = ($c1 + 1);
+							$cw[] = ($chr + 1);
 							++$cw_num;
+							$pos = $epos;
+							$enc = ENC_ASCII;
+							$this->last_enc = $enc;
 						} elseif (($cwr == 2) AND ($p == 1)) {
 							// c. If two symbol characters remain and only one C40 value (data character) remains to be encoded
 							$c1 = array_shift($temp_cw);
 							--$p;
 							$cw[] = 254;
-							$cw[] = ($c1 + 1);
+							$cw[] = ($chr + 1);
 							$cw_num += 2;
+							$pos = $epos;
+							$enc = ENC_ASCII;
+							$this->last_enc = $enc;
 						} elseif (($cwr == 2) AND ($p == 2)) {
 							// b. If two symbol characters remain and two C40 values remain to be encoded
 							$c1 = array_shift($temp_cw);
@@ -834,12 +853,17 @@ class Datamatrix {
 							$cw[] = ($tmp >> 8);
 							$cw[] = ($tmp % 256);
 							$cw_num += 2;
+							$pos = $epos;
+							$enc = ENC_ASCII;
+							$this->last_enc = $enc;
 						} else {
 							// switch to ASCII encoding
 							if ($enc != ENC_ASCII) {
 								$enc = ENC_ASCII;
+								$this->last_enc = $enc;
 								$cw[] = $this->getSwitchEncodingCodeword($enc);
 								++$cw_num;
+								$pos = ($epos - $p);
 							}
 						}
 					}
@@ -860,6 +884,12 @@ class Datamatrix {
 							++$field_lenght;
 						}
 						if (($field_lenght == 4) OR ($epos == $data_lenght) OR !$this->isCharMode($chr, ENC_EDF)) {
+							if (($epos == $data_lenght) AND ($field_lenght < 3)) {
+								$enc = ENC_ASCII;
+								$cw[] = $this->getSwitchEncodingCodeword($enc);
+								++$cw_num;
+								break;
+							}
 							if ($field_lenght < 4) {
 								// set unlatch character
 								$temp_cw[] = 0x1f;
@@ -869,6 +899,7 @@ class Datamatrix {
 									$temp_cw[] = 0;
 								}
 								$enc = ENC_ASCII;
+								$this->last_enc = $enc;
 							}
 							// encodes four data characters in three codewords
 							$tcw = (($temp_cw[0] & 0x3F) << 2) + (($temp_cw[1] & 0x30) >> 4);
@@ -905,8 +936,6 @@ class Datamatrix {
 						if ($newenc != $enc) {
 							// 1. If the look-ahead test (starting at step J) indicates another mode, switch to that mode.
 							$enc = $newenc;
-							$cw[] = $this->getSwitchEncodingCodeword($enc);
-							++$cw_num;
 							break; // exit from B256 mode
 						} else {
 							// 2. Otherwise, process the next character in Base 256 encodation.
@@ -918,25 +947,23 @@ class Datamatrix {
 					}
 					// set field lenght
 					if ($field_lenght <= 249) {
-						$cw[] = $field_lenght;
+						$cw[] = $this->get255StateCodeword($field_lenght, ($cw_num + 1));
 						++$cw_num;
 					} else {
-						$cw[] = (floor($field_lenght / 250) + 249);
-						$cw[] = ($field_lenght % 250);
+						$cw[] = $this->get255StateCodeword((floor($field_lenght / 250) + 249), ($cw_num + 1));
+						$cw[] = $this->get255StateCodeword(($field_lenght % 250), ($cw_num + 2));
 						$cw_num += 2;
 					}
 					if (!empty($temp_cw)) {
 						// add B256 field
 						foreach ($temp_cw as $p => $cht) {
-							$cw[] = $this->get255StateCodeword($chr, ($cw_num + $p));
+							$cw[] = $this->get255StateCodeword($cht, ($cw_num + $p + 1));
 						}
 					}
 					break;
 				}
 			} // end of switch enc
 		} // end of while
-		// set last used encoding
-		$this->last_enc = $enc;
 		return $cw;
 	}
 

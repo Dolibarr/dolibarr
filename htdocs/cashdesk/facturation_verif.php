@@ -137,16 +137,17 @@ switch ( $_GET['action'] )
 
 	case 'ajout_article':	// We have clicked on button "Add product"
 
-		//var_dump($obj_facturation);
+		//var_dump('ajout_article');
 		//exit;
 
-		if (! empty($obj_facturation->id))	// A product has been selected and stored in session
+		if (! empty($obj_facturation->id))	// A product was previously selected and stored in session, so we can add it
 		{
 			$obj_facturation->qte($_POST['txtQte']);
 			$obj_facturation->tva($_POST['selTva']);
 			$obj_facturation->remisePercent($_POST['txtRemise']);
-			$obj_facturation->ajoutArticle();
-
+			$obj_facturation->ajoutArticle();	// This add an entry into $_SESSION['poscart']
+			// We update prixTotalTtc
+			 
 		}
 
 		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
@@ -160,10 +161,9 @@ switch ( $_GET['action'] )
 
 }
 
-
+// We saved object obj_facturation
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
 header('Location: '.$redirection);
 exit;
 
-?>

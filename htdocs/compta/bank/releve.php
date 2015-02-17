@@ -146,9 +146,14 @@ if (empty($num))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("AccountStatement").'</td></tr>';
+		print '<td>'.$langs->trans("AccountStatement").'</td>';
+		print '<td align="right">'.$langs->trans("InitialBankBalance").'</td>';
+		print '<td align="right">'.$langs->trans("EndBankBalance").'</td>';
+		print '</tr>';
 
-		//while ($i < min($numrows,$conf->liste_limit))   // retrait de la limite tant qu'il n'y a pas de pagination
+		$balancestart=array();
+		$content=array();
+
 		while ($i < min($numrows,$conf->liste_limit))
 		{
 			$objp = $db->fetch_object($result);
@@ -159,7 +164,37 @@ if (empty($num))
 			}
 			else
 			{
-				print '<tr '.$bc[$var].'><td><a href="releve.php?num='.$objp->numr.'&amp;account='.$acct->id.'">'.$objp->numr.'</a></td></tr>'."\n";
+				print '<tr '.$bc[$var].'><td><a href="releve.php?num='.$objp->numr.'&amp;account='.$acct->id.'">'.$objp->numr.'</a></td>';
+
+				// Calculate start amount
+				$sql = "SELECT sum(b.amount) as amount";
+				$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+				$sql.= " WHERE b.num_releve < '".$db->escape($objp->numr)."'";
+				$sql.= " AND b.fk_account = ".$acct->id;
+				$resql=$db->query($sql);
+				if ($resql)
+				{
+					$obj=$db->fetch_object($resql);
+					$balancestart[$objp->numr] = $obj->amount;
+					$db->free($resql);
+				}
+				print '<td align="right">'.price($balancestart[$objp->numr],'',$langs,1,-1,-1,$conf->currency).'</td>';
+
+				// Calculate end amount
+				$sql = "SELECT sum(b.amount) as amount";
+				$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+				$sql.= " WHERE b.num_releve = '".$db->escape($objp->numr)."'";
+				$sql.= " AND b.fk_account = ".$acct->id;
+				$resql=$db->query($sql);
+				if ($resql)
+				{
+					$obj=$db->fetch_object($resql);
+					$content[$objp->numr] = $obj->amount;
+					$db->free($resql);
+				}
+				print '<td align="right">'.price(($balancestart[$objp->numr]+$content[$objp->numr]),'',$langs,1,-1,-1,$conf->currency).'</td>';
+
+				print '</tr>'."\n";
 			}
 			$i++;
 		}
@@ -179,6 +214,7 @@ else
 	 */
 	$ve=$_GET["ve"];
 
+	// Define number of receipt to show (current, previous or next one ?)
 	$found=false;
 	if ($_GET["rel"] == 'prev')
 	{
@@ -189,7 +225,7 @@ else
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve DESC";
 
-		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -211,7 +247,7 @@ else
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve ASC";
 
-		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -277,7 +313,6 @@ else
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 
-	dol_syslog("sql=".$sql);
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -350,7 +385,7 @@ else
 				}
 				elseif ($links[$key]['type']=='payment_sc')
 				{
-					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
 					print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
 					print $langs->trans("SocialContributionPayment");
 					print '</a>';
@@ -392,14 +427,13 @@ else
 					}
 				}
 				elseif ($links[$key]['type']=='company') {
-					print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('ShowCustomer'),'company').' ';
-					print dol_trunc($links[$key]['label'],24);
-					print '</a>';
+                    $societestatic->id = $links[$key]['url_id'];
+                    $societestatic->name = $links[$key]['label'];
+                    print $societestatic->getNomUrl(1, 'company', 24);
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='member') {
-					print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('ShowMember'),'user').' ';
 					print $links[$key]['label'];
 					print '</a>';

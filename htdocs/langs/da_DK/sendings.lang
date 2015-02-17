@@ -4,7 +4,8 @@ Sending=Sender
 Sendings=Sendings
 Shipment=Sender
 Shipments=Forsendelser
-Receivings=Receivings
+ShowSending=Show Sending
+Receivings=Receipts
 SendingsArea=Sendings område
 ListOfSendings=Liste over sendings
 SendingMethod=Afsendelse metode
@@ -13,8 +14,8 @@ LastSendings=Seneste %s sendings
 SearchASending=Søg en sendeorganisation
 StatisticsOfSendings=Statistik over sendings
 NbOfSendings=Antal sendings
-# NumberOfShipmentsByMonth=Number of shipments by month
-SendingCard=Afsendelse kortet
+NumberOfShipmentsByMonth=Number of shipments by month
+SendingCard=Shipment card
 NewSending=Ny afsendelse
 CreateASending=Opret en sendeorganisation
 CreateSending=Opret afsendelse
@@ -37,7 +38,7 @@ StatusSendingCanceledShort=Aflyst
 StatusSendingDraftShort=Udkast
 StatusSendingValidatedShort=Valideret
 StatusSendingProcessedShort=Forarbejdet
-SendingSheet=Afsendelse ark
+SendingSheet=Shipment sheet
 Carriers=Carriers
 Carrier=Carrier
 CarriersArea=Rederierne område
@@ -50,27 +51,35 @@ Enlevement=Fået efter kunde
 DocumentModelSimple=Simpelt dokument model
 DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=Advarsel, ikke produkter som venter på at blive afsendt.
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Høvlet leveringsdato
 DateReceived=Dato levering modtaget
 SendShippingByEMail=Send forsendelse via e-mail
-SendShippingRef=Send forsendelse %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Arrangementer på forsendelse
 LinkToTrackYourPackage=Link til at spore din pakke
 ShipmentCreationIsDoneFromOrder=For øjeblikket er skabelsen af ​​en ny forsendelse udført af ordrekortet.
-# RelatedShippings=Related shippings
-# ShipmentLine=Shipment line
-# CarrierList=List of transporters
+RelatedShippings=Related shipments
+ShipmentLine=Shipment line
+CarrierList=List of transporters
+SendingRunning=Product from ordered customer orders
+SuppliersReceiptRunning=Product from ordered supplier orders
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Fangst af kunden
 SendingMethodTRANS=Transporter
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Simpelt dokument model for levering kvitteringer
 DocumentModelTyphon=Mere komplet dokument model for levering kvitteringer (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER ikke defineret
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

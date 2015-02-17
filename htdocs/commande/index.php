@@ -63,7 +63,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Search customer orders
 $var=false;
 print '<table class="noborder nohover" width="100%">';
-print '<form method="post" action="'.DOL_URL_ROOT.'/commande/liste.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchOrder").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
@@ -141,7 +141,7 @@ if ($resql)
             $var=!$var;
             print "<tr ".$bc[$var].">";
             print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
-            print '<td align="right"><a href="liste.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
+            print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
             print $commandestatic->LibStatut($status,$bool,3);
             print '</a>';
             print '</td>';
@@ -166,7 +166,7 @@ else
  */
 if (! empty($conf->commande->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -187,15 +187,15 @@ if (! empty($conf->commande->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
+			$var = true;
 			while ($i < $num)
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
-				print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td></tr>';
+				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
 				$i++;
 			}
 		}
@@ -215,7 +215,7 @@ $max=5;
  */
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem,";
-$sql.= " s.nom, s.rowid as socid";
+$sql.= " s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -238,7 +238,7 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		$var = True;
+		$var = true;
 		while ($i < $num)
 		{
 			$var=!$var;
@@ -268,7 +268,7 @@ if ($resql)
 
 			print '</td>';
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
 			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 			print '</tr>';
@@ -285,7 +285,7 @@ else dol_print_error($db);
  */
 if (! empty($conf->commande->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
 	$sql.=" FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -303,12 +303,12 @@ if (! empty($conf->commande->enabled))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=1">('.$num.')</a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
+			$var = true;
 			while ($i < $num)
 			{
 				$var=!$var;
@@ -337,7 +337,7 @@ if (! empty($conf->commande->enabled))
 
 				print '</td>';
 
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td>';
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
 
 				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
@@ -356,7 +356,7 @@ if (! empty($conf->commande->enabled))
  */
 if (! empty($conf->commande->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -374,12 +374,12 @@ if (! empty($conf->commande->enabled))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=2">('.$num.')</a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2"><span class="badge">'.$num.'</span></a></td></tr>';
 
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
+			$var = true;
 			while ($i < $num)
 			{
 				$var=!$var;
@@ -408,7 +408,7 @@ if (! empty($conf->commande->enabled))
 
 				print '</td>';
 
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
 
 				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 

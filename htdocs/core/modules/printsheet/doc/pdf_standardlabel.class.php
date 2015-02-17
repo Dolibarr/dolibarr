@@ -99,7 +99,7 @@ class pdf_standardlabel
 	 * Methode qui permet de modifier la taille des caracteres
 	 * Cela modiera aussi l'espace entre chaque ligne
 	 *
-	 * @param    PDF    &$pdf      PDF
+	 * @param    PDF    $pdf      PDF
 	 * @param    int    $pt        point
 	 * @return   void
 	 */
@@ -117,7 +117,7 @@ class pdf_standardlabel
 	 * - %LOGO% is replace with company logo
 	 * - %PHOTO% is replace with photo provided as parameter
 	 *
-	 * @param   PDF	    	&$pdf		    PDF
+	 * @param   PDF	    	$pdf		    PDF
 	 * @param   string		$textleft       Text left
 	 * @param   string     	$header         Header
 	 * @param   string     	$footer         Footer
@@ -135,7 +135,7 @@ class pdf_standardlabel
 	 	$imgscaleheight=(empty($forceimgscalewidth)?0.5:$forceimgscalewidth);	// Scale of image for height (1=Full height of sticker)
 
 	 	// We are in a new page, then we must add a page
-		if (($this->_COUNTX ==0) and ($this->_COUNTY==0) and (!$this->_First==1)) {
+		if (($this->_COUNTX ==0) && ($this->_COUNTY==0) and (!$this->_First==1)) {
 			$pdf->AddPage();
 		}
 		$this->_First=0;
@@ -155,6 +155,12 @@ class pdf_standardlabel
 			{
 				$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
 			}
+		}
+
+		// Define photo
+		if (! empty($photo))
+		{
+			if (! is_readable($photo)) $photo='';
 		}
 
 		// Define background image
@@ -286,7 +292,7 @@ class pdf_standardlabel
 	/**
 	 * Print dot line
 	 *
-	 * @param	PDF		&$pdf				PDF
+	 * @param	PDF		$pdf				PDF
 	 * @param 	int		$x1					X1
 	 * @param 	int		$y1					Y1
 	 * @param 	int		$x2					X2
@@ -327,7 +333,7 @@ class pdf_standardlabel
 	/**
 	 * Fonction realisant une croix aux 4 coins des cartes
 	 *
-	 * @param PDF	&$pdf				PDF
+	 * @param PDF	$pdf				PDF
 	 * @param int	$x1					X1
 	 * @param int	$y1					Y1
 	 * @param int	$x2					X2
@@ -398,7 +404,7 @@ class pdf_standardlabel
 	/**
 	 * Set format
 	 *
-	 * @param    PDF       &$pdf    PDF
+	 * @param    PDF       $pdf    PDF
 	 * @param    string    $format  Format
 	 * @return   void
 	 */

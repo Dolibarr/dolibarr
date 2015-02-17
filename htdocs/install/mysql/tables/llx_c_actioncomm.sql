@@ -24,8 +24,9 @@ create table llx_c_actioncomm
   code       varchar(12) NOT NULL,
   type       varchar(10) DEFAULT 'system' NOT NULL,
   libelle    varchar(48) NOT NULL,
-  module	varchar(16) DEFAULT NULL,
+  module	 varchar(16) DEFAULT NULL,
   active     tinyint DEFAULT 1 NOT NULL,
   todo       tinyint,
+  color      varchar(9),
   position   integer NOT NULL DEFAULT 0
 )ENGINE=innodb;

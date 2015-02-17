@@ -94,7 +94,7 @@ abstract class ActionsAdherentCardCommon
     /**
      *  Load data control
      *
-	 *  @param	string	&$action    Type of action
+	 *  @param	string	$action    Type of action
 	 *  @param	int		$id			Id of object
      *	@return	void
      */
@@ -130,7 +130,7 @@ abstract class ActionsAdherentCardCommon
                 }
                 else
                 {
-                    $this->errors=$nuser->error;
+                    $this->errors[]=$nuser->error;
 
                     $this->db->rollback();
                 }
@@ -228,7 +228,7 @@ abstract class ActionsAdherentCardCommon
 	/**
      *  Set content of ->tpl array, to use into template
      *
-     *  @param	string		&$action    Type of action
+     *  @param	string		$action    Type of action
      *  @param	int			$id			Id
      *  @return	string					HTML output
      */
@@ -412,7 +412,7 @@ abstract class ActionsAdherentCardCommon
         // We set country_id, and country_code label of the chosen country
         if ($this->object->country_id)
         {
-            $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_pays WHERE rowid = ".$this->object->country_id;
+            $sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".$this->object->country_id;
             $resql=$this->db->query($sql);
             if ($resql)
             {

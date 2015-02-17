@@ -153,11 +153,11 @@ function html_print_paypal_footer($fromcompany,$langs)
 	}
 
 	print '<br><br><hr>'."\n";
-	print '<center><font style="font-size: 10px;">'."\n";
-	print $fromcompany->nom.'<br>';
+	print '<div class="center"><font style="font-size: 10px;">'."\n";
+	print $fromcompany->name.'<br>';
 	print $line1.'<br>';
 	print $line2;
-	print '</font></center>'."\n";
+	print '</font></div>'."\n";
 }
 
 /**
@@ -473,6 +473,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	$_SESSION["Payment_Amount"] = $paymentAmount;
     $_SESSION["currencyCodeType"] = $currencyCodeType;
     $_SESSION["PaymentType"] = $paymentType;
+    $_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR '];  // Payer ip
 
     //'---------------------------------------------------------------------------------------------------------------
     //' Make the API call to PayPal
@@ -485,7 +486,6 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
     {
         $token = urldecode($resArray["TOKEN"]);
         $_SESSION['TOKEN']=$token;
-        $_SESSION['ipaddress']=$_SERVER['REMOTE_ADDR '];  // Payer ip
     }
 
     return $resArray;
@@ -683,7 +683,8 @@ function hash_call($methodName,$nvpStr)
      exit;*/
     curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
-    curl_setopt($ch, CURLOPT_SSLVERSION, 3); // Force SSLv3
+	//curl_setopt($ch, CURLOPT_SSLVERSION, 3); // Force SSLv3
+    curl_setopt($ch, CURLOPT_SSLVERSION, 1); // Force TLSv1
 
     //turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);

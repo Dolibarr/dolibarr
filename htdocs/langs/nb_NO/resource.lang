@@ -1,0 +1,34 @@
+
+MenuResourceIndex=Ressurser
+MenuResourceAdd=Ny ressurs
+MenuResourcePlanning=Ressursplanlegging
+DeleteResource=Slett ressurs
+ConfirmDeleteResourceElement=Bekreft sletting av ressursen for dette elementet
+NoResourceInDatabase=Ingen ressurs i databasen
+NoResourceLinked=Ingen koblet ressurs
+
+ResourcePageIndex=Ressursliste
+ResourceSingular=Ressurs
+ResourceCard=Ressurskort
+AddResource=Opprett ressurs
+ResourceFormLabel_ref=Ressursnavn
+ResourceType=Ressurstype
+ResourceFormLabel_description=Beskrivelse av ressurs
+
+ResourcesLinkedToElement=Ressurs koblet til element
+
+ShowResourcePlanning=Vis ressursplanlegging
+GotoDate=Gå til dato
+
+ResourceElementPage=Elementressurser
+ResourceCreatedWithSuccess=Ressursopprettelse vellykket
+RessourceLineSuccessfullyDeleted=Vellykket sletting av ressurslinje
+RessourceLineSuccessfullyUpdated=Vellykket oppdatering av ressurslinje
+ResourceLinkedWithSuccess=Vellykket ressurskobling
+
+TitleResourceCard=Ressurskort
+ConfirmDeleteResource=Bekreft sletting av ressurs
+RessourceSuccessfullyDeleted=Vellykket sletting av ressurs
+DictionaryResourceType=Ressurstype
+
+SelectResource=Velg ressurs

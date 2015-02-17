@@ -64,7 +64,7 @@ else if ($action == 'update')
 {
 	if (GETPOST('submit_GENBARCODE_LOCATION'))
 	{
-		$location = GETPOST('genbarcodelocation','alpha');
+		$location = GETPOST('GENBARCODE_LOCATION','alpha');
 		$res = dolibarr_set_const($db, "GENBARCODE_LOCATION",$location,'chaine',0,'',$conf->entity);
 	}
 	if (GETPOST('submit_PRODUIT_DEFAULT_BARCODE_TYPE'))
@@ -203,7 +203,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
 $sql.= " WHERE entity = ".$conf->entity;
 $sql.= " ORDER BY code";
 
-dol_syslog("admin/barcode.php sql=".$sql);
+dol_syslog("admin/barcode.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -318,7 +318,6 @@ if (! isset($_SERVER['WINDIR']))
 	print '</td>';
 	print '<td width="60" align="center"><input type="submit" class="button" name="submit_GENBARCODE_LOCATION" value="'.$langs->trans("Modify").'"></td>';
 	print '</tr>';
-	print '</form>';
 }
 
 // Module products
@@ -350,6 +349,7 @@ if (! empty($conf->societe->enabled))
 }
 
 print "</table>\n";
+print '</form>';
 
 print '<br>';
 
@@ -396,7 +396,7 @@ if ($conf->produit->enabled)
 	    			$var = !$var;
 
 	    			print '<tr '.$bc[$var].'>';
-	    			print '<td>'.$modBarCode->nom."</td><td>\n";
+	    			print '<td>'.(isset($modBarCode->name)?$modBarCode->name:$modBarCode->nom)."</td><td>\n";
 	    			print $modBarCode->info($langs);
 	    			print '</td>';
 	    			print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";

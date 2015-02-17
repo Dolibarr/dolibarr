@@ -47,6 +47,14 @@ function SetXmlHeaders()
 	header('Content-Type: text/xml; charset=utf-8');
 }
 
+/**
+ * CreateXmlHeader
+ *
+ * @param string	$command		Command
+ * @param string	$resourceType	Resource type
+ * @param string	$currentFolder	Current folder
+ * @return void
+ */
 function CreateXmlHeader( $command, $resourceType, $currentFolder )
 {
 	SetXmlHeaders();
@@ -63,6 +71,11 @@ function CreateXmlHeader( $command, $resourceType, $currentFolder )
 	$GLOBALS['HeaderSent'] = true ;
 }
 
+/**
+ * CreateXmlFooter
+ *
+ * @return void
+ */
 function CreateXmlFooter()
 {
 	echo '</Connector>' ;
@@ -101,6 +114,13 @@ function SendError($number, $text)
 	exit ;
 }
 
+/**
+ * SendErrorNode
+ *
+ * @param 	integer $number		Number
+ * @param	string	$text		Text of error
+ * @return 	string				Error node
+ */
 function SendErrorNode($number, $text)
 {
 	if ($text)
@@ -108,4 +128,3 @@ function SendErrorNode($number, $text)
 	else
 		echo '<Error number="' . $number . '" />' ;
 }
-?>

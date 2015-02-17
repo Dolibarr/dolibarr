@@ -253,7 +253,6 @@ CivilityMR=Dl
 CivilityMLE=Doamna
 CivilityMTRE=Maestru
 CivilityDR=Doctor
-
 ##### Currencies #####
 Currencyeuros=Euro
 CurrencyAUD=Dolar AU
@@ -290,10 +289,10 @@ CurrencyXOF=CFA BCEAO Franci
 CurrencySingXOF=CFA franc BCEAO
 CurrencyXPF=PCP franci
 CurrencySingXPF=PCP franc
-
 CurrencyCentSingEUR=cent
+CurrencyCentINR=paisa
+CurrencyCentSingINR=paise
 CurrencyThousandthSingTND=mii
-
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Mailing campanie
@@ -306,7 +305,6 @@ DemandReasonTypeSRC_WOM=din gură în gură
 DemandReasonTypeSRC_PARTNER=Partener
 DemandReasonTypeSRC_EMPLOYEE=Angajat
 DemandReasonTypeSRC_SPONSORING=Sponsor
-
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
 PaperFormatEU2A0=Format 2A0

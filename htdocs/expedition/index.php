@@ -44,14 +44,12 @@ llxHeader('',$langs->trans("Shipment"),$helpurl);
 print_fiche_titre($langs->trans("SendingsArea"));
 
 
-//print '<table class="notopnoleftnoright" width="100%">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 $var=false;
 print '<table class="noborder nohover" width="100%">';
-print '<form method="post" action="liste.php">';
+print '<form method="post" action="list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASending").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
@@ -64,10 +62,10 @@ print "</form></table><br>\n";
 $clause = " WHERE ";
 
 $sql = "SELECT e.rowid, e.ref";
-$sql.= ", s.nom, s.rowid as socid";
+$sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid)
@@ -101,10 +99,10 @@ if ($resql)
 			print $shipment->getNomUrl(1);
 			print "</td>";
 			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name.'</a>';
 			print '</td>';
 			print '<td>';
-			if ($obj->commande_id) print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
+			if ($obj->commande_id) print '<a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
 			print '</td></tr>';
 			$i++;
 		}
@@ -116,7 +114,7 @@ if ($resql)
 /*
  * Commandes a traiter
  */
-$sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -138,7 +136,7 @@ if ($resql)
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
+		print '<td colspan="3">'.$langs->trans("OrdersToProcess").'</td></tr>';
 		$var = True;
 		while ($i < $num)
 		{
@@ -148,13 +146,19 @@ if ($resql)
 			print '<td class="nowrap">';
 			$orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
+			$orderstatic->statut=$obj->fk_statut;
+			$orderstatic->facturee=0;
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			$companystatic->nom=$obj->nom;
+			$companystatic->name=$obj->name;
 			$companystatic->id=$obj->socid;
 			print $companystatic->getNomUrl(1,'customer',32);
-			print '</td></tr>';
+			print '</td>';
+			print '<td align="right">';
+			print $orderstatic->getLibStatut(3);
+			print '</td>';
+			print '</tr>';
 			$i++;
 		}
 		print "</table><br>";
@@ -169,7 +173,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Commandes en traitement
  */
-$sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.facture as billed, s.nom, s.rowid as socid";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.facture as billed, s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -202,7 +206,7 @@ if ( $resql )
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			$companystatic->nom=$obj->nom;
+			$companystatic->name=$obj->name;
 			$companystatic->id=$obj->socid;
 			print $companystatic->getNomUrl(1,'customer');
 			print '</td>';
@@ -224,7 +228,7 @@ else dol_print_error($db);
  * Last shipments
  */
 $sql = "SELECT e.rowid, e.ref";
-$sql.= ", s.nom, s.rowid as socid";
+$sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
@@ -253,9 +257,9 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print '<tr '.$bc[$var].'><td width="20%"><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' ';
+			print '<tr '.$bc[$var].'><td width="20%"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' ';
 			print $obj->ref.'</a></td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
 			print '<td>';
 			if ($obj->commande_id)
 			{
@@ -274,7 +278,6 @@ if ($resql)
 else dol_print_error($db);
 
 
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 

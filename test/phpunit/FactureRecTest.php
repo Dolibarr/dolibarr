@@ -81,6 +81,8 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -131,7 +133,7 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
 		$localobjectinv=new Facture($this->savdb);
 		$localobjectinv->initAsSpecimen();
 		$localobjectinv->create($user);
-		
+
 		$localobject=new FactureRec($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user, $localobjectinv->id);
@@ -141,15 +143,15 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
     	return $result;
     }
 
-    
-    
-    
-    
-    
+
+
+
+
+
     /**
      * Edit an object to test updates
      *
-     * @param 	mixed	&$localobject		Object Facture
+     * @param 	mixed	$localobject		Object Facture
      * @return	void
      */
     public function changeProperties(&$localobject)
@@ -196,4 +198,3 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
         return $retAr;
     }
 }
-?>

@@ -51,7 +51,7 @@ if ($id > 0 || ! empty($ref))
 	if ($object->fetch($id,$ref) > 0)
 	{
 		$projectstatic->fetch($object->fk_project);
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = dol_clone($projectstatic);
 	}
@@ -134,7 +134,7 @@ if ($object->id > 0)
 
 		// Company
 		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
+		if (! empty($projectstatic->thirdparty->id)) print $projectstatic->thirdparty->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td>';
 		print '</tr>';
@@ -148,11 +148,19 @@ if ($object->id > 0)
 		// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
 
+	   	// Date start
+		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+		print dol_print_date($projectstatic->date_start,'day');
+		print '</td></tr>';
+
+		// Date end
+		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+		print dol_print_date($projectstatic->date_end,'day');
+		print '</td></tr>';
+
 		print '</table>';
 
 		dol_fiche_end();
-
-		print '<br>';
 	}
 
 	$head = task_prepare_head($object);
@@ -171,7 +179,7 @@ if ($object->id > 0)
 	    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 	}
 	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 	print '</td></tr>';
 
 	// Label
@@ -186,7 +194,7 @@ if ($object->id > 0)
 
 		// Third party
 		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
+		if ($projectstatic->thirdparty->id > 0) print $projectstatic->thirdparty->getNomUrl(1);
 		else print'&nbsp;';
 		print '</td></tr>';
 	}

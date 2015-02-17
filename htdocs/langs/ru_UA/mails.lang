@@ -1,23 +1,11 @@
-/*
- * Language code: ru_UA
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ru_UA
+# Dolibarr language file - Source file is en_US - mails
 Mailing=По электронной почте
 EMailing=По электронной почте
-Mailings=EMailings
 MailReply=Отвечать на
 MailTo=Ресивер (ы)
 MailCC=Копировать в
 MailCCC=Сохраненная копия для
 MailTopic=EMail тему
-MailText=Сообщение
-PrepareMailing=Подготовка по электронной почте
-CreateMailing=Создание электронной почте
 MailingDesc=На этой странице можно отправить emailings к группе людей.
 MailingResult=Отправка сообщений результате
 TestMailing=Испытание электронной почте
@@ -29,21 +17,13 @@ ConfirmResetMailing=Предупреждение, по электронной п
 ConfirmDeleteMailing=Вы действительно хотите удалить этот emailling?
 NbOfRecipients=Количество получателей
 MailingAddFile=Прикрепите этот файл
-NoAttachedFiles=Нет прикрепленных файлов
 BadEMail=Плохо значение EMail
-CloneEMailing=Клон Отправка
 ConfirmCloneEMailing=Вы уверены, что хотите клонировать этот электронной почте?
-MailingModuleDescContactsByCompanyCategory=Контакты третьих лиц (по третьей категории сторон)
-MailingModuleDescMembersCategories=Фонд членов (по категориям)
-MailingModuleDescContactsByFunction=Контакты третьих лиц (по должности / функции)
-LineInFile=Линия %s в файл
 RecipientSelectionModules=Определено запросы на выбор получателя
 MailingNeedCommand=В целях безопасности, отправка по электронной почте должна быть выполнена из командной строки. Попросите вашего администратора запустить следующую команду для отправки по электронной почте всем получателям:
 MailingNeedCommand2=Однако, вы можете отправить их в Интернете путем добавления параметра MAILING_LIMIT_SENDBYWEB со значением максимальное число писем вы хотите отправить на сессии. Для этого перейдите на главную - Настройка - другие.
 ConfirmSendingEmailing=Вы действительно хотите отправить по электронной почте без командной строки или веб-режиме?
 LimitSendingEmailing=В строке отправки emailings ограничены для обеспечения безопасности и тайм-аут причин <b>%s</b> получателей, отправив сессии.
-TargetsReset=Очистить список
 ToClearAllRecipientsClickHere=Нажмите сюда, чтобы очистить список получателей для этого электронной почтой
 ListOfActiveNotifications=Список всех активных запросов уведомлений по электронной почте
 ListOfNotificationsDone=Список всех почтовых уведомлений
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:01:53).

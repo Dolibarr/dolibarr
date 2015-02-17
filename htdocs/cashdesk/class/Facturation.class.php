@@ -103,7 +103,7 @@ class Facturation
         $sql.= " FROM ".MAIN_DB_PREFIX."c_tva";
         $sql.= " WHERE rowid = ".$this->tva();
 
-        dol_syslog("ajoutArticle sql=".$sql);
+        dol_syslog("ajoutArticle", LOG_DEBUG);
         $resql = $db->query($sql);
 
         if ($resql)
@@ -653,4 +653,3 @@ class Facturation
 
 }
 
-?>

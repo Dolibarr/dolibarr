@@ -460,7 +460,7 @@ function createThirdParty($authentication,$thirdparty)
         $result=$newobject->create($fuser);
         if ($newobject->particulier && $result > 0) {
             $newobject->firstname = $thirdparty['firstname'];
-            $newobject->name_bis = $thirdparty['ref'];
+            $newobject->name_bis = $thirdparty['lastname'];
             $result = $newobject->create_individual($fuser);
         }
         if ($result <= 0)
@@ -471,6 +471,11 @@ function createThirdParty($authentication,$thirdparty)
         if (! $error)
         {
             $db->commit();
+
+            // Patch to add capability to associate (one) sale representative
+            if($thirdparty['commid'] && $thirdparty['commid']>0)
+                $newobject->add_commercial($fuser, $thirdparty["commid"]);
+
             $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
         }
         else
@@ -624,7 +629,7 @@ function updateThirdParty($authentication,$thirdparty)
  * getListOfThirdParties
  *
  * @param	array		$authentication		Array of authentication information
- * @param	array		$filterthirdparty	Filter fields
+ * @param	array		$filterthirdparty	Filter fields (key=>value to filer on. For example 'client'=>2, 'supplier'=>1, 'category'=>idcateg, 'name'=>'searchstring', ...)
  * @return	array							Array result
  */
 function getListOfThirdParties($authentication,$filterthirdparty)
@@ -648,19 +653,20 @@ function getListOfThirdParties($authentication,$filterthirdparty)
 
     if (! $error)
     {
-        $sql ="SELECT s.rowid as socRowid, s.nom as ref, s.ref_ext, s.address, s.zip, s.town, p.libelle as country, s.phone, s.fax, s.url, extra.*";
-        $sql.=" FROM ".MAIN_DB_PREFIX."societe as s";
-        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON s.fk_pays = p.rowid';
-        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as extra ON s.rowid=fk_object";
+        $sql  = "SELECT s.rowid as socRowid, s.nom as ref, s.ref_ext, s.address, s.zip, s.town, c.label as country, s.phone, s.fax, s.url, extra.*";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON s.fk_pays = c.rowid";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as extra ON s.rowid=fk_object";
 
         $sql.=" WHERE entity=".$conf->entity;
         foreach($filterthirdparty as $key => $val)
         {
-            if ($key == 'client'   && $val != '')  $sql.=" AND s.client = ".$db->escape($val);
+            if ($key == 'name'     && $val != '')  $sql.=" AND s.name LIKE '%".$db->escape($val)."%'";
+        	if ($key == 'client'   && $val != '')  $sql.=" AND s.client = ".$db->escape($val);
             if ($key == 'supplier' && $val != '')  $sql.=" AND s.fournisseur = ".$db->escape($val);
-            if ($key == 'category'   && $val != '')  $sql.=" AND s.rowid IN (SELECT fk_societe FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
+            if ($key == 'category' && $val != '')  $sql.=" AND s.rowid IN (SELECT fk_societe FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
         }
-        dol_syslog("Function: getListOfThirdParties sql=".$sql);
+        dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);
 
         $extrafields=new ExtraFields($db);
         $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
@@ -723,4 +729,4 @@ function getListOfThirdParties($authentication,$filterthirdparty)
 }
 
 // Return the results.
-$server->service($HTTP_RAW_POST_DATA);
+$server->service(file_get_contents("php://input"));

@@ -141,7 +141,7 @@ $server->register(
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
- * @param	ref_ext		$ref_ext			Ref external of object
+ * @param	string		$ref_ext			Ref external of object
  * @return	mixed
  */
 function getSkeleton($authentication,$id,$ref='',$ref_ext='')
@@ -269,6 +269,4 @@ function createSkeleton($authentication,$skeleton)
 }
 
 // Return the results.
-$server->service($HTTP_RAW_POST_DATA);
-
-?>
+$server->service(file_get_contents("php://input"));

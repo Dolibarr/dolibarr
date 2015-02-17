@@ -25,7 +25,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function trip_prepare_head($object)
 {
@@ -34,7 +34,7 @@ function trip_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/compta/deplacement/fiche.php?id=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/compta/deplacement/card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
@@ -54,10 +54,8 @@ function trip_prepare_head($object)
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
-	
+
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'trip','remove');
 
 	return $head;
 }
-
-?>

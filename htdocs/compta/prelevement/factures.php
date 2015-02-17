@@ -47,7 +47,7 @@ $page = GETPOST('page','int');
 $sortorder = ((GETPOST('sortorder','alpha')=="")) ? "DESC" : GETPOST('sortorder','alpha');
 $sortfield = ((GETPOST('sortfield','alpha')=="")) ? "p.ref" : GETPOST('sortfield','alpha');
 
-llxHeader('',$langs->trans("WithdrawalReceipts"));
+llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 if ($prev_id)
 {
@@ -56,24 +56,24 @@ if ($prev_id)
   	if ($bon->fetch($prev_id) == 0)
     {
     	$head = prelevement_prepare_head($bon);
-      	dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalReceipts"), '', 'payment');
+		dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), '', 'payment');
 
       	print '<table class="border" width="100%">';
 
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
-	
+
 		// Status
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
 		print '<td>'.$bon->getLibStatut(1).'</td>';
 		print '</tr>';
-	
+
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
 			$muser->fetch($bon->user_trans);
-	
+
 			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($bon->date_trans,'day');
 			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
@@ -87,19 +87,19 @@ if ($prev_id)
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
-	
+
 		print '</table>';
-	
+
 		print '<br>';
-	
+
 		print '<table class="border" width="100%"><tr><td width="20%">';
 		print $langs->trans("WithdrawalFile").'</td><td>';
 		$relativepath = 'receipts/'.$bon->ref;
 		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
 		print '</td></tr></table>';
-	
+
 		dol_fiche_end();
-      	
+
     }
   	else
     {
@@ -114,7 +114,7 @@ $offset = $conf->liste_limit * $page ;
  */
 $sql = "SELECT pf.rowid";
 $sql.= ",f.rowid as facid, f.facnumber as ref, f.total_ttc";
-$sql.= ", s.rowid as socid, s.nom, pl.statut";
+$sql.= ", s.rowid as socid, s.nom as name, pl.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture as pf";
@@ -144,9 +144,9 @@ if ($result)
   	print"\n<!-- debut table -->\n";
   	print '<table class="liste" width="100%">';
   	print '<tr class="liste_titre">';
-  	print_liste_field_titre($langs->trans("Bill"),"factures.php","p.ref",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("ThirdParty"),"factures.php","s.nom",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("Amount"),"factures.php","f.total_ttc","",$urladd,'class="liste_titre" align="center"',$sortfield,$sortorder);
+  	print_liste_field_titre($langs->trans("Bill"),$_SERVER["PHP_SELF"],"p.ref",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
+  	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
+  	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"f.total_ttc","",$urladd,'class="liste_titre" align="center"',$sortfield,$sortorder);
   	print '<td class="liste_titre" colspan="2">&nbsp;</td></tr>';
 
   	$var=false;
@@ -165,8 +165,8 @@ if ($result)
 
       	print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
-      	print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
-      	print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
+      	print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
+      	print img_object($langs->trans("ShowCompany"),"company"). ' '.$obj->name."</a></td>\n";
 
       	print '<td align="center">'.price($obj->total_ttc)."</td>\n";
 
@@ -213,6 +213,7 @@ else
 	dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();

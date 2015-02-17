@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,7 +80,7 @@ class Skeleton_Class extends CommonObject
 		// Put here code to add control on parameters values
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mytable(";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		$sql.= " field1,";
 		$sql.= " field2";
 		//...
@@ -91,13 +92,13 @@ class Skeleton_Class extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
 		if (! $error)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mytable");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			if (! $notrigger)
 			{
@@ -105,10 +106,8 @@ class Skeleton_Class extends CommonObject
 	            // want this action calls a trigger.
 
 	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 	            //// End call triggers
 			}
         }
@@ -118,7 +117,7 @@ class Skeleton_Class extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -135,10 +134,11 @@ class Skeleton_Class extends CommonObject
     /**
      *  Load object in memory from the database
      *
-     *  @param	int		$id    Id object
+     *  @param	int		$id    	Id object
+     *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id)
+    function fetch($id,$ref='')
     {
     	global $langs;
         $sql = "SELECT";
@@ -146,10 +146,11 @@ class Skeleton_Class extends CommonObject
 		$sql.= " t.field1,";
 		$sql.= " t.field2";
 		//...
-        $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
-        $sql.= " WHERE t.rowid = ".$id;
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        if ($ref) $sql.= " WHERE t.ref = '".$ref."'";
+        else $sql.= " WHERE t.rowid = ".$id;
 
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch");
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -169,7 +170,6 @@ class Skeleton_Class extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -182,7 +182,7 @@ class Skeleton_Class extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user, $notrigger=0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -196,7 +196,7 @@ class Skeleton_Class extends CommonObject
 		// Put here code to add a control on parameters values
 
         // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."mytable SET";
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         $sql.= " field1=".(isset($this->field1)?"'".$this->db->escape($this->field1)."'":"null").",";
         $sql.= " field2=".(isset($this->field2)?"'".$this->db->escape($this->field2)."'":"null")."";
 		//...
@@ -204,7 +204,7 @@ class Skeleton_Class extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -216,12 +216,10 @@ class Skeleton_Class extends CommonObject
 	            // want this action calls a trigger.
 
 	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 	            //// End call triggers
-	    	}
+			 }
 		}
 
         // Commit or rollback
@@ -229,7 +227,7 @@ class Skeleton_Class extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -264,21 +262,19 @@ class Skeleton_Class extends CommonObject
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action calls a trigger.
 
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
+	            //// Call triggers
+	            //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            //// End call triggers
 			}
 		}
 
 		if (! $error)
 		{
-    		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mytable";
+    		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
     		$sql.= " WHERE rowid=".$this->id;
 
-    		dol_syslog(get_class($this)."::delete sql=".$sql);
+    		dol_syslog(__METHOD__);
     		$resql = $this->db->query($sql);
         	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
@@ -288,7 +284,7 @@ class Skeleton_Class extends CommonObject
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -371,4 +367,3 @@ class Skeleton_Class extends CommonObject
 	}
 
 }
-?>

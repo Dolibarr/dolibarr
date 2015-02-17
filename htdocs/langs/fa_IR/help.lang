@@ -1,28 +1,28 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=منتدى / الدعم ويكي
-EMailSupport=رسائل البريد الإلكتروني لدعم
-RemoteControlSupport=الانترنت في الوقت الحقيقي / النائية الدعم
-OtherSupport=الدعم الأخرى
-ToSeeListOfAvailableRessources=للاتصال / انظر الموارد المتاحة :
-ClickHere=اضغط هنا
-HelpCenter=مركز المساعدة
-DolibarrHelpCenter=Dolibarr مركز المساعدة والدعم
-ToGoBackToDolibarr=Otherwise, click <a href=بخلاف ذلك ، انقر <a href="%s">هنا لاستخدام Dolibarr</a>
-TypeOfSupport=مصدر الدعم
-TypeSupportCommunauty=المجتمع (مجاني)
-TypeSupportCommercial=التجارية
+CommunitySupport=انجمن / پشتیبانی از ویکی
+EMailSupport=پشتیبانی ایمیل
+RemoteControlSupport=زمان واقعی آنلاین / پشتیبانی از راه دور
+OtherSupport=پشتیبانی دیگر
+ToSeeListOfAvailableRessources=برای تماس / نگاه کنید به منابع در دسترس:
+ClickHere=اینجا را کلیک کنید
+HelpCenter=مرکز راهنما
+DolibarrHelpCenter=کمک Dolibarr و پشتیبانی مرکز
+ToGoBackToDolibarr=در غیر این صورت، با کلیک <a href="%s">در اینجا به استفاده از Dolibarr</a>
+TypeOfSupport=منبع پشتیبانی
+TypeSupportCommunauty=ارتباطات (رایگان)
+TypeSupportCommercial=تجاری
 TypeOfHelp=نوع
-NeedHelpCenter=بحاجة إلى مساعدة أو دعم؟
-Efficiency=الكفاءة
-TypeHelpOnly=يساعد فقط
-TypeHelpDev=+ المساعدة على التنمية
-TypeHelpDevForm=مساعدة التنمية + + تشكيل
-ToGetHelpGoOnSparkAngels1=ويمكن أن توفر بعض الشركات سريعة (ما الفورية) ، وزيادة كفاءة شبكة الإنترنت عن طريق دعم السيطرة على جهاز الكمبيوتر الخاص بك. مساعدات من هذا القبيل يمكن الاطلاع على الموقع الإلكتروني <b>ل ٪</b> :
-ToGetHelpGoOnSparkAngels3=كما يمكنك الذهاب الى قائمة المدربين كل ما هو متاح لDolibarr ، لهذا اضغط على زر
-ToGetHelpGoOnSparkAngels2=في بعض الأحيان ، لا يوجد أي شركة المتاحة في الوقت الراهن تقوم بإجراء البحث ، لذلك اعتقد تغيير فلتر للبحث عن "توافر جميع". ستتمكن من ارسال المزيد من الطلبات.
-BackToHelpCenter=Otherwise, click here to go <a href=بخلاف ذلك ، انقر هنا للذهاب <a href="%s">الى الصفحة الرئيسية لمركز المساعدة.</a>
-LinkToGoldMember=تستطيع الاتصال به من قبل المدرب مختار مسبقا لغتك Dolibarr (٪) عن طريق النقر فوق القطعة له (والحد الاعلى لسعر يتم تحديثها تلقائيا) :
-PossibleLanguages=وأيد لغات
-MakeADonation=مساعدة Dolibarr المشروع ، تقديم تبرع
-# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+NeedHelpCenter=نیاز به کمک یا حمایت؟
+Efficiency=بهره وری
+TypeHelpOnly=راهنما تنها
+TypeHelpDev=راهنما + توسعه
+TypeHelpDevForm=سازند راهنما + توسعه +
+ToGetHelpGoOnSparkAngels1=برخی از شرکت ها می توانند پشتیبانی آنلاین سریع (گاهی اوقات فوری) و کارآمد تر با در نظر گرفتن کنترل کامپیوتر شما را فراهم کنند. این کمک کننده ها را می توان <b>در٪ بازدید کنندگان</b> وب سایت یافت:
+ToGetHelpGoOnSparkAngels3=شما همچنین می توانید به لیستی از تمام مربیان برای Dolibarr بروید، برای این کار با کلیک بر روی دکمه
+ToGetHelpGoOnSparkAngels2=گاهی اوقات، هیچ شرکت های موجود در حال حاضر شما می توانید جستجوی خود را وجود دارد، بنابراین فکر می کنم برای تغییر فیلتر برای "همه در دسترس بودن" است. شما قادر به ارسال درخواست بیشتر خواهد شد.
+BackToHelpCenter=در غیر این صورت، در اینجا کلیک کنید برای رفتن <a href="%s">به عقب برای کمک به صفحه اصلی مرکز</a> .
+LinkToGoldMember=شما می توانید یکی از مربی های Dolibarr برای زبان خود را (از%s) با کلیک کردن ویجت خود (وضعیت و حداکثر قیمت ها به طور خودکار به روز رسانی) از پیش انتخاب شده تماس بگیرید:
+PossibleLanguages=زبانهای پشتیبانی شده
+MakeADonation=کمک به پروژه Dolibarr، کمک مالی
+SubscribeToFoundation=کمک به پروژه Dolibarr، مشترک به پایه و اساس
+SeeOfficalSupport=برای حمایت Dolibarr رسمی در زبان شما: <br> <a href="%s" target="_blank"><b>از%s</b></a>

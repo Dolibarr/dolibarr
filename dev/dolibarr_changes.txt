@@ -44,6 +44,8 @@ In htdocs/includes/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';
 
+* Renamed getmypid into dol_getmypid().
+
 
 JSGANTT:
 --------

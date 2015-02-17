@@ -42,7 +42,7 @@ $object=new Opensurveysondage($db);
 $result=$object->fetch(0,$numsondage);
 if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
 
-$nblignes=count($object->fetch_lines());
+$nblignes=$object->fetch_lines();
 
 
 /*
@@ -83,7 +83,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 		$nom=substr(GETPOST("nom"),0,64);
 
 		// Check if vote already exists
-		$sql = 'SELECT id_users, nom';
+		$sql = 'SELECT id_users, nom as name';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
 		$sql.= " WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."'";
 		$sql.= ' ORDER BY id_users';
@@ -151,7 +151,6 @@ if ($testmodifier)
 	$sql.= " SET reponses = '".$db->escape($nouveauchoix)."'";
 	$sql.= " WHERE id_users = '".$db->escape($idtomodify)."'";
 
-	dol_syslog("sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
 }
@@ -172,7 +171,6 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_sondage";
 	$sql.= " SET sujet = '".$db->escape($nouveauxsujets)."'";
 	$sql.= " WHERE id_sondage = '".$db->escape($numsondage)."'";
-	dol_syslog("sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
 	else {
@@ -258,7 +256,6 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_sondage";
 			$sql.= " SET sujet = '".$db->escape($dateinsertion)."'";
 			$sql.= " WHERE id_sondage = '".$db->escape($numsondage)."'";
-			dol_syslog("sql=".$sql);
 			$resql = $db->query($sql);
 			if (! $resql) dol_print_error($db);
 			else {
@@ -286,10 +283,9 @@ for ($i = 0; $i < $nblignes; $i++)
 
 		// Loop on each answer
 		$compteur = 0;
-		$sql ="SELECT id_users, nom, id_sondage, reponses";
+		$sql ="SELECT id_users, nom as name, id_sondage, reponses";
 		$sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
-		dol_syslog('sql='.$sql);
 		$resql=$db->query($sql);
 		if (! $resql) dol_print_error($db);
 		$num=$db->num_rows($resql);
@@ -340,13 +336,12 @@ for ($i = 0; $i < $nbcolonnes; $i++)
 		// Mise a jour des sujets dans la base
 		$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_sondage";
 		$sql.= " SET sujet = '".$db->escape($nouveauxsujets)."' WHERE id_sondage = '".$db->escape($numsondage)."'";
-		dol_syslog("sql=".$sql);
 		$resql = $db->query($sql);
 		if (! $resql) dol_print_error($db);
 
 		// Clean current answer to remove deleted columns
 		$compteur = 0;
-		$sql ="SELECT id_users, nom, id_sondage, reponses";
+		$sql ="SELECT id_users, nom as name, id_sondage, reponses";
 		$sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
 		dol_syslog('sql='.$sql);
@@ -761,7 +756,7 @@ else
 $sumfor = array();
 $sumagainst = array();
 $compteur = 0;
-$sql ="SELECT id_users, nom, id_sondage, reponses";
+$sql ="SELECT id_users, nom as name, id_sondage, reponses";
 $sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 $sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
 dol_syslog('sql='.$sql);
@@ -785,7 +780,7 @@ while ($compteur < $num)
 	}
 
 	// Name
-	print '</td><td class="nom">'.dol_htmlentities($obj->nom).'</td>'."\n";
+	print '</td><td class="nom">'.dol_htmlentities($obj->name).'</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (! $testligneamodifier)
@@ -1083,4 +1078,3 @@ print '<a name="bas"></a>'."\n";
 llxFooterSurvey();
 
 $db->close();
-?>

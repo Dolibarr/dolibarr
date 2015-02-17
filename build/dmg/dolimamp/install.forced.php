@@ -14,4 +14,3 @@ $force_install_databaserootpass='root';
 $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
-?>

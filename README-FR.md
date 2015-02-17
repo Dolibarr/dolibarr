@@ -1,21 +1,16 @@
 # DOLIBARR ERP & CRM
 
-## INTRODUCTION
-
 Dolibarr ERP & CRM est un logiciel moderne pour gérer votre activité (société, association, auto-entrepreneurs, artisans). 
 Il est simple d'utilisation et modulaire, vous permettant de n'activez que les fonctions dont vous avez besoin (contacts, fournisseurs, factures, commandes, stocks, agenda, ...).
  
 ![ScreenShot](http://www.dolibarr.org/images/dolibarr_screenshot1_640x480.png)
 
---------------------------------
-Documentation démarrage rapide
---------------------------------
 
-1) Installer Dolibarr
-2) Mettre à jour Dolibarr depuis une ancienne version
-3) Ce qui est nouveau dans cette version
-4) Ce que peux faire Dolibarr
-5) Ce que ne peux pas faire Dolibarr (pas encore)
+
+## LICENCE
+
+Dolibarr est distribué sous les termes de la licence GNU General Public License v3+ ou supérieure.
+
 
 
 ## INSTALLER DOLIBARR
@@ -115,8 +110,8 @@ Divers:
 - Application simple à utiliser.
 - Plusieurs thèmes visuels.
 - Code simple et facilement personnalisable.
-- Fonctionne avec PHP 5.3+, MySQL 4.1+ ou PostgreSql 8.1.4+.
-- Compatible avec toutes les offres Cloud du marché respectant les prérequis MySQL et PHP. 
+- Requiert PHP et Mysql ou Postgresql (Voir versions exactes sur http://wiki.dolibarr.org/index.php/Prérequis). 
+- Compatible avec toutes les offres Cloud du marché respectant les prérequis MySQL et PHP ou Postgresql.
 
 
 ## CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)

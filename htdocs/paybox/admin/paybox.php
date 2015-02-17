@@ -67,7 +67,7 @@ if ($action == 'setvalue' && $user->admin)
     if (! $error)
   	{
   		$db->commit();
-  		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+	    setEventMessage($langs->trans("SetupSaved"));
   	}
   	else
   	{
@@ -195,7 +195,7 @@ print '<input size="32" type="email" name="PAYBOX_PAYONLINE_SENDEMAIL" value="'.
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
 print '</td></tr>';
 
-print '</table><br><center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center></form>';
+print '</table><br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div></form>';
 
 print '<br><br>';
 
@@ -226,8 +226,6 @@ if (! empty($conf->adherent->enabled))
 
 print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 dol_fiche_end();

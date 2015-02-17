@@ -34,7 +34,7 @@ $langs->load("companies");
 $langs->load("categories");
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->COMPTA_MODE;
+$modecompta = $conf->global->ACCOUNTING_MODE;
 if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
 
 $sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -191,9 +191,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	$sql.= " WHERE f.fk_statut in (1,2)";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	    $sql.= " AND f.type IN (0,1,2)";
+	    $sql.= " AND f.type IN (0,1,2,5)";
 	} else {
-	    $sql.= " AND f.type IN (0,1,2,3)";
+	    $sql.= " AND f.type IN (0,1,2,3,5)";
 	}
 	$sql.= " AND f.fk_soc = s.rowid";
 	if ($date_start && $date_end) {
@@ -250,7 +250,7 @@ $sql.= " GROUP BY s.rowid, s.nom";
 $sql.= " ORDER BY s.rowid";
 //echo $sql;
 
-dol_syslog("casoc sql=".$sql);
+dol_syslog("casoc", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -429,9 +429,9 @@ if (count($amount)) {
 		print '<td align="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
                     if ($key > 0) {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid='.$key.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
 		    } else {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid=-1">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid=-1">';
 		    }
 		} else {
 		    if ($key > 0) {
@@ -447,9 +447,9 @@ if (count($amount)) {
 		print '<td align="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
                     if ($key > 0) {
-                        print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid='.$key.'">';
+                        print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
 		    } else {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?orphelins=1">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?orphelins=1">';
 		    }
 		} else {
                     if ($key > 0) {

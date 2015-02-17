@@ -1,6 +1,7 @@
 <?php
 /*
- * Copyright (C) 2013   Cédric Salvador    <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013	Cédric Salvador	<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014	Regis Houssin	<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +45,7 @@ $result=restrictedArea($user,'produit|service');
  * View
  */
 
-$helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
-$helpurl .= 'ES:M&oacute;dulo_Stocks';
+$helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $texte = $langs->trans('ReplenishmentOrders');
 
 llxHeader('', $texte, $helpurl, '');
@@ -72,17 +72,12 @@ $sproduct = GETPOST('sproduct', 'int');
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
 
-if (!$sortorder) {
-    $sortorder = 'DESC';
-}
-
-if (!$sortfield) {
-    $sortfield = 'cf.date_creation';
-}
+if (!$sortorder) $sortorder = 'DESC';
+if (!$sortfield) $sortfield = 'cf.date_creation';
 
 $offset = $conf->liste_limit * $page ;
 
-$sql = 'SELECT s.rowid as socid, s.nom, cf.date_creation as dc,';
+$sql = 'SELECT s.rowid as socid, s.nom as name, cf.date_creation as dc,';
 $sql.= ' cf.rowid, cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,';
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande_fournisseur as cf';
@@ -137,7 +132,7 @@ if ($sall) {
     $sql .= ' AND (cf.ref LIKE "%' . $db->escape($sall) . '%" ';
     $sql .= 'OR cf.note LIKE "%' . $db->escape($sall) . '%")';
 }
-if ($socid) {
+if (!empty($socid)) {
     $sql .= ' AND s.rowid = ' . $socid;
 }
 
@@ -146,7 +141,7 @@ if (GETPOST('statut', 'int')) {
 }
 $sql .= ' GROUP BY cf.rowid, cf.ref, cf.date_creation, cf.fk_statut';
 $sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
-$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder  . ' ';
+$sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($conf->liste_limit+1, $offset);
 $resql = $db->query($sql);
 if ($resql)
@@ -265,7 +260,7 @@ if ($resql)
         $var = !$var;
         if (!dispatched($obj->rowid) && (!$sproduct || in_array($sproduct, getProducts($obj->rowid))))
         {
-            $href = DOL_URL_ROOT . '/fourn/commande/fiche.php?id=' . $obj->rowid;
+            $href = DOL_URL_ROOT . '/fourn/commande/card.php?id=' . $obj->rowid;
             print '<tr ' . $bc[$var] . '>'.
             // Ref
                  '<td>'.
@@ -274,11 +269,11 @@ if ($resql)
                  '</a></td>';
 
             // Company
-            $href = DOL_URL_ROOT . '/fourn/fiche.php?socid=' . $obj->socid;
+            $href = DOL_URL_ROOT . '/fourn/card.php?socid=' . $obj->socid;
             print '<td>'.
                  '<a href="' . $href .'">'.
                  img_object($langs->trans('ShowCompany'), 'company'). ' '.
-                 $obj->nom . '</a></td>';
+                 $obj->name . '</a></td>';
 
             // Author
             $userstatic->id = $obj->fk_user_author;
@@ -317,7 +312,7 @@ if ($resql)
          '</form>';
 
     $db->free($resql);
-    
+
     dol_fiche_end();
 }
 else

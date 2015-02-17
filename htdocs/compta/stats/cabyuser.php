@@ -36,7 +36,7 @@ if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta'
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->COMPTA_MODE;
+$modecompta = $conf->global->ACCOUNTING_MODE;
 if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
 
 $sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -178,9 +178,9 @@ if ($modecompta == 'CREANCES-DETTES') {
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid";
     $sql.= " WHERE f.fk_statut in (1,2)";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	    $sql.= " AND f.type IN (0,1,2)";
+	    $sql.= " AND f.type IN (0,1,2,5)";
 	    } else {
-	    $sql.= " AND f.type IN (0,1,2,3)";
+	    $sql.= " AND f.type IN (0,1,2,3,5)";
 	}
 	if ($date_start && $date_end) {
 	    $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -348,7 +348,7 @@ if (count($amount)) {
         // Third party
         $fullname=$name[$key];
         if ($key >= 0) {
-            $linkname='<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowUser"),'user').' '.$fullname.'</a>';
+            $linkname='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$key.'">'.img_object($langs->trans("ShowUser"),'user').' '.$fullname.'</a>';
         } else {
             $linkname=$langs->trans("PaymentsNotLinkedToUser");
         }
@@ -359,9 +359,9 @@ if (count($amount)) {
         if ($modecompta != 'CREANCES-DETTES')
         {
             if ($key > 0) {
-		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid='.$key.'">';
+		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
 		} else {
-		    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid=-1">';
+		    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
 		}
         } else {
             if ($key > 0) {
@@ -377,9 +377,9 @@ if (count($amount)) {
         print '<td align="right">';
         if ($modecompta != 'CREANCES-DETTES') {
             if ($key > 0) {
-		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid='.$key.'">';
+		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
 		} else {
-		    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid=-1">';
+		    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
 		}
         } else {
             if ($key > 0) {

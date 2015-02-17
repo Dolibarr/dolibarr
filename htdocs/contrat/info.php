@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 $langs->load("contracts");
 
 // Security check
-$contratid = isset($_GET["id"])?$_GET["id"]:'';
+$contratid = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat',$contratid,'');
 
@@ -41,8 +41,8 @@ $result = restrictedArea($user, 'contrat',$contratid,'');
 llxHeader();
 
 $contrat = new Contrat($db);
-$contrat->fetch($_GET["id"]);
-$contrat->info($_GET["id"]);
+$contrat->fetch($contratid);
+$contrat->info($contratid);
 
 $head = contract_prepare_head($contrat);
 
@@ -58,4 +58,3 @@ print '</div>';
 $db->close();
 
 llxFooter();
-?>

@@ -158,4 +158,3 @@ class modPrelevement extends DolibarrModules
     }
 
 }
-?>

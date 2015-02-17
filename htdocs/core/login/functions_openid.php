@@ -79,7 +79,7 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
             $sql.=" WHERE openid = '".$db->escape($_GET['openid_identity'])."'";
             $sql.=" AND entity IN (0," . ($_SESSION["dol_entity"] ? $_SESSION["dol_entity"] : 1) . ")";
 
-            dol_syslog("functions_openid::check_user_password_openid sql=".$sql);
+            dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -112,5 +112,3 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
 
     return $login;
 }
-
-?>

@@ -43,5 +43,3 @@ else if ($action == 'setnote_private' && ! empty($permissionnote) && ! GETPOST('
 	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
 	if ($result < 0) setEventMessage($object->error,'errors');
 }
-
-?>

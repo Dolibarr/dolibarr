@@ -102,7 +102,7 @@ class FormMail
         $this->withfilereadonly=0;
         $this->withbodyreadonly=0;
         $this->withdeliveryreceiptreadonly=0;
-        $this->withfckeditor=0;
+        $this->withfckeditor=-1;	// -1 = Auto
 
         return 1;
     }
@@ -222,7 +222,7 @@ class FormMail
         global $conf, $langs, $user, $hookmanager, $form;
 
         if (! is_object($form)) $form=new Form($this->db);
-        
+
         $langs->load("other");
         $langs->load("mails");
 
@@ -249,6 +249,21 @@ class FormMail
         	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
         	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
         	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+
+       		// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $this->param['langsmodels'];
+			if (! empty($newlang))
+			{
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+				$outputlangs->load('other');
+			}
+
+        	// Get message template
+        	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs);
+
 
         	$out.= "\n<!-- Debut form mail -->\n";
         	if ($this->withform == 1)
@@ -459,7 +474,12 @@ class FormMail
         				$out.= $form->selectarray("receiverccc", $this->withtoccc, GETPOST("receiverccc"), 1);
         			}
         		}
-        		//if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print ' '.info_admin("+ ".$conf->global->MAIN_MAIL_AUTOCOPY_TO,1);
+
+        		$showinfobcc='';
+        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
+        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
+        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+        		if ($showinfobcc) $out.=' + '.$showinfobcc;
         		$out.= "</td></tr>\n";
         	}
 
@@ -474,7 +494,11 @@ class FormMail
         		}
         		else
         		{
-        			$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:0), 1);
+        			$defaultvaluefordeliveryreceipt=0;
+        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_PROPAL) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $defaultvaluefordeliveryreceipt=1;
+        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_ORDER) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $defaultvaluefordeliveryreceipt=1;
+        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $defaultvaluefordeliveryreceipt=1;
+        			$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:$defaultvaluefordeliveryreceipt), 1);
         		}
 
         		$out.= "</td></tr>\n";
@@ -483,19 +507,23 @@ class FormMail
         	// Topic
         	if (! empty($this->withtopic))
         	{
-        		$this->withtopic=make_substitutions($this->withtopic,$this->substit);
+        		$defaulttopic="";
+        		if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['topic']) $defaulttopic=$arraydefaultmessage['topic'];
+        		elseif (! is_numeric($this->withtopic))	 $defaulttopic=$this->withtopic;
+
+        		$defaulttopic=make_substitutions($defaulttopic,$this->substit);
 
         		$out.= '<tr>';
         		$out.= '<td width="180">'.$langs->trans("MailTopic").'</td>';
         		$out.= '<td>';
         		if ($this->withtopicreadonly)
         		{
-        			$out.= $this->withtopic;
-        			$out.= '<input type="hidden" size="60" id="subject" name="subject" value="'.$this->withtopic.'" />';
+        			$out.= $defaulttopic;
+        			$out.= '<input type="hidden" size="60" id="subject" name="subject" value="'.$defaulttopic.'" />';
         		}
         		else
         		{
-        			$out.= '<input type="text" size="60" id="subject" name="subject" value="'. (isset($_POST["subject"])?$_POST["subject"]:(is_numeric($this->withtopic)?'':$this->withtopic)) .'" />';
+        			$out.= '<input type="text" size="60" id="subject" name="subject" value="'. (isset($_POST["subject"])?$_POST["subject"]:($defaulttopic?$defaulttopic:'')) .'" />';
         		}
         		$out.= "</td></tr>\n";
         	}
@@ -554,18 +582,8 @@ class FormMail
         	if (! empty($this->withbody))
         	{
         		$defaultmessage="";
-
-        		// TODO    A partir du type, proposer liste de messages dans table llx_c_email_template
-        		if     ($this->param["models"]=='facture_send')	            { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
-        		elseif ($this->param["models"]=='facture_relance')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
-        		elseif ($this->param["models"]=='propal_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
-        		elseif ($this->param["models"]=='order_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
-        		elseif ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
-        		elseif ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
-        		elseif ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
-        		elseif ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendFichInter"); }
-        	    elseif ($this->param["models"]=='thirdparty')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentThirdparty"); }
-        		elseif (! is_numeric($this->withbody))						{ $defaultmessage=$this->withbody; }
+        		if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['content']) $defaultmessage=$arraydefaultmessage['content'];
+        		elseif (! is_numeric($this->withbody))	$defaultmessage=$this->withbody;
 
         		// Complete substitution array
         		if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
@@ -619,9 +637,12 @@ class FormMail
 
         			// Editor wysiwyg
         			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        			if (!empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
-        				$this->withfckeditor=1;
+        			if ($this->withfckeditor == -1)
+        			{
+        				if (! empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $this->withfckeditor=1;
+						else $this->withfckeditor=0;
         			}
+
         			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72);
         			$out.= $doleditor->Create(1);
         		}
@@ -630,7 +651,7 @@ class FormMail
 
         	if ($this->withform == 1 || $this->withform == -1)
         	{
-        		$out.= '<tr><td align="center" colspan="2"><center>';
+        		$out.= '<tr><td align="center" colspan="2"><div class="center">';
         		$out.= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
         		// Add a javascript test to avoid to forget to submit file before sending email
         		if ($this->withfile == 2 && $conf->use_javascript_ajax)
@@ -643,7 +664,7 @@ class FormMail
         			$out.= ' &nbsp; &nbsp; ';
         			$out.= '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
         		}
-        		$out.= '</center></td></tr>'."\n";
+        		$out.= '</div></td></tr>'."\n";
         	}
 
         	$out.= '</table>'."\n";
@@ -654,5 +675,70 @@ class FormMail
         	return $out;
         }
     }
+
+
+
+	/**
+	 *      Return template of email
+	 *      Search into table c_email_templates
+	 *
+	 * 		@param	DoliDB		$db				Database handler
+	 * 		@param	string		$type_template	Get message for key module
+	 *      @param	string		$user			Use template public or limited to this user
+	 *      @param	Translate	$outputlangs	Output lang object
+	 *      @return array						array('topic'=>,'content'=>,..)
+	 */
+	private function getEMailTemplate($db, $type_template, $user, $outputlangs)
+	{
+		$ret=array();
+
+		$sql = "SELECT label, topic, content, lang";
+		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
+		$sql.= " WHERE type_template='".$db->escape($type_template)."'";
+		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
+		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
+		$sql.= $db->order("lang,label","ASC");
+		//print $sql;
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);	// Get first found
+			if ($obj)
+			{
+				$ret['label']=$obj->label;
+				$ret['topic']=$obj->topic;
+				$ret['content']=$obj->content;
+				$ret['lang']=$obj->lang;
+			}
+			else
+			{
+				$defaultmessage='';
+				if     ($type_template=='facture_send')	            { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
+	        	elseif ($type_template=='facture_relance')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
+	        	elseif ($type_template=='propal_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendProposal"); }
+	        	elseif ($type_template=='order_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendOrder"); }
+	        	elseif ($type_template=='order_supplier_send')		{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
+	        	elseif ($type_template=='invoice_supplier_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
+	        	elseif ($type_template=='shipping_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendShipping"); }
+	        	elseif ($type_template=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
+	        	elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
+
+	        	$ret['label']='default';
+	        	$ret['topic']='';
+	        	$ret['content']=$defaultmessage;
+	        	$ret['lang']=$outputlangs->defaultlang;
+			}
+
+			$db->free($resql);
+			return $ret;
+		}
+		else
+		{
+			dol_print_error($db);
+			return -1;
+		}
+	}
 }
 

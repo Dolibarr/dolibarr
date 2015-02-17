@@ -155,6 +155,7 @@ MigrationFinished=Migration abgeschlossen
 LastStepDesc=<strong>Letzter Schritt</strong>: Legen Sie Ihr Logo und das Passwort fest, welches Sie für dolibarr verwenden möchten. Verlieren Sie diese Administrator-Passwort nicht, da es der "Generalschlüssel" ist.
 ActivateModule=Aktivieren von Modul %s
 ShowEditTechnicalParameters=Hier klicken um erweiterte Funktionen zu zeigen/bearbeiten (Expertenmodus)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 
 #########
 # upgrade
@@ -206,6 +207,7 @@ MigrationProjectTaskTime=Aktualisiere aufgewandte Zeit (in Sekunden)
 MigrationActioncommElement=Aktualisiere die Maßnahmen
 MigrationPaymentMode=Migration der Daten für die Zahlungsart
 MigrationCategorieAssociation=Kategorien verschieben
+MigrationEvents=Migration of events to add event owner into assignement table
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Nicht verfügbare Optionen anzeigen
+HideNotAvailableOptions=Nicht verfügbare Optionen ausblenden

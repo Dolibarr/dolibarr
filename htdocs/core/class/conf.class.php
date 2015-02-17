@@ -72,8 +72,6 @@ class Conf
 
 	/**
 	 * Constructor
-	 *
-	 * @return Conf
 	 */
 	function __construct()
 	{
@@ -364,14 +362,38 @@ class Conf
 			unset($this->global->PRODUIT_USE_SEARCH_TO_SELECT);
 			unset($this->global->COMPANY_USE_SEARCH_TO_SELECT);
 			unset($this->global->CONTACT_USE_SEARCH_TO_SELECT);
+			unset($this->global->PROJECT_USE_SEARCH_TO_SELECT);
+		}
+
+		if (! empty($conf->productbatch->enabled))
+		{
+			$this->global->STOCK_CALCULATE_ON_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SHIPMENT=1;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
+		}
+
+		if (! empty($conf->productbatch->enabled))
+		{
+			$this->global->STOCK_CALCULATE_ON_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SHIPMENT=1;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
 		}
 
 		// conf->currency
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
 		$this->currency=$this->global->MAIN_MONNAIE;
 
-		// conf->global->COMPTA_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
-        if (empty($this->global->COMPTA_MODE)) $this->global->COMPTA_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+		// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
+        if (empty($this->global->ACCOUNTING_MODE)) $this->global->ACCOUNTING_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+
+        // By default, suppliers ojbects can be linked to all projects
+        $conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
 
 		// conf->liste_limit = constante de taille maximale des listes
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;
@@ -428,6 +450,9 @@ class Conf
 		// Define list of limited modules
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,facture,categorie,commande,fournisseur,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda,adherent';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
+		// Enable select2
+		if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)) $conf->global->MAIN_USE_JQUERY_MULTISELECT='select2';
+		
 		// Timeouts
         if (empty($this->global->MAIN_USE_CONNECT_TIMEOUT)) $this->global->MAIN_USE_CONNECT_TIMEOUT=10;
         if (empty($this->global->MAIN_USE_RESPONSE_TIMEOUT)) $this->global->MAIN_USE_RESPONSE_TIMEOUT=30;
@@ -464,6 +489,10 @@ class Conf
 		$this->adherent->cotisation->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
 		$this->bank->rappro->warning_delay=(isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE)?$this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE:0)*24*60*60;
 		$this->bank->cheque->warning_delay=(isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT)?$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT:0)*24*60*60;
+
+		// For modules that want to disable top or left menu
+		if (! empty($this->global->MAIN_HIDE_TOP_MENU)) $this->dol_hide_topmenu=$this->global->MAIN_HIDE_TOP_MENU;
+		if (! empty($this->global->MAIN_HIDE_LEFT_MENU)) $this->dol_hide_leftmenu=$this->global->MAIN_HIDE_LEFT_MENU;
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;

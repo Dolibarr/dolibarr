@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,9 @@ llxHeader('','',$helpurl);
 $sql = "SELECT count(*) as c";
 $sql.= " FROM ".MAIN_DB_PREFIX."product";
 $sql.= ' WHERE entity IN ('.getEntity('product', 1).')';
-if (isset($type)) $sql.= " AND fk_product_type = ".$type;
+if ($type !== '') {
+	$sql.= " AND fk_product_type = ".$type;
+}
 
 $result=$db->query($sql);
 if ($result)
@@ -82,23 +85,26 @@ if ($result)
 
 $param = '';
 $title = $langs->trans("ListProductServiceByPopularity");
-if (isset($type))
-{
+if ($type !== '') {
 	$param = '&amp;type='.$type;
-	$title = $langs->trans("ListProductByPopularity");
-	if ($type == 1) $title = $langs->trans("ListServiceByPopularity");
+
+	if ($type == 1) {
+		$title = $langs->trans("ListServiceByPopularity");
+	} else {
+		$title = $langs->trans("ListProductByPopularity");
+	}
 }
 
-print_barre_liste($title, $page, "popuprop.php",$param,"","","",$num);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$param,"","","",$num);
 
 
 print '<table class="noborder" width="100%">';
 
 print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans('Ref'), 'popuprop.php', 'p.ref', '', '', '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Type'), 'popuprop.php', 'p.type', '', '', '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Label'), 'popuprop.php', 'p.label', '', '', '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('NbOfProposals'), 'popuprop.php', 'c', '', '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], 'p.ref', '', '', '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], 'p.type', '', '', '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label', '', '', '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('NbOfProposals'), $_SERVER["PHP_SELF"], 'c', '', '', 'align="right"', $sortfield, $sortorder);
 print "</tr>\n";
 
 $sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, count(*) as c";
@@ -106,7 +112,9 @@ $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
 $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 $sql.= " AND p.rowid = pd.fk_product";
-if (isset($type)) $sql.= " AND fk_product_type = ".$type;
+if ($type !== '') {
+	$sql.= " AND fk_product_type = ".$type;
+}
 $sql.= " GROUP BY (p.rowid)";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit, $offset);
@@ -141,7 +149,7 @@ if ($result)
 
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
-		print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$objp->rowid.'">';
+		print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$objp->rowid.'">';
 		if ($objp->type==1) print img_object($langs->trans("ShowService"),"service");
 		else print img_object($langs->trans("ShowProduct"),"product");
 		print " ";

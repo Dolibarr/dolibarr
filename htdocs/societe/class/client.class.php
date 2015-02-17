@@ -86,4 +86,3 @@ class Client extends Societe
     }
 
 }
-?>

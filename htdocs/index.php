@@ -46,6 +46,17 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
     exit;
 }
 
+if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax disabled)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone=GETPOST('areacode');
+	$userid=GETPOST('userid');
+	$boxorder=GETPOST('boxorder');
+	$boxorder.=GETPOST('boxcombo');
+
+	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
+}
+
 
 
 /*
@@ -143,7 +154,9 @@ if (empty($user->societe_id))
 	    ! empty($conf->propal->enabled) && $user->rights->propale->lire,
 	    ! empty($conf->commande->enabled) && $user->rights->commande->lire,
 	    ! empty($conf->facture->enabled) && $user->rights->facture->lire,
-	    ! empty($conf->contrat->enabled) && $user->rights->contrat->activer);
+	    ! empty($conf->contrat->enabled) && $user->rights->contrat->activer,
+		! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire,
+		! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire);
 	    // Class file containing the method load_state_board for each line
 	    $includes=array(DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
 	    DOL_DOCUMENT_ROOT."/comm/prospect/class/prospect.class.php",
@@ -154,7 +167,9 @@ if (empty($user->societe_id))
 	    DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php",
 	    DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
 	    DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
-	    DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
+	    DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php",
+	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php",
+	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
 	    // Name class containing the method load_state_board for each line
 	    $classes=array('Client',
 	                   'Prospect',
@@ -162,10 +177,12 @@ if (empty($user->societe_id))
 	                   'Adherent',
 	                   'Product',
 	                   'Service',
-					   'Propal',
-					   'Commande',
-					   'Facture',
-	                   'Contrat');
+	                   'Propal',
+	                   'Commande',
+	                   'Facture',
+	                   'Contrat',
+	                   'CommandeFournisseur',
+	                   'FactureFournisseur');
 	    // Cle array returned by the method load_state_board for each line
 	    $keys=array('customers',
 	                'prospects',
@@ -173,10 +190,12 @@ if (empty($user->societe_id))
 	                'members',
 	                'products',
 	                'services',
-					'proposals',
-					'orders',
-					'invoices',
-					'Contracts');
+	                'proposals',
+	                'orders',
+	                'invoices',
+	                'Contracts',
+	                'supplier_orders',
+	                'supplier_invoices');
 	    // Dashboard Icon lines
 	    $icons=array('company',
 	                 'company',
@@ -184,10 +203,12 @@ if (empty($user->societe_id))
 	                 'user',
 	                 'product',
 	                 'service',
-					 'propal',
-					 'order',
-					 'bill',
-					 'order');
+	                 'propal',
+	                 'order',
+	                 'bill',
+	                 'order',
+	                 'order',
+	                 'bill');
 	    // Translation keyword
 	    $titres=array("ThirdPartyCustomersStats",
 	                  "ThirdPartyProspectsStats",
@@ -198,18 +219,22 @@ if (empty($user->societe_id))
 	                  "CommercialProposalsShort",
 	                  "CustomersOrders",
 	                  "BillsCustomers",
-	                  "Contracts");
+	                  "Contracts",
+	                  "SuppliersOrders",
+	                  "SuppliersInvoices");
 	    // Dashboard Link lines
 	    $links=array(DOL_URL_ROOT.'/comm/list.php',
 	    DOL_URL_ROOT.'/comm/prospect/list.php',
-	    DOL_URL_ROOT.'/fourn/liste.php',
-	    DOL_URL_ROOT.'/adherents/liste.php?statut=1&mainmenu=members',
-	    DOL_URL_ROOT.'/product/liste.php?type=0&mainmenu=products',
-	    DOL_URL_ROOT.'/product/liste.php?type=1&mainmenu=products',
+	    DOL_URL_ROOT.'/fourn/list.php',
+	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
+	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
+	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
 	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial',
-	    DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
+	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial',
 	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
-	    DOL_URL_ROOT.'/contrat/liste.php');
+	    DOL_URL_ROOT.'/contrat/list.php',
+	    DOL_URL_ROOT.'/fourn/commande/list.php',
+	    DOL_URL_ROOT.'/fourn/facture/list.php');
 	    // Translation lang files
 	    $langfile=array("companies",
 	                    "prospects",
@@ -245,7 +270,7 @@ if (empty($user->societe_id))
 	            $text=$langs->trans($titres[$key]);
 	            print '<div class="boxstats">';
 	            print '<a href="'.$links[$key].'" class="nobold nounderline">';
-	            print img_object($text,$icons[$key]).' '.$text.'<br>';
+	            print img_object("",$icons[$key]).' '.$text.'<br>';
 	            print '</a>';
 	            print '<a href="'.$links[$key].'">';
 	            print $board->nb[$val];
@@ -269,15 +294,15 @@ $showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
 $rowspan=0;
 $dashboardlines=array();
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">';
-print '<th class="liste_titre"colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
-print '<th class="liste_titre"align="right">'.$langs->trans("Number").'</th>';
-print '<th class="liste_titre"align="right">'.$langs->trans("Late").'</th>';
+print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
+print '<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
+print '<th class="liste_titre" align="right">'.$langs->trans("Late").'</th>';
 print '<th class="liste_titre">&nbsp;</th>';
-print '<th class="liste_titre"width="20">&nbsp;</th>';
+print '<th class="liste_titre" width="20">&nbsp;</th>';
 if ($showweather) print '<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
-print '</tr>';
+print '</tr>'."\n";
 
 
 //
@@ -292,7 +317,7 @@ if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
     $board->load_board($user);
     $board->warning_delay=$conf->actions->warning_delay/60/60/24;
     $board->label=$langs->trans("ActionsToDo");
-    $board->url=DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&mainmenu=agenda';
+    $board->url=DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
     $board->img=img_object($langs->trans("Actions"),"action");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -306,7 +331,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
     $board->load_board($user);
     $board->warning_delay=$conf->commande->client->warning_delay/60/60/24;
     $board->label=$langs->trans("OrdersToProcess");
-    $board->url=DOL_URL_ROOT.'/commande/liste.php?viewstatut=-3';
+    $board->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
     $board->img=img_object($langs->trans("Orders"),"order");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -433,7 +458,7 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
     {
         $board->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
         $board->label=$langs->trans("TransactionsToConciliate");
-        $board->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&mainmenu=bank';
+        $board->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank';
         $board->img=img_object($langs->trans("TransactionsToConciliate"),"payment");
         $rowspan++;
         $dashboardlines[]=$board;
@@ -450,7 +475,7 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
     $board->load_board($user);
     $board->warning_delay=$conf->bank->cheque->warning_delay/60/60/24;
     $board->label=$langs->trans("BankChecksToReceipt");
-    $board->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=accountancy';
+    $board->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=accountancy';
     $board->img=img_object($langs->trans("BankChecksToReceipt"),"payment");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -466,7 +491,7 @@ if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $use
     $board->load_board($user);
     $board->warning_delay=$conf->adherent->cotisation->warning_delay/60/60/24;
     $board->label=$langs->trans("MembersWithSubscriptionToReceive");
-    $board->url=DOL_URL_ROOT.'/adherents/liste.php?mainmenu=members&statut=1';
+    $board->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1';
     $board->img=img_object($langs->trans("Members"),"user");
     $rowspan++;
     $dashboardlines[]=$board;

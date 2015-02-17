@@ -131,7 +131,7 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     $IBS_MODE=1;            	// Mode formulaire
     $IBS_PORTEUR=$EMAIL;
 	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   // Format des parametres du get de validation en reponse (url a definir sous paybox)
-    //$IBS_TXT="<center><b>".$langsiso->trans("YouWillBeRedirectedOnPayBox")."</b><br><i>".$langsiso->trans("PleaseBePatient")."...</i><br></center>";
+    //$IBS_TXT="<div class="center"><b>".$langsiso->trans("YouWillBeRedirectedOnPayBox")."</b><br><i>".$langsiso->trans("PleaseBePatient")."...</i><br></div>";
     $IBS_TXT=' ';	// Use a space
     $IBS_BOUTPI=$langs->trans("Wait");
     //$IBS_BOUTPI='';
@@ -183,27 +183,6 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     // Formulaire pour module Paybox
     print '<form action="'.$URLPAYBOX.'" NAME="Submit" method="POST">'."\n";
 
-    // For Paybox V1 (IBS_xxx)
-    /*
-    print '<!-- Param for Paybox v1 -->'."\n";
-    print '<input type="hidden" name="IBS_MODE" value="'.$IBS_MODE.'">'."\n";
-    print '<input type="hidden" name="IBS_SITE" value="'.$IBS_SITE.'">'."\n";
-    print '<input type="hidden" name="IBS_RANG" value="'.$IBS_RANG.'">'."\n";
-    print '<input type="hidden" name="IBS_TOTAL" value="'.$IBS_TOTAL.'">'."\n";
-    print '<input type="hidden" name="IBS_DEVISE" value="'.$IBS_DEVISE.'">'."\n";
-    print '<input type="hidden" name="IBS_CMD" value="'.$IBS_CMD.'">'."\n";
-    print '<input type="hidden" name="IBS_PORTEUR" value="'.$IBS_PORTEUR.'">'."\n";
-    print '<input type="hidden" name="IBS_RETOUR" value="'.$IBS_RETOUR.'">'."\n";
-    print '<input type="hidden" name="IBS_EFFECTUE" value="'.$IBS_EFFECTUE.'">'."\n";
-    print '<input type="hidden" name="IBS_ANNULE" value="'.$IBS_ANNULE.'">'."\n";
-    print '<input type="hidden" name="IBS_REFUSE" value="'.$IBS_REFUSE.'">'."\n";
-    print '<input type="hidden" name="IBS_TXT" value="'.$IBS_TXT.'">'."\n";
-    print '<input type="hidden" name="IBS_BKGD" value="'.$IBS_BKGD.'">'."\n";
-    print '<input type="hidden" name="IBS_WAIT" value="'.$IBS_WAIT.'">'."\n";
-    print '<input type="hidden" name="IBS_LANG" value="'.$IBS_LANG.'">'."\n";
-    print '<input type="hidden" name="IBS_OUTPUT" value="'.$IBS_OUTPUT.'">'."\n";
-	*/
-
     // For Paybox V2 (PBX_xxx)
     print '<!-- Param for Paybox v2 -->'."\n";
     print '<input type="hidden" name="PBX_IDENTIFIANT" value="'.$PBX_IDENTIFIANT.'">'."\n";
@@ -227,8 +206,6 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     print '<input type="hidden" name="PBX_TYPEPAIEMENT" value="'.$PBX_TYPEPAIEMENT.'">'."\n";
 
     print '</form>'."\n";
-
-    // Formulaire pour module Paybox v2 (PBX_xxx)
 
 
     print "\n";
@@ -303,10 +280,10 @@ function html_print_paybox_footer($fromcompany,$langs)
 	}
 
 	print '<br><br><hr>'."\n";
-	print '<center><font style="font-size: 10px;">'."\n";
-	print $fromcompany->nom.'<br>';
+	print '<div class="center"><font style="font-size: 10px;">'."\n";
+	print $fromcompany->name.'<br>';
 	print $line1.'<br>';
 	print $line2;
-	print '</font></center>'."\n";
+	print '</font></div>'."\n";
 }
 

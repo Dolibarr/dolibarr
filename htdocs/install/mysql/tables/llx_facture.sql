@@ -3,6 +3,8 @@
 -- Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
+-- Copyright (C) 2014      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,7 +30,7 @@ create table llx_facture
   entity				integer  DEFAULT 1 NOT NULL,			-- multi company id
 
   ref_ext				varchar(255),							-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(255),							-- reference into an internal system (used by dolibarr)
+  ref_int				varchar(255),							-- reference into an internal system (used by dolibarr to store extern id like paypal info)
   ref_client			varchar(255),							-- reference for customer
 
   type					smallint DEFAULT 0 NOT NULL,			-- type of invoice
@@ -56,14 +58,16 @@ create table llx_facture
 
   fk_statut				smallint DEFAULT 0 NOT NULL,
 
-  fk_user_author		integer,								-- createur de la facture
-  fk_user_valid			integer,								-- valideur de la facture
+  fk_user_author		integer,								-- user making creation
+  fk_user_modif         integer,                               -- user making last change
+  fk_user_valid			integer,								-- user validating
 
   fk_facture_source		integer,								-- facture origine si facture avoir
   fk_projet				integer DEFAULT NULL,					-- projet auquel est associee la facture
 
   fk_account			integer,								-- bank account
   fk_currency			varchar(3),								-- currency code
+  
   fk_cond_reglement		integer  DEFAULT 1 NOT NULL,			-- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement		integer,								-- mode de reglement (Virement, Prelevement)
   date_lim_reglement	date,									-- date limite de reglement
@@ -72,6 +76,10 @@ create table llx_facture
   note_public			text,
   model_pdf				varchar(255),
   import_key			varchar(14),
-  extraparams			varchar(255)							-- for stock other parameters with json format
+  extraparams			varchar(255),							-- for stock other parameters with json format
+
+  situation_cycle_ref smallint,  -- situation cycle reference
+  situation_counter   smallint,  -- situation counter
+  situation_final     smallint   -- is the situation final ?
 
 )ENGINE=innodb;

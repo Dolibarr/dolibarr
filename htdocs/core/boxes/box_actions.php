@@ -2,6 +2,8 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014 	   Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,16 +56,20 @@ class box_actions extends ModeleBoxes
 
 		$this->max=$max;
 
-		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-		$actionstatic=new ActionComm($db);
+        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+        $societestatic = new Societe($db);
+        $actionstatic = new ActionComm($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo",$max));
 
-		if ($user->rights->agenda->myactions->read)
-		{
-			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage,";
-			$sql.= " ta.code,";
-			$sql.= " s.nom, s.rowid as socid";
+        if ($user->rights->agenda->myactions->read) {
+			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
+            $sql.= ", ta.code";
+            $sql.= ", ta.libelle as type_label";
+            $sql.= ", s.nom as name";
+            $sql.= ", s.rowid as socid";
+            $sql.= ", s.code_client";
 			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
 			$sql.= MAIN_DB_PREFIX."actioncomm AS a)";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -77,68 +83,82 @@ class box_actions extends ModeleBoxes
 			$sql.= " ORDER BY a.datec DESC";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog("Box_actions::loadBox sql=".$sql, LOG_DEBUG);
+			dol_syslog("Box_actions::loadBox", LOG_DEBUG);
 			$result = $db->query($sql);
-			if ($result)
-			{
+            if ($result) {
 				$now=dol_now();
-				$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
 				$num = $db->num_rows($result);
-				$i = 0;
-				while ($i < $num)
-				{
+				$line = 0;
+                while ($line < $num) {
 					$late = '';
 					$objp = $db->fetch_object($result);
-					$datelimite=$db->jdate($objp->dp);
+					$datelimite = $db->jdate($objp->dp);
+                    $actionstatic->label = $objp->label;
+                    $actionstatic->type_label = $objp->type_label;
+                    $actionstatic->code = $objp->code;
+                    $societestatic->id = $objp->socid;
+                    $societestatic->name = $objp->name;
+                    $societestatic->code_client = $objp->code_client;
 
-					if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite  < ($now - $delay_warning)) $late=img_warning($langs->trans("Late"));
+                    if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite  < ($now - $delay_warning))
+                        $late=img_warning($langs->trans("Late"));
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
-					$label=$objp->label;
+					$label = empty($objp->label)?$objp->type_label:$objp->label;
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-					'logo' => ("action"),
-					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
+                    $tooltip = $langs->trans('Action'.$objp->code).': '.$label;
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $actionstatic->getNomUrl(1),
+                        'text2'=> $late,
+                        'asis' => 1,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-					'text' => dol_trunc($label,32),
-					'text2'=> $late,
-					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $societestatic->getNomUrl(1),
+                        'asis' => 1,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-                    'logo' => ($objp->socid?'company':''),
-                    'url' => ($objp->socid?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid:''));
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left" class="nowrap"',
+                        'text' => dol_print_date($datelimite, "dayhour"),
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-					'text' => dol_trunc($objp->nom,24),
-					'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => ($objp->percentage>= 0?$objp->percentage.'%':''),
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="left" class="nowrap"',
-					'text' => dol_print_date($datelimite, "dayhour"));
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $actionstatic->LibStatut($objp->percentage,3),
+                    );
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right"',
-					'text' => ($objp->percentage>= 0?$objp->percentage.'%':''));
+                    $line++;
+                }
 
-					$this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
-		          	'text' => $actionstatic->LibStatut($objp->percentage,3));
+                if ($num==0)
+                    $this->info_box_contents[$line][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoActionsToDo"),
+                    );
 
-					$i++;
-				}
-
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoActionsToDo"));
-
-				$db->free($result);
-			}
-			else {
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else {
-			$this->info_box_contents[0][0] = array('align' => 'left',
-			'text' => $langs->trans("ReadPermissionNotAllowed"));
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'align' => 'left',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
 		}
 	}
 
@@ -151,9 +171,71 @@ class box_actions extends ModeleBoxes
 	 */
 	function showBox($head = null, $contents = null)
 	{
+		global $langs, $conf;
 		parent::showBox($this->info_box_head, $this->info_box_contents);
+        if ($conf->global->SHOW_DIALOG_HOMEPAGE) {
+			$actioncejour=false;
+			$contents=$this->info_box_contents;
+			$nblines=count($contents);
+			$bcx=array();
+			$bcx[0] = 'class="box_pair"';
+			$bcx[1] = 'class="box_impair"';
+			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo"))
+			{
+				print '<div id="dialog" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
+				print '<table width=100%>';
+				for ($line=0, $n=$nblines; $line < $n; $line++)
+				{
+					if (isset($contents[$line]))
+					{
+						// on affiche que les évènement du jours ou passé
+						// qui ne sont pas à 100%
+						$actioncejour=true;
+						$var=!$var;
+						// TR
+						$logo=$contents[$line][0]['logo'];
+						$label=$contents[$line][1]['text'];
+						$urlevent=$contents[$line][1]['url'];
+						$logosoc=$contents[$line][2]['logo'];
+						$nomsoc=$contents[$line][3]['text'];
+						$urlsoc=$contents[$line][3]['url'];
+						$dateligne=$contents[$line][4]['text'];
+						$percentage=$contents[$line][5]['text'];
+						print '<tr '.$bcx[$var].'>';
+						print '<td align=center>';
+						print img_object("",$logo);
+						print '</td>';
+						print '<td align=center><a href="'.$urlevent.'">'.$label.'</a></td>';
+						print '<td align=center><a href="'.$urlsoc.'">'.img_object("",$logosoc)." ".$nomsoc.'</a></td>';
+						print '<td align=center>'.$dateligne.'</td>';
+						print '<td align=center>'.$percentage.'</td>';
+						print '</tr>';
+					}
+				}
+				print '</table>';
+
+			}
+			print '</div>';
+			if ($actioncejour)
+			{
+				print '<script>';
+				print '$( "#dialog" ).dialog({ autoOpen: true });';
+				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1)
+				{
+					print 'setTimeout(function(){';
+					print '$("#dialog").dialog("close");';
+					print '}, '.($conf->global->SHOW_DIALOG_HOMEPAGE*1000).');';
+				}
+				print '</script>';
+			}
+			else
+			{
+				print '<script>';
+				print '$( "#dialog" ).dialog({ autoOpen: false });';
+				print '</script>';
+			}
+		}
 	}
 
 }
 
-?>

@@ -86,7 +86,7 @@ if ($resql)
 		print "<tr ".$bc[$var].">";
 		print '<td>'.$langs->trans($commande->statuts[$row[1]]).'</td>';
 		print '<td align="center">'.$row[0].'</td>';
-		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/liste.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
+		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
 
 		print "</tr>\n";
 		$i++;
@@ -106,8 +106,8 @@ if (! empty($conf->fournisseur->enabled))
 {
 	$langs->load("orders");
 
-	$sql = "SELECT cf.rowid, cf.ref, cf.total_ttc";
-	$sql.= ", s.nom, s.rowid as socid";
+	$sql = "SELECT cf.rowid, cf.ref, cf.total_ttc,";
+	$sql.= " s.nom as name, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
@@ -126,7 +126,7 @@ if (! empty($conf->fournisseur->enabled))
 		{
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftOrders").' ('.$num.')</td></tr>';
+			print '<td colspan="3">'.$langs->trans("DraftOrders").' <span class="badge">'.$num.'</span></td></tr>';
 
 			$i = 0;
 			$var = true;
@@ -141,7 +141,7 @@ if (! empty($conf->fournisseur->enabled))
 				print '</td>';
 				print '<td  class="nowrap">';
 				$companystatic->id=$obj->socid;
-				$companystatic->nom=$obj->nom;
+				$companystatic->name=$obj->name;
 				$companystatic->client=0;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
@@ -164,7 +164,7 @@ if (! empty($conf->fournisseur->enabled))
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
 	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
-	$sql.= ", s.nom, s.rowid as socid";
+	$sql.= ", s.nom as name, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
@@ -183,7 +183,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		{
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftBills").' ('.$num.')</td></tr>';
+			print '<td colspan="3">'.$langs->trans("DraftBills").' <span class="badge">'.$num.'</span></td></tr>';
 			$i = 0;
 			$tot_ttc = 0;
 			$var = True;
@@ -199,7 +199,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
-				$companystatic->nom=$obj->nom;
+				$companystatic->name=$obj->name;
 				$companystatic->client=0;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
@@ -233,7 +233,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * List last modified supliers
  */
 $max=10;
-$sql = "SELECT s.rowid as socid, s.nom, s.town, s.datec, s.tms, s.prefix_comm, s.code_fournisseur, s.code_compta_fournisseur";
+$sql = "SELECT s.rowid as socid, s.nom as name, s.town, s.datec, s.tms, s.prefix_comm, s.code_fournisseur, s.code_compta_fournisseur";
 $sql.= ", st.libelle as stcomm";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -266,8 +266,8 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
-		print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
-		print "&nbsp;<a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
+		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
+		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
 		print "</tr>\n";

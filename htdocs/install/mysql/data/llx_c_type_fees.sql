@@ -30,6 +30,6 @@
 -- Type fees
 --
 
-insert into llx_c_type_fees (code,libelle,active) values ('TF_OTHER',    'Other',  1);
-insert into llx_c_type_fees (code,libelle,active) values ('TF_TRIP',     'Trip',   1);
-insert into llx_c_type_fees (code,libelle,active) values ('TF_LUNCH',    'Lunch',  1);
+insert into llx_c_type_fees (code,label,active) values ('TF_OTHER',    'Other',  1);
+insert into llx_c_type_fees (code,label,active) values ('TF_TRIP',     'Transportation',   1);
+insert into llx_c_type_fees (code,label,active) values ('TF_LUNCH',    'Lunch',  1);

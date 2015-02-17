@@ -4,7 +4,8 @@ Sending=Αποστολή
 Sendings=Αποστολές
 Shipment=Αποστολή
 Shipments=Αποστολές
-Receivings=Παραλαβές
+ShowSending=Προβολή αποστολής
+Receivings=Αποδείξεις
 SendingsArea=Περιοχή αποστολών 
 ListOfSendings=Κατάλογος των αποστολών
 SendingMethod=Μέθοδο αποστολής
@@ -14,7 +15,7 @@ SearchASending=Αναζήτηση για την αποστολή
 StatisticsOfSendings=Στατιστικά στοιχεία για τις αποστολές
 NbOfSendings=Αριθμός των αποστολών
 NumberOfShipmentsByMonth=Αριθμός αποστολών ανά μήνα
-SendingCard=Αποστολές καρτών
+SendingCard=Κάρτα αποστολής
 NewSending=Νέα αποστολή
 CreateASending=Δημιουργία μιας αποστολής
 CreateSending=Δημιουργία αποστολής
@@ -54,23 +55,31 @@ StatsOnShipmentsOnlyValidated=Στατιστικά στοιχεία σχετικ
 DateDeliveryPlanned=Προγραμματισμένη ημερομηνία παράδοσης
 DateReceived=Παράδοση Ημερομηνία παραλαβής
 SendShippingByEMail=Στείλτε αποστολή με e-mail
-SendShippingRef=Στείλτε αποστολή %s
+SendShippingRef=Υποβολή της αποστολής %s
 ActionsOnShipping=Εκδηλώσεις για την αποστολή
 LinkToTrackYourPackage=Σύνδεσμος για να παρακολουθείτε το πακέτο σας
 ShipmentCreationIsDoneFromOrder=Προς το παρόν, η δημιουργία μιας νέας αποστολής γίνεται από την κάρτα παραγγελίας.
 RelatedShippings=Σχετικές αποστολές
 ShipmentLine=Σειρά αποστολής
 CarrierList=Κατάλογος των μεταφορέων
+SendingRunning=Προϊόν από εντολή παραγγελιών σε πελάτες
+SuppliersReceiptRunning=Προϊόν από εντολή παραγγελιών σε προμηθευτές
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Πιάσε τον πελάτη
 SendingMethodTRANS=Μεταφορέας
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Απλό μοντέλο έγγραφο για αποδεικτικά παράδοσης
 DocumentModelTyphon=Πληρέστερο πρότυπο έγγραφο για αποδεικτικά παράδοσης (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Σταθερή EXPEDITION_ADDON_NUMBER δεν ορίζεται
 SumOfProductVolumes=Άθροισμα όγκου του προϊόντος
 SumOfProductWeights=Άθροισμα το βάρος των προϊόντων
+
+# warehouse details
+DetailWarehouseNumber= Λεπτομέρειες Αποθήκης
+DetailWarehouseFormat= W:%s (Ποσότητα : %d)

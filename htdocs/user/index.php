@@ -42,7 +42,6 @@ if ($user->societe_id > 0)
 $sall=GETPOST('sall','alpha');
 $search_user=GETPOST('search_user','alpha');
 $search_statut=GETPOST('search_statut','alpha');
-if ($search_statut=='') $search_statut=1; // always display activ customer first
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -73,23 +72,25 @@ $sql.= " u.datec,";
 $sql.= " u.tms as datem,";
 $sql.= " u.datelastlogin,";
 $sql.= " u.ldap_sid, u.statut, u.entity,";
-$sql.= " s.nom, s.canvas";
+$sql.= " u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2,";
+$sql.= " s.nom as name, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
 if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
 {
 	$sql.= " WHERE u.entity IS NOT NULL";
 }
 else
 {
-	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 }
 if (! empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
 if (! empty($search_user))
 {
     $sql.= " AND (u.login LIKE '%".$db->escape($search_user)."%' OR u.lastname LIKE '%".$db->escape($search_user)."%' OR u.firstname LIKE '%".$db->escape($search_user)."%')";
 }
-if ($search_statut!='')
+if ($search_statut != '' && $search_statut >= 0)
 {
 	$sql.= " AND (u.statut=".$search_statut.")";
 }
@@ -103,33 +104,44 @@ if ($result)
     $i = 0;
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    
-    $param="search_user=$search_user&amp;sall=$sall";
+
+    $param="search_user=".$search_user."&sall=".$sall;
+    $param.="&search_statut=".$search_statut;
+
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Login"),"index.php","u.login",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("LastName"),"index.php","u.lastname",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("FirstName"),"index.php","u.firstname",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),"index.php","u.fk_societe",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("LastConnexion"),"index.php","u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),"index.php","u.statut",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LastName"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("FirstName"),$_SERVER['PHP_SELF'],"u.firstname",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"u.fk_societe",$param,"","",$sortfield,$sortorder);
+    if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))
+    {
+	    print_liste_field_titre($langs->trans("Entity"),$_SERVER['PHP_SELF'],"u.entity",$param,"","",$sortfield,$sortorder);
+    }
+    print_liste_field_titre($langs->trans("DateCreation"),$_SERVER['PHP_SELF'],"u.datec",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LastConnexion"),$_SERVER['PHP_SELF'],"u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("HierarchicalResponsible"),$_SERVER['PHP_SELF'],"u2.login",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"u.statut",$param,"",'align="center"',$sortfield,$sortorder);
     print '<td width="1%">&nbsp;</td>';
     print "</tr>\n";
-    
+
     //SearchBar
     print '<tr class="liste_titre">';
-    print '<td colspan="6">&nbsp;</td>';
+    print '<td colspan="7">&nbsp;</td>';
 
+	// Status
     print '<td>';
-    print $form->selectarray('search_statut', array('0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
+    print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
     print '</td>';
-    
+
     print '<td class="liste_titre" align="right">';
     print '<input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '</td>';
-    
+
     print "</tr>\n";
+
+    $user2=new User($db);
+
     $var=True;
     while ($i < $num)
     {
@@ -137,7 +149,7 @@ if ($result)
         $var=!$var;
 
         print "<tr ".$bc[$var].">";
-        print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
+        print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
         if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
         {
           	print img_picto($langs->trans("SuperAdministrator"),'redstar');
@@ -153,13 +165,24 @@ if ($result)
         if ($obj->fk_societe)
         {
             $companystatic->id=$obj->fk_societe;
-            $companystatic->nom=$obj->nom;
+            $companystatic->name=$obj->name;
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
         }
-        // Multicompany enabled
-        else if (! empty($conf->multicompany->enabled))
+        else if ($obj->ldap_sid)
         {
+        	print $langs->trans("DomainUser");
+        }
+        else
+       {
+        	print $langs->trans("InternalUser");
+        }
+        print '</td>';
+
+        // Multicompany enabled
+        if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))
+        {
+        	print '<td>';
         	if (! $obj->entity)
         	{
         		print $langs->trans("AllEntities");
@@ -173,16 +196,8 @@ if ($result)
         			print $mc->label;
         		}
         	}
+        	print '</td>';
         }
-        else if ($obj->ldap_sid)
-        {
-        	print $langs->trans("DomainUser");
-        }
-        else
-        {
-        	print $langs->trans("InternalUser");
-        }
-        print '</td>';
 
         // Date creation
         print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datec),"dayhour").'</td>';
@@ -190,9 +205,22 @@ if ($result)
         // Date last login
         print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datelastlogin),"dayhour").'</td>';
 
-		// Statut
+        // Resp
+        print '<td class="nowrap" align="center">';
+        if ($obj->login2)
+        {
+	        $user2->login=$obj->login2;
+	        //$user2->lastname=$obj->lastname2;
+	        //$user2->firstname=$obj->firstname2;
+	        $user2->lastname=$user2->login;
+	        $user2->firstname='';
+	        print $user2->getNomUrl(1);
+        }
+        print '</td>';
+
+        // Statut
 		$userstatic->statut=$obj->statut;
-                print '<td width="100" align="center">'.$userstatic->getLibStatut(5).'</td>';
+		print '<td width="100" align="center">'.$userstatic->getLibStatut(5).'</td>';
         print '<td>&nbsp;</td>';
         print "</tr>\n";
         $i++;

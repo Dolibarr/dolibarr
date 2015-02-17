@@ -1,29 +1,3 @@
-/*
- * Language code: de_AT
- * Manually translated by eCleaners.at
- * Generation date 2010-11-11 00:11:12
- */
-
-
-Delivery=Lieferung
-Deliveries=Lieferungen
-DeliveryCard=Lieferkarte
-DeliveryOrder=Lieferschein
-DeliveryOrders=Lieferscheine
-DeliveryDate=Liefertermin
-DeliveryDateShort=Liefertermin
-CreateDeliveryOrder=Erstelle Lieferschein
-QtyDelivered=Gelieferte Menge
-SetDeliveryDate=Liefertermin setzen
-ValidateDeliveryReceipt=Lieferschein freigeben
-ValidateDeliveryReceiptConfirm=Möchten Sie die Lieferung wirklich bestätigen?
-DeliveryMethod=Versandart
-TrackingNumber=Tracking Nummer
-
-# merou PDF model
-NameAndSignature=Name und Unterschrift:
-ToAndDate=An___________________________________ am ____/_____/__________
+# Dolibarr language file - Source file is en_US - deliveries
 GoodStatusDeclaration=Haben die oben genannten Waren in einwandfreiem Zustand erhalten,
 Deliverer=Lieferant
-Sender=Absender
-Recipient=Empfänger

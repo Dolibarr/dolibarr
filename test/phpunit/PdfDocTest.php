@@ -83,6 +83,8 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -168,4 +170,3 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals($result,10.4);
     }
 }
-?>

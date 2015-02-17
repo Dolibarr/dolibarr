@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -214,7 +214,7 @@ class modAgenda extends DolibarrModules
 													'type'=>'left',
 													'titre'=>'NewAction',
 													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/fiche.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
+													'url'=>'/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
 													'langs'=>'commercial',
 													'position'=>101,
 													'perms'=>'($user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create)',
@@ -361,34 +361,40 @@ class modAgenda extends DolibarrModules
 
 		// Exports
 		//--------
-		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town',
-			'cp.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4',
-			's.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra',
-			'ac.id'=>"ActionId",'ac.ref_ext'=>"ExternalRef",'ac.datec'=>"ActionDateCreation",'ac.datep'=>"DateActionBegin",
-			'ac.datep2'=>"DateActionEnd",'ac.label'=>"Label",'ac.note'=>"Note",'ac.percent'=>"Percent",'ac.durationp'=>"durationp",
-			'cac.libelle'=>"ActionType");
-		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text',
-			'cp.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text',
-			's.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text',
-			'ac.ref_ext'=>"Text",'ac.datec'=>"Date",'ac.datep'=>"Date",
+		$r=0;
+
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]="ExportDataset_event1";
+		$this->export_permission[$r]=array(array("agenda","export"));
+		$this->export_fields_array[$r]=array('ac.id'=>"ActionId",'ac.ref_ext'=>"ExternalRef",'ac.datec'=>"ActionDateCreation",'ac.datep'=>"DateActionBegin",
+			'ac.datep2'=>"DateActionEnd",'ac.label'=>"Title",'ac.note'=>"Note",'ac.percent'=>"Percent",'ac.durationp'=>"durationp",
+			'cac.libelle'=>"ActionType",
+			's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town',
+			'co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4',
+			's.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra');
+		$this->export_TypeFields_array[$r]=array('ac.ref_ext'=>"Text",'ac.datec'=>"Date",'ac.datep'=>"Date",
 			'ac.datep2'=>"Date",'ac.label'=>"Text",'ac.note'=>"Text",'ac.percent'=>"Number",
 			'ac.durationp'=>"Duree",
-			'cac.libelle'=>"List:c_actioncomm:libelle:rowid");
-		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company',
-			'cp.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company',
-			's.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company',
-			'ac.id'=>"action",'ac.ref_ext'=>"action",'ac.datec'=>"action",'ac.datep'=>"action",
+			'cac.libelle'=>"List:c_actioncomm:libelle:rowid",
+			's.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text',
+			'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text',
+			's.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text');
+		$this->export_entities_array[$r]=array('ac.id'=>"action",'ac.ref_ext'=>"action",'ac.datec'=>"action",'ac.datep'=>"action",
 			'ac.datep2'=>"action",'ac.label'=>"action",'ac.note'=>"action",'ac.percent'=>"action",'ac.durationp'=>"action",
-			'cac.libelle'=>"action");
+			'cac.libelle'=>"action",
+			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company',
+			'co.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company',
+			's.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company',);
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM  '.MAIN_DB_PREFIX.'actioncomm as ac';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_actioncomm as cac on ac.fk_action = cac.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp on ac.fk_contact = sp.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s on ac.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as cp on s.fk_pays = cp.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
 		$this->export_sql_end[$r] .=' Where ac.entity = '.$conf->entity;
-		$this->export_sql_end[$r] .=' ORDER BY datep';
+		$this->export_sql_end[$r] .=' ORDER BY ac.datep';
 
 	}
 

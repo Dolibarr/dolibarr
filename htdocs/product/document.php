@@ -73,15 +73,20 @@ if ($id > 0 || ! empty($ref))
 }
 $modulepart='produit';
 
-$parameters=array('id'=>$id);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
 
 /*
- * Action envoie fichier
+ * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+$parameters=array('id'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
+{
+	// Action sending file
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_pre_headers.tpl.php';
+}
 
 
 /*
@@ -101,7 +106,7 @@ if ($object->id)
 	dol_fiche_head($head, 'documents', $titre, 0, $picto);
 
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
@@ -141,7 +146,7 @@ if ($object->id)
     print '</div>';
 
     $modulepart = 'produit';
-    $permission = $user->rights->produit->creer;
+    $permission = (($object->type == 0 && $user->rights->produit->creer) || ($object->type == 1 && $user->rights->service->creer));
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
@@ -153,4 +158,3 @@ else
 
 llxFooter();
 $db->close();
-?>

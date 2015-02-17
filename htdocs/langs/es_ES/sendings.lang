@@ -4,7 +4,8 @@ Sending=Envío
 Sendings=Envíos
 Shipment=Envío
 Shipments=Envíos
-Receivings=Recepciones
+ShowSending=Show Sending
+Receivings=Receipts
 SendingsArea=Área envíos
 ListOfSendings=Listado de envíos
 SendingMethod=Método de envío
@@ -14,7 +15,7 @@ SearchASending=Buscar envío
 StatisticsOfSendings=Estadísticas de envíos
 NbOfSendings=Número de envíos
 NumberOfShipmentsByMonth=Número de envíos por mes
-SendingCard=Ficha envío
+SendingCard=Shipment card
 NewSending=Nuevo envío
 CreateASending=Crear un envío
 CreateSending=Crear envío
@@ -37,7 +38,7 @@ StatusSendingCanceledShort=Anulado
 StatusSendingDraftShort=Borrador
 StatusSendingValidatedShort=Validado
 StatusSendingProcessedShort=Procesado
-SendingSheet=Nota de entrega
+SendingSheet=Shipment sheet
 Carriers=Transportistas
 Carrier=Transportista
 CarriersArea=Área transportistas
@@ -54,23 +55,31 @@ StatsOnShipmentsOnlyValidated=Estadísticas realizadas únicamente sobre las exp
 DateDeliveryPlanned=Fecha prevista de entrega
 DateReceived=Fecha real de recepción
 SendShippingByEMail=Envío de expedición por e-mail
-SendShippingRef=Envío expedición %s
+SendShippingRef=Envío de la expedición %s
 ActionsOnShipping=Eventos sobre la expedición
 LinkToTrackYourPackage=Enlace para el seguimento de su paquete
 ShipmentCreationIsDoneFromOrder=De momento, la creación de una nueva expedición se realiza desde la ficha de pedido.
-RelatedShippings=Expedición(es) asociada(s)
+RelatedShippings=Related shipments
 ShipmentLine=Línea de expedición
 CarrierList=Listado de transportistas
+SendingRunning=Product from ordered customer orders
+SuppliersReceiptRunning=Product from ordered supplier orders
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Recogido por el cliente
 SendingMethodTRANS=Transportista
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Modelo simple de nota de entrega / recepción
 DocumentModelTyphon=Modelo completo de nota de entrega / recepción (logo...)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER no definida
 SumOfProductVolumes=Suma del volumen de los productos
 SumOfProductWeights=Suma del peso de los productos
+
+# warehouse details
+DetailWarehouseNumber= Detalles del almacén
+DetailWarehouseFormat= Alm.:%s (Cant. : %d)

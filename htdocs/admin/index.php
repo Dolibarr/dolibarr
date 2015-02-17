@@ -109,11 +109,10 @@ if (empty($reshook))
 	print "<br>";
 
 	// Show logo
-	print '<center><div class="logo_setup"></div></center>';
+	print '<div class="center"><div class="logo_setup"></div></div>';
 }
 
 
 llxFooter();
 
 $db->close();
-?>

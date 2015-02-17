@@ -62,7 +62,7 @@ print_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicVi
 
 
 
-// Charge tableau des categories
+// Load hierarchy of users
 $user_arbo = $userstatic->get_full_tree();
 
 // Define fulltree array
@@ -76,9 +76,9 @@ foreach($fulltree as $key => $val)
 	$userstatic->id=$val['id'];
 	$userstatic->ref=$val['label'];
 	$userstatic->firstname=$val['firstname'];
-	$userstatic->lastname=$val['name'];
+	$userstatic->lastname=$val['lastname'];
 	$userstatic->statut=$val['statut'];
-	$li=$userstatic->getNomUrl(1,'').' ('.$val['login'].')';
+	$li=$userstatic->getNomUrl(1,'').' ('.$val['login'].(empty($conf->multicompany->enabled)?'':' - '.$langs->trans("Instance").' '.$val['entity']).')';
 
 	$data[] = array(
 		'rowid'=>$val['rowid'],

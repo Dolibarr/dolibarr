@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin          <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent          <jmenent@2byte.es>
+ * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 /**
- *	\class      PaiementFourn
- *	\brief      Classe permettant la gestion des paiements des factures fournisseurs
+ *	Class to manage payments for supplier invoices
  */
 class PaiementFourn extends Paiement
 {
@@ -56,6 +56,18 @@ class PaiementFourn extends Paiement
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
 
 	/**
+	 * Label of payment type
+	 * @var string
+	 */
+	public $type_libelle;
+
+	/**
+	 * Code of Payment type
+	 * @var string
+	 */
+	public $type_code;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -74,7 +86,7 @@ class PaiementFourn extends Paiement
 	function fetch($id)
 	{
 		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank,';
-		$sql.= ' c.libelle as paiement_type,';
+		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
@@ -95,6 +107,7 @@ class PaiementFourn extends Paiement
 				$this->bank_line      = $obj->fk_bank;
 				$this->montant        = $obj->amount;
 				$this->note           = $obj->note;
+				$this->type_code      = $obj->paiement_code;
 				$this->type_libelle   = $obj->paiement_type;
 				$this->statut         = $obj->statut;
 				$error = 1;
@@ -149,7 +162,7 @@ class PaiementFourn extends Paiement
 			$sql.= " VALUES ('".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaye)."', '".$this->total."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
 
-			dol_syslog("PaiementFourn::create sql=".$sql);
+			dol_syslog("PaiementFourn::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -201,18 +214,15 @@ class PaiementFourn extends Paiement
 
 				if (! $error)
 				{
-		            // Appel des triggers
-		            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		            $interface=new Interfaces($this->db);
-		            $result=$interface->run_triggers('PAYMENT_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		            // Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('PAYMENT_SUPPLIER_CREATE',$user);
+                    if ($result < 0) $error++;
+                    // End call triggers
 				}
 			}
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
 				$error++;
 			}
 		}
@@ -258,7 +268,7 @@ class PaiementFourn extends Paiement
 		{
 			if (count($billsarray))
 			{
-				$this->error='Can\'t delete a payment shared by at least one invoice with status payed';
+				$this->error="ErrorCantDeletePaymentSharedWithPayedInvoice";
 				$this->db->rollback();
 				return -1;
 			}
@@ -277,7 +287,7 @@ class PaiementFourn extends Paiement
 			$accline->fetch($bank_line_id);
 			if ($accline->rappro)
 			{
-				$this->error='Impossible de supprimer un paiement qui a genere une ecriture qui a ete rapprochee';
+				$this->error="ErrorCantDeletePaymentReconciliated";
 				$this->db->rollback();
 				return -3;
 			}
@@ -286,13 +296,11 @@ class PaiementFourn extends Paiement
 		// Efface la ligne de paiement (dans paiement_facture et paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
 		$sql.= ' WHERE fk_paiementfourn = '.$this->id;
-		dol_syslog("sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn';
 			$sql.= ' WHERE rowid = '.$this->id;
-		    dol_syslog("sql=".$sql);
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
@@ -336,7 +344,7 @@ class PaiementFourn extends Paiement
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, datec, fk_user_author, tms';
+		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
@@ -348,6 +356,7 @@ class PaiementFourn extends Paiement
 			{
 				$obj = $this->db->fetch_object($resql);
 				$this->id = $obj->rowid;
+
 				if ($obj->fk_user_creat)
 				{
 					$cuser = new User($this->db);
@@ -372,10 +381,10 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	 *	Retourne la liste des factures sur lesquels porte le paiement
+	 *	Return list of supplier invoices the payment point to
 	 *
-	 *	@param      string	$filter         Critere de filtre
-	 *	@return     array           		Tableau des id de factures
+	 *	@param      string	$filter         SQL filter
+	 *	@return     array           		Array of supplier invoice id
 	 */
 	function getBillsArray($filter='')
 	{
@@ -384,7 +393,7 @@ class PaiementFourn extends Paiement
 		$sql.= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.$this->id;
 		if ($filter) $sql.= ' AND '.$filter;
 
-		dol_syslog(get_class($this).'::getBillsArray sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::getBillsArray', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -478,19 +487,19 @@ class PaiementFourn extends Paiement
 		global $langs;
 
 		$result='';
+        $text=$this->ref;   // Sometimes ref contains label
+        if (preg_match('/^\((.*)\)$/i',$text,$reg)) {
+            // Label generique car entre parentheses. On l'affiche en le traduisant
+            if ($reg[1]=='paiement') $reg[1]='Payment';
+            $text=$langs->trans($reg[1]);
+        }
+        $label = $langs->trans("ShowPayment").': '.$text;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$this->id.'">';
-		$lienfin='</a>';
+        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $lienfin='</a>';
 
-		$text=$this->ref;	// Sometimes ref contains label
-		if (preg_match('/^\((.*)\)$/i',$text,$reg))
-		{
-			// Label g诩rique car entre parenth粥s. On l'affiche en le traduisant
-			if ($reg[1]=='paiement') $reg[1]='Payment';
-			$text=$langs->trans($reg[1]);
-		}
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"),'payment').$lienfin);
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$text.$lienfin;
 		return $result;

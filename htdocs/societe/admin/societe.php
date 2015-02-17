@@ -77,14 +77,14 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 	    {
-	        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		    setEventMessage($langs->trans("SetupSaved"));
 	    }
 	    else
 	    {
-	        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		    setEventMessage($langs->trans("Error"), 'errors');
 		}
 	}
-	
+
 	if (GETPOST('CONTACT_USE_SEARCH_TO_SELECT'))
 	{
 		$contactsearch = GETPOST('activate_CONTACT_USE_SEARCH_TO_SELECT','alpha');
@@ -92,11 +92,11 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 		{
-			$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+			setEventMessage($langs->trans("SetupSaved"));
 		}
 		else
 		{
-			$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+			setEventMessage($langs->trans("Error"), 'errors');
 		}
 	}
 }
@@ -121,12 +121,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -184,7 +184,7 @@ if ($action == 'setdoc')
 	$sql.= ($label?"'".$db->escape($label)."'":'null').", ";
 	$sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
 	$sql.= ")";
-    dol_syslog("societe.php ".$sql);
+    dol_syslog("societe.php", LOG_DEBUG);
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -192,7 +192,6 @@ if ($action == 'setdoc')
 	}
 	else
 	{
-        dol_syslog("societe.php ".$db->lasterror(), LOG_ERR);
 	    $db->rollback();
 	}
 }
@@ -221,11 +220,11 @@ if ($action=="setaddrefinlist") {
 	if (! $res > 0) $error++;
 	if (! $error)
 	{
-		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		setEventMessage($langs->trans("SetupSaved"));
 	}
 	else
 	{
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -299,9 +298,6 @@ $head = societe_admin_prepare_head(null);
 
 dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), 0, 'company');
 
-dol_htmloutput_mesg($mesg);
-
-
 $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
 
 // Module to manage customer/supplier code
@@ -348,7 +344,7 @@ foreach ($dirsociete as $dirroot)
 
     			$var = !$var;
     			print '<tr '.$bc[$var].'>'."\n";
-    			print '<td width="140">'.$modCodeTiers->nom.'</td>'."\n";
+    			print '<td width="140">'.$modCodeTiers->name.'</td>'."\n";
     			print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
     			print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
 
@@ -399,6 +395,7 @@ print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
+$var=true;
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot,0);
@@ -424,7 +421,7 @@ foreach ($dirsociete as $dirroot)
     			$var = !$var;
 
     			print '<tr '.$bc[$var].'>';
-    			print '<td>'.$modCodeCompta->nom."</td><td>\n";
+    			print '<td>'.$modCodeCompta->name."</td><td>\n";
     			print $modCodeCompta->info($langs);
     			print '</td>';
     			print '<td class="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
@@ -492,6 +489,7 @@ print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
+$var=true;
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot.'doc/',0);
@@ -573,7 +571,7 @@ foreach ($dirsociete as $dirroot)
 					}
 					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn((! empty($module->option_draft_watermark)?$module->option_draft_watermark:''), 1, 1);
-					
+
 					print '<td align="center" class="nowrap">';
 					print $form->textwithpicto('',$htmltooltip,1,0);
 					print '</td>';
@@ -636,19 +634,19 @@ while ($i < $nbofloop)
 	if ($profid[$i][1]!='-')
 	{
 		$var = !$var;
-	
+
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.$profid[$i][0]."</td><td>\n";
 		print $profid[$i][1];
 		print '</td>';
-	
+
 		$idprof_unique ='SOCIETE_IDPROF'.($i+1).'_UNIQUE';
 		$idprof_mandatory ='SOCIETE_IDPROF'.($i+1).'_MANDATORY';
 		$idprof_invoice_mandatory ='SOCIETE_IDPROF'.($i+1).'_INVOICE_MANDATORY';
 		$verif=(empty($conf->global->$idprof_unique)?false:true);
 		$mandatory=(empty($conf->global->$idprof_mandatory)?false:true);
 		$invoice_mandatory=(empty($conf->global->$idprof_invoice_mandatory)?false:true);
-	
+
 		if ($verif)
 		{
 			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.($i+1).'&status=0">';
@@ -661,7 +659,7 @@ while ($i < $nbofloop)
 			print img_picto($langs->trans("Disabled"),'switch_off');
 			print '</a></td>';
 		}
-		
+
 		if ($mandatory)
 		{
 			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.($i+1).'&status=0">';
@@ -674,7 +672,7 @@ while ($i < $nbofloop)
 			print img_picto($langs->trans("Disabled"),'switch_off');
 			print '</a></td>';
 		}
-		
+
 		if ($invoice_mandatory)
 		{
 			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.($i+1).'&status=0">';
@@ -687,7 +685,7 @@ while ($i < $nbofloop)
 			print img_picto($langs->trans("Disabled"),'switch_off');
 			print '</a></td>';
 		}
-		
+
 		print "</tr>\n";
 	}
 	$i++;
@@ -715,7 +713,7 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
 // Utilisation formulaire Ajax sur choix societe
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$form->textwithpicto($langs->trans("UseSearchToSelectCompany"),$langs->trans('UseSearchToSelectCompanyTooltip'),1).' </td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectCompany"),$langs->trans('UseSearchToSelectCompanyTooltip'),1).' </td>';
 if (! $conf->use_javascript_ajax)
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -730,7 +728,7 @@ else
     '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
     '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT",$arrval,$conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -739,7 +737,7 @@ print '</tr>';
 
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$form->textwithpicto($langs->trans("UseSearchToSelectContact"),$langs->trans('UseSearchToSelectContactTooltip'),1).'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectContact"),$langs->trans('UseSearchToSelectContactTooltip'),1).'</td>';
 if (! $conf->use_javascript_ajax)
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -754,7 +752,7 @@ else
 	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
 	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT",$arrval,$conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -765,18 +763,20 @@ print '</tr>';
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
 if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
-	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-	print '</a></td>';
+
 }
 else
 {
-	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
-	print '</a></td>';
 }
+print '</a></td>';
 print '</tr>';
 
 

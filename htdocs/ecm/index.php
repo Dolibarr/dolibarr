@@ -110,8 +110,6 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
-				//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-				//print_r($_FILES);
 				$result=$ecmdir->changeNbOfFiles('+');
 			}
 			else
@@ -134,7 +132,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		else
 		{
 			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
+			setEventMessage($langs->trans("ErrorFailToCreateDir",$upload_dir), 'errors');
 		}
 	}
 }
@@ -156,7 +154,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	}
 	else
 	{
-		$mesg='<div class="error">Error '.$langs->trans($ecmdir->error).'</div>';
+		setEventMessage('Error '.$langs->trans($ecmdir->error), 'errors');
 		$action = "create";
 	}
 
@@ -198,7 +196,7 @@ if ($action == 'confirm_deletefile')
 if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 {
 	$result=$ecmdir->delete($user);
-	$mesg = '<div class="ok">'.$langs->trans("ECMSectionWasRemoved", $ecmdir->label).'</div>';
+	setEventMessage($langs->trans("ECMSectionWasRemoved", $ecmdir->label));
 
     clearstatcache();
 }
@@ -324,7 +322,6 @@ if ($action == 'refreshmanual')
     	$dirtotest=$conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
 		if (! dol_is_dir($dirtotest))
 		{
-			$mesg.=$dirtotest." not found onto disk. We delete from database dir with id=".$dirdesc['id']."<br>\n";
 			$ecmdirtmp->id=$dirdesc['id'];
 			$ecmdirtmp->delete($user,'databaseonly');
 			//exit;
@@ -419,12 +416,6 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 
 print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
 
-$helptext1=''; $helptext2='';
-$helptext1.=$langs->trans("ECMAreaDesc");
-$helptext1.=$langs->trans("ECMAreaDesc2");
-$helptext2.=$langs->trans("ECMAreaDesc");
-$helptext2.=$langs->trans("ECMAreaDesc2");
-
 /*
 print '<div class="hideonsmartphone">';
 print $langs->trans("ECMAreaDesc")."<br>";
@@ -439,9 +430,6 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 
 }
-
-dol_htmloutput_mesg($mesg);
-
 
 if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
 else $classviewhide='visible';
@@ -676,7 +664,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			$userstatic->lastname=$val['login_c'];
     			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
     			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1).'<br>';
+    			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
     			$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'],"dayhour").'<br>';
     			$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
     			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';

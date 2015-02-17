@@ -74,7 +74,7 @@ $sql.=" GROUP BY d.morphy";
 $foundphy=$foundmor=0;
 
 // Define $data array
-dol_syslog("Count member sql=".$sql);
+dol_syslog("Count member", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {

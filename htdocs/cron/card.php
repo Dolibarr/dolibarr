@@ -95,9 +95,18 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 	}
 	else
 	{
-		if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
-		else setEventMessage($langs->trans("JobFinished"),'mesgs');
-		$action='';
+		$res = $object->reprogram_jobs($user->login);
+		if ($res > 0)
+		{
+			if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
+			else setEventMessage($langs->trans("JobFinished"),'mesgs');
+			$action='';
+		}
+		else
+		{
+			setEventMessage($object->error,'errors');
+			$action='';
+		}
 	}
 }
 
@@ -269,7 +278,7 @@ if ($action == 'execute'){
 
 if (empty($object->status) && $action != 'create')
 {
-	dol_htmloutput_mesg($langs->trans("CronTaskInactive"),'','warning',1);
+	setEventMessage($langs->trans("CronTaskInactive"), 'warnings');
 }
 
 if (($action=="create") || ($action=="edit"))
@@ -344,16 +353,20 @@ if (($action=="create") || ($action=="edit"))
 	print "<tr><td>";
 	print $langs->trans('CronEvery')."</td>";
 	print "<td><select name=\"nbfrequency\">";
-	for($i=1; $i<=60; $i++){
-		if(($object->frequency/$object->unitfrequency) == $i){
+	for($i=1; $i<=60; $i++)
+	{
+		if (! empty($object->unitfrequency) && ($object->frequency/$object->unitfrequency) == $i)
+		{
 			print "<option value='".$i."' selected='selected'>".$i."</option>";
 		}
-		else{
+		else
+		{
 			print "<option value='".$i."'>".$i."</option>";
 		}
 	}
 	$input = "<input type=\"radio\" name=\"unitfrequency\" value=\"60\" id=\"frequency_minute\" ";
-	if($object->unitfrequency=="60"){
+	if($object->unitfrequency=="60")
+	{
 		$input .= ' checked="checked" />';
 	}
 	else{
@@ -463,8 +476,9 @@ if (($action=="create") || ($action=="edit"))
 
 	print '<div align="center"><br>';
 	print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-	print "</center>";
+	print "</div>";
 
 	print "</form>\n";
 

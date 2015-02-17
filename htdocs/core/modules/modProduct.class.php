@@ -198,7 +198,7 @@ class modProduct extends DolibarrModules
 		        $this->export_entities_array[$r][$fieldname]='product';
 		    }
 		}
-		// End add axtra fields
+		// End add extra fields
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
@@ -210,7 +210,7 @@ class modProduct extends DolibarrModules
 		{
 			// Exports product multiprice
 			$r++;
-			$this->export_code[$r]=$this->rights_class.'_'.$key;
+			$this->export_code[$r]=$this->rights_class.'_'.$r;
 			$this->export_label[$r]="ProductsMultiPrice";	// Translation key (used only if key ExportDataset_xxx_z not found)
 			$this->export_permission[$r]=array(array("produit","export"));
 			$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",
@@ -219,10 +219,11 @@ class modProduct extends DolibarrModules
 				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
 				'pr.tva_tx'=>'PriceLevelVATRate',
 				'pr.date_price'=>'DateCreation');
+			//$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.length'=>"Number",'p.surface'=>"Number",'p.volume'=>"Number",'p.weight'=>"Number",'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Number",'p.price_ttc'=>"Number",'p.tva_tx'=>'Number','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date');
 			$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",
 				'pr.price_base_type'=>"product",'pr.price_level'=>"product",'pr.price'=>"product",
 				'pr.price_ttc'=>"product",
-				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
+				'pr.price_min'=>"product",'pr.price_min_ttc'=>"product",
 				'pr.tva_tx'=>'product',
 				'pr.date_price'=>"product");
 			$this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -245,6 +246,7 @@ class modProduct extends DolibarrModules
 		$this->import_tables_array[$r]=array('p'=>MAIN_DB_PREFIX.'product','extra'=>MAIN_DB_PREFIX.'product_extrafields');
 		$this->import_tables_creator_array[$r]=array('p'=>'fk_user_author');	// Fields to store import user id
 		$this->import_fields_array[$r]=array('p.ref'=>"Ref*",'p.label'=>"Label*",'p.description'=>"Description",'p.url'=>"PublicUrl",'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.length'=>"Length",'p.surface'=>"Surface",'p.volume'=>"Volume",'p.weight'=>"Weight",'p.duration'=>"Duration",'p.customcode'=>'CustomCode','p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.tosell'=>"OnSell*",'p.tobuy'=>"OnBuy*",'p.fk_product_type'=>"Type*",'p.finished'=>'Nature','p.datec'=>'DateCreation*');
+		if (! empty($conf->barcode->enabled)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('p.barcode'=>'BarCode'));
 		// Add extra fields
 		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product' AND entity = ".$conf->entity;
 		$resql=$this->db->query($sql);
@@ -330,7 +332,6 @@ class modProduct extends DolibarrModules
 	 */
 	function init($options='')
 	{
-		// Permissions
 		$this->remove($options);
 
 		$sql = array();

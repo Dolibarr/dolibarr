@@ -51,4 +51,3 @@ print '</table>';
 
 
 llxFooter();
-?>

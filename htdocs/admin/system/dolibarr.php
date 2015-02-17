@@ -90,6 +90,20 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentMenuHandler").'</td><td colspan="2">';
 print $conf->standard_menu;
 print '</td></tr>'."\n";
+$var=!$var;
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("Screen").'</td><td colspan="2">';
+print $_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
+print '</td></tr>'."\n";
+$var=!$var;
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("Session").'</td><td colspan="2">';
+$i=0;
+foreach($_SESSION as $key => $val)
+{
+	if ($i > 0) print ', ';
+	print $key.' => '.$val;
+	$i++;
+}
+print '</td></tr>'."\n";
 print '</table>';
 print '<br>';
 
@@ -178,13 +192,20 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => dol_get_first_day(1970,1,false)</td><td>'.dol_get_first_day(1970,1,false).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970,1,false),'dayhour').')</td>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => dol_get_first_day(1970,1,true)</td><td>'.dol_get_first_day(1970,1,true).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970,1,true),'dayhour').')</td>';
-// Parent company
-/*
-$var=!$var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CompanyTZ").'</td><td>'.$langs->trans("FeatureNotYetAvailable").'</td></tr>'."\n";
-$var=!$var;
-print '<tr '.$bc[$var].'><td width="300">&nbsp; => '.$langs->trans("CompanyHour").'</td><td>'.$langs->trans("FeatureNotYetAvailable").'</td></tr>'."\n";
-*/
+// Database timezone
+if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
+{
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("MySQLTimeZone").' (database)</td><td>';	// Timezone server base
+	$sql="SHOW VARIABLES where variable_name = 'system_time_zone'";
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$obj = $db->fetch_object($resql);
+		print $form->textwithtooltip($obj->Value,$langs->trans('TZHasNoEffect'),2,1,img_info(''));
+	}
+	print '</td></tr>'."\n";
+}
 // Client
 $var=!$var;
 $tz=(int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst'];
@@ -303,6 +324,22 @@ foreach($configfileparameters as $key => $value)
 			print "<td>";
 			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$newkey});
 			else if ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
+			else if ($newkey == 'dolibarr_main_document_root_alt')
+			{
+				$tmparray=explode(',',${$newkey});
+				$i=0;
+				foreach($tmparray as $value2)
+				{
+					if ($i > 0) print ', ';
+					print $value2;
+					if (! is_readable($value2)) 
+					{
+						$langs->load("errors");
+						print ' '.img_warning($langs->trans("ErrorCantReadDir",$value2));
+					}
+					++$i;
+				}
+			}
 			else print ${$newkey};
 			if ($newkey == 'dolibarr_main_url_root' && $newkey != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
 			print "</td>";
@@ -372,4 +409,3 @@ print '</table>';
 llxFooter();
 
 $db->close();
-?>

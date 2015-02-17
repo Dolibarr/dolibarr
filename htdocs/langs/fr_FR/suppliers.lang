@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Fournisseurs
 Supplier=Fournisseur
-AddSupplier=Ajouter un fournisseur
+AddSupplier=Créer un fournisseur
 SupplierRemoved=Fournisseur supprimé
 SuppliersInvoice=Facture fournisseur
 NewSupplier=Nouveau fournisseur
@@ -40,3 +40,7 @@ AddSupplierInvoice=Créer facture fournisseur
 ListOfSupplierProductForSupplier=Liste des produits et prix du fournisseurs <b>%s</b>
 NoneOrBatchFileNeverRan=Aucun ou traitement par lot <b>%s</b> non exécuté récemment
 SentToSuppliers=Envoyés aux fournisseurs
+ListOfSupplierOrders=Liste des commandes fournisseurs
+MenuOrdersSupplierToBill=Commandes fournisseurs en facture
+NbDaysToDelivery=Délai de livraison en jours
+DescNbDaysToDelivery=Délai le plus élevé parmi la liste de produit dans la commande

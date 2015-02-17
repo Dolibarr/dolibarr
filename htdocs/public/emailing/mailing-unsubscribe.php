@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Florian Henry  <florian.henry@open-concept.pro>
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ if (! empty($tag) && ($unsuscrib=='1'))
 	$resql=$db->query($sql);
 
     //Update status communication of contact prospect
-	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$db->escape($tag)."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT sc.rowid FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$db->escape($tag)."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe contact : ".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
@@ -124,4 +125,3 @@ if (! empty($tag) && ($unsuscrib=='1'))
 }
 
 $db->close();
-?>

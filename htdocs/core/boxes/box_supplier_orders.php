@@ -3,6 +3,7 @@
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,12 +59,12 @@ class box_supplier_orders extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
         $supplierorderstatic=new CommandeFournisseur($db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLatestSupplierOrders", $max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierOrders", $max));
 
         if ($user->rights->fournisseur->commande->lire)
         {
-            $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " c.ref, c.tms, c.rowid,";
+            $sql = "SELECT s.nom as name, s.rowid as socid,";
+            $sql.= " c.ref, c.tms, c.rowid, c.date_commande,";
             $sql.= " c.fk_statut";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -72,7 +73,8 @@ class box_supplier_orders extends ModeleBoxes
             $sql.= " AND c.entity = ".$conf->entity;
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-            $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
             $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);
@@ -81,56 +83,78 @@ class box_supplier_orders extends ModeleBoxes
                 $num = $db->num_rows($result);
 
                 $i = 0;
-                while ($i < $num)
-                {
+                while ($i < $num) {
                     $objp = $db->fetch_object($result);
-                    $datem=$db->jdate($objp->tms);
+                    $date=$db->jdate($objp->date_commande);
+					$datem=$db->jdate($objp->tms);
 
-                    $urlo = DOL_URL_ROOT."/fourn/commande/fiche.php?id=".$objp->rowid;
-                    $urls = DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid;
+                    $urlo = DOL_URL_ROOT."/fourn/commande/card.php?id=".$objp->rowid;
+                    $urls = DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid;
 
-                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $this->boximg,
-                    'url' => $urlo);
-
-                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->ref,
-                    'url' => $urlo);
-
-                    $this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-                    'logo' => 'company',
-                    'url' => $urls);
-
-                    $this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $objp->nom,
-                    'url' => $urls);
-
-                    $this->info_box_contents[$i][4] = array('td' => 'align="right"',
-                    'text' => dol_print_date($datem,'day'),
+                    $tooltip = $langs->trans('SupplierOrder') . ': ' . $objp->ref;
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => $this->boximg,
+                        'tooltip' => $tooltip,
+                        'url' => $urlo,
                     );
 
-                    $this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
-                    'text' => $supplierorderstatic->LibStatut($objp->fk_statut,3));
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->ref,
+                        'tooltip' => $tooltip,
+                        'url' => $urlo,
+                    );
+
+                    $tooltip = $langs->trans('Supplier') . ': ' . $objp->name;
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => 'company',
+                        'tooltip' => $tooltip,
+                        'url' => $urls,
+                    );
+
+                    $this->info_box_contents[$i][3] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->name,
+                        'tooltip' => $tooltip,
+                        'url' => $urls,
+                    );
+
+                    $this->info_box_contents[$i][4] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($date,'day'),
+                    );
+
+                    $this->info_box_contents[$i][5] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $supplierorderstatic->LibStatut($objp->fk_statut,3),
+                    );
 
                     $i++;
                 }
 
                 if ($num == 0)
-                    $this->info_box_contents[$i][0] = array('td' => 'align="center"', 'text' => $langs->trans("NoSupplierOrder"));
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="center"',
+                        'text' => $langs->trans("NoSupplierOrder"),
+                    );
 
-				$db->free($result);
-            }
-            else
-            {
-                $this->info_box_contents[0][0] = array( 'td' => 'align="left"',
-                                                        'maxlength'=>500,
-                                                        'text' => ($db->error().' sql='.$sql));
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
             }
         }
         else
         {
-            $this->info_box_contents[0][0] = array('td' => 'align="left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed"));
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
         }
     }
 

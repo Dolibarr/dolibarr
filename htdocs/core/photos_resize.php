@@ -173,11 +173,11 @@ if (! empty($conf->use_javascript_ajax))
 	print '<fieldset id="redim_file">';
 	print '<legend>'.$langs->trans("Recenter").'</legend>';
 	print $langs->trans("DefineNewAreaToPick").'...<br>';
-	print '<br><center>';
+	print '<br><div class="center">';
 	print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
 	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$object->entity.'&file='.$original_file.'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 	print '</div>';
-	print '</center><br>';
+	print '</div><br>';
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post" onsubmit="return checkCoords();">
 	      <div class="jc_coords">
 	         '.$langs->trans("NewSizeAfterCropping").':

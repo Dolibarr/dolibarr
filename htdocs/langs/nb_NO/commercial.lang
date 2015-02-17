@@ -71,6 +71,7 @@ ActionAC_FAX=Send fax
 ActionAC_PROP=Send tilbud
 ActionAC_EMAIL=Send e-post
 ActionAC_RDV=Møter
+ActionAC_INT=Intervention on site
 ActionAC_FAC=Send faktura
 ActionAC_REL=Send purring
 ActionAC_CLO=Lukk

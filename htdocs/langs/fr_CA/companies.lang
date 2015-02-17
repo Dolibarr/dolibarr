@@ -1,6 +1,5 @@
-# Dolibarr language file - en_US - companies
+# Dolibarr language file - Source file is en_US - companies
 VATIsUsed=Assujetti à la TPS
 VATIsNotUsed=Non assujetti à la TPS
-##### Local Taxes #####
-LocalTax1IsUsedES= Assujetti à TVQ
-LocalTax1IsNotUsedES= Non assujetti à TVQ
+LocalTax1IsUsedES=Assujetti à TVQ
+LocalTax1IsNotUsedES=Non assujetti à TVQ

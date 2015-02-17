@@ -94,7 +94,7 @@ $cancel != $langs->trans("Cancel") &&
 	else
 	{
 		$action = 'add';
-		$mesg = '<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -127,7 +127,7 @@ $cancel != $langs->trans("Cancel") &&
 	else
 	{
 		$action = 'edit';
-		$mesg = '<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -152,10 +152,6 @@ else $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
 dol_fiche_head($head, 'translation', $title, 0, 'category');
-
-if (! empty($mesg)) {
-	dol_htmloutput_mesg($mesg);
-}
 
 print '<table class="border" width="100%">';
 
@@ -194,9 +190,11 @@ if ($action == 'edit')
 		}
 	}
 
-	print '<br /><center>';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<br /><div class="center">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 
@@ -270,9 +268,11 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '</tr>';
 	print '</table>';
 
-	print '<br><center>';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<br><div class="center">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 

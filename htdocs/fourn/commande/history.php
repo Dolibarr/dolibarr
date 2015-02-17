@@ -76,7 +76,7 @@ if ($id > 0 || ! empty($ref))
 
 		print '<table class="border" width="100%">';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
@@ -160,7 +160,7 @@ if ($id > 0 || ! empty($ref))
 				print '<td class="nowrap">'.$commande->LibStatut($obj->fk_statut,4)."</td>\n";
 
 				// User
-				print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+				print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
 				print img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
 				// Comment

@@ -82,7 +82,7 @@ class Cotisation extends CommonObject
 		$sql.= " '".$this->db->idate($this->datef)."',";
 		$sql.= " ".$this->amount.",'".$this->db->escape($this->note)."')";
 
-		dol_syslog(get_class($this)."::create sql=".$sql);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -91,7 +91,6 @@ class Cotisation extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog($this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -113,7 +112,7 @@ class Cotisation extends CommonObject
 		$sql.=" FROM ".MAIN_DB_PREFIX."cotisation";
 		$sql.="	WHERE rowid=".$rowid;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -168,7 +167,7 @@ class Cotisation extends CommonObject
 		$sql .= " fk_bank = ".($this->fk_bank ? $this->fk_bank : 'null');
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -183,7 +182,6 @@ class Cotisation extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -207,7 +205,7 @@ class Cotisation extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid = ".$this->id;
-		dol_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -266,14 +264,14 @@ class Cotisation extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowSubscription").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='payment';
-		$label=$langs->trans("ShowSubscription");
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$lien.$this->ref.$lienfin;
 		return $result;

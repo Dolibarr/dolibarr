@@ -56,7 +56,7 @@ $error=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
 
 
@@ -71,7 +71,6 @@ if ($id != 'all')
 	$sql.= " LIMIT 1";
 }
 
-dol_syslog("sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -144,19 +143,21 @@ if ($resql)
 						$other3=$other[2];
 						$other4=$other[3];
 						$other5=$other[4];
+						// Array of possible substitutions (See also fie mailing-send.php that should manage same substitutions)
 						$substitutionarray=array(
 							'__ID__' => $obj->source_id,
 							'__EMAIL__' => $obj->email,
-							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
-							'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj2->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
-							'__MAILTOEMAIL__' => '<a href="mailto:'.$obj2->email.'">'.$obj2->email.'</a>',
 							'__LASTNAME__' => $obj2->lastname,
 							'__FIRSTNAME__' => $obj2->firstname,
+							'__MAILTOEMAIL__' => '<a href="mailto:'.$obj2->email.'">'.$obj2->email.'</a>',
 							'__OTHER1__' => $other1,
 							'__OTHER2__' => $other2,
 							'__OTHER3__' => $other3,
 							'__OTHER4__' => $other4,
-							'__OTHER5__' => $other5
+							'__OTHER5__' => $other5,
+							'__SIGNATURE__' => '',	// Signature is empty when ran from command line (user is a bot)
+							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
+							'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj2->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>'
 						);
 						if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
 						{
@@ -225,7 +226,7 @@ if ($resql)
 								{
 									//Update status communication of thirdparty prospect
 									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$obj2->rowid.")";
-									dol_syslog("fiche.php: set prospect thirdparty status sql=".$sql, LOG_DEBUG);
+									dol_syslog("card.php: set prospect thirdparty status", LOG_DEBUG);
 									$resqlx=$db->query($sqlx);
 									if (! $resqlx)
 									{
@@ -235,7 +236,7 @@ if ($resql)
 
 					    			//Update status communication of contact prospect
 									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj2->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
-									dol_syslog("fiche.php: set prospect contact status sql=".$sql, LOG_DEBUG);
+									dol_syslog("card.php: set prospect contact status", LOG_DEBUG);
 
 									$resqlx=$db->query($sqlx);
 									if (! $resqlx)
@@ -244,6 +245,11 @@ if ($resql)
 										$error++;
 									}
 								}
+                                
+                                if (!empty($conf->global->MAILING_DELAY)) {
+                                    sleep($conf->global->MAILING_DELAY);
+                                }
+
 							}
 						}
 						else
@@ -279,7 +285,7 @@ if ($resql)
 
 				$sqlenddate="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
 
-				dol_syslog("update global status sql=".$sqlenddate, LOG_DEBUG);
+				dol_syslog("update global status", LOG_DEBUG);
 				print "Update status of emailing id ".$id." to ".$statut."\n";
 				$resqlenddate=$db->query($sqlenddate);
 				if (! $resqlenddate)

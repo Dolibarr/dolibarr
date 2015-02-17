@@ -216,7 +216,7 @@ class FactureRec extends Facture
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
 		$sql.= ' WHERE f.rowid='.$rowid;
 
-        dol_syslog("FactureRec::Fetch rowid=".$rowid." sql=".$sql, LOG_DEBUG);
+        dol_syslog("FactureRec::Fetch rowid=".$rowid."", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -269,7 +269,6 @@ class FactureRec extends Facture
 				if ($result < 0)
 				{
 					$this->error=$this->db->error();
-					dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 					return -3;
 				}
 				return 1;
@@ -284,7 +283,6 @@ class FactureRec extends Facture
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -359,7 +357,6 @@ class FactureRec extends Facture
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Facture::fetch_lines: Error '.$this->error, LOG_ERR);
 			return -3;
 		}
 	}
@@ -497,7 +494,7 @@ class FactureRec extends Facture
 			$sql.= ", ".$rang;
 			$sql.= ", ".$special_code.")";
 
-			dol_syslog(get_class($this)."::addline sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				$this->id=$facid;
@@ -507,7 +504,6 @@ class FactureRec extends Facture
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("FactureRec::addline sql=".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -562,15 +558,15 @@ class FactureRec extends Facture
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowInvoice").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='bill';
 
-		$label=$langs->trans("ShowInvoice").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;

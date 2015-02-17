@@ -44,7 +44,7 @@ $page = GETPOST('page','int');
  * View
  */
 
-llxHeader('',$langs->trans("WithdrawalReceipts"));
+llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 if ($prev_id)
 {
@@ -53,7 +53,7 @@ if ($prev_id)
 	if ($bon->fetch($prev_id) == 0)
 	{
 		$head = prelevement_prepare_head($bon);
-		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalReceipts"), '', 'payment');
+		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), '', 'payment');
 
 		print '<table class="border" width="100%">';
 
@@ -106,7 +106,6 @@ if ($prev_id)
 
 	/*
 	 * Stats
-	 *
 	 */
 	$ligne=new LignePrelevement($db,$user);
 
@@ -121,6 +120,8 @@ if ($prev_id)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
+		print_fiche_titre($langs->trans("StatisticsByLineStatus"),'','');
+		
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		print '<tr class="liste_titre">';

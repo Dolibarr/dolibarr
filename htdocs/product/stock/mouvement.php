@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ $search_movement = GETPOST("search_movement");
 $search_product_ref = trim(GETPOST("search_product_ref"));
 $search_product = trim(GETPOST("search_product"));
 $search_warehouse = trim(GETPOST("search_warehouse"));
+$search_inventorycode = trim(GETPOST("search_inventorycode"));
 $search_user = trim(GETPOST("search_user"));
 $page = GETPOST("page",'int');
 $sortfield = GETPOST("sortfield",'alpha');
@@ -60,7 +61,7 @@ $offset = $conf->liste_limit * $page;
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $year='';
     $month='';
@@ -77,10 +78,10 @@ if (GETPOST("button_removefilter"))
  * Actions
  */
 
-if ($cancel) $action='';
+if ($cancel) $action='';	// Protection to avoid action for all cancel buttons
 
 // Correct stock
-if ($action == "correct_stock" && ! $_POST["cancel"])
+if ($action == "correct_stock")
 {
     if (is_numeric($_POST["nbpiece"]) && $product_id)
     {
@@ -119,8 +120,9 @@ $formother=new FormOther($db);
 $formproduct=new FormProduct($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type,";
-$sql.= " e.label as stock, e.rowid as entrepot_id,";
-$sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label, m.fk_origin, m.origintype,";
+$sql.= " e.label as stock, e.rowid as entrepot_id, e.lieu,";
+$sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
+$sql.= " m.batch,m.eatby,m.sellby,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."product as p,";
@@ -148,6 +150,10 @@ else if ($year > 0)
 if (! empty($search_movement))
 {
     $sql.= " AND m.label LIKE '%".$db->escape($search_movement)."%'";
+}
+if (! empty($search_inventorycode))
+{
+    $sql.= " AND m.inventorycode LIKE '%".$db->escape($search_inventorycode)."%'";
 }
 if (! empty($search_product_ref))
 {
@@ -213,7 +219,7 @@ if ($resql)
 
         print '<table class="border" width="100%">';
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
         print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
@@ -332,9 +338,13 @@ if ($resql)
 
         print '</table>';
 
-        print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
-        print '</form>';
+        print '<div class="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
+
+		print '</form>';
     }
 
     /*
@@ -370,8 +380,11 @@ if ($resql)
 
         print '</table>';
 
-        print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+        print '<div class="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
         print '</form>';
     }
@@ -403,47 +416,51 @@ if ($resql)
     $param='';
     if ($id) $param.='&id='.$id;
     if ($search_movement)   $param.='&search_movement='.urlencode($search_movement);
+    if ($search_inventorycode)   $param.='&search_inventorycode='.urlencode($search_inventorycode);
     if ($search_product_ref) $param.='&search_product_ref='.urlencode($search_product_ref);
     if ($search_product)   $param.='&search_product='.urlencode($search_product);
     if ($search_warehouse) $param.='&search_warehouse='.urlencode($search_warehouse);
-    if ($sref) $param.='&sref='.urlencode($sref);
-    if ($snom) $param.='&snom='.urlencode($snom);
+    if (!empty($sref)) $param.='&sref='.urlencode($sref); // FIXME $sref is not defined
+    if (!empty($snom)) $param.='&snom='.urlencode($snom); // FIXME $snom is not defined
     if ($search_user)    $param.='&search_user='.urlencode($search_user);
     if ($idproduct > 0)  $param.='&idproduct='.$idproduct;
     if ($id) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,0,'');
     else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
+    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($id) print '<input type="hidden" name="id" value="'.$id.'">';
+
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
     //print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"], "m.rowid","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"], "m.datem","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("LabelMovement"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ProductRef"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ProductLabel"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
+	if (! empty($conf->productbatch->enabled))
+	{
+		$langs->load("productbatch");
+	    print '<td align="right" width="10%">'.$langs->trans("batch_number").'</td>';
+		print '<td align="center" width="10%">'.$langs->trans("l_eatby").'</td>';
+		print '<td align="center" width="10%">'.$langs->trans("l_sellby").'</td>';
+	}
     print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("InventoryCode"),$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LabelMovement"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Units"),$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
     // Lignes des champs de filtre
-    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($id) print '<input type="hidden" name="id" value="'.$id.'">';
 
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" valign="right">';
     print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
-    print '&nbsp;'.$langs->trans('Year').': ';
-    $syear = GETPOST('year')?GETPOST('year'):-1;
+    if (empty($conf->productbatch->enabled)) print '&nbsp;';
+    else print '<br>';
+    print $langs->trans('Year').': ';
+    $syear = $year?$year:-1;
     $formother->select_year($syear,'year',1, 20, 5);
-    print '</td>';
-    // Label of movement
-    print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="10" name="search_movement" value="'.$search_movement.'">';
-    print '</td>';
-    // Origin of movement
-    print '<td class="liste_titre" align="left">';
-    print '&nbsp; ';
     print '</td>';
     // Product Ref
     print '<td class="liste_titre" align="left">';
@@ -453,15 +470,36 @@ if ($resql)
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="10" name="search_product" value="'.($idproduct?$product->libelle:$search_product).'">';
     print '</td>';
+    // Batch
+	if (! empty($conf->productbatch->enabled))
+	{
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
+	}
+    // Warehouse
     print '<td class="liste_titre" align="left">';
-    if (empty($idproduct) || $idproduct < 0) print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';	// We are on a specific warehouse card, no filter on other should be possible
+    print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';
     print '</td>';
+    // Author
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="6" name="search_user" value="'.($search_user).'">';
     print '</td>';
+    // Inventory code
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" type="text" size="4" name="search_inventorycode" value="'.$search_inventorycode.'">';
+    print '</td>';
+    // Label of movement
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" type="text" size="10" name="search_movement" value="'.$search_movement.'">';
+    print '</td>';
+    // Origin of movement
+    print '<td class="liste_titre" align="left">';
+    print '&nbsp; ';
+    print '</td>';
+
     print '<td class="liste_titre" align="right">';
     print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print '&nbsp; ';
     print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
     print "</tr>\n";
@@ -487,14 +525,11 @@ if ($resql)
         //print '<td>'.$objp->mid.'</td>';	// This is primary not movement id
         // Date
         print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
-        // Label of movement
-        print '<td>'.$objp->label.'</td>';
-		// Origin of movement
-        print '<td>'.$origin.'</td>';
 		// Product ref
         print '<td>';
         $productstatic->id=$objp->rowid;
         $productstatic->ref=$objp->product_ref;
+        $productstatic->label=$objp->produit;
         $productstatic->type=$objp->type;
         print $productstatic->getNomUrl(1,'',16);
         print "</td>\n";
@@ -505,10 +540,18 @@ if ($resql)
         $productstatic->type=$objp->type;
         print $productstatic->getNomUrl(1,'',16);
         print "</td>\n";
+        // Batch
+    	if (! empty($conf->productbatch->enabled))
+		{
+	    		print '<td align="right">'.$objp->batch.'</td>';
+	            print '<td align="center">'. dol_print_date($objp->eatby,'day') .'</td>';
+	            print '<td align="center">'. dol_print_date($objp->sellby,'day') .'</td>';
+		}
         // Warehouse
         print '<td>';
         $warehousestatic->id=$objp->entrepot_id;
         $warehousestatic->libelle=$objp->stock;
+        $warehousestatic->lieu=$objp->lieu;
         print $warehousestatic->getNomUrl(1);
         print "</td>\n";
         // Author
@@ -517,6 +560,12 @@ if ($resql)
         $userstatic->lastname=$objp->login;
         print $userstatic->getNomUrl(1);
         print "</td>\n";
+        // Inventory code
+        print '<td>'.$objp->inventorycode.'</td>';
+        // Label of movement
+        print '<td>'.$objp->label.'</td>';
+        // Origin of movement
+        print '<td>'.$origin.'</td>';
         // Value
         print '<td align="right">';
         if ($objp->value > 0) print '+';
@@ -529,7 +578,7 @@ if ($resql)
     print "</table><br>";
 
     // Add number of product when there is a filter on period
-    if (count($arrayofuniqueproduct) == 1)
+    if (count($arrayofuniqueproduct) == 1 && is_numeric($year))
     {
     	$productidselected=0;
     	foreach ($arrayofuniqueproduct as $key => $val)
@@ -569,4 +618,3 @@ llxFooter();
 
 $db->close();
 
-?>

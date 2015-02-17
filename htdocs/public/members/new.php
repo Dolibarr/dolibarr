@@ -42,7 +42,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retreive from object ref and not from url.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_int($entity)) define("DOLENTITY", $entity);
+if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -110,9 +110,9 @@ function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayo
     {
         $urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
     }
-    print '<center>';
+    print '<div class="center">';
     print '<img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'" />';
-    print '</center><br>';
+    print '</div><br>';
 
     print '<div style="margin-left: 50px; margin-right: 50px;">';
 }
@@ -251,7 +251,7 @@ if ($action == 'add')
         $extralabels=$extrafields->fetch_name_optionals_label($adh->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels,$adh);
 
-        $result=$adh->create($user->id);
+        $result=$adh->create($user);
         if ($result > 0)
         {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -343,9 +343,9 @@ if ($action == 'added')
 
     // Si on a pas ete redirige
     print '<br>';
-    print '<center>';
+    print '<div class="center">';
     print $langs->trans("NewMemberbyWeb");
-    print '</center>';
+    print '</div>';
 
     llxFooterVierge();
     exit;
@@ -591,13 +591,13 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
 print "</table>\n";
 
 // Save
-print '<br><center>';
+print '<br><div class="center">';
 print '<input type="submit" value="'.$langs->trans("Save").'" id="submitsave" class="button">';
 if (! empty($backtopage))
 {
     print ' &nbsp; &nbsp; <input type="submit" value="'.$langs->trans("Cancel").'" id="submitcancel" class="button">';
 }
-print '</center>';
+print '</div>';
 
 print "<br></div></form>\n";
 print '</div>';

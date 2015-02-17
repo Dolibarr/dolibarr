@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=供应商
 Supplier=供应商
-AddSupplier=新增供应商
+AddSupplier=Create a supplier
 SupplierRemoved=供应商删除
 SuppliersInvoice=供应商发票
 NewSupplier=新供应商
@@ -12,8 +12,8 @@ OrderDate=订购日期
 BuyingPrice=买价
 BuyingPriceMin=最低购买价格
 BuyingPriceMinShort=最小买入价
-# TotalBuyingPriceMin=Total of subproducts buying prices
-# SomeSubProductHaveNoPrices=Some sub-products have no price defined
+TotalBuyingPriceMin=Total of subproducts buying prices
+SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=新增供应商的价格
 ChangeSupplierPrice=供应商的价格变化
 ErrorQtyTooLowForThisSupplier=数量过低，供应商或供应商在这此产品没有价格定义
@@ -40,3 +40,7 @@ AddSupplierInvoice=创建供应商发票
 ListOfSupplierProductForSupplier=<b>%</b>产品供应商名单和价格<b>的</b> S
 NoneOrBatchFileNeverRan=无或批处理<b>%不是</b>最近跑
 SentToSuppliers=发送到供应商
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list

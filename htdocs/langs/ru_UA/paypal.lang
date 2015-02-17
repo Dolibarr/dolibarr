@@ -1,20 +1,2 @@
-/*
- * Language code: ru_UA
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ru_UA
+# Dolibarr language file - Source file is en_US - paypal
 PaypalDoPayment=Оплатить с Paypal
-PaypalCBDoPayment=Оплата кредитной картой
-PAYPAL_API_SANDBOX=Режим тестирования / песочнице
-PAYPAL_API_USER=API имя пользователя
-PAYPAL_API_PASSWORD=API пароль
-PAYPAL_API_SIGNATURE=API подпись
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Предложение платежа &quot;Интеграл&quot; (кредитные карточки + Paypal) или &quot;PayPal&quot;, только
-PAYPAL_CSS_URL=Optionnal адрес таблицы стилей CSS на странице оплаты
-ThisIsTransactionId=Это идентификатор сделки: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Добавить адрес Paypal оплата при отправке документа по почте
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:59:41).

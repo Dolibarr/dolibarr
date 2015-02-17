@@ -39,6 +39,7 @@ if ( $_SESSION['uid'] > 0 )
 }
 
 $usertxt=GETPOST('user','',1);
+$err=GETPOST("err");
 
 
 /*
@@ -64,7 +65,7 @@ top_htmlhead('','',0,0,'',$arrayofcss);
 
 <div class="contenu">
 <div class="principal_login">
-<?php if (! empty($_GET["err"])) print $_GET["err"]."<br><br>\n"; ?>
+<?php if ($err) print dol_escape_htmltag($err)."<br><br>\n"; ?>
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Identification"); ?></legend>
 <form id="frmLogin" method="POST" action="index_verif.php">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -98,16 +99,15 @@ print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):$conf-
 print '</td>';
 print "</tr>\n";
 
-if (! empty($conf->stock->enabled))
+if (! empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_STOCK))
 {
 	$langs->load("stocks");
 	print "<tr>";
 	print '<td class="label1">'.$langs->trans("Warehouse").'</td>';
 	print '<td>';
 	$disabled=0;
-	if (! empty($conf->global->CASHDESK_ID_WAREHOUSE)) $disabled=1;	// If a particular stock is defined, we disable choice
-	print $formproduct->selectWarehouses((GETPOST('warehouseid')?GETPOST('warehouseid'):(empty($conf->global->CASHDESK_ID_WAREHOUSE)?'ifone':$conf->global->CASHDESK_ID_WAREHOUSE)),'warehouseid','',!$disabled,$disabled);
-	//print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
+	if ($conf->global->CASHDESK_ID_WAREHOUSE > 0) $disabled=1;	// If a particular stock is defined, we disable choice
+	print $formproduct->selectWarehouses((GETPOST('warehouseid')?GETPOST('warehouseid','int'):(empty($conf->global->CASHDESK_ID_WAREHOUSE)?'ifone':$conf->global->CASHDESK_ID_WAREHOUSE)),'warehouseid','',!$disabled,$disabled);
 	print '</td>';
 	print "</tr>\n";
 }
@@ -151,7 +151,7 @@ print "</tr>\n";
 </table>
 <br>
 
-<div align="center"><span class="bouton_login"><input name="sbmtConnexion" type="submit" value=<?php echo $langs->trans("Connection"); ?> /></span></div>
+<div align="center"><span class="bouton_login"><input class="button" name="sbmtConnexion" type="submit" value=<?php echo $langs->trans("Connection"); ?> /></span></div>
 
 </form>
 </fieldset>

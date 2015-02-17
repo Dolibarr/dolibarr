@@ -71,6 +71,7 @@ ActionAC_FAX=Invia fax
 ActionAC_PROP=Invia proposta
 ActionAC_EMAIL=Invia email
 ActionAC_RDV=Riunione
+ActionAC_INT=Intervento presso cliente
 ActionAC_FAC=Invia fattura
 ActionAC_REL=Invia la fattura (promemoria)
 ActionAC_CLO=Chiudere
