@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
@@ -1601,13 +1601,13 @@ elseif (! empty($object->id))
 	}
 	print '</td></tr>';
 
-	
+
 	// Delai livraison jours
 	print '<tr>';
 	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
 	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
 	print '</tr>';
-	
+
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -2232,8 +2232,12 @@ elseif (! empty($object->id))
 			        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->commande->creer))
 			       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid"';
-						print '>'.$langs->trans('Validate').'</a>';
+						$tmpbuttonlabel=$langs->trans('Validate');
+						if ($user->rights->fournisseur->commande->approuver) $tmpbuttonlabel = $langs->trans("ValidateAndApprove");
+
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">';
+						print $tmpbuttonlabel;
+						print '</a>';
 					}
 				}
 

@@ -613,7 +613,7 @@ class CommandeFournisseur extends CommonOrder
     }
 
     /**
-     * 	Accept an order
+     * 	Approve a supplier order
      *
      *	@param	User	$user			Object user
      *	@param	int		$idwarehouse	Id of warhouse for stock change
@@ -658,6 +658,15 @@ class CommandeFournisseur extends CommonOrder
             if ($this->db->query($sql))
             {
                 $this->log($user, 2, time());	// Statut 2
+
+            	if (! empty($conf->global->SUPPLIER_ORDER_AUTOADD_USER_CONTACT))
+	            {
+					$result=$this->add_contact($user->id, 'SALESREPFOLL', 'internal', 1);
+					if ($result < 0)
+					{
+						$error++;
+					}
+	            }
 
                 // If stock is incremented on validate order, we must increment it
                 if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER))
@@ -967,8 +976,8 @@ class CommandeFournisseur extends CommonOrder
 	            dol_syslog(get_class($this)."::create", LOG_DEBUG);
 	            if ($this->db->query($sql))
 	            {
-	                // On logue creation pour historique
-	                $this->log($user, 0, time());
+	                // Add entry into log
+	                $this->log($user, 0, $now);
 
 	                if (! $error)
                     {

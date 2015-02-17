@@ -175,8 +175,8 @@ abstract class CommonObject
     /**
      *  Add a link between element $this->element and a contact
      *
-     *  @param	int		$fk_socpeople       Id of contact to link
-     *  @param 	int		$type_contact 		Type of contact (code or id). For example: SALESREPFOLL
+     *  @param	int		$fk_socpeople       Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
+     *  @param 	int		$type_contact 		Type of contact (code or id). Must be if or code found into table llx_c_type_contact. For example: SALESREPFOLL
      *  @param  int		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
      *  @param  int		$notrigger			Disable all triggers
      *  @return int                 		<0 if KO, >0 if OK
