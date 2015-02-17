@@ -561,7 +561,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 * recalculer
 	 *
-	 * @param 	int			$id
+	 * @param 	int			$id		Id of expense report
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
 	function recalculer($id)
