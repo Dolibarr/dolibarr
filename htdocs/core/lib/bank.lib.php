@@ -132,8 +132,8 @@ function bank_admin_prepare_head($object)
 function checkIbanForAccount($account)
 {
     require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-    $iban = new Iban();
-    $check = $iban->Verify($account->iban);
+    $iban = new Iban($account->iban);
+    $check = $iban->Verify();
     //print '<pre>'.print_r($iban, true).'</pre>';
     if ($check) {
         //print '<pre>OK</pre>';
