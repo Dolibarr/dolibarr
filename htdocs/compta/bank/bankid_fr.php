@@ -245,7 +245,15 @@ if (($_GET["id"] || $_GET["ref"]) && $action != 'edit')
 		if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 		print '<tr><td valign="top">'.$langs->trans($ibankey).'</td>';
-		print '<td colspan="3">'.$account->iban.'</td></tr>';
+		print '<td colspan="3">'.$account->iban.'&nbsp;';
+        if (! empty($account->iban)) {
+            if (! checkIbanForAccount($account)) {
+                print img_picto($langs->trans("IbanNotValid"),'warning');
+            } else {
+                print img_picto($langs->trans("IbanValid"),'info');
+            }
+        }
+        print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans($bickey).'</td>';
 		print '<td colspan="3">'.$account->bic.'</td></tr>';

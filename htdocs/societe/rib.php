@@ -296,9 +296,9 @@ if ($socid && $action != 'edit' && $action != "create")
 	print '<td colspan="4">'.$account->iban . '&nbsp;';
     if (! empty($account->iban)) {
         if (! checkIbanForAccount($account)) {
-            print img_picto($langs->trans("NotValid"),'warning');
+            print img_picto($langs->trans("IbanNotValid"),'warning');
         } else {
-            print img_picto($langs->trans("IsValid"),'info');
+            print img_picto($langs->trans("IbanValid"),'info');
         }
     }
     print '</td></tr>';
