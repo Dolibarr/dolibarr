@@ -124,6 +124,29 @@ function bank_admin_prepare_head($object)
 		}
 
 /**
+ *      Check IBAN number informations for a bank account
+ *
+ *      @param  Account     $account    A bank account
+ *      @return int                     True if informations are valid, false otherwise
+ */
+function checkIbanForAccount($account)
+{
+    require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
+    $iban = new Iban();
+    $check = $iban->Verify($account->iban);
+    //print '<pre>'.print_r($iban, true).'</pre>';
+    if ($check) {
+        //print '<pre>OK</pre>';
+        return true;
+    } else {
+        //$suggest = $iban->MistranscriptionSuggestions($account->iban);
+        //print '<pre>'.print_r($suggest, true).'</pre>';
+        return false;
+    }
+
+}
+
+/**
  * 		Check account number informations for a bank account
  *
  * 		@param	Account		$account    A bank account

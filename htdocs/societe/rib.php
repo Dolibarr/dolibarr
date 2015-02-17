@@ -293,7 +293,15 @@ if ($socid && $action != 'edit' && $action != "create")
 	}
 
 	print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-	print '<td colspan="4">'.$account->iban.'</td></tr>';
+	print '<td colspan="4">'.$account->iban . '&nbsp;';
+    if (! empty($account->iban)) {
+        if (! checkIbanForAccount($account)) {
+            print img_picto($langs->trans("NotValid"),'warning');
+        } else {
+            print img_picto($langs->trans("IsValid"),'info');
+        }
+    }
+    print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
 	print '<td colspan="4">'.$account->bic.'</td></tr>';
