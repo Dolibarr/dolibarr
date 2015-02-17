@@ -200,7 +200,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
-				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				$nblignes = count($object->lines);
 
