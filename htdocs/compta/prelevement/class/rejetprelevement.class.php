@@ -71,7 +71,7 @@ class RejetPrelevement
 	 * @param 	User		$user				User object
 	 * @param 	int			$id					Id
 	 * @param 	string		$motif				Motif
-	 * @param 	timestamp	$date_rejet			Date rejet
+	 * @param 	int	$date_rejet			Date rejet
 	 * @param 	int			$bonid				Bon id
 	 * @param 	int			$facturation		Facturation
 	 * @return	void
@@ -272,7 +272,7 @@ class RejetPrelevement
 	/**
 	 *    Retrieve the list of invoices
 	 *
-	 *    @return	void
+	 *    @return	array
 	 */
 	private function getListInvoices()
 	{
@@ -318,7 +318,7 @@ class RejetPrelevement
 	 *    Retrieve withdrawal object
 	 *
 	 *    @param    int		$rowid       id of invoice to retrieve
-	 *    @return	void
+	 *    @return	int
 	 */
 	function fetch($rowid)
 	{

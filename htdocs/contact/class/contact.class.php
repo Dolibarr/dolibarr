@@ -1001,8 +1001,6 @@ class Contact extends CommonObject
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs;
-
 		// Get first id of existing company and save it into $socid
 		$socid = 0;
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe ORDER BY rowid LIMIT 1";

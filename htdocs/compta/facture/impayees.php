@@ -324,7 +324,7 @@ if ($action == 'remove_file')
 	$langs->load("other");
 	$upload_dir = $diroutputpdf;
 	$file = $upload_dir . '/' . GETPOST('file');
-	$ret=dol_delete_file($file,0,0,0,'');
+	$ret=dol_delete_file($file);
 	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
 	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 	$action='';
@@ -482,7 +482,8 @@ if ($resql)
 		$formmail = new FormMail($db);
 
 		print '<br>';
-		print_fiche_titre($langs->trans("SendRemind"),'','').'<br>';
+		print_fiche_titre($langs->trans("SendRemind"),'','');
+		print '<br>';
 
 		$topicmail="MailTopicSendRemindUnpaidInvoices";
 		$modelmail="facture_relance";

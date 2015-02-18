@@ -26,10 +26,10 @@
 /**
  *	Prepare array with list of admin tabs
  *
- *	@param	Object	$object		Object instance we show card
+ *	@param	AccountingAccount	$object		Object instance we show card
  *	@return	array				Array of tabs to show
  */
-function admin_accounting_prepare_head($object=null)
+function admin_accounting_prepare_head(AccountingAccount $object=null)
 {
 	global $langs, $conf;
 
@@ -65,10 +65,10 @@ function admin_accounting_prepare_head($object=null)
 /**
  *	Prepare array with list of tabs
  *
- *	@param	Object	$object		Accounting account
+ *	@param	AccountingAccount	$object		Accounting account
  *	@return	array				Array of tabs to show
  */
-function accounting_prepare_head($object)
+function accounting_prepare_head(AccountingAccount $object)
 {
 	global $langs, $conf;
 
