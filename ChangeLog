@@ -22,6 +22,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #1819 ] SQL error when searching for an invoice payment
 - Fix: [ bug #1827 ] Tax reports gives incorrect amounts when using external modules that create lines with special codes
 - Fix: [ bug #1822 ] SQL error in clientfourn.php report with PostgreSQL
+- Fix: [ bug #1832 ] SQL error when adding a product with no price defined to an object
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
