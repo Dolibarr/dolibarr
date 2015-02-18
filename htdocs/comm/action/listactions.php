@@ -313,7 +313,7 @@ if ($resql)
 		$actionstatic->id=$obj->id;
 		$actionstatic->type_code=$obj->type_code;
 		$actionstatic->type_label=$obj->type_label;
-		$actionstatic->libelle=$obj->label;
+		$actionstatic->label=$obj->label;
 		print $actionstatic->getNomUrl(1,28);
 		print '</td>';
 

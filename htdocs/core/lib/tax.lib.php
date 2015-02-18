@@ -29,10 +29,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   ChargeSociales	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function tax_prepare_head($object)
+function tax_prepare_head(ChargeSociales $object)
 {
     global $langs, $conf;
 

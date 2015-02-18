@@ -149,7 +149,7 @@ print '</tr>';
 // Bank account (from Banks module)
 print '<tr class="impair"><td>'.$langs->trans("BankToReceiveWithdraw").'</td>';
 print '<td align="left">';
-print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
+$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
 print '</td></tr>';
 
 // ICS

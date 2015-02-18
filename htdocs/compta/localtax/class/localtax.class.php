@@ -249,10 +249,6 @@ class Localtax extends CommonObject
  	 */
 	function delete($user)
 	{
-		global $conf, $langs;
-
-		$error=0;
-
 		// Call trigger
 		$result=$this->call_trigger('LOCALTAX_DELETE',$user);
 		if ($result < 0) return -1;
@@ -269,7 +265,6 @@ class Localtax extends CommonObject
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
 		}
-
 
 		return 1;
 	}

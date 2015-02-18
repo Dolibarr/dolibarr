@@ -709,7 +709,7 @@ class FormCompany
 	 *    @param    string		$fields					Fields
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable autocomplete features
-	 *    @return	void
+	 *    @return	string
 	 */
 	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0)
 	{

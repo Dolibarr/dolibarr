@@ -51,7 +51,7 @@ class FormEcm
 	 *  @param  string	$select_name		Nom formulaire HTML
 	 *  @return	string						String with HTML select
 	 */
-	function select_all_sections($selected='',$select_name='')
+	function select_all_sections($selected=0,$select_name='')
 	{
 		global $langs;
 		$langs->load("ecm");

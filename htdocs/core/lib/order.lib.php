@@ -28,10 +28,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Commande	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function commande_prepare_head($object)
+function commande_prepare_head(Commande $object)
 {
 	global $langs, $conf, $user;
 	if (! empty($conf->expedition->enabled)) $langs->load("sendings");

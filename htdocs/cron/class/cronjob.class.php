@@ -273,7 +273,6 @@ class Cronjob extends CommonObject
      */
     function fetch($id)
     {
-    	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
 
@@ -655,15 +654,14 @@ class Cronjob extends CommonObject
 	 */
 	function delete($user, $notrigger=0)
 	{
-		global $conf, $langs;
 		$error=0;
 
 		$this->db->begin();
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+//		if (! $error)
+//		{
+//			if (! $notrigger)
+//			{
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action calls a trigger.
 
@@ -673,18 +671,18 @@ class Cronjob extends CommonObject
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		        //// End call triggers
-			}
-		}
+//			}
+//		}
 
-		if (! $error)
-		{
+//		if (! $error)
+//		{
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cronjob";
     		$sql.= " WHERE rowid=".$this->id;
 
     		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
     		$resql = $this->db->query($sql);
         	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		}
+//		}
 
         // Commit or rollback
 		if ($error)
@@ -803,12 +801,10 @@ class Cronjob extends CommonObject
 	/**
 	 *	Load object information
 	 *
-	 *	@return	void
+	 *	@return	int
 	 */
 	function info()
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql.= " f.rowid, f.datec, f.tms, f.fk_user_mod, f.fk_user_author";
 		$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as f";
@@ -849,7 +845,6 @@ class Cronjob extends CommonObject
 	{
 		global $langs, $conf;
 
-		$error=0;
 		$now=dol_now();
 
 		$langs->load('cron');
@@ -935,7 +930,6 @@ class Cronjob extends CommonObject
 			// Create Object for the call module
 			$object = new $this->objectname($this->db);
 
-			$params_arr = array();
 			$params_arr = explode(", ",$this->params);
 			if (!is_array($params_arr))
 			{
@@ -978,7 +972,6 @@ class Cronjob extends CommonObject
 				return -1;
 			}
 			dol_syslog(get_class($this) . "::run_jobs " . $this->libname . "::" . $this->methodename."(" . $this->params . ");", LOG_DEBUG);
-			$params_arr = array();
 			$params_arr = explode(", ", $this->params);
 			if (!is_array($params_arr))
 			{
@@ -1074,8 +1067,6 @@ class Cronjob extends CommonObject
 	 */
 	function reprogram_jobs($userlogin)
 	{
-		global $langs, $conf;
-
 		dol_syslog(get_class($this)."::reprogram_jobs userlogin:$userlogin", LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
