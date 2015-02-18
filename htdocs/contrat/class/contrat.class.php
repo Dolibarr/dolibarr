@@ -7,7 +7,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1881,15 +1881,11 @@ class Contrat extends CommonObject
      *
      *      @param	User	$user           Objet user
      *      @param  string	$mode           "inactive" pour services a activer, "expired" pour services expires
-     *      @return int                 	<0 if KO, >0 if OK
+     *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	function load_board($user,$mode)
 	{
-		global $conf, $user;
-
-		$now=dol_now();
-
-		$this->nbtodo=$this->nbtodolate=0;
+		global $conf, $user, $langs;
 
 		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$this->from.= ", ".MAIN_DB_PREFIX."contratdet as cd";
@@ -1920,15 +1916,35 @@ class Contrat extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$langs->load("contracts");
+			$now=dol_now();
+
+			if ($mode == 'inactives') {
+				$warning_delay = $conf->contrat->services->inactifs->warning_delay;
+				$label = $langs->trans("BoardNotActivatedServices");
+				$url = DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=0';
+			} else {
+				$warning_delay = $conf->contrat->services->expires->warning_delay;
+				$url = DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=4&amp;filter=expired';
+				$label = $langs->trans("BoardRunningServices");
+			}
+
+			$response = new WorkboardResponse();
+			$response->warning_delay = $warning_delay/60/60/24;
+			$response->label = $label;
+			$response->url = $url;
+			$response->img = img_object($langs->trans("Contract"),"contract");
+
 			while ($obj=$this->db->fetch_object($resql))
 			{
-				$this->nbtodo++;
-				if ($mode == 'inactives')
-				if ($obj->datefin && $this->db->jdate($obj->datefin) < ($now - $conf->contrat->services->inactifs->warning_delay)) $this->nbtodolate++;
-				if ($mode == 'expired')
-				if ($obj->datefin && $this->db->jdate($obj->datefin) < ($now - $conf->contrat->services->expires->warning_delay)) $this->nbtodolate++;
+				$response->nbtodo++;
+
+				if ($obj->datefin && $this->db->jdate($obj->datefin) < ($now - $warning_delay)) {
+					$response->nbtodolate++;
+				}
 			}
-			return 1;
+
+			return $response;
 		}
 		else
 		{

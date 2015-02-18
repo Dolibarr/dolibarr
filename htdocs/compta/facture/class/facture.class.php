@@ -9,7 +9,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012-2014 Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2012-2014 Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2015 Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
@@ -117,9 +117,6 @@ class Facture extends CommonInvoice
 	var $lines=array();
 	var $line;
 	var $extraparams=array();
-	//! Pour board
-	var $nbtodo;
-	var $nbtodolate;
 	var $specimen;
 
 	var $fac_rec;
@@ -3088,15 +3085,12 @@ class Facture extends CommonInvoice
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param      User	$user    	Object user
-	 *	@return     int                 <0 if KO, >0 if OK
+	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	function load_board($user)
 	{
-		global $conf, $user;
+		global $conf, $user, $langs;
 
-		$now=dol_now();
-
-		$this->nbtodo=$this->nbtodolate=0;
 		$clause = " WHERE";
 
 		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin";
@@ -3115,12 +3109,25 @@ class Facture extends CommonInvoice
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$langs->load("bills");
+			$now=dol_now();
+
+			$response = new WorkboardResponse();
+			$response->warning_delay=$conf->facture->client->warning_delay/60/60/24;
+			$response->label=$langs->trans("CustomerBillsUnpaid");
+			$response->url=DOL_URL_ROOT.'/compta/facture/impayees.php';
+			$response->img=img_object($langs->trans("Bills"),"bill");
+
 			while ($obj=$this->db->fetch_object($resql))
 			{
-				$this->nbtodo++;
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->facture->client->warning_delay)) $this->nbtodolate++;
+				$response->nbtodo++;
+
+				if ($this->db->jdate($obj->datefin) < ($now - $conf->facture->client->warning_delay)) {
+					$response->nbtodolate++;
+				}
 			}
-			return 1;
+
+			return $response;
 		}
 		else
 		{
