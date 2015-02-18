@@ -1160,3 +1160,5 @@ ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_b
 -- this update change the old formated url on llx_bank_url
 UPDATE llx_bank_url set url = REPLACE( url, 'fiche.php', 'card.php');
 
+-- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INT(11) NOT NULL DEFAULT '0' AFTER fk_product;
