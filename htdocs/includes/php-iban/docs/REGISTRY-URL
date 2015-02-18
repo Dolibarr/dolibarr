@@ -1,0 +1,17 @@
+To get the latest ISO13616 IBAN registry, go to:
+ http://www.swift.com/products_services/bic_and_iban_format_registration_iban_format_r
+
+TXT format:
+ http://www.swift.com/dsp/resources/documents/IBAN_Registry.txt
+
+PDF format:
+ http://www.swift.com/dsp/resources/documents/IBAN_Registry.pdf
+
+Unfortunately, it has been noticed in 2011 that the official .txt file is
+not an accurate representation of the PDF format specification, and lacks
+some information. It is hoped that in future SWIFT will be more careful to
+publish only correct standards information.
+
+It has been noted in 2014 that this is still the case.
+
+(For more information on this subject, see the HACKING file)
