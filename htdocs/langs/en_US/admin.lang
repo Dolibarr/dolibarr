@@ -1494,6 +1494,7 @@ CashDeskBankAccountForCB= Default account to use to receive payments by credit c
 CashDeskDoNotDecreaseStock=Disable stock decrease when a sell is done from Point of Sale
 CashDeskIdWareHouse=Force and restrict warehouse to use for stock decrease
 StockDecreaseForPointOfSaleDisabled=Stock decrease from Point Of Sale disabled
+StockDecreaseForPointOfSaleDisabledbyBatch=Stock decrease in POS is not compatible with batch management
 CashDeskYouDidNotDisableStockDecease=You did not disable stock decrease when making a sell from Point Of Sale. So a warehouse is required.
 ##### Bookmark #####
 BookmarkSetup=Bookmark module setup
