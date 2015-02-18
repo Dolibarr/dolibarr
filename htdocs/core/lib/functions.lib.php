@@ -2952,7 +2952,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty_seller->country_code."'";
-	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
+	$sql .= " AND t.taux = ".(float)$tva." AND t.active = 1";
 
 	dol_syslog("get_localtax sql=".$sql);
 	$resql=$db->query($sql);
@@ -2988,7 +2988,7 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty->country_code."'";
-	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
+	$sql .= " AND t.taux = ".(float)$vatrate." AND t.active = 1";
 
 	$resql=$db->query($sql);
 	if ($resql)
