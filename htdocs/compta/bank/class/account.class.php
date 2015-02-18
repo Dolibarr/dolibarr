@@ -37,7 +37,12 @@ class Account extends CommonObject
     public $element='bank_account';
     public $table_element='bank_account';
 
-    var $rowid;	 	// deprecated
+    /**
+     * //TODO: Discuss this. $rowid is preferred over $id
+     * @var
+     * @deprecated
+     */
+    var $rowid;
     var $id;
     var $ref;
     var $label;
@@ -221,7 +226,7 @@ class Account extends CommonObject
     /**
      *  Add an entry into table ".MAIN_DB_PREFIX."bank
      *
-     *  @param	timestamp	$date			Date operation
+     *  @param	int	$date			Date operation
      *  @param	string		$oper			1,2,3,4... (deprecated) or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
      *  @param	string		$label			Descripton
      *  @param	float		$amount			Amount
@@ -1358,7 +1363,7 @@ class AccountLine extends CommonObject
                 $sql.= ")";
 
                 dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);
-                $resql = $this->db->query($sql);
+                $this->db->query($sql);
 
                 // No error check. Can fail if category already affected
             }

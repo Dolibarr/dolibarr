@@ -469,7 +469,6 @@ function backup_tables($outputfile, $tables='*')
 
 	        $sql='SELECT * FROM '.$table;
 	        $result = $db->query($sql);
-	        $num_fields = $db->num_rows($result);
 	        while($row = $db->fetch_row($result))
 	        {
 	            // For each row of data we print a line of INSERT

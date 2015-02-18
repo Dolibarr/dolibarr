@@ -450,7 +450,7 @@ class Don extends CommonObject
     function delete($rowid)
     {
 
-        $this->db-begin();
+        $this->db->begin();
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
 

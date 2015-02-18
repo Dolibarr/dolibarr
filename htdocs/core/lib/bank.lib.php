@@ -27,10 +27,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Account	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function bank_prepare_head($object)
+function bank_prepare_head(Account $object)
 {
     global $langs, $conf, $user;
     $h = 0;

@@ -360,7 +360,7 @@ print '<br>';
 print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromproduct')?'checked="checked" ':'').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
 print '<br>';
 print '<div class="showforproductselector">';
-print $form->select_produits(GETPOST('productid'), 'productid', '');
+$form->select_produits(GETPOST('productid'), 'productid', '');
 print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 print '</div>';
 

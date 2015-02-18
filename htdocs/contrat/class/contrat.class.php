@@ -236,7 +236,6 @@ class Contrat extends CommonObject
 			}
 
 			$obj = new $classname();
-			$numref = "";
 			$numref = $obj->getNextValue($soc,$this);
 
 			if ( $numref != "")
@@ -1645,11 +1644,11 @@ class Contrat extends CommonObject
 		// Load $this->lines array
 		//		$this->fetch_lines();
 
-		$newstatut=1;
-		foreach($this->lines as $key => $contractline)
-		{
-			//			if ($contractline)         // Loop on each service
-		}
+//		$newstatut=1;
+//		foreach($this->lines as $key => $contractline)
+//		{
+//			//			if ($contractline)         // Loop on each service
+//		}
 
 		return 1;
 	}

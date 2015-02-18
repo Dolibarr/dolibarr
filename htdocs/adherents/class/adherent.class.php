@@ -642,10 +642,6 @@ class Adherent extends CommonObject
      */
     function update_end_date($user)
     {
-        global $conf, $langs;
-
-        $error=0;
-
         $this->db->begin();
 
         // Search for last subscription id and end date

@@ -69,7 +69,7 @@ class ChargeSociales extends CommonObject
      *
      *  @param	int     $id		Id
      *  @param	string  $ref	Ref
-     *  @return	void
+     *  @return	int <0 KO >0 OK
      */
     function fetch($id, $ref='')
     {
@@ -99,13 +99,14 @@ class ChargeSociales extends CommonObject
                 $this->paye           = $obj->paye;
                 $this->periode        = $this->db->jdate($obj->periode);
 
+                $this->db->free($resql);
+
                 return 1;
             }
             else
             {
                 return 0;
             }
-            $this->db->free($resql);
         }
         else
         {
@@ -308,14 +309,13 @@ class ChargeSociales extends CommonObject
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
+                $this->db->free($result);
                 return $obj->amount;
             }
             else
             {
                 return 0;
             }
-
-            $this->db->free($result);
 
         }
         else
@@ -521,8 +521,6 @@ class ChargeSociales extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
-
         // Initialize parameters
         $this->id=0;
         $this->ref = 'SPECIMEN';

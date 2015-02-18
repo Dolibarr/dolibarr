@@ -50,10 +50,10 @@ function cronadmin_prepare_head()
 /**
  * Return array of tabs to used on a cron job
  *
- * @param 	Object	$object		Object cron
+ * @param 	Cronjob	$object		Object cron
  * @return 	array				Array of tabs
  */
-function cron_prepare_head($object)
+function cron_prepare_head(Cronjob $object)
 {
 	global $langs, $conf, $user;
 	$h = 0;

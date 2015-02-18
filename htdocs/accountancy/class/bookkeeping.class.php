@@ -225,8 +225,6 @@ class BookKeeping extends CommonObject
 	 */
 	function create($user='')
 	{
-		global $conf, $user, $langs;
-
 		$this->piece_num = 0;
 
 		// first check if line not yet in bookkeeping
@@ -355,7 +353,6 @@ class BookKeeping extends CommonObject
 	 */
 	function create_std($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -445,7 +442,7 @@ class BookKeeping extends CommonObject
 		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_bookkeeping");
 
-			if (! $notrigger) {
+//			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -455,7 +452,7 @@ class BookKeeping extends CommonObject
 				// $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
 				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// // End call triggers
-			}
+//			}
 		}
 
 		// Commit or rollback
@@ -481,7 +478,6 @@ class BookKeeping extends CommonObject
 	 */
 	function update($user = 0, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -550,8 +546,8 @@ class BookKeeping extends CommonObject
 			$this->errors[] = "Error " . $this->db->lasterror();
 		}
 
-		if (! $error) {
-			if (! $notrigger) {
+//		if (! $error) {
+//			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -561,8 +557,8 @@ class BookKeeping extends CommonObject
 				// $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// // End call triggers
-			}
-		}
+//			}
+//		}
 
 		// Commit or rollback
 		if ($error) {
@@ -587,7 +583,6 @@ class BookKeeping extends CommonObject
 	 */
 	function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();
@@ -642,10 +637,10 @@ class BookKeeping extends CommonObject
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 
+		dol_syslog(get_class($this) . "::export_bookkeping", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 
-		dol_syslog(get_class($this) . "::export_bookkeping sql=" . $sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->linesexport = array ();
 

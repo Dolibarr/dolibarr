@@ -42,6 +42,8 @@ class RemiseCheque extends CommonObject
 	//! Numero d'erreur Plage 1024-1279
 	var $errno;
 
+	public $statut;
+
 	/**
 	 *	Constructor
 	 *
@@ -275,7 +277,7 @@ class RemiseCheque extends CommonObject
 	 *	Supprime la remise en base
 	 *
 	 *	@param  User	$user 		Utilisateur qui effectue l'operation
-	 *	@return	void
+	 *	@return	int
 	 */
 	function delete($user='')
 	{
@@ -293,25 +295,23 @@ class RemiseCheque extends CommonObject
 		{
 			$num = $this->db->affected_rows($resql);
 
-			if ($num <> 1)
-	  {
-	  	$this->errno = -2;
-	  	dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
-	  }
+			if ($num <> 1) {
+				$this->errno = -2;
+				dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
+			}
 
-	  if ( $this->errno === 0)
-	  {
-	  	$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-	  	$sql.= " SET fk_bordereau = 0";
-	  	$sql.= " WHERE fk_bordereau = '".$this->id."'";
+			if ( $this->errno === 0) {
+			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+			    $sql.= " SET fk_bordereau = 0";
+			    $sql.= " WHERE fk_bordereau = '".$this->id."'";
 
-	  	$resql = $this->db->query($sql);
-	  	if (!$resql)
-	  	{
-	  		$this->errno = -1028;
-	  		dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
-	  	}
-	  }
+			    $resql = $this->db->query($sql);
+			    if (!$resql)
+			    {
+			        $this->errno = -1028;
+				    dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
+				}
+			}
 		}
 
 		if ($this->errno === 0)
@@ -486,7 +486,7 @@ class RemiseCheque extends CommonObject
 	 *	Build document
 	 *
 	 *	@param	string		$model 			Model name
-	 *	@param 	Tranlsate	$outputlangs	Object langs
+	 *	@param 	Translate	$outputlangs	Object langs
 	 * 	@return int        					<0 if KO, >0 if OK
 	 */
 	function generatePdf($model, $outputlangs)
@@ -703,7 +703,7 @@ class RemiseCheque extends CommonObject
      *      Set the creation date
      *
      *      @param	User		$user           Object user
-     *      @param  timestamp   $date           Date creation
+     *      @param  int   $date           Date creation
      *      @return int                 		<0 if KO, >0 if OK
      */
     function set_date($user, $date)
@@ -737,7 +737,7 @@ class RemiseCheque extends CommonObject
 	 *      Set the number of bordereau
 	 *
 	 *      @param	User		$user           Object user
-	 *      @param  timestamp   $number         number of bordereau
+	 *      @param  int   $number         number of bordereau
 	 *      @return int                 		<0 if KO, >0 if OK
 	 */
 	function set_number($user, $number)
