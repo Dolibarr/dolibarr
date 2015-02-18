@@ -186,9 +186,9 @@ if ($result) {
 		if (empty($objp->code_buy)) {
 			$code_buy_notset = 'color:red';
 			if ($objp->type == 1) {
-				$objp->code_buy = (! empty($conf->global->COMPTA_SERVICE_BUY_ACCOUNT) ? $conf->global->COMPTA_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$objp->code_buy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 			} else {
-				$objp->code_buy = (! empty($conf->global->COMPTA_PRODUCT_BUY_ACCOUNT) ? $conf->global->COMPTA_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));					
+				$objp->code_buy = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));					
 			}
 		}else {
 			$code_buy_notset = 'color:blue';
