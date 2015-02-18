@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Simon Desee          <simon@dedisoft.com>
+ * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -659,7 +660,7 @@ class DoliDBMssql extends DoliDB
         if (empty($collation)) $collation=$this->forcecollate;
 
         // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-		$sql = 'CREATE DATABASE '.$database;
+		$sql = 'CREATE DATABASE '.$this->EscapeFieldName($database);
 		$sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
 		$ret=$this->query($sql);
 		if (! $ret)
@@ -722,7 +723,7 @@ class DoliDBMssql extends DoliDB
 		$i=0;
 		foreach($fields as $field_name => $field_desc)
 		{
-			$sqlfields[$i] = $field_name." ";
+			$sqlfields[$i] = $this->EscapeFieldName($field_name)." ";
 			$sqlfields[$i]  .= $field_desc['type'];
 			if( preg_match("/^[^\s]/i",$field_desc['value']))
 			$sqlfields[$i]  .= "(".$field_desc['value'].")";
@@ -808,7 +809,7 @@ class DoliDBMssql extends DoliDB
 	{
 		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
+		$sql= "ALTER TABLE ".$table." ADD ".$this->EscapeFieldName($field_name)." ";
 		$sql .= $field_desc['type'];
 		if( preg_match("/^[^\s]/i",$field_desc['value']))
 		$sql  .= "(".$field_desc['value'].")";
@@ -841,8 +842,8 @@ class DoliDBMssql extends DoliDB
 	 */
 	function DDLUpdateField($table,$field_name,$field_desc)
 	{
-		$sql = "ALTER TABLE ".$table;
-		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
+		$sql = "ALTER TABLE ".$this->EscapeFieldName($table);
+		$sql .= " MODIFY COLUMN ".$this->EscapeFieldName($field_name)." ".$field_desc['type'];
 		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
 			$sql.="(".$field_desc['value'].")";
 		}
@@ -863,7 +864,7 @@ class DoliDBMssql extends DoliDB
 	 */
 	function DDLDropField($table,$field_name)
 	{
-		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
+		$sql= "ALTER TABLE ".$this->EscapeFieldName($table)." DROP COLUMN ".$this->EscapeFieldName($field_name);
 		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		{
@@ -1003,5 +1004,16 @@ class DoliDBMssql extends DoliDB
 
 		return array();
 	}
+	
+	/**
+	 *    Escape a field name according to escape's syntax
+	 *
+	 * @param      string $fieldname   Field's name to escape
+	 * @return     string              field's name escaped
+	 */
+	function EscapeFieldName($fieldname) {
+	    return "[".$fieldname."]";
+	}
+	
 }
 

@@ -3423,7 +3423,7 @@ abstract class CommonObject
             $sql = "SELECT rowid";
             foreach ($optionsArray as $name => $label)
             {
-                $sql.= ", ".$name;
+                $sql.= ", ".$this->db->EscapeFieldName($name);
             }
             $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
             $sql.= " WHERE fk_object = ".$rowid;
@@ -3554,7 +3554,7 @@ abstract class CommonObject
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field of attribut
             	if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
-                	$sql.=",".$attributeKey;
+                	$sql.=",".$this->db->EscapeFieldName($attributeKey);
             }
             $sql .= ") VALUES (".$this->id;
             foreach($this->array_options as $key => $value)
