@@ -635,7 +635,7 @@ Permission181=Read supplier orders
 Permission182=Create/modify supplier orders
 Permission183=Validate supplier orders
 Permission184=Approve supplier orders
-Permission185=Order supplier orders
+Permission185=Order or cancel supplier orders
 Permission186=Receive supplier orders
 Permission187=Close supplier orders
 Permission188=Cancel supplier orders
@@ -1394,7 +1394,7 @@ BarcodeDescUPC=Barcode of type UPC
 BarcodeDescISBN=Barcode of type ISBN
 BarcodeDescC39=Barcode of type C39
 BarcodeDescC128=Barcode of type C128
-GenbarcodeLocation=Bar code generation command line tool (used by internal engine for some bar code types)
+GenbarcodeLocation=Bar code generation command line tool (used by internal engine for some bar code types). Must be compatible with "genbarcode".<br>For example: /usr/local/bin/genbarcode 
 BarcodeInternalEngine=Internal engine
 BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
