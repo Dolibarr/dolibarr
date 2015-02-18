@@ -227,7 +227,7 @@ llxHeader('',$langs->trans("CronAdd"));
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
 {
 	$head=cron_prepare_head($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'bill');
+	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
 }
 elseif ($action=='create')
 {
