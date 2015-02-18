@@ -194,7 +194,7 @@ class modProjet extends DolibarrModules
 		's.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text',
 		'p.rowid'=>"List:projet:ref",'p.ref'=>"Text",'p.datec'=>"Date",'p.dateo'=>"Date",'p.datee'=>"Date",'p.fk_statut'=>'Status','p.description'=>"Text",
 		'pt.dateo'=>"Date",'pt.datee'=>"Date",'pt.duration_effective'=>"Duree",'pt.planned_workload'=>"Number",'pt.progress'=>"Number",'pt.description'=>"Text",
-		'ptt.task_date'=>'Date','ptt.task_duration'=>"Duree",'ptt.fk_user'=>"List:user:Name",'ptt.note'=>"Text");
+		'ptt.task_date'=>'Date','ptt.task_duration'=>"Duree",'ptt.fk_user'=>"List:user:CONCAT(lastname,' ',firstname)",'ptt.note'=>"Text");
 
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company',
 		's.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company',
