@@ -432,7 +432,7 @@ if ($id > 0 || ! empty($ref))
 	print '<td>';
 	//$filtertype=array('TIP'=>'TIP','PRE'=>'PRE',...)
 	$filtertype='';
-	print $form->select_types_paiements($paiementtype,'paiementtype',$filtertype,2,1,1,8);
+	$form->select_types_paiements($paiementtype,'paiementtype',$filtertype,2,1,1,8);
 	print '</td>';
 	print '<td><input type="text" class="flat" name="req_nb" value="'.$req_nb.'" size="2"></td>';
 	print '<td><input type="text" class="flat" name="req_desc" value="'.$req_desc.'" size="24"></td>';

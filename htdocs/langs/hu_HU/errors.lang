@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Beállítás modul néz ki, hogy uncomplete. Menj a 
 ErrorBadMask=Hiba a maszk
 ErrorBadMaskFailedToLocatePosOfSequence=Hiba, maszk sorozatszám nélkül
 ErrorBadMaskBadRazMonth=Hiba, rossz érték visszaállítása
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Hiba. Válasszon legalább egy bejegyzést.
 ErrorProductWithRefNotExist=Termék referencia <i>&quot;%s&quot;</i> nem létezik
 ErrorDeleteNotPossibleLineIsConsolidated=Törlése nem lehetséges, mert rekord kapcsolódik egy bank, amely egyeztetett transation
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

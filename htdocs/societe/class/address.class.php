@@ -47,6 +47,11 @@ class Address
 	var $fax;
 	var $note;
 
+	/**
+	 * Adresses liees a la societe
+	 * @var array
+	 */
+	public $lines;
 
 	/**
 	 *  Constructor
@@ -391,7 +396,7 @@ class Address
 	 *
 	 *  @param	int		$id      id de la societe a supprimer
 	 *  @param	int		$socid	id third party
-	 *  @return	void
+	 *  @return	<0 KO >0 OK
 	 */
 	function delete($id,$socid)
 	{
@@ -403,10 +408,11 @@ class Address
 
 		$result = $this->db->query($sql);
 
-		if (!$result)
-		{
-			print $this->db->error() . '<br>' . $sql;
+		if (!$result) {
+			return -1;
 		}
+
+		return 1;
 	}
 
 	/**

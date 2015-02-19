@@ -29,6 +29,7 @@ ReportTurnover=Umsatz
 PaymentsNotLinkedToInvoice=Zahlungen mit keiner Rechnung und damit auch keinem Partner verbunden
 PaymentsNotLinkedToUser=Zahlungen mit keinem Benutzer verbunden
 Profit=Gewinn
+AccountingResult=Accounting result
 Balance=Bilanz
 Debit=Soll
 Credit=Haben

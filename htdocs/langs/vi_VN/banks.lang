@@ -8,6 +8,7 @@ FinancialAccount=Tài khoản
 FinancialAccounts=Tài khoản
 BankAccount=Tài khoản ngân hàng
 BankAccounts=Tài khoản ngân hàng
+ShowAccount=Show Account
 AccountRef=Tài khoản tài chính ref
 AccountLabel=Nhãn tài khoản tài chính
 CashAccount=Tài khoản tiền mặt

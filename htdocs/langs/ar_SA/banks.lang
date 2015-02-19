@@ -8,6 +8,7 @@ FinancialAccount=حساب
 FinancialAccounts=الحسابات
 BankAccount=الحساب المصرفي
 BankAccounts=الحسابات المصرفية
+ShowAccount=Show Account
 AccountRef=الحساب المالي المرجع
 AccountLabel=الحساب المالي العلامة
 CashAccount=الحساب النقدي

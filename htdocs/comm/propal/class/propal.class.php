@@ -296,15 +296,15 @@ class Propal extends CommonObject
      *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      *
      * 		@param    	string		$desc				Description de la ligne
-     * 		@param    	double		$pu_ht				Prix unitaire
-     * 		@param    	double		$qty             	Quantite
-     * 		@param    	double		$txtva           	Taux de tva
-     * 		@param		double		$txlocaltax1		Local tax 1 rate
-     *  	@param		double		$txlocaltax2		Local tax 2 rate
+     * 		@param    	float		$pu_ht				Prix unitaire
+     * 		@param    	float		$qty             	Quantite
+     * 		@param    	float		$txtva           	Taux de tva
+     * 		@param		float		$txlocaltax1		Local tax 1 rate
+     *  	@param		float		$txlocaltax2		Local tax 2 rate
      *		@param    	int			$fk_product      	Id du produit/service predefini
-     * 		@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+     * 		@param    	float		$remise_percent  	Pourcentage de remise de la ligne
      * 		@param    	string		$price_base_type	HT or TTC
-     * 		@param    	double		$pu_ttc             Prix unitaire TTC
+     * 		@param    	float		$pu_ttc             Prix unitaire TTC
      * 		@param    	int			$info_bits			Bits de type de lignes
      *      @param      int			$type               Type of line (product, service)
      *      @param      int			$rang               Position of line
@@ -320,7 +320,7 @@ class Propal extends CommonObject
      *
      *    	@see       	add_product
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0)
     {
     	global $mysoc;
 
@@ -477,14 +477,14 @@ class Propal extends CommonObject
      *  Update a proposal line
      *
      *  @param      int			$rowid           	Id de la ligne
-     *  @param      double		$pu		     	  	Prix unitaire (HT ou TTC selon price_base_type)
-     *  @param      double		$qty            	Quantity
-     *  @param      double		$remise_percent  	Remise effectuee sur le produit
-     *  @param      double		$txtva	          	Taux de TVA
-     * 	@param	  	double		$txlocaltax1		Local tax 1 rate
-     *  @param	  	double		$txlocaltax2		Local tax 2 rate
+     *  @param      float		$pu		     	  	Prix unitaire (HT ou TTC selon price_base_type)
+     *  @param      float		$qty            	Quantity
+     *  @param      float		$remise_percent  	Remise effectuee sur le produit
+     *  @param      float		$txtva	          	Taux de TVA
+     * 	@param	  	float		$txlocaltax1		Local tax 1 rate
+     *  @param	  	float		$txlocaltax2		Local tax 2 rate
      *  @param      string		$desc            	Description
-     *	@param	  	double		$price_base_type	HT ou TTC
+     *	@param	  	string		$price_base_type	HT ou TTC
      *	@param      int			$info_bits        	Miscellaneous informations
      *	@param		int			$special_code		Special code (also used by externals modules!)
      * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
@@ -498,9 +498,9 @@ class Propal extends CommonObject
 	 *  @param		array		$array_option		extrafields array
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_option=0)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_option=0)
     {
-        global $conf,$user,$langs, $mysoc;
+        global $mysoc;
 
         dol_syslog(get_class($this)."::updateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -1866,8 +1866,6 @@ class Propal extends CommonObject
      */
     function set_draft($user)
     {
-        global $conf,$langs;
-
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 0";
         $sql.= " WHERE rowid = ".$this->id;
 

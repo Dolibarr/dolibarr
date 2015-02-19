@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=模塊設置，看起來是uncomplete的。進入設
 ErrorBadMask=錯誤的遮罩參數值
 ErrorBadMaskFailedToLocatePosOfSequence=沒有序列號錯誤，面具
 ErrorBadMaskBadRazMonth=錯誤，壞的復位值
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=錯誤。選擇至少一個條目。
 ErrorProductWithRefNotExist=參考<i>“%s”</i>產品不存在
 ErrorDeleteNotPossibleLineIsConsolidated=刪除沒有可能的，因為記錄是調解到的銀行transation，
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

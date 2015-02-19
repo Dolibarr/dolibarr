@@ -155,6 +155,7 @@ MigrationFinished=Proses migrasi selesai
 LastStepDesc=<strong>Last step</strong>: Define here login and password you plan to use to connect to software. Do not loose this as it is the account to administer all others.
 ActivateModule=Activate module %s
 ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 
 #########
 # upgrade
@@ -206,6 +207,7 @@ MigrationProjectTaskTime=Update time spent in seconds
 MigrationActioncommElement=Update data on actions
 MigrationPaymentMode=Data migration for payment mode
 MigrationCategorieAssociation=Migration of categories
+MigrationEvents=Migration of events to add event owner into assignement table
 
 ShowNotAvailableOptions=Show not available options
 HideNotAvailableOptions=Hide not available options

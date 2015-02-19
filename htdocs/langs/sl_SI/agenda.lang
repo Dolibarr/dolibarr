@@ -29,7 +29,7 @@ ActionsToDoBy=Dogoki, ki se nanašajo na
 ActionsDoneBy=Dogodke izvedel
 ActionsForUser=Aktivnosti za uporabnika
 ActionsForUsersGroup=Aktivnosti za vse uporabnike v skupini
-ActionAssignedTo=Event assigned to
+ActionAssignedTo=Aktivnost se nanaša na
 AllMyActions= Vsi moji dogodki/naloge
 AllActions= Vse dogodki/naloge
 ViewList=Glej seznam
@@ -58,8 +58,9 @@ OrderSentByEMail=Naročilo kupca %s poslano po elektronski pošti
 InvoiceSentByEMail=Račun kupcu %s poslan po elektronski pošti
 SupplierOrderSentByEMail=Naročilo dobavitelju %s poslano po elektronski pošti
 SupplierInvoiceSentByEMail=Račun odbavitelja %s poslan po elektronski pošti
-ShippingSentByEMail=Pošiljka %s poslana po EMailu
-ShippingValidated= Odprema %s potrjena
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Pošiljka %s potrjena
+InterventionSentByEMail=Intervencija %s poslana po E-pošti
 NewCompanyToDolibarr= Kreiran partner
 DateActionPlannedStart= Planiran začetni datum
 DateActionPlannedEnd= Planiran končni datum
@@ -68,7 +69,7 @@ DateActionDoneEnd= Realen končni datum
 DateActionStart= Začetni datum
 DateActionEnd= Končni datum
 AgendaUrlOptions1=V filtriran izhod lahko dodate tudi naslednje parametre:
-AgendaUrlOptions2=<b>login=%s</b> za omejitev izhoda na aktivnosti, ki se nanašajo, ali jih je naredil uporabnik <b>%s</b>.
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> za omejitev izhoda na aktivnosti v lasti uporabnika <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> za omejitev izhoda na aktivnosti, ki se nanašajo na uporabnika <b>%s</b>.
 AgendaUrlOptionsProject=<b>projekt=PROJECT_ID</b> za omejitev izhoda na aktivnosti povezane s projektom<b>PROJECT_ID</b>.

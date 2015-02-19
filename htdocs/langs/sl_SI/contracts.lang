@@ -91,7 +91,7 @@ ListOfServicesToExpire=Seznam storitev, ki potečejo
 NoteListOfYourExpiredServices=Ta seznam vsebuje samo storitve po pogodbah s partnerji, ki so povezane z referentom.
 StandardContractsTemplate=Predloga standardnih pogodb
 ContactNameAndSignature=Za %s, ime in podpis:
-OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
+OnlyLinesWithTypeServiceAreUsed=Klonirane bodo samo vrstice tipa "Servis"
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Podpisnik pogodbe

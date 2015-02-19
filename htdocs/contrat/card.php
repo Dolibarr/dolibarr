@@ -662,7 +662,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contr
 // Close all lines
 else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 {
-    $result = $object->cloture($user);
+    $object->cloture($user);
 }
 
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)

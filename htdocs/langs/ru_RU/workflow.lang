@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Установка модуля Рабочих процессов
-WorkflowDesc=Этот модуль является designed изменить поведение автоматического действия в приложении. По умолчанию рабочий процесс открыт (вы делаете вещь, чтобы вы хотите). Вы можете включить автоматическую действия, которые вам интересны дюйма
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
 ThereIsNoWorkflowToModify=Существует не рабочий процесс можно изменить для модуля активации.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Создать заказ клиента автоматически после коммерческое предложение подписано
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Создать счет клиента автоматически после коммерческое предложение подписано

@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Instalação do módulo parece ser incompleto. Vá e
 ErrorBadMask=Erro na máscara
 ErrorBadMaskFailedToLocatePosOfSequence=Máscara de erro, sem número de seqüência
 ErrorBadMaskBadRazMonth=Erro, o valor de reset ruim
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Erro. Selecione pelo menos uma entrada.
 ErrorProductWithRefNotExist=Produto com <i>&quot;%s&quot;</i> de referência não existem
 ErrorDeleteNotPossibleLineIsConsolidated=Excluir registro não é possível porque está ligado a uma transacção bancária conciliada
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Os parâmetros de configuração obrigatórios ainda não estão definidos

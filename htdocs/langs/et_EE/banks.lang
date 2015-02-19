@@ -8,6 +8,7 @@ FinancialAccount=Konto
 FinancialAccounts=Kontod
 BankAccount=Pangakonto
 BankAccounts=Pangakontod
+ShowAccount=Show Account
 AccountRef=Finantskonto viide
 AccountLabel=Finantskonto silt
 CashAccount=Sularaha konto

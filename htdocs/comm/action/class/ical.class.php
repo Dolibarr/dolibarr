@@ -261,7 +261,7 @@ class ICal
      */
     function ical_rrule($value)
     {
-    	$result=aray();
+    	$result=array();
         $rrule = explode(';',$value);
         foreach ($rrule as $line)
         {

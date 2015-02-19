@@ -25,10 +25,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Contact	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function contact_prepare_head($object)
+function contact_prepare_head(Contact $object)
 {
 	global $langs, $conf, $user;
 
