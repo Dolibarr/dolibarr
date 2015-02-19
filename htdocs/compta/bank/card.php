@@ -3,7 +3,7 @@
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copytight (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
+ * Copytight (C) 2014-2015	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -79,7 +79,6 @@ if ($_POST["action"] == 'add')
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
 
-    $account->state_id  	  = $_POST["account_state_id"];
     $account->country_id      = $_POST["account_country_id"];
 
     $account->min_allowed     = $_POST["account_min_allowed"];
@@ -89,19 +88,19 @@ if ($_POST["action"] == 'add')
     if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
     {
         setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), 'error');
-        $action='create';       // Force chargement page en mode creation
+        $action='create';       // Force create mode page
         $error++;
     }
     if (empty($account->ref))
     {
         setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), 'errors');
-        $action='create';       // Force chargement page en mode creation
+        $action='create';       // Force create mode page
         $error++;
     }
     if (empty($account->label))
     {
     	setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("LabelBankCashAccount")), 'errors');
-    	$action='create';       // Force chargement page en mode creation
+    	$action='create';       // Force create mode page
     	$error++;
     }
 
@@ -113,11 +112,11 @@ if ($_POST["action"] == 'add')
         $id = $account->create($user);
         if ($id > 0)
         {
-            $_GET["id"]=$id;            // Force chargement page en mode visu
+            $_GET["id"]=$id;    // Force view mode page
         }
         else {
             setEventMessage($account->error,'errors');
-            $action='create';   // Force chargement page en mode creation
+            $action='create';   // Force create mode page
         }
     }
 }
@@ -138,11 +137,13 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->url             = trim($_POST["url"]);
 
     $account->bank            = trim($_POST["bank"]);
-    $account->code_banque     = trim($_POST["code_banque"]);
+    /*
+	$account->code_banque     = trim($_POST["code_banque"]);
     $account->code_guichet    = trim($_POST["code_guichet"]);
     $account->number          = trim($_POST["number"]);
     $account->cle_rib         = trim($_POST["cle_rib"]);
-    $account->bic             = trim($_POST["bic"]);
+    */
+	$account->bic             = trim($_POST["bic"]);
     $account->iban            = trim($_POST["iban"]);
     $account->domiciliation   = trim($_POST["domiciliation"]);
 
@@ -154,7 +155,6 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
 
-    $account->state_id        = $_POST["account_state_id"];
     $account->country_id      = $_POST["account_country_id"];
 
     $account->min_allowed     = $_POST["account_min_allowed"];
@@ -164,19 +164,19 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
     {
         setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), 'error');
-        $action='edit';       // Force chargement page en mode creation
+        $action='edit';       // Force edit mode page
         $error++;
     }
     if (empty($account->ref))
     {
         setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), 'errors');
-        $action='edit';       // Force chargement page en mode creation
+        $action='edit';       // Force edit mode page
         $error++;
     }
     if (empty($account->label))
     {
     	setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("LabelBankCashAccount")), 'errors');
-    	$action='edit';       // Force chargement page en mode creation
+    	$action='edit';       // Force edit mode page
     	$error++;
     }
 
@@ -188,12 +188,12 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
         $result = $account->update($user);
         if ($result >= 0)
         {
-            $_GET["id"]=$_POST["id"];   // Force chargement page en mode visu
+            $_GET["id"]=$_POST["id"];   // // Force view mode page
         }
         else
         {
 	        setEventMessage($account->error, 'errors');
-            $action='edit';     // Force chargement page edition
+            $action='edit';     // Force edit mode page
         }
     }
 }
@@ -293,18 +293,6 @@ if ($action == 'create')
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
 
-	// State
-	print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-	if ($selectedcode)
-	{
-		$formcompany->select_departement(isset($_POST["account_state_id"])?$_POST["account_state_id"]:'',$selectedcode,'account_state_id');
-	}
-	else
-	{
-		print $countrynotdefined;
-	}
-	print '</td></tr>';
-
 	// Web
 	print '<tr><td valign="top">'.$langs->trans("Web").'</td>';
 	print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$_POST["url"].'"></td></tr>';
@@ -399,16 +387,16 @@ else
 		}
 
 		/*
-		* Affichage onglets
-		*/
+		 * Show tabs
+		 */
 
-		// Onglets
+		// Tabs
 		$head=bank_prepare_head($account);
 		dol_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"),0,'account');
 
 		/*
-		* Confirmation to delete
-		*/
+		 * Confirmation to delete
+		 */
 		if ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
@@ -453,11 +441,6 @@ else
 			print $img?$img.' ':'';
 			print getCountry($account->getCountryCode(),0,$db);
 		}
-		print '</td></tr>';
-
-		// State
-		print '<tr><td>'.$langs->trans('State').'</td><td>';
-		if ($account->fk_departement > 0) print getState($account->fk_departement);
 		print '</td></tr>';
 
 		// Conciliate
@@ -513,7 +496,7 @@ else
 
 
 		/*
-		 * Barre d'actions
+		 * Actions buttons
 		 */
 		print '<div class="tabsAction">';
 
@@ -607,18 +590,6 @@ else
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		print '</td></tr>';
 
-		// State
-		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-		if ($selectedcode)
-		{
-			print $formcompany->select_state(isset($_POST["account_state_id"])?$_POST["account_state_id"]:$account->state_id,$selectedcode,'account_state_id');
-		}
-		else
-		{
-			print $countrynotdefined;
-		}
-		print '</td></tr>';
-
 		// Conciliable
         print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
         print '<td colspan="3">';
@@ -694,8 +665,6 @@ else
 	}
 
 }
-
-
 
 $db->close();
 

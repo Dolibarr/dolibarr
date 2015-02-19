@@ -188,3 +188,4 @@ CREATE TABLE llx_expensereport_det
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
 
+ALTER TABLE llx_bank_account DROP state_id;
