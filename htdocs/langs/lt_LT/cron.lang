@@ -14,8 +14,8 @@ URLToLaunchCronJobs=URL patikrinti ir pradėti cron darbą, jei reikės
 OrToLaunchASpecificJob=Arba patikrinti ir pradėti spec. darbą
 KeyForCronAccess=Apsaugos raktas URL pradėti cron darbus
 FileToLaunchCronJobs=Komandinė eilutė paleisti cron darbą
-CronExplainHowToRunUnix=Unix aplinkoje reikia naudoti crontab paleisti komandinę eilutę kiekvieną minutę
-CronExplainHowToRunWin=Microsoft (tm) Windows aplinkoje galite naudoti Numatytų užduočių įrankį paleisti komandinę eilutę kiekvieną minutę
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Suplanuoti darbai
 CronListActive=List of active/scheduled jobs

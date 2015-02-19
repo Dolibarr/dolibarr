@@ -21,6 +21,7 @@ create table llx_commande_fournisseur_dispatch
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_commande    integer,
   fk_product     integer,
+  fk_commandefourndet integer,
   qty            float,              -- qty
   fk_entrepot    integer,
   fk_user        integer,

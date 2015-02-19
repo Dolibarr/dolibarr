@@ -801,7 +801,7 @@ class Ldap
 	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	string	$filter		Filter
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int|false|array					<0 or false if KO, array if OK
 	 */
 	function getAttribute($dn,$filter)
 	{

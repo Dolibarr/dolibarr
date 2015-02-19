@@ -28,10 +28,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   BonPrelevement	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function prelevement_prepare_head($object)
+function prelevement_prepare_head(BonPrelevement $object)
 {
 	global $langs, $conf, $user;
 	$langs->load("withdrawals");

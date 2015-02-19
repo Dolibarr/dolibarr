@@ -29,6 +29,7 @@ ReportTurnover=Doanh thu
 PaymentsNotLinkedToInvoice=Thanh toán không liên quan đến bất kỳ hóa đơn, do đó không liên quan đến bất kỳ bên thứ ba
 PaymentsNotLinkedToUser=Thanh toán không liên quan đến bất kỳ người dùng
 Profit=Lợi nhuận
+AccountingResult=Accounting result
 Balance=Cân bằng
 Debit=Nợ
 Credit=Tín dụng

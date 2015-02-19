@@ -8,6 +8,7 @@ FinancialAccount=Účet
 FinancialAccounts=Účty
 BankAccount=Bankový účet
 BankAccounts=Bankové účty
+ShowAccount=Show Account
 AccountRef=Finančný účet ref
 AccountLabel=Finančný účet štítok
 CashAccount=Pokladničné účet

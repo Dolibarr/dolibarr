@@ -1,9 +1,9 @@
 # ProductBATCH language file - en_US - ProductBATCH
-ManageLotSerial=Gestion des lots/séries
-ProductStatusOnBatch=Géré
-ProductStatusNotOnBatch=Non géré
-ProductStatusOnBatchShort=Géré
-ProductStatusNotOnBatchShort=Non géré
+ManageLotSerial=Utiliser les numéros de lots/série
+ProductStatusOnBatch=Oui (Lot/Série requis)
+ProductStatusNotOnBatch=Non (Lot/série non utilisé)
+ProductStatusOnBatchShort=Oui
+ProductStatusNotOnBatchShort=Non
 Batch=Lot/Série
 atleast1batchfield=Date de péremption ou numéro de lot/série
 batch_number=Lot/Numéro de série
@@ -18,3 +18,4 @@ printQty=Qté: %d
 AddDispatchBatchLine=Ajouter une ligne pour la répartition par durée de conservation
 BatchDefaultNumber=Non défini
 WhenProductBatchModuleOnOptionAreForced=Quand le module Lot/Série est activé, le mode incrémentation/décrémentation des stocks est forcé sur le dernier choix et ne peut pas être édité. D'autres options peuvent être définies comme vous le voulez.
+ProductDoesNotUseBatchSerial=Ce produit n'utilise pas les numéros de lots/série

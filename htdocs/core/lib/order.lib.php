@@ -28,10 +28,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Commande	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function commande_prepare_head($object)
+function commande_prepare_head(Commande $object)
 {
 	global $langs, $conf, $user;
 	if (! empty($conf->expedition->enabled)) $langs->load("sendings");
@@ -52,7 +52,7 @@ function commande_prepare_head($object)
 	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipment");
+		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipments");
 		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
 		if ($conf->livraison_bon->enabled)  $text.=$langs->trans("Receivings");
 		$head[$h][1] = $text;

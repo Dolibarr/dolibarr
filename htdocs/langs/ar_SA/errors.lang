@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=إعداد وحدة يتطلع إلى أن يكون 
 ErrorBadMask=خطأ في قناع
 ErrorBadMaskFailedToLocatePosOfSequence=خطأ، من دون قناع رقم التسلسل
 ErrorBadMaskBadRazMonth=خطأ، قيمة إعادة سيئة
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=خطأ. حدد واحد على الأقل دخول.
 ErrorProductWithRefNotExist=المنتج مع <i>'%s</i> &quot;إشارة لا وجود لها
 ErrorDeleteNotPossibleLineIsConsolidated=حذف غير ممكن لأنه مرتبط سجل إلى transation البنك الذي يتم التصالح
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

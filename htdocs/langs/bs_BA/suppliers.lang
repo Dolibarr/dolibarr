@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Dobavljači
 Supplier=Dobavljač
-AddSupplier=Dodaj dobavljača
+AddSupplier=Create a supplier
 SupplierRemoved=Dobavljač uklonjen
 SuppliersInvoice=Faktura dobavljača
 NewSupplier=Novi dobavljač
@@ -42,3 +42,5 @@ NoneOrBatchFileNeverRan=Nijedan ili gomila <b>%s</b> nije pokrenuto nedavno
 SentToSuppliers=Poslano prema dobavljačima
 ListOfSupplierOrders=List of supplier orders
 MenuOrdersSupplierToBill=Supplier orders to invoice
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list

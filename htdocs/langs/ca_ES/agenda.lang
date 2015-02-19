@@ -58,8 +58,9 @@ OrderSentByEMail=Comanda de client %s enviada per e-mail
 InvoiceSentByEMail=Factura a client %s enviada per e-mail
 SupplierOrderSentByEMail=Comanda a proveïdor %s enviada per e-mail
 SupplierInvoiceSentByEMail=Factura de proveïdor %s enviada per e-mail
-ShippingSentByEMail=Expedició %s enviada per e-mail
-ShippingValidated= Shipping %s validated
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Tercer creat
 DateActionPlannedStart= Data d'inici prevista
 DateActionPlannedEnd= Data fi prevista
@@ -68,7 +69,7 @@ DateActionDoneEnd= Data real de finalització
 DateActionStart= Data d'inici
 DateActionEnd= Data finalització
 AgendaUrlOptions1=Podeu també afegir aquests paràmetres al filtre de sortida:
-AgendaUrlOptions2=<b>login=%s</b> per a restringir insercions a accions creades, que afectin o realitzades per l'usuari <b>%s</b>.
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> per a restringir insercions a accions que afectin a l'usuari <b>%s</b>.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.

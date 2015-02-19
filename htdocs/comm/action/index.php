@@ -1144,7 +1144,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                 	$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
 
                     // Define $color (Hex string like '0088FF') and $cssclass of event
-                    $color=-1; $cssclass=''; $colorindex=-1;
+                    $color=-1; $colorindex=-1;
        				if (in_array($user->id, $keysofuserassigned))
 					{
 						$nummytasks++; $cssclass='family_mytasks';

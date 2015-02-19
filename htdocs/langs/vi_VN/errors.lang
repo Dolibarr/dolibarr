@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Thiết lập các mô-đun có vẻ là uncomplete.
 ErrorBadMask=Lỗi trên mặt nạ
 ErrorBadMaskFailedToLocatePosOfSequence=Lỗi, mặt nạ mà không có số thứ tự
 ErrorBadMaskBadRazMonth=Lỗi, giá trị thiết lập lại xấu
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Lỗi. Chọn ít nhất một mục.
 ErrorProductWithRefNotExist=Sản phẩm có sự tham khảo <i>'% s'</i> không tồn tại
 ErrorDeleteNotPossibleLineIsConsolidated=Xóa không thể vì hồ sơ được liên kết với một ngân hàng transation được hoà giải
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Thiết lập các thông số bắt buộc chưa được xác định

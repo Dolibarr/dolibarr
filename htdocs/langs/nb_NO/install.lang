@@ -155,6 +155,7 @@ MigrationFinished=Migrasjon ferdig
 LastStepDesc=<strong>Siste trinn:</strong> Definer her login og passord du har tenkt å bruke til å koble til programvare. Ikke mist dette som det er kontoen for å administrere alle andre.
 ActivateModule=Aktiver modulen %s
 ShowEditTechnicalParameters=Klikk her for å vise/endre avanserte parametre (expert mode)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 
 #########
 # upgrade
@@ -206,6 +207,7 @@ MigrationProjectTaskTime=Oppdater tid i sekunder
 MigrationActioncommElement=Oppdatering data på handlinger
 MigrationPaymentMode=Datamigrering for betaling modus
 MigrationCategorieAssociation=Migrer kategorier
+MigrationEvents=Migration of events to add event owner into assignement table
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Vis utilgjengelige opsjoner
+HideNotAvailableOptions=Gjem utilgjengelige opsjoner

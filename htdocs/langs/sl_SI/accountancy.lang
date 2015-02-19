@@ -13,7 +13,9 @@ ConfigAccountingExpert=Konfiguracija modula računovodskega strokovnjaka
 Journaux=Revije
 JournalFinancial=Finančne revije
 Exports=Izvoz
+Export=Export
 Modelcsv=Model izvoza
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=Izberite model izvoza
 Modelcsv_normal=Classic izvoz
 Modelcsv_CEGID=Izvoz v CEGID Expert
@@ -66,7 +68,7 @@ Lineofinvoice=Line računa
 VentilatedinAccount=Uspešno prezračen v obračunskem računu
 NotVentilatedinAccount=Ni prezračen v obračunskem računu
 
-ACCOUNTING_SEPARATORCSV=Ločilo CSV
+ACCOUNTING_SEPARATORCSV=Column separator in export file
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements

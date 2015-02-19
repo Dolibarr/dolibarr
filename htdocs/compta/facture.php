@@ -2736,7 +2736,7 @@ if ($action == 'create')
 	} else {
 		if ($absolute_creditnote > 0) 		// If not, link will be added later
 		{
-			if ($object->statut == 0 && $object->type != TYPE_CREDIT_NOTE && $object->type != TYPE_DEPOSIT)
+			if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT)
 				print ' (' . $addabsolutediscount . ')<br>';
 			else
 				print '. ';
