@@ -535,6 +535,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 			$cury+=3;
 		}
 
+		/*
 		if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+8);
 
 		if ($usedetailedbban == 1)
@@ -598,6 +599,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 		$curx=$savcurx;
 		$cury+=9;
+		*/
 	}
 	else
 	{
