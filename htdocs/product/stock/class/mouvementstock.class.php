@@ -242,7 +242,7 @@ class MouvementStock
 		}
 
 		// Add movement for sub products (recursive call)
-		if (! $error && ! empty($conf->global->PRODUIT_SOUSPRODUITS))
+		if (! $error && ! empty($conf->global->PRODUIT_SOUSPRODUITS) && empty($conf->global->INDEPENDANT_SUBPRODUCT_STOCK))
 		{
 			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// we use 0 as price, because pmp is not changed for subproduct
 		}

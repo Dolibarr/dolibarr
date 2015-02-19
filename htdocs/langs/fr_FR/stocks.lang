@@ -47,6 +47,7 @@ PMPValue=Valorisation (PMP)
 PMPValueShort=PMP
 EnhancedValueOfWarehouses=Valorisation des stocks
 UserWarehouseAutoCreate=Créer automatiquement un stock/entrepôt propre à l'utilisateur lors de sa création
+IndependantSubProductStock=Le stock du produit parent et celui du produit enfant sont indépendants
 QtyDispatched=Quantité ventilée
 OrderDispatch=Réception vers stocks
 RuleForStockManagementDecrease=Règle de gestion des décrémentations de stock
