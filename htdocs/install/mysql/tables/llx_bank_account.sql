@@ -33,10 +33,6 @@ create table llx_bank_account
   fk_user_author		integer,
   fk_user_modif			integer,
   bank					varchar(60),
-  code_banque			varchar(8),					-- deprecated from august 2014 - Replaced with iban
-  code_guichet			varchar(6),					-- deprecated from august 2014 - Replaced with iban
-  number				varchar(255),				
-  cle_rib				varchar(5),					-- deprecated from august 2014 - Replaced with iban
   bic					varchar(11),
   iban_prefix			varchar(34),				-- full iban. 34 according to ISO 13616
   country_iban			varchar(2),					-- deprecated
