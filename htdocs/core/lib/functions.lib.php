@@ -4305,6 +4305,8 @@ function picto_from_langcode($codelang)
 {
 	global $langs;
 
+	if (empty($codelang)) return '';
+
 	if ($codelang == 'auto')
 	{
 		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png');
