@@ -29,6 +29,7 @@ ReportTurnover=Fatturato
 PaymentsNotLinkedToInvoice=I pagamenti non legati ad una fattura, quindi non legati ad alcun soggetto terzo
 PaymentsNotLinkedToUser=Pagamenti non legati ad alcun utente
 Profit=Utile
+AccountingResult=Accounting result
 Balance=Saldo
 Debit=Debito
 Credit=Credito

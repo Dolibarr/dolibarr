@@ -31,7 +31,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 /**
  *	Classe de description et activation du module Document
  */
-class modDocument extends DolibarrModules
+class modDocumentGeneration extends DolibarrModules
 {
 
 	/**
@@ -42,12 +42,12 @@ class modDocument extends DolibarrModules
 	function __construct($db)
 	{
 		$this->db = $db;
-		$this->numero = 1510;
+		$this->numero = 1520;
 
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Generation de courriers/publipostages papiers";
+		$this->description = "Direct mail document generation";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 
@@ -56,7 +56,7 @@ class modDocument extends DolibarrModules
 		$this->picto='email';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/document/temp");
+		$this->dirs = array("/documentgeneration/temp");
 
 		// Config pages
 		//$this->config_page_url = array("document.php");
@@ -65,7 +65,7 @@ class modDocument extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
-		$this->langfiles = array("orders","bills","companies");
+		$this->langfiles = array("orders","bills","companies","mails");
 
 		// Constantes
 
@@ -80,14 +80,14 @@ class modDocument extends DolibarrModules
 
 		$r=0;
 
-		$this->rights[$r][0] = 1511;
+		$this->rights[$r][0] = 1521;
 		$this->rights[$r][1] = 'Lire les documents';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 1512;
+		$this->rights[$r][0] = 1522;
 		$this->rights[$r][1] = 'Supprimer les documents clients';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;

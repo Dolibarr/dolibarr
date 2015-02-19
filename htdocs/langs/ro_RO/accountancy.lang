@@ -13,7 +13,9 @@ ConfigAccountingExpert=Configurare modul expert contabil
 Journaux=Jurnale
 JournalFinancial=Jurnale financiale
 Exports=Exporturi
+Export=Export
 Modelcsv=Model export
+OptionsDeactivatedForThisExportModel=Pentru acest model de export, optiunile sunt dezactivate
 Selectmodelcsv=Selectează un model de export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=Export către CEGID Expert
@@ -66,7 +68,7 @@ Lineofinvoice=Linia facturii
 VentilatedinAccount=Ventilare cu succes in conturi contabile
 NotVentilatedinAccount=Ne ventilate in conturi contabile
 
-ACCOUNTING_SEPARATORCSV=Separator CSV
+ACCOUNTING_SEPARATORCSV=Separator coloane in fisierul export
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Numărul de elemente de ventilat afişat pe pagină (maxim recomandat: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Începe sortarea paginilor ventilate "Trebuie ventilate" începand cu cele mai recente elemente

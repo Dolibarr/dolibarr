@@ -249,7 +249,6 @@ if ($action == 'writebookkeeping')
 				$bookkeeping->doc_type = 'customer_invoice';
 				$bookkeeping->fk_doc = $key;
 				$bookkeeping->fk_docdet = $val["fk_facturedet"];
-				$bookkeeping->fk_compte = $compte->id;
 				$bookkeeping->code_tiers = '';
 				$bookkeeping->numero_compte = $k;
 				$bookkeeping->label_compte = $langs->trans("VAT");
@@ -446,7 +445,6 @@ if ($action == 'export_csv')
 		$invoicestatic->id = $key;
 		$invoicestatic->ref = $val["ref"];
 		$invoicestatic->type = $val["type"];
-		$invoicestatic->description = html_entity_decode(dol_trunc($val["description"], 32));
 
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 

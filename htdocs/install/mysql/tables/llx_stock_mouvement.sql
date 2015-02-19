@@ -23,12 +23,15 @@ create table llx_stock_mouvement
   tms             timestamp,
   datem           datetime,
   fk_product      integer NOT NULL,
+  batch           varchar(30) DEFAULT NULL,
+  eatby           date DEFAULT NULL,
+  sellby          date DEFAULT NULL,
   fk_entrepot     integer NOT NULL,
   value           real,
   price           float(13,4) DEFAULT 0,
   type_mouvement  smallint,
   fk_user_author  integer,
-  label           varchar(255),
+  label           varchar(255),		-- comment on movement
   inventorycode   varchar(128),
   fk_origin       integer,
   origintype      varchar(32)

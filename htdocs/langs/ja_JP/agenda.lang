@@ -58,8 +58,9 @@ OrderSentByEMail=電子メールで送信、顧客の注文%s
 InvoiceSentByEMail=電子メールで送信顧客の請求書%s
 SupplierOrderSentByEMail=電子メールで送信サプライヤの注文%s
 SupplierInvoiceSentByEMail=電子メールで送信サプライヤの請求書%s
-ShippingSentByEMail=電子メールで送信出荷%s
-ShippingValidated= Shipping %s validated
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= 第三者が作成した
 DateActionPlannedStart= 計画開始日
 DateActionPlannedEnd= 計画終了日
@@ -68,7 +69,7 @@ DateActionDoneEnd= 実際の終了日
 DateActionStart= 開始日
 DateActionEnd= 終了日
 AgendaUrlOptions1=また、出力をフィルタリングするには、次のパラメータを追加することができます。
-AgendaUrlOptions2=<b>ログインは= %s</b>に影響を受けた、またはユーザー<b>%s</b>によって行われ、作成されたアクションに出力を制限する。
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=ユーザー<b>%s</b>に影響を受けたアクションに出力を制限する<b>logint = %s。</b>
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.

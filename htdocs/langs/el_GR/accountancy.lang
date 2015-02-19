@@ -13,7 +13,9 @@ ConfigAccountingExpert=Διαμόρφωση της μονάδας λογιστι
 Journaux=Ημερολόγια
 JournalFinancial=Οικονιμικά ημερολόγια
 Exports=Εξαγωγές
+Export=Εξαγωγή
 Modelcsv=Πρότυπο εξαγωγής
+OptionsDeactivatedForThisExportModel=Γι 'αυτό το μοντέλο εξαγωγών, οι επιλογές είναι απενεργοποιημένες
 Selectmodelcsv=Επιλέξτε ένα πρότυπο από την εξαγωγή
 Modelcsv_normal=Κλασική εξαγωγή
 Modelcsv_CEGID=Εξαγωγή προς CEGID εμπειρογνωμόνων
@@ -66,7 +68,7 @@ Lineofinvoice=Γραμμή τιμολογίου
 VentilatedinAccount=Ανανεώθηκε επιτυχώς στον λογιστικό λογαριασμό
 NotVentilatedinAccount=Δεν ανανεώθηκε στον λογιστικό λογαριασμό
 
-ACCOUNTING_SEPARATORCSV=Διαχωριστικό CSV
+ACCOUNTING_SEPARATORCSV=Διαχωριστικό στήλης στο αρχείο εξαγωγής
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Αριθμός αντικειμένων για ανάλυση ανά σελίδα (προτείνεται μέγιστο : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ξεκινήστε τη διαλογή της κατανομής των σελίδων "Έχει για κατανομή» από τα πιο πρόσφατα στοιχεία

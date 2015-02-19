@@ -26,8 +26,7 @@
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
 /**
- *      \class      mailing_example
- *      \brief      Class to provide printing with PrintIPP
+ *   Class to provide printing with PrintIPP
  */
 class printing_printipp extends PrintingDriver
 {
@@ -61,8 +60,8 @@ class printing_printipp extends PrintingDriver
         $this->password=$conf->global->PRINTIPP_PASSWORD;
         $this->conf[] = array('varname'=>'PRINTIPP_HOST', 'required'=>1, 'example'=>'localhost', 'type'=>'text');
         $this->conf[] = array('varname'=>'PRINTIPP_PORT', 'required'=>1, 'example'=>'631', 'type'=>'text');
-        $this->conf[] = array('varname'=>'PRINTIPP_USER', 'required'=>0, 'example'=>'', 'type'=>'text');
-        $this->conf[] = array('varname'=>'PRINTIPP_PASSWORD', 'required'=>0, 'example'=>'', 'type'=>'password');
+        $this->conf[] = array('varname'=>'PRINTIPP_USER', 'required'=>0, 'example'=>'', 'type'=>'text', 'moreattributes'=>'autocomplete="off"');
+        $this->conf[] = array('varname'=>'PRINTIPP_PASSWORD', 'required'=>0, 'example'=>'', 'type'=>'password', 'moreattributes'=>'autocomplete="off"');
     }
 
     /**
@@ -79,7 +78,7 @@ class printing_printipp extends PrintingDriver
         global $conf, $user, $db;
 
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
-        
+
         $ipp = new CupsPrintIPP();
         $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
         $ipp->setHost($this->host);
@@ -89,28 +88,31 @@ class printing_printipp extends PrintingDriver
         if (! empty($this->user)) $ipp->setAuthentication($this->user,$this->password);
 
         // select printer uri for module order, propal,...
-        $sql = 'SELECT rowid,printer_id,copy FROM '.MAIN_DB_PREFIX.'printing WHERE module="'.$module.'" AND driver="printipp" AND userid='.$user->id;
+        $sql = "SELECT rowid,printer_id,copy FROM ".MAIN_DB_PREFIX."printing WHERE module = '".$module."' AND driver = 'printipp' AND userid = ".$user->id;
         $result = $db->query($sql);
         if ($result)
         {
             $obj = $this->db->fetch_object($result);
             if ($obj)
             {
+            	dol_syslog("Found a default printer for user ".$user->id." = ".$obj->printer_id);
                 $ipp->setPrinterURI($obj->printer_id);
             }
             else
             {
                 if (! empty($conf->global->PRINTIPP_URI_DEFAULT))
                 {
+					dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
                     $ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
                 }
                 else
-                {
+				{
                     return 'NoDefaultPrinterDefined';
                 }
             }
         }
-        
+        else dol_print_error($db);
+
         // Set number of copy
         $ipp->setCopies($obj->copy);
         $fileprint=$conf->{$module}->dir_output;
@@ -118,7 +120,7 @@ class printing_printipp extends PrintingDriver
         $fileprint.='/'.$file;
         $ipp->setData($fileprint);
         $ipp->printJob();
-        
+
         return '';
     }
 
@@ -170,8 +172,10 @@ class printing_printipp extends PrintingDriver
                 $html.= img_picto($langs->trans("Default"),'on');
             }
             else
-                $html.= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-            $html.= '</td>';
+			{
+            	$html.= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+          	}
+			$html.= '</td>';
             $html.= '</tr>'."\n";
         }
 

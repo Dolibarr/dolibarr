@@ -510,6 +510,7 @@ class Entrepot extends CommonObject
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
+		$langs->load("stocks");
 
 		$result='';
         $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';

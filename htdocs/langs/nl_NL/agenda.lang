@@ -58,8 +58,9 @@ OrderSentByEMail=Afnemersopdracht %s verzonden per e-mail
 InvoiceSentByEMail=Afnemersfactuur %s verzonden per e-mail
 SupplierOrderSentByEMail=Leveranciersopdracht %s verzonden per e-mail
 SupplierInvoiceSentByEMail=Leveranciersfactuur %s verzonden per e-mail
-ShippingSentByEMail=Verzendkosten %s per e-mail
-ShippingValidated= Verzending %s is gevalideerd
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Derde aangemaakt
 DateActionPlannedStart= Geplande startdatum
 DateActionPlannedEnd= Geplande einddatum
@@ -68,7 +69,7 @@ DateActionDoneEnd= Daadwerkelijke einddatum
 DateActionStart= Startdatum
 DateActionEnd= Einddatum
 AgendaUrlOptions1=U kunt ook de volgende parameters gebruiken om te filteren:
-AgendaUrlOptions2=<b>login=%s</b> om uitvoer van acties gecreëerd door, toegewezen aan of gedaan door gebruiker <b>%s</b> te beperken.
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>login=%s</b> om uitvoer van acties toegewezen aan gebruiker <b>%s</b> te beperken.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.

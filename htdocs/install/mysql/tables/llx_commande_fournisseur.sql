@@ -55,11 +55,11 @@ create table llx_commande_fournisseur
   note_public			text,
   model_pdf				varchar(255),
 
-  date_livraison		date 	  default NULL,
+  date_livraison		datetime  default NULL,
   fk_account            integer,                       -- bank account
   fk_cond_reglement		integer,                       -- condition de reglement
   fk_mode_reglement		integer,                       -- mode de reglement
-  fk_input_method	integer default 0,
+  fk_input_method	    integer default 0,
   import_key			varchar(14),
   extraparams			varchar(255)					-- for stock other parameters with json format
   

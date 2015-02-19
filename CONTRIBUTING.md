@@ -47,9 +47,9 @@ Long description (Can span accross multiple lines).
 
 Where KEYWORD is one of:
 
-- void: don't put a keyword if the commit is not introducing feature or closing a bug.
-- NEW: for new features (May be followed by the task number i.e: #123)
-- FIXED: for bug fixes (May be followed by the bug number i.e: #456)
+- "FIXED:" for bug fixes (May be followed by the bug number i.e: #456)
+- "NEW:" for new features (May be followed by the task number i.e: #123)
+- void, don't put a keyword if the commit is not introducing feature or closing a bug.
 
 ### Resources
 [Developer documentation](http://wiki.dolibarr.org/index.php/Developer_documentation)

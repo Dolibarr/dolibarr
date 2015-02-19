@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copytight (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,12 @@ class Account extends CommonObject
     public $element='bank_account';
     public $table_element='bank_account';
 
-    var $rowid;	 	// deprecated
+    /**
+     * //TODO: Discuss this. $rowid is preferred over $id
+     * @var
+     * @deprecated
+     */
+    var $rowid;
     var $id;
     var $ref;
     var $label;
@@ -220,7 +226,7 @@ class Account extends CommonObject
     /**
      *  Add an entry into table ".MAIN_DB_PREFIX."bank
      *
-     *  @param	timestamp	$date			Date operation
+     *  @param	int	$date			Date operation
      *  @param	string		$oper			1,2,3,4... (deprecated) or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
      *  @param	string		$label			Descripton
      *  @param	float		$amount			Amount
@@ -881,17 +887,13 @@ class Account extends CommonObject
      *
      *      @param	User	$user        		Objet user
      *		@param	int		$filteraccountid	To get info for a particular account id
-     *      @return int         				<0 if KO, 0=Nothing to show, >0 if OK
+     *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user,$filteraccountid=0)
     {
-        global $conf;
+        global $conf, $langs;
 
         if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
-
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
 
         $sql = "SELECT b.rowid, b.datev as datefin";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
@@ -902,17 +904,27 @@ class Account extends CommonObject
         $sql.= " AND (ba.rappro = 1 AND ba.courant != 2)";	// Compte rapprochable
         if ($filteraccountid) $sql.=" AND ba.rowid = ".$filteraccountid;
 
-        //print $sql;
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $num=$this->db->num_rows($resql);
+	        $langs->load("banks");
+	        $now=dol_now();
+
+	        $response = new WorkboardResponse();
+	        $response->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
+	        $response->label=$langs->trans("TransactionsToConciliate");
+	        $response->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank';
+	        $response->img=img_object($langs->trans("TransactionsToConciliate"),"payment");
+
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
-                if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) $this->nbtodolate++;
+                $response->nbtodo++;
+                if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) {
+	                $response->nbtodolate++;
+                }
             }
-            return $num;
+
+            return $response;
         }
         else
         {
@@ -1351,7 +1363,7 @@ class AccountLine extends CommonObject
                 $sql.= ")";
 
                 dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);
-                $resql = $this->db->query($sql);
+                $this->db->query($sql);
 
                 // No error check. Can fail if category already affected
             }

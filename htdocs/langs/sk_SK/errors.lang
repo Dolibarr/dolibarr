@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Nastavenie modulu sa javí ako neúplná. Prejdite n
 ErrorBadMask=Chyba na masku
 ErrorBadMaskFailedToLocatePosOfSequence=Chyba maska ​​bez poradovým číslom
 ErrorBadMaskBadRazMonth=Chyba, zlá hodnota po resete
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Chyba. Vyberte aspoň jednu položku.
 ErrorProductWithRefNotExist=Výrobok s <i>&quot;%s&quot;</i> referenčná neexistujú
 ErrorDeleteNotPossibleLineIsConsolidated=Odstránenie nie je možné, pretože záznam je spojená s bankovým transakčného ktorý zmieril
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Povinné parametre sú doteraz stanovené

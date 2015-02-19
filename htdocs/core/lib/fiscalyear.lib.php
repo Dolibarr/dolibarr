@@ -24,10 +24,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Fiscalyear	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function fiscalyear_prepare_head($object)
+function fiscalyear_prepare_head(Fiscalyear $object)
 {
 	global $langs, $conf;
 

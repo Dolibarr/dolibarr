@@ -488,7 +488,7 @@ class Paiement extends CommonObject
                                     $fac->thirdparty->name,
                                     'company'
                                 );
-                                if ($result <= 0) dol_print_error($this->db);
+                                if ($result <= 0) dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
                                 $linkaddedforthirdparty[$fac->thirdparty->id]=$fac->thirdparty->id;  // Mark as done for this thirdparty
                             }
                         }
@@ -506,7 +506,7 @@ class Paiement extends CommonObject
                                     $fac->thirdparty->name,
                                     'company'
                                 );
-                                if ($result <= 0) dol_print_error($this->db);
+                                if ($result <= 0) dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
                                 $linkaddedforthirdparty[$fac->thirdparty->id]=$fac->thirdparty->id;  // Mark as done for this thirdparty
                             }
                         }
@@ -576,7 +576,7 @@ class Paiement extends CommonObject
     /**
      *	Updates the payment date
      *
-     *  @param	timestamp	$date   New date
+     *  @param	int	$date   New date
      *  @return int					<0 if KO, 0 if OK
      */
     function update_date($date)

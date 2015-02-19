@@ -26,8 +26,7 @@
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
 /**
- *      \class      mailing_example
- *      \brief      Class to provide printing with Google Cloud Print
+ *     Class to provide printing with Google Cloud Print
  */
 class printing_printgcp extends PrintingDriver
 {
@@ -70,7 +69,7 @@ class printing_printgcp extends PrintingDriver
     function listAvailablePrinters()
     {
         global $bc, $conf, $langs;
-        $langs->load('printgcp');
+        $langs->load('printing');
         $var=true;
 
         $html = '<tr class="liste_titre">';
@@ -175,7 +174,7 @@ class printing_printgcp extends PrintingDriver
         if ($subdir!='') $fileprint.='/'.$subdir;
         $fileprint.='/'.$file;
         // select printer uri for module order, propal,...
-        $sql = 'SELECT rowid, printer_id, copy FROM '.MAIN_DB_PREFIX.'printing WHERE module="'.$module.'" AND driver="printgcp" AND userid='.$user->id;
+        $sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$module."' AND driver='printgcp' AND userid=".$user->id;
         $result = $db->query($sql);
         if ($result)
         {
@@ -196,6 +195,7 @@ class printing_printgcp extends PrintingDriver
                 }
             }
         }
+        else dol_print_error($db);
 
         $this->sendPrintToPrinter($printer_id, $file, $fileprint, 'application/pdf');
     }
@@ -204,7 +204,7 @@ class printing_printgcp extends PrintingDriver
      *  Sends document to the printer
      *
      *  @param  string      $printerid      Printer id returned by Google Cloud Print
-     *  @param  string      $printjobtitle  Job Title 
+     *  @param  string      $printjobtitle  Job Title
      *  @param  string      $filepath       File Path to be send to Google Cloud Print
      *  @param  string      $contenttype    File content type by example application/pdf, image/png
      *  @return array                       status array

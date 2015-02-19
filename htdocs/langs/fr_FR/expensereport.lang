@@ -1,0 +1,137 @@
+# Dolibarr language file - fr_FR - trips
+CHARSET=UTF-8
+Trip=Note de frais
+Trips=Notes de frais
+TripsAndExpenses=Notes de frais
+TripId=Id note de frais
+TripCard=Fiche note de frais
+AddTrip=Ajouter note de frais
+ListOfTrips=Liste des notes de frais
+ListOfFees=Liste des notes de frais
+NewTrip=Nouvelle note de frais
+CancelAddTrip=Annuler
+ExportTripCSV=Exporter en CSV
+AnyOtherInThisListCanValidate=Toute personne dans la liste pourra valider. Le choix détermine qui sera informé. 
+TripSociete=Informations société
+TripSalarie=Informations salarié
+TripNDF=Informations note de frais
+
+DeleteTrip=Supprimer note de frais
+ConfirmDeleteTrip=Êtes vous sûr de vouloir supprimer cette note de frais ?
+
+DeleteLine=Supprimer une ligne de la note de frais
+ConfirmDeleteLine=Êtes vous sûr de vouloir supprimer cette ligne ?
+
+TF_OTHER=Autre
+TF_LUNCH=Repas
+TF_METRO=Métro
+TF_TRAIN=Train
+TF_RATP=Ratp
+TF_BUS=Bus
+TF_PEAGE=Péage
+TF_ESSENCE=Essence
+TF_SNCF=SNCF (Autre)
+TF_HOTEL=Hôtel
+TF_TRANSPORT=SNCF (Train)
+TF_TAXI=Taxi
+
+ErrorDoubleDeclaration=ERREUR : Vous avez déclaré au moins une note de frais dans le même intervalle.
+ListTripsAndExpenses=Liste des notes de frais
+AucuneNDF=Il n'y a aucune note de frais déclarée correspondante à votre recherche!
+AucuneLigne=Il n'y a aucune ligne de déclarée dans cette note de frais!
+AddLine=Ajouter une ligne
+AddLineMini=Ajouter
+TotalHT=Montant HT
+TotalTTC=Montant TTC
+TotalTVA=Total TVA
+
+Date_DEBUT=Date de début période
+Date_FIN=Date de fin période
+ModePaiement=Mode de paiement
+Note=Note
+Project=Projet
+
+VALIDATOR=Utilisateur informé pour validation
+VALIDOR=Validée par
+AUTHOR=Enregistrée par
+AUTHORPAIEMENT=Payée par
+REFUSEUR=Refusée par
+CANCEL_USER=Annulée par
+
+MOTIF_REFUS=Motif de refus
+MOTIF_CANCEL=Motif d'annulation
+
+DATE_REFUS=Date du refus
+DATE_CANCEL=Date annulation
+DATE_VALIDE=Date de validation
+DATE_PAIEMENT=Date de paiement
+DATE_SAVE=Date d'enregistrement
+
+VALIDATE=Valider
+REFUSE=Refuser
+CANCEL=Annuler
+TO_PAID=Payer
+BROUILLONNER=Remettre en brouillon
+SendToValid=Envoyer en validation
+ModifyInfoGen=Modifier les infos générales
+
+Module20130304Name=Notes de frais
+Module20130304Desc=Gestion des notes de frais et déplacement (par ')
+
+NOT_VALIDATOR=Vous n'êtes pas la personne habilitée à valider cette note de frais!
+NOT_AUTHOR=Vous n'êtes pas l'auteur de cette note de frais, impossible de réaliser l'opération voulue!
+NOT_VALIDOR=Vous n'êtes pas le valideur de cette note de frais, vous ne pouvez donc pas réaliser cette opération!
+NotUserRightToView=Vous n'avez pas le droit d'afficher cette note de frais.
+
+RefuseTrip=Refuser une note de frais
+ConfirmRefuseTrip=Êtes vous sûr de vouloir refuser cette note de frais ?
+
+ValideTrip=Valider une note de frais
+ConfirmValideTrip=Êtes vous sûr de vouloir valider cette note de frais ?
+
+PaidTrip=Payer une note de frais
+ConfirmPaidTrip=Êtes vous sûr de vouloir payer cette note de frais ?
+
+CancelTrip=Annuler une note de frais
+ConfirmCancelTrip=Êtes vous sûr de vouloir annuler cette note de frais ?
+
+BrouillonnerTrip=Remettre une note de frais en brouillon
+ConfirmBrouillonnerTrip=Êtes vous sûr de vouloir remettre cette note de frais en brouillon ?
+
+SaveTrip=Enregistrement de votre note de frais
+ConfirmSaveTrip=Êtes vous sûr de vouloir enregistrer cette note de frais? (elle sera transmise par mail pour validation)
+
+INFOS_DATES=Infos Workflow
+INFOS_NDF=Infos générales note de frais
+
+EURO=€
+PriceUNITAIRE=Prix U. (TTC)
+
+StatsTrip=Statistiques
+Synchro_Compta=NDF <-> Compte
+
+TripSynch=Synchronisation : Notes de frais <-> Compte courant
+TripToSynch=Notes de frais à intégrer dans la compta
+AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
+ViewAccountSynch=Voir le compte
+
+ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
+ndfToAccount=Note de frais - Intégration 
+
+ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
+AccountToNdf=Note de frais - Retrait 
+
+USER_AUTHOR=Auteur
+PU=P.U.
+Q=Q
+
+LINE_NOT_ADDED=Ligne non ajoutée :
+NO_PROJECT=Aucun projet sélectionné.
+NO_DATE=Aucune date sélectionnée.
+NO_PRICE=Aucun prix indiqué.
+
+TripForValid=à Valider
+TripForPaid=à Payer
+TripPaid=Payée
+
+NoTripsToExportCSV=Il n'y a pas de notes de frais à exporter pour cette période.

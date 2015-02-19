@@ -14,8 +14,8 @@ URLToLaunchCronJobs=URL-ul pentru a verifica și a lansa joburi cron, dacă este
 OrToLaunchASpecificJob=Sau pentru a verifica și  a lansa un anumit job
 KeyForCronAccess=Cheie de securitate pentru URL de lansare a joburilor cron
 FileToLaunchCronJobs=Linie de comandă pentru lansare joburi cron
-CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentru a rula linia de comanda la fiecare minut
-CronExplainHowToRunWin=Pe mediul Microsoft(tm) Windows puteţi utiliza instrumentul Scheduled task pentru a rula linia de comanda la fiecare minut
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Joburi programate
 CronListActive=Lista  activelor/programatelor joburi

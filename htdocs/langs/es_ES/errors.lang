@@ -158,6 +158,8 @@ ErrorPriceExpression21=Resultado '%s' vacío
 ErrorPriceExpression22=Resultado '%s' negativo
 ErrorPriceExpressionInternal=Error interno '%s'
 ErrorPriceExpressionUnknown=Error desconocido '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos

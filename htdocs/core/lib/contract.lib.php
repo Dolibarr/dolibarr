@@ -25,10 +25,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Contrat	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function contract_prepare_head($object)
+function contract_prepare_head(Contrat $object)
 {
 	global $langs, $conf;
 	$h = 0;

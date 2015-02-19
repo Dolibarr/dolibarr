@@ -569,11 +569,15 @@ if (empty($reshook))
 
 			// Boucle sur chaque taux de tva
 			$i = 0;
-			foreach ($object->lines as $line) {
-				$amount_ht [$line->tva_tx] += $line->total_ht;
-				$amount_tva [$line->tva_tx] += $line->total_tva;
-				$amount_ttc [$line->tva_tx] += $line->total_ttc;
-				$i ++;
+			foreach ($object->lines as $line)
+			{
+				if ($line->total_ht!=0)
+				{ 	// no need to create discount if amount is null
+					$amount_ht[$line->tva_tx] += $line->total_ht;
+					$amount_tva[$line->tva_tx] += $line->total_tva;
+					$amount_ttc[$line->tva_tx] += $line->total_ttc;
+					$i ++;
+				}
 			}
 
 			// Insert one discount by VAT rate category
@@ -590,10 +594,12 @@ if (empty($reshook))
 			$discount->fk_facture_source = $object->id;
 
 			$error = 0;
-			foreach ($amount_ht as $tva_tx => $xxx) {
-				$discount->amount_ht = abs($amount_ht [$tva_tx]);
-				$discount->amount_tva = abs($amount_tva [$tva_tx]);
-				$discount->amount_ttc = abs($amount_ttc [$tva_tx]);
+
+			foreach ($amount_ht as $tva_tx => $xxx)
+			{
+				$discount->amount_ht = abs($amount_ht[$tva_tx]);
+				$discount->amount_tva = abs($amount_tva[$tva_tx]);
+				$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
 				$discount->tva_tx = abs($tva_tx);
 
 				$result = $discount->create($user);
@@ -2872,7 +2878,7 @@ if ($action == 'create')
 	} else {
 		if ($absolute_creditnote > 0) 		// If not, link will be added later
 		{
-			if ($object->statut == 0 && $object->type != TYPE_CREDIT_NOTE && $object->type != TYPE_DEPOSIT)
+			if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT)
 				print ' (' . $addabsolutediscount . ')<br>';
 			else
 				print '. ';
@@ -3741,7 +3747,7 @@ if ($action == 'create')
 					$i ++;
 				}
 				print '</table>';
-				print '<br><div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
 				print '</form>';
 				$db->free($resqlorderlist);
 			} else {

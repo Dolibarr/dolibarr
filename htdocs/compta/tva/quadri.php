@@ -54,7 +54,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * @param	DoliDB	$db		Database handler
  * @param	int		$y		Year
  * @param	int		$q		Year quarter (1-4)
- * @return	void
+ * @return	array
  */
 function tva_coll($db,$y,$q)
 {
@@ -122,7 +122,7 @@ function tva_coll($db,$y,$q)
  * @param	DoliDB	$db			Database handler object
  * @param	int		$y			Year
  * @param	int		$q			Year quarter (1-4)
- * @return	void
+ * @return	array
  */
 function tva_paye($db, $y,$q)
 {

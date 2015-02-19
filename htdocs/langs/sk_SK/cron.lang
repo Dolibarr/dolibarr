@@ -14,8 +14,8 @@ URLToLaunchCronJobs=URL to check and launch cron jobs if required
 OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Bezpečnostný kľúč pre URL spustiť cron
 FileToLaunchCronJobs=Príkazový riadok spustiť cron
-CronExplainHowToRunUnix=V oblasti životného prostredia Unix, mali by ste použiť crontab spustiť príkazový riadok zakaždým, minút
-CronExplainHowToRunWin=Na Microsoft (tm) Windows environement môžete použiť naplánovaná úloha nástroja spustiť príkazový riadok zakaždým, minút
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Naplánované úlohy
 CronListActive=List of active/scheduled jobs

@@ -244,8 +244,6 @@ class EcmDirectory // extends CommonObject
 	 */
 	function changeNbOfFiles($sign)
 	{
-		global $conf, $langs;
-
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
@@ -320,7 +318,7 @@ class EcmDirectory // extends CommonObject
 	 * 	Delete object on database and/or on disk
 	 *
 	 *	@param	User	$user		User that delete
-	 *  @param	int		$mode		'all'=delete all, 'databaseonly'=only database entry, 'fileonly' (not implemented)
+	 *  @param	string		$mode		'all'=delete all, 'databaseonly'=only database entry, 'fileonly' (not implemented)
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function delete($user, $mode='all')
@@ -329,7 +327,6 @@ class EcmDirectory // extends CommonObject
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
-		$result=0;
 
 		if ($mode != 'databaseonly') $relativepath=$this->getRelativePath(1);	// Ex: dir1/dir2/dir3
 

@@ -558,7 +558,6 @@ if ($conf->salaries->enabled)
 	$sql.= " WHERE p.entity = ".$conf->entity;
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-
 	$sql.= " GROUP BY u.rowid, u.firstname, u.lastname, p.fk_user, p.label, dm";
 	$sql.= " ORDER BY u.firstname";
 

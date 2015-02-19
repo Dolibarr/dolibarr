@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=راه اندازی ماژول گردش کار
-WorkflowDesc=این ماژول طراحی شده است که به تغییر رفتار از اقدامات خودکار به برنامه. به طور پیش فرض، گردش کار باز می شود (شما را به چیزی که در شما می خواهید). شما می توانید اقدامات اتوماتیک است که می جالب شوید. فعال
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
 ThereIsNoWorkflowToModify=هیچ گردش کار شما می توانید برای ماژول شما فعال شده است را تغییر دهید وجود دارد.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=ایجاد یک سفارش مشتری به طور خودکار پس از یک طرح تجاری امضا شده است
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=ایجاد یک فاکتور مشتری به طور خودکار پس از یک طرح تجاری امضا شده است

@@ -29,6 +29,7 @@ ReportTurnover=Оборот
 PaymentsNotLinkedToInvoice=Плащания, които не са свързани с всяка фактура, така че не свързани с която и да е трета страна
 PaymentsNotLinkedToUser=Плащанията, които не са свързани с който и да е потребител
 Profit=Печалба
+AccountingResult=Accounting result
 Balance=Баланс
 Debit=Дебит
 Credit=Кредит

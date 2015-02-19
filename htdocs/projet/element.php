@@ -38,6 +38,7 @@ if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn
 if (! empty($conf->contrat->enabled))     require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->ficheinter->enabled))  require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 if (! empty($conf->deplacement->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 $langs->load("projects");
@@ -225,13 +226,22 @@ $listofreferent=array(
 	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
 'trip'=>array(
 	'name'=>"TripsAndExpenses",
-	'title'=>"ListTripAssociatedProject",
+	'title'=>"ListExpenseReportsAssociatedProject",
 	'class'=>'Deplacement',
 	'table'=>'deplacement',
 	'datefieldname'=>'dated',
 	'margin'=>'minus',
 	'disableamount'=>1,
 	'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
+'expensereport'=>array(
+	'name'=>"ExpenseReports",
+	'title'=>"ListExpenseReportsAssociatedProject",
+	'class'=>'ExpenseReportLine',
+	'table'=>'expensereport',
+	'datefieldname'=>'date',
+	'margin'=>'minus',
+	'disableamount'=>1,
+	'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire),
 'agenda'=>array(
 	'name'=>"Agenda",
 	'title'=>"ListActionsAssociatedProject",

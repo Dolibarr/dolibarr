@@ -14,8 +14,8 @@ URLToLaunchCronJobs=URL to check and launch cron jobs if required
 OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Sigurnosni ključ za URL za pokretanje cron poslova
 FileToLaunchCronJobs=Command line to launch cron jobs
-CronExplainHowToRunUnix=On Unix environment you should use crontab to run Command line each minutes
-CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run Command line each minutes
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Scheduled jobs
 CronListActive=List of active/scheduled jobs

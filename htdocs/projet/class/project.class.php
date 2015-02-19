@@ -55,8 +55,11 @@ class Project extends CommonObject
     var $public;      //!< Tell if this is a public or private project
     var $note_private;
     var $note_public;
+    var $budget_amount;
+
     var $statuts_short;
     var $statuts;
+
     var $oldcopy;
 
 
@@ -110,6 +113,7 @@ class Project extends CommonObject
         $sql.= ", datec";
         $sql.= ", dateo";
         $sql.= ", datee";
+        $sql.= ", budget_amount";
         $sql.= ", entity";
         $sql.= ") VALUES (";
         $sql.= "'" . $this->db->escape($this->ref) . "'";
@@ -122,6 +126,7 @@ class Project extends CommonObject
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", " . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
         $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
+        $sql.= ", " . $this->budget_amount;
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -208,6 +213,7 @@ class Project extends CommonObject
             $sql.= ", datec=" . ($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');
             $sql.= ", dateo=" . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
             $sql.= ", datee=" . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
+            $sql.= ", budget_amount = " . ($this->budget_amount > 0 ? $this->budget_amount : "null");
             $sql.= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this)."::Update", LOG_DEBUG);
@@ -293,8 +299,8 @@ class Project extends CommonObject
     {
         if (empty($id) && empty($ref)) return -1;
 
-        $sql = "SELECT rowid, ref, title, description, public, datec";
-        $sql.= ", tms, dateo, datee, fk_soc, fk_user_creat, fk_statut, note_private, note_public,model_pdf";
+        $sql = "SELECT rowid, ref, title, description, public, datec, budget_amount,";
+        $sql.= " tms, dateo, datee, fk_soc, fk_user_creat, fk_statut, note_private, note_public,model_pdf";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -331,6 +337,7 @@ class Project extends CommonObject
                 $this->user_author_id = $obj->fk_user_creat;
                 $this->public = $obj->public;
                 $this->statut = $obj->fk_statut;
+                $this->budget_amount	= $obj->budget_amount;
                 $this->modelpdf	= $obj->model_pdf;
 
                 $this->db->free($resql);
@@ -411,6 +418,10 @@ class Project extends CommonObject
         else
 		{
             $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet=" . $this->id;
+		}
+    	if ($type == 'expensereport')
+		{
+            $sql = "SELECT e.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet=" . $this->id;
 		}
 		if ($dates > 0)
 		{
@@ -838,6 +849,8 @@ class Project extends CommonObject
         $this->date_m = $now;
         $this->date_start = $now;
         $this->note_public = 'SPECIMEN';
+        $this->budget_amount = 10000;
+
         /*
         $nbp = rand(1, 9);
         $xnbp = 0;
@@ -889,13 +902,6 @@ class Project extends CommonObject
                         if ($mode == 'write'  && $user->rights->projet->creer)     $userAccess++;
                         if ($mode == 'delete' && $user->rights->projet->supprimer) $userAccess++;
                     }
-                    // Permission are supported on users only. To have an external thirdparty contact to see a project, its user must allowed to contacts of projects.
-                    /*if ($source == 'external' && preg_match('/PROJECT/', $userRole[$nblinks]['code']) && $user->contact_id == $userRole[$nblinks]['id'])
-                    {
-                        if ($mode == 'read'   && $user->rights->projet->lire)      $userAccess++;
-                        if ($mode == 'write'  && $user->rights->projet->creer)     $userAccess++;
-                        if ($mode == 'delete' && $user->rights->projet->supprimer) $userAccess++;
-                    }*/
                     $nblinks++;
                 }
             }
@@ -941,11 +947,9 @@ class Project extends CommonObject
         {
             $sql.= " AND ec.element_id = p.rowid";
             $sql.= " AND ( p.public = 1";
-            //$sql.= " OR p.fk_user_creat = ".$user->id;
             $sql.= " OR ( ctc.rowid = ec.fk_c_type_contact";
             $sql.= " AND ctc.element = '" . $this->element . "'";
             $sql.= " AND ( (ctc.source = 'internal' AND ec.fk_socpeople = ".$user->id.")";
-            //$sql.= " OR (ctc.source = 'external' AND ec.fk_socpeople = ".($user->contact_id?$user->contact_id:0).")"; // Permission are supported on users only. To have an external thirdparty contact to see a project, its user must allowed to contacts of projects.
             $sql.= " )";
             $sql.= " ))";
         }
@@ -955,7 +959,6 @@ class Project extends CommonObject
             $sql.= " AND ctc.rowid = ec.fk_c_type_contact";
             $sql.= " AND ctc.element = '" . $this->element . "'";
             $sql.= " AND ( (ctc.source = 'internal' AND ec.fk_socpeople = ".$user->id.")";
-            //$sql.= " OR (ctc.source = 'external' AND ec.fk_socpeople = ".($user->contact_id?$user->contact_id:0).")"; // Permission are supported on users only. To have an external thirdparty contact to see a project, its user must allowed to contacts of projects.
             $sql.= " )";
         }
         if ($mode == 2)

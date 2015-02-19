@@ -376,11 +376,11 @@ class Deplacement extends CommonObject
 	 * List of types
 	 *
 	 * @param	int		$active		Active or not
-	 * @return	void
+	 * @return	array
 	 */
 	function listOfTypes($active=1)
 	{
-	   global $conf,$langs;
+	   global $langs;
 
 	   $ret=array();
 
