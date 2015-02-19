@@ -582,8 +582,13 @@ class FormMail
         	if (! empty($this->withbody))
         	{
         		$defaultmessage="";
-        		if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['content']) $defaultmessage=$arraydefaultmessage['content'];
-        		elseif (! is_numeric($this->withbody))	$defaultmessage=$this->withbody;
+        		$from_template=false;
+        		if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['content']) {
+        			$defaultmessage=$arraydefaultmessage['content'];
+        			$from_template=true;
+        		} elseif (! is_numeric($this->withbody)) {
+        			$defaultmessage=$this->withbody;
+        		}
 
         		// Complete substitution array
         		if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
@@ -613,6 +618,11 @@ class FormMail
 					$defaultmessage = dol_nl2br($defaultmessage);
 				}
 
+				if (dol_textishtml($defaultmessage) && $from_template) {
+					$allow_content=1;
+				} else {
+					$allow_content=0;
+				}
 
         		if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 				else
@@ -643,7 +653,7 @@ class FormMail
 						else $this->withfckeditor=0;
         			}
 
-        			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72);
+        			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72,0,$allow_content);
         			$out.= $doleditor->Create(1);
         		}
         		$out.= "</td></tr>\n";
