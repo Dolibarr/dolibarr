@@ -144,12 +144,19 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 				foreach ($showextcals as $val)
 				{
 					$htmlname = dol_string_nospecial($val['name']);
+
 					print '<tr><td>';
 					print '<script type="text/javascript">' . "\n";
+
+					//jQuery Learning "How do I select an element by an ID that has characters used in CSS notation?"
+					//http://learn.jquery.com/using-jquery-core/faq/how-do-i-select-an-element-by-an-id-that-has-characters-used-in-css-notation/
+					print '	function jq( myid ) {
+					    return myid.replace( /(:|\.|\[|\]|,|@)/g, "\\\\$1" );
+					}';
+
 					print 'jQuery(document).ready(function () {' . "\n";
-					print '		jQuery("#check_' . $htmlname . '").click(function() {';
-					print ' 		/* alert("'.$htmlname.'"); */';
-					print ' 		jQuery(".family_' . $htmlname . '").toggle();';
+					print '		jQuery("#check_" + jq("'.$htmlname.'")).click(function() {';
+					print ' 		jQuery(".family_" + jq("'.$htmlname.'")).toggle();';
 					print '		});' . "\n";
 					print '});' . "\n";
 					print '</script>' . "\n";
