@@ -33,16 +33,11 @@ create table llx_bank_account
   fk_user_author		integer,
   fk_user_modif			integer,
   bank					varchar(60),
-  code_banque			varchar(8),
-  code_guichet			varchar(6),
-  number				varchar(255),
-  cle_rib				varchar(5),
   bic					varchar(11),
   iban_prefix			varchar(34),				-- full iban. 34 according to ISO 13616
   country_iban			varchar(2),					-- deprecated
   cle_iban				varchar(2),
   domiciliation			varchar(255),
-  state_id				integer        DEFAULT NULL,
   fk_pays				integer        NOT NULL,
   proprio				varchar(60),
   owner_address     	varchar(255),

@@ -4,8 +4,9 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copytight (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,24 +55,12 @@ class Account extends CommonObject
     var $clos;
     var $rappro=1;    // If bank need to be conciliated
     var $url;
-    //! BBAN field for French Code banque
-    var $code_banque;
-    //! BBAN field for French Code guichet
-    var $code_guichet;
-    //! BBAN main account number
-    var $number;
-    //! BBAN field for French Cle de controle
-    var $cle_rib;
     //! BIC/SWIFT number
     var $bic;
     //! IBAN number (International Bank Account Number)
     var $iban;			// stored into iban_prefix field into database
     var $proprio;
     var $owner_address;
-
-    var $state_id;
-    var $state_code;
-    var $state;
 
     var $country_id;
     var $country_code;
@@ -354,7 +343,6 @@ class Account extends CommonObject
         // Clean parameters
         if (! $this->min_allowed) $this->min_allowed=0;
         if (! $this->min_desired) $this->min_desired=0;
-        $this->state_id = ($this->state_id?$this->state_id:$this->state_id);
         $this->country_id = ($this->country_id?$this->country_id:$this->country_id);
 
         // Check parameters
@@ -387,20 +375,31 @@ class Account extends CommonObject
         $sql.= ", ref";
         $sql.= ", label";
         $sql.= ", entity";
-        $sql.= ", account_number";
+		$sql.= ", bank";
+		$sql.= ", bic";
+        $sql.= ", iban_prefix";
+		$sql.= ", domiciliation";
+		$sql.= ", proprio";
+		$sql.= ", owner_address";
+		$sql.= ", account_number";
 		$sql.= ", accountancy_journal";
         $sql.= ", currency_code";
         $sql.= ", rappro";
         $sql.= ", min_allowed";
         $sql.= ", min_desired";
         $sql.= ", comment";
-        $sql.= ", state_id";
         $sql.= ", fk_pays";
         $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."'";
         $sql.= ", '".$this->db->escape($this->ref)."'";
         $sql.= ", '".$this->db->escape($this->label)."'";
         $sql.= ", ".$conf->entity;
+		$sql.= ", '".$this->db->escape($this->bank)."'";
+		$sql.= ", '".$this->db->escape($this->bic)."'";
+		$sql.= ", '".$this->db->escape($this->iban)."'";
+		$sql.= ", '".$this->db->escape($this->domiciliation)."'";
+		$sql.= ", '".$this->db->escape($this->proprio)."'";
+		$sql.= ", '".$this->db->escape($this->owner_address)."'";
         $sql.= ", '".$this->db->escape($this->account_number)."'";
 		$sql.= ", '".$this->db->escape($this->accountancy_journal)."'";
         $sql.= ", '".$this->currency_code."'";
@@ -408,7 +407,6 @@ class Account extends CommonObject
         $sql.= ", ".price2num($this->min_allowed);
         $sql.= ", ".price2num($this->min_desired);
         $sql.= ", '".$this->db->escape($this->comment)."'";
-        $sql.= ", ".($this->state_id>0?"'".$this->state_id."'":"null");
         $sql.= ", ".$this->country_id;
         $sql.= ")";
 
@@ -494,7 +492,6 @@ class Account extends CommonObject
         // Clean parameters
         if (! $this->min_allowed) $this->min_allowed=0;
         if (! $this->min_desired) $this->min_desired=0;
-        $this->state_id = ($this->state_id?$this->state_id:$this->state_id);
         $this->country_id = ($this->country_id?$this->country_id:$this->country_id);
 
         // Check parameters
@@ -521,7 +518,15 @@ class Account extends CommonObject
         $sql.= ",clos = ".$this->clos;
         $sql.= ",rappro = ".$this->rappro;
         $sql.= ",url = ".($this->url?"'".$this->url."'":"null");
-        $sql.= ",account_number = '".$this->account_number."'";
+        
+		$sql.= ",bank = '".$this->db->escape($this->bank)."'";
+		$sql.= ",bic = '".$this->db->escape($this->bic)."'";
+		$sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
+		$sql.= ",domiciliation = '".$this->db->escape($this->domiciliation)."'";
+		$sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
+		
+		$sql.= ",account_number = '".$this->account_number."'";
 		$sql.= ",accountancy_journal = '".$this->accountancy_journal."'";
 
         $sql.= ",currency_code = '".$this->currency_code."'";
@@ -530,7 +535,6 @@ class Account extends CommonObject
         $sql.= ",min_desired = '".price2num($this->min_desired)."'";
         $sql.= ",comment     = '".$this->db->escape($this->comment)."'";
 
-        $sql.= ",state_id = ".($this->state_id>0?"'".$this->state_id."'":"null");
         $sql.= ",fk_pays = ".$this->country_id;
 
         $sql.= " WHERE rowid = ".$this->id;
@@ -569,65 +573,6 @@ class Account extends CommonObject
         }
     }
 
-
-    /**
-     *    	Update BBAN (RIB) account fields
-     *
-     *    	@param	User	$user       Object user making update
-     *		@return	int					<0 if KO, >0 if OK
-     */
-    function update_bban($user='')
-    {
-        global $conf,$langs;
-
-        // Clean parameters
-        $this->state_id = ($this->state_id?$this->state_id:$this->state_id);
-        $this->country_id = ($this->country_id?$this->country_id:$this->country_id);
-
-        // Chargement librairie pour acces fonction controle RIB
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
-
-        dol_syslog(get_class($this)."::update_bban $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban");
-
-        // Check parameters
-        if (! $this->ref)
-        {
-            $this->error=$langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->trans("Ref"));
-            return -2;
-        }
-
-        $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
-        $sql.= " bank  = '".$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->code_banque."'";
-        $sql.= ",code_guichet='".$this->code_guichet."'";
-        $sql.= ",number='".$this->number."'";
-        $sql.= ",cle_rib='".$this->cle_rib."'";
-        $sql.= ",bic='".$this->bic."'";
-        $sql.= ",iban_prefix = '".$this->iban."'";
-        $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
-        $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
-        $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
-        $sql.= ",state_id = ".($this->state_id>0?"'".$this->state_id."'":"null");
-        $sql.= ",fk_pays = ".$this->country_id;
-        $sql.= " WHERE rowid = ".$this->id;
-        $sql.= " AND entity = ".$conf->entity;
-
-        dol_syslog(get_class($this)."::update_bban", LOG_DEBUG);
-
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
-            dol_print_error($this->db);
-            return -1;
-        }
-    }
-
-
     /**
      *      Load a bank account into memory from database
      *
@@ -645,16 +590,14 @@ class Account extends CommonObject
             return -1;
         }
 
-        $sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
-        $sql.= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
-        $sql.= " ba.domiciliation, ba.proprio, ba.owner_address, ba.state_id, ba.fk_pays as country_id,";
+        $sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.courant, ba.clos, ba.rappro, ba.url,";
+        $sql.= " ba.bic, ba.iban_prefix as iban,";
+        $sql.= " ba.domiciliation, ba.proprio, ba.owner_address, ba.fk_pays as country_id,";
         $sql.= " ba.account_number, ba.accountancy_journal, ba.currency_code,";
         $sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
-        $sql.= ' c.code as country_code, c.label as country,';
-        $sql.= ' d.code_departement as state_code, d.nom as state';
+        $sql.= ' c.code as country_code, c.label as country';
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON ba.fk_pays = c.rowid';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON ba.state_id = d.rowid';
         $sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
         if ($id)  $sql.= " AND ba.rowid  = ".$id;
         if ($ref) $sql.= " AND ba.ref = '".$this->db->escape($ref)."'";
@@ -678,19 +621,11 @@ class Account extends CommonObject
                 $this->rappro        = $obj->rappro;
                 $this->url           = $obj->url;
 
-                $this->code_banque   = $obj->code_banque;
-                $this->code_guichet  = $obj->code_guichet;
-                $this->number        = $obj->number;
-                $this->cle_rib       = $obj->cle_rib;
                 $this->bic           = $obj->bic;
                 $this->iban          = $obj->iban;
                 $this->domiciliation = $obj->domiciliation;
                 $this->proprio       = $obj->proprio;
                 $this->owner_address = $obj->owner_address;
-
-                $this->state_id        = $obj->state_id;
-                $this->state_code      = $obj->state_code;
-                $this->state           = $obj->state;
 
                 $this->country_id    = $obj->country_id;
                 $this->country_code  = $obj->country_code;
@@ -973,33 +908,6 @@ class Account extends CommonObject
 
     // Method after here are common to Account and CompanyBankAccount
 
-
-    /**
-     *     Return if an account has valid information
-     *
-     *     @return     int         1 if correct, <=0 if wrong
-     */
-    function verif()
-    {
-        require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
-
-        // Call function to check BAN
-        if (! checkBanForAccount($this))
-        {
-            $this->error_number = 12;
-            $this->error_message = 'RIBControlError';
-        }
-
-        if ($this->error_number == 0)
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
     /**
      * 	Return account country code
      *
@@ -1037,23 +945,6 @@ class Account extends CommonObject
     }
 
     /**
-     * Return if a bank account is defined with detailed information (bank code, desk code, number and key).
-     * More information on codes used by countries on page http://en.wikipedia.org/wiki/Bank_code
-     *
-     * @return		int        0=No bank code need + Account number is enough
-     *                         1=Need 2 fields for bank code: Bank, Desk (France, Spain, ...) + Account number and key
-     *                         2=Neek 1 field for bank code:  Bank only (Sort code for Great Britain, BSB for Australia) + Account number
-     */
-    function useDetailedBBAN()
-    {
-        $country_code=$this->getCountryCode();
-
-        if (in_array($country_code,array('CH','DE','FR','ES','GA','IT'))) return 1; // France, Spain, Gabon
-        if (in_array($country_code,array('AU','BE','CA','DK','GR','GB','ID','IE','IR','KR','NL','NZ','UK','US'))) return 2;      // Australia, Great Britain...
-        return 0;
-    }
-
-    /**
      *	Load miscellaneous information for tab "Info"
      *
      *	@param  int		$id		Id of object to load
@@ -1079,10 +970,6 @@ class Account extends CommonObject
         $this->bank            = 'MyBank';
         $this->courant         = 1;
         $this->clos            = 0;
-        $this->code_banque     = '123';
-        $this->code_guichet    = '456';
-        $this->number          = 'ABC12345';
-        $this->cle_rib         = 50;
         $this->bic             = 'AA12';
         $this->iban            = 'FR999999999';
         $this->domiciliation   = 'The bank addresse';

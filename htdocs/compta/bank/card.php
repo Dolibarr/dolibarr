@@ -2,8 +2,8 @@
 /* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copytight (C) 2005-2009	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copytight (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014-2015	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -70,6 +70,13 @@ if ($_POST["action"] == 'add')
     $account->clos          = $_POST["clos"];
     $account->rappro        = (isset($_POST["norappro"]) && $_POST["norappro"])?0:1;
     $account->url           = $_POST["url"];
+	
+	$account->bank            = trim($_POST["bank"]);
+	$account->bic             = trim($_POST["bic"]);
+	$account->iban            = trim($_POST["iban"]);
+	$account->domiciliation   = trim($_POST["domiciliation"]);
+	$account->proprio 	      = trim($_POST["proprio"]);
+	$account->owner_address   = trim($_POST["owner_address"]);
 
     $account->account_number  = trim($_POST["account_number"]);
 	$account->accountancy_journal  = trim($_POST["accountancy_journal"]);
@@ -79,7 +86,6 @@ if ($_POST["action"] == 'add')
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
 
-    $account->state_id  	  = $_POST["account_state_id"];
     $account->country_id      = $_POST["account_country_id"];
 
     $account->min_allowed     = $_POST["account_min_allowed"];
@@ -89,19 +95,19 @@ if ($_POST["action"] == 'add')
     if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
     {
         setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), 'error');
-        $action='create';       // Force chargement page en mode creation
+        $action='create';       // Force create mode page
         $error++;
     }
     if (empty($account->ref))
     {
         setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), 'errors');
-        $action='create';       // Force chargement page en mode creation
+        $action='create';       // Force create mode page
         $error++;
     }
     if (empty($account->label))
     {
     	setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("LabelBankCashAccount")), 'errors');
-    	$action='create';       // Force chargement page en mode creation
+    	$action='create';       // Force create mode page
     	$error++;
     }
 
@@ -113,11 +119,11 @@ if ($_POST["action"] == 'add')
         $id = $account->create($user);
         if ($id > 0)
         {
-            $_GET["id"]=$id;            // Force chargement page en mode visu
+            $_GET["id"]=$id;    // Force view mode page
         }
         else {
             setEventMessage($account->error,'errors');
-            $action='create';   // Force chargement page en mode creation
+            $action='create';   // Force create mode page
         }
     }
 }
@@ -138,14 +144,9 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->url             = trim($_POST["url"]);
 
     $account->bank            = trim($_POST["bank"]);
-    $account->code_banque     = trim($_POST["code_banque"]);
-    $account->code_guichet    = trim($_POST["code_guichet"]);
-    $account->number          = trim($_POST["number"]);
-    $account->cle_rib         = trim($_POST["cle_rib"]);
-    $account->bic             = trim($_POST["bic"]);
+	$account->bic             = trim($_POST["bic"]);
     $account->iban            = trim($_POST["iban"]);
     $account->domiciliation   = trim($_POST["domiciliation"]);
-
     $account->proprio 	      = trim($_POST["proprio"]);
     $account->owner_address   = trim($_POST["owner_address"]);
 
@@ -154,7 +155,6 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
 
-    $account->state_id        = $_POST["account_state_id"];
     $account->country_id      = $_POST["account_country_id"];
 
     $account->min_allowed     = $_POST["account_min_allowed"];
@@ -164,19 +164,19 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
     {
         setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), 'error');
-        $action='edit';       // Force chargement page en mode creation
+        $action='edit';       // Force edit mode page
         $error++;
     }
     if (empty($account->ref))
     {
         setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), 'errors');
-        $action='edit';       // Force chargement page en mode creation
+        $action='edit';       // Force edit mode page
         $error++;
     }
     if (empty($account->label))
     {
     	setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("LabelBankCashAccount")), 'errors');
-    	$action='edit';       // Force chargement page en mode creation
+    	$action='edit';       // Force edit mode page
     	$error++;
     }
 
@@ -188,12 +188,12 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
         $result = $account->update($user);
         if ($result >= 0)
         {
-            $_GET["id"]=$_POST["id"];   // Force chargement page en mode visu
+            $_GET["id"]=$_POST["id"];   // // Force view mode page
         }
         else
         {
 	        setEventMessage($account->error, 'errors');
-            $action='edit';     // Force chargement page edition
+            $action='edit';     // Force edit mode page
         }
     }
 }
@@ -222,9 +222,7 @@ $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("Se
 
 llxHeader();
 
-
 // Creation
-
 if ($action == 'create')
 {
 	$account=new Account($db);
@@ -292,23 +290,68 @@ if ($action == 'create')
 	print $form->select_country($selectedcode,'account_country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
+	print '</table>';
+	print '<br>';
 
-	// State
-	print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-	if ($selectedcode)
+	if ($account->type == 0 || $account->type == 1)
 	{
-		$formcompany->select_departement(isset($_POST["account_state_id"])?$_POST["account_state_id"]:'',$selectedcode,'account_state_id');
+		print '<table class="border" width="100%">';
+		
+		// Name of bank
+		print '<tr><td valign="top" width="25%">'.$langs->trans("BankName").'</td>';
+		print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$_POST["bank"].'"></td></tr>';
+		
+		$ibankey="IBANNumber";
+		$bickey="BICNumber";
+		if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+		if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
+
+		// IBAN
+		print '<tr><td valign="top">'.$langs->trans($ibankey).'</td>';
+		print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.$_POST["iban"].'"></td></tr>';
+
+		print '<tr><td valign="top">'.$langs->trans($bickey).'</td>';
+		print '<td colspan="3"><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.$_POST["bic"].'"></td></tr>';
+
+		print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
+		print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
+		print $_POST["domiciliation"];
+		print "</textarea></td></tr>";
+
+		print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
+		print '<td colspan="3"><input size="30" type="text" class="flat" name="proprio" value="'.$_POST["proprio"].'">';
+		print '</td></tr>';
+
+		print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
+		print "<textarea class=\"flat\" name=\"owner_address\" rows=\"2\" cols=\"40\">";
+		print $_POST["owner_address"];
+		print "</textarea></td></tr>";
+		
+		print '</table>';
+		print '<br>';
 	}
-	else
-	{
-		print $countrynotdefined;
-	}
+	
+	print '<table class="border" width="100%">';
+	
+	// Sold
+	print '<tr><td valign="top" width="25%">'.$langs->trans("InitialBankBalance").'</td>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="solde" value="'.($_POST["solde"]?$_POST["solde"]:price2num($account->solde)).'"></td></tr>';
+
+	print '<tr><td valign="top">'.$langs->trans("Date").'</td>';
+	print '<td colspan="3">';
+	$form->select_date('', 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
+	print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.($_POST["account_min_allowed"]?$_POST["account_min_allowed"]:$account->account_min_allowed).'"></td></tr>';
+
+	print '<tr><td valign="top">'.$langs->trans("BalanceMinimalDesired").'</td>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.($_POST["account_min_desired"]?$_POST["account_min_desired"]:$account->account_min_desired).'"></td></tr>';
+	
 	// Web
 	print '<tr><td valign="top">'.$langs->trans("Web").'</td>';
 	print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$_POST["url"].'"></td></tr>';
-
+	
 	// Comment
 	print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 	print '<td colspan="3">';
@@ -325,31 +368,8 @@ if ($action == 'create')
 	{
 		print $account->showOptionals($extrafields,'edit',$parameters);
 	}
-
-
+	
 	print '</table>';
-
-	print '<br>';
-
-	print '<table class="border" width="100%">';
-
-	// Sold
-	print '<tr><td valign="top" width="25%">'.$langs->trans("InitialBankBalance").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="solde" value="'.($_POST["solde"]?$_POST["solde"]:price2num($account->solde)).'"></td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("Date").'</td>';
-	print '<td colspan="3">';
-	$form->select_date('', 're', 0, 0, 0, 'formsoc');
-	print '</td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.($_POST["account_min_allowed"]?$_POST["account_min_allowed"]:$account->account_min_allowed).'"></td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("BalanceMinimalDesired").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.($_POST["account_min_desired"]?$_POST["account_min_desired"]:$account->account_min_desired).'"></td></tr>';
-
-	print '</table>';
-
 	print '<br>';
 
 	print '<table class="border" width="100%">';
@@ -399,16 +419,16 @@ else
 		}
 
 		/*
-		* Affichage onglets
-		*/
+		 * Show tabs
+		 */
 
-		// Onglets
+		// Tabs
 		$head=bank_prepare_head($account);
 		dol_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"),0,'account');
 
 		/*
-		* Confirmation to delete
-		*/
+		 * Confirmation to delete
+		 */
 		if ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
@@ -454,14 +474,64 @@ else
 			print getCountry($account->getCountryCode(),0,$db);
 		}
 		print '</td></tr>';
+		print '</table>';
 
-		// State
-		print '<tr><td>'.$langs->trans('State').'</td><td>';
-		if ($account->fk_departement > 0) print getState($account->fk_departement);
-		print '</td></tr>';
+		print '<br>';
+		
+		if ($account->type == 0 || $account->type == 1)
+		{
+			$ibankey="IBANNumber";
+			$bickey="BICNumber";
+			if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+			if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
+			
+			print '<table class="border" width="100%">';
+			
+			print '<tr><td valign="top" width="25%">'.$langs->trans("BankName").'</td>';
+			print '<td colspan="3">'.$account->bank.'</td></tr>';
+
+			print '<tr><td valign="top">'.$langs->trans($ibankey).'</td>';
+			print '<td colspan="3">'.$account->iban.'&nbsp;';
+			if (! empty($account->iban)) {
+				if (! checkIbanForAccount($account)) {
+					print img_picto($langs->trans("IbanNotValid"),'warning');
+				} else {
+					print img_picto($langs->trans("IbanValid"),'info');
+				}
+			}
+			print '</td></tr>';
+
+			print '<tr><td valign="top">'.$langs->trans($bickey).'</td>';
+			print '<td colspan="3">'.$account->bic.'&nbsp;';
+			if (! empty($account->bic)) {
+				if (! checkSwiftForAccount($account)) {
+					print img_picto($langs->trans("SwiftNotValid"),'warning');
+				} else {
+					print img_picto($langs->trans("SwiftValid"),'info');
+				}
+			}
+			print '</td></tr>';
+
+			print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
+			print nl2br($account->domiciliation);
+			print "</td></tr>\n";
+
+			print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td><td colspan="3">';
+			print $account->proprio;
+			print "</td></tr>\n";
+
+			print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
+			print nl2br($account->owner_address);
+			print "</td></tr>\n";
+			print '<table>';
+			
+			print '<br>';
+		}	
+		
+		print '<table class="border" width="100%">';
 
 		// Conciliate
-		print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
+		print '<tr><td valign="top" width="25%">'.$langs->trans("Conciliable").'</td>';
 		print '<td colspan="3">';
 		$conciliate=$account->canBeConciliated();
 		if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
@@ -513,7 +583,7 @@ else
 
 
 		/*
-		 * Barre d'actions
+		 * Actions buttons
 		 */
 		print '<div class="tabsAction">';
 
@@ -522,7 +592,7 @@ else
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$account->id.'">'.$langs->trans("Modify").'</a>';
 		}
 
-		$canbedeleted=$account->can_be_deleted();   // Renvoi vrai si compte sans mouvements
+		$canbedeleted=$account->can_be_deleted();   // Return true if it's an account without movements
 		if ($user->rights->banque->configurer && $canbedeleted)
 		{
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$account->id.'">'.$langs->trans("Delete").'</a>';
@@ -606,21 +676,53 @@ else
 		print $form->select_country($selectedcode,'account_country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		print '</td></tr>';
+		print '</table>';
 
-		// State
-		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-		if ($selectedcode)
+		print '<br>';
+		
+		if ($account->type == 0 || $account->type == 1)
 		{
-			print $formcompany->select_state(isset($_POST["account_state_id"])?$_POST["account_state_id"]:$account->state_id,$selectedcode,'account_state_id');
+			print '<table class="border" width="100%">';
+			
+			// Bank account
+			print '<tr><td valign="top" width="25%">'.$langs->trans("BankName").'</td>';
+			print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td>';
+			print '</tr>';
+
+			$ibankey="IBANNumber";
+			$bickey="BICNumber";
+			if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+			if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
+
+			// IBAN
+			print '<tr><td valign="top">'.$langs->trans($ibankey).'</td>';
+			print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.$account->iban.'"></td></tr>';
+
+			print '<tr><td valign="top">'.$langs->trans($bickey).'</td>';
+			print '<td colspan="3"><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
+
+			print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
+			print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
+			print $account->domiciliation;
+			print "</textarea></td></tr>";
+
+			print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
+			print '<td colspan="3"><input size="30" type="text" class="flat" name="proprio" value="'.$account->proprio.'">';
+			print '</td></tr>';
+
+			print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
+			print "<textarea class=\"flat\" name=\"owner_address\" rows=\"2\" cols=\"40\">";
+			print $account->owner_address;
+			print "</textarea></td></tr>";
+			
+			print '</table>';
+			print '<br>';
 		}
-		else
-		{
-			print $countrynotdefined;
-		}
-		print '</td></tr>';
+
+		print '<table class="border" width="100%">';
 
 		// Conciliable
-        print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
+        print '<tr><td valign="top" width="25%">'.$langs->trans("Conciliable").'</td>';
         print '<td colspan="3">';
         $conciliate=$account->canBeConciliated();
         if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
@@ -656,7 +758,6 @@ else
 		{
 			print $account->showOptionals($extrafields,'edit');
 		}
-
 
 		print '</table>';
 
@@ -694,8 +795,6 @@ else
 	}
 
 }
-
-
 
 $db->close();
 
