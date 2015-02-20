@@ -255,6 +255,7 @@ class FormMail
         	if ($this->withform == 1)
         	{
         		$out.= '<form method="POST" name="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">'."\n";
+				$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
         		$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
         	}
         	foreach ($this->param as $key=>$value)
@@ -500,10 +501,6 @@ class FormMail
         		}
         		$out.= "</td></tr>\n";
         	}
-
-	        if ($this->withform == 1 || $this->withform == -1) {
-		        $out .= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
-	        }
 
         	// Attached files
         	if (! empty($this->withfile))
