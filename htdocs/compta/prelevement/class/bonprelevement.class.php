@@ -894,13 +894,13 @@ class BonPrelevement extends CommonObject
             if (!$error)
             {
 				$ref = substr($year,-2).$month;
-				
+
 				$sql = "SELECT substring(ref from char_length(ref) - 1)";
 				$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql.= " WHERE ref LIKE '%".$ref."%'";
 				$sql.= " AND entity = ".$conf->entity;
 				$sql.= " ORDER BY ref DESC LIMIT 1";
-				
+
 				dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 
@@ -917,7 +917,7 @@ class BonPrelevement extends CommonObject
 				$ref = "T".$ref.str_pad(dol_substr("00".intval($row[0])+1),2,"0",STR_PAD_LEFT);
 
 				$filebonprev = $ref;
-                
+
                 // Create withdraw receipt in database
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
                 $sql.= " ref, entity, datec";
@@ -978,10 +978,7 @@ class BonPrelevement extends CommonObject
                             $error++;
                         }
 
-                        /*
-                         * Update orders
-                         *
-                         */
+                        // Update invoice requests as done
                         $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
                         $sql.= " SET traite = 1";
                         $sql.= ", date_traite = '".$this->db->idate($now)."'";
@@ -1029,7 +1026,7 @@ class BonPrelevement extends CommonObject
 
                     $bonprev->factures = $factures_prev_id;
 
-                    //Build file
+                    // Generation of SEPA file
                     $bonprev->generate();
                 }
                 dol_syslog($filebonprev);
@@ -1039,7 +1036,6 @@ class BonPrelevement extends CommonObject
             /*
              * Update total
              */
-
             $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
             $sql.= " SET amount = ".price2num($bonprev->total);
             $sql.= " WHERE rowid = ".$prev_id;
@@ -1053,9 +1049,6 @@ class BonPrelevement extends CommonObject
                 dol_syslog("Erreur mise a jour du total - $sql");
             }
 
-            /*
-             * Rollback or Commit
-             */
             if (!$error)
             {
                 $this->db->commit();
@@ -1267,9 +1260,9 @@ class BonPrelevement extends CommonObject
 			/*
 			 * section Debiteur (sepa Debiteurs bloc lines)
 			 */
-			$sql = "SELECT soc.code_client as code, soc.address, soc.zip, soc.town, soc.datec, c.code as country_code,";
+			$sql = "SELECT soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 			$sql.= " pl.client_nom as name, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
-			$sql.= " f.facnumber as fac, pf.fk_facture as idfac, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum";
+			$sql.= " f.facnumber as fac, pf.fk_facture as idfac, rib.iban_prefix as iban, rib.bic as bic, rib.datec, rib.rowid as drum";
 			$sql.= " FROM";
 			$sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 			$sql.= " ".MAIN_DB_PREFIX."facture as f,";
@@ -1510,17 +1503,21 @@ class BonPrelevement extends CommonObject
      *	@param	string		$row_idfac			pf.fk_facture AS idfac,
      *	@param	string		$row_iban			rib.iban_prefix AS iban,
      *	@param	string		$row_bic			rib.bic AS bic,
-     *	@param	string		$row_datec			soc.datec,
-     *	@param	string		$row_drum			soc.rowid AS drum
+     *	@param	string		$row_datec			rib.datec,
+     *	@param	string		$row_drum			rib.rowid AS drum
      *	@return	string							Return string with SEPA part DrctDbtTxInf
      */
     function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_facnumber, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum)
     {
 		$CrLf = "\n";
 		$Rowing = sprintf("%06d", $row_idfac);
+
+		// Define value for RUM
+		// Example:  RUMCustomerCode-CustomerBankAccountId-01424448606	(note: Date is date of creation of CustomerBankAccountId)
 		$Date_Rum = strtotime($row_datec);
-		$pre = ($date_Rum > 1359673200) ? 'Rum' : '++R';
-		$Rum = $pre.$row_code_client.$row_drum.'-0'.date('U', $Date_Rum);
+		$pre = ($date_Rum > 1359673200) ? 'RUM' : '++R';
+		$Rum = dol_trunc($pre.$row_code_client.'-'.$row_drum.'-0'.date('U', $Date_Rum), 35, 'right', 'UTF-8', 1);
+
 		$XML_DEBITOR ='';
 		$XML_DEBITOR .='			<DrctDbtTxInf>'.$CrLf;
 		$XML_DEBITOR .='				<PmtId>'.$CrLf;
