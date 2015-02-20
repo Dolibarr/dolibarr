@@ -910,6 +910,8 @@ class Account extends CommonObject
 	        $langs->load("banks");
 	        $now=dol_now();
 
+            require_once DOL_DOCUMENT_ROOT.'/core/class/WorkboardResponse.class.php';
+
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
 	        $response->label=$langs->trans("TransactionsToConciliate");
