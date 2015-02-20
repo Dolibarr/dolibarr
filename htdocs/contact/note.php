@@ -36,7 +36,7 @@ $langs->load("companies");
 // Security check
 $id = GETPOST('id','int');
 if ($user->societe_id) $id=$user->societe_id;
-$result = restrictedArea($user, 'societe', $id, '&societe');
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
 if ($id > 0) $object->fetch($id);
