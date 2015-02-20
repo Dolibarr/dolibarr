@@ -184,13 +184,14 @@ if ($action == 'order' && isset($_POST['valid']))
                 }
             } else {
                 $order->socid = $suppliersid[$i];
+                $order->fetch_thirdparty();
                 //trick to know which orders have been generated this way
                 $order->source = 42;
                 foreach ($supplier['lines'] as $line) {
                     $order->lines[] = $line;
                 }
-                $order->cond_reglement_id = 0;
-                $order->mode_reglement_id = 0;
+                $order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
+                $order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
                 $id = $order->create($user);
                 if ($id < 0) {
                     $fail++;
