@@ -4232,7 +4232,7 @@
 	  so the commonly used ones were shorter. pba_mal renamed to ba_mal
 	  chandrakkala renamed to candrakala Cleared NameMe_195551 as it
 	  did nothing Raised ascenders on both i_sign_mal and ii_sign_mal,
-	  and made the latter go over preceeding letter, based on other
+	  and made the latter go over preceding letter, based on other
 	  fonts and samples.
 
 2010-10-07 06:21 +0000 [r1580]  Stevan_White:
@@ -8330,7 +8330,7 @@
 	  FreeSerifBold.sfd: Various technical tweeks,
 	  mostly concerning recent additions. Also did a bit more "Points
 	  too close" and "irrelevant control points". Cyrillic millions
-	  redesign meant could not maintain use of refrences for it.
+	  redesign meant could not maintain use of references for it.
 
 2008-10-03 11:03 +0000 [r962]  Stevan_White:
 
