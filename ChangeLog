@@ -197,6 +197,7 @@ Dolibarr better:
 - Fix: [ bug #1826 ] Supplier payment types are not translated into fourn/facture/paiement.php
 - Fix: [ bug #1830 ] Salaries payment only allows checking accounts
 - Fix: [ bug #1825 ] External agenda: hide/show checkbox doesn't work
+- Fix: [ bug #1790 ] Email form behaves in an unexpected way when pressing Enter key
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
