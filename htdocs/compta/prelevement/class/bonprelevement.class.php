@@ -1629,7 +1629,7 @@ class BonPrelevement extends CommonObject
      *	@param	int		$nombre			0 or 1
      *	@param	float	$total			Total
      *	@param	string	$CrLf			End of line character
-     *	@return	string					String with SEAP Sender
+     *	@return	string					String with SEPA Sender
      */
     function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf='\n')
     {	// SEPA INITIALISATION
