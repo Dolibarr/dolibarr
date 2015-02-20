@@ -10,8 +10,8 @@
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ function getBrowserInfo()
 	elseif (preg_match('/epiphany/i',$_SERVER["HTTP_USER_AGENT"]))                       { $name='epiphany';  $version=$reg[2]; }
 	elseif ((empty($phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari(\/|\s)([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"], $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
 	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i',  $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='opera';     $version=$reg[2]; }
-	elseif (preg_match('/msie(\/|\s)([\d\.]*)/i',   $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='ie';        $version=$reg[2]; }    // MS products at end
+	elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];\srv:([0-9]+\.[0-9]+))/i',   $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='ie';        $version= end($reg); }    // MS products at end
 	// Other
 	$firefox=0;
 	if (in_array($name,array('firefox','iceweasel'))) $firefox=1;
@@ -454,18 +454,18 @@ function dol_string_unaccent($str)
 /**
  *	Clean a string from all punctuation characters to use it as a ref or login
  *
- *	@param	string	$str            String to clean
- * 	@param	string	$newstr			String to replace forbidden chars with
- *  @param  array	$badchars       List of forbidden characters
- * 	@return string          		Cleaned string
+ *	@param	string	$str            	String to clean
+ * 	@param	string	$newstr				String to replace forbidden chars with
+ *  @param  array	$badcharstoreplace  List of forbidden characters
+ * 	@return string          			Cleaned string
  *
  * 	@see    		dol_sanitizeFilename, dol_string_unaccent
  */
-function dol_string_nospecial($str,$newstr='_',$badchars='')
+function dol_string_nospecial($str,$newstr='_',$badcharstoreplace='')
 {
 	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 	$forbidden_chars_to_remove=array();
-	if (is_array($badchars)) $forbidden_chars_to_replace=$badchars;
+	if (is_array($badcharstoreplace)) $forbidden_chars_to_replace=$badcharstoreplace;
 	//$forbidden_chars_to_remove=array("(",")");
 
 	return str_replace($forbidden_chars_to_replace,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
@@ -2656,7 +2656,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 	$return='';
 
 	if ($picto == 'setup') $picto='title.png';
-	if (!empty($conf->browser->ie) && $picto=='title.png') $picto='title.gif';
+	if (($conf->browser->name == 'ie') && $picto=='title.png') $picto='title.gif';
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
@@ -2695,7 +2695,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	global $conf,$langs;
 
 	if ($picto == 'setup') $picto='title.png';
-	if (!empty($conf->browser->ie) && $picto=='title.png') $picto='title.gif';
+	if (($conf->browser->name == 'ie') && $picto=='title.png') $picto='title.gif';
 
 	if (($num > $conf->liste_limit) || ($num == -1))
 	{
@@ -3010,7 +3010,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 
 /**
  *	Return localtax rate for a particular vat, when selling a product with vat $tva, from a $thirdparty_buyer to a $thirdparty_seller
- *  Note: It applies same rule than get_default_tva
+ *  Note: This function applies same rules than get_default_tva
  *
  * 	@param	float		$tva			        Vat taxe
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
@@ -3111,13 +3111,10 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 		}
 	}
 
-
-
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
 	$sql .= " AND t.taux = ".((float) $tva)." AND t.active = 1";
-
 	dol_syslog("get_localtax", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
@@ -4607,6 +4604,8 @@ function dol_validElement($element)
 function picto_from_langcode($codelang)
 {
 	global $langs;
+
+	if (empty($codelang)) return '';
 
 	if (empty($codelang)) return '';
 

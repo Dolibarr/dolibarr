@@ -196,6 +196,7 @@ Dolibarr better:
 - Fix: [ bug #1832 ] SQL error when adding a product with no price defined to an object
 - Fix: [ bug #1826 ] Supplier payment types are not translated into fourn/facture/paiement.php
 - Fix: [ bug #1830 ] Salaries payment only allows checking accounts
+- Fix: [ bug #1825 ] External agenda: hide/show checkbox doesn't work
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
@@ -362,6 +363,7 @@ Fix: [ bug #1752 ] Date filter of margins module, filters since 12H instead of 0
 Fix: [ bug #1757 ] Sorting breaks product/service statistics
 Fix: [ bug #1797 ] Tulip supplier invoice module takes creation date instead of invoice date
 Fix: [ bug #1792 ] Users are not allowed to see margins module index page when no product view permission is enabled
+Fix: [ bug #1846 ] Browser IE11 not detected
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

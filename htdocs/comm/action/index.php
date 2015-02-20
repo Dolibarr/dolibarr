@@ -361,6 +361,7 @@ if (! empty($conf->use_javascript_ajax))
 		foreach ($showextcals as $val)
 		{
 			$htmlname = dol_string_nospecial($val['name']);
+			$htmlname = dol_string_nospecial($htmlname,'_',array("\.","#"));
 			$s.='<script type="text/javascript">' . "\n";
 			$s.='jQuery(document).ready(function () {' . "\n";
 			$s.='		jQuery("#check_' . $htmlname . '").click(function() {';
