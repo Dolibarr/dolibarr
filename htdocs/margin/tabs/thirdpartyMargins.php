@@ -94,15 +94,6 @@ if ($socid > 0)
         print '</td></tr>';
     }
 
-    if ($societe->fournisseur)
-    {
-        print '<tr><td>';
-        print $langs->trans('SupplierCode').'</td><td colspan="3">';
-        print $societe->code_fournisseur;
-        if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-        print '</td></tr>';
-    }
-
 		// Total Margin
 		print '<tr><td>'.$langs->trans("TotalMargin").'</td><td colspan="3">';
 		print '<span id="totalMargin"></span>'; // set by jquery (see below)
