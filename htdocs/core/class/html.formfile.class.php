@@ -273,7 +273,7 @@ class FormFile
         }
 
         $printer=0;
-        if (in_array($modulepart,array('facture','propal','proposal','order','commande','expedition')))	// This feature is implemented only for such elements
+        if (in_array($modulepart,array('facture','propal','proposal','order','commande','expedition')))	// The direct print feature is implemented only for such elements
         {
             $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
         }
@@ -440,7 +440,6 @@ class FormFile
             }
             else if ($modulepart != 'agenda')
             {
-
                 // For normalized standard modules
                 $file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 if (file_exists($file))
@@ -449,7 +448,7 @@ class FormFile
                 }
                 // For normalized external modules
                 else
-              {
+				{
                 	$file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 	$res=include_once $file;
                 }

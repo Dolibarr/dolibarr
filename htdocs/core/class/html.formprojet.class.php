@@ -86,6 +86,8 @@ class FormProjets
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$minmax='';
+			
 			// Use select2 selector
 			$nodatarole='';
 			if (! empty($conf->use_javascript_ajax))
@@ -94,10 +96,11 @@ class FormProjets
 	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
             	$out.=$comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
+            	$minmax='minwidth100 maxwidth300';
 			}
 
 			if (empty($option_only)) {
-				$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
 			}
 			if (!empty($show_empty)) {
 				$out.= '<option value="0">&nbsp;</option>';

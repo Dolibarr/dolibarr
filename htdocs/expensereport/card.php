@@ -32,6 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formprojet.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/expensereport.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/price.lib.php");
 dol_include_once('/expensereport/core/modules/expensereport/modules_expensereport.php');
 dol_include_once("/expensereport/class/expensereport.class.php");
 
@@ -99,9 +100,9 @@ if ($action == 'add' && $user->rights->expensereport->creer)
 	$object->date_debut = $date_start;
 	$object->date_fin = $date_end;
 
-	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
 	$object->fk_c_expensereport_statuts = 1;
 	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
+	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
 	$object->note						= GETPOST('note');
 
 	if ($object->periode_existe($user,dol_print_date($object->date_debut, 'dayrfc'),dol_print_date($object->date_fin, 'dayrfc')))
@@ -164,7 +165,7 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
-	$result = $object->set_save($user);
+	$result = $object->setValidate($user);
 	if ($result > 0)
 	{
 		// Send mail
@@ -234,7 +235,7 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 	}
 }
 
-if ($action == "confirm_save_from_refuse" && $_GET["confirm"] == "yes" && $id > 0 && $user->rights->expensereport->creer)
+if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -315,7 +316,7 @@ if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
 
-	$result = $object->set_valide($user);
+	$result = $object->setApproved($user);
 	if ($result > 0)
 	{
 		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
@@ -393,12 +394,12 @@ if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $
 	}
 }
 
-if ($action == "confirm_refuse" && $_POST['confirm']=="yes" && !empty($_POST['detail_refuse']) && $id > 0 && $user->rights->expensereport->to_validate)
+if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->to_validate)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
-
-	$result = $object->set_refuse($user,$_POST['detail_refuse']);
+	
+	$result = $object->set_refuse($user,GETPOST('detail_refuse'));
 	if ($result > 0)
 	{
 		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
@@ -454,35 +455,35 @@ if ($action == "confirm_refuse" && $_POST['confirm']=="yes" && !empty($_POST['de
 	}
 }
 
-if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && !empty($_POST['detail_cancel']) && $id > 0 && $user->rights->expensereport->to_validate)
+//var_dump($user->id == $object->fk_user_validator);exit;
+if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && !empty($_POST['detail_cancel']) && $id > 0 && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
-
-	if($user->id == $object->fk_user_validator)
+	
+	if ($user->id == $object->fk_user_valid || $user->id == $object->fk_user_author)
 	{
 		$result = $object->set_cancel($user,$_POST['detail_cancel']);
-
+	
 		if ($result > 0)
 		{
 			if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
 			{
-
 				// Send mail
-
+	
 				// TO
 				$destinataire = new User($db);
 				$destinataire->fetch($object->fk_user_author);
 				$emailTo = $destinataire->email;
-
+	
 				// FROM
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user_cancel);
 				$emailFrom = $expediteur->email;
-
+	
 				// SUBJECT
 				$subject = "' ERP - Note de frais annulée";
-
+	
 				// CONTENT
 				$message = "Bonjour {$destinataire->firstname},\n\n";
 				$message.= "Votre note de frais \"{$object->ref}\" vient d'être annulée.\n";
@@ -490,10 +491,10 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && !empty($_POST['d
 				$message.= "- Motif d'annulation : {$_POST['detail_cancel']}\n";
 				$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
 				$message.= "Bien cordialement,\n' SI";
-
+	
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message);
-
+	
 				if(!$mailfile->error)
 				{
 					// SEND
@@ -520,10 +521,6 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && !empty($_POST['d
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	else
-	{
-		setEventMessages($langs->transnoentitiesnoconv("NOT_VALIDATOR"), '', 'errors');
-	}
 }
 
 if ($action == "confirm_paid" && $_GET['confirm']=="yes" && $id > 0 && $user->rights->expensereport->to_paid)
@@ -531,7 +528,7 @@ if ($action == "confirm_paid" && $_GET['confirm']=="yes" && $id > 0 && $user->ri
 	$object = new ExpenseReport($db);
 	$object->fetch($id,$user);
 
-	$result = $object->set_paid($user);
+	$result = $object->setPaid($user);
 	if ($result > 0)
 	{
 		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
@@ -622,13 +619,13 @@ if ($action == "confirm_paid" && $_GET['confirm']=="yes" && $id > 0 && $user->ri
 	}
 }
 
-if ($action == "confirm_brouillonner" && $_GET['confirm']=="yes" && $id > 0 && $user->rights->expensereport->creer)
+if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
-	if($user->id == $object->fk_user_author OR $user->id == $object->fk_user_validator)
+	if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 	{
-		$result = $object->set_draft($user);
+		$result = $object->setStatut(0);
 		if ($result > 0)
 		{
 			header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
@@ -654,19 +651,21 @@ if ($action == "addline")
 	$object_ligne = new ExpenseReportLine($db);
 
 	$object_ligne->comments = GETPOST('comments');
-	$object_ligne->qty  = empty($_POST['qty'])?1:$_POST['qty'];
+	$qty  = GETPOST('qty','int');
+	if (empty($qty)) $qty=1;
+	$object_ligne->qty = $qty;
 
-	$object_ligne->value_unit = price2num(GETPOST('value_unit'));
-	$object_ligne->value_unit = price2num($object_ligne->value_unit,'MU');
+	$up=price2num(GETPOST('value_unit'),'MU');
+	$object_ligne->value_unit = $up;
 
 	$object_ligne->date = $date;
 
 	$object_ligne->fk_c_type_fees = GETPOST('fk_c_type_fees');
 
-	$tva=GETPOST('vatrate');
-
-	$object_ligne->fk_c_tva = $tva;
-
+	$vatrate=GETPOST('vatrate');
+	$object_ligne->fk_c_tva = $vatrate;
+	$object_ligne->vatrate = $vatrate;
+	
 	$object_ligne->fk_projet = $fk_projet;
 
 	if (! GETPOST('fk_c_type_fees') > 0)
@@ -682,7 +681,7 @@ if ($action == "addline")
 		$action='';
 	}
 
-	// Si aucun projet n'est défini
+    /* Projects are never required. To force them, check module forceproject
 	if ($conf->projet->enabled)
 	{
 		if (empty($object_ligne->fk_projet) || $object_ligne->fk_projet==-1)
@@ -690,7 +689,7 @@ if ($action == "addline")
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Project")), 'errors');
 		}
-	}
+	}*/
 
 	// Si aucune date n'est rentrée
 	if (empty($object_ligne->date) || $object_ligne->date=="--")
@@ -698,7 +697,6 @@ if ($action == "addline")
 		$error++;
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
 	}
-
 	// Si aucun prix n'est rentré
 	if($object_ligne->value_unit==0)
 	{
@@ -711,25 +709,19 @@ if ($action == "addline")
 	{
 		$object_ligne->fk_expensereport = $_POST['fk_expensereport'];
 
-		// Calculs des totos
-		$object_ligne->total_ttc = $object_ligne->value_unit * $object_ligne->qty;
-		$object_ligne->total_ttc = price2num($object_ligne->total_ttc,'MT');
+		$type = 0;	// TODO What if service
+		$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type);
 
+		$object_ligne->total_ttc = $tmp[2];
 		$object_ligne->tva_taux = GETPOST('vatrate');
-
-		$tx_tva = $object_ligne->tva_taux / 100;
-		$tx_tva	= $tx_tva + 1;
-
-		$object_ligne->total_ht = $object_ligne->total_ttc / $tx_tva;
-		$object_ligne->total_ht = price2num($object_ligne->total_ht,'MT');
-
-		$object_ligne->total_tva = $object_ligne->total_ttc - $object_ligne->total_ht;
+		$object_ligne->total_ht = $tmp[0];
+		$object_ligne->total_tva = $tmp[1];
 
 		$result = $object_ligne->insert();
 		if ($result > 0)
 		{
 			$db->commit();
-			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_GET['id']);
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 		}
 		else
@@ -910,10 +902,7 @@ if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
 }
 
 
-/*
- * Create
- */
-
+// Create
 if ($action == 'create')
 {
 	print print_fiche_titre($langs->trans("NewTrip"));
@@ -1002,11 +991,6 @@ else
 			}
 
 			$head = expensereport_prepare_head($object);
-			/*
-			$head[0][0] = $_SERVER['PHP_SELF'].'?id='.$object->id;
-			$head[0][1] = $langs->trans('Card');
-			$head[0][2] = 'card';
-			$h++;*/
 
 			if ($action == 'edit' && ($object->fk_c_expensereport_statuts < 3 || $object->fk_c_expensereport_statuts==99))
 			{
@@ -1062,10 +1046,10 @@ else
 				if($object->fk_c_expensereport_statuts<3)
 				{
 					print '<tr>';
-					print '<td>'.$langs->trans("VALIDATOR").'</td>';
+					print '<td>'.$langs->trans("VALIDATOR").'</td>';	// Approbator
 					print '<td>';
 					$include_users = $object->fetch_users_approver_expensereport();
-					$s=$form->select_dolusers($object->fk_user_validator,"fk_user_validator",0,"",0,$include_users);
+					$s=$form->select_dolusers($object->fk_user_validator,"fk_user_validator",1,"",0,$include_users);
 					print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 					print '</td>';
 					print '</tr>';
@@ -1146,7 +1130,7 @@ else
 				endif;
 
 				if ($action == 'cancel'):
-				$array_input = array(array('type'=>"text",'label'=>"Entrez ci-dessous un motif d'annulation :",'name'=>"detail_cancel",'size'=>"50",'value'=>""));
+				$array_input = array(array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_cancel",'size'=>"50",'value'=>""));
 				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("ConfirmCancelTrip"),"","confirm_cancel",$array_input,"",0);
 				if ($ret == 'html') print '<br>';
 				endif;
@@ -1157,14 +1141,14 @@ else
 				endif;
 
 				if ($action == 'refuse'):
-				$array_input = array(array('type'=>"text",'label'=>"Entrez ci-dessous un motif de refus :",'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("ConfirmRefuseTrip"),"","confirm_refuse",$array_input,"yes",0);
+				$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
+				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
 				if ($action == 'delete_line')
 				{
-					$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$_GET['id']."&amp;rowid=".$_GET['rowid'],$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line");
+					$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id."&amp;rowid=".$_GET['rowid'],$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
 					if ($ret == 'html') print '<br>';
 				}
 
@@ -1190,9 +1174,10 @@ else
 					print '<td>'.$object->libelle_paiement.'</td>';
 					print '</tr>';
 				}
+				// Status
 				print '<tr>';
 				print '<td>'.$langs->trans("Statut").'</td>';
-				print '<td style="font-weight:bold;">'.$object->getLibStatut(4).'</td>';
+				print '<td>'.$object->getLibStatut(4).'</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("Note").'</td>';
@@ -1211,58 +1196,7 @@ else
 				print '<td>'.price($object->total_ttc).'</td>';
 				print '</tr>';
 
-				if($object->fk_c_expensereport_statuts<3)
-				{
-					print '<tr>';
-					print '<td>'.$langs->trans("VALIDATOR").'</td>';
-					print '<td>';
-					if ($object->fk_user_validator > 0)
-					{
-						$userfee=new User($db);
-						$userfee->fetch($object->fk_user_validator);
-						print $userfee->getNomUrl(1);
-					}
-					print '</td></tr>';
-				}
-				elseif($object->fk_c_expensereport_statuts==4)
-				{
-					print '<tr>';
-					print '<td><span style="font-weight:bold;color:red;">'.$langs->trans("CANCEL_USER").'</span></td>';
-					print '<td><span style="font-weight:bold;color:red;">';
-					if ($object->fk_user_cancel > 0)
-					{
-						$userfee=new User($db);
-						$userfee->fetch($object->fk_user_cancel);
-						print $userfee->getNomUrl(1);
-					}
-					print '</span></td></tr>';
-					print '<tr>';
-					print '<td><span style="font-weight:bold;color:red;">'.$langs->trans("MOTIF_CANCEL").'</span></td>';
-					print '<td><span style="font-weight:bold;color:red;">'.$object->detail_cancel.'</span></td></tr>';
-					print '</tr>';
-					print '<tr>';
-					print '<td><span style="font-weight:bold;color:red;">'.$langs->trans("DATE_CANCEL").'</span></td>';
-					print '<td><span style="font-weight:bold;color:red;">'.$object->date_cancel.'</span></td></tr>';
-					print '</tr>';
-				}
-				else
-				{
-					print '<tr>';
-					print '<td>'.$langs->trans("VALIDOR").'</td>';
-					print '<td>';
-					if ($object->fk_user_valid > 0)
-					{
-						$userfee=new User($db);
-						$userfee->fetch($object->fk_user_valid);
-						print $userfee->getNomUrl(1);
-					}
-					print '</td></tr>';
-					print '<tr>';
-					print '<td>'.$langs->trans("DATE_VALIDE").'</td>';
-					print '<td>'.$object->date_valide.'</td></tr>';
-					print '</tr>';
-				}
-
+				// Author
 				print '<tr>';
 				print '<td>'.$langs->trans("AUTHOR").'</td>';
 				print '<td>';
@@ -1293,31 +1227,82 @@ else
 					print '<td>'.$object->date_paiement.'</td></tr>';
 					print '</tr>';
 				}
+				
+				if($object->fk_c_expensereport_statuts<3)
+				{
+					print '<tr>';
+					print '<td>'.$langs->trans("VALIDATOR").'</td>';
+					print '<td>';
+					if ($object->fk_user_validator > 0)
+					{
+						$userfee=new User($db);
+						$userfee->fetch($object->fk_user_validator);
+						print $userfee->getNomUrl(1);
+					}
+					print '</td></tr>';
+				}
+				elseif($object->fk_c_expensereport_statuts==4)
+				{
+					print '<tr>';
+					print '<td>'.$langs->trans("CANCEL_USER").'</span></td>';
+					print '<td>';
+					if ($object->fk_user_cancel > 0)
+					{
+						$userfee=new User($db);
+						$userfee->fetch($object->fk_user_cancel);
+						print $userfee->getNomUrl(1);
+					}
+					print '</td></tr>';
+					print '<tr>';
+					print '<td>'.$langs->trans("MOTIF_CANCEL").'</td>';
+					print '<td>'.$object->detail_cancel.'</td></tr>';
+					print '</tr>';
+					print '<tr>';
+					print '<td>'.$langs->trans("DATE_CANCEL").'</td>';
+					print '<td>'.$object->date_cancel.'</td></tr>';
+					print '</tr>';
+				}
+				else
+				{
+					print '<tr>';
+					print '<td>'.$langs->trans("VALIDOR").'</td>';
+					print '<td>';
+					if ($object->fk_user_valid > 0)
+					{
+						$userfee=new User($db);
+						$userfee->fetch($object->fk_user_valid);
+						print $userfee->getNomUrl(1);
+					}
+					print '</td></tr>';
+					print '<tr>';
+					print '<td>'.$langs->trans("DATE_VALIDE").'</td>';
+					print '<td>'.$object->date_valide.'</td></tr>';
+					print '</tr>';
+				}
+
 				if($object->fk_c_expensereport_statuts==99 || !empty($object->detail_refuse))
 				{
 					print '<tr>';
-					print '<td><span style="font-weight:bold;color:red;">'.$langs->trans("REFUSEUR").'</span></td>';
-					print '<td><span style="font-weight:bold;color:red;">';
+					print '<td>'.$langs->trans("REFUSEUR").'</td>';
+					print '<td>';
 					$userfee=new User($db);
 					$userfee->fetch($object->fk_user_refuse);
 					print $userfee->getNomUrl(1);
-					print '</span></td></tr>';
+					print '</td></tr>';
 					print '<tr>';
-					print '<td><span style="font-weight:bold;color:red;">'.$langs->trans("MOTIF_REFUS").'</span></td>';
-					print '<td><span style="font-weight:bold;color:red;">'.$object->detail_refuse.'</span></td></tr>';
-					print '</tr>';
-					print '<tr>';
-					print '<td><span style="font-weight:bold;color:red;">'.$langs->trans("DATE_REFUS").'</span></td>';
-					print '<td><span style="font-weight:bold;color:red;">'.$object->date_refuse.'</span></td></tr>';
+					print '<td>'.$langs->trans("DATE_REFUS").'</td>';
+					print '<td>'.$object->date_refuse;
+					if ($object->detail_refuse) print ' - '.$object->detail_refuse;
+					print '</td>';
 					print '</tr>';
 				}
 				print '</table>';
 
 				print '<br>';
 
-				// Fetch Lines of current ndf
+				// Fetch Lines of current expense report
 				$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
-				$sql.= ' fde.fk_c_tva, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
+				$sql.= ' fde.fk_c_tva as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
 				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det fde';
@@ -1357,7 +1342,7 @@ else
 							print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
 						}
 						// Ajout des boutons de modification/suppression
-						if ($object->fk_c_expensereport_statuts<2 OR $object->fk_c_expensereport_statuts==99)
+						if ($object->fk_c_expensereport_statuts < 2 || $object->fk_c_expensereport_statuts==99)
 						{
 							print '<td style="text-align:right;"></td>';
 						}
@@ -1370,25 +1355,34 @@ else
 							$piece_comptable = $i + 1;
 							$objp = $db->fetch_object($resql);
 							$var=!$var;
-							if ($action != 'editline')
+							if ($action != 'editline' || $objp->rowid != GETPOST('rowid'))
 							{
 								print '<tr '.$bc[$var].'>';
-								print '<td style="text-align:center;width:9%;">';
-								print img_picto($langs->trans("Document"), "object_generic");
-								print ' <span style="color:red;font-weight:bold;font-size:14px;">'.$piece_comptable.'</span></td>';
+								if ($action != 'editline')
+								{
+									print '<td style="text-align:center;">';
+									print img_picto($langs->trans("Document"), "object_generic");
+									print ' <span>'.$piece_comptable.'</span></td>';
+								}
 								print '<td style="text-align:center;">'.$objp->date.'</td>';
 								print '<td style="text-align:center;">';
-								$projecttmp->id=$objp->projet_id;
-								$projecttmp->ref=$objp->projet_ref;
-								print $projecttmp->getNomUrl(1);
+								if ($objp->projet_id > 0)
+								{
+									$projecttmp->id=$objp->projet_id;
+									$projecttmp->ref=$objp->projet_ref;
+									print $projecttmp->getNomUrl(1);
+								}
 								print '</td>';
 								print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper($objp->type_fees_libelle)).'</td>';
 								print '<td style="text-align:left;">'.$objp->comments.'</td>';
-								print '<td style="text-align:right;">'.vatrate($objp->tva_taux,true).'</td>';
+								print '<td style="text-align:right;">'.vatrate($objp->vatrate,true).'</td>';
 								print '<td style="text-align:right;">'.price($objp->value_unit).'</td>';
 								print '<td style="text-align:right;">'.$objp->qty.'</td>';
-								print '<td style="text-align:right;">'.price($objp->total_ht).'</td>';
-								print '<td style="text-align:right;">'.price($objp->total_ttc).'</td>';
+								if ($action != 'editline')
+								{
+									print '<td style="text-align:right;">'.price($objp->total_ht).'</td>';
+									print '<td style="text-align:right;">'.price($objp->total_ttc).'</td>';
+								}
 
 								// Ajout des boutons de modification/suppression
 								if($object->fk_c_expensereport_statuts<2 OR $object->fk_c_expensereport_statuts==99)
@@ -1404,45 +1398,44 @@ else
 								}
 								print '</tr>';
 							}
-							else
+							
+							if ($action == 'editline' && $objp->rowid == GETPOST('rowid'))
 							{
-								if($objp->rowid==$_GET['rowid'])
-								{
 									//modif ligne!!!!!
 									print '<tr '.$bc[$var].'>';
 									// Sélection date
-									print '<td style="text-align:center;width:10%;">';
+									print '<td style="text-align:center;">';
 									$form->select_date($objp->date,'date');
 									print '</td>';
 
-									// Sélection projet
-									print '<td style="text-align:center;width:10%;">';
-									print select_projet($objp->fk_projet,'','fk_projet');
+									// Select project
+									print '<td>';
+									$formproject->select_projects(-1, $objp->fk_projet,'fk_projet', 0, 0, 0, 1);
 									print '</td>';
 
-									// Sélection type
-									print '<td style="text-align:center;width:10%;">';
+									// Sélect type
+									print '<td style="text-align:center;">';
 									select_type_fees_id($objp->type_fees_code,'fk_c_type_fees');
 									print '</td>';
 
 									// Add comments
-									print '<td style="text-align:left;width:35%;">';
+									print '<td>';
 									print '<textarea class="flat_ndf" name="comments" class="centpercent">'.$objp->comments.'</textarea>';
 									print '</td>';
 
 									// Sélection TVA
-									print '<td style="text-align:right;width:10%;">';
+									print '<td style="text-align:right;">';
 									print $form->load_tva('fk_c_tva', (isset($_POST["fk_c_tva"])?$_POST["fk_c_tva"]:$objp->tva_taux), $mysoc, '');
 									print '</td>';
 
 									// Prix unitaire
-									print '<td style="text-align:right;width:10%;">';
-									print '<input type="text" size="10" name="value_unit" value="'.$objp->value_unit.'" />';
+									print '<td style="text-align:right;">';
+									print '<input type="text" size="6" name="value_unit" value="'.$objp->value_unit.'" />';
 									print '</td>';
 
 									// Quantité
-									print '<td style="text-align:right;width:10%;">';
-									print '<input type="text" size="10" name="qty" value="'.$objp->qty.'" />';
+									print '<td style="text-align:right;">';
+									print '<input type="text" size="4" name="qty" value="'.$objp->qty.'" />';
 									print '</td>';
 
 									print '<td style="text-align:center;">';
@@ -1450,7 +1443,6 @@ else
 									print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 									print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 									print '</td>';
-								}
 							}
 
 							$i++;
@@ -1503,7 +1495,7 @@ else
 
 						// Sélection projet
 						print '<td>';
-						$formproject->select_projects('', GETPOST('fk_projet'), 'fk_projet', 0, 0, 1, 1);
+						$formproject->select_projects(-1, GETPOST('fk_projet'), 'fk_projet', 0, 0, 1, 1);
 						print '</td>';
 
 						// Sélection type
@@ -1528,7 +1520,7 @@ else
 
 						// Prix unitaire
 						print '<td style="text-align:right;">';
-						print '<input type="text" size="10" name="value_unit" value="'.GETPOST('value_unit').'">';
+						print '<input type="text" size="6" name="value_unit" value="'.GETPOST('value_unit').'">';
 						print '</td>';
 
 						// Quantité
@@ -1593,7 +1585,7 @@ if ($action != 'create' && $action != 'edit')
 			// Validate
 			if (count($object->lines) > 0 || count($object->lignes) > 0)
 			{
-				print '<a class="butAction" href="'.$_SEVER["PHP_SELF"].'?action=save&id='.$id.'">'.$langs->trans('Validate').'</a>';
+				print '<a class="butAction" href="'.$_SEVER["PHP_SELF"].'?action=save&id='.$id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
 			}
 
 			if ($user->rights->expensereport->supprimer)
@@ -1611,7 +1603,7 @@ if ($action != 'create' && $action != 'edit')
 	 */
 	if($user->rights->expensereport->creer && $object->fk_c_expensereport_statuts==99)
 	{
-		if ($object->fk_user_author == $user->id)
+		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Modifier
 			print '<a class="butAction" href="'.$_SEVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('ModifyInfoGen').'</a>';
@@ -1619,7 +1611,7 @@ if ($action != 'create' && $action != 'edit')
 			// Brouillonner (le statut refusée est identique à brouillon)
 			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
 			// Enregistrer depuis le statut "Refusée"
-			print '<a class="butAction" href="'.$_SEVER["PHP_SELF"].'?action=save_from_refuse&id='.$id.'">'.$langs->trans('Validate').'</a>';
+			print '<a class="butAction" href="'.$_SEVER["PHP_SELF"].'?action=save_from_refuse&id='.$id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
 
 			if ($user->rights->expensereport->supprimer)
 			{
@@ -1631,10 +1623,10 @@ if ($action != 'create' && $action != 'edit')
 
 	if ($user->rights->expensereport->to_paid && $object->fk_c_expensereport_statuts==5)
 	{
-		if ($object->fk_user_author == $user->id || $object->fk_user_valid == $user->id)
+		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Brouillonner
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('SetToDraft').'</a>';
 		}
 	}
 
@@ -1648,7 +1640,7 @@ if ($action != 'create' && $action != 'edit')
 		if ($object->fk_user_author == $user->id)
 		{
 			// Brouillonner
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('SetToDraft').'</a>';
 		}
 	}
 
@@ -1659,12 +1651,12 @@ if ($action != 'create' && $action != 'edit')
 			// Valider
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$id.'">'.$langs->trans('Approve').'</a>';
 			// Refuser
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$id.'">'.$langs->trans('Refuse').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$id.'">'.$langs->trans('Deny').'</a>';
 		//}
 
-		if ($object->fk_user_author==$user->id)
+		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
-			// Annuler
+			// Cancel
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('Cancel').'</a>';
 		}
 
@@ -1679,14 +1671,17 @@ if ($action != 'create' && $action != 'edit')
 	 *	ET user à droit de "to_paid"
 	*	Afficher : "Annuler" / "Payer" / "Supprimer"
 	*/
-	if ($user->rights->expensereport->to_paid && $object->fk_c_expensereport_statuts==5)
+	if ($user->rights->expensereport->to_paid && $object->fk_c_expensereport_statuts == 5)
 	{
 		// Payer
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=paid&id='.$id.'">'.$langs->trans('TO_PAID').'</a>';
 
-		// Annuler
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('CANCEL').'</a>';
-
+		// Cancel
+		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
+		{
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('Cancel').'</a>';
+		}
+		
 		if($user->rights->expensereport->supprimer)
 		{
 			// Supprimer
@@ -1717,10 +1712,10 @@ if ($action != 'create' && $action != 'edit')
 	if ($user->rights->expensereport->supprimer && $object->fk_c_expensereport_statuts==4)
 	{
 
-		if ($object->fk_user_validator==$user->id)
+		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Brouillonner
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('ReOpen').'</a>';
 		}
 
 		// Supprimer
@@ -1732,7 +1727,7 @@ if ($action != 'create' && $action != 'edit')
 print '</div>';
 
 
-$conf->global->DOL_URL_ROOT_DOCUMENT_PHP=dol_buildpath('/expensereport/documentwrapper.php',1);
+//$conf->global->DOL_URL_ROOT_DOCUMENT_PHP=dol_buildpath('/expensereport/documentwrapper.php',1);
 
 
 print '<div style="width:50%">';

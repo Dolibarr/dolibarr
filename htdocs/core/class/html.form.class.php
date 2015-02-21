@@ -3042,7 +3042,7 @@ class Form
             if (! empty($more)) {
             	$formconfirm.= '<div>'.$more.'</div>';
             }
-            $formconfirm.= img_help('','').' '.$question;
+            $formconfirm.= ($question ? img_help('','').' '.$question : '');
             $formconfirm.= '</div>'."\n";
 
             $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";

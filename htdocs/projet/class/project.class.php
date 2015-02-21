@@ -126,7 +126,7 @@ class Project extends CommonObject
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", " . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
         $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
-        $sql.= ", " . $this->budget_amount;
+        $sql.= ", " . ($this->budget_amount != ''?price2num($this->budget_amount):'null');
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -152,7 +152,7 @@ class Project extends CommonObject
             $error++;
         }
 
-        //Update extrafield
+        // Update extrafield
         if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
@@ -495,6 +495,23 @@ class Project extends CommonObject
             }
         }
 
+        // Set fk_projet into elements to null
+        $listoftables=array(
+        		'facture'=>'fk_projet','propal'=>'fk_projet','commande'=>'fk_projet','facture_fourn'=>'fk_projet','commande_fournisseur'=>'fk_projet',
+        		'expensereport_det'=>'fk_projet','contrat'=>'fk_projet','fichinter'=>'fk_projet'
+        		);
+        foreach($listoftables as $key => $value)
+        {
+   	        $sql = "UPDATE " . MAIN_DB_PREFIX . $key . " SET ".$value." = NULL where ".$value." = ". $this->id;
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        	break;
+	        }
+        }
+        
         // Delete tasks
         if (! $error)
         {

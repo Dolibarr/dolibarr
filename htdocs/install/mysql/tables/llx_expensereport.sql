@@ -41,6 +41,7 @@ CREATE TABLE llx_expensereport (
   note 				text,
   note_private 		text,
   fk_user_valid 	integer DEFAULT NULL,
+  fk_user_approve 	integer DEFAULT NULL,
   fk_user_paid 		integer DEFAULT NULL,
   detail_refuse 	varchar(255) DEFAULT NULL,
   date_cancel 		datetime,

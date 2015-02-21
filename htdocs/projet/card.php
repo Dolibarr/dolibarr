@@ -466,7 +466,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Budget
     print '<tr><td>'.$langs->trans("Budget").'</td>';
-    print '<td><input size="4" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount'])?price(GETPOST('budget_amount')):'').'"></td></tr>';
+    print '<td><input size="4" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td></tr>';
     print '</td></tr>';
 
     // Description

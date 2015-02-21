@@ -2121,7 +2121,7 @@ abstract class CommonObject
      *
      *      @param	int		$status			Status to set
      *      @param	int		$elementId		Id of element to force (use this->id by default)
-     *      @param	string	$elementType	Type of element to force (use ->this->element by default)
+     *      @param	string	$elementType	Type of element to force (use this->table_element by default)
      *      @return int						<0 if KO, >0 if OK
      */
     function setStatut($status,$elementId='',$elementType='')
@@ -2135,9 +2135,12 @@ abstract class CommonObject
 
         $fieldstatus="fk_statut";
         if ($elementTable == 'user') $fieldstatus="statut";
-
+        if ($elementTable == 'expensereport') $fieldstatus="fk_c_expensereport_statuts";
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
         $sql.= " SET ".$fieldstatus." = ".$status;
+        // If status = 1 = validated, update also fk_user_valid
+        if ($status == 1 && $elementTable == 'expensereport') $sql.=", fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid=".$elementId;
 
         dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
