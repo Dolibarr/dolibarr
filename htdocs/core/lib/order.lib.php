@@ -28,10 +28,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Commande	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function commande_prepare_head($object)
+function commande_prepare_head(Commande $object)
 {
 	global $langs, $conf, $user;
 	if (! empty($conf->expedition->enabled)) $langs->load("sendings");
@@ -52,7 +52,7 @@ function commande_prepare_head($object)
 	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipment");
+		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipments");
 		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
 		if ($conf->livraison_bon->enabled)  $text.=$langs->trans("Receivings");
 		$head[$h][1] = $text;
@@ -116,10 +116,9 @@ function commande_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object informations.
  *
- *  @param	Object	$object		order
- *  @return	array   	        head array with tabs
+ *  @return	array   	    		    head array with tabs
  */
-function order_admin_prepare_head($object)
+function order_admin_prepare_head()
 {
 	global $langs, $conf, $user;
 
@@ -131,7 +130,7 @@ function order_admin_prepare_head($object)
 	$head[$h][2] = 'general';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'order_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/order_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
@@ -143,7 +142,7 @@ function order_admin_prepare_head($object)
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'order_admin','remove');
 
 	return $head;
 }

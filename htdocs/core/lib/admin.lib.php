@@ -516,11 +516,6 @@ function security_prepare_head()
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
-    $head[$h][1] = $langs->trans("ExternalAccess");
-    $head[$h][2] = 'proxy';
-    $h++;
-
     $head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
     $head[$h][1] = $langs->trans("Miscellaneous");
     $head[$h][2] = 'misc';
@@ -529,6 +524,16 @@ function security_prepare_head()
     $head[$h][0] = DOL_URL_ROOT."/admin/security.php";
     $head[$h][1] = $langs->trans("Passwords");
     $head[$h][2] = 'passwords';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
+    $head[$h][1] = $langs->trans("Files");
+    $head[$h][2] = 'file';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
+    $head[$h][1] = $langs->trans("ExternalAccess");
+    $head[$h][2] = 'proxy';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT."/admin/events.php";
@@ -1193,7 +1198,7 @@ function showModulesExludedForExternal($modules)
 			$text .= $langs->trans('Module'.$module->numero.'Name');
 		}
 	}
-	return img_picto($langs->trans('InfoAdmin'), 'star').' '.$text;
+	return $text;
 }
 
 

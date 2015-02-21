@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,36 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 abstract class CommonInvoice extends CommonObject
 {
+    /**
+     * Standard invoice
+     */
+    const TYPE_STANDARD = 0;
+
+    /**
+     * Replacement invoice
+     */
+    const TYPE_REPLACEMENT = 1;
+
+    /**
+     * Credit note invoice
+     */
+    const TYPE_CREDIT_NOTE = 2;
+
+    /**
+     * Deposit invoice
+     */
+    const TYPE_DEPOSIT = 3;
+
+    /**
+     * Proforma invoice
+     */
+    const TYPE_PROFORMA = 4;
+
+    /**
+     * Situation invoice
+     */
+    const TYPE_SITUATION = 5;
+
 	/**
 	 * 	Return amount of payments already done
 	 *
@@ -143,11 +175,12 @@ abstract class CommonInvoice extends CommonObject
 	function getLibType()
 	{
 		global $langs;
-		if ($this->type == 0) return $langs->trans("InvoiceStandard");
-		if ($this->type == 1) return $langs->trans("InvoiceReplacement");
-		if ($this->type == 2) return $langs->trans("InvoiceAvoir");
-		if ($this->type == 3) return $langs->trans("InvoiceDeposit");
-		if ($this->type == 4) return $langs->trans("InvoiceProForma");
+        if ($this->type == CommonInvoice::TYPE_STANDARD) return $langs->trans("InvoiceStandard");
+        if ($this->type == CommonInvoice::TYPE_REPLACEMENT) return $langs->trans("InvoiceReplacement");
+        if ($this->type == CommonInvoice::TYPE_CREDIT_NOTE) return $langs->trans("InvoiceAvoir");
+        if ($this->type == CommonInvoice::TYPE_DEPOSIT) return $langs->trans("InvoiceDeposit");
+        if ($this->type == CommonInvoice::TYPE_PROFORMA) return $langs->trans("InvoiceProForma");
+        if ($this->type == CommonInvoice::TYPE_SITUATION) return $langs->trans("InvoiceSituation");
 		return $langs->trans("Unknown");
 	}
 

@@ -43,10 +43,10 @@ $dolibarr_main_document_root='';
 // You can put several values, separated by a coma, but number of entries must match 
 // number of entries into $dolibarr_main_document_root_alt.
 // Examples:
-// $dolibarr_main_url_root_alt='/extensions';
+// $dolibarr_main_url_root_alt='/custom';
 // $dolibarr_main_url_root_alt='/extensions1,/extensions2';
 //
-$dolibarr_main_url_root_alt='';
+//$dolibarr_main_url_root_alt='/custom';
 
 
 // dolibarr_main_document_root_alt
@@ -55,10 +55,10 @@ $dolibarr_main_url_root_alt='';
 // You can put several values, separated by a coma, but number of entries must match 
 // number of entries into $dolibarr_main_url_root_alt.
 // Examples:
-// $dolibarr_main_document_root_alt='/var/www/dolibarr/htdocs/extensions';
+// $dolibarr_main_document_root_alt='/var/www/dolibarr/htdocs/custom';
 // $dolibarr_main_document_root_alt='C:/My web sites/dolibarr/htdocs/extensions1,C:/My web sites/dolibarr/htdocs/extensions2';
 //
-$dolibarr_main_document_root_alt='';
+//$dolibarr_main_document_root_alt='/var/www/dolibarr/htdocs/custom';
 
 
 // dolibarr_main_data_root
@@ -204,15 +204,17 @@ $dolibarr_main_authentication='dolibarr';
 //##################
 
 // dolibarr_main_force_https
-// This parameter allows to force the HTTPS mode. 
+// This parameter allows to force the HTTPS mode.
 // 0 = No forced redirect
 // 1 = Force redirect to https, until SCRIPT_URI start with https into response
 // 2 = Force redirect to https, until SERVER["HTTPS"] is 'on' into response
-// Warning: If you enable this parameter, your web server must be configured
-// to respond URL with https protocol. Try different values (1,2) if you 
-// experience problems.
+// 'https://my.domain.com' = Force reditect to https using this domain name. 
+// Warning: If you enable this parameter, your web server must be configured to
+// respond URL with https protocol. 
+// According to your web server setup, some values may works and other not. Try 
+// different values (1,2 or 'https://my.domain.com') if you experience problems.
 // Default value: 0
-// Possible values: 0, 1 or 2
+// Possible values: 0, 1, 2 or 'https://my.domain.com'
 // Examples:
 // $dolibarr_main_force_https='0';
 //

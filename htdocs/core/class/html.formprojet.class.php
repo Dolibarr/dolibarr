@@ -43,17 +43,19 @@ class FormProjets
 	}
 
 	/**
-	 *	Show a combo list with projects qualified for a third party
+	 *	Output a combo list with projects qualified for a third party
 	 *
 	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
 	 *	@param  int		$selected   	Id project preselected
 	 *	@param  string	$htmlname   	Nom de la zone html
 	 *	@param	int		$maxlength		Maximum length of label
-	 *	@param	int		$option_only	Option only
+	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
+	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+     *  @param	int		$forcefocus		Force focus on field (works with javascript only)
 	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1)
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0)
 	{
 		global $user,$conf,$langs;
 
@@ -84,8 +86,21 @@ class FormProjets
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$minmax='';
+			
+			// Use select2 selector
+			$nodatarole='';
+			if (! empty($conf->use_javascript_ajax))
+			{
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+            	$out.=$comboenhancement;
+            	$nodatarole=($comboenhancement?' data-role="none"':'');
+            	$minmax='minwidth100 maxwidth300';
+			}
+
 			if (empty($option_only)) {
-				$out.= '<select class="flat" name="'.$htmlname.'">';
+				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
 			}
 			if (!empty($show_empty)) {
 				$out.= '<option value="0">&nbsp;</option>';
@@ -104,33 +119,40 @@ class FormProjets
 					}
 					else
 					{
+						if ($discard_closed == 1 && $obj->fk_statut == 2)
+						{
+							$i++;
+							continue;
+						}
+
 						$labeltoshow=dol_trunc($obj->ref,18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
+						$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
+
+						$disabled=0;
+						if ($obj->fk_statut == 0)
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("Draft");
+						}
+						else if ($obj->fk_statut == 2)
+						{
+							if ($discard_close == 2) $disabled=1;
+							$labeltoshow.=' - '.$langs->trans("Closed");
+						}
+						else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+						}
+
 						if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.' '.dol_trunc($obj->title,$maxlength).'</option>';
+							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
 						}
 						else
 						{
-							$disabled=0;
-							$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
-							if ($obj->fk_statut == 0)
-							{
-								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("Draft");
-							}
-							else if ($obj->fk_statut == 2)
-							{
-								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("Closed");
-							}
-							else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
-							{
-								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
-							}
-
 							if ($hideunselectables && $disabled)
 							{
 								$resultat='';
@@ -154,6 +176,7 @@ class FormProjets
 			if (empty($option_only)) {
 				$out.= '</select>';
 			}
+
 			print $out;
 
 			$this->db->free($resql);

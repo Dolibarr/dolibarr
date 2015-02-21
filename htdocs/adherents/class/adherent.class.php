@@ -6,6 +6,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,10 @@ class Adherent extends CommonObject
     var $mesgs;
 
     var $id;
+
     var $ref;
+    public $ref_ext;
+
     var $civility_id;
     var $firstname;
     var $lastname;
@@ -107,6 +111,7 @@ class Adherent extends CommonObject
 
     var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
+    public $entity;
 
     /**
 	 *	Constructor
@@ -637,10 +642,6 @@ class Adherent extends CommonObject
      */
     function update_end_date($user)
     {
-        global $conf, $langs;
-
-        $error=0;
-
         $this->db->begin();
 
         // Search for last subscription id and end date
@@ -1045,7 +1046,7 @@ class Adherent extends CommonObject
      *	@param	int		$rowid      Id of object to load
      * 	@param	string	$ref		To load member from its ref
      * 	@param	int		$fk_soc		To load member from its link to third party
-     * 	@param	int		$ref_ext	External reference
+     * 	@param	string	$ref_ext	External reference
      *	@return int         		>0 if OK, 0 if not found, <0 if KO
      */
     function fetch($rowid,$ref='',$fk_soc='',$ref_ext='')
@@ -1237,7 +1238,7 @@ class Adherent extends CommonObject
     /**
      *	Insert subscription into database and eventually add links to banks, mailman, etc...
      *
-     *	@param	timestamp	$date        		Date of effect of subscription
+     *	@param	int	        $date        		Date of effect of subscription
      *	@param	double		$montant     		Amount of subscription (0 accepted for some members)
      *	@param	int			$accountid			Id bank account
      *	@param	string		$operation			Type operation (if Id bank account provided)
@@ -1245,7 +1246,7 @@ class Adherent extends CommonObject
      *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
      *	@param	string		$emetteur_nom		Name of cheque writer
      *	@param	string		$emetteur_banque	Name of bank of cheque
-     *	@param	timestamp	$datesubend			Date end subscription
+     *	@param	int     	$datesubend			Date end subscription
      *	@return int         					rowid of record added, <0 if KO
      */
     function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
@@ -1306,7 +1307,7 @@ class Adherent extends CommonObject
                 return $rowid;
             }
             else
-            {
+			{
                 $this->db->rollback();
                 return -2;
             }
@@ -1559,27 +1560,31 @@ class Adherent extends CommonObject
         global $langs;
 
         $result='';
+        $label = '<u>' . $langs->trans("ShowMember") . '</u>';
+        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->firstname) || ! empty($this->lastname))
+            $label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if ($option == 'card')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.$linkclose;
             $lienfin='</a>';
         }
         if ($option == 'subscription')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$this->id.$linkclose;
             $lienfin='</a>';
         }
         if ($option == 'category')
         {
-        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
-        	$lienfin='</a>';
+            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3'.$linkclose;
+            $lienfin='</a>';
         }
 
         $picto='user';
-        $label=$langs->trans("ShowMember");
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
         return $result;
@@ -1601,7 +1606,7 @@ class Adherent extends CommonObject
      *
      *  @param	int			$statut      			Id statut
      *	@param	int			$need_subscription		1 si type adherent avec cotisation, 0 sinon
-     *	@param	timestamp	$date_end_subscription	Date fin adhesion
+     *	@param	int     	$date_end_subscription	Date fin adhesion
      *  @param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string      						Label
      */
@@ -1717,17 +1722,15 @@ class Adherent extends CommonObject
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *      @param	User	$user   	Objet user
-     *      @return int     			<0 if KO, >0 if OK
+     *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
-        global $conf;
-
-        $now=dol_now();
+        global $conf, $langs;
 
         if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
 
-        $this->nbtodo=$this->nbtodolate=0;
+	    $now=dol_now();
 
         $sql = "SELECT a.rowid, a.datefin";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
@@ -1738,12 +1741,24 @@ class Adherent extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+	        $langs->load("members");
+
+	        $response = new WorkboardResponse();
+	        $response->warning_delay=$conf->adherent->cotisation->warning_delay/60/60/24;
+	        $response->label=$langs->trans("MembersWithSubscriptionToReceive");
+	        $response->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1';
+	        $response->img=img_object($langs->trans("Members"),"user");
+
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
-                if ($this->db->jdate($obj->datefin) < ($now - $conf->adherent->cotisation->warning_delay)) $this->nbtodolate++;
+	            $response->nbtodo++;
+
+                if ($this->db->jdate($obj->datefin) < ($now - $conf->adherent->cotisation->warning_delay)) {
+	                $response->nbtodolate++;
+                }
             }
-            return 1;
+
+            return $response;
         }
         else
         {

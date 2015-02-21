@@ -392,6 +392,7 @@ class Opensurveysondage extends CommonObject
 	function fetch_lines()
 	{
 		$ret=array();
+
 		$sql = "SELECT id_users, nom as name, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql.= " WHERE id_sondage = '".$this->db->escape($this->id_sondage)."'";
 		$resql=$this->db->query($sql);
@@ -441,7 +442,9 @@ class Opensurveysondage extends CommonObject
 	 *
 	 * @return Object[]
 	 */
-	public function getComments() {
+	public function getComments()
+	{
+		$comments = array();
 
 		$sql = 'SELECT id_comment, usercomment, comment';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_comments';
@@ -449,13 +452,16 @@ class Opensurveysondage extends CommonObject
 		$sql.= " ORDER BY id_comment";
 		$resql = $this->db->query($sql);
 
-		$num_rows=$this->db->num_rows($resql);
+		if ($resql)
+		{
+			$num_rows=$this->db->num_rows($resql);
 
-		$comments = array();
-
-		if ($num_rows > 0) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$comments[] = $obj;
+			if ($num_rows > 0)
+			{
+				while ($obj = $this->db->fetch_object($resql))
+				{
+					$comments[] = $obj;
+				}
 			}
 		}
 
@@ -469,8 +475,8 @@ class Opensurveysondage extends CommonObject
 	 * @param string $comment_user Comment author
 	 * @return boolean False in case of the query fails, true if it was successful
 	 */
-	public function addComment($comment, $comment_user) {
-
+	public function addComment($comment, $comment_user)
+	{
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
 		$sql.= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."')";
 		$resql = $this->db->query($sql);
@@ -488,8 +494,9 @@ class Opensurveysondage extends CommonObject
 	 * @param int $id_comment Id of the comment
 	 * @return boolean False in case of the query fails, true if it was successful
 	 */
-	public function deleteComment($id_comment) {
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_comments WHERE id_comment = '.$id_comment.' AND id_sondage = '.$this->id_sondage;
+	public function deleteComment($id_comment)
+	{
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_comments WHERE id_comment = '.$id_comment.' AND id_sondage = "'.$this->db->escape($this->id_sondage).'"';
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
@@ -504,8 +511,8 @@ class Opensurveysondage extends CommonObject
 	 *
 	 * @return void
 	 */
-	private function cleanParameters() {
-
+	private function cleanParameters()
+	{
 		$this->id_sondage = trim($this->id_sondage);
 		$this->commentaires = trim($this->commentaires);
 		$this->mail_admin = trim($this->mail_admin);

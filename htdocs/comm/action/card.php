@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -74,6 +75,7 @@ $cactioncomm = new CActionComm($db);
 $object = new ActionComm($db);
 $contact = new Contact($db);
 $extrafields = new ExtraFields($db);
+$formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
@@ -538,6 +540,7 @@ $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('',$langs->trans("Agenda"),$help_url);
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formactions = new FormActions($db);
 
 if ($action == 'create')
@@ -678,7 +681,7 @@ if ($action == 'create')
 			$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
 		}
 	}
-	print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
+	print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
 	if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").': <input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked="checked"':'').'> '.$langs->trans("Busy");
 	print '</td></tr>';
 
@@ -776,11 +779,11 @@ if ($action == 'create')
 
 	print '</table>';
 
-	print '<center><br>';
+	print '<br><div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	print ' &nbsp; &nbsp; ';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</center>';
+	print '</div>';
 
 	print "</form>";
 }
@@ -878,15 +881,15 @@ if ($id > 0)
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $form->select_date($object->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
-		else if (GETPOST("afaire") == 2) $form->select_date($object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
-		else $form->select_date($object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		if (GETPOST("afaire") == 1) $form->select_date($datep?$datep:$object->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
+		else if (GETPOST("afaire") == 2) $form->select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		else $form->select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $form->select_date($object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		else if (GETPOST("afaire") == 2) $form->select_date($object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		else $form->select_date($object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		if (GETPOST("afaire") == 1) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else if (GETPOST("afaire") == 2) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		print '</td></tr>';
 
 		// Status
@@ -902,7 +905,7 @@ if ($id > 0)
 	    }
 
 		// Assigned to
-		print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
@@ -925,7 +928,7 @@ if ($id > 0)
 				$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
 			}
 		}
-		print $form->select_dolusers_forevent(($action=='create'?'add':'update'),'assignedtouser',1);
+		print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
 		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked="checked"':'').'">'.$langs->trans("Busy");
 		print '</td></tr>';
 
@@ -1010,9 +1013,11 @@ if ($id > 0)
 
 		dol_fiche_end();
 
-		print '<center><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</center>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
 		print '</form>';
 	}
@@ -1040,7 +1045,7 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
         // Full day event
-        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent).'</td></tr>';
+        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent, 3).'</td></tr>';
 
 		$rowspan=4;
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) $rowspan++;
@@ -1072,7 +1077,7 @@ if ($id > 0)
     	}
 
 		// Assigned to
-    	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+    	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
@@ -1282,6 +1287,33 @@ if ($id > 0)
 		print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
 		print '</form>'."\n";
 		print '</div>';
+
+		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC))
+		{
+			print '<div style="clear:both;">&nbsp;<br><br></div><div class="fichecenter"><div class="fichehalfleft">';
+            print '<a name="builddoc"></a>'; // ancre
+
+            /*
+             * Documents generes
+             */
+
+            $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
+            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+
+            $genallowed=$user->rights->agenda->myactions->create;
+	        $delallowed=$user->rights->agenda->myactions->delete;
+
+            $var=true;
+
+            $somethingshown=$formfile->show_documents('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
+
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+
+			print '</div></div></div>';
+
+            print '<div style="clear:both;">&nbsp;</div>';
+	    }
 	}
 }
 

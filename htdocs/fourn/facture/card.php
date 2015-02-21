@@ -120,7 +120,10 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 //    }
 }
 
-elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseur->facture->valider)
+elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
+    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
+    || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
+)
 {
     $idwarehouse=GETPOST('idwarehouse');
 
@@ -154,8 +157,7 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
         $result = $object->validate($user,'',$idwarehouse);
         if ($result < 0)
         {
-            setEventMessage($object->error,'errors');
-            setEventMessage($object->errors,'errors');
+            setEventMessages($object->error,$object->errors,'errors');
         }
     }
 }
@@ -300,13 +302,13 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         $_GET['socid']=$_POST['socid'];
         $error++;
     }
-    
+
     // Fill array 'array_options' with data from add form
-    
+
     if (! $error)
     {
         $db->begin();
-        
+
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 		if ($ret < 0) $error ++;
@@ -711,10 +713,8 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
     			$outputlangs->setDefaultLang($newlang);
     		}
     		$model=$object->modelpdf;
-    		if (empty($model)) {
-    			$tmp=getListOfModels($db, 'invoice_supplier'); $keys=array_keys($tmp); $model=$keys[0];
-    		}
     		$ret = $object->fetch($id); // Reload to get new records
+
     		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		if ($result < 0) dol_print_error($db,$result);
     	}
@@ -793,10 +793,8 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
     			$outputlangs->setDefaultLang($newlang);
     		}
     		$model=$object->modelpdf;
-    		if (empty($model)) {
-    			$tmp=getListOfModels($db, 'invoice_supplier'); $keys=array_keys($tmp); $model=$keys[0];
-    		}
     		$ret = $object->fetch($id); // Reload to get new records
+
     		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		if ($result < 0) dol_print_error($db,$result);
     	}
@@ -1187,16 +1185,16 @@ if ($action == 'create')
 {
 	$facturestatic = new FactureFournisseur($db);
 	$extralabels = $extrafields->fetch_name_optionals_label($facturestatic->table_element);
-	
+
     print_fiche_titre($langs->trans('NewBill'));
 
     dol_htmloutput_events();
 
     $societe='';
-    if ($_GET['socid'])
+    if (GETPOST('socid') > 0)
     {
         $societe=new Societe($db);
-        $societe->fetch($_GET['socid']);
+        $societe->fetch(GETPOST('socid','int'));
     }
 
     if (GETPOST('origin') && GETPOST('originid'))
@@ -1275,14 +1273,14 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
     print '<td>';
 
-    if ($_REQUEST['socid'] > 0)
+    if (GETPOST('socid') > 0)
     {
         print $societe->getNomUrl(1);
-        print '<input type="hidden" name="socid" value="'.$_GET['socid'].'">';
+        print '<input type="hidden" name="socid" value="'.GETPOST('socid','int').'">';
     }
     else
     {
-        print $form->select_company((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
+        print $form->select_company(GETPOST('socid','int'),'socid','s.fournisseur = 1',1);
     }
     print '</td></tr>';
 
@@ -1397,12 +1395,13 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Project
-	if (! empty($conf->projet->enabled)) {
+	if (! empty($conf->projet->enabled))
+	{
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
-		$formproject->select_projects($soc->id, $projectid, 'projectid');
+		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$societe->id:'-1'), $projectid, 'projectid', 0);
 		print '</td></tr>';
 	}
 
@@ -1428,7 +1427,7 @@ if ($action == 'create')
     print '</td>';
     // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
     print '</tr>';
-    
+
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		print $object->showOptionals($extrafields, 'edit');
@@ -1503,7 +1502,7 @@ if ($action == 'create')
     // Bouton "Create Draft"
     print "</table>\n";
 
-    print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
+    print '<br><div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></div>';
 
     print "</form>\n";
 
@@ -1544,7 +1543,7 @@ else
         $societe = new Fournisseur($db);
         $result=$societe->fetch($object->socid);
         if ($result < 0) dol_print_error($db);
-        
+
         // fetch optionals attributes and labels
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -1941,11 +1940,11 @@ else
             print '</td><td colspan="3">';
             if ($action == 'classify')
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1', $object->fk_project, 'projectid');
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1'), $object->fk_project, 'projectid', 0, 0, 1);
             }
             else
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0);
             }
             print '</td>';
             print '</tr>';
@@ -2259,7 +2258,8 @@ else
             {
                 if (count($object->lines))
                 {
-                    if ($user->rights->fournisseur->facture->valider)
+			        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
+			       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
                     {
                         print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid"';
                         print '>'.$langs->trans('Validate').'</a>';
@@ -2368,7 +2368,7 @@ else
                 			$i ++;
                 		}
                 		print '</table>';
-                		print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></center>';
+                		print '<br><div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
                 		print '</form>';
                 		$db->free($resqlorderlist);
                 	} else {

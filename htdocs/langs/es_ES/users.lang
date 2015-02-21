@@ -63,7 +63,6 @@ ShowGroup=Ver grupo
 ShowUser=Ver usuario
 NonAffectedUsers=Usuarios no destinados al grupo
 UserModified=Usuario correctamente modificado
-GroupModified=Grupo %s modificado
 PhotoFile=Archivo foto
 UserWithDolibarrAccess=Usuario con acceso a Dolibarr
 ListOfUsersInGroup=Listado de usuarios de este grupo

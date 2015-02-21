@@ -4,6 +4,8 @@
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +58,17 @@ class pdf_crabe extends ModelePDFFactures
 
 	var $emetteur;	// Objet societe qui emet
 
+	/**
+	 * @var bool Situation invoice type
+	 */
+	public $situationinvoice;
 
+	/**
+	 * @var float X position for the situation progress column
+	 */
+	public $posxprogress;
+
+	
 	/**
 	 *	Constructor
 	 *
@@ -107,6 +119,7 @@ class pdf_crabe extends ModelePDFFactures
 		$this->posxup=126;
 		$this->posxqty=145;
 		$this->posxdiscount=162;
+		$this->posxprogress=174; // Only displayed for situation invoices
 		$this->postotalht=174;
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
@@ -125,6 +138,7 @@ class pdf_crabe extends ModelePDFFactures
 		$this->localtax2=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
+		$this->situationinvoice=False;
 	}
 
 
@@ -276,6 +290,18 @@ class pdf_crabe extends ModelePDFFactures
 					$this->posxqty+=($this->postotalht - $this->posxdiscount);
 					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
 					//$this->postotalht;
+				}
+
+				// Situation invoice handling
+				if ($object->situation_cycle_ref) 
+				{
+					$this->situationinvoice = True;
+					$progress_width = 14;
+					$this->posxtva -= $progress_width;
+					$this->posxup -= $progress_width;
+					$this->posxqty -= $progress_width;
+					$this->posxdiscount -= $progress_width;
+					$this->posxprogress -= $progress_width;
 				}
 
 				// New page
@@ -444,16 +470,30 @@ class pdf_crabe extends ModelePDFFactures
 					{
                         $pdf->SetXY($this->posxdiscount-2, $curY);
 					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
+						$pdf->MultiCell($this->posxprogress-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
+					}
+
+					if ($this->situationinvoice)
+					{
+						// Situation progress
+						$progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
+						$pdf->SetXY($this->posxprogress, $curY);
+						$pdf->MultiCell($this->postotalht-$this->posxprogress, 3, $progress, 0, 'R');
 					}
 
 					// Total HT line
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
-
+					
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$tvaligne=$object->lines[$i]->total_tva;
+					$prev_progress = $object->lines[$i]->get_prev_progress();
+					if ($prev_progress > 0) // Compute progress from previous situation
+					{
+						$tvaligne = $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+					} else {
+						$tvaligne = $object->lines[$i]->total_tva;
+					}
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
 					$localtax1_rate=$object->lines[$i]->localtax1_tx;
@@ -1434,7 +1474,7 @@ class pdf_crabe extends ModelePDFFactures
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
+			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posy=42;

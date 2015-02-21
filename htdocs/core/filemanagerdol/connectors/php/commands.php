@@ -53,6 +53,13 @@ function GetFolders( $resourceType, $currentFolder )
 	echo "</Folders>" ;
 }
 
+/**
+ * GetFoldersAndFiles
+ *
+ * @param	string	$resourceType	Resource type
+ * @param	string	$currentFolder	Current folder
+ * @return void
+ */
 function GetFoldersAndFiles( $resourceType, $currentFolder )
 {
 	// Map the virtual path to the local server path.
@@ -111,6 +118,13 @@ function GetFoldersAndFiles( $resourceType, $currentFolder )
 	echo '</Files>' ;
 }
 
+/**
+ * Create folder
+ *
+ * @param   string $resourceType    Resource type
+ * @param   string $currentFolder   Current folder
+ * @return void
+ */
 function CreateFolder( $resourceType, $currentFolder )
 {
 	if (!isset($_GET)) {
@@ -174,7 +188,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 	if ( isset( $_FILES['NewFile'] ) && !is_null($_FILES['NewFile']['tmp_name'])
        // This is for the QuickUpload tab box
-        or (isset($_FILES['upload']) and !is_null($_FILES['upload']['tmp_name'])))
+        or (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name'])))
 	{
 		global $Config ;
 

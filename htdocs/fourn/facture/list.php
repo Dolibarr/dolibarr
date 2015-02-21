@@ -72,8 +72,9 @@ $search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax","alpha");
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
+$filter = GETPOST("filtre");
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
 {
 	$search_ref="";
 	$search_ref_supplier="";
@@ -83,6 +84,7 @@ if (GETPOST("button_removefilter"))
 	$search_amount_all_tax="";
 	$year="";
 	$month="";
+	$filter="";
 }
 
 /*
@@ -123,11 +125,11 @@ llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:Factur
 
 $sql = "SELECT s.rowid as socid, s.nom as name, ";
 $sql.= " fac.rowid as facid, fac.ref, fac.ref_supplier, fac.datef, fac.date_lim_reglement as date_echeance,";
-$sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle";
-if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) $sql.=", p.rowid as project_id, p.ref as project_ref";
+$sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle,";
+$sql.= " p.rowid as project_id, p.ref as project_ref";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
-if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = fac.fk_projet";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = fac.fk_projet";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE fac.entity = ".$conf->entity;
 $sql.= " AND fac.fk_soc = s.rowid";
@@ -136,9 +138,9 @@ if ($socid)
 {
 	$sql .= " AND s.rowid = ".$socid;
 }
-if (GETPOST('filtre') && GETPOST('filtre') != -1)		// GETPOST('filtre') may be a string
+if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
 {
-	$filtrearr = explode(",", GETPOST('filtre'));
+	$filtrearr = explode(",", $filter);
 	foreach ($filtrearr as $fil)
 	{
 		$filt = explode(":", $fil);
@@ -148,7 +150,7 @@ if (GETPOST('filtre') && GETPOST('filtre') != -1)		// GETPOST('filtre') may be a
 
 if ($search_ref)
 {
-	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.rowid', 'fac.ref'), $search_ref);// For backward compatibility
+	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.ref'), $search_ref);
 	else $sql .= natural_search('fac.ref', $search_ref);
 }
 if (search_ref_supplier)
@@ -217,14 +219,14 @@ if ($resql)
 	if ($search_company)      	$param.='&search_company='.urlencode($search_company);
 	if ($search_amount_no_tax)	$param.='&search_amount_no_tax='.urlencode($search_amount_no_tax);
 	if ($search_amount_all_tax)	$param.='&search_amount_all_tax='.urlencode($search_amount_all_tax);
-	if (GETPOST("filtre") && GETPOST('filtre') != -1) $param.='&filtre='.urlencode(GETPOST("filtre"));
+	if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
 
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"fac.ref,fac.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"ref_supplier","",$param,"",$sortfield,$sortorder);
+	if (empty($conf->global->SUPPLIER_INVOICE_HIDE_REF_SUPPLIER)) print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"ref_supplier","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fac.datef,fac.rowid","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"fac.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"fac.libelle","",$param,"",$sortfield,$sortorder);
@@ -242,9 +244,12 @@ if ($resql)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" size="6" type="text" name="search_ref_supplier" value="'.$search_ref_supplier.'">';
-	print '</td>';
+	if (empty($conf->global->SUPPLIER_INVOICE_HIDE_REF_SUPPLIER))
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" size="6" type="text" name="search_ref_supplier" value="'.$search_ref_supplier.'">';
+		print '</td>';
+	}
 	print '<td class="liste_titre" colspan="1" align="center">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 	//print '&nbsp;'.$langs->trans('Year').': ';
@@ -269,8 +274,8 @@ if ($resql)
 	print '</td><td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
-	$liststatus=array('paye:0'=>$langs->trans("Unpayed"), 'paye:1'=>$langs->trans("Payed"));
-	print $form->selectarray('filtre', $liststatus, GETPOST('filtre'), 1);
+	$liststatus=array('paye:0'=>$langs->trans("Unpaid"), 'paye:1'=>$langs->trans("Paid"));
+	print $form->selectarray('filtre', $liststatus, $filter, 1);
 	print '</td><td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -290,6 +295,7 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
+
 		print '<td class="nowrap">';
 		$facturestatic->id=$obj->facid;
 		$facturestatic->ref=$obj->ref;
@@ -299,7 +305,10 @@ if ($resql)
 		$filedir=$conf->fournisseur->dir_output.'/facture' . '/' . dol_sanitizeFileName($obj->facid).'/0/'.dol_sanitizeFileName($obj->ref);
 		print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 		print "</td>\n";
-		print '<td class="nowrap">'.dol_trunc($obj->ref_supplier,10)."</td>";
+
+		// Ref supplier
+		if (empty($conf->global->SUPPLIER_INVOICE_HIDE_REF_SUPPLIER)) print '<td class="nowrap">'.$obj->ref_supplier."</td>";
+
 		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
 		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->date_echeance),'day');
 		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance && $db->jdate($obj->date_echeance) < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
@@ -323,13 +332,13 @@ if ($resql)
 		$total+=$obj->total_ht;
 		$total_ttc+=$obj->total_ttc;
 
-		// Affiche statut de la facture
+		// Status
 		print '<td align="right" class="nowrap">';
 		// TODO  le montant deja paye objp->am n'est pas definie
 		//print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
 		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5);
 		print '</td>';
-		
+
 		print '<td align="center">&nbsp;</td>';
 
 		print "</tr>\n";
@@ -337,9 +346,12 @@ if ($resql)
 
 		if ($i == min($num,$limit))
 		{
+			$rowspan=5;
+			if (empty($conf->global->SUPPLIER_INVOICE_HIDE_REF_SUPPLIER)) $rowspan++;
+
 			// Print total
 			print '<tr class="liste_total">';
-			print '<td class="liste_total" colspan="6" align="left">'.$langs->trans("Total").'</td>';
+			print '<td class="liste_total" colspan="'.$rowspan.'" align="left">'.$langs->trans("Total").'</td>';
 			if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) print '<td></td>';
 			print '<td class="liste_total" align="right">'.price($total).'</td>';
 			print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';

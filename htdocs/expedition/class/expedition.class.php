@@ -113,7 +113,7 @@ class Expedition extends CommonObject
 	/**
 	 *	Return next contract ref
 	 *
-	 *	@param	Societe		$soc	Objet society
+	 *	@param	Societe		$soc	Thirdparty object
 	 *	@return string				Free reference for contract
 	 */
 	function getNextNumRef($soc)
@@ -121,21 +121,30 @@ class Expedition extends CommonObject
 		global $db, $langs, $conf;
 		$langs->load("sendings");
 
-		$dir = DOL_DOCUMENT_ROOT . "/core/modules/expedition";
-
-	    if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
+	    if (!empty($conf->global->EXPEDITION_ADDON_NUMBER))
         {
-            $conf->global->EXPEDITION_ADDON_NUMBER='mod_expedition_safor';
-        }
+			$mybool = false;
 
-		$file = $conf->global->EXPEDITION_ADDON_NUMBER.".php";
+			$file = $conf->global->EXPEDITION_ADDON_NUMBER.".php";
+			$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
 
-		// Chargement de la classe de numerotation
-		$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
+	        // Include file with class
+	        $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-		$result=include_once $dir.'/'.$file;
-		if ($result)
-		{
+	        foreach ($dirmodels as $reldir) {
+
+		        $dir = dol_buildpath($reldir."core/modules/expedition/");
+
+		        // Load file with numbering class (if found)
+		        $mybool|=@include_once $dir.$file;
+	        }
+
+	        if (! $mybool)
+	        {
+		        dol_print_error('',"Failed to include file ".$file);
+		        return '';
+	        }
+
 			$obj = new $classname();
 			$numref = "";
 			$numref = $obj->getNextValue($soc,$this);
@@ -149,12 +158,12 @@ class Expedition extends CommonObject
 				dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
-		}
-		else
-		{
-			print $langs->trans("Error")." ".$langs->trans("Error_EXPEDITION_ADDON_NUMBER_NotDefined");
-			return "";
-		}
+        }
+	    else
+	    {
+		    print $langs->trans("Error")." ".$langs->trans("Error_EXPEDITION_ADDON_NUMBER_NotDefined");
+		    return "";
+	    }
 	}
 
 	/**
@@ -246,13 +255,16 @@ class Expedition extends CommonObject
 				$num=count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
-					if (! isset($this->lines[$i]->detail_batch)) {
-					if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty) > 0)
-					{
-						$error++;
+					if (! isset($this->lines[$i]->detail_batch))
+					{	// no batch management
+						if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty) > 0)
+						{
+							$error++;
+						}
 					}
-					} else {
-						if (! $this->create_line_ext($this->lines[$i]) > 0)
+					else
+					{	// with batch management
+						if (! $this->create_line_batch($this->lines[$i]) > 0)
 						{
 							$error++;
 						}
@@ -357,28 +369,37 @@ class Expedition extends CommonObject
 		if (! $error) return 1;
 		else return -1;
 	}
+
+
 	/**
 	 * Create a expedition line with eat-by date
 	 *
 	 * @param 	object		$line_ext		full line informations
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function create_line_ext($line_ext)
+	function create_line_batch($line_ext)
 	{
 		$error = 0;
 
-		if ( $this->create_line(($line_ext->entrepot_id?$line_ext->entrepot_id:'null'),$line_ext->origin_line_id,$line_ext->qty)<0)
+		if ($this->create_line(($line_ext->entrepot_id?$line_ext->entrepot_id:'null'),$line_ext->origin_line_id,$line_ext->qty) < 0)
 		{
 			$error++;
-		} else {
+		}
+
+		if (! $error)
+		{
 			$line_id= $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
 			$tab=$line_ext->detail_batch;
-			foreach ($tab as $detbatch) {
-				if (! ($detbatch->create($line_id) >0)) {
+			foreach ($tab as $detbatch)
+			{
+				if (! ($detbatch->create($line_id) >0))		// Create an expeditionlinebatch
+				{
 					$error++;
 				}
 			}
 		}
+
+
 		if (! $error) return 1;
 		else return -1;
 	}
@@ -390,7 +411,7 @@ class Expedition extends CommonObject
 	 * 	@param	string	$ref		Ref of object
 	 * 	@param	string	$ref_ext	External reference of object
      * 	@param	string	$ref_int	Internal reference of other object
-	 *	@return int			        >0 if OK, <0 if KO
+	 *	@return int			        >0 if OK, 0 if not found, <0 if KO
 	 */
 	function fetch($id, $ref='', $ref_ext='', $ref_int='')
 	{
@@ -487,9 +508,9 @@ class Expedition extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this).'::Fetch Error -2', LOG_ERR);
+				dol_syslog(get_class($this).'::Fetch no expedition found', LOG_ERR);
 				$this->error='Delivery with id '.$id.' not found sql='.$sql;
-				return -2;
+				return 0;
 			}
 		}
 		else
@@ -521,7 +542,8 @@ class Expedition extends CommonObject
 			return 0;
 		}
 
-		if (! $user->rights->expedition->valider)
+        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate))))
 		{
 			$this->error='Permission denied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -602,11 +624,16 @@ class Expedition extends CommonObject
 					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
 					if ($result < 0) { $error++; break; }
 
-					if (! empty($conf->productbatch->enabled)) {
-						$details=ExpeditionLigneBatch::FetchAll($this->db,$obj->rowid);
-						foreach ($details as $dbatch) {
-							$result=$mouvS->livraison_batch($dbatch->fk_origin_stock,$dbatch->dluo_qty);
-							if ($result < 0) { $error++; $this->errors[]=$mouvS->$error; break 2; }
+					if (! empty($conf->productbatch->enabled))
+					{
+						$details=ExpeditionLineBatch::fetchAll($this->db,$obj->rowid);
+						if (! empty($details))
+						{
+							foreach ($details as $dbatch)
+							{
+								$result=$mouvS->livraison_batch($dbatch->fk_origin_stock,$dbatch->dluo_qty);
+								if ($result < 0) { $error++; $this->errors[]=$mouvS->$error; break 2; }
+							}
 						}
 					}
 				}
@@ -721,10 +748,12 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 * Add a expedition line
+	 * Add a expedition line.
+	 * If STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS is set, you can add a shipment line, with no stock source defined
+	 * If STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT is not set, you can add a shipment line, even if not enough into stock
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
-	 * @param 	int		$id					Id of source line
+	 * @param 	int		$id					Id of source line (order line)
 	 * @param 	int		$qty				Quantity
 	 * @return	int							<0 if KO, >0 if OK
 	 */
@@ -739,18 +768,26 @@ class Expedition extends CommonObject
 		$line->origin_line_id = $id;
 		$line->qty = $qty;
 
-		if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
-			$orderline = new OrderLine($this->db);
-			$orderline->fetch($id);
-			$fk_product = $orderline->fk_product;
+		$orderline = new OrderLine($this->db);
+		$orderline->fetch($id);
+		$fk_product = $orderline->fk_product;
 
-			if (!empty($orderline->fk_product))
+		if (! empty($orderline->fk_product))
+		{
+			if (! ($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS))
+			{
+				$this->error=$langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
+				return -1;
+			}
+
+			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)	// FIXME Check is done for stock of product, it must be done for stock of product into warehouse if $entrepot_id defined
 			{
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
 
-				if($product_type == 0 && $product->stock_reel < $qty) {
+				if ($product_type == 0 && $product->stock_reel < $qty)
+				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
 					$this->db->rollback();
 					return -3;
@@ -765,24 +802,34 @@ class Expedition extends CommonObject
 	 * Add a shipment line with batch record
 	 *
 	 * @param 	array		$dbatch		Array of value (key 'detail' -> Array, key 'qty' total quantity for line, key ix_l : original line index)
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int						<0 if KO, >0 if OK
 	 */
 	function addline_batch($dbatch)
 	{
 		$num = count($this->lines);
-		if ($dbatch['qty']>0) {
+		if ($dbatch['qty']>0)
+		{
 			$line = new ExpeditionLigne($this->db);
 			$tab=array();
-			foreach ($dbatch['detail'] as $key=>$value) {
-				if ($value['q']>0) {
-					$linebatch = new ExpeditionLigneBatch($this->db);
-					$ret=$linebatch->fetchFromStock($value['id_batch']);
-					if ($ret<0) {
+			foreach ($dbatch['detail'] as $key=>$value)
+			{
+				if ($value['q']>0)
+				{
+					$linebatch = new ExpeditionLineBatch($this->db);
+					$ret=$linebatch->fetchFromStock($value['id_batch']);	// load serial, sellby, eatby
+					if ($ret<0)
+					{
 						$this->error=$linebatch->error;
 						return -1;
 					}
 					$linebatch->dluo_qty=$value['q'];
 					$tab[]=$linebatch;
+
+					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
+					{
+						// TODO
+					}
+
 				}
 			}
 			$line->entrepot_id = $linebatch->entrepot_id;
@@ -920,10 +967,13 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		if ($conf->productbatch->enabled) {
+		if ($conf->productbatch->enabled)
+		{
             require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-			if ( ExpeditionLigneBatch::deletefromexp($this->db,$this->id)<0)
-			{$error++;$this->errors[]="Error ".$this->db->lasterror();}
+			if (ExpeditionLineBatch::deletefromexp($this->db,$this->id) < 0)
+			{
+				$error++;$this->errors[]="Error ".$this->db->lasterror();
+			}
 		}
 		// Stock control
 		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
@@ -1162,10 +1212,11 @@ class Expedition extends CommonObject
                      * May be conf is not well initialized for dark reason
                      */
                     require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-                    if ($originline != $obj->fk_origin_line) {
-                        $line->detail_batch = ExpeditionLigneBatch::FetchAll($this->db,$obj->line_id);
+                    if ($originline != $obj->fk_origin_line)
+                    {
+                        $line->detail_batch = ExpeditionLineBatch::fetchAll($this->db,$obj->line_id);
                     } else {
-                        $line->detail_batch = array_merge($line->detail_batch,ExpeditionLigneBatch::FetchAll($this->db,$obj->line_id));
+                        $line->detail_batch = array_merge($line->detail_batch,ExpeditionLineBatch::fetchAll($this->db,$obj->line_id));
                     }
 				}
 				if ($originline != $obj->fk_origin_line) {
@@ -1206,18 +1257,20 @@ class Expedition extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = '<u>' . $langs->trans("ShowSending") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
 		if ($short) return $url;
 
-		$linkstart = '<a href="'.$url.'">';
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='sending';
-		$label=$langs->trans("ShowSending").': '.$this->ref;
 
-		if ($withpicto) $result.=($linkstart.img_object($label,$picto).$linkend);
+		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
@@ -1511,7 +1564,7 @@ class Expedition extends CommonObject
     }
 
 	/**
-	 * Get tracking url status
+	 * Forge an set tracking url
 	 *
 	 * @param	string	$value		Value
 	 * @return	void

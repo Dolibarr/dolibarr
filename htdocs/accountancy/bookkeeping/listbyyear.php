@@ -56,12 +56,11 @@ $offset = $conf->liste_limit * $page;
 
 llxHeader('', $langs->trans("Bookkeeping"));
 
-$textprevyear = "<a href=\"listbyyear.php?year=" . ($year_current - 1) . "\">" . img_previous() . "</a>";
-$textnextyear = " <a href=\"listbyyear.php?year=" . ($year_current + 1) . "\">" . img_next() . "</a>";
+$textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
+$textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
 /*
- * Mode Liste
- *
+ * Mode List
  */
 
 $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.code_tiers, bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant , bk.sens, bk.code_journal";

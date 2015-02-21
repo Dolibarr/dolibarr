@@ -36,6 +36,13 @@ class AdherentType extends CommonObject
     public $element = 'adherent_type';
 
     var $id;
+
+    /**
+     * @var int
+     * @deprecated Use rowid
+     */
+    public $ref;
+
     var $libelle;
     var $statut;
     var $cotisation;  // Soumis a la cotisation
@@ -60,7 +67,7 @@ class AdherentType extends CommonObject
      *  Fonction qui permet de creer le status de l'adherent
      *
      *  @param      User		$user		User making creation
-     *  @return     						>0 if OK, < 0 if KO
+     *  @return     int						>0 if OK, < 0 if KO
      */
     function create($user)
     {
@@ -248,13 +255,13 @@ class AdherentType extends CommonObject
                     $i++;
                 }
             }
-            return $projets;
         }
         else
         {
             print $this->db->error();
         }
 
+        return $projets;
     }
 
 
@@ -270,14 +277,14 @@ class AdherentType extends CommonObject
         global $langs;
 
         $result='';
+        $label=$langs->trans("ShowTypeCard",$this->libelle);
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
 
         $picto='group';
-        $label=$langs->trans("ShowTypeCard",$this->libelle);
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($this->libelle,$maxlen):$this->libelle).$lienfin;
         return $result;
@@ -287,7 +294,7 @@ class AdherentType extends CommonObject
     /**
      *     getMailOnValid
      *
-     *     @return     Return mail model
+     *     @return string     Return mail model
      */
     function getMailOnValid()
     {
@@ -306,7 +313,7 @@ class AdherentType extends CommonObject
     /**
      *     getMailOnSubscription
      *
-     *     @return     Return mail model
+     *     @return string     Return mail model
      */
     function getMailOnSubscription()
     {
@@ -325,7 +332,7 @@ class AdherentType extends CommonObject
     /**
      *     getMailOnResiliate
      *
-     *     @return     Return mail model
+     *     @return string     Return mail model
      */
     function getMailOnResiliate()
     {

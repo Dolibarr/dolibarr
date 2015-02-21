@@ -8,6 +8,7 @@ FinancialAccount=Konts
 FinancialAccounts=Konti
 BankAccount=Bankas konts
 BankAccounts=Banku konti
+ShowAccount=Show Account
 AccountRef=Finanšu konta ref
 AccountLabel=Finanšu konts nosaukums
 CashAccount=Skaidras naudas konts

@@ -59,7 +59,7 @@ $pagenext = $page + 1;
 if (! $sortorder) { $sortorder=($filter=='outofdate'?"ASC":"DESC"); }
 if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.lastname"); }
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search="";
 	$search_ref="";
@@ -152,7 +152,7 @@ $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$resql = $db->query($sql);
-	if ($resql) $nbtotalofrecords = $db->num_rows($result);
+	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
 	else dol_print_error($db);
 }
 // Add order and limit
@@ -233,7 +233,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Line for filters fields
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre" align="left">';
@@ -264,7 +264,6 @@ if ($resql)
 	print '</td>';
 
 	print "</tr>\n";
-	print '</form>';
 
 	$var=True;
 	while ($i < $num && $i < $conf->liste_limit)
@@ -366,6 +365,7 @@ if ($resql)
 	}
 
 	print "</table>\n";
+	print '</form>';
 
 	if ($num > $conf->liste_limit)
 	{

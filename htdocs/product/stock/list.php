@@ -52,7 +52,7 @@ $year = strftime("%Y",time());
  */
 
 $sql = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays,";
-$sql.= " SUM(ps.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
+$sql.= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
@@ -103,9 +103,12 @@ if ($result)
 		while ($i < min($num,$limit))
 		{
 			$objp = $db->fetch_object($result);
+            $entrepot->id = $objp->rowid;
+            $entrepot->libelle = $objp->ref;
+            $entrepot->lieu = $objp->lieu;
             print "<tr ".$bc[$var].">";
-            print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
-			// Location
+            print '<td>' . $entrepot->getNomUrl(1) . '</td>';
+            // Location
             print '<td>'.$objp->lieu.'</td>';
             // PMP value
             print '<td align="right">';

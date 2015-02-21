@@ -2,6 +2,8 @@
 /* Copyright (C) 2010-2013	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +47,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td><?php $coldisplay++; ?><div id="<?php echo $line->rowid; ?>"></div>
+	<td><?php $coldisplay++; ?><div id="row-<?php echo $line->id; ?>"></div>
 	<?php if (($line->info_bits & 2) == 2) { ?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
 		<?php
@@ -138,6 +140,11 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	<td><?php $coldisplay++; ?>&nbsp;</td>
 	<?php }
 
+	if ($this->situation_cycle_ref) {
+		$coldisplay++;
+		print '<td align="right" nowrap="nowrap">' . $line->situation_percent . '%</td>';
+	}
+
   if (! empty($conf->margin->enabled) && empty($user->societe_id)) {
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   ?>
@@ -167,12 +174,16 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	</td>
 
 	<td align="center"><?php $coldisplay++; ?>
-		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id; ?>">
-		<?php echo img_delete(); ?>
-		</a>
+		<?php
+		if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
+			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
+			print img_delete();
+			print '</a>';
+		}
+		?>
 	</td>
 
-	<?php if ($num > 1 && empty($conf->browser->phone)) { ?>
+	<?php if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref)) { ?>
 	<td align="center" class="tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">

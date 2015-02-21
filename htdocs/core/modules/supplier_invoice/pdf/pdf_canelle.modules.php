@@ -939,16 +939,28 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		if ($object->ref_supplier)
 		{
-    		$posy+=5;
+    		$posy+=4;
     		$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
     		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSupplier")." : " . $object->ref_supplier, '', 'R');
 		}
 
-		$posy+=1;
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		$posy+=5;
+		$posy+=6;
+		if (! empty($conf->global->PDF_SHOW_PROJECT))
+		{
+			$object->fetch_projet();
+			$pdf->SetXY($posx,$posy);
+			if (! empty($object->project->ref))
+			{
+				$langs->load("projects");
+				$pdf->SetTextColor(0,0,60);
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : " . (empty($object->project->ref)?'':$object->projet->ref), '', 'R');
+        		$posy+=4;
+			}
+		}
+
 		$pdf->SetXY($posx,$posy);
 		if ($object->date)
 		{
@@ -970,7 +982,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
+			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posy=42;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -42,9 +42,15 @@ if (!$user->admin)
 
 $action = GETPOST('action', 'alpha');
 
-// Other parameters ACCOUNTING_*
+// Other parameters ACCOUNTING_EXPORT_*
 $list = array (
-		'ACCOUNTING_SEPARATORCSV'
+		'ACCOUNTING_EXPORT_SEPARATORCSV',
+		'ACCOUNTING_EXPORT_DATE',
+		'ACCOUNTING_EXPORT_PIECE',
+		'ACCOUNTING_EXPORT_GLOBAL_ACCOUNT',
+		'ACCOUNTING_EXPORT_LABEL',
+		'ACCOUNTING_EXPORT_AMOUNT',
+		'ACCOUNTING_EXPORT_DEVISE'
 );
 
 /*
@@ -57,7 +63,7 @@ if ($action == 'update') {
 
 	if (! empty($modelcsv)) {
 
-		if (! dolibarr_set_const($db, 'ACCOUNTING_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
+		if (! dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
 	} else {
@@ -108,57 +114,63 @@ print '</tr>';
 $var = ! $var;
 
 print '<tr ' . $bc[$var] . '>';
-print "<td>" . $langs->trans("Selectmodelcsv") . "</td>";
-print "<td>";
-print '<select class="flat" name="modelcsv" id="modelcsv">';
-print '<option value="0"';
-if ($conf->global->ACCOUNTING_MODELCSV == 0) {
-	print ' selected="selected"';
+print '<td width="50%">' . $langs->trans("Selectmodelcsv") . '</td>';
+if (! $conf->use_javascript_ajax)
+{
+	print '<td class="nowrap">';
+	print $langs->trans("NotAvailableWhenAjaxDisabled");
+	print "</td>";
 }
-print '>' . $langs->trans("Modelcsv_normal") . '</option>';
-print '<option value="1"';
-if ($conf->global->ACCOUNTING_MODELCSV == 1) {
-	print ' selected="selected"';
+else
+{
+	print '<td>';
+	$listmodelcsv=array(
+		'1'=>$langs->trans("Modelcsv_normal"),
+		'2'=>$langs->trans("Modelcsv_CEGID")
+	);
+	print $form->selectarray("modelcsv",$listmodelcsv,$conf->global->ACCOUNTING_EXPORT_MODELCSV,0);
+
+	print '</td>';
 }
-print '>' . $langs->trans("Modelcsv_CEGID") . '</option>';
-print "</select>";
 print "</td></tr>";
 print "</table>";
 
 print "<br>\n";
 
 /*
- *  Params
- *
+ *  Parameters
  */
 
 $num = count($list);
-if ($num) {
+if ($num)
+{
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
 	print "</tr>\n";
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV > 1) print '<tr><td colspan="2" bgcolor="red"><b>' . $langs->trans('OptionsDeactivatedForThisExportModel') . '</b></td></tr>';
+
+	foreach ( $list as $key ) {
+		$var = ! $var;
+
+		print '<tr ' . $bc[$var] . ' class="value">';
+
+		// Param
+		$label = $langs->trans($key);
+		print '<td width="50%">' . $label . '</td>';
+
+		// Value
+		print '<td>';
+		print '<input type="text" size="20" name="' . $key . '" value="' . $conf->global->$key . '">';
+		print '</td></tr>';
+	}
+
+	print "</table>\n";
 }
 
-foreach ( $list as $key ) {
-	$var = ! $var;
-
-	print '<tr ' . $bc[$var] . ' class="value">';
-
-	// Param
-	$label = $langs->trans($key);
-	print '<td>' . $label . '</td>';
-
-	// Value
-	print '<td>';
-	print '<input type="text" size="20" name="' . $key . '" value="' . $conf->global->$key . '">';
-	print '</td></tr>';
-}
+print '<br><div style="text-align:center"><input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '" name="button"></div>';
 
 print '</form>';
-print "</table>\n";
-
-print '<br /><div style="text-align:center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
 
 llxFooter();
 $db->close();

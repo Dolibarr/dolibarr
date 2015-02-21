@@ -388,7 +388,7 @@ abstract class CommonDocGenerator
 			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
 			$object->fetch_optionals($object->id,$extralabels);
 
-			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
 		}
 		return $resarray;
 	}
@@ -404,7 +404,7 @@ abstract class CommonDocGenerator
 	{
 		global $conf;
 
-		return array(
+		$resarray= array(
 			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
 			'line_product_ref'=>$line->product_ref,
 			'line_product_label'=>$line->product_label,
@@ -425,6 +425,18 @@ abstract class CommonDocGenerator
 			'line_date_end'=>$line->date_end,
 			'line_date_end_rfc'=>dol_print_date($line->date_end,'rfc')
 		);
+
+		// Retrieve extrafields
+		$extrafieldkey=$line->element;
+		$array_key="line";
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
+		$line->fetch_optionals($line->rowid,$extralabels);
+
+		$resarray = $this->fill_substitutionarray_with_extrafields($line,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+
+		return $resarray;
 	}
 
     /**

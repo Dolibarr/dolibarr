@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("bills");
 $langs->load("products");
+$langs->load("stocks");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -456,7 +457,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr class="liste_titre">';
 			print '<th class="liste_titre">'.$langs->trans("Ref").'</td>';
 			print '<th class="liste_titre">'.$langs->trans("Label").'</td>';
-			print '<th class="liste_titre" align="center">'.$langs->trans("AddDel").'</td>';
+			print '<th class="liste_titre" align="center">'.$langs->trans("IsInPackage").'</td>';
 			print '<th class="liste_titre" align="right">'.$langs->trans("Qty").'</td>';
 			print '</tr>';
 			if ($resql)
@@ -537,9 +538,11 @@ if ($id > 0 || ! empty($ref))
 
 			if($num > 0)
 			{
-				print '<br><center><input type="submit" class="button" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
-				print ' &nbsp; &nbsp; <input type="submit" class="button" value="'.$langs->trans("Cancel").'">';
-				print '</center>';
+				print '<br><div class="center">';
+				print '<input type="submit" class="button" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
+				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'">';
+				print '</div>';
 			}
 
 			print '</form>';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -85,23 +85,19 @@ function project_prepare_head($object)
 	$head[$h][2] = 'document';
 	$h++;
 
-	// Then tab for sub level of projet, i mean tasks
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Tasks");
-	$head[$h][2] = 'tasks';
-	$h++;
+	if (empty($conf->global->PROJECT_HIDE_TASKS))
+	{
+		// Then tab for sub level of projet, i mean tasks
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Tasks");
+		$head[$h][2] = 'tasks';
+		$h++;
 
-	/* Now this is a filter in the Task tab.
-	 $head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&mode=mine';
-	$head[$h][1] = $langs->trans("MyTasks");
-	$head[$h][2] = 'mytasks';
-	$h++;
-	*/
-
-	$head[$h][0] = DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Gantt");
-	$head[$h][2] = 'gantt';
-	$h++;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Gantt");
+		$head[$h][2] = 'gantt';
+		$h++;
+	}
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'project','remove');
 
@@ -357,7 +353,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 
 				// Planned Workload (in working hours)
-				print '<td align="center">';
+				print '<td align="right">';
 				$fullhour=convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
 				$workingdelay=convertSecondToTime($lines[$i]->planned_workload,'all',86400,7);	// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
 				if ($lines[$i]->planned_workload)
@@ -384,10 +380,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				else print '</a>';
 				print '</td>';
 
-				// Progress calculated
-				// Note: ->duration is in fact time spent i think
+				// Progress calculated (Note: ->duration is time spent)
 				print '<td align="right">';
-				if ($lines[$i]->planned_workload) print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload,2).' %';
+				if ($lines[$i]->planned_workload || $lines[$i]->duration)
+				{
+					if ($lines[$i]->planned_workload) print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload,2).' %';
+					else print $langs->trans('WorkloadNotDefined');
+				}
 				print '</td>';
 
 				// Tick to drag and drop
@@ -422,7 +421,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
-		print '<td align="center" class="nowrap liste_total">';
+		print '<td align="right" class="nowrap liste_total">';
 		print convertSecondToTime($total_projectlinesa_planned, 'allhourmin');
 		print '</td>';
 		print '<td></td>';
@@ -430,7 +429,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print convertSecondToTime($total_projectlinesa_spent, 'allhourmin');
 		print '</td>';
 		print '<td align="right" class="nowrap liste_total">';
-		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent_if_planned / $total_projectlinesa_planned,2).' %';
+		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned,2).' %';
 		print '</td>';
 		if ($addordertick) print '<td class="hideonsmartphone"></td>';
 		print '</tr>';
@@ -499,7 +498,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 				// Ref
 				print '<td>';
 				$taskstatic->id=$lines[$i]->id;
-				$taskstatic->ref=$lines[$i]->id;
+				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
 				print $taskstatic->getNomUrl(1);
 				print '</td>';
 
@@ -562,13 +561,16 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 					$disabledtask=1;
 				}
 
-				print '<td class="nowrap">';
-				$s =$form->select_date('',$lines[$i]->id,'','','',"addtime",1,0,1,$disabledtask);
+				// Form to add new time
+				print '<td class="nowrap" align="right">';
+				$s='';
+				$s.=$form->select_date('',$lines[$i]->id,0,0,2,"addtime",1,0,1,$disabledtask);
 				$s.='&nbsp;&nbsp;&nbsp;';
-				$s.=$form->select_duration($lines[$i]->id,'',$disabledtask,'text');
+				$s.=$form->select_duration($lines[$i]->id,'',$disabledtask,'text',0,1);
 				$s.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
 				print $s;
 				print '</td>';
+
 				print '<td align="right">';
 				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("YouAreNotContactOfProject"));
 				else if ($disabledtask) print $form->textwithpicto('',$langs->trans("TaskIsNotAffectedToYou"));

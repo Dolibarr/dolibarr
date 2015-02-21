@@ -2,7 +2,7 @@
 /* Copyright (C) 2013      Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es> 
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 /**
  * \file		htdocs/accountancy/customer/index.php
  * \ingroup		Accounting Expert
- * \brief		Page accueil clients ventilation comptable
+ * \brief		Home customer ventilation
  */
 
 require '../../main.inc.php';
-	
+
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -43,7 +43,7 @@ if ($user->societe_id > 0)
 	accessforbidden();
 if (! $user->rights->accounting->ventilation->read)
 	accessforbidden();
-	
+
 // Filter
 $year = $_GET["year"];
 if ($year == 0) {
@@ -57,10 +57,10 @@ if ($year == 0) {
 // Validate History
 $action = GETPOST('action');
 if ($action == 'validatehistory') {
-	
+
 	$error = 0;
 	$db->begin();
-	
+
 	if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
 		$sql1 .= " SET fd.fk_code_ventilation = accnt.rowid";
@@ -76,7 +76,8 @@ if ($action == 'validatehistory') {
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
 	}
 	
-	dol_syslog("/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
+	dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
+
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
 		$error ++;
@@ -94,7 +95,7 @@ if ($action == 'validatehistory') {
 llxHeader('', $langs->trans("CustomersVentilation"));
 
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
-$textnextyear = ' <a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
+$textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
 print_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
 
@@ -106,7 +107,7 @@ $sql .= " , " . MAIN_DB_PREFIX . "facture as f";
 $sql .= " WHERE fd.fk_code_ventilation = 0";
 $sql .= " AND f.rowid = fd.fk_facture AND f.fk_statut = 1;";
 
-dol_syslog("/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
+dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$row = $db->fetch_row($result);
@@ -162,15 +163,15 @@ if (! empty($conf->multicompany->enabled)) {
 
 $sql .= " GROUP BY fd.fk_code_ventilation";
 
-dol_syslog("/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
+dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
 	$num = $db->num_rows($resql);
-	
+
 	while ( $i < $num ) {
 		$row = $db->fetch_row($resql);
-		
+
 		print '<tr><td>' . length_accountg($row[0]) . '</td>';
 		print '<td align="left">' . $row[1] . '</td>';
 		print '<td align="right">' . price($row[2]) . '</td>';
@@ -197,7 +198,7 @@ print "</table>\n";
 
 print "<br>\n";
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("Total") . '</td>';
+print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("TotalVente") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("JanuaryMin") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("FebruaryMin") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("MarchMin") . '</td>';
@@ -235,15 +236,15 @@ if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity = '" . $conf->entity . "'";
 }
 
-dol_syslog('accountancy/customer/index.php:: $sql=' . $sql);
+dol_syslog('htdocs/accountancy/customer/index.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
 	$num = $db->num_rows($resql);
-	
+
 	while ( $i < $num ) {
 		$row = $db->fetch_row($resql);
-		
+
 		print '<tr><td>' . $row[0] . '</td>';
 		print '<td align="right">' . price($row[1]) . '</td>';
 		print '<td align="right">' . price($row[2]) . '</td>';
@@ -284,7 +285,7 @@ if (! empty($conf->margin->enabled)) {
 	print '<td width="60" align="center">' . $langs->trans("NovemberMin") . '</td>';
 	print '<td width="60" align="center">' . $langs->trans("DecemberMin") . '</td>';
 	print '<td width="60" align="center"><b>' . $langs->trans("Total") . '</b></td></tr>';
-	
+
 	$sql = "SELECT '" . $langs->trans("Vide") . "' AS 'Marge',";
 	$sql .= "  ROUND(SUM(IF(MONTH(f.datef)=1,(fd.total_ht-(fd.qty * fd.buy_price_ht)),0)),2) AS 'Janvier',";
 	$sql .= "  ROUND(SUM(IF(MONTH(f.datef)=2,(fd.total_ht-(fd.qty * fd.buy_price_ht)),0)),2) AS 'Fevrier',";
@@ -303,20 +304,20 @@ if (! empty($conf->margin->enabled)) {
 	$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 	$sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 	$sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
-	
+
 	if (! empty($conf->multicompany->enabled)) {
 		$sql .= " AND f.entity = '" . $conf->entity . "'";
 	}
 	
-	dol_syslog('accountancy/customer/index.php:: $sql=' . $sql);
+	dol_syslog('htdocs/accountancy/customer/index.php:: $sql=' . $sql);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$i = 0;
 		$num = $db->num_rows($resql);
-		
+
 		while ( $i < $num ) {
 			$row = $db->fetch_row($resql);
-			
+
 			print '<tr><td>' . $row[0] . '</td>';
 			print '<td align="right">' . price($row[1]) . '</td>';
 			print '<td align="right">' . price($row[2]) . '</td>';

@@ -7,7 +7,7 @@
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,11 @@ class Commande extends CommonOrder
     public $fk_element = 'fk_commande';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
+
     var $id;
 
     var $socid;		// Id client
@@ -56,8 +61,9 @@ class Commande extends CommonOrder
     var $contactid;
     var $fk_project;
     var $statut;		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+    var $facturee;		// deprecated
+    var $billed;		// billed or not
 
-    var $facturee;		// Facturee ou non
     var $brouillon;
     var $cond_reglement_id;
     var $cond_reglement_code;
@@ -100,10 +106,6 @@ class Commande extends CommonOrder
 
     var $lines = array();
 
-    // Pour board
-    var $nbtodo;
-    var $nbtodolate;
-
 
     /**
      *	Constructor
@@ -134,30 +136,28 @@ class Commande extends CommonOrder
 
         if (! empty($conf->global->COMMANDE_ADDON))
         {
-		$mybool=false;
-		$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
-		foreach ($dirmodels as $reldir)
-		{
-	            $file = $conf->global->COMMANDE_ADDON.".php";
-	            $classname = $conf->global->COMMANDE_ADDON;
+        	$mybool=false;
 
-	            // Include file with class
-	            foreach ($conf->file->dol_document_root as $dirroot)
-	            {
-	            	$dir = $dirroot.$reldir."/core/modules/commande/";
-	            	// Load file with numbering class (if found)
-	            	$mybool|=@include_once $dir.$file;
-	            }
-		}
+        	$file = $conf->global->COMMANDE_ADDON.".php";
+			$classname = $conf->global->COMMANDE_ADDON;
+
+			// Include file with class
+			$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir)
+			{
+                $dir = dol_buildpath($reldir."core/modules/commande/");
+
+                // Load file with numbering class (if found)
+                $mybool|=@include_once $dir.$file;
+            }
 
             if (! $mybool)
             {
-            	dol_print_error('',"Failed to include file ".$file);
-            	return '';
+                dol_print_error('',"Failed to include file ".$file);
+                return '';
             }
 
             $obj = new $classname();
-            $numref = "";
             $numref = $obj->getNextValue($soc,$this);
 
             if ($numref != "")
@@ -200,7 +200,8 @@ class Commande extends CommonOrder
             return 0;
         }
 
-        if (! $user->rights->commande->valider)
+        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate))))
         {
             $this->error='Permission denied';
             dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -356,7 +357,8 @@ class Commande extends CommonOrder
             return 0;
         }
 
-        if (! $user->rights->commande->valider)
+        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate))))
         {
             $this->error='Permission denied';
             return -1;
@@ -430,6 +432,7 @@ class Commande extends CommonOrder
 
         if ($this->statut != 3)
         {
+        	dol_syslog(get_class($this)."::set_reopen order has not status closed", LOG_WARNING);
             return 0;
         }
 
@@ -488,7 +491,8 @@ class Commande extends CommonOrder
 
         $error=0;
 
-        if ($user->rights->commande->valider)
+        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate)))
         {
             $this->db->begin();
 
@@ -664,19 +668,20 @@ class Commande extends CommonOrder
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
-        $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_client, ref_int";
+        $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_ext, ref_client, ref_int";
         $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", fk_shipping_method";
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
         $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
-        $sql.= ", ".($this->fk_project?$this->fk_project:"null");
+        $sql.= ", ".($this->fk_project>0?$this->fk_project:"null");
         $sql.= ", '".$this->db->idate($date)."'";
         $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
-        $sql.= ", '".$this->db->escape($this->ref_client)."'";
+        $sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
+        $sql.= ", ".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
         $sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
         $sql.= ", '".$this->modelpdf."'";
         $sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
@@ -1000,7 +1005,12 @@ class Commande extends CommonOrder
 				$line->marge_tx			= $marginInfos[1];
 				$line->marque_tx		= $marginInfos[2];
 
-                $this->lines[$i] = $line;
+                // get extrafields from original line
+				$object->lines[$i]->fetch_optionals($object->lines[$i]->rowid);
+				foreach($object->lines[$i]->array_options as $options_key => $value)
+					$line->array_options[$options_key] = $value;
+
+				$this->lines[$i] = $line;
             }
 
             $this->socid                = $object->socid;
@@ -1020,6 +1030,11 @@ class Commande extends CommonOrder
 
             $this->origin				= $object->element;
             $this->origin_id			= $object->id;
+
+            // get extrafields from original line
+			$object->fetch_optionals($object->id);
+			foreach($object->array_options as $options_key => $value)
+				$this->array_options[$options_key] = $value;
 
             // Possibility to add external linked objects with hooks
             $this->linked_objects[$this->origin] = $this->origin_id;
@@ -1062,19 +1077,19 @@ class Commande extends CommonOrder
      *	Add an order line into database (linked to product/service or not)
      *
      *	@param      string			$desc            	Description of line
-     *	@param      double			$pu_ht    	        Unit price (without tax)
-     *	@param      double			$qty             	Quantite
-     *	@param      double			$txtva           	Taux de tva force, sinon -1
-     *	@param      double			$txlocaltax1		Local tax 1 rate
-     *	@param      double			$txlocaltax2		Local tax 2 rate
+     *	@param      float			$pu_ht    	        Unit price (without tax)
+     *	@param      float			$qty             	Quantite
+     *	@param      float			$txtva           	Taux de tva force, sinon -1
+     *	@param      float			$txlocaltax1		Local tax 1 rate
+     *	@param      float			$txlocaltax2		Local tax 2 rate
      *	@param      int				$fk_product      	Id du produit/service predefini
-     *	@param      double			$remise_percent  	Pourcentage de remise de la ligne
+     *	@param      float			$remise_percent  	Pourcentage de remise de la ligne
      *	@param      int				$info_bits			Bits de type de lignes
      *	@param      int				$fk_remise_except	Id remise
      *	@param      string			$price_base_type	HT or TTC
-     *	@param      double			$pu_ttc    		    Prix unitaire TTC
-     *	@param      timestamp		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     *	@param      timestamp		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      float			$pu_ttc    		    Prix unitaire TTC
+     *	@param      int		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      int		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      *	@param      int				$type				Type of line (0=product, 1=service)
      *	@param      int				$rang             	Position of line
      *	@param		int				$special_code		Special code (also used by externals modules!)
@@ -1214,7 +1229,15 @@ class Commande extends CommonOrder
             $this->line->date_end=$date_end;
 
 			// infos marge
-			$this->line->fk_fournprice = $fk_fournprice;
+			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			    // by external module, take lowest buying price
+			    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			    $productFournisseur = new ProductFournisseur($this->db);
+			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
+			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
+			} else {
+			    $this->line->fk_fournprice = $fk_fournprice;
+			}
 			$this->line->pa_ht = $pa_ht;
 
             // TODO Ne plus utiliser
@@ -1260,16 +1283,16 @@ class Commande extends CommonOrder
      *	$this->client must be loaded
      *
      *	@param		int				$idproduct			Product Id
-     *	@param		double			$qty				Quantity
-     *	@param		double			$remise_percent		Product discount relative
-     * 	@param    	timestamp		$date_start         Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     * 	@param    	timestamp		$date_end           End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param		float			$qty				Quantity
+     *	@param		float			$remise_percent		Product discount relative
+     * 	@param    	int		$date_start         Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     * 	@param    	int		$date_end           End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      * 	@return    	void
      *
      *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
      *			insere dans tableau $this->products
      */
-    function add_product($idproduct, $qty, $remise_percent=0, $date_start='', $date_end='')
+    function add_product($idproduct, $qty, $remise_percent=0.0, $date_start='', $date_end='')
     {
         global $conf, $mysoc;
 
@@ -1667,7 +1690,6 @@ class Commande extends CommonOrder
      */
     function loadExpeditions($filtre_statut=-1)
     {
-        $num=0;
         $this->expeditions = array();
 
         $sql = 'SELECT cd.rowid, cd.fk_product,';
@@ -1936,7 +1958,7 @@ class Commande extends CommonOrder
      *	Set the order date
      *
      *	@param      User		$user       Object user making change
-     *	@param      timestamp	$date		Date
+     *	@param      int	$date		Date
      *	@return     int         			<0 if KO, >0 if OK
      */
     function set_date($user, $date)
@@ -1970,7 +1992,7 @@ class Commande extends CommonOrder
      *	Set the planned delivery date
      *
      *	@param      User			$user        		Objet utilisateur qui modifie
-     *	@param      timestamp		$date_livraison     Date de livraison
+     *	@param      int		$date_livraison     Date de livraison
      *	@return     int         						<0 si ko, >0 si ok
      */
     function set_date_livraison($user, $date_livraison)
@@ -2299,16 +2321,16 @@ class Commande extends CommonOrder
      *
      *  @param    	int				$rowid            	Id of line to update
      *  @param    	string			$desc             	Description de la ligne
-     *  @param    	double			$pu               	Prix unitaire
-     *  @param    	double			$qty              	Quantity
-     *  @param    	double			$remise_percent   	Pourcentage de remise de la ligne
-     *  @param    	double			$txtva           	Taux TVA
-     * 	@param		double			$txlocaltax1		Local tax 1 rate
-     *  @param		double			$txlocaltax2		Local tax 2 rate
+     *  @param    	float			$pu               	Prix unitaire
+     *  @param    	float			$qty              	Quantity
+     *  @param    	float			$remise_percent   	Pourcentage de remise de la ligne
+     *  @param    	float			$txtva           	Taux TVA
+     * 	@param		float			$txlocaltax1		Local tax 1 rate
+     *  @param		float			$txlocaltax2		Local tax 2 rate
      *  @param    	string			$price_base_type	HT or TTC
      *  @param    	int				$info_bits        	Miscellaneous informations on line
-     *  @param    	timestamp		$date_start        	Start date of the line
-     *  @param    	timestamp		$date_end          	End date of the line
+     *  @param    	int		$date_start        	Start date of the line
+     *  @param    	int		$date_end          	End date of the line
      * 	@param		int				$type				Type of line (0=product, 1=service)
      * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
      * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
@@ -2319,7 +2341,7 @@ class Commande extends CommonOrder
 	 *  @param		array			$array_option		extrafields array
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)
     {
         global $conf, $mysoc;
 
@@ -2411,7 +2433,15 @@ class Commande extends CommonOrder
             $this->line->skip_update_total=$skip_update_total;
 
 			// infos marge
-			$this->line->fk_fournprice = $fk_fournprice;
+			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
+			    //by external module, take lowest buying price
+			    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			    $productFournisseur = new ProductFournisseur($this->db);
+			    $productFournisseur->find_min_price_product_fournisseur($fk_product);
+			    $this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
+			} else {
+			    $this->line->fk_fournprice = $fk_fournprice;
+			}
 			$this->line->pa_ht = $pa_ht;
 
             // TODO deprecated
@@ -2450,6 +2480,133 @@ class Commande extends CommonOrder
         }
     }
 
+	/**
+	 *      Update database
+	 *
+	 *      @param      User	$user        	User that modify
+	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *      @return     int      			   	<0 if KO, >0 if OK
+	 */
+	function update($user=null, $notrigger=0)
+	{
+		global $conf, $langs;
+		$error=0;
+
+		// Clean parameters
+		if (isset($this->ref)) $this->ref=trim($this->ref);
+		if (isset($this->ref_client)) $this->ref_client=trim($this->ref_client);
+		if (isset($this->note) || isset($this->note_private)) $this->note_private=(isset($this->note_private) ? trim($this->note_private) : trim($this->note));
+		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
+		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
+		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
+
+		// Check parameters
+		// Put here code to add control on parameters values
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET";
+
+		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
+		$sql.= " ref_client=".(isset($this->ref_client)?"'".$this->db->escape($this->ref_client)."'":"null").",";
+		$sql.= " ref_ext=".(isset($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null").",";
+		$sql.= " fk_soc=".(isset($this->socid)?$this->socid:"null").",";
+		$sql.= " date_commande=".(strval($this->date_commande)!='' ? "'".$this->db->idate($this->date_commande)."'" : 'null').",";
+		$sql.= " date_valid=".(strval($this->date_validation)!='' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
+		$sql.= " tva=".(isset($this->total_tva)?$this->total_tva:"null").",";
+		$sql.= " localtax1=".(isset($this->total_localtax1)?$this->total_localtax1:"null").",";
+		$sql.= " localtax2=".(isset($this->total_localtax2)?$this->total_localtax2:"null").",";
+		$sql.= " total_ht=".(isset($this->total_ht)?$this->total_ht:"null").",";
+		$sql.= " total_ttc=".(isset($this->total_ttc)?$this->total_ttc:"null").",";
+		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
+		$sql.= " fk_user_author=".(isset($this->user_author)?$this->user_author:"null").",";
+		$sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
+		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
+		$sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
+		$sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
+		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
+		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
+		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
+		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
+
+		$sql.= " WHERE rowid=".$this->id;
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql) {
+			$error++; $this->errors[]="Error ".$this->db->lasterror();
+		}
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+	            // Call trigger
+	            $result=$this->call_trigger('ORDER_MODIFY',$user);
+	            if ($result < 0) $error++;
+	            // End call triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+    /**
+     *	Update value of extrafields on order
+     *
+     *	@param      User	$user       Object user that modify
+     *	@return     int         		<0 if ko, >0 if ok
+     */
+    function update_extrafields($user)
+    {
+        global $hookmanager, $conf;
+
+    	$action='create';
+
+    	// Actions on extra fields (by external module or standard code)
+    	// FIXME le hook fait double emploi avec le trigger !!
+    	$hookmanager->initHooks(array('orderdao'));
+    	$parameters=array('id'=>$this->id);
+    	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+    	if (empty($reshook))
+    	{
+    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+    		{
+    			$result=$this->insertExtraFields();
+    			if ($result < 0)
+    			{
+    				$error++;
+    			}
+    		}
+    	}
+    	else if ($reshook < 0) $error++;
+
+    	if (!$error)
+    	{
+    		return 1;
+    	}
+    	else
+    	{
+    		return -1;
+    	}
+
+    }
 
     /**
      *	Delete the customer order
@@ -2568,15 +2725,12 @@ class Commande extends CommonOrder
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param		User	$user   Object user
-     *	@return     int     		<0 if KO, >0 if OK
+     *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
-        global $conf, $user;
+        global $conf, $user, $langs;
 
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
         $clause = " WHERE";
 
         $sql = "SELECT c.rowid, c.date_creation as datec, c.date_livraison as delivery_date, c.fk_statut";
@@ -2595,14 +2749,26 @@ class Commande extends CommonOrder
         $resql=$this->db->query($sql);
         if ($resql)
         {
+	        $now=dol_now();
+
+	        $response = new WorkboardResponse();
+	        $response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
+	        $response->label=$langs->trans("OrdersToProcess");
+	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
+	        $response->img=img_object($langs->trans("Orders"),"order");
+
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
+	            $response->nbtodo++;
 
 				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
-                if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->client->warning_delay)) $this->nbtodolate++;
+
+	            if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->client->warning_delay)) {
+		            $response->nbtodolate++;
+	            }
             }
-            return 1;
+
+            return $response;
         }
         else
         {
@@ -2641,22 +2807,22 @@ class Commande extends CommonOrder
      *	Return label of status
      *
      *	@param		int		$statut      	Id statut
-     *  @param      int		$facturee    	if invoiced
+     *  @param      int		$billed    		If invoiced
      *	@param      int		$mode        	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return     string					Label of status
      */
-    function LibStatut($statut,$facturee,$mode)
+    function LibStatut($statut,$billed,$mode)
     {
         global $langs;
-        //print 'x'.$statut.'-'.$facturee;
+        //print 'x'.$statut.'-'.$billed;
         if ($mode == 0)
         {
             if ($statut==-1) return $langs->trans('StatusOrderCanceled');
             if ($statut==0) return $langs->trans('StatusOrderDraft');
             if ($statut==1) return $langs->trans('StatusOrderValidated');
             if ($statut==2) return $langs->trans('StatusOrderSentShort');
-            if ($statut==3 && (! $facturee && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderToBill');
-            if ($statut==3 && ($facturee || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderProcessed');
+            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderToBill');
+            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderProcessed');
         }
         elseif ($mode == 1)
         {
@@ -2664,8 +2830,8 @@ class Commande extends CommonOrder
             if ($statut==0) return $langs->trans('StatusOrderDraftShort');
             if ($statut==1) return $langs->trans('StatusOrderValidatedShort');
             if ($statut==2) return $langs->trans('StatusOrderSentShort');
-            if ($statut==3 && (! $facturee && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderToBillShort');
-            if ($statut==3 && ($facturee || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderProcessed');
+            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderToBillShort');
+            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderProcessed');
         }
         elseif ($mode == 2)
         {
@@ -2673,8 +2839,8 @@ class Commande extends CommonOrder
             if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$langs->trans('StatusOrderDraftShort');
             if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$langs->trans('StatusOrderValidatedShort');
             if ($statut==2) return img_picto($langs->trans('StatusOrderSent'),'statut3').' '.$langs->trans('StatusOrderSentShort');
-            if ($statut==3 && (! $facturee && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7').' '.$langs->trans('StatusOrderToBillShort');
-            if ($statut==3 && ($facturee || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessedShort');
+            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7').' '.$langs->trans('StatusOrderToBillShort');
+            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessedShort');
         }
         elseif ($mode == 3)
         {
@@ -2682,8 +2848,8 @@ class Commande extends CommonOrder
             if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0');
             if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1');
             if ($statut==2) return img_picto($langs->trans('StatusOrderSentShort'),'statut3');
-            if ($statut==3 && (! $facturee && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7');
-            if ($statut==3 && ($facturee || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6');
+            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7');
+            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6');
         }
         elseif ($mode == 4)
         {
@@ -2691,8 +2857,8 @@ class Commande extends CommonOrder
             if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$langs->trans('StatusOrderDraft');
             if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$langs->trans('StatusOrderValidated');
             if ($statut==2) return img_picto($langs->trans('StatusOrderSentShort'),'statut3').' '.$langs->trans('StatusOrderSent');
-            if ($statut==3 && (! $facturee && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7').' '.$langs->trans('StatusOrderToBill');
-            if ($statut==3 && ($facturee || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessed');
+            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7').' '.$langs->trans('StatusOrderToBill');
+            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessed');
         }
         elseif ($mode == 5)
         {
@@ -2700,8 +2866,8 @@ class Commande extends CommonOrder
             if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderDraftShort').' </span>'.img_picto($langs->trans('StatusOrderDraft'),'statut0');
             if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderValidatedShort').' </span>'.img_picto($langs->trans('StatusOrderValidated'),'statut1');
             if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderSentShort').' </span>'.img_picto($langs->trans('StatusOrderSent'),'statut3');
-            if ($statut==3 && (! $facturee && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderToBillShort').' </span>'.img_picto($langs->trans('StatusOrderToBill'),'statut7');
-            if ($statut==3 && ($facturee || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderProcessedShort').' </span>'.img_picto($langs->trans('StatusOrderProcessed'),'statut6');
+            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderToBillShort').' </span>'.img_picto($langs->trans('StatusOrderToBill'),'statut7');
+            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderProcessedShort').' </span>'.img_picto($langs->trans('StatusOrderProcessed'),'statut6');
         }
     }
 
@@ -2726,13 +2892,23 @@ class Commande extends CommonOrder
 
         if ($short) return $url;
 
-        $linkstart = '<a href="'.$url.'">';
+        $picto = 'order';
+        $label = '<u>' . $langs->trans("ShowOrder") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->ref_client))
+            $label.= '<br><b>' . $langs->trans('RefCustomer') . ':</b> ' . $this->ref_client;
+        if (! empty($this->total_ht))
+            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_tva))
+            $label.= '<br><b>' . $langs->trans('TVA') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_ttc))
+            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
-        $picto='order';
-        $label=$langs->trans("ShowOrder").': '.$this->ref;
-
-        if ($withpicto) $result.=($linkstart.img_object($label,$picto).$linkend);
+        if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$linkstart.$this->ref.$linkend;
         return $result;
@@ -2923,45 +3099,6 @@ class Commande extends CommonOrder
     }
 
     /**
-     *	Update value of extrafields on order
-     *
-     *	@param      User	$user       Object user that modify
-     *	@return     int         		<0 if ko, >0 if ok
-     */
-    function update_extrafields($user)
-    {
-    	$action='create';
-
-    	// Actions on extra fields (by external module or standard code)
-    	// FIXME le hook fait double emploi avec le trigger !!
-    	$hookmanager->initHooks(array('orderdao'));
-    	$parameters=array('id'=>$this->id);
-    	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-    	if (empty($reshook))
-    	{
-    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-    		{
-    			$result=$this->insertExtraFields();
-    			if ($result < 0)
-    			{
-    				$error++;
-    			}
-    		}
-    	}
-    	else if ($reshook < 0) $error++;
-
-    	if (!$error)
-    	{
-    		return 1;
-    	}
-    	else
-    	{
-    		return -1;
-    	}
-
-    }
-
-    /**
      * 	Return an array of order lines
      *
      * @return	array		Lines of order
@@ -2975,7 +3112,8 @@ class Commande extends CommonOrder
         $sql.= ' l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.localtax1_tx, l.localtax2_tx,';
         $sql.= ' l.date_start, l.date_end,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, ';
-        $sql.= ' p.description as product_desc, p.stock as stock_reel';
+        $sql.= ' p.description as product_desc, p.stock as stock_reel,';
+        $sql.= ' p.entity';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
         $sql.= ' WHERE l.fk_commande = '.$this->id;
@@ -2997,6 +3135,7 @@ class Commande extends CommonOrder
                 $this->lines[$i]->description 		= $obj->description;
                 $this->lines[$i]->fk_product		= $obj->fk_product;
                 $this->lines[$i]->ref				= $obj->ref;
+                $this->lines[$i]->entity            = $obj->entity;         // Product entity
                 $this->lines[$i]->product_label		= $obj->product_label;
                 $this->lines[$i]->product_desc		= $obj->product_desc;
                 $this->lines[$i]->fk_product_type	= $obj->fk_product_type;
@@ -3048,7 +3187,7 @@ class Commande extends CommonOrder
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs,$hookmanager;
+		global $conf,$langs;
 
 		$langs->load("orders");
 
@@ -3074,8 +3213,7 @@ class Commande extends CommonOrder
 
 
 /**
- *  \class      OrderLine
- *  \brief      Classe de gestion des lignes de commande
+ *  Class to mange order lines
  */
 class OrderLine extends CommonOrderLine
 {

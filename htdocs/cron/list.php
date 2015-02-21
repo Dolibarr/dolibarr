@@ -64,7 +64,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_label='';
 	$status=-1;

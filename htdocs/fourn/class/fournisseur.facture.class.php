@@ -7,7 +7,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,11 @@ class FactureFournisseur extends CommonInvoice
     public $table_element_line='facture_fourn_det';
     public $fk_element='fk_facture_fourn';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
 
     var $rowid;
     var $ref;
@@ -942,7 +947,7 @@ class FactureFournisseur extends CommonInvoice
             }
 
             // Triggers call
-            if (! $error && $notrigger)
+            if (! $error && empty($notrigger))
             {
                 // Call trigger
                 $result=$this->call_trigger('BILL_SUPPLIER_VALIDATE',$user);
@@ -1416,15 +1421,12 @@ class FactureFournisseur extends CommonInvoice
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param      User	$user       Object user
-     *	@return     int                 <0 if KO, >0 if OK
+     *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
-        global $conf, $user;
+        global $conf, $user, $langs;
 
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
         $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1437,13 +1439,24 @@ class FactureFournisseur extends CommonInvoice
         $resql=$this->db->query($sql);
         if ($resql)
         {
+	        $langs->load("bills");
+	        $now=dol_now();
+
+	        $response = new WorkboardResponse();
+	        $response->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
+	        $response->label=$langs->trans("SupplierBillsToPay");
+	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=paye:0';
+	        $response->img=img_object($langs->trans("Bills"),"bill");
+
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
-                if (! empty($obj->datefin) && $this->db->jdate($obj->datefin) < ($now - $conf->facture->fournisseur->warning_delay)) $this->nbtodolate++;
+                $response->nbtodo++;
+                if (! empty($obj->datefin) && $this->db->jdate($obj->datefin) < ($now - $conf->facture->fournisseur->warning_delay)) {
+	                $response->nbtodolate++;
+                }
             }
             $this->db->free($resql);
-            return 1;
+            return $response;
         }
         else
         {
@@ -1467,24 +1480,33 @@ class FactureFournisseur extends CommonInvoice
         global $langs;
 
         $result='';
+        $label = '<u>' . $langs->trans("ShowSupplierInvoice") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->ref_supplier))
+            $label.= '<br><b>' . $langs->trans('RefSupplier') . ':</b> ' . $this->ref_supplier;
+        if (! empty($this->total_ht))
+            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_tva))
+            $label.= '<br><b>' . $langs->trans('TVA') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+        if (! empty($this->total_ttc))
+            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 
         if ($option == 'document')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $lienfin='</a>';
         }
         else
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id.'">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $lienfin='</a>';
         }
-        $label=$langs->trans("ShowInvoice").': '.$this->ref;
-        if ($this->ref_supplier) $label.=' / '.$this->ref_supplier;
 
         $ref=$this->ref;
         if (empty($ref)) $ref=$this->id;
 
-        if ($withpicto) $result.=($lien.img_object($label,'bill').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($label, 'bill', 'class="classfortooltip"').$lienfin.' ');
         $result.=$lien.($max?dol_trunc($ref,$max):$ref).$lienfin;
         return $result;
     }
@@ -1493,7 +1515,7 @@ class FactureFournisseur extends CommonInvoice
       *      Return next reference of supplier invoice not already used (or last reference)
       *      according to numbering module defined into constant INVOICE_SUPPLIER_ADDON_NUMBER
       *
-      *      @param	   Society		$soc		object company
+      *      @param	   Societe		$soc		Thirdparty object
       *      @param    string		$mode		'next' for next value or 'last' for last value
       *      @return   string					free ref or last ref
       */
@@ -1509,10 +1531,14 @@ class FactureFournisseur extends CommonInvoice
 
         $file = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER.".php";
         $classname = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER;
+
         // Include file with class
-        foreach ($conf->file->dol_document_root as $dirroot)
-        {
-            $dir = $dirroot."/core/modules/supplier_invoice/";
+        $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+        foreach ($dirmodels as $reldir) {
+
+            $dir = dol_buildpath($reldir."core/modules/supplier_invoice/");
+
             // Load file with numbering class (if found)
             $mybool|=@include_once $dir.$file;
         }

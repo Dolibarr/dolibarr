@@ -141,6 +141,7 @@ if (empty($reshook))
 	        $object->socid           = GETPOST('socid','int');
 	        $object->description     = GETPOST('description'); // Do not use 'alpha' here, we want field as it is
 	        $object->public          = GETPOST('public','alpha');
+	        $object->budget_amount   = GETPOST('budget_amount','int');
 	        $object->datec=dol_now();
 	        $object->date_start=$date_start;
 	        $object->date_end=$date_end;
@@ -217,6 +218,7 @@ if (empty($reshook))
 	        $object->socid        = GETPOST('socid','int');
 	        $object->description  = GETPOST('description');	// Do not use 'alpha' here, we want field as it is
 	        $object->public       = GETPOST('public','alpha');
+	        $object->budget_amount= GETPOST('budget_amount','int');
 	        $object->date_start   = empty($_POST["projectstart"])?'':$date_start;
 	        $object->date_end     = empty($_POST["projectend"])?'':$date_end;
 
@@ -260,7 +262,7 @@ if (empty($reshook))
 		{
 	    	$db->commit();
 
-			if (GETPOST('socid','int') > 0) $object->thirdparty->fetch(GETPOST('socid','int'));
+			if (GETPOST('socid','int') > 0) $object->fetch_thirdparty(GETPOST('socid','int'));
 			else unset($object->thirdparty);
 	    }
 	}
@@ -353,7 +355,8 @@ if (empty($reshook))
 		$clone_project_files = GETPOST('clone_project_files') ? 1 : 0;
 		$clone_task_files = GETPOST('clone_task_files') ? 1 : 0;
 	    $clone_notes=GETPOST('clone_notes')?1:0;
-	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes);
+	    $move_date=GETPOST('move_date')?1:0;
+	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes,$move_date);
 	    if ($result <= 0)
 	    {
 		    setEventMessage($object->error, 'errors');
@@ -397,6 +400,8 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
+    print dol_fiche_head();
+
     print '<table class="border" width="100%">';
 
     $defaultref='';
@@ -430,13 +435,17 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
 
     // Label
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="40" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
 
     // Customer
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    $text=$form->select_company(GETPOST('socid','int'),'socid','',1,1);
-    $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-    print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+   	$text=$form->select_company(GETPOST('socid','int'),'socid','',1,1);
+    if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
+    {
+    	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+    	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+    }
+    else print $text;
     print '</td></tr>';
 
     // Public
@@ -455,6 +464,11 @@ if ($action == 'create' && $user->rights->projet->creer)
     print $form->select_date(($date_end?$date_end:-1),'projectend');
     print '</td></tr>';
 
+    // Budget
+    print '<tr><td>'.$langs->trans("Budget").'</td>';
+    print '<td><input size="4" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td></tr>';
+    print '</td></tr>';
+
     // Description
     print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
     print '<td>';
@@ -471,14 +485,16 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     print '</table>';
 
-    print '<br><center>';
+    dol_fiche_end();
+
+    print '<div class="center">';
     print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
     if (! empty($backtopage))
     {
         print ' &nbsp; &nbsp; ';
 	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     }
-    print '</center>';
+    print '</div>';
 
     print '</form>';
 
@@ -497,9 +513,6 @@ else
     $userDelete = $object->restrictedProjectArea($user,'delete');
     //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
-
-    $head=project_prepare_head($object);
-    dol_fiche_head($head, 'project', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
 
     // Confirmation validation
     if ($action == 'validate')
@@ -534,6 +547,7 @@ else
     		'text' => $langs->trans("ConfirmClone"),
             array('type' => 'checkbox', 'name' => 'clone_contacts',		'label' => $langs->trans("CloneContacts"), 			'value' => true),
             array('type' => 'checkbox', 'name' => 'clone_tasks',   		'label' => $langs->trans("CloneTasks"), 			'value' => true),
+        	array('type' => 'checkbox', 'name' => 'move_date',   		'label' => $langs->trans("CloneMoveDate"), 			'value' => true),
             array('type' => 'checkbox', 'name' => 'clone_notes',   		'label' => $langs->trans("CloneNotes"), 			'value' => true),
         	array('type' => 'checkbox', 'name' => 'clone_project_files','label' => $langs->trans("CloneProjectFiles"),	    'value' => false),
         	array('type' => 'checkbox', 'name' => 'clone_task_files',	'label' => $langs->trans("CloneTaskFiles"),         'value' => false)
@@ -542,14 +556,20 @@ else
         print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloneProject"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 240);
     }
 
+
+
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="id" value="'.$object->id.'">';
+    print '<input type="hidden" name="comefromclone" value="'.$comefromclone.'">';
+
+
+    $head=project_prepare_head($object);
+    dol_fiche_head($head, 'project', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+
     if ($action == 'edit' && $userWrite > 0)
     {
-        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="update">';
-        print '<input type="hidden" name="id" value="'.$object->id.'">';
-        print '<input type="hidden" name="comefromclone" value="'.$comefromclone.'">';
-
         print '<table class="border" width="100%">';
 
         // Ref
@@ -558,7 +578,7 @@ else
 
         // Label
         print '<tr><td>'.$langs->trans("Label").'</td>';
-        print '<td><input size="30" name="title" value="'.$object->title.'"></td></tr>';
+        print '<td><input size="40" name="title" value="'.$object->title.'"></td></tr>';
 
         // Customer
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
@@ -589,6 +609,11 @@ else
         print $form->select_date($object->date_end?$object->date_end:-1,'projectend');
         print '</td></tr>';
 
+	    // Budget
+	    print '<tr><td>'.$langs->trans("Budget").'</td>';
+	    print '<td><input size="4" type="text" name="budget_amount" value="'.(price(isset($_POST['budget_amount'])?GETPOST('budget_amount'):$object->budget_amount)).'"></td></tr>';
+	    print '</td></tr>';
+
         // Description
         print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
         print '<td>';
@@ -604,12 +629,6 @@ else
         }
 
         print '</table>';
-
-        print '<div align="center"><br>';
-        print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; ';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
-
-        print '</form>';
     }
     else
     {
@@ -656,6 +675,11 @@ else
         print dol_print_date($object->date_end,'day');
         print '</td></tr>';
 
+        // Budget
+        print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+        if ($object->budget_amount != '') print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
+        print '</td></tr>';
+
         // Description
         print '<td valign="top">'.$langs->trans("Description").'</td><td>';
         print nl2br($object->description);
@@ -673,6 +697,17 @@ else
 
     dol_fiche_end();
 
+	if ($action == 'edit' && $userWrite > 0)
+	{
+	    print '<div align="center">';
+    	print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; &nbsp; ';
+    	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    	print '</div>';
+	}
+
+    print '</form>';
+
+
     /*
      * Boutons actions
      */
@@ -685,11 +720,11 @@ else
         {
             if ($userWrite > 0)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Valid").'</a>';
+                print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
             }
             else
             {
-                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Valid').'</a>';
+                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
             }
         }
 

@@ -167,11 +167,11 @@ print '</tr>';
 
 $var=false;
 print '<tr '.$bc[$var].'><td>';
-print $form->select_comptes($account_from,'account_from',0,'',1);
+$form->select_comptes($account_from,'account_from',0,'',1);
 print "</td>";
 
 print "<td>\n";
-print $form->select_comptes($account_to,'account_to',0,'',1);
+$form->select_comptes($account_to,'account_to',0,'',1);
 print "</td>\n";
 
 print "<td>";
@@ -182,7 +182,7 @@ print '<td><input name="amount" class="flat" type="text" size="8" value="'.$amou
 
 print "</table>";
 
-print '<br><center><input type="submit" class="button" value="'.$langs->trans("Add").'"></center>';
+print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></div>';
 
 print "</form>";
 

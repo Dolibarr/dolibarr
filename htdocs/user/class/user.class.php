@@ -138,7 +138,7 @@ class User extends CommonObject
 	 *
 	 *	@param	int		$id		       		Si defini, id a utiliser pour recherche
 	 * 	@param  string	$login       		Si defini, login a utiliser pour recherche
-	 *	@param  strinf	$sid				Si defini, sid a utiliser pour recherche
+	 *	@param  string	$sid				Si defini, sid a utiliser pour recherche
 	 * 	@param	int		$loadpersonalconf	Also load personal conf of user (in $user->conf->xxx)
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
@@ -639,10 +639,8 @@ class User extends CommonObject
 		}
 
 		// For backward compatibility
-		if (isset($this->rights->propale))
-		{
-			$this->rights->propal = $this->rights->propale;
-		}
+		if (isset($this->rights->propale) && ! isset($this->rights->propal)) $this->rights->propal = $this->rights->propale;
+		if (isset($this->rights->propal) && ! isset($this->rights->propale)) $this->rights->propale = $this->rights->propal;
 
 		if (! $moduletag)
 		{
@@ -1662,7 +1660,7 @@ class User extends CommonObject
 	/**
 	 *  Add user into a group
 	 *
-	 *  @param	Group	$group      Id of group
+	 *  @param	int	$group      Id of group
 	 *  @param  int		$entity     Entity
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				<0 if KO, >0 if OK
@@ -1721,7 +1719,7 @@ class User extends CommonObject
 	/**
 	 *  Remove a user from a group
 	 *
-	 *  @param	Group   $group       Id of group
+	 *  @param	int   $group       Id of group
 	 *  @param  int		$entity      Entity
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     <0 if KO, >0 if OK
@@ -1779,23 +1777,76 @@ class User extends CommonObject
 	 *
 	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
 	 *	@param	string	$option			On what the link point to
+     *  @param  boolean $infologin      Add connection info to the tooltip
+     *  @param	string	$notooltip		1=Disable tooltip
+     *  @param	int		$maxlen			Max length of visible user name
 	 *	@return	string					String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24)
 	{
-		global $langs;
+		global $langs, $conf, $db;
+        global $dolibarr_main_authentication, $dolibarr_main_demo;
 
-		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+        $result = '';
+        $companylink = '';
+
+        $label = '<u>' . $langs->trans("User") . '</u>';
+        $label.= '<div width="100%">';
+        $label .= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
+        if (! empty($this->login))
+        $label .= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
+        if (! empty($this->email))
+        $label .= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
+        if (! empty($this->admin))
+        $label .= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
+        if (! empty($this->societe_id)) {
+            $thirdpartystatic = new Societe($db);
+            $thirdpartystatic->fetch($this->societe_id);
+            $companylink = ' ('.$thirdpartystatic->getNomUrl('','').')';
+            $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
+        }
+        $type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
+        $label .= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
+        if (! empty($this->photo))
+        {
+        	$label.= '</div><div style="padding: 10px">';
+        	//if (! is_object($form)) $form = new Form($db);
+            $label.= Form::showphoto('userphoto', $this, 80);
+        }
+        $label.= '</div>';
+
+        // Info Login
+        if ($infologin)
+        {
+            $label.= '<br>';
+            $label.= '<br><u>'.$langs->trans("Connection").'</u>';
+            $label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
+            if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
+            $label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
+            $label.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin,"dayhour");
+            $label.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin,"dayhour");
+            $label.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
+            $label.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
+            $s=picto_from_langcode($langs->getDefaultLang());
+            $label.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($s?$s.' ':'').$langs->getDefaultLang();
+            $label.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
+            if (! empty($conf->browser->phone)) $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
+            if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
+        }
+
+
+        $lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
+        $lien.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
+        $lien.= '>';
 		$lienfin='</a>';
 
-		if ($withpicto)
-		{
-			$result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin);
-			if ($withpicto != 2) $result.=' ';
+        if ($withpicto)
+        {
+            $result.=($lien.img_object(($notooltip?'':$label), 'user', ($notooltip?'':'class="classfortooltip"')).$lienfin);
+            if ($withpicto != 2) $result.=' ';
 		}
-		$result.=$lien.$this->getFullName($langs,'','',16).$lienfin;
+		$result.= $lien . $this->getFullName($langs,'','',$maxlen) . $companylink . $lienfin;
 		return $result;
 	}
 

@@ -113,35 +113,20 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("StockSetup"),$linkback,'setup');
 
 $form=new Form($db);
-$var=true;
-print '<table class="noborder" width="100%">';
 
-print '<tr class="liste_titre">';
-print "  <td>".$langs->trans("Parameters")."</td>\n";
-print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
-print '</tr>'."\n";
 
-/*
- * Formulaire parametres divers
- */
+$disabled='';
+if (! empty($conf->productbatch->enabled))
+{
+	$langs->load("productbatch");
+	$disabled=' disabled="disabled"';
+	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
+}
 
-$var=!$var;
-
-print "<tr ".$bc[$var].">";
-print '<td width="60%">'.$langs->trans("UserWarehouseAutoCreate").'</td>';
-
-print '<td width="160" align="right">';
-print "<form method=\"post\" action=\"stock.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK_AUTOCREATE\">";
-print $form->selectyesno("STOCK_USERSTOCK_AUTOCREATE",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</form>';
-print "</td>\n";
-print "</tr>\n";
-print '<br>';
-print '</table>';
-print '<br>';
+//if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
+//{
+print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
+//}
 
 // Title rule for stock decrease
 print '<table class="noborder" width="100%">';
@@ -160,8 +145,8 @@ if (! empty($conf->facture->enabled))
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_BILL\">";
-	print $form->selectyesno("STOCK_CALCULATE_ON_BILL",$conf->global->STOCK_CALCULATE_ON_BILL,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print $form->selectyesno("STOCK_CALCULATE_ON_BILL",$conf->global->STOCK_CALCULATE_ON_BILL,1,$disabled);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
 }
 
@@ -174,8 +159,8 @@ if (! empty($conf->commande->enabled))
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_VALIDATE_ORDER\">";
-	print $form->selectyesno("STOCK_CALCULATE_ON_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print $form->selectyesno("STOCK_CALCULATE_ON_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER,1,$disabled);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
 }
 
@@ -188,11 +173,12 @@ if (! empty($conf->expedition->enabled))
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SHIPMENT\">";
-	print $form->selectyesno("STOCK_CALCULATE_ON_SHIPMENT",$conf->global->STOCK_CALCULATE_ON_SHIPMENT,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print $form->selectyesno("STOCK_CALCULATE_ON_SHIPMENT",$conf->global->STOCK_CALCULATE_ON_SHIPMENT,1,$disabled);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
 }
 print '</table>';
+
 print '<br>';
 
 // Title rule for stock increase
@@ -212,8 +198,8 @@ if (! empty($conf->fournisseur->enabled))
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_BILL\">";
-	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_BILL",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_BILL",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL,1,$disabled);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
 }
 
@@ -226,8 +212,8 @@ if (! empty($conf->fournisseur->enabled))
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER\">";
-	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER,1,$disabled);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
 }
 if (! empty($conf->fournisseur->enabled))
@@ -239,8 +225,8 @@ if (! empty($conf->fournisseur->enabled))
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER\">";
-	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER,1,$disabled);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
 }
 
@@ -328,6 +314,34 @@ if ($virtualdiffersfromphysical)
 	print "</tr>\n";
 	print '</table>';
 }
+
+
+$var=true;
+print '<table class="noborder" width="100%">';
+
+print '<tr class="liste_titre">';
+print "  <td>".$langs->trans("Other")."</td>\n";
+print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
+print '</tr>'."\n";
+
+$var=!$var;
+
+print "<tr ".$bc[$var].">";
+print '<td width="60%">'.$langs->trans("UserWarehouseAutoCreate").'</td>';
+
+print '<td width="160" align="right">';
+print "<form method=\"post\" action=\"stock.php\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK_AUTOCREATE\">";
+print $form->selectyesno("STOCK_USERSTOCK_AUTOCREATE",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print "</td>\n";
+print "</tr>\n";
+print '<br>';
+print '</table>';
+print '<br>';
+
 
 llxFooter();
 

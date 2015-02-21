@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,8 @@ class RemiseCheque extends CommonObject
 	var $ref_ext;
 	//! Numero d'erreur Plage 1024-1279
 	var $errno;
+
+	public $statut;
 
 	/**
 	 *	Constructor
@@ -274,7 +277,7 @@ class RemiseCheque extends CommonObject
 	 *	Supprime la remise en base
 	 *
 	 *	@param  User	$user 		Utilisateur qui effectue l'operation
-	 *	@return	void
+	 *	@return	int
 	 */
 	function delete($user='')
 	{
@@ -292,25 +295,23 @@ class RemiseCheque extends CommonObject
 		{
 			$num = $this->db->affected_rows($resql);
 
-			if ($num <> 1)
-	  {
-	  	$this->errno = -2;
-	  	dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
-	  }
+			if ($num <> 1) {
+				$this->errno = -2;
+				dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
+			}
 
-	  if ( $this->errno === 0)
-	  {
-	  	$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-	  	$sql.= " SET fk_bordereau = 0";
-	  	$sql.= " WHERE fk_bordereau = '".$this->id."'";
+			if ( $this->errno === 0) {
+			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+			    $sql.= " SET fk_bordereau = 0";
+			    $sql.= " WHERE fk_bordereau = '".$this->id."'";
 
-	  	$resql = $this->db->query($sql);
-	  	if (!$resql)
-	  	{
-	  		$this->errno = -1028;
-	  		dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
-	  	}
-	  }
+			    $resql = $this->db->query($sql);
+			    if (!$resql)
+			    {
+			        $this->errno = -1028;
+				    dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
+				}
+			}
 		}
 
 		if ($this->errno === 0)
@@ -432,17 +433,13 @@ class RemiseCheque extends CommonObject
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *      @param      User	$user       Objet user
-     *      @return     int                 <0 if KO, >0 if OK
+     *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	function load_board($user)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
-
-		$now=dol_now();
-
-		$this->nbtodo=$this->nbtodolate=0;
 
 		$sql = "SELECT b.rowid, b.datev as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -456,12 +453,25 @@ class RemiseCheque extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$langs->load("banks");
+			$now=dol_now();
+
+			$response = new WorkboardResponse();
+			$response->warning_delay=$conf->bank->cheque->warning_delay/60/60/24;
+			$response->label=$langs->trans("BankChecksToReceipt");
+			$response->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=accountancy';
+			$response->img=img_object($langs->trans("BankChecksToReceipt"),"payment");
+
 			while ($obj=$this->db->fetch_object($resql))
 			{
-				$this->nbtodo++;
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->cheque->warning_delay)) $this->nbtodolate++;
+				$response->nbtodo++;
+
+				if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->cheque->warning_delay)) {
+					$response->nbtodolate++;
+				}
 			}
-			return 1;
+
+			return $response;
 		}
 		else
 		{
@@ -476,7 +486,7 @@ class RemiseCheque extends CommonObject
 	 *	Build document
 	 *
 	 *	@param	string		$model 			Model name
-	 *	@param 	Tranlsate	$outputlangs	Object langs
+	 *	@param 	Translate	$outputlangs	Object langs
 	 * 	@return int        					<0 if KO, >0 if OK
 	 */
 	function generatePdf($model, $outputlangs)
@@ -693,7 +703,7 @@ class RemiseCheque extends CommonObject
      *      Set the creation date
      *
      *      @param	User		$user           Object user
-     *      @param  timestamp   $date           Date creation
+     *      @param  int   $date           Date creation
      *      @return int                 		<0 if KO, >0 if OK
      */
     function set_date($user, $date)
@@ -727,7 +737,7 @@ class RemiseCheque extends CommonObject
 	 *      Set the number of bordereau
 	 *
 	 *      @param	User		$user           Object user
-	 *      @param  timestamp   $number         number of bordereau
+	 *      @param  int   $number         number of bordereau
 	 *      @return int                 		<0 if KO, >0 if OK
 	 */
 	function set_number($user, $number)
@@ -769,11 +779,12 @@ class RemiseCheque extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = $langs->trans("ShowCheckReceipt").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"),'payment').$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, 'payment', 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 

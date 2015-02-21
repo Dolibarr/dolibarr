@@ -35,3 +35,6 @@ MessageKO=Zpráva o zrušení straně platební návratu
 NewPayboxPaymentReceived=Nový Paybox přijaté platby
 NewPayboxPaymentFailed=Nový Paybox platba snažil se ale propadal
 PAYBOX_PAYONLINE_SENDEMAIL=E-mail upozornit po platbě (úspěch nebo selhání)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID

@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - admin
+VATManagement=GST Management
+LocalTax1IsUsedDesc=Use a second tax (PST)
+LocalTax1IsNotUsedDesc=Do not use second tax (PST)
+LocalTax1Management=PST Management

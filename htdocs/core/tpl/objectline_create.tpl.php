@@ -2,7 +2,9 @@
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,25 +52,26 @@ if (in_array($object->element,array('propal','facture','invoice','commande','ord
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
-	<td align="right"><span id="title_vat"><label for="tva_tx"><?php echo $langs->trans('VAT'); ?></label></span></td>
-	<td align="right"><span id="title_up_ht"><label for="price_ht"><?php echo $langs->trans('PriceUHT'); ?></label></span></td>
+	<td align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
+	<td align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
-	<td align="right"><span id="title_up_ttc"><label for="price_ttc"><?php echo $langs->trans('PriceUTTC'); ?></label></span></td>
+	<td align="right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 	<?php } ?>
-	<td align="right"><label for="qty"><?php echo $langs->trans('Qty'); ?></label></td>
-	<td align="right"><label for="remise_percent"><?php echo $langs->trans('ReductionShort'); ?></label></td>
+	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
+	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
+	if ($this->situation_cycle_ref) {
+		print '<td align="right">' . $langs->trans('Progress') . '</td>';
+	}
 	if (! empty($usemargins))
 	{
 		?>
 		<td align="right" class="margininfos">
 		<?php
-		echo '<label for="buying_price">';
 		if ($conf->global->MARGIN_TYPE == "1")
 			echo $langs->trans('BuyingPrice');
 		else
 			echo $langs->trans('CostPrice');
-		echo '</label>';
 		?>
 		</td>
 		<?php
@@ -103,20 +106,25 @@ else {
 	// Show radio free line
 	if ($forceall >= 0 && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
 	{
+		echo '<label for="prod_entry_mode_free">';
 		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 		//echo (GETPOST('prod_entry_mode')=='free' ? ' checked="true"' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked="true"':'') );
 		echo (GETPOST('prod_entry_mode')=='free' ? ' checked="true"' : '');
 		echo '> ';
-	}
-	else echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
-
-	// Show type selector
-	if ($forceall >= 0)
-	{
-		echo '<label for="select_type">';
+		// Show type selector
 		echo $langs->trans("FreeLineOfType");
 		echo '</label>';
 		echo ' ';
+	}
+	else
+	{
+		echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
+		// Show type selector
+		if ($forceall >= 0)
+		{
+			echo $langs->trans("FreeLineOfType");
+			echo ' ';
+		}
 	}
 
 	echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,1,$forceall);
@@ -128,9 +136,8 @@ else {
 	{
 		if ($forceall >= 0) echo '<br>';
 		echo '<span>';
-		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked="true"':'').'> ';
-
 		echo '<label for="prod_entry_mode_predef">';
+		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked="true"':'').'> ';
 		if (empty($senderissupplier))
 		{
 			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
@@ -212,8 +219,11 @@ else {
 	<td align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
 	</td>
 	<td align="right" class="nowrap"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
-
 	<?php
+	if ($this->situation_cycle_ref) {
+		$coldisplay++;
+		print '<td align="right" class="nowrap"><input type="text" size="1" value="0" name="progress">%</td>';
+	}
 	if (! empty($usemargins))
 	{
 		?>
@@ -263,6 +273,9 @@ else {
 		elseif ($this->table_element_line=='facturedet') {
 			$newline = new FactureLigne($this->db);
 		}
+		elseif ($this->table_element_line=='contratdet') {
+			$newline = new ContratLigne($this->db);
+		}
 		if (is_object($newline)) {
 			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));
 		}
@@ -271,10 +284,11 @@ else {
 </tr>
 
 <?php
-if (! empty($conf->service->enabled) && $dateSelector)
+if (! empty($conf->service->enabled) && $dateSelector && GETPOST('type') != '0')
 {
 	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;
+	if($this->situation_cycle_ref) $colspan++;
 	if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
 	if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
 
@@ -446,41 +460,74 @@ jQuery(document).ready(function() {
 		setforpredef();
 		jQuery('#trlinefordates').show();
 	});
+
+	/* Sur changemenr de produit, on recharge la liste des prix fournisseur */
 	$("#idprod, #idprodfournprice").change(function()
 	{
 		setforpredef();
 		jQuery('#trlinefordates').show();
 
-		<?php if (! empty($usemargins) && $user->rights->margins->creer) { ?>
+		<?php
+		if (! empty($usemargins) && $user->rights->margins->creer)
+		{
+			$langs->load('stocks');
+			?>
 
 		/* Code for margin */
   		$("#fournprice_predef options").remove();
 		$("#fournprice_predef").hide();
 		$("#buying_price").val("").show();
+		/* Call post to load content of combo list fournprice_predef */
   		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', { 'idprod': $(this).val() }, function(data) {
 	    	if (data && data.length > 0)
 	    	{
     	  		var options = '';
+    	  		var defaultkey = '';
+    	  		var defaultprice = '';
 	      		var i = 0;
 	      		$(data).each(function() {
-	        		i++;
-	        		options += '<option value="'+this.id+'" price="'+this.price+'"';
-	        		if (i == 1) {
-	          			options += ' selected';
-	          			$("#buying_price").val(this.price);
-	        		}
-	        		options += '>'+this.label+'</option>';
+	      			if (this.id != 'pmpprice')
+		      		{
+		        		i++;
+		        		options += '<option value="'+this.id+'" price="'+this.price+'"';
+		        		if (this.price > 0 && i == 1) { defaultkey = this.id; defaultprice = this.price; }
+		        		options += '>'+this.label+'</option>';
+		      		}
+	      			if (this.id == 'pmpprice')
+	      			{
+		      			var defaultbuyprice = <?php echo (isset($conf->global->MARGIN_PMP_AS_DEFAULT_BUY_PRICE)?int($conf->global->MARGIN_PMP_AS_DEFAULT_BUY_PRICE):1); ?>;
+		      			if (this.price > 0 && 1 == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
+	    	      		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
+	      			}
 	      		});
-	      		options += '<option value=""><?php echo $langs->trans("InputPrice"); ?></option>';
-	      		$("#buying_price").hide();
+	      		options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
+
+				/* alert(defaultkey+' '+defaultprice); */
 	      		$("#fournprice_predef").html(options).show();
+	      		$("#fournprice_predef").val(defaultkey);
+
+	      		/* At loading, no product are yet selected, so we hide field of buying_price */
+	      		$("#buying_price").hide();
+
+	      		/* Define default price at loading */
+	      		var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
+	      		$("#buying_price").val(defaultprice);
+
 	      		$("#fournprice_predef").change(function() {
-	        		var selval = $(this).find('option:selected').attr("price");
-	        		if (selval)
-	          			$("#buying_price").val(selval).hide();
-	        		else
-	          			$('#buying_price').show();
-	      		});
+	      			/* Hide field buying_price according to choice into list (if 'inputprice' or not) */
+					var linevalue=$(this).find('option:selected').val();
+	        		var pricevalue = $(this).find('option:selected').attr("price");
+	        		if (linevalue != 'inputprice' && linevalue != 'pmpprice') {
+	          			$("#buying_price").val(pricevalue).hide();	/* We set value then hide field */
+	        		}
+	        		if (linevalue == 'inputprice') {
+		          		$('#buying_price').show();
+	        		}
+	        		if (linevalue == 'pmpprice') {
+	        			$("#buying_price").val(pricevalue);
+		          		$('#buying_price').hide();
+	        		}
+				});
 	    	}
 	  	},
 	  	'json');

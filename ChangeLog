@@ -2,6 +2,29 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.8 compared to 3.7.* *****
+For users:
+- New: Add Option to not change date on cloning project
+- New: Add check list from table for extrafield type
+- New: Use new combobox.
+- New: Add hidden option MAXTABS_IN_CARD.
+- New: A default label is suggested for stock correction and transfer instead of empty string.
+- Fix / Improve : [ bug #1747 ] Remove creation of batch 'Undefined'
+- Add Weighted average price as default price for buying price for margin calculation. Add option 
+  MARGIN_PMP_AS_DEFAULT_BUY_PRICE to replace with first supplier price.
+- Introduce option MAIN_HTML_TITLE to start to control format of html title content.
+- Add extrafields on bank account cards.
+- Added delay between mails in Newsletter module
+- [ task #1793 ] Create new permission to restrict commercial agent margin to logged user
+
+For translators:
+- Update language files.
+- New: When a translation is not available we always jump to en_US and only en_US.
+
+For developers:
+- New: Function yn can show a visual checkbox.
+- New: Introduced select2 jquery plugin.
+
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
@@ -82,8 +105,11 @@ For users:
 - New: Add dunning into accountancy report.
 - New: Add favorite button into country dictionary to put value on top select list
 - Upgrade phpexcel lib to 1.7.8
-- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export
-- New : Option on extrafields to have them always editable regardless of the document status
+- New : Use of MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR to use disk cache for big excel export.
+- New : Option on extrafields to have them always editable regardless of the document status.
+- New : New module PrintIPP to print without opening document is available as stable.
+- New : Introduce hidden option STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS to solve at no risk
+        a missing control on missing warehouse.
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -100,8 +126,12 @@ For users:
 - Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
+- Fix: [ bug #1533 ] Links triggers do not show trigger error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 - Fix: [ bug #1535 ] Supplier invoice Extrafields are not shown
+- Fix: datepicker first day of week can be monday by setting into display setup
+- Fix: [ bug #575 ] GED doesn't works if there is "/" in a mask
+- Fix: [ task #1728 ] Deactivate RIB suggest in proposals / invoices / orders
 
 For users, new experimental module (need to set feature level of instance to experimental to see them):
 - New: Module Accounting Expert to manage accountancy
@@ -148,6 +178,7 @@ For developers:
 - Qual: Renamed all files & links "fiche.php" into "card.php".
 - Qual: Replace all constants COMPTA_* by ACCOUNTING_*.
 - Qual: Replace all constants ACCOUNTINGEX_* by ACCOUNTING_* to simplify migration of the module
+- Fix: [ bug #1724 ] Can't add a submenu to projects
 
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -162,19 +193,52 @@ Dolibarr better:
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
 - A lot of pages called fiche.php were renamed into card.php
 - A lot of pages called liste.php were renamed into list.php
+- If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
+  warehouse module and your Point Of Sale module if you use one.
 
-
+***** ChangeLog for 3.6.3 compared to 3.6.2 *****
+- Fix: ref_ext was not saved when recording a customer order from web service
+- Fix: withdrawal create error if in the same month are deleted previus withdrawals.
+- Fix: amarok is a bugged theme making dolidroid failed. We switch to eldy automatically with dolidroid.
+- Fix: [ bug #1788 ] Duplicated doActions hook in product/fournisseurs.php
+- Fix: withdrawal create error if in the same month are deleted previous withdrawals.
+- Fix: [ bug #1801 ] FAC_FORCE_DATE_VALIDATION constant alters supplier invoice date given to numeration modules
+- Fix: [ bug #1802 ] SQL error when updating a task with PostgreSQL database
+- Fix: [ bug #1785 ] Start date is lost in Project > Linked objects
+- Fix: [ bug #1804 ] SQL error when sending email without address
+- Fix: [ bug #1803 ] AJAX company contact input is not aligned
+- Fix: [ bug #1787 ] Incorrect behaviour of doActions hook
+- Fix: [ bug #1796 ] Unable to use numeration modules from an external module
+- Fix: [ bug #1783 ] SQL error when enabling 3rd party module with PostgreSQL and MySQL strict mode ON
+- Fix: [ bug #1717 ] Sorting unpaid invoices by amount received brings due amount
+- Fix: [ bug #1784 ] MOTD doesn't show up in Amarok theme
+- Fix: Tracking number not visible on shipment pdf
+- Fix: [ bug #1812 ] SQL Error message while sending emailing with PostgreSQL database
+- Fix: [ bug #1819 ] SQL error when searching for an invoice payment
+- Fix: [ bug #1827 ] Tax reports gives incorrect amounts when using external modules that create lines with special codes
+- Fix: [ bug #1822 ] SQL error in clientfourn.php report with PostgreSQL
+- Fix: [ bug #1832 ] SQL error when adding a product with no price defined to an object
+- Fix: [ bug #1826 ] Supplier payment types are not translated into fourn/facture/paiement.php
+- Fix: [ bug #1830 ] Salaries payment only allows checking accounts
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
 - Fix: bug 1588 : relative discount.
-- Fix: label of input method not tranlated.
-- Fix: box of customer and propsects were not correctly disabled.
+- Fix: label of input method not translated.
+- Fix: box of customer and prospects were not correctly disabled.
 - Fix: [ bug #1618 ] PHP Error thrown when saving a barcode
 - Fix: Civility & birthdate wasn't save into adherent module.
-- Fix: webservice Thirdparty parameter lastname for invidual creation is now lastname and not ref
+- Fix: webservice Thirdparty parameter lastname for individual creation is now lastname and not ref
 - Fix: Chars - is no more allowed into value for code for extra fields.
-( Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
+- Fix: [ bug #1622 ] Requesting holiday than spans across two years cause high CPU usage by Apache
+- Fix: [ bug #1595 ] Selected boolean extrafield in intervention creation page, does not save state
+- Fix: Show sender Country on PDF docs when sender Country <> receiver Country
+- Fix: [ bug #1624 ] Use lowest buying price for margin when selling with POS
+- Fix: [ bug #1749 ] Undefined $mailchimp
+- Fix: [ bug #1736 ] Failing supplier Elephant numeration module with some masks
+- Fix: [ bug #1649 ] Cancel button of several thirdparty actions, does the same thing as modify
+- Fix: [ bug #1736 ] Failing supplier Elephant numeration module with some masks
+- Fix: [ bug #1731 ] Can't use quick navigation on project tasks secondary tabs
 
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
@@ -192,14 +256,14 @@ For users:
 - Fix: Iban was used instead of Bic into SEPA file.
 - Fix: Must unaccent strings into SEPA file.
 - Fix: Extrafield feature select from table should try to translate multiple column when not needed 
-- Fix: cents for indian ruppes are calle paisa and paise.
+- Fix: cents for indian ruppes are called paisa and paise.
 - Fix: Invoices payments may be older than invoices.
 - Fix: Withdrawal total amount is double
 - Fix: [ bug #1593 ] Spanish Localtax IRPF not being calculated since 3.6.0 in supplier invoices when adding a line
 - Fix: Web service categorie WDSL declaration is correct
 - Fix: ErrorBadValueForParamNotAString was displayed in virtual product if no base price defined
 - Fix: Category creation failed and no message output
-- Fix: Lanf for Payment Type
+- Fix: Lang for Payment Type
 - Fix: PHPCheckstyle 1.5.5
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
@@ -221,12 +285,12 @@ For users:
 - New: Improved Opensurvey module:
        Added options to disable comments and disable public votes.
        Limit dates use calendar popup.
-       Description of survey use wysiwig editor.
+       Description of survey use wysiwyg editor.
        More information shown on result tab.
        Renamed "survey" into "poll" (better translation).
 - New: Add filter on text and status into survey list. Can also sort on id, text and date end.
 - New: The box "balance of bank accounts" show all opened accounts.
-- New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE to add sale represnative into public
+- New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE to add sale representative into public
        note of generated documents.
 - New: Add warning if supplier payment is higher that due amount.
 - New: Increase length of url into bookmark module.
@@ -239,7 +303,7 @@ For users:
 - New: Add barcode fields into user database.
 - New: Add manager name (ceo, director, president...) into main company information page.
 - New: Add field url as product properties.
-- New: More options to create a credit note (can be filled autatically according to remain to pay).
+- New: More options to create a credit note (can be filled automatically according to remain to pay).
 - New: Can define custom fields for categories.
 - New: Prepare generation of SEPA files into module withdrawal.
 - New: [ task #1164 ] Add "Ref. supplier" search box in supplier orders
@@ -256,7 +320,7 @@ For users:
 - New: [ task #926 ] Add extrafield feature on order lines.
 - New: [ task #927 ] Add extrafield feature on Proposal lines.
 - New: [ task #928 ] Add extrafield feature on invoice lines.
-- New: Paypal/paybox email sent after backcall of a payment is now a formated and translated
+- New: Paypal/paybox email sent after backcall of a payment is now a formatted and translated
        HTML content. For member subscription renewal, there is also a link to member.
 - New: When a subscription is recorded with invoice and payment:
        - the document (PDF) of invoice is also generated.
@@ -312,14 +376,30 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
   So check that return value is 0 to keep default standard behaviour after hook, or 1 to disable
   default standard behaviour.
 - Properties "civilite_id" were renamed into "civility_id".
-- Remove add_photo_web() that is ot used anymore by core code.
+- Remove add_photo_web() that is not used anymore by core code.
 
+
+***** ChangeLog for 3.5.7 compared to 3.5.6 *****
+Fix: Paypal link were broken due to SSL v3 closed.
+Fix: [ bug #1769 ] Error when installing to a PostgreSQL DB that contains numbers
+Fix: [ bug #1752 ] Date filter of margins module, filters since 12H instead of 00H
+Fix: [ bug #1757 ] Sorting breaks product/service statistics
+Fix: [ bug #1797 ] Tulip supplier invoice module takes creation date instead of invoice date
+Fix: [ bug #1792 ] Users are not allowed to see margins module index page when no product view permission is enabled
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973
+Fix: Can't update phone_pro from web service
+Fix: Some security holes.
+Fix: copy extrafields when creating order from proposal.
+Fix: report on action was not filtering by environment.
+Fix: Avoid missing class error.
+Fix: Add function dolEscapeXML.
+Fix: Bad days and month reported by function.
+Fix: Bad margin calculation.
 
 ***** ChangeLog for 3.5.5 compared to 3.5.4 *****
-Fix: Holiday module was broken. Initializaion of amount of holidays failed.
+Fix: Holiday module was broken. Initialization of amount of holidays failed.
 Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas.
 Fix: Fusion PDF button on unpaid invoice is no more displayed.
 Fix: Unpaid invoice launch fusion PDF action even if it is only search (with enter keyboard input instead of lens click).
@@ -354,7 +434,7 @@ Fix: When using option MAIN_MAIL_ALLOW_SENDMAIL_F, a mail was sent to sender.
 Fix: Question about warehouse must not be done when module stock is disabled.
 Fix: Option STOCK_SUPPORTS_SERVICES was not correctly implemented
      (missing test at some places).
-Fix: Renaming a project with uplaoded files failed.
+Fix: Renaming a project with uploaded files failed.
 Fix: [ bug #1476 ] Invoice creation form loses invoice date when there is a validation error.
 Fix: [ bug #1431 ] Reception and Send supplier order box has a weird top margin.
 Fix: [ bug #1428 ] "Nothing" is shown in the middle of the screen in a supplier order.
@@ -375,7 +455,7 @@ Fix: [ bug #1449 ] Trigger ORDER_CREATE, LINEORDER_DELETE, LINEORDER_UPDATE and 
 Fix: [ bug #1450 ] Several Customer order's triggers do not report the error from the trigger handler.
 Fix: [ bug #1451 ] Interrupted order clone through trigger, loads nonexistent order.
 Fix: [ bug #1454 ] Mention de bas de page erroné
-Fix: Do not display dictionnay for non activated module 
+Fix: Do not display dictionary for non activated module 
 Fix: Link element from element project pages
 Fix: [ bug #1509 ] Expedition admin free text & watermark submit error
 Fix: [ bug #1349 ] AJAX contact selector does not work fine in Project card

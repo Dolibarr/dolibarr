@@ -24,10 +24,10 @@
 /**
  *  Return array head with list of tabs to view object informations
  *
- *  @param	Object	$object         Member
+ *  @param	Adherent	$object         Member
  *  @return array           		head
  */
-function member_prepare_head($object)
+function member_prepare_head(Adherent $object)
 {
 	global $langs, $conf, $user;
 
@@ -155,7 +155,7 @@ function member_admin_prepare_head()
 /**
  *  Return array head with list of tabs to view object stats informations
  *
- *  @param	Object	$object         Member or null
+ *  @param	Adherent	$object         Member or null
  *  @return	array           		head
  */
 function member_stats_prepare_head($object)

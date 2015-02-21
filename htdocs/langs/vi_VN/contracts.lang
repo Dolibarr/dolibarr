@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
-ContractsArea=Diện tích hợp đồng
+ContractsArea=Phạm vi hợp đồng
 ListOfContracts=Danh sách các hợp đồng
-LastContracts=Hợp đồng đổi cuối cùng% s
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Tất cả các hợp
 ContractCard=Thẻ đồng
 ContractStatus=Tình trạng hợp đồng
@@ -27,7 +27,7 @@ MenuRunningServices=Dịch vụ đang chạy
 MenuExpiredServices=Dịch vụ hết hạn
 MenuClosedServices=Dịch vụ khép kín
 NewContract=Hợp đồng mới
-AddContract=Thêm hợp đồng
+AddContract=Tạo hợp đồng
 SearchAContract=Tìm kiếm một hợp đồng
 DeleteAContract=Xóa một hợp đồng
 CloseAContract=Đóng một hợp đồng
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Danh sách các đường chạy hợp đồng
 ListOfRunningServices=Danh sách các dịch vụ đang chạy
 NotActivatedServices=Dịch vụ không hoạt động (trong hợp đồng xác nhận)
 BoardNotActivatedServices=Dịch vụ để kích hoạt các hợp đồng xác nhận
-LastContracts=Hợp đồng đổi cuối cùng% s
+LastContracts=Last %s contracts
 LastActivatedServices=Dịch vụ kích hoạt cuối% s
 LastModifiedServices=Dịch vụ biến đổi cuối cùng% s
 EditServiceLine=Dòng Chỉnh sửa dịch vụ
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Danh sách Dịch vụ hết hạn
 NoteListOfYourExpiredServices=Danh sách này chỉ bao gồm các dịch vụ hợp đồng cho các bên thứ ba mà bạn đang kết nối như là một đại diện bán hàng.
 StandardContractsTemplate=Hợp đồng tiêu chuẩn mẫu
 ContactNameAndSignature=Đối với% s, tên, chữ ký:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Bán hàng ký kết hợp đồng đại diện

@@ -299,7 +299,7 @@ if ($action == 'create')
     // Handler
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuHandler').'</td>';
     print '<td>';
-    print $formadmin->select_menu_families($menu_handler,'menu_handler',$dirmenu);
+    $formadmin->select_menu_families($menu_handler,'menu_handler',$dirmenu);
     print '</td>';
     print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
@@ -369,9 +369,11 @@ if ($action == 'create')
     print '</table>';
 
     // Boutons
-    print '<center><br><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-    print ' &nbsp; &nbsp; ';
-    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+    print '<br><div class="center">';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
     print '</form>';
 }
@@ -453,9 +455,11 @@ elseif ($action == 'edit')
     print '</table>';
 
     // Bouton
-    print '<center><br><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-    print ' &nbsp; &nbsp; ';
-    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+    print '<br><div class="center">';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
     print '</form>';
 

@@ -181,7 +181,7 @@ print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
+print '<td colspan="2" align="right">'.$langs->trans("NewTimeSpent").'</td>';
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to

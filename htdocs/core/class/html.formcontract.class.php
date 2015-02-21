@@ -65,7 +65,7 @@ class FormContract
 		$sql.= " WHERE c.entity = ".$conf->entity;
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$contratListId.")";
 		if ($socid == 0) $sql.= " AND (c.fk_soc = 0 OR c.fk_soc IS NULL)";
-		else $sql.= " AND c.fk_soc = ".$socid;
+		if ($socid > 0)  $sql.= " AND (c.fk_soc=".$socid." OR c.fk_soc IS NULL)";
 
 		dol_syslog(get_class($this)."::select_contract", LOG_DEBUG);
 		$resql=$db->query($sql);

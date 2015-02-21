@@ -155,6 +155,7 @@ MigrationFinished=Actualización terminada
 LastStepDesc=<strong>Último paso</strong>: Indique aquí la cuenta y la contraseña del primer usuario que usted utilizará para conectarse a la aplicación. No pierda estos identificadores, es la cuenta que permite administrar el resto.
 ActivateModule=Activación del módulo %s
 ShowEditTechnicalParameters=Pulse aquí para ver/editar los parámetros técnicos (modo experto)
+WarningUpgrade=Atención:\nHa pensado en hacer una copia de seguridad de la base de datos?\nEs muy recomendable: por ejemplo, debido a algunos fallos en los sistemas de bases de datos (por ejemplo MySQL versión 5.5.40), algunos datos o tablas se pueden perder durante este proceso, por lo que es muy recomendable tener una copia completa de su base de datos antes de iniciar la migración.\n\nHaga clic en OK para iniciar el proceso de migración...
 
 #########
 # upgrade
@@ -206,6 +207,7 @@ MigrationProjectTaskTime=Actualización de tiempo dedicado en segundos
 MigrationActioncommElement=Actualización de los datos de acciones sobre elementos
 MigrationPaymentMode=Actualización de los modos de pago
 MigrationCategorieAssociation=Actualización de las categorías
+MigrationEvents=Migración de eventos para agregar propietario de evento en la tabla de asignacion
 
 ShowNotAvailableOptions=Mostrar opciones no disponibles
 HideNotAvailableOptions=Ocultar opciones no disponibles

@@ -27,8 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
- *	    \class      MailingTargets
- *		\brief      Parent class of emailing target selectors modules
+ *		Parent class of emailing target selectors modules
  */
 class MailingTargets    // This can't be abstract as it is used for some method
 {

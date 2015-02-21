@@ -22,7 +22,7 @@
 
 /**
  *       \file        htdocs/compta/resultat/index.php
- *       \brief       Page reporting resultat
+ *       \brief       Page reporting result
  */
 
 require '../../main.inc.php';
@@ -103,8 +103,8 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_soc = s.rowid";
 	$sql.= " AND f.fk_statut IN (1,2)";
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-	else $sql.= " AND f.type IN (0,1,2,3)";
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+	else $sql.= " AND f.type IN (0,1,2,3,5)";
 }
 else
 {
@@ -246,8 +246,8 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut IN (1,2)";
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-	else $sql.= " AND f.type IN (0,1,2,3)";
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+	else $sql.= " AND f.type IN (0,1,2,3,5)";
 	$sql.= " AND f.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
@@ -570,8 +570,8 @@ print '</tr>';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="right">'.$langs->trans("Outcome").'</td>';
-	print '<td align="right" class="borderrightlight">'.$langs->trans("Income").'</td>';
+	print '<td align="center">'.$langs->trans("Outcome").'</td>';
+	print '<td align="center" class="borderrightlight">'.$langs->trans("Income").'</td>';
 }
 print '</tr>';
 
@@ -634,7 +634,7 @@ print "</tr>\n";
 
 // Balance
 $var=!$var;
-print '<tr class="liste_total"><td>'.$langs->trans("Profit").'</td>';
+print '<tr class="liste_total"><td>'.$langs->trans("AccountingResult").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	print '<td align="right" colspan="2" class="borderrightlight"> ';

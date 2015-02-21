@@ -488,13 +488,15 @@ function dolEscapeXML($string)
  *
  *  @param      string		$stringtoescape		String to escape
  *  @param		string		$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
+ *  @param		string		$noescapebackslashn	0=Escape also \n. 1=Do not escape \n.
  *  @return     string     		 				Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
-function dol_escape_js($stringtoescape, $mode=0)
+function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
 {
 	// escape quotes and backslashes, newlines, etc.
-	$substitjs=array("&#039;"=>"\\'",'\\'=>'\\\\',"\r"=>'\\r',"\n"=>'\\n');
+	$substitjs=array("&#039;"=>"\\'","\r"=>'\\r');
 	//$substitjs['</']='<\/';	// We removed this. Should be useless.
+	if (empty($noescapebackslashn)) { $substitjs["\n"]='\\n'; $substitjs['\\']='\\\\'; }
 	if (empty($mode)) { $substitjs["'"]="\\'"; $substitjs['"']="\\'"; }
 	else if ($mode == 1) $substitjs["'"]="\\'";
 	else if ($mode == 2) { $substitjs['"']='\\"'; }
@@ -655,11 +657,11 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
- * 	@return	void
+ * 	@return	string
  */
 function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
-	global $conf;
+	global $conf,$langs;
 
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
@@ -684,35 +686,82 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	}
 
 	// Show tabs
+	$bactive=false;
+	// if =0 we don't use the feature
+	$limittoshow=($conf->global->MAIN_MAXTABS_IN_CARD?$conf->global->MAIN_MAXTABS_IN_CARD:99);
+	$displaytab=0;
+
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
-		$isactive=(is_numeric($active) && $i == $active) || (! is_numeric($active) && $active == $links[$i][2]);
 
-		$out.='<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'">';
-		if (isset($links[$i][2]) && $links[$i][2] == 'image')
+		if ((is_numeric($active) && $i == $active) || (! is_numeric($active) && $active == $links[$i][2]))
 		{
-			if (!empty($links[$i][0]))
-			{
-				$out.='<a data-role="button" class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
-			}
-			else
-			{
-				$out.='<span data-role="button" class="tabspan">'.$links[$i][1].'</span>'."\n";
-			}
+			$isactive=true;
+			$bactive=true;
+			if ($i <=$limittoshow)
+				$limittoshow++;
 		}
-		else if (! empty($links[$i][1]))
+		else
+			$isactive=false;
+
+		if ($i <=$limittoshow || $isactive )
 		{
-			//print "x $i $active ".$links[$i][2]." z";
-			if ($isactive)
+			$out.='<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'">';
+			if (isset($links[$i][2]) && $links[$i][2] == 'image')
 			{
-				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabactive tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				if (!empty($links[$i][0]))
+				{
+					$out.='<a data-role="button" class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				}
+				else
+				{
+					$out.='<span data-role="button" class="tabspan">'.$links[$i][1].'</span>'."\n";
+				}
 			}
-			else
+			else if (! empty($links[$i][1]))
 			{
-				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				//print "x $i $active ".$links[$i][2]." z";
+				if ($isactive)
+				{
+					$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabactive tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				}
+				else
+				{
+					$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				}
 			}
+			$out.='</div>';
 		}
-		$out.='</div>';
+		else
+		{
+			$outmore.='<div class="" style="display:inherit; background-color:#f9f9f9; padding-top:5px; padding-right:15px; padding-left:12px;">';
+			if (isset($links[$i][2]) && $links[$i][2] == 'image')
+			{
+				if (!empty($links[$i][0]))
+					$outmore.='<a  class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				else
+					$outmore.='<span  class="tabspan">'.$links[$i][1].'</span>'."\n";
+
+			}
+			else if (! empty($links[$i][1]))
+				$outmore.='<a "'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').'  class="inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+
+			$outmore.='</div>';
+		}
+		$displaytab=$i;
+	}
+
+	if ($displaytab > $limittoshow)
+	{
+		$out.='<div id="moretabs" class="inline-block tabsElem">';
+		$out.='<a href="" data-role="button" style="background-color: #f0f0f0;" class="tab inline-block">'.$langs->trans("More").'...</a>';
+		$out.='<div id="moretabsList" style="position: absolute; left: -999em;text-align: left;margin:0px;padding:2px">'.$outmore.'</div>';
+		$out.="</div>\n";
+
+		$out.="<script>";
+		$out.="$('#moretabs').mouseenter( function() { $('#moretabsList').css('left','auto');});";
+		$out.="$('#moretabs').mouseleave( function() { $('#moretabsList').css('left','-999em');});";
+		$out.="</script>";
 	}
 
 	$out.="</div>\n";
@@ -737,7 +786,7 @@ function dol_fiche_end($notab=0)
  *	Return tab footer of a card
  *
  *	@param  int		$notab		0=Add tab footer, 1=no tab footer
- *  @return	void
+ *  @return	string
  */
 function dol_get_fiche_end($notab=0)
 {
@@ -766,11 +815,12 @@ function dol_bc($var,$moreclass='')
  *      @param  Object		$object         A company or contact object
  * 	    @param	int			$withcountry	1=Add country into address string
  *      @param	string		$sep			Separator to use to build string
+ *      @param	Tranlsate	$outputlangs	Object lang that contains language for text translation.
  *      @return string          			Formated string
  */
-function dol_format_address($object,$withcountry=0,$sep="\n")
+function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 {
-	global $conf;
+	global $conf,$langs;
 
 	$ret='';
 	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
@@ -799,7 +849,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n")
 	else if (in_array($object->country_code,array('ES','TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
-		$ret .= ' '.$object->town;
+		$ret .= ($object->town?' '.$object->town:'');
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.="\n".$object->state;
@@ -809,14 +859,14 @@ function dol_format_address($object,$withcountry=0,$sep="\n")
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
-		$ret .= ' '.$object->town;
+		$ret .= ($object->town?' '.$object->town:'');
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.=", ".$object->state;
 		}
 	}
-
-	if ($withcountry) $ret.=($object->country?$sep.$object->country:'');
+	if (! is_object($outputlangs)) $outputlangs=$langs;
+	if ($withcountry) $ret.=($object->country_code?($ret?$sep:'').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->country_code)):'');
 
 	return $ret;
 }
@@ -852,7 +902,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for local browser TZ usage
- *	@param	Tranlsate	$outputlangs	Object lang that contains language for text translation.
+ *	@param	Translate	$outputlangs	Object lang that contains language for text translation.
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
  * 	@return string      				Formated date or '' if time is null
  *
@@ -996,8 +1046,9 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 /**
  *	Return an array with locale date info.
  *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
- *  WARNING: This function always use PHP server timezone to return locale informations.
+ *  WARNING: This function always use PHP server timezone to return locale informations !!!
  *  Usage must be avoid.
+ *  FIXME: Replace this with PHP date function and a parameter $gm
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode
@@ -1007,7 +1058,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *										'minutes' => $min,
  *										'hours' => $hour,
  *										'mday' => $day,
- *										'wday' => $dow,
+ *										'wday' => $dow,		0=sunday, 6=saturday
  *										'mon' => $month,
  *										'year' => $year,
  *										'yday' => floor($secsInYear/$_day_power),
@@ -1027,6 +1078,8 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  */
 function dol_getdate($timestamp,$fast=false)
 {
+	global $conf;
+
 	$usealternatemethod=false;
 	if ($timestamp <= 0) $usealternatemethod=true;				// <= 1970
 	if ($timestamp >= 2145913200) $usealternatemethod=true;		// >= 2038
@@ -1038,6 +1091,19 @@ function dol_getdate($timestamp,$fast=false)
 	else
 	{
 		$arrayinfo=getdate($timestamp);
+
+		/*$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
+		if($startday==1)
+		{
+			if ($arrayinfo["wday"]==0)
+			{
+				$arrayinfo["wday"]=6;
+			}
+			else
+			{
+				$arrayinfo["wday"]=$arrayinfo["wday"]-1;
+			}
+		}*/
 	}
 
 	return $arrayinfo;
@@ -1056,7 +1122,7 @@ function dol_getdate($timestamp,$fast=false)
  *	@param	int			$year			Year
  *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values, False or 0 or 'server' = local to server TZ, 'user' = local to user TZ
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	timestamp|string			Date as a timestamp, '' if error
+ *	@return	timestamp|string			Date as a timestamp, '' or false if error
  * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
@@ -1100,7 +1166,11 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 				$default_timezone=@date_default_timezone_get();
 			}
 		}
-		else $localtz = new DateTimeZone('UTC');
+
+		if (empty($localtz)) {
+			$localtz = new DateTimeZone('UTC');
+		}
+
 		$dt = new DateTime(null,$localtz);
 		$dt->setDate($year,$month,$day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);
@@ -1231,9 +1301,10 @@ function dol_print_url($url,$target='_blank',$max=32)
  * @param 	int			$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on)
  * @param	int			$max			Max number of characters to show
  * @param	int			$showinvalid	Show warning if syntax email is wrong
+ * @param	int			$withpicto		Show picto
  * @return	string						HTML Link
  */
-function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=1)
+function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=1,$withpicto=0)
 {
 	global $conf,$user,$langs;
 
@@ -1259,7 +1330,7 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 		{
 			$type='AC_EMAIL'; $link='';
 			if (! empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
-			$newemail='<table class="nobordernopadding"><tr><td>'.$newemail.' </td><td>&nbsp;'.$link.'</td></tr></table>';
+			if ($link) $newemail='<div>'.$newemail.' '.$link.'</div>';
 		}
 	}
 	else
@@ -1270,18 +1341,18 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 			$newemail.=img_warning($langs->trans("ErrorBadEMail",$email));
 		}
 	}
-	return $newemail;
+	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("EMail"), 'object_email.png').' ':'').$newemail.'</div>';
 }
 
 /**
  * Show Skype link
  *
  * @param	string		$skype			Skype to show (only skype, without 'Name of recipient' before)
- * @param int 			$cid 			  Id of contact if known
- * @param int 			$socid 			Id of third party if known
- * @param int 			$addlink		0=no link to create action
- * @param	int			  $max			  Max number of characters to show
- * @return	string						  HTML Link
+ * @param	int 		$cid 			Id of contact if known
+ * @param	int 		$socid 			Id of third party if known
+ * @param	int 		$addlink		0=no link to create action
+ * @param	int			$max			Max number of characters to show
+ * @return	string						HTML Link
  */
 function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
 {
@@ -1296,18 +1367,18 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
 		$newskype='<a href="skype:';
 		$newskype.=dol_trunc($skype,$max);
 		$newskype.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$skype.'" title="'.$langs->trans("Call").'&nbsp;'.$skype.'">';
-    $newskype.='<img src="../theme/common/skype_callbutton.png" border="0">&nbsp;';
-		$newskype.='</a>&nbsp;<a href="skype:';
+		$newskype.='<img src="../theme/common/skype_callbutton.png" border="0">';
+		$newskype.='</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="skype:';
 		$newskype.=dol_trunc($skype,$max);
 		$newskype.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$skype.'" title="'.$langs->trans("Chat").'&nbsp;'.$skype.'">';
-    $newskype.='<img src="../theme/common/skype_chatbutton.png" border="0">&nbsp;';
+		$newskype.='<img src="../theme/common/skype_chatbutton.png" border="0">';
 		$newskype.='</a>';
 
 		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		{
 			$type='AC_SKYPE'; $link='';
 			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
-			$newskype='<table class="nobordernopadding"><tr><td>'.$newskype.' </td><td>&nbsp;'.$link.'</td></tr></table>';
+			$newskype='<div class="divskype nowrap">'.$newskype.($link?' '.$link:'').'</div>';
 		}
 	}
 	else
@@ -1327,9 +1398,10 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
  * 	@param 	int		$socid 		Id of third party if known
  * 	@param 	int		$addlink	''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
  * 	@param 	string	$separ 		Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
+ *  @param	string  $withpicto  Show picto
  * 	@return string 				Formated phone number
  */
-function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;")
+function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='')
 {
 	global $conf,$user,$langs,$mysoc;
 
@@ -1405,11 +1477,11 @@ function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="
 			$type='AC_TEL'; $link='';
 			if ($addlink == 'AC_FAX') $type='AC_FAX';
 			if (! empty($conf->global->AGENDA_ADDACTIONFORPHONE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.($cid?'&amp;contactid='.$cid:'').($socid?'&amp;socid='.$socid:'').'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
-			if ($link) $newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>&nbsp;'.$link.'</td></tr></table>';
+			if ($link) $newphone='<div>'.$newphone.' '.$link.'</div>';
 		}
 	}
 
-	return $newphone;
+	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto(($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone")), 'object_'.($withpicto=='fax'?'phoning_fax':'phoning').'.png').' ':'').$newphone.'</div>';
 }
 
 /**
@@ -1762,14 +1834,18 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  *	@param	string	$trunc				Where to trunc: right, left, middle (size must be a 2 power), wrap
  * 	@param	string	$stringencoding		Tell what is source string encoding
  *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
+ *  @param  int     $display            Trunc is use to display and can be changed for small screen
  *	@return string						Truncated string
  */
-function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodot=0)
+function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodot=0, $display=0)
 {
 	global $conf;
 
-	if ($size==0 || ! empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
+	if (empty($stringencoding)) $stringencoding='UTF-8';
 
+	if ($size==0 || ! empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
+	// reduce for small screen
+    if ($conf->dol_optimize_smallscreen==1 && $display==1) $size = round($size/3);
 	// We go always here
 	if ($trunc == 'right')
 	{
@@ -2383,19 +2459,22 @@ function dol_print_error($db='',$error='')
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
 		$out.=$langs->trans("DolibarrHasDetectedError").".<br>\n";
-		if (! empty($conf->global->MAIN_FEATURES_LEVEL))
-		$out.="You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n";
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $out.="You use an experimental level of features, so please do NOT report any bugs, except if problem is confirmed moving option MAIN_FEATURES_LEVEL back to 0.<br>\n";
 		$out.=$langs->trans("InformationToHelpDiagnose").":<br>\n";
 
-		$out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";;
-		$out.="<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;
-		if (isset($conf->global->MAIN_FEATURES_LEVEL)) $out.="<b>".$langs->trans("LevelOfFeature").":</b> ".$conf->global->MAIN_FEATURES_LEVEL."<br>\n";;
+		$out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";
+		$out.="<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";
+		if (isset($conf->global->MAIN_FEATURES_LEVEL)) $out.="<b>".$langs->trans("LevelOfFeature").":</b> ".$conf->global->MAIN_FEATURES_LEVEL."<br>\n";
 		if (function_exists("phpversion"))
 		{
 			$out.="<b>".$langs->trans("PHP").":</b> ".phpversion()."<br>\n";
-			//phpinfo();       // This is to show location of php.ini file
 		}
 		$out.="<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
+		if (function_exists("php_uname"))
+		{
+			$out.="<b>".$langs->trans("OS").":</b> ".php_uname()."<br>\n";
+		}
+		$out.="<b>".$langs->trans("UserAgent").":</b> ".$_SERVER["HTTP_USER_AGENT"]."<br>\n";
 		$out.="<br>\n";
 		$out.="<b>".$langs->trans("RequestedUrl").":</b> ".dol_htmlentities($_SERVER["REQUEST_URI"],ENT_COMPAT,'UTF-8')."<br>\n";
 		$out.="<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"])?dol_htmlentities($_SERVER["HTTP_REFERER"],ENT_COMPAT,'UTF-8'):'')."<br>\n";
@@ -2514,7 +2593,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
- *	@return	void
+ *	@return	string
  */
 function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="")
 {
@@ -2585,10 +2664,11 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 }
 
 /**
- *	Show a title (deprecated. use print_fiche_titre instead)
+ *	Show a title.
  *
  *	@param	string	$title			Title to show
  *	@return	string					Title to show
+ *  @deprecated						Use print_fiche_titre instead
  */
 function print_titre($title)
 {
@@ -2618,7 +2698,7 @@ function print_fiche_titre($title, $mesg='', $picto='title.png', $pictoisfullpat
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
- * 	@return	void
+ * 	@return	string
  */
 function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
@@ -2877,7 +2957,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	{
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
-		$listofcurrenciesbefore=array('USD');
+		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN');
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
 		else
 		{
@@ -2901,7 +2981,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
  *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *									'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
  * 	@param	int		$alreadysqlnb	Put 1 if you know that content is already universal format number
- *	@return	string					Amount with universal numeric format (Example: '99.99999')
+ *	@return	string					Amount with universal numeric format (Example: '99.99999') or unchanged text if conversion fails.
  *
  *	@see    price					Opposite function of price2num
  */
@@ -3087,7 +3167,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
-	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
+	$sql .= " AND t.taux = ".((float) $tva)." AND t.active = 1";
 
 	dol_syslog("get_localtax", LOG_DEBUG);
 	$resql=$db->query($sql);
@@ -3159,11 +3239,11 @@ function get_localtax_by_third($local)
  *  Instead this function must be called when adding a line to get (array of localtax and type) and
  *  provide it to the function calcul_price_total.
  *
- *  @param		float	$vatrate			VAT Rate
- *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
- *  @param		int		$buyer         		Company object
- *  @param		int		$seller        		Company object
- *  @return		array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
+ *  @param	float	$vatrate			VAT Rate
+ *  @param	int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
+ *  @param	Societe	$buyer         		Company object
+ *  @param	Societe	$seller        		Company object
+ *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 {
@@ -3175,7 +3255,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";
-	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
+	$sql .= " AND t.taux = ".((float) $vatrate)." AND t.active = 1";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -3438,7 +3518,7 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
 	// we use the buyer VAT.
 	if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))
 	{
-		if (! $seller_in_cee && $buyer_in_cee && ! $thirdparty_buyer->isACompany())
+		if ($seller_in_cee && $buyer_in_cee && ! $thirdparty_buyer->isACompany())
 		{
 			//print 'VATRULE 0';
 			return get_product_vat_for_country($idprod,$thirdparty_buyer,$idprodfournprice);
@@ -3575,7 +3655,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
  *	Return yes or no in current language
  *
  *	@param	string	$yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
- *	@param	string	$case			1=Yes/No, 0=yes/no
+ *	@param	string	$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Yes/No
  *	@param	int		$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
  *	@return	string					HTML string
  */
@@ -3585,12 +3665,20 @@ function yn($yesno, $case=1, $color=0)
 	$result='unknown';
 	if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') 	// A mettre avant test sur no a cause du == 0
 	{
-		$result=($case?$langs->trans("Yes"):$langs->trans("yes"));
+		$result=$langs->trans('yes');
+		if ($case == 1 || $case == 3) $result=$langs->trans("Yes");
+		if ($case == 2) $result='<input type="checkbox" value="1" checked="checked" disabled="disabled">';
+		if ($case == 3) $result='<input type="checkbox" value="1" checked="checked" disabled="disabled"> '.$result;
+
 		$classname='ok';
 	}
 	elseif ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false')
 	{
-		$result=($case?$langs->trans("No"):$langs->trans("no"));
+		$result=$langs->trans("no");
+		if ($case == 1 || $case == 3) $result=$langs->trans("No");
+		if ($case == 2) $result='<input type="checkbox" value="0" disabled="disabled">';
+		if ($case == 3) $result='<input type="checkbox" value="0" disabled="disabled"> '.$result;
+
 		if ($color == 2) $classname='ok';
 		else $classname='error';
 	}
@@ -4084,13 +4172,14 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 /**
  *    Format output for start and end date
  *
- *    @param	timestamp	$date_start    Start date
- *    @param    timestamp	$date_end      End date
- *    @param    string		$format        Output format
- *    @param	Translate	$outputlangs   Output language
- *    @return	string						String
+ *    @param	timestamp	$date_start    		Start date
+ *    @param    timestamp	$date_end      		End date
+ *    @param    string		$format        		Output format
+ *    @param	Translate	$outputlangs   		Output language
+ *    @param	string		$withparenthesis	1=Add parenthesis, 0=non parenthesis
+ *    @return	string							String
  */
-function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
+function get_date_range($date_start,$date_end,$format = '',$outputlangs='', $withparenthesis=1)
 {
 	global $langs;
 
@@ -4100,15 +4189,15 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 
 	if ($date_start && $date_end)
 	{
-		$out.= ' ('.$outputlangs->trans('DateFromTo',dol_print_date($date_start, $format, false, $outputlangs),dol_print_date($date_end, $format, false, $outputlangs)).')';
+		$out.= ($withparenthesis?' (':'').$outputlangs->trans('DateFromTo',dol_print_date($date_start, $format, false, $outputlangs),dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 	if ($date_start && ! $date_end)
 	{
-		$out.= ' ('.$outputlangs->trans('DateFrom',dol_print_date($date_start, $format, false, $outputlangs)).')';
+		$out.= ($withparenthesis?' (':'').$outputlangs->trans('DateFrom',dol_print_date($date_start, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 	if (! $date_start && $date_end)
 	{
-		$out.= ' ('.$outputlangs->trans('DateUntil',dol_print_date($date_end, $format, false, $outputlangs)).')';
+		$out.= ($withparenthesis?' (':'').$outputlangs->trans('DateUntil',dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 
 	return $out;
@@ -4551,6 +4640,7 @@ function dol_eval($s,$returnvalue=0)
 	global $leftmenu;
 	global $rights;
 	global $object;
+    global $soc;
 
 	//print $s."<br>\n";
 	if ($returnvalue) return @eval('return '.$s.';');
@@ -4607,26 +4697,26 @@ function picto_from_langcode($codelang)
  *  Complete or removed entries into a head array (used to build tabs) with value added by external modules.
  *  Such values are declared into $conf->modules_parts['tab'].
  *
- *  @param	Conf		$conf           Object conf
- *  @param  Translate	$langs          Object langs
- *  @param  Object		$object         Object object
- *  @param  array		$head          Object head
- *  @param  int			$h             New position to fill
- *  @param  string		$type           Value for object where objectvalue can be
- *                              		'thirdparty'       to add a tab in third party view
- *		                              	'intervention'     to add a tab in intervention view
- *     		                         	'supplier_order'   to add a tab in supplier order view
- *          		                    'supplier_invoice' to add a tab in supplier invoice view
- *                  		            'invoice'          to add a tab in customer invoice view
- *                          		    'order'            to add a tab in customer order view
- *                      		        'product'          to add a tab in product view
- *                              		'propal'           to add a tab in propal view
- *                              		'user'             to add a tab in user view
- *                              		'group'            to add a tab in group view
- * 		        	                    'member'           to add a tab in fundation member view
- *      		                        'categories_x'	   to add a tab in category view ('x': type of category (0=product, 1=supplier, 2=customer, 3=member)
- *      								'ecm'			   to add a tab for another ecm view
- *  @param  string		$mode  	        'add' to complete head, 'remove' to remove entries
+ *  @param	Conf			$conf           Object conf
+ *  @param  Translate		$langs          Object langs
+ *  @param  object|null		$object         Object object
+ *  @param  array			$head          	Object head
+ *  @param  int				$h				New position to fill
+ *  @param  string			$type           Value for object where objectvalue can be
+ *                              			'thirdparty'       to add a tab in third party view
+ *		                        	      	'intervention'     to add a tab in intervention view
+ *     		                    	     	'supplier_order'   to add a tab in supplier order view
+ *          		            	        'supplier_invoice' to add a tab in supplier invoice view
+ *                  		    	        'invoice'          to add a tab in customer invoice view
+ *                          			    'order'            to add a tab in customer order view
+ *                      			        'product'          to add a tab in product view
+ *                              			'propal'           to add a tab in propal view
+ *                              			'user'             to add a tab in user view
+ *                              			'group'            to add a tab in group view
+ * 		        	               	     	'member'           to add a tab in fundation member view
+ *      		                        	'categories_x'	   to add a tab in category view ('x': type of category (0=product, 1=supplier, 2=customer, 3=member)
+ *      									'ecm'			   to add a tab for another ecm view
+ *  @param  string		$mode  	        	'add' to complete head, 'remove' to remove entries
  *	@return	void
  */
 function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode='add')
@@ -4816,19 +4906,6 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 
 
 /**
- *	Convert an array with RGB value into hex RGB value
- *
- *  @param	array	$arraycolor			Array
- *  @param	string	$colorifnotfound	Color code to return if entry not defined
- *  @return	string						RGB hex value (without # before). For example: FF00FF
- */
-function colorArrayToHex($arraycolor,$colorifnotfound='888888')
-{
-	if (! is_array($arraycolor)) return $colorifnotfound;
-	return dechex($arraycolor[0]).dechex($arraycolor[1]).dechex($arraycolor[2]);
-}
-
-/**
  * Set focus onto field with selector
  *
  * @param 	string	$selector	Selector ('#id')
@@ -4889,3 +4966,4 @@ function natural_search($fields, $value)
     }
     return " AND " . ($end > 1? '(' : '') . $res;
 }
+

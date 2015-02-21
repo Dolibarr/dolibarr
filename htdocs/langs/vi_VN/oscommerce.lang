@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=Hệ điều hành thương mại
-OSCommerceSetup=Thiết lập mô-đun hệ điều hành thương mại
-OSCommerceSetupSaved=Thiết lập hệ điều hành thương mại lưu
-OSCommerceServer=Hệ điều hành máy chủ lưu trữ thương mại / ip
-OSCommerceDatabaseName=Tên cơ sở dữ liệu hệ điều hành thương mại
-OSCommercePrefix=Hệ điều hành thương mại bảng tiền tố
-OSCommerceUser=Đăng nhập cơ sở dữ liệu hệ điều hành thương mại

@@ -60,7 +60,7 @@ if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
  *
  * @param 	DoliDB	$db		Database handler
  * @param 	string	$sql	SQL Request
- * @param 	date	$date	Date
+ * @param 	string	$date	Date
  * @return	void
  */
 function pt ($db, $sql, $date)

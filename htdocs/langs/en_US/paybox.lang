@@ -35,3 +35,6 @@ MessageKO=Message on canceled payment return page
 NewPayboxPaymentReceived=New Paybox payment received
 NewPayboxPaymentFailed=New Paybox payment tried but failed
 PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID

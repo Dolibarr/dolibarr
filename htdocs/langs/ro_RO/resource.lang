@@ -1,0 +1,34 @@
+
+MenuResourceIndex=Resurse
+MenuResourceAdd=Resursă nouă
+MenuResourcePlanning=Planificare resursă
+DeleteResource=Şterge resursa
+ConfirmDeleteResourceElement=Confirmaţi ştergerea resursei pentru acest element
+NoResourceInDatabase=Nicio resursă în baza de date.
+NoResourceLinked=Nicio resursă legată
+
+ResourcePageIndex=Lista resurse
+ResourceSingular=Resursă
+ResourceCard=Fişă resursă
+AddResource=Crează resursă
+ResourceFormLabel_ref=Nume resursă
+ResourceType=Tip resursă
+ResourceFormLabel_description=Descriere resursă
+
+ResourcesLinkedToElement=Resurse legate de elementul
+
+ShowResourcePlanning=Arată planificare resursă
+GotoDate=Mergi la data
+
+ResourceElementPage=Element resurse
+ResourceCreatedWithSuccess=Resursă creată
+RessourceLineSuccessfullyDeleted=Linie resursă ștearsă
+RessourceLineSuccessfullyUpdated=Linie  resursă actualizată
+ResourceLinkedWithSuccess=Resursă legată cu succes
+
+TitleResourceCard=Fişă resursă
+ConfirmDeleteResource=Confirmaţi ştergerea acestei resurse
+RessourceSuccessfullyDeleted=Resursă ştearsă
+DictionaryResourceType=Tipuri resurse
+
+SelectResource=Selectează resursa

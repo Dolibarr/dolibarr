@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=الموردين
 Supplier=المورد
-AddSupplier=إضافة مورد
+AddSupplier=Create a supplier
 SupplierRemoved=إزالة المورد
 SuppliersInvoice=فاتورة الموردين
 NewSupplier=مورد جديد
@@ -42,3 +42,5 @@ NoneOrBatchFileNeverRan=أو لا شيء دفعة <b>٪ ق</b> لا يتعارض
 SentToSuppliers=Sent to suppliers
 ListOfSupplierOrders=List of supplier orders
 MenuOrdersSupplierToBill=Supplier orders to invoice
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list

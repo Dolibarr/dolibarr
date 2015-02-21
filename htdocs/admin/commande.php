@@ -147,7 +147,7 @@ if ($action == 'setModuleOptions')
 }
 
 // Activate a model
-if ($action == 'set')
+else if ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
@@ -222,7 +222,7 @@ else if ($action == 'set_COMMANDE_FREE_TEXT')
     }
 }
 
-//Activate Set Shippable Icon In List
+// Activate Set Shippable Icon In List
 else if ($action=="setshippableiconinlist") {
     $setshippableiconinlist = GETPOST('value','int');
     $res = dolibarr_set_const($db, "SHIPPABLE_ORDER_ICON_IN_LIST", $setshippableiconinlist,'yesno',0,'',$conf->entity);
@@ -231,6 +231,23 @@ else if ($action=="setshippableiconinlist") {
         setEventMessage($langs->trans("SetupSaved"));
     } else {
         setEventMessage($langs->trans("Error"), 'errors');
+    }
+}
+
+// Activate ask for payment bank
+else if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER')
+{
+    $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_ORDER",$value,'chaine',0,'',$conf->entity);
+
+    if (! $res > 0) $error++;
+
+    if (! $error)
+    {
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -249,7 +266,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'setup');
 print '<br>';
 
-$head = order_admin_prepare_head(null);
+$head = order_admin_prepare_head();
 
 dol_fiche_head($head, 'general', $langs->trans("Orders"), 0, 'order');
 
@@ -331,18 +348,16 @@ foreach ($dirmodels as $reldir)
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$commande->type=0;
 						$nextval=$module->getNextValue($mysoc,$commande);
-						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-						{
-							$htmltooltip.=''.$langs->trans("NextValue").': ';
-							if ($nextval)
-							{
-								$htmltooltip.=$nextval.'<br>';
-							}
-							else
-							{
-								$htmltooltip.=$langs->trans($module->error).'<br>';
-							}
-						}
+                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+                            $htmltooltip.=''.$langs->trans("NextValue").': ';
+                            if ($nextval) {
+                                if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                    $nextval = $langs->trans($nextval);
+                                $htmltooltip.=$nextval.'<br>';
+                            } else {
+                                $htmltooltip.=$langs->trans($module->error).'<br>';
+                            }
+                        }
 
 						print '<td align="center">';
 						print $form->textwithpicto('',$htmltooltip,1,0);
@@ -575,6 +590,36 @@ if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
 }
 print '</a></td>';
 print '</tr>';
+
+// Ask for payment bank during order
+if ($conf->banque->enabled)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp</td><td align="center">';
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_ORDER');
+    }
+    else
+    {
+        if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER))
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+        }
+        else
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+        }
+    }
+    print '</td></tr>';
+}
+else
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
+}
 
 print '</table>';
 

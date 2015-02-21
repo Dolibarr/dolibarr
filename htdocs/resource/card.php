@@ -62,57 +62,56 @@ $parameters=array('resource_id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-
-/*******************************************************************
-* ACTIONS
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
-
-if ($action == 'update' && ! $_POST["cancel"]  && $user->rights->resource->write )
+if (empty($reshook))
 {
-	$error=0;
+	/*******************************************************************
+	* ACTIONS
+	********************************************************************/
 
-	if (empty($ref))
+	if ($action == 'update' && ! $_POST["cancel"]  && $user->rights->resource->write )
 	{
-		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
-	}
+		$error=0;
 
-	if (! $error)
-	{
-		$res = $object->fetch($id);
-		if ( $res > 0 )
+		if (empty($ref))
 		{
-			$object->ref          			= $ref;
-			$object->description  			= $description;
-			$object->fk_code_type_resource  = $fk_code_type_resource;
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
+		}
 
-			$result=$object->update($user);
-			if ($result > 0)
+		if (! $error)
+		{
+			$res = $object->fetch($id);
+			if ( $res > 0 )
 			{
-				Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-				exit;
+				$object->ref          			= $ref;
+				$object->description  			= $description;
+				$object->fk_code_type_resource  = $fk_code_type_resource;
+
+				$result=$object->update($user);
+				if ($result > 0)
+				{
+					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+					exit;
+				}
+				else
+				{
+					setEventMessage($object->error, 'errors');
+					$action='edit';
+				}
+
 			}
 			else
 			{
-				setEventMessage('<div class="error">'.$object->error.'</div>');
+				setEventMessage($object->error,'errors');
 				$action='edit';
 			}
-
 		}
 		else
 		{
-			setEventMessage($object->error,'errors');
 			$action='edit';
 		}
 	}
-	else
-	{
-		$action='edit';
-	}
 }
-
 
 /***************************************************
 * VIEW
@@ -139,7 +138,7 @@ if ( $object->fetch($id) > 0 )
 
 		/*---------------------------------------
 		 * Edit object
-		*/
+		 */
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
@@ -171,7 +170,7 @@ if ( $object->fetch($id) > 0 )
 	}
 	else
 	{
-	    // Confirmation suppression resource line
+	    // Confirm deleting resource line
 	    if ($action == 'delete')
 	    {
 	        print $form->formconfirm("card.php?&id=".$id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
@@ -228,9 +227,9 @@ if ( $object->fetch($id) > 0 )
 				print '</div>';
 			}
 		}
-		if ($action != "delete" )
+		if ($action != "delete" && $action != "edit")
 		{
-		    // Edit resource
+		    // Delete resource
 		    if($user->rights->resource->delete)
 		    {
 		        print '<div class="inline-block divButAction">';

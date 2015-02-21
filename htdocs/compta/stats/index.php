@@ -91,8 +91,8 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql  = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut in (1,2)";
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-	else $sql.= " AND f.type IN (0,1,2,3)";
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
+	else $sql.= " AND f.type IN (0,1,2,3,5)";
 }
 else
 {
@@ -209,6 +209,8 @@ $maxyear=substr($maxyearmonth,0,4);
 $nowyear=strftime("%Y",dol_now());
 $nowyearmonth=strftime("%Y-%m",dol_now());
 $maxyearmonth=max($maxyearmonth,$nowyearmonth);
+$now=dol_now();
+$casenow = dol_print_date($now,"%Y-%m");
 
 // Loop on each month
 $nb_mois_decalage = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START-1):0;
@@ -220,22 +222,37 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 	print "<tr ".$bc[$var].">";
 
 	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,2000),"%B")."</td>";
-	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+	for ($annee = $year_start -1 ; $annee <= $year_end ; $annee++)	// We start one year before to have data to be able to make delta
 	{
-		$now=dol_now();
 		$annee_decalage=$annee;
 		if ($mois>12) {$annee_decalage=$annee+1;}
-		$casenow = dol_print_date($now,"%Y-%m");
 		$case = dol_print_date(dol_mktime(1,1,1,$mois_modulo,1,$annee_decalage),"%Y-%m");
 		$caseprev = dol_print_date(dol_mktime(1,1,1,$mois_modulo,1,$annee_decalage-1),"%Y-%m");
 
-		if ($modecompta == 'CREANCES-DETTES') {
-			// Valeur CA du mois w/o VAT
+		if ($annee >= $year_start)
+		{
+			if ($modecompta == 'CREANCES-DETTES') {
+				// Valeur CA du mois w/o VAT
+				print '<td align="right">';
+				if ($cum_ht[$case])
+				{
+					$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
+					print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum_ht[$case],1).'</a>';
+				}
+				else
+				{
+					if ($minyearmonth < $case && $case <= max($maxyearmonth,$nowyearmonth)) { print '0'; }
+					else { print '&nbsp;'; }
+				}
+				print "</td>";
+			}
+
+			// Valeur CA du mois
 			print '<td align="right">';
-			if ($cum_ht[$case])
+			if ($cum[$case])
 			{
 				$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
-				print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum_ht[$case],1).'</a>';
+				print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum[$case],1).'</a>';
 			}
 			else
 			{
@@ -243,60 +260,46 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 				else { print '&nbsp;'; }
 			}
 			print "</td>";
-		}
 
-		// Valeur CA du mois
-		print '<td align="right">';
-		if ($cum[$case])
-		{
-			$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
-			print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum[$case],1).'</a>';
-		}
-		else
-		{
-			if ($minyearmonth < $case && $case <= max($maxyearmonth,$nowyearmonth)) { print '0'; }
-			else { print '&nbsp;'; }
-		}
-		print "</td>";
-
-		// Pourcentage du mois
-		if ($annee_decalage > $minyear && $case <= $casenow)
-		{
-			if ($cum[$caseprev] && $cum[$case])
+			// Pourcentage du mois
+			if ($annee_decalage > $minyear && $case <= $casenow)
 			{
-				$percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100);
-				//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
-				print '<td align="right" class="borderrightlight">'.($percent>=0?"+$percent":"$percent").'%</td>';
+				if ($cum[$caseprev] && $cum[$case])
+				{
+					$percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100);
+					//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
+					print '<td align="right" class="borderrightlight">'.($percent>=0?"+$percent":"$percent").'%</td>';
+				}
+				if ($cum[$caseprev] && ! $cum[$case])
+				{
+					print '<td align="right" class="borderrightlight">-100%</td>';
+				}
+				if (! $cum[$caseprev] && $cum[$case])
+				{
+					//print '<td align="right">+Inf%</td>';
+					print '<td align="right" class="borderrightlight">-</td>';
+				}
+				if (isset($cum[$caseprev]) && ! $cum[$caseprev] && ! $cum[$case])
+				{
+					print '<td align="right" class="borderrightlight">+0%</td>';
+				}
+				if (! isset($cum[$caseprev]) && ! $cum[$case])
+				{
+					print '<td align="right" class="borderrightlight">-</td>';
+				}
 			}
-			if ($cum[$caseprev] && ! $cum[$case])
+			else
 			{
-				print '<td align="right" class="borderrightlight">-100%</td>';
+				print '<td align="right" class="borderrightlight">';
+				if ($minyearmonth <= $case && $case <= $maxyearmonth) { print '-'; }
+				else { print '&nbsp;'; }
+				print '</td>';
 			}
-			if (! $cum[$caseprev] && $cum[$case])
-			{
-				//print '<td align="right">+Inf%</td>';
-				print '<td align="right" class="borderrightlight">-</td>';
-			}
-			if (isset($cum[$caseprev]) && ! $cum[$caseprev] && ! $cum[$case])
-			{
-				print '<td align="right" class="borderrightlight">+0%</td>';
-			}
-			if (! isset($cum[$caseprev]) && ! $cum[$case])
-			{
-				print '<td align="right" class="borderrightlight">-</td>';
-			}
-		}
-		else
-		{
-			print '<td align="right" class="borderrightlight">';
-			if ($minyearmonth <= $case && $case <= $maxyearmonth) { print '-'; }
-			else { print '&nbsp;'; }
-			print '</td>';
+			if ($annee_decalage != $year_end) print '<td width="15">&nbsp;</td>';
 		}
 
 		$total_ht[$annee]+=!empty($cum_ht[$case]) ? $cum_ht[$case] : 0;;
 		$total[$annee]+=$cum[$case];
-		if ($annee_decalage != $year_end) print '<td width="15">&nbsp;</td>';
 	}
 
 	print '</tr>';
@@ -406,7 +409,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 		}
 		if (! $total[$annee-1] && $total[$annee])
 		{
-			print '<td align="right" class="borderrightlight">+Inf%</td>';
+			print '<td align="right" class="borderrightlight">+zzzz'.$total[$annee-1].$langs->trans('Inf').'%</td>';
 		}
 		if (! $total[$annee-1] && ! $total[$annee])
 		{

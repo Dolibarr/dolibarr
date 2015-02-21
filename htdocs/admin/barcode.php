@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
  *
@@ -318,7 +318,6 @@ if (! isset($_SERVER['WINDIR']))
 	print '</td>';
 	print '<td width="60" align="center"><input type="submit" class="button" name="submit_GENBARCODE_LOCATION" value="'.$langs->trans("Modify").'"></td>';
 	print '</tr>';
-	print '</form>';
 }
 
 // Module products
@@ -328,7 +327,7 @@ if (! empty($conf->product->enabled))
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" align="right">';
-	print $formbarcode->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"PRODUIT_DEFAULT_BARCODE_TYPE",1);
+	$formbarcode->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"PRODUIT_DEFAULT_BARCODE_TYPE",1);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="submit_PRODUIT_DEFAULT_BARCODE_TYPE" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -350,6 +349,7 @@ if (! empty($conf->societe->enabled))
 }
 
 print "</table>\n";
+print '</form>';
 
 print '<br>';
 
@@ -430,6 +430,5 @@ print '</form>';
 
 print "<br>";
 
-$db->close();
-
 llxFooter();
+$db->close();

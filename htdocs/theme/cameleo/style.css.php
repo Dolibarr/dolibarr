@@ -197,7 +197,7 @@ div.floatright
 {
     float:<?php print $right; ?>;
 }
-div.inline-block
+.inline-block
 {
 	display:inline-block;
 }

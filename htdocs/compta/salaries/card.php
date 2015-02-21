@@ -248,7 +248,7 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-		$form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
@@ -274,8 +274,11 @@ if ($action == 'create')
 
 	print "<br>";
 
-	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 }

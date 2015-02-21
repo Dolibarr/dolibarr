@@ -47,7 +47,7 @@ class HookManager
 	/**
 	 * Constructor
 	 *
-	 * @param	DoliDB		$db		Handler acces base de donnees
+	 * @param	DoliDB		$db		Database handler
 	 */
 	function __construct($db)
 	{
@@ -56,13 +56,13 @@ class HookManager
 
 
 	/**
-	 *	Init array this->hooks with instantiated action controlers.
+	 *	Init array $this->hooks with instantiated action controlers.
 	 *  First, a hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS
 	 *  with value 'nameofcontext1:nameofcontext2:...' into $this->const of module descriptor file.
-	 *  This make conf->hooks_modules loaded with an entry ('modulename'=>array(nameofcontext1,nameofcontext2,...))
-	 *  When initHooks function is called, with initHooks(list_of_contexts), an array this->hooks is defined with instance of controler
+	 *  This makes $conf->hooks_modules loaded with an entry ('modulename'=>array(nameofcontext1,nameofcontext2,...))
+	 *  When initHooks function is called, with initHooks(list_of_contexts), an array $this->hooks is defined with instance of controler
 	 *  class found into file /mymodule/class/actions_mymodule.class.php (if module has declared the context as a managed context).
-	 *  Then when a hook is executeHook('aMethod'...) is called, the method aMethod found into class will be executed.
+	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
 	 *	@param	array	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
 	 *	@return	int							Always 1
@@ -116,7 +116,7 @@ class HookManager
      * 	    @param		array	$parameters		Array of parameters
      * 		@param		Object	$object			Object to use hooks on
      * 	    @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-     * 		@return		mixed					For doActions,formObjectOptions,pdf_xxx:    								Return 0 if we want to keep standard actions, >0 if if want to stop standard actions, <0 means KO.
+     * 		@return		mixed					For doActions,formObjectOptions,pdf_xxx:    								Return 0 if we want to keep standard actions, >0 if we want to stop standard actions, <0 means KO.
      * 											For printSearchForm,printLeftBlock,printTopRightMenu,formAddObjectLine,...: Return HTML string. TODO Deprecated. Must always return an int and things to print into ->resprints.
      *                                          Can also return some values into an array ->results.
      * 											$this->error or this->errors are also defined by class called by this function if error.
@@ -131,6 +131,7 @@ class HookManager
         // Define type of hook ('output', 'returnvalue' or 'addreplace'). 'addreplace' should be type for all hooks. 'output' and 'returnvalue' are deprecated.
         $hooktype='output';
         if (preg_match('/^pdf_/',$method)) $hooktype='returnvalue';	// pdf_xxx except pdf_writelinedesc are returnvalue hooks. When there is 2 hooks of this type, only last one win.
+        if ($method =='insertExtraFields') $hooktype='returnvalue';
         if (in_array(
         	$method,
         	array(
@@ -149,11 +150,11 @@ class HookManager
         		)
         	)) $hooktype='addreplace';
 
-        // Loop on each hook to qualify modules that declared context
+        // Loop on each hook to qualify modules that have declared context
         $modulealreadyexecuted=array();
         $resaction=0; $error=0; $result='';
 		$this->resPrint=''; $this->resArray=array();
-        foreach($this->hooks as $context => $modules)    // this->hooks is an array with context as key and value is an array of modules that handle this context
+        foreach($this->hooks as $context => $modules)    // $this->hooks is an array with context as key and value is an array of modules that handle this context
         {
             if (! empty($modules))
             {
@@ -161,18 +162,18 @@ class HookManager
                 {
                 	//print "Before hook ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction." result=".$result."<br>\n";
 
-                	// jump to next module/class if method does not exists
+                	// jump to next module/class if method does not exist
                     if (! method_exists($actionclassinstance,$method)) continue;
 
-                    // test to avoid to run twice a hook, when a module implements several active contexts
+                    // test to avoid running twice a hook, when a module implements several active contexts
                     if (in_array($module,$modulealreadyexecuted)) continue;
-                    $modulealreadyexecuted[$module]=$module; // Use the $currentcontext in method for avoid to run twice
+                    $modulealreadyexecuted[$module]=$module; // Use the $currentcontext in method to avoid running twice
 
-                    // Clean class (an error may have been set into a previous call of another method for same module/hook)
+                    // Clean class (an error may have been set from a previous call of another method for same module/hook)
                     $actionclassinstance->error=0;
                     $actionclassinstance->errors=array();
 
-                    // Add current context for avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
+                    // Add current context to avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
                     $parameters['currentcontext'] = $context;
                     // Hooks that must return int (hooks with type 'addreplace')
                     if ($hooktype == 'addreplace')

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Workflow modulio nustatymas
-WorkflowDesc=Šis modulis yra skirtas modifikuoti automatiniams veiksmams aplikacijoje. Pagal nutylėjimą darbo eiga yra atidaryta (Jūs atliekate veiksmus Jūsų norima seka). Galite įjungti norimus automatinius veiksmus.
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
 ThereIsNoWorkflowToModify=Čia nėra darbo eigos Jūsų įjungtam moduliui, kurią galėtumėte modifikuoti
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Sukurti kliento užsakymą automatiškai po komercinio pasiūlymo pasirašymo
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Sukurti kliento sąskaitą-faktūrą automatiškai po komercinio pasiūlymo pasirašymo

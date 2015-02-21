@@ -25,6 +25,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 $langs->load("bookmarks");
+$langs->load("admin");
 
 // Security check
 if (! $user->rights->bookmark->lire) {
@@ -58,7 +59,7 @@ if ($_GET["action"] == 'delete')
     }
     else
     {
-        $setEventMessage($bookmark->error, 'errors');
+        setEventMessage($bookmark->error, 'errors');
     }
 }
 
@@ -93,9 +94,12 @@ if ($resql)
     print "<tr class=\"liste_titre\">";
     //print "<td>&nbsp;</td>";
     print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bid","","",'align="left"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Title"),'','')."</td>";
-    print_liste_field_titre($langs->trans("Link"),'','')."</td>";
-    print_liste_field_titre($langs->trans("Target"),'','','','','align="center"')."</td>";
+    print_liste_field_titre($langs->trans("Title"),'','');
+    print "</td>";
+    print_liste_field_titre($langs->trans("Link"),'','');
+    print "</td>";
+    print_liste_field_titre($langs->trans("Target"),'','','','','align="center"');
+    print "</td>";
     print_liste_field_titre($langs->trans("Owner"),$_SERVER["PHP_SELF"],"u.lastname","","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Position"),$_SERVER["PHP_SELF"],"b.position","","",'align="right"',$sortfield,$sortorder);

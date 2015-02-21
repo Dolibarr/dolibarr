@@ -8,6 +8,7 @@ FinancialAccount=Reikningur
 FinancialAccounts=Reikningar
 BankAccount=Bankanúmer
 BankAccounts=Bankareikningar
+ShowAccount=Show Account
 AccountRef=Financial reikning dómari
 AccountLabel=Financial reikning merki
 CashAccount=Cash reikning

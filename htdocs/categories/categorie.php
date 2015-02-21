@@ -278,7 +278,7 @@ if ($socid)
 
 	// Address
 	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">';
-    print dol_print_address($soc->address,'gmap','thirdparty',$object->id);
+    dol_print_address($soc->address,'gmap','thirdparty',$soc->id);
     print '</td></tr>';
 
 	// Zip / Town
@@ -289,7 +289,8 @@ if ($socid)
 	if ($soc->country)
 	{
 		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-		$img=picto_from_langcode($soc->country_code);
+		//$img=picto_from_langcode($soc->country_code);
+		$img='';
 		print ($img?$img.' ':'');
 		print $soc->country;
 		print '</td></tr>';
@@ -608,7 +609,7 @@ else if ($id || $ref)
  * 	@param		Object		$object				Object we want to see categories it can be classified into
  * 	@param		int			$typeid				Type of category (0, 1, 2, 3)
  *  @param		int			$socid				Id thirdparty
- *  @param		string		$showclassifyform	1=Add form to 'Classify', 0=Do not show form to 'Classify'
+ *  @param		int		$showclassifyform	1=Add form to 'Classify', 0=Do not show form to 'Classify'
  *  @return		int			0
  */
 function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)

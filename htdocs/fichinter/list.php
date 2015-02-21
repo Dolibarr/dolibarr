@@ -62,7 +62,7 @@ $search_desc=GETPOST('search_desc','alpha');
 $search_status=GETPOST('search_status');
 $sall=GETPOST('sall');
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_company="";
@@ -121,7 +121,13 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 
-	$urlparam="&amp;socid=$socid";
+	$urlparam='';
+	if ($socid) $urlparam.="&socid=".$socid;
+	if ($search_ref) $urlparam.="&search_ref=".urlencode($search_ref);
+	if ($search_company) $urlparam.="&search_company=".urlencode($search_company);
+	if ($search_desc) $urlparam.="&search_desc=".urlencode($search_desc);
+	if ($search_status != '' && $search_status > -1) $urlparam.="&search_status=".urlencode($search_status);
+
 	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -158,7 +164,7 @@ if ($result)
 	}
 	print '<td class="liste_titre" align="right">';
 	$liststatus=$interventionstatic->statuts_short;
-	print $form->selectarray('search_status', $liststatus, GETPOST('search_status'), 1, 0, 0, '', 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -193,7 +199,7 @@ if ($result)
 			print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
 		}
 		print '<td align="right">'.$interventionstatic->LibStatut($objp->fk_statut,5).'</td>';
-		
+
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 
@@ -207,7 +213,7 @@ if ($result)
 		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td><td>&nbsp;</td>';
 		print '</tr>';
 	}
-	
+
 	print '</table>';
 	print "</form>\n";
 	$db->free($result);

@@ -14,18 +14,17 @@ URLToLaunchCronJobs=URL to check and launch cron jobs if required
 OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Drošības atslēga URL uzsākt cron darbavietas
 FileToLaunchCronJobs=Komandrindas uzsākt cron darbavietas
-CronExplainHowToRunUnix=Par Unix vidē, jums vajadzētu izmantot crontab palaist komandrindas viena otras minūtes
-CronExplainHowToRunWin=Microsoft (tm), Windows environement jūs varat izmantot regulāro uzdevums rīkus, lai palaistu komandrindas viena otras minūtes
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Plānotie darbi
-CronListActive= Aktīvo darbu saraksts
-CronListInactive= Saraksts ar invaliditāti darba vietas
-CronListActive= Aktīvo darbu saraksts
+CronListActive=List of active/scheduled jobs
+CronListInactive=Saraksts ar invaliditāti darba vietas
 # Page list
 CronDateLastRun=Pēdējo reizi palaists
 CronLastOutput=Pēdējo reizi palaist izejas
-CronLastResult=Pēdējais rezultāts kods
-CronListOfCronJobs=Saraksts ar plānoto darbu
+CronLastResult=Pēdējais rezultātu kods
+CronListOfCronJobs=Saraksts ar plānotajiem darbiem
 CronCommand=Komanda
 CronList=Darbu saraksts
 CronDelete= Dzēst cron darbavietas

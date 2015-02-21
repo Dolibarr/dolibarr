@@ -150,8 +150,8 @@ class modFournisseur extends DolibarrModules
             $this->rights[$r][1] = 'Valider une commande fournisseur';
             $this->rights[$r][2] = 'w';
             $this->rights[$r][3] = 0;
-            $this->rights[$r][4] = 'commande';
-            $this->rights[$r][5] = 'valider';
+            $this->rights[$r][4] = 'supplier_order_advance';
+            $this->rights[$r][5] = 'validate';
 
             $r++;
             $this->rights[$r][0] = 1185;
@@ -206,8 +206,8 @@ class modFournisseur extends DolibarrModules
             $this->rights[$r][1] = 'Valider une facture fournisseur';
             $this->rights[$r][2] = 'w';
             $this->rights[$r][3] = 0;
-            $this->rights[$r][4] = 'facture';
-            $this->rights[$r][5] = 'valider';
+            $this->rights[$r][4] = 'supplier_invoice_advance';
+            $this->rights[$r][5] = 'validate';
 
             $r++;
             $this->rights[$r][0] = 1234;

@@ -121,8 +121,8 @@ if ($action == 'builddoc')
 	if (! $error)
 	{
 		$code=$forbarcode;
-		$generator=$stdobject->barcode_type_coder;
-		$encoding=strtoupper($stdobject->barcode_type_code);
+		$generator=$stdobject->barcode_type_coder;				// coder (loaded by fetch_barcode). Engine.
+		$encoding=strtoupper($stdobject->barcode_type_code);	// code (loaded by fetch_barcode). Example 'ean', 'isbn', ...
 		$barcodeimage=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 
 		$diroutput=$conf->barcode->dir_temp;
@@ -360,7 +360,7 @@ print '<br>';
 print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromproduct')?'checked="checked" ':'').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
 print '<br>';
 print '<div class="showforproductselector">';
-print $form->select_produits(GETPOST('productid'), 'productid', '');
+$form->select_produits(GETPOST('productid'), 'productid', '');
 print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 print '</div>';
 

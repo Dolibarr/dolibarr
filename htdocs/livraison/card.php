@@ -119,7 +119,10 @@ if ($action == 'add')
 	}
 }
 
-else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition->livraison->valider)
+else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
+    || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
+)
 {
 	$result = $object->valid($user);
 
@@ -135,10 +138,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
 			$outputlangs->setDefaultLang($newlang);
 		}
 		$model=$object->modelpdf;
-		if (empty($model)) {
-			$tmp=getListOfModels($db, 'delivery'); $keys=array_keys($tmp); $model=$keys[0];
-		}
 		$ret = $object->fetch($id); // Reload to get new records
+
 		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		if ($result < 0) dol_print_error($db,$result);
 	}

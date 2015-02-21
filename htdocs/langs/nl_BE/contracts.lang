@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Contracten gebied
 ListOfContracts=Lijst van opdrachten
-LastContracts=Laatste %s bewerkte contracten
 ContractCard=Contract kaart
 ContractStatusDraft=Ontwerp
 ServiceStatusLate=Actief, verstreken
@@ -24,6 +23,7 @@ ListOfServices=Lijst van diensten
 ListOfRunningContractsLines=Lijst van lopende contract lijnen
 ListOfRunningServices=Lijst van actieve diensten
 NotActivatedServices=Niet geactiveerde diensten (onder gevalideerde contracten)
+LastContracts=Laatste %s bewerkte contracten
 LastActivatedServices=Laatste %s geactiveerde diensten
 EditServiceLine=Bewerken service lijn
 DateEndReal=Werkelijke einddatum van de dienst

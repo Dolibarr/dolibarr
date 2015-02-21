@@ -132,6 +132,8 @@ $tableparams = array_merge($commonparams, $tableparams);
 foreach($allparams as $key => $value) {
     $paramslink .= '&' . $key . '=' . $value;
 }
+
+
 /*
  * View
  */
@@ -174,12 +176,12 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 // SQL request
 $catotal=0;
 
-if ($modecompta == 'CREANCES-DETTES') 
+if ($modecompta == 'CREANCES-DETTES')
 {
     $sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label,";
     $sql.= " sum(l.total_ht) as amount, sum(l.total_ttc) as amount_ttc";
     $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as l, ".MAIN_DB_PREFIX."product as p";
-	if ($selected_cat === -2)	// Without any category 
+	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 	}
@@ -191,14 +193,14 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " AND l.fk_facture = f.rowid";
     $sql.= " AND f.fk_statut in (1,2)";
     if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	$sql.= " AND f.type IN (0,1,2)";
+	$sql.= " AND f.type IN (0,1,2,5)";
     } else {
-	$sql.= " AND f.type IN (0,1,2,3)";
+	$sql.= " AND f.type IN (0,1,2,3,5)";
     }
     if ($date_start && $date_end) {
 	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
     }
-	if ($selected_cat === -2)	// Without any category  
+	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql.=" AND cp.fk_product is null";
 	}
@@ -209,7 +211,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sql.= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
     $sql.= " AND f.entity = ".$conf->entity;
-    $sql.= " GROUP BY p.rowid";
+    $sql.= " GROUP BY p.rowid, p.ref, p.label";
     $sql.= " ORDER BY p.ref";
 
     dol_syslog("cabyprodserv", LOG_DEBUG);
@@ -390,7 +392,7 @@ if ($modecompta == 'CREANCES-DETTES')
     // $modecompta != 'CREANCES-DETTES'
     // "Calculation of part of each product for accountancy in this mode is not possible. When a partial payment (for example 5 euros) is done on an
     // invoice with 2 product (product A for 10 euros and product B for 20 euros), what is part of paiment for product A and part of paiment for product B ?
-    // Because there is no way to know this, this report is not relevant.  
+    // Because there is no way to know this, this report is not relevant.
 	print '<br>'.$langs->trans("TurnoverPerProductInCommitmentAccountingNotRelevant") . '<br>';
 }
 

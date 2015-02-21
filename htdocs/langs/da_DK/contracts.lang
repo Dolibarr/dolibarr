@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Kontrakter område
 ListOfContracts=Liste over kontrakter
-LastContracts=Seneste %s modificerede kontrakter
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Alle kontrakter
 ContractCard=Kontrakt-kortet
 ContractStatus=Kontrakt status
@@ -27,7 +27,7 @@ MenuRunningServices=Kørsel tjenester
 MenuExpiredServices=Udløbet tjenester
 MenuClosedServices=Lukket tjenester
 NewContract=Ny kontrakt
-AddContract=Tilføj kontrakt
+AddContract=Create contract
 SearchAContract=Søg en kontrakt
 DeleteAContract=Slet en kontrakt
 CloseAContract=Luk en kontrakt
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Liste over kører kontrakt linjer
 ListOfRunningServices=Liste over kører tjenester
 NotActivatedServices=Ikke aktiverede tjenester (blandt valideret kontrakter)
 BoardNotActivatedServices=Tjenester for at aktivere blandt valideret kontrakter
-LastContracts=Seneste %s modificerede kontrakter
+LastContracts=Last %s contracts
 LastActivatedServices=Seneste %s aktiveret tjenester
 LastModifiedServices=Seneste %s modificerede tjenester
 EditServiceLine=Rediger service line
@@ -91,6 +91,7 @@ ListOfServicesToExpire=List of Services to expire
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Salg repræsentant, der underskriver kontrakt

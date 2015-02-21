@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=商务部操作系统
-OSCommerceSetup=商务部模块安装操作系统
-OSCommerceSetupSaved=商务部操作系统设置保存
-OSCommerceServer=商业服务器操作系统的主机/ IP
-OSCommerceDatabaseName=操作系统商业数据库的名称
-OSCommercePrefix=操作系统商务部表前缀
-OSCommerceUser=操作系统商业数据库登录

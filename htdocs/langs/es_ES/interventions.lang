@@ -31,6 +31,14 @@ RelatedInterventions=Intervenciones adjuntas
 ShowIntervention=Mostrar intervención
 SendInterventionRef=Envío de la intervención %s
 SendInterventionByMail=Enviar intervención por e-mail
+InterventionCreatedInDolibarr=Intervención %s creada
+InterventionValidatedInDolibarr=Intervención %s validada
+InterventionModifiedInDolibarr=Intervención %s modificada
+InterventionClassifiedBilledInDolibarr=Intervención %s clasificada como facturada
+InterventionClassifiedUnbilledInDolibarr=Intervención %s clasificada como no facturada
+InterventionSentByEMail=Intervención %s enviada por E-Mail
+InterventionDeletedInDolibarr=Intervención %s eliminada
+SearchAnIntervention=Buscar una intervención
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable seguimiento de la intervención
 TypeContact_fichinter_internal_INTERVENING=Interventor

@@ -3,6 +3,8 @@
 -- Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
+-- Copyright (C) 2014      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -65,6 +67,7 @@ create table llx_facture
 
   fk_account			integer,								-- bank account
   fk_currency			varchar(3),								-- currency code
+  
   fk_cond_reglement		integer  DEFAULT 1 NOT NULL,			-- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement		integer,								-- mode de reglement (Virement, Prelevement)
   date_lim_reglement	date,									-- date limite de reglement
@@ -73,6 +76,10 @@ create table llx_facture
   note_public			text,
   model_pdf				varchar(255),
   import_key			varchar(14),
-  extraparams			varchar(255)							-- for stock other parameters with json format
+  extraparams			varchar(255),							-- for stock other parameters with json format
+
+  situation_cycle_ref smallint,  -- situation cycle reference
+  situation_counter   smallint,  -- situation counter
+  situation_final     smallint   -- is the situation final ?
 
 )ENGINE=innodb;

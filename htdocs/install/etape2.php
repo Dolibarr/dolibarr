@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,6 +193,11 @@ if ($action == "set")
                 {
                     $buffer=preg_replace('/type=innodb/i','ENGINE=innodb',$buffer);
                 }
+                else if ($conf->db->type == 'mssql')
+                {
+                    $buffer=preg_replace('/type=innodb/i','',$buffer);
+                    $buffer=preg_replace('/ENGINE=innodb/i','',$buffer);
+                }
 
                 // Replace the prefix tables
                 if ($dolibarr_main_db_prefix != 'llx_')
@@ -219,7 +225,7 @@ if ($action == "set")
                     else
                     {
                         print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
-                        print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
+                        print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer.' <br>Executed query : '.$db->lastquery;
                         print "\n</td>";
                         print '<td><font class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</font></td></tr>';
                         $error++;

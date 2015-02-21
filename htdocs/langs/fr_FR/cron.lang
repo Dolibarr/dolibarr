@@ -14,13 +14,12 @@ URLToLaunchCronJobs=URL pour vérifier et lancer les travaux programmés actifs
 OrToLaunchASpecificJob=Ou pour vérifier et lancer un travail programmé spécifique
 KeyForCronAccess=Clé de sécurité pour l'URL de lancement des travaux programmés
 FileToLaunchCronJobs=Commande pour lancer les travaux programmés actifs
-CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser 'crontab' pour exécuter une commande toute les minutes
-CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tâche pour lancer une commande toute les minutes
+CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser l'entrée suivante en crontab pour exécuter la ligne de commande toutes les 5 minutes
+CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tache pour lancer cette commande toute les 5 minutes.
 # Menu
 CronJobs=Travaux programmés
-CronListActive= Liste des travaux actifs
-CronListInactive= Liste des travaux inactifs
-CronListActive= Liste des travaux actifs
+CronListActive=Liste des travaux actifs/programmés
+CronListInactive=Liste des travaux inactifs
 # Page list
 CronDateLastRun=Dernier lancement
 CronLastOutput=Sortie du dernier lancement

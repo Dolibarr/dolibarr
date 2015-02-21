@@ -24,3 +24,5 @@ Deliverer=Dostavljač:
 Sender=Pošiljatelj
 Recipient=Primatelj
 ErrorStockIsNotEnough=Nema dovoljno robe na skladištu
+Shippable=Dostava je moguća
+NonShippable=Dostava nije moguća

@@ -64,7 +64,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="f.date_lim_reglement";
 if (! $sortorder) $sortorder="ASC";
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_ref_supplier="";
@@ -117,7 +117,7 @@ if ($user->rights->fournisseur->facture->lire)
 
 	if ($search_ref)
 	{
-		$sql .= " AND f.rowid LIKE '%".$search_ref."%'";
+		$sql .= " AND f.ref LIKE '%".$search_ref."%'";
 	}
 	if ($search_ref_supplier)
 	{
@@ -241,7 +241,7 @@ if ($user->rights->fournisseur->facture->lire)
 				print $facturestatic->getNomUrl(1);
 				print "</td>\n";
 
-				print '<td class="nowrap">'.dol_trunc($objp->ref_supplier,12)."</td>\n";
+				print '<td class="nowrap">'.dol_trunc($objp->ref_supplier,12).'</td>';
 
 				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day');
@@ -258,7 +258,7 @@ if ($user->rights->fournisseur->facture->lire)
 				print "<td align=\"right\">".price($objp->total_ttc)."</td>";
 				print "<td align=\"right\">".price($objp->am)."</td>";
 
-				// Affiche statut de la facture
+				// Show invoice status
 				print '<td align="right" class="nowrap">';
 				print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
 				print '</td>';

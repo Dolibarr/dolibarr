@@ -8,6 +8,7 @@ FinancialAccount=Hesap
 FinancialAccounts=Hesaplar
 BankAccount=Banka hesabı
 BankAccounts=Banka hesapları
+ShowAccount=Hesabı Göster
 AccountRef=Ticari hesap ref
 AccountLabel=Ticari hesap adı
 CashAccount=Kasa hesabı

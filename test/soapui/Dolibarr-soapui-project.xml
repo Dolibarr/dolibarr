@@ -27446,4 +27446,374 @@
          </actioncomm>
       </ns:updateActionComm>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#updateActionComm"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#updateActionComm"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WebServicesDolibarrOrderBinding" type="wsdl" bindingName="{http://www.dolibarr.org/ns/}WebServicesDolibarrOrderBinding" soapVersion="1_1" anonymous="optional" definition="http://localhostalias/dolibarr_3.7/webservices/server_order.php?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhostalias/dolibarr_3.7/webservices/server_order.php?wsdl"><con:part><con:url>http://localhostalias/dolibarr_3.7/webservices/server_order.php?wsdl</con:url><con:content><![CDATA[<definitions targetNamespace="http://www.dolibarr.org/ns/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.dolibarr.org/ns/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema targetNamespace="http://www.dolibarr.org/ns/">
+      <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+      <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/"/>
+      <xsd:complexType name="authentication">
+        <xsd:all>
+          <xsd:element name="dolibarrkey" type="xsd:string"/>
+          <xsd:element name="sourceapplication" type="xsd:string"/>
+          <xsd:element name="login" type="xsd:string"/>
+          <xsd:element name="password" type="xsd:string"/>
+          <xsd:element name="entity" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="result">
+        <xsd:all>
+          <xsd:element name="result_code" type="xsd:string"/>
+          <xsd:element name="result_label" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="line">
+        <xsd:all>
+          <xsd:element name="id" type="xsd:string"/>
+          <xsd:element name="type" type="xsd:int"/>
+          <xsd:element name="fk_commande" type="xsd:int"/>
+          <xsd:element name="fk_parent_line" type="xsd:int"/>
+          <xsd:element name="desc" type="xsd:string"/>
+          <xsd:element name="qty" type="xsd:double"/>
+          <xsd:element name="price" type="xsd:double"/>
+          <xsd:element name="unitprice" type="xsd:double"/>
+          <xsd:element name="vat_rate" type="xsd:double"/>
+          <xsd:element name="remise" type="xsd:double"/>
+          <xsd:element name="remise_percent" type="xsd:double"/>
+          <xsd:element name="total_net" type="xsd:double"/>
+          <xsd:element name="total_vat" type="xsd:double"/>
+          <xsd:element name="total" type="xsd:double"/>
+          <xsd:element name="date_start" type="xsd:date"/>
+          <xsd:element name="date_end" type="xsd:date"/>
+          <xsd:element name="product_id" type="xsd:int"/>
+          <xsd:element name="product_ref" type="xsd:string"/>
+          <xsd:element name="product_label" type="xsd:string"/>
+          <xsd:element name="product_desc" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="LinesArray2">
+        <xsd:sequence>
+          <xsd:element name="line" type="tns:line" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="order">
+        <xsd:all>
+          <xsd:element name="id" type="xsd:string"/>
+          <xsd:element name="ref" type="xsd:string"/>
+          <xsd:element name="ref_client" type="xsd:string"/>
+          <xsd:element name="ref_ext" type="xsd:string"/>
+          <xsd:element name="ref_int" type="xsd:string"/>
+          <xsd:element name="thirdparty_id" type="xsd:int"/>
+          <xsd:element name="status" type="xsd:int"/>
+          <xsd:element name="facturee" type="xsd:string"/>
+          <xsd:element name="total_net" type="xsd:double"/>
+          <xsd:element name="total_vat" type="xsd:double"/>
+          <xsd:element name="total_localtax1" type="xsd:double"/>
+          <xsd:element name="total_localtax2" type="xsd:double"/>
+          <xsd:element name="total" type="xsd:double"/>
+          <xsd:element name="date" type="xsd:date"/>
+          <xsd:element name="date_creation" type="xsd:dateTime"/>
+          <xsd:element name="date_validation" type="xsd:dateTime"/>
+          <xsd:element name="date_modification" type="xsd:dateTime"/>
+          <xsd:element name="remise" type="xsd:string"/>
+          <xsd:element name="remise_percent" type="xsd:string"/>
+          <xsd:element name="remise_absolue" type="xsd:string"/>
+          <xsd:element name="source" type="xsd:string"/>
+          <xsd:element name="note_private" type="xsd:string"/>
+          <xsd:element name="note_public" type="xsd:string"/>
+          <xsd:element name="project_id" type="xsd:string"/>
+          <xsd:element name="mode_reglement_id" type="xsd:string"/>
+          <xsd:element name="mode_reglement_code" type="xsd:string"/>
+          <xsd:element name="mode_reglement" type="xsd:string"/>
+          <xsd:element name="cond_reglement_id" type="xsd:string"/>
+          <xsd:element name="cond_reglement_code" type="xsd:string"/>
+          <xsd:element name="cond_reglement" type="xsd:string"/>
+          <xsd:element name="cond_reglement_doc" type="xsd:string"/>
+          <xsd:element name="date_livraison" type="xsd:date"/>
+          <xsd:element name="fk_delivery_address" type="xsd:int"/>
+          <xsd:element name="demand_reason_id" type="xsd:string"/>
+          <xsd:element name="lines" type="tns:LinesArray2"/>
+          <xsd:element name="options_aaa" type="xsd:string"/>
+          <xsd:element name="options_bbb" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="OrdersArray2">
+        <xsd:sequence>
+          <xsd:element name="order" type="tns:order" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+  <message name="getOrderRequest">
+    <part name="authentication" type="tns:authentication"/>
+    <part name="id" type="xsd:string"/>
+    <part name="ref" type="xsd:string"/>
+    <part name="ref_ext" type="xsd:string"/>
+  </message>
+  <message name="getOrderResponse">
+    <part name="result" type="tns:result"/>
+    <part name="order" type="tns:order"/>
+  </message>
+  <message name="getOrdersForThirdPartyRequest">
+    <part name="authentication" type="tns:authentication"/>
+    <part name="idthirdparty" type="xsd:string"/>
+  </message>
+  <message name="getOrdersForThirdPartyResponse">
+    <part name="result" type="tns:result"/>
+    <part name="orders" type="tns:OrdersArray2"/>
+  </message>
+  <message name="createOrderRequest">
+    <part name="authentication" type="tns:authentication"/>
+    <part name="order" type="tns:order"/>
+  </message>
+  <message name="createOrderResponse">
+    <part name="result" type="tns:result"/>
+    <part name="id" type="xsd:string"/>
+    <part name="ref" type="xsd:string"/>
+  </message>
+  <message name="updateOrderRequest">
+    <part name="authentication" type="tns:authentication"/>
+    <part name="order" type="tns:order"/>
+  </message>
+  <message name="updateOrderResponse">
+    <part name="result" type="tns:result"/>
+    <part name="id" type="xsd:string"/>
+    <part name="ref" type="xsd:string"/>
+  </message>
+  <message name="validOrderRequest">
+    <part name="authentication" type="tns:authentication"/>
+    <part name="id" type="xsd:string"/>
+  </message>
+  <message name="validOrderResponse">
+    <part name="result" type="tns:result"/>
+  </message>
+  <portType name="WebServicesDolibarrOrderPortType">
+    <operation name="getOrder">
+      <documentation>WS to get a particular invoice</documentation>
+      <input message="tns:getOrderRequest"/>
+      <output message="tns:getOrderResponse"/>
+    </operation>
+    <operation name="getOrdersForThirdParty">
+      <documentation>WS to get all orders of a third party</documentation>
+      <input message="tns:getOrdersForThirdPartyRequest"/>
+      <output message="tns:getOrdersForThirdPartyResponse"/>
+    </operation>
+    <operation name="createOrder">
+      <documentation>WS to create an order</documentation>
+      <input message="tns:createOrderRequest"/>
+      <output message="tns:createOrderResponse"/>
+    </operation>
+    <operation name="updateOrder">
+      <documentation>WS to update an order</documentation>
+      <input message="tns:updateOrderRequest"/>
+      <output message="tns:updateOrderResponse"/>
+    </operation>
+    <operation name="validOrder">
+      <documentation>WS to valid an order</documentation>
+      <input message="tns:validOrderRequest"/>
+      <output message="tns:validOrderResponse"/>
+    </operation>
+  </portType>
+  <binding name="WebServicesDolibarrOrderBinding" type="tns:WebServicesDolibarrOrderPortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="getOrder">
+      <soap:operation soapAction="http://www.dolibarr.org/ns/#getOrder" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="getOrdersForThirdParty">
+      <soap:operation soapAction="http://www.dolibarr.org/ns/#getOrdersForThirdParty" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="createOrder">
+      <soap:operation soapAction="http://www.dolibarr.org/ns/#createOrder" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="updateOrder">
+      <soap:operation soapAction="http://www.dolibarr.org/ns/#updateOrder" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="validOrder">
+      <soap:operation soapAction="http://www.dolibarr.org/ns/#validOrder" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="WebServicesDolibarrOrder">
+    <port name="WebServicesDolibarrOrderPort" binding="tns:WebServicesDolibarrOrderBinding">
+      <soap:address location="http://localhostalias/dolibarr_3.7/webservices/server_order.php"/>
+    </port>
+  </service>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhostalias/dolibarr_3.6/webservices/server_order.php</con:endpoint><con:endpoint>http://localhostalias/dolibarr_3.7/webservices/server_order.php</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#createOrder" name="createOrder" bindingOperationName="createOrder" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostalias/dolibarr_3.7/webservices/server_order.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:createOrder soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <authentication xsi:type="ns:authentication">
+            <!--You may enter the following 5 items in any order-->
+            <dolibarrkey xsi:type="xsd:string">dolibarrkey</dolibarrkey>
+            <sourceapplication xsi:type="xsd:string">aaa</sourceapplication>
+            <login xsi:type="xsd:string">admin</login>
+            <password xsi:type="xsd:string">admin</password>
+            <entity xsi:type="xsd:string"></entity>
+         </authentication>
+         <order xsi:type="ns:order">
+            <!--You may enter the following 35 items in any order-->
+            <ref_client xsi:type="xsd:string"></ref_client>
+            <ref_ext xsi:type="xsd:string">123ext</ref_ext>
+            <ref_int xsi:type="xsd:string">?</ref_int>
+            <thirdparty_id xsi:type="xsd:int">1</thirdparty_id>
+            <status xsi:type="xsd:int">?</status>
+            <facturee xsi:type="xsd:string">?</facturee>
+            <total_net xsi:type="xsd:double">?</total_net>
+            <total_vat xsi:type="xsd:double">?</total_vat>
+            <total_localtax1 xsi:type="xsd:double">?</total_localtax1>
+            <total_localtax2 xsi:type="xsd:double">?</total_localtax2>
+            <total xsi:type="xsd:double">?</total>
+            <date xsi:type="xsd:date">?</date>
+            <date_creation xsi:type="xsd:dateTime">?</date_creation>
+            <date_validation xsi:type="xsd:dateTime">?</date_validation>
+            <date_modification xsi:type="xsd:dateTime">?</date_modification>
+            <remise xsi:type="xsd:string">?</remise>
+            <remise_percent xsi:type="xsd:string">?</remise_percent>
+            <remise_absolue xsi:type="xsd:string">?</remise_absolue>
+            <source xsi:type="xsd:string">?</source>
+            <note_private xsi:type="xsd:string">?</note_private>
+            <note_public xsi:type="xsd:string">?</note_public>
+            <project_id xsi:type="xsd:string">?</project_id>
+            <mode_reglement_id xsi:type="xsd:string">?</mode_reglement_id>
+            <mode_reglement_code xsi:type="xsd:string">?</mode_reglement_code>
+            <mode_reglement xsi:type="xsd:string">?</mode_reglement>
+            <cond_reglement_id xsi:type="xsd:string">?</cond_reglement_id>
+            <cond_reglement_code xsi:type="xsd:string">?</cond_reglement_code>
+            <cond_reglement xsi:type="xsd:string">?</cond_reglement>
+            <cond_reglement_doc xsi:type="xsd:string">?</cond_reglement_doc>
+            <date_livraison xsi:type="xsd:date">?</date_livraison>
+            <fk_delivery_address xsi:type="xsd:int">?</fk_delivery_address>
+            <demand_reason_id xsi:type="xsd:string">?</demand_reason_id>
+            <lines xsi:type="ns:LinesArray2">
+               <!--Zero or more repetitions:-->
+               <line xsi:type="ns:line">
+                  <!--You may enter the following 20 items in any order-->
+                  <id xsi:type="xsd:string">?</id>
+                  <type xsi:type="xsd:int">?</type>
+                  <fk_commande xsi:type="xsd:int">?</fk_commande>
+                  <fk_parent_line xsi:type="xsd:int">?</fk_parent_line>
+                  <desc xsi:type="xsd:string">?</desc>
+                  <qty xsi:type="xsd:double">?</qty>
+                  <price xsi:type="xsd:double">?</price>
+                  <unitprice xsi:type="xsd:double">?</unitprice>
+                  <vat_rate xsi:type="xsd:double">?</vat_rate>
+                  <remise xsi:type="xsd:double">?</remise>
+                  <remise_percent xsi:type="xsd:double">?</remise_percent>
+                  <total_net xsi:type="xsd:double">?</total_net>
+                  <total_vat xsi:type="xsd:double">?</total_vat>
+                  <total xsi:type="xsd:double">?</total>
+                  <date_start xsi:type="xsd:date">?</date_start>
+                  <date_end xsi:type="xsd:date">?</date_end>
+                  <product_id xsi:type="xsd:int">?</product_id>
+                  <product_ref xsi:type="xsd:string">?</product_ref>
+                  <product_label xsi:type="xsd:string">?</product_label>
+                  <product_desc xsi:type="xsd:string">?</product_desc>
+               </line>
+            </lines>
+         </order>
+      </ns:createOrder>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#createOrder"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getOrder" name="getOrder" bindingOperationName="getOrder" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostalias/dolibarr_3.7/webservices/server_order.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:getOrder soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <authentication xsi:type="ns:authentication">
+            <!--You may enter the following 5 items in any order-->
+            <dolibarrkey xsi:type="xsd:string">?</dolibarrkey>
+            <sourceapplication xsi:type="xsd:string">?</sourceapplication>
+            <login xsi:type="xsd:string">?</login>
+            <password xsi:type="xsd:string">?</password>
+            <entity xsi:type="xsd:string">?</entity>
+         </authentication>
+         <id xsi:type="xsd:string">?</id>
+         <ref xsi:type="xsd:string">?</ref>
+         <ref_ext xsi:type="xsd:string">?</ref_ext>
+      </ns:getOrder>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#getOrder"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getOrdersForThirdParty" name="getOrdersForThirdParty" bindingOperationName="getOrdersForThirdParty" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostalias/dolibarr_3.7/webservices/server_order.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:getOrdersForThirdParty soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <authentication xsi:type="ns:authentication">
+            <!--You may enter the following 5 items in any order-->
+            <dolibarrkey xsi:type="xsd:string">?</dolibarrkey>
+            <sourceapplication xsi:type="xsd:string">?</sourceapplication>
+            <login xsi:type="xsd:string">?</login>
+            <password xsi:type="xsd:string">?</password>
+            <entity xsi:type="xsd:string">?</entity>
+         </authentication>
+         <idthirdparty xsi:type="xsd:string">?</idthirdparty>
+      </ns:getOrdersForThirdParty>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#getOrdersForThirdParty"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#validOrder" name="validOrder" bindingOperationName="validOrder" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostalias/dolibarr_3.7/webservices/server_order.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:validOrder soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <authentication xsi:type="ns:authentication">
+            <!--You may enter the following 5 items in any order-->
+            <dolibarrkey xsi:type="xsd:string">?</dolibarrkey>
+            <sourceapplication xsi:type="xsd:string">?</sourceapplication>
+            <login xsi:type="xsd:string">?</login>
+            <password xsi:type="xsd:string">?</password>
+            <entity xsi:type="xsd:string">?</entity>
+         </authentication>
+         <id xsi:type="xsd:string">?</id>
+      </ns:validOrder>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#validOrder"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#updateOrder" name="updateOrder" bindingOperationName="updateOrder" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostalias/dolibarr_3.7/webservices/server_order.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:updateOrder soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <authentication xsi:type="ns:authentication">
+            <!--You may enter the following 5 items in any order-->
+            <dolibarrkey xsi:type="xsd:string">dolibarrkey</dolibarrkey>
+            <sourceapplication xsi:type="xsd:string"></sourceapplication>
+            <login xsi:type="xsd:string">admin</login>
+            <password xsi:type="xsd:string">admin</password>
+            <entity xsi:type="xsd:string"></entity>
+         </authentication>
+         <order xsi:type="ns:order">
+            <!--You may enter the following 37 items in any order-->
+            <id xsi:type="xsd:string">6</id>
+<status xsi:type="xsd:string">0</status>
+            <thirdparty_id xsi:type="xsd:int">2</thirdparty_id>
+            <total_net xsi:type="xsd:double">?</total_net>
+            <total_vat xsi:type="xsd:double">?</total_vat>
+            <total_localtax1 xsi:type="xsd:double">?</total_localtax1>
+            <total_localtax2 xsi:type="xsd:double">?</total_localtax2>
+            <total xsi:type="xsd:double">?</total>
+            <note_private xsi:type="xsd:string">?</note_private>
+            <note_public xsi:type="xsd:string">?</note_public>
+            <project_id xsi:type="xsd:string">?</project_id>
+         </order>
+      </ns:updateOrder>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#updateOrder"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/></con:soapui-project>

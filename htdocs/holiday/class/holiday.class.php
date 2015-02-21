@@ -655,21 +655,20 @@ class Holiday extends CommonObject
      */
     function getNomUrl($withpicto=0)
     {
-    	global $langs;
+        global $langs;
 
-    	$result='';
+        $result='';
+        $label=$langs->trans("Show").': '.$this->ref;
 
-    	$lien = '<a href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$this->id.'">';
-    	$lienfin='</a>';
+        $lien = '<a href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $lienfin='</a>';
 
-    	$picto='holiday';
+        $picto='holiday';
 
-    	$label=$langs->trans("Show").': '.$this->ref;
-
-    	if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
-    	if ($withpicto && $withpicto != 2) $result.=' ';
-    	if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
-    	return $result;
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto && $withpicto != 2) $result.=' ';
+        if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+        return $result;
     }
 
 
@@ -1045,7 +1044,8 @@ class Holiday extends CommonObject
         $result = $this->db->query($sql);
         if($result) {
             $obj = $this->db->fetch_object($result);
-            return number_format($obj->nb_holiday,2);
+            //return number_format($obj->nb_holiday,2);
+			return $obj->nb_holiday;
         } else {
             return '0';
         }

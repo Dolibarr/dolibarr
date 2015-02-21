@@ -93,7 +93,7 @@ llxHeader('',$langs->trans("PaypalSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre(' - '.$langs->trans("ModuleSetup"),$linkback,'paypal_logo@paypal');
+print_fiche_titre($langs->trans("ModuleSetup").' PayPal',$linkback);
 print '<br>';
 
 $head=paypaladmin_prepare_head();
@@ -232,7 +232,7 @@ print '</td></tr>';
 
 print '</table>';
 
-print '<br><center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 

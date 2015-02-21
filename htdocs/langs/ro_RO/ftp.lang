@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=Configurarea modulului client FTP
 NewFTPClient=Creează o nouă conexiune FTP
-FTPArea=Aria FTP
+FTPArea=FTP
 FTPAreaDesc=Acest ecran afișează conţinutul unui server FTP
 SetupOfFTPClientModuleNotComplete=Configurarea clientului FTP pare incompletă
 FTPFeatureNotSupportedByYourPHP=Versiunea PHP a dvs. nu are suport pentru funcţii FTP

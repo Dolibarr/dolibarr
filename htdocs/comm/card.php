@@ -66,6 +66,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
+$cancelbutton = GETPOST('cancel');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('commcard','globalcard'));
@@ -80,70 +81,75 @@ $parameters = array('socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-
-if ($action == 'setcustomeraccountancycode')
+if (empty($reshook))
 {
-	$result=$object->fetch($id);
-	$object->code_compta=$_POST["customeraccountancycode"];
-	$result=$object->update($object->id,$user,1,1,0);
-	if ($result < 0)
+	if ($cancelbutton)
 	{
-		setEventMessage($object->errors, 'errors');
+		$action="";
 	}
-	$action="";
-}
 
-// conditions de reglement
-if ($action == 'setconditions' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-// mode de reglement
-if ($action == 'setmode' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-// assujetissement a la TVA
-if ($action == 'setassujtva' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$object->tva_assuj=$_POST['assujtva_value'];
+	if ($action == 'setcustomeraccountancycode')
+	{
+		$result=$object->fetch($id);
+		$object->code_compta=$_POST["customeraccountancycode"];
+		$result=$object->update($object->id,$user,1,1,0);
+		if ($result < 0)
+		{
+			setEventMessage($object->errors, 'errors');
+		}
+	}
 
-	// TODO move to DAO class
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE rowid='".$id."'";
-	$result = $db->query($sql);
-	if (! $result) dol_print_error($result);
-}
+	// conditions de reglement
+	if ($action == 'setconditions' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
 
-// set prospect level
-if ($action == 'setprospectlevel' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
-	$result=$object->set_prospect_level($user);
-	if ($result < 0) setEventMessage($object->error,'errors');
-}
+	// mode de reglement
+	if ($action == 'setmode' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
 
-// Update communication level
-if ($action == 'cstc')
-{
-	$object->fetch($id);
-	$object->stcomm_id=GETPOST('stcomm','int');
-	$result=$object->set_commnucation_level($user);
-	if ($result < 0) setEventMessage($object->error,'errors');
-}
+	// assujetissement a la TVA
+	if ($action == 'setassujtva' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$object->tva_assuj=$_POST['assujtva_value'];
+		$result=$object->update($object->id);
+		if ($result < 0) dol_print_error($db,$object->error);
+	}
 
-// Update communication level
-if ($action == 'setOutstandingBill')
-{
-	$object->fetch($id);
-	$object->outstanding_limit=GETPOST('OutstandingBill');
-	$result=$object->set_OutstandingBill($user);
-	if ($result < 0) setEventMessage($object->error,'errors');
+	// set prospect level
+	if ($action == 'setprospectlevel' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
+		$result=$object->set_prospect_level($user);
+		if ($result < 0) setEventMessage($object->error,'errors');
+	}
+
+	// update prospect level
+	if ($action == 'cstc')
+	{
+		$object->fetch($id);
+		$object->stcomm_id=GETPOST('stcomm','int');
+		$result=$object->set_commnucation_level($user);
+		if ($result < 0) setEventMessage($object->error,'errors');
+	}
+
+	// update outstandng limit
+	if ($action == 'setOutstandingBill')
+	{
+		$object->fetch($id);
+		$object->outstanding_limit=GETPOST('OutstandingBill');
+		$result=$object->set_OutstandingBill($user);
+		if ($result < 0) setEventMessage($object->error,'errors');
+	}
 }
 
 
@@ -151,13 +157,23 @@ if ($action == 'setOutstandingBill')
  * View
  */
 
-llxHeader('',$langs->trans('CustomerCard'));
-
-
 $contactstatic = new Contact($db);
 $userstatic=new User($db);
 $form = new Form($db);
 $formcompany=new FormCompany($db);
+
+if ($id > 0 && empty($object->id))
+{
+	// Load data of third party
+	$res=$object->fetch($id);
+	if ($object->id <= 0) dol_print_error($db,$object->error);
+}
+
+$title=$langs->trans("CustomerCard");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$title,$help_url);
+
 
 
 if ($mode == 'search')
@@ -188,14 +204,6 @@ if ($mode == 'search')
 
 if ($id > 0)
 {
-	// Load data of third party
-	$object->fetch($id);
-	if ($object->id <= 0)
-	{
-		dol_print_error($db,$object->error);
-	}
-
-
 	$head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"),0,'company');
@@ -257,7 +265,8 @@ if ($id > 0)
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
 	if (! empty($object->country_code))
 	{
-		$img=picto_from_langcode($object->country_code);
+		//$img=picto_from_langcode($object->country_code);
+		$img='';
 		if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
 		else print ($img?$img.' ':'').$object->country;
 	}
@@ -289,24 +298,15 @@ if ($id > 0)
 	print '</tr>';
 
 	// Local Taxes
-	if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+	if ($mysoc->useLocalTax(1))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
-		print yn($object->localtax1_assuj);
-		print '</td></tr>';
-		print '<tr><td class="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
-		print yn($object->localtax2_assuj);
-		print '</td></tr>';
-	}
-	elseif($mysoc->localtax1_assuj=="1")
-	{
-		print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
 		print yn($object->localtax1_assuj);
 		print '</td></tr>';
 	}
-	elseif($mysoc->localtax2_assuj=="1")
+	if ($mysoc->useLocalTax(2))
 	{
-		print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
 		print yn($object->localtax2_assuj);
 		print '</td></tr>';
 	}
@@ -396,6 +396,10 @@ if ($id > 0)
 		print $form->editfieldkey("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer);
 		print '</td><td colspan="3">';
 		print $form->editfieldval("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer,'amount',($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
+		// display amount and link to unpaid bill
+		$outstandigBills = $object->get_OutstandingBill();
+		if ($outstandigBills != 0)
+			print " / <a href='".DOL_URL_ROOT."/compta/facture/list.php?socid=".$object->id."&search_status=1'>".price($outstandigBills).'</a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -501,8 +505,11 @@ if ($id > 0)
 	{
 		$propal_static = new Propal($db);
 
-		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
-		$sql.= " p.datep as dp, p.fin_validite as datelimite";
+		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht";
+        $sql.= ", p.tva as total_tva";
+        $sql.= ", p.total as total_ttc";
+        $sql.= ", p.ref, p.ref_client, p.remise";
+		$sql.= ", p.datep as dp, p.fin_validite as datelimite";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql.= " AND s.rowid = ".$object->id;
@@ -520,7 +527,7 @@ if ($id > 0)
 		        print '<table class="noborder" width="100%">';
 
                 print '<tr class="liste_titre">';
-    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td>';
+    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'">'.$langs->trans("AllPropals").' <span class="badge">'.$num.'</span></a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table></td>';
     			print '</tr>';
@@ -530,16 +537,22 @@ if ($id > 0)
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
+				$var=!$var;
 				print "<tr ".$bc[$var].">";
-				print '<td class="nowrap"><a href="propal.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a>'."\n";
-				if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 )
-				{
-					print " ".img_warning();
-				}
+                print '<td class="nowrap">';
+                $propal_static->id = $objp->propalid;
+                $propal_static->ref = $objp->ref;
+                $propal_static->ref_client = $objp->ref_client;
+                $propal_static->total_ht = $objp->total_ht;
+                $propal_static->total_tva = $objp->total_tva;
+                $propal_static->total_ttc = $objp->total_ttc;
+                print $propal_static->getNomUrl(1);
+                if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 ) {
+                    print " ".img_warning();
+                }
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td align="right" style="min-width: 60px" class="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
-				$var=!$var;
 				$i++;
 			}
 			$db->free($resql);
@@ -559,9 +572,12 @@ if ($id > 0)
 	{
 		$commande_static=new Commande($db);
 
-		$sql = "SELECT s.nom, s.rowid,";
-		$sql.= " c.rowid as cid, c.total_ht, c.ref, c.fk_statut, c.facture,";
-		$sql.= " c.date_commande as dc";
+        $sql = "SELECT s.nom, s.rowid";
+        $sql.= ", c.rowid as cid, c.total_ht";
+        $sql.= ", c.tva as total_tva";
+        $sql.= ", c.total_ttc";
+        $sql.= ", c.ref, c.ref_client, c.fk_statut, c.facture";
+        $sql.= ", c.date_commande as dc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql.= " WHERE c.fk_soc = s.rowid ";
 		$sql.= " AND s.rowid = ".$object->id;
@@ -593,7 +609,7 @@ if ($id > 0)
 				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' ('.$num.')</a></td>';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></a></td>';
 				print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				//if($num2 > 0) print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.img_picto($langs->trans("CreateInvoiceForThisCustomer"),'object_bill').'</a></td>';
 				//else print '<td width="20px" align="right"><a href="#">'.img_picto($langs->trans("NoOrdersToInvoice"),'object_bill').'</a></td>';
@@ -607,7 +623,14 @@ if ($id > 0)
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
-				print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
+                print '<td class="nowrap">';
+                $commande_static->id = $objp->cid;
+                $commande_static->ref = $objp->ref;
+                $commande_static->ref_client=$objp->ref_client;
+                $commande_static->total_ht = $objp->total_ht;
+                $commande_static->total_tva = $objp->total_tva;
+                $commande_static->total_ttc = $objp->total_ttc;
+                print $commande_static->getNomUrl(1);
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td align="right" style="min-width: 60px" class="nowrap">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
@@ -648,7 +671,7 @@ if ($id > 0)
 
 			    print '<tr class="liste_titre">';
 				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
-				print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'">'.$langs->trans("AllContracts").' ('.$num.')</a></td></tr></table></td>';
+				print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'">'.$langs->trans("AllContracts").' <span class="badge">'.$num.'</span></a></td></tr></table></td>';
 				print '</tr>';
 			}
 			$i = 0;
@@ -707,7 +730,7 @@ if ($id > 0)
 		        print '<table class="noborder" width="100%">';
 
 			    print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'">'.$langs->trans("AllInterventions").' ('.$num.')</td></tr></table></td>';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'">'.$langs->trans("AllInterventions").' <span class="badge">'.$num.'</span></td></tr></table></td>';
 				print '</tr>';
 				$var=!$var;
 			}
@@ -745,15 +768,18 @@ if ($id > 0)
 	{
 		$facturestatic = new Facture($db);
 
-		$sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
-		$sql.= ' f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut,';
-		$sql.= ' s.nom, s.rowid as socid,';
-		$sql.= ' SUM(pf.amount) as am';
+        $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount';
+        $sql.= ', f.total';
+        $sql.= ', f.tva as total_tva';
+        $sql.= ', f.total_ttc';
+		$sql.= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut';
+		$sql.= ', s.nom, s.rowid as socid';
+		$sql.= ', SUM(pf.amount) as am';
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
 		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
 		$sql.= " AND f.entity = ".$conf->entity;
-		$sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
+		$sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.amount, f.total, f.tva, f.total_ttc,';
 		$sql.= ' f.datef, f.datec, f.paye, f.fk_statut,';
 		$sql.= ' s.nom, s.rowid';
 		$sql.= " ORDER BY f.datef DESC, f.datec DESC";
@@ -770,7 +796,7 @@ if ($id > 0)
 
 			    $tableaushown=1;
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").' ('.$num.')</a></td>';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").' <span class="badge">'.$num.'</span></a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -782,9 +808,12 @@ if ($id > 0)
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
-				$facturestatic->id=$objp->facid;
-				$facturestatic->ref=$objp->facnumber;
-				$facturestatic->type=$objp->type;
+				$facturestatic->id = $objp->facid;
+				$facturestatic->ref = $objp->facnumber;
+				$facturestatic->type = $objp->type;
+                $facturestatic->total_ht = $objp->total;
+                $facturestatic->total_tva = $objp->total_tva;
+                $facturestatic->total_ttc = $objp->total_ttc;
 				print $facturestatic->getNomUrl(1);
 				print '</td>';
 				if ($objp->df > 0)
@@ -908,7 +937,7 @@ if ($id > 0)
 	// Addresses list
 	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
 	{
-		$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+		show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))

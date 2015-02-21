@@ -158,7 +158,8 @@ $head = mailmanspip_admin_prepare_head();
 
 dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
 
-$var=!$var;
+$var=true;
+
 if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 {
     //$lien=img_picto($langs->trans("Active"),'tick').' ';

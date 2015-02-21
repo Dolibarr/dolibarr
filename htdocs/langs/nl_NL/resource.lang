@@ -1,0 +1,34 @@
+
+MenuResourceIndex=Resources
+MenuResourceAdd=Nieuwe resource
+MenuResourcePlanning=Resource planning
+DeleteResource=Verwijder resource
+ConfirmDeleteResourceElement=Bevestig het verwijderen van de resource voor dit element
+NoResourceInDatabase=Geen resource in de database
+NoResourceLinked=Geen gelinkte resource
+
+ResourcePageIndex=Resource lijst
+ResourceSingular=Resource
+ResourceCard=Resource kaart
+AddResource=Creeer een resource
+ResourceFormLabel_ref=Resource naam
+ResourceType=Resource type
+ResourceFormLabel_description=Resource beschrijving
+
+ResourcesLinkedToElement=Resources gekoppeld aan element
+
+ShowResourcePlanning=Toon resource planning
+GotoDate=Ga naar datum
+
+ResourceElementPage=Element resources
+ResourceCreatedWithSuccess=Resource met succes gecreeerd 
+RessourceLineSuccessfullyDeleted=Resource line successfully deleted
+RessourceLineSuccessfullyUpdated=Resource line successfully updated
+ResourceLinkedWithSuccess=Resource met succes gekoppeld
+
+TitleResourceCard=Resource kaart
+ConfirmDeleteResource=Bevestig verwijderen van deze resource
+RessourceSuccessfullyDeleted=Resource met succes verwijderd
+DictionaryResourceType=Type resources
+
+SelectResource=Kies resource

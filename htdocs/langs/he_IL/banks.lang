@@ -8,6 +8,7 @@ FinancialAccount=Account
 FinancialAccounts=Accounts
 BankAccount=Bank account
 BankAccounts=Bank accounts
+ShowAccount=Show Account
 AccountRef=Financial account ref
 AccountLabel=Financial account label
 CashAccount=Cash account

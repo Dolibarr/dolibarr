@@ -14,13 +14,12 @@ URLToLaunchCronJobs=URL-osoite ajastettujen tehtävien tarkistamiseen ja ajamise
 OrToLaunchASpecificJob=Tai tietyn tehtävän tarkistamiseen ja ajamiseen
 KeyForCronAccess=Turva avain ajastettujen  tehtävien ajamiseen URL-sta
 FileToLaunchCronJobs=Ajastettujen tehtävien komentorivi
-CronExplainHowToRunUnix=Unix ympäristössä sinun tulee käyttää crontabia ajaaksesi komnetoriviä joka minuutti
-CronExplainHowToRunWin=Microsoft(tm) Windows ympäristössä voit käyttää ajastetut tehtävät -työkalua ajaaksesi komentorivin minuuteittain
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Scheduled jobs
-CronListActive= Aktiivisten tehtävien lista
-CronListInactive= Hylättyjen tehtävien lista
-CronListActive= Aktiivisten tehtävien lista
+CronListActive=List of active/scheduled jobs
+CronListInactive=Hylättyjen tehtävien lista
 # Page list
 CronDateLastRun=Viimeinen ajo
 CronLastOutput=Viimeisen ajon tulostus

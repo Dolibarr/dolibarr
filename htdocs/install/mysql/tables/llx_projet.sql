@@ -34,5 +34,7 @@ create table llx_projet
   fk_statut        smallint DEFAULT 0 NOT NULL,
   note_private     text,
   note_public      text,
+  --budget_days      real,                      -- budget in days is sum of field planned_workload of tasks
+  budget_amount    double(24,8),				
   model_pdf        varchar(255)
 )ENGINE=innodb;

@@ -133,8 +133,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			}
 			else
 			{
-			    setEventMessage($task->error,'errors');
-			    setEventMessage($task->errors,'errors');
+			    setEventMessages($task->error,$task->errors,'errors');
 			}
 		}
 
@@ -150,6 +149,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 				header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
 			}
+			$id = $projectid;
 		}
 	}
 	else
@@ -168,9 +168,10 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	}
 }
 
+
 /*
  * View
-*/
+ */
 
 $form=new Form($db);
 $formother=new FormOther($db);
@@ -300,7 +301,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
-	$contactsofproject=$object->getListContactId('internal');
+	$contactsofproject=(! empty($object->id)?$object->getListContactId('internal'):'');
 	$form->select_users($user->id,'userid',0,'',0,'',$contactsofproject);
 	print '</td></tr>';
 
@@ -417,7 +418,7 @@ else
 	print '<td>'.$langs->trans("LabelTask").'</td>';
 	print '<td align="center">'.$langs->trans("DateStart").'</td>';
 	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-	print '<td align="center">'.$langs->trans("PlannedWorkload").'</td>';
+	print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 	print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 	print '<td align="right">'.$langs->trans("ProgressCalculated").'</td>';

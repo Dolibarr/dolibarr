@@ -58,7 +58,7 @@ $month	= GETPOST('month','int');
 $year	= GETPOST('year','int');
 
 // Clean up on purge search criteria ?
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $sref='';
     $sprod_fulldescr='';
@@ -67,7 +67,7 @@ if (GETPOST("button_removefilter"))
 }
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id");
-$type_element = GETPOST('type_element')?GETPOST('type_element'):$type_element;
+$type_element = GETPOST('type_element')?GETPOST('type_element'):'';
 
 
 $langs->load("companies");
@@ -76,10 +76,17 @@ $langs->load("orders");
 $langs->load("suppliers");
 $langs->load("propal");
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('consumptionthirdparty'));
+
 
 /*
  * Actions
  */
+
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
 

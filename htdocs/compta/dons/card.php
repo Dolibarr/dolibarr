@@ -76,7 +76,7 @@ if ($action == 'update')
 
 	if (empty($amount))
 	{
-		$setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -329,7 +329,7 @@ if ($action == 'create')
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$don,$action);    // Note that $action and $object may have been modified by hook
 
 	print "</table>\n";
-	print '<br><center><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<br><div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 	print "</form>\n";
 }
 
@@ -429,7 +429,7 @@ if (! empty($id) && $action == 'edit')
 
 	print "</table>\n";
 
-	print '<br><center><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<br><div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 
 	print "</form>\n";
 
@@ -500,7 +500,7 @@ if (! empty($id) && $action != 'edit')
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-	print $form->form_modes_reglement(null, $don->modepaiementid,'none');
+	$form->form_modes_reglement(null, $don->modepaiementid,'none');
 	print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut(4).'</td></tr>';

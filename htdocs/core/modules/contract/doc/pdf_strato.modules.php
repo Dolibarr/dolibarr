@@ -54,6 +54,18 @@ class pdf_strato extends ModelePDFContract
 	var	$marge_basse;
 
 	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
+
+	/**
+	 * Recipient
+	 * @var Societe
+	 */
+	public $recipient;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -227,29 +239,9 @@ class pdf_strato extends ModelePDFContract
 
 				$iniY = $tab_top + 7;
 				$curY = $tab_top + 7;
-				$nexY = $tab_top + 7;
+				$nexY = $tab_top + 2;
 
 				$pdf->SetXY($this->marge_gauche, $tab_top);
-				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
-				$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8);
-
-				$pdf->SetFont('', '', $default_font_size - 1);
-
-				$pdf->MultiCell(0, 3, '');		// Set interline to 3
-				$pdf->SetXY($this->marge_gauche, $tab_top + 8);
-				$text=$object->description;
-				if ($object->duree > 0)
-				{
-				    $totaltime=convertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
-				    $text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
-				}
-				$desc=dol_htmlentitiesbr($text,1);
-				//print $outputlangs->convToOutputCharset($desc); exit;
-
-				$pdf->writeHTMLCell(180, 3, 10, $tab_top + 8, $outputlangs->convToOutputCharset($desc), 0, 1);
-				$nexY = $pdf->GetY();
-
-				$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
 
 				$pdf->MultiCell(0, 2, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
 
@@ -273,7 +265,20 @@ class pdf_strato extends ModelePDFContract
 						$pageposbefore=$pdf->getPage();
 
 						// Description of product line
-						$txt='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration),1,$outputlangs->charset_output).'</strong>';
+
+						if ($objectligne->datei) {
+							$datei = dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
+						} else {
+							$datei = $langs->trans("Unknown");
+						}
+
+						if ($objectligne->duration) {
+							$durationi = convertSecondToTime($objectligne->duration);
+						} else {
+							$durationi = $langs->trans("Unknown");
+						}
+
+						$txt='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".$datei." - ".$outputlangs->transnoentities("Duration")." : ".$durationi,1,$outputlangs->charset_output).'</strong>';
 						$desc=dol_htmlentitiesbr($objectligne->desc,1);
 
 						$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt,$desc), 0, 1, 0);
@@ -521,7 +526,7 @@ class pdf_strato extends ModelePDFContract
 		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->datec,"day",false,$outputlangs,true), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_creation,"day",false,$outputlangs,true), '', 'R');
 
 		if ($object->client->code_client)
 		{
@@ -543,7 +548,7 @@ class pdf_strato extends ModelePDFContract
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 			}
 
-			$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);
+			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posy=42;
@@ -581,17 +586,17 @@ class pdf_strato extends ModelePDFContract
 				$result=$object->fetch_contact($arrayidcontact[0]);
 			}
 
+			$this->recipient = $object->client;
+
 			// Recipient name
-			if (! empty($usecontact))
-			{
+			if (! empty($usecontact)) {
 				// On peut utiliser le nom de la societe du contact
 				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
 				else $socname = $object->client->name;
-				$this->recipient->name=$outputlangs->convToOutputCharset($socname);
+				$this->recipient->name = $outputlangs->convToOutputCharset($socname);
 			}
-			else
-			{
-				$this->recipient->name=$outputlangs->convToOutputCharset($object->client->name);
+			else {
+				$this->recipient->name = $outputlangs->convToOutputCharset($object->client->name);
 			}
 
 			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->client, (isset($object->contact)?$object->contact:''), $usecontact, 'target');

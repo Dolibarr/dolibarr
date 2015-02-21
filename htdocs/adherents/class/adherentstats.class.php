@@ -48,7 +48,6 @@ class AdherentStats extends Stats
 	 *	@param 		DoliDB		$db			Database handler
 	 * 	@param 		int			$socid	   	Id third party
      * 	@param   	int			$userid    	Id user for filter
-	 * 	@return 	AdherentStats
 	 */
 	function __construct($db, $socid=0, $userid=0)
 	{

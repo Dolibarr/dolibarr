@@ -58,7 +58,7 @@ $result = restrictedArea($user, 'contrat', $id);
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_name="";
 	$search_contract="";
@@ -79,14 +79,13 @@ $now=dol_now();
 llxHeader();
 
 $sql = 'SELECT';
+$sql.= " c.rowid as cid, c.ref, c.datec, c.date_contrat, c.statut, c.ref_supplier,";
+$sql.= " s.nom as name, s.rowid as socid,";
 $sql.= ' SUM('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')",1,0).') as nb_running,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')",1,0).') as nb_expired,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')",1,0).') as nb_late,';
-$sql.= ' SUM('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
-$sql.= " c.rowid as cid, c.ref, c.datec, c.date_contrat, c.statut,";
-$sql.= " s.nom as name, s.rowid as socid";
-$sql.= " ,c.ref_supplier";
+$sql.= ' SUM('.$db->ifsql("cd.statut=5",1,0).') as nb_closed';
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."contrat as c";
@@ -107,7 +106,7 @@ if (!empty($search_ref_supplier)) {
 if ($sall) {
     $sql .= natural_search(array('s.nom', 'cd.label', 'cd.description'), $sall);
 }
-$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut, s.nom, s.rowid";
+$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut, c.ref_supplier, s.nom, s.rowid";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit + 1, $offset);
 
@@ -119,6 +118,7 @@ if ($resql)
 
     print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], '&search_contract='.$search_contract.'&search_name='.$search_name, $sortfield, $sortorder,'',$num);
 
+    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     print '<table class="liste" width="100%">';
 
     print '<tr class="liste_titre">';
@@ -137,7 +137,6 @@ if ($resql)
     print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
     print "</tr>\n";
 
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
@@ -154,7 +153,6 @@ if ($resql)
     print '<td colspan="4" class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print "</td></tr>\n";
-    print '</form>';
 
     $var=true;
     while ($i < min($num,$limit))
@@ -180,7 +178,8 @@ if ($resql)
     }
     $db->free($resql);
 
-    print "</table>";
+    print '</table>';
+    print '</form>';
 }
 else
 {

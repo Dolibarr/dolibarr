@@ -73,7 +73,7 @@ $limit = $conf->liste_limit;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='b.dateo';
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$description="";
 	$type="";
@@ -175,7 +175,8 @@ if ($resql)
 		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 
-	print '<form method="post" action="search.php" name="search_form">';
+	print '<form method="post" action="search.php" name="search_form">'."\n";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
 	$moreforfilter .= $langs->trans('Period') . ' ' . $langs->trans('StartDate') . ': ';
 	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 1, 1);
@@ -185,10 +186,10 @@ if ($resql)
 	if ($moreforfilter) {
 		print '<div class="liste_titre">';
 		print $moreforfilter;
-		print '</div>';
+		print '</div>'."\n";
 	}
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste" width="100%">'."\n";
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
@@ -202,7 +203,6 @@ if ($resql)
 	print '<td class="liste_titre" align="left"> &nbsp; '.$langs->trans("Account").'</td>';
 	print "</tr>\n";
 
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
@@ -228,35 +228,38 @@ if ($resql)
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print "</td></tr>\n";
 
-	// Loop on each record
-	$total_debit=0;
-	$total_credit=0;
-	while ($i < min($num,$limit))
-	{
-		$objp = $db->fetch_object($resql);
-		$printline=false;
-		//Search Description
-		if ($description) {
-			preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthee on tente recherche de traduction
-			if ($reg[1]) {
-				if ($langs->transnoentities($reg[1])==$description) {
-					$printline=true;
-				}
-			}elseif ($objp->label==$description) {$printline=true;}
-		}else {$printline=true;}
+    // Loop on each record
+    $total_debit=0;
+    $total_credit=0;
+    while ($i < min($num,$limit)) {
+        $objp = $db->fetch_object($resql);
+        $printline=false;
+        //Search Description
+        if ($description) {
+            preg_match('/\((.+)\)/i',$objp->label,$reg); // Si texte entoure de parenthese on tente recherche de traduction
+            if ($reg[1]) {
+                if ($langs->transnoentities($reg[1])==$description) {
+                    $printline=true;
+                }
+            } elseif ($objp->label==$description) {
+                $printline=true;
+            }
+        } else {
+            $printline=true;
+        }
 
-		if ($printline) {
-			$var=!$var;
+        if ($printline) {
+            $var=!$var;
 
-			print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var].">";
 
-			// Ref
-			print '<td align="left" class="nowrap">';
-			print "<a href=\"ligne.php?rowid=".$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid."</a> &nbsp; ";
-			print '</td>';
+            // Ref
+            print '<td align="left" class="nowrap">';
+            print "<a href=\"ligne.php?rowid=".$objp->rowid.'">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'payment', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
+            print '</td>';
 
-			// Date ope
-	        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
+            // Date ope
+            print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
 
 	        // Date value
 	        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
@@ -330,7 +333,7 @@ if ($resql)
 	}
 
 	print "</table>";
-
+    print '</form>';
 	$db->free($resql);
 }
 else
