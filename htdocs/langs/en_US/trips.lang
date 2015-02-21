@@ -20,7 +20,8 @@ ListToApprove=Waiting for approval
 ExpensesArea=Expense reports area
 SearchATripAndExpense=Search an expense report
 ClassifyRefunded=Classify 'Refunded'
-
+ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=Id expense report
 AnyOtherInThisListCanValidate=Person to inform for validation. 
 TripSociete=Information company

@@ -49,7 +49,7 @@ class ExpenseReportStats extends Stats
 	 */
 	function __construct($db, $socid=0, $userid=0)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$this->db = $db;
         $this->socid = $socid;
@@ -65,7 +65,16 @@ class ExpenseReportStats extends Stats
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
 		}
-        if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
+
+		// Only me and subordinates
+		if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
+		{
+			$childids = $user->getAllChildIds();
+			$childids[]=$user->id;
+			$this->where.=" AND fk_user_author IN (".(join(',',$childids)).")";
+		}
+
+		if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
 	}
 
 

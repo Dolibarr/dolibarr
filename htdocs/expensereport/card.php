@@ -70,6 +70,11 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->entity) && $conf->en
 $conf->expensereport->dir_output = $rootfordata.'/expensereport';
 $conf->expensereport->dir_output = $rootfordata.'/expensereport';
 
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
 
 
 /*
@@ -166,67 +171,74 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
 	$result = $object->setValidate($user);
-	if ($result > 0)
+	if ($result > 0 && $object->fk_user_validator > 0)
 	{
-		// Send mail
-		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
+		$langs->load("mails");
+
+		// TO
+		$destinataire = new User($db);
+		$destinataire->fetch($object->fk_user_validator);
+		$emailTo = $destinataire->email;
+
+		// FROM
+		$expediteur = new User($db);
+		$expediteur->fetch($object->fk_user_author);
+		$emailFrom = $expediteur->email;
+
+		// SUBJECT
+		$subject = $langs->trans("ExpenseReportWaitingForApproval");
+
+		// CONTENT
+		$link = $urlwithroot.'/expenserecord/card.php?id='.$object->id;
+		$message = $langs->trans("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
+
+		// Rebuild pdf
+		/*
+		$object->setDocModel($user,"");
+		$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
+
+		if($resultPDF):
+		// ATTACHMENT
+		$filename=array(); $filedir=array(); $mimetype=array();
+		array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+		array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref).".pdf");
+		array_push($mimetype,"application/pdf");
+		*/
+
+		// PREPARE SEND
+		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+
+		if ($mailfile)
 		{
-			// Send mail
-
-			// TO
-			$destinataire = new User($db);
-			$destinataire->fetch($object->fk_user_validator);
-			$emailTo = $destinataire->email;
-
-			// FROM
-			$expediteur = new User($db);
-			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = $expediteur->email;
-
-			// SUBJECT
-			$subject = "' ERP - Note de frais à valider";
-
-			// CONTENT
-			$message = "Bonjour {$destinataire->firstname},\n\n";
-			$message.= "Veuillez trouver en pièce jointe une nouvelle note de frais à valider.\n";
-			$message.= "- Déclarant : {$expediteur->firstname} {$expediteur->lastname}\n";
-			$message.= "- Période : du {$object->date_debut} au {$object->date_fin}\n";
-			$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-			$message.= "Bien cordialement,\n' SI";
-
-			// Génération du pdf avant attachement
-			$object->setDocModel($user,"");
-			$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
-
-			if($resultPDF):
-			// ATTACHMENT
-			$filename=array(); $filedir=array(); $mimetype=array();
-			array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-			array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref).".pdf");
-			array_push($mimetype,"application/pdf");
-
-			// PREPARE SEND
-			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
-
-			if(!$mailfile->error):
-
 			// SEND
 			$result=$mailfile->sendfile();
-			if ($result):
-			Header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
-			exit;
-			endif;
-
-			else:
-
-			$mesg="Impossible d'envoyer l'email.";
-
-			endif;
-			// END - Send mail
-			else:
-			dol_print_error($db,$resultPDF);
-			exit;
-			endif;
+			if ($result)
+			{
+				$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+				setEventMessage($mesg);
+				header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
+				exit;
+			}
+			else
+			{
+				$langs->load("other");
+				if ($mailfile->error)
+				{
+					$mesg='';
+					$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+					$mesg.='<br>'.$mailfile->error;
+					setEventMessage($mesg,'errors');
+				}
+				else
+				{
+					setEventMessage('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', 'warnings');
+				}
+			}
+		}
+		else
+		{
+			setEventMessages($mailfile->error,$mailfile->errors,'errors');
+			$action='';
 		}
 	}
 	else
@@ -311,7 +323,7 @@ if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id 
 }
 
 // Approve
-if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->to_validate)
+if ($action == "confirm_approve" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->approve)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -394,7 +406,7 @@ if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $
 	}
 }
 
-if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->to_validate)
+if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->approve)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -1120,7 +1132,7 @@ else
 				endif;
 
 				if ($action == 'validate'):
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_validate","","",1);
+				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
@@ -1633,7 +1645,7 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 	/* Si l'état est "En attente d'approbation"
-	 *	ET user à droit de "to_validate"
+	 *	ET user à droit de "approve"
 	*	ET fk_user_validator == user courant
 	*	Afficher : "Valider" / "Refuser" / "Supprimer"
 	*/
@@ -1646,7 +1658,7 @@ if ($action != 'create' && $action != 'edit')
 		}
 	}
 
-	if ($user->rights->expensereport->to_validate && $object->fk_c_expensereport_statuts == 2)
+	if ($user->rights->expensereport->approve && $object->fk_c_expensereport_statuts == 2)
 	{
 		//if($object->fk_user_validator==$user->id)
 		//{
@@ -1692,11 +1704,11 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 	/* Si l'état est "Payée"
-	 *	ET user à droit "to_validate"
+	 *	ET user à droit "approve"
 	*	ET user à droit "to_paid"
 	*	Afficher : "Annuler"
 	*/
-	if ($user->rights->expensereport->to_validate && $user->rights->expensereport->to_paid && $object->fk_c_expensereport_statuts==6)
+	if ($user->rights->expensereport->approve && $user->rights->expensereport->to_paid && $object->fk_c_expensereport_statuts==6)
 	{
 		// Annuler
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('Cancel').'</a>';

@@ -222,7 +222,9 @@ print '</td></tr>';
 */
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
-print $form->select_dolusers($userid,'userid',1);
+$include='';
+if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $include='hierarchy';
+print $form->select_dolusers($userid,'userid',1,'',0,$include);
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';

@@ -162,7 +162,7 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[6][1] = 'Approve expense reports';
 		$this->rights[6][2] = 'w';
 		$this->rights[6][3] = 0;
-		$this->rights[6][4] = 'to_validate';
+		$this->rights[6][4] = 'approve';
 
 		$this->rights[7][0] = 776;
 		$this->rights[7][1] = 'Pay expense reports';
@@ -267,7 +267,7 @@ class modExpenseReport extends DolibarrModules
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
 									'enabled'=>'$conf->expensereport->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-									'perms'=>'$user->rights->expensereport->lire',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+									'perms'=>'$user->rights->expensereport->approve',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;

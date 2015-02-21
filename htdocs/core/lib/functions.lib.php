@@ -4189,15 +4189,15 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='', $wit
 
 	if ($date_start && $date_end)
 	{
-		$out.= ($withparenthesis?' (':'').$outputlangs->trans('DateFromTo',dol_print_date($date_start, $format, false, $outputlangs),dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
+		$out.= ($withparenthesis?' (':'').$outputlangs->transnoentitiesnoconv('DateFromTo',dol_print_date($date_start, $format, false, $outputlangs),dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 	if ($date_start && ! $date_end)
 	{
-		$out.= ($withparenthesis?' (':'').$outputlangs->trans('DateFrom',dol_print_date($date_start, $format, false, $outputlangs)).($withparenthesis?')':'');
+		$out.= ($withparenthesis?' (':'').$outputlangs->transnoentitiesnoconv('DateFrom',dol_print_date($date_start, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 	if (! $date_start && $date_end)
 	{
-		$out.= ($withparenthesis?' (':'').$outputlangs->trans('DateUntil',dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
+		$out.= ($withparenthesis?' (':'').$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 
 	return $out;

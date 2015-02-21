@@ -790,7 +790,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 * set_to_validate
+	 * set_save_from_refuse
 	 *
 	 * @param 	User	$user		User
 	 * @return	int					<0 if KO, >0 if OK
@@ -968,38 +968,6 @@ class ExpenseReport extends CommonObject
 		else
 		{
 			dol_syslog(get_class($this)."::set_unpaid expensereport already with unpaid status", LOG_WARNING);
-		}
-	}
-
-	/**
-	 * set_to_validate
-	 *
-	 * @param 	User	$user		User
-	 * @return	int					<0 if KO, >0 if OK
-	 */
-	function set_to_valide($user)
-	{
-		if ($this->fk_c_expensereport_statuts != 2)
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET fk_c_expensereport_statuts = 2, fk_user_validator = ".$this->fk_user_validator;
-			$sql.= ' WHERE rowid = '.$this->id;
-
-			dol_syslog(get_class($this)."::set_to_valide sql=".$sql, LOG_DEBUG);
-
-			if ($this->db->query($sql))
-			{
-				return 1;
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				return -1;
-			}
-		}
-		else
-		{
-			dol_syslog(get_class($this)."::set_to_valide expensereport already with to-valide status", LOG_WARNING);
 		}
 	}
 
@@ -1312,7 +1280,7 @@ class ExpenseReport extends CommonObject
 
 		$sql = "SELECT fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
-		$sql.= " WHERE ur.fk_id = rd.id and module = 'expensereport' AND perms = 'to_validate'";					// Permission 'Approve';
+		$sql.= " WHERE ur.fk_id = rd.id and module = 'expensereport' AND perms = 'approve'";					// Permission 'Approve';
 
 		dol_syslog(get_class($this)."::fetch_users_approver_expensereport sql=".$sql);
 		$result = $this->db->query($sql);

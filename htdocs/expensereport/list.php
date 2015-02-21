@@ -48,7 +48,7 @@ $html = new Form($db);
 $formother = new FormOther($db);
 $expensereporttmp=new ExpenseReport($db);
 
-llxHeader();
+llxHeader('', $langs->trans("ListOfExpenseReports"));
 
 $max_year = 5;
 $min_year = 5;
@@ -84,13 +84,14 @@ $sql.= " u.rowid as id_user, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport d\n";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user u ON d.fk_user_author = u.rowid\n";
 
+
+
 // WHERE
 if(!empty($search_ref)){
 	$sql.= " WHERE d.ref LIKE '%".$db->escape($search_ref)."%'\n";
 }else{
 	$sql.= " WHERE 1 = 1\n";
 }
-
 // DATE START
 if ($month_start > 0) {
 	if ($year_start > 0) {
@@ -148,13 +149,15 @@ if ($month_start > 0) {
 		}
 	}
 }
-
-if (!empty($search_user) && $search_user != -1) $sql.= " AND d.fk_user_author = '$search_user'\n";
+if (!empty($search_user) && $search_user > 0) $sql.= " AND d.fk_user_author = ".$search_user."\n";
 if($search_state != '') $sql.= " AND d.fk_c_expensereport_statuts = '$search_state'\n";
 
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)){
-	$sql.= " AND d.fk_user_author = '{$user->id}'\n";
+if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
+{
+	$childids = $user->getAllChildIds();
+	$childids[]=$user->id;
+	$sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
 }
 
 $sql.= $db->order($sortfield,$sortorder);
