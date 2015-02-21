@@ -137,12 +137,12 @@ else:
 	print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("ViewAccountSynch").'">';
 	print "</form>";
 
-	$sql = "SELECT d.fk_bank_account, d.ref, d.rowid, d.date_valide, d.fk_user_author, d.total_ttc, d.integration_compta, d.fk_c_expensereport_statuts";
+	$sql = "SELECT d.fk_bank_account, d.ref, d.rowid, d.date_valid, d.fk_user_author, d.total_ttc, d.integration_compta, d.fk_c_expensereport_statuts";
 	$sql.= " ,CONCAT(u.firstname,' ',u.lastname) as declarant_NDF";
 	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport d";
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user u ON d.fk_user_author = u.rowid";
 	$sql.= " WHERE d.fk_c_expensereport_statuts = 6";
-	$sql.= " ORDER BY d.date_valide DESC";
+	$sql.= " ORDER BY d.date_valid DESC";
 
 	$resql=$db->query($sql);
 	if ($resql):
@@ -170,7 +170,7 @@ else:
 					$var=!$var;
 						print "<tr $bc[$var]>";
 							print '<td>'.$objp->ref.'</td>';
-							print '<td>'.dol_print_date($db->jdate($objp->date_valide),'day').'</td>';
+							print '<td>'.dol_print_date($db->jdate($objp->date_valid),'day').'</td>';
 							print '<td><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->declarant_NDF.'</a></td>';
 							print '<td align="center">'.$objp->total_ttc.' '.$langs->trans("EURO").'</td>';
 

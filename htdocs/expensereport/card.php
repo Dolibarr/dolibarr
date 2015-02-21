@@ -105,7 +105,7 @@ if ($action == 'add' && $user->rights->expensereport->creer)
 	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
 	$object->note						= GETPOST('note');
 
-	if ($object->periode_existe($user,dol_print_date($object->date_debut, 'dayrfc'),dol_print_date($object->date_fin, 'dayrfc')))
+	if ($object->periode_existe($user,$object->date_debut,$object->date_fin))
 	{
 		$error++;
 		setEventMessage($langs->trans("ErrorDoubleDeclaration"),'errors');
@@ -398,8 +398,8 @@ if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
-	
-	$result = $object->set_refuse($user,GETPOST('detail_refuse'));
+
+	$result = $object->setDeny($user,GETPOST('detail_refuse'));
 	if ($result > 0)
 	{
 		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
@@ -456,34 +456,34 @@ if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user
 }
 
 //var_dump($user->id == $object->fk_user_validator);exit;
-if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && !empty($_POST['detail_cancel']) && $id > 0 && $user->rights->expensereport->creer)
+if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && GETPOST('detail_cancel') && $id > 0 && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
-	
+
 	if ($user->id == $object->fk_user_valid || $user->id == $object->fk_user_author)
 	{
-		$result = $object->set_cancel($user,$_POST['detail_cancel']);
-	
+		$result = $object->set_cancel($user,GETPOST('detail_cancel'));
+
 		if ($result > 0)
 		{
 			if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
 			{
 				// Send mail
-	
+
 				// TO
 				$destinataire = new User($db);
 				$destinataire->fetch($object->fk_user_author);
 				$emailTo = $destinataire->email;
-	
+
 				// FROM
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user_cancel);
 				$emailFrom = $expediteur->email;
-	
+
 				// SUBJECT
 				$subject = "' ERP - Note de frais annulée";
-	
+
 				// CONTENT
 				$message = "Bonjour {$destinataire->firstname},\n\n";
 				$message.= "Votre note de frais \"{$object->ref}\" vient d'être annulée.\n";
@@ -491,10 +491,10 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && !empty($_POST['d
 				$message.= "- Motif d'annulation : {$_POST['detail_cancel']}\n";
 				$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
 				$message.= "Bien cordialement,\n' SI";
-	
+
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message);
-	
+
 				if(!$mailfile->error)
 				{
 					// SEND
@@ -523,10 +523,10 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && !empty($_POST['d
 	}
 }
 
-if ($action == "confirm_paid" && $_GET['confirm']=="yes" && $id > 0 && $user->rights->expensereport->to_paid)
+if ($action == "confirm_paid" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->to_paid)
 {
 	$object = new ExpenseReport($db);
-	$object->fetch($id,$user);
+	$object->fetch($id);
 
 	$result = $object->setPaid($user);
 	if ($result > 0)
@@ -665,7 +665,7 @@ if ($action == "addline")
 	$vatrate=GETPOST('vatrate');
 	$object_ligne->fk_c_tva = $vatrate;
 	$object_ligne->vatrate = $vatrate;
-	
+
 	$object_ligne->fk_projet = $fk_projet;
 
 	if (! GETPOST('fk_c_type_fees') > 0)
@@ -1129,22 +1129,24 @@ else
 				if ($ret == 'html') print '<br>';
 				endif;
 
-				if ($action == 'cancel'):
-				$array_input = array(array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_cancel",'size'=>"50",'value'=>""));
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("ConfirmCancelTrip"),"","confirm_cancel",$array_input,"",0);
-				if ($ret == 'html') print '<br>';
-				endif;
+				if ($action == 'cancel')
+				{
+					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_cancel",'size'=>"50",'value'=>""));
+					$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
+					if ($ret == 'html') print '<br>';
+				}
 
 				if ($action == 'brouillonner'):
 				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
-				if ($action == 'refuse'):
-				$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
-				if ($ret == 'html') print '<br>';
-				endif;
+				if ($action == 'refuse')		// Deny
+				{
+					$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
+					$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
+					if ($ret == 'html') print '<br>';
+				}
 
 				if ($action == 'delete_line')
 				{
@@ -1211,7 +1213,7 @@ else
 
 				print '<tr>';
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
-				print '<td>'.$object->date_create.'</td></tr>';
+				print '<td>'.dol_print_date($object->date_create,'dayhour').'</td></tr>';
 				print '</tr>';
 				if($object->fk_c_expensereport_statuts==6)
 				{
@@ -1227,8 +1229,8 @@ else
 					print '<td>'.$object->date_paiement.'</td></tr>';
 					print '</tr>';
 				}
-				
-				if($object->fk_c_expensereport_statuts<3)
+
+				if($object->fk_c_expensereport_statuts<3)	// informed
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("VALIDATOR").'</td>';
@@ -1259,24 +1261,24 @@ else
 					print '</tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_CANCEL").'</td>';
-					print '<td>'.$object->date_cancel.'</td></tr>';
+					print '<td>'.dol_print_date($object->date_cancel,'dayhour').'</td></tr>';
 					print '</tr>';
 				}
 				else
 				{
 					print '<tr>';
-					print '<td>'.$langs->trans("VALIDOR").'</td>';
+					print '<td>'.$langs->trans("Approbator").'</td>';
 					print '<td>';
-					if ($object->fk_user_valid > 0)
+					if ($object->fk_user_approve > 0)
 					{
-						$userfee=new User($db);
-						$userfee->fetch($object->fk_user_valid);
-						print $userfee->getNomUrl(1);
+						$userapp=new User($db);
+						$userapp->fetch($object->fk_user_approve);
+						print $userapp->getNomUrl(1);
 					}
 					print '</td></tr>';
 					print '<tr>';
-					print '<td>'.$langs->trans("DATE_VALIDE").'</td>';
-					print '<td>'.$object->date_valide.'</td></tr>';
+					print '<td>'.$langs->trans("DateApprove").'</td>';
+					print '<td>'.dol_print_date($object->date_approve,'dayhour').'</td></tr>';
 					print '</tr>';
 				}
 
@@ -1291,7 +1293,7 @@ else
 					print '</td></tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_REFUS").'</td>';
-					print '<td>'.$object->date_refuse;
+					print '<td>'.dol_print_date($object->date_refuse,'dayhour');
 					if ($object->detail_refuse) print ' - '.$object->detail_refuse;
 					print '</td>';
 					print '</tr>';
@@ -1398,7 +1400,7 @@ else
 								}
 								print '</tr>';
 							}
-							
+
 							if ($action == 'editline' && $objp->rowid == GETPOST('rowid'))
 							{
 									//modif ligne!!!!!
@@ -1681,7 +1683,7 @@ if ($action != 'create' && $action != 'edit')
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('Cancel').'</a>';
 		}
-		
+
 		if($user->rights->expensereport->supprimer)
 		{
 			// Supprimer

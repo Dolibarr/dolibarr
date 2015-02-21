@@ -421,7 +421,7 @@ class Project extends CommonObject
 		}
     	if ($type == 'expensereport')
 		{
-            $sql = "SELECT e.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet=" . $this->id;
+            $sql = "SELECT ed.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet=" . $this->id;
 		}
 		if ($dates > 0)
 		{
@@ -511,7 +511,7 @@ class Project extends CommonObject
 	        	break;
 	        }
         }
-        
+
         // Delete tasks
         if (! $error)
         {
