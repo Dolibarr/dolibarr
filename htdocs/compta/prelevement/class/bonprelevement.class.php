@@ -403,7 +403,7 @@ class BonPrelevement extends CommonObject
      *	Set withdrawal to credited status
      *
      *	@param	User		$user		id of user
-     *	@param 	timestamp	$date		date of action
+     *	@param 	int	$date		date of action
      *	@return	int						>0 if OK, <0 if KO
      */
     function set_infocredit($user, $date)
@@ -525,7 +525,7 @@ class BonPrelevement extends CommonObject
      *	Set withdrawal to transmited status
      *
      *	@param	User		$user		id of user
-     *	@param 	timestamp	$date		date of action
+     *	@param 	int	$date		date of action
      *	@param	string		$method		method of transmision to bank
      *	@return	int						>0 if OK, <0 if KO
      */
@@ -667,9 +667,9 @@ class BonPrelevement extends CommonObject
         {
             $obj = $this->db->fetch_object($resql);
 
-            return $obj->nb;
-
             $this->db->free($resql);
+
+            return $obj->nb;
         }
         else
         {
@@ -1161,7 +1161,7 @@ class BonPrelevement extends CommonObject
     /**
      *	Delete a notification
      *
-     *	@param	User	$user		notification user
+     *	@param	int	$user		notification user
      *	@param	string	$action		notification action
      *	@return	int					>0 if OK, <0 if KO
      */
@@ -1186,7 +1186,7 @@ class BonPrelevement extends CommonObject
      *	Add a notification
      *
      *	@param	DoliDB	$db			database handler
-     *	@param	User	$user		notification user
+     *	@param	int	$user		notification user
      *	@param	string	$action		notification action
      *	@return	int					0 if OK, <0 if KO
      */
@@ -1625,11 +1625,11 @@ class BonPrelevement extends CommonObject
      *  Note: The tag PmtInf is opened here but closed into caller
      *
      *	@param	string	$configuration	conf
-     *	@param	date	$ladate			Date
+     *	@param	int	$ladate			Date
      *	@param	int		$nombre			0 or 1
      *	@param	float	$total			Total
      *	@param	string	$CrLf			End of line character
-     *	@return	string					String with SEAP Sender
+     *	@return	string					String with SEPA Sender
      */
     function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf='\n')
     {	// SEPA INITIALISATION

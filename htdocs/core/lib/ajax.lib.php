@@ -401,7 +401,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
  * 	@param	int		$entity			Entity to set
  *  @param	int		$revertonoff	Revert on/off
  *  @param	bool	$strict			Use only "disabled" with delConstant and "enabled" with setConstant
- * 	@return	void
+ * 	@return	string
  */
 function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0, $strict=0)
 {

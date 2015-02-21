@@ -175,8 +175,8 @@ abstract class CommonObject
     /**
      *  Add a link between element $this->element and a contact
      *
-     *  @param	int		$fk_socpeople       Id of contact to link
-     *  @param 	int		$type_contact 		Type of contact (code or id). For example: SALESREPFOLL
+     *  @param	int		$fk_socpeople       Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
+     *  @param 	int		$type_contact 		Type of contact (code or id). Must be if or code found into table llx_c_type_contact. For example: SALESREPFOLL
      *  @param  int		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
      *  @param  int		$notrigger			Disable all triggers
      *  @return int                 		<0 if KO, >0 if OK
@@ -833,7 +833,7 @@ abstract class CommonObject
      *	Update a specific field into database
      *
      *	@param	string	$field		Field to update
-     *	@param	mixte	$value		New value
+     *	@param	mixed	$value		New value
      *	@param	string	$table		To force other table element or element line (should not be used)
      *	@param	int		$id			To force other object id (should not be used)
      *	@param	string	$format		Data format ('text', 'date'). 'text' is used if not defined
@@ -2445,7 +2445,7 @@ abstract class CommonObject
      *  TODO Move this into html.class.php
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *
-     *  @return	void
+     *  @return	int
      */
     function showLinkedObjectBlock()
     {

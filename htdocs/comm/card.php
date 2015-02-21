@@ -396,6 +396,10 @@ if ($id > 0)
 		print $form->editfieldkey("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer);
 		print '</td><td colspan="3">';
 		print $form->editfieldval("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer,'amount',($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
+		// display amount and link to unpaid bill
+		$outstandigBills = $object->get_OutstandingBill();
+		if ($outstandigBills != 0)
+			print " / <a href='".DOL_URL_ROOT."/compta/facture/list.php?socid=".$object->id."&search_status=1'>".price($outstandigBills).'</a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -933,7 +937,7 @@ if ($id > 0)
 	// Addresses list
 	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
 	{
-		$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+		show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))

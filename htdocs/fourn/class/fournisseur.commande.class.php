@@ -5,7 +5,7 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2014	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2014  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  *
@@ -613,7 +613,7 @@ class CommandeFournisseur extends CommonOrder
     }
 
     /**
-     * 	Accept an order
+     * 	Approve a supplier order
      *
      *	@param	User	$user			Object user
      *	@param	int		$idwarehouse	Id of warhouse for stock change
@@ -658,6 +658,15 @@ class CommandeFournisseur extends CommonOrder
             if ($this->db->query($sql))
             {
                 $this->log($user, 2, time());	// Statut 2
+
+            	if (! empty($conf->global->SUPPLIER_ORDER_AUTOADD_USER_CONTACT))
+	            {
+					$result=$this->add_contact($user->id, 'SALESREPFOLL', 'internal', 1);
+					if ($result < 0)
+					{
+						$error++;
+					}
+	            }
 
                 // If stock is incremented on validate order, we must increment it
                 if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER))
@@ -967,8 +976,8 @@ class CommandeFournisseur extends CommonOrder
 	            dol_syslog(get_class($this)."::create", LOG_DEBUG);
 	            if ($this->db->query($sql))
 	            {
-	                // On logue creation pour historique
-	                $this->log($user, 0, time());
+	                // Add entry into log
+	                $this->log($user, 0, $now);
 
 	                if (! $error)
                     {
@@ -1272,18 +1281,19 @@ class CommandeFournisseur extends CommonOrder
     /**
      * Save a receiving into the tracking table of receiving (commande_fournisseur_dispatch) and add product into stock warehouse.
      *
-     * @param 	User		$user		User object making change
-     * @param 	int			$product	Id of product to dispatch
-     * @param 	double		$qty		Qty to dispatch
-     * @param 	int			$entrepot	Id of warehouse to add product
-     * @param 	double		$price		Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
-     * @param	string		$comment	Comment for stock movement
-	 * @param	date		$eatby		eat-by date
-	 * @param	date		$sellby		sell-by date
-	 * @param	string		$batch		Lot number
+     * @param 	User		$user					User object making change
+     * @param 	int			$product				Id of product to dispatch
+     * @param 	double		$qty					Qty to dispatch
+     * @param 	int			$entrepot				Id of warehouse to add product
+     * @param 	double		$price					Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
+     * @param	string		$comment				Comment for stock movement
+	 * @param	date		$eatby					eat-by date
+	 * @param	date		$sellby					sell-by date
+	 * @param	string		$batch					Lot number
+	 * @param	int			$fk_commandefourndet	Id of supplier order line
      * @return 	int						<0 if KO, >0 if OK
      */
-    function dispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='')
+    function dispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='', $fk_commandefourndet='')
     {
         global $conf;
         $error = 0;
@@ -1306,8 +1316,8 @@ class CommandeFournisseur extends CommonOrder
             $this->db->begin();
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
-            $sql.= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, status, comment, eatby, sellby, batch) VALUES";
-            $sql.= " ('".$this->id."','".$product."','".$qty."',".($entrepot>0?"'".$entrepot."'":"null").",'".$user->id."','".$this->db->idate($now)."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
+            $sql.= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch) VALUES";
+            $sql.= " ('".$this->id."','".$product."','".$qty."',".($entrepot>0?"'".$entrepot."'":"null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
             $sql.= ($eatby?"'".$this->db->idate($eatby)."'":"null").", ".($sellby?"'".$this->db->idate($sellby)."'":"null").", ".($batch?"'".$batch."'":"null");
             $sql.= ")";
 
@@ -1626,9 +1636,9 @@ class CommandeFournisseur extends CommonOrder
 	/**
      *	Set the planned delivery date
      *
-     *	@param      User			$user        		Objet utilisateur qui modifie
-     *	@param      timestamp		$date_livraison     Date de livraison
-     *	@return     int         						<0 si ko, >0 si ok
+     *	@param      User			$user        		Objet user making change
+     *	@param      timestamp		$date_livraison     Planned delivery date
+     *	@return     int         						<0 if KO, >0 if OK
      */
     function set_date_livraison($user, $date_livraison)
     {
@@ -2000,15 +2010,12 @@ class CommandeFournisseur extends CommonOrder
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param          User	$user   Objet user
-     *	@return         int    			<0 if KO, >0 if OK
+     *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
-        global $conf, $user;
+        global $conf, $user, $langs;
 
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
         $clause = " WHERE";
 
         $sql = "SELECT c.rowid, c.date_creation as datec, c.fk_statut,c.date_livraison as delivery_date";
@@ -2026,14 +2033,25 @@ class CommandeFournisseur extends CommonOrder
         $resql=$this->db->query($sql);
         if ($resql)
         {
+	        $now=dol_now();
+
+	        $response = new WorkboardResponse();
+	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
+	        $response->label=$langs->trans("SuppliersOrdersToProcess");
+	        $response->url=DOL_URL_ROOT.'/fourn/commande/index.php';
+	        $response->img=img_object($langs->trans("Orders"),"order");
+
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
+                $response->nbtodo++;
 
 				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
-                if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->fournisseur->warning_delay)) $this->nbtodolate++;
+                if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->fournisseur->warning_delay)) {
+	                $response->nbtodolate++;
+                }
             }
-            return 1;
+
+            return $response;
         }
         else
         {

@@ -19,6 +19,10 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+-- Remove menu entries of removed or renamed modules
+DELETE FROM llx_menu where module = 'printipp';
+
+
 ALTER TABLE llx_bank ADD INDEX idx_bank_num_releve(num_releve);
 
 

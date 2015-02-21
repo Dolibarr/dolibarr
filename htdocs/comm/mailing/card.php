@@ -140,9 +140,7 @@ if (empty($reshook))
 	{
 		if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 		{
-			//TODO: What is this for?
-			// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
-			// on affiche donc juste un message
+			// As security measure, we don't allow send from the GUI
 			setEventMessage($langs->trans("MailingNeedCommand"), 'warnings');
 			setEventMessage('<textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', 'warnings');
 			setEventMessage($langs->trans("MailingNeedCommand2"), 'warnings');

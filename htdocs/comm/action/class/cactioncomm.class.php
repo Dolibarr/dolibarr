@@ -99,10 +99,10 @@ class CActionComm
     /**
      *  Return list of event types: array(id=>label) or array(code=>label)
      *
-     *  @param	int			$active     	1 or 0 to filter on event state active or not ('' by default = no filter)
+     *  @param	string|int			$active     	1 or 0 to filter on event state active or not ('' by default = no filter)
      *  @param	string		$idorcode		'id' or 'code'
      *  @param	string		$excludetype	Type to exclude
-     *  @param	string		$onlyautoornot	Group list by auto events or not
+     *  @param	int		$onlyautoornot	Group list by auto events or not
      *  @return mixed      					Array of all event types if OK, <0 if KO
      */
     function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0)

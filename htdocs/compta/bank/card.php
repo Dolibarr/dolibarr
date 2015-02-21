@@ -261,7 +261,7 @@ if ($action == 'create')
 	// Type
 	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td colspan="3">';
-	print $formbank->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]:1,"type");
+	$formbank->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]:1,"type");
 	print '</td></tr>';
 
 	// Currency
@@ -575,7 +575,7 @@ else
         // Type
         print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountType").'</td>';
         print '<td colspan="3">';
-		print $formbank->select_type_comptes_financiers((isset($_POST["type"])?$_POST["type"]:$account->type),"type");
+		$formbank->select_type_comptes_financiers((isset($_POST["type"])?$_POST["type"]:$account->type),"type");
         print '</td></tr>';
 
 		// Currency

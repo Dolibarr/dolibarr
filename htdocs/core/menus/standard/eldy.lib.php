@@ -217,8 +217,8 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 
 
 	// Tools
-	$tmpentry=array('enabled'=>(! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled) || ! empty($conf->opensurvey->enabled)),
-	'perms'=>(! empty($user->rights->mailing->lire) || ! empty($user->rights->export->lire) || ! empty($user->rights->import->run) || ! empty($user->rights->opensurvey->read)),
+	$tmpentry=array('enabled'=>(! empty($conf->barcode->enabled) || ! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled) || ! empty($conf->opensurvey->enabled)),
+	'perms'=>(! empty($conf->barcode->enabled) || ! empty($user->rights->mailing->lire) || ! empty($user->rights->export->lire) || ! empty($user->rights->import->run) || ! empty($user->rights->opensurvey->read)),
 	'module'=>'mailing|export|import|opensurvey');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)

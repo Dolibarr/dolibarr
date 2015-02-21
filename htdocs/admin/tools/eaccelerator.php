@@ -97,7 +97,7 @@ function compare($x, $y)
  */
 function revcompare($x, $y)
 {
-    global $sortby, $langs;
+    global $sortby;
 
     if ($x[$sortby] == $y[$sortby]) {
         return 0;
@@ -146,16 +146,16 @@ function create_script_table($list)
     if($sortby == "file")
         print ($order == "asc" ? "&darr;" : "&uarr;").'</th>';
     print '<th><a href="'.$_SERVER['PHP_SELF'].'?sort=mtime&order='.($order == "asc" ? "desc" : "asc").'">'.$langs->trans("Date").'</a>&nbsp;';
-    if($sortby == "mtime") 
+    if($sortby == "mtime")
         print ($order == "asc" ? "&darr;" : "&uarr;").'</th>';
     print '<th><a href="'.$_SERVER['PHP_SELF'].'?sort=size&order='.($order == "asc" ? "desc" : "asc").'">'.$langs->trans("Size").'</a>&nbsp;';
-    if($sortby == "size") 
+    if($sortby == "size")
         print ($order == "asc" ? "&darr;" : "&uarr;").'</th>';
     print '<th><a href="'.$_SERVER['PHP_SELF'].'?sort=reloads&order='.($order == "asc" ? "desc" : "asc").'">'.$langs->trans("Reloads").'</a>&nbsp;';
-    if($sortby == "reloads") 
+    if($sortby == "reloads")
         print ($order == "asc" ? "&darr;" : "&uarr;").'</th>';
     print '<th><a href="'.$_SERVER['PHP_SELF'].'?sort=hits&order='.($order == "asc" ? "desc" : "asc").'">'.$langs->trans("Hits").'</a>&nbsp;';
-    if($sortby == "hits") 
+    if($sortby == "hits")
         print ($order == "asc" ? "&darr;" : "&uarr;").'</th>';
     print '</tr>';
     switch ($sortby) {

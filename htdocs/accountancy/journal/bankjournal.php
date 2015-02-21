@@ -599,17 +599,15 @@ else
 
 		// Bank
 		foreach ( $tabbq[$key] as $k => $mt ) {
-			if (1) {
-				print "<tr " . $bc[$var] . ">";
-				print "<td>" . $date . "</td>";
-				print "<td>" . $reflabel . "</td>";
-				print "<td>" . length_accountg($k) . "</td>";
-				print "<td>" . $langs->trans('Bank') . "</td>";
-				print "<td>" . $val["type_payment"] . "</td>";
-				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-				print "</tr>";
-			}
+			print "<tr " . $bc[$var] . ">";
+			print "<td>" . $date . "</td>";
+			print "<td>" . $reflabel . "</td>";
+			print "<td>" . length_accountg($k) . "</td>";
+			print "<td>" . $langs->trans('Bank') . "</td>";
+			print "<td>" . $val["type_payment"] . "</td>";
+			print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+			print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
+			print "</tr>";
 		}
 
 		// Third party

@@ -81,9 +81,10 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 			$qty = "qty_".$reg[1];
 			$ent = "entrepot_".$reg[1];
 			$pu = "pu_".$reg[1];	// This is unit price including discount
+			$fk_commandefourndet = "fk_commandefourndet_".$reg[1];
 			if (GETPOST($ent,'int') > 0)
 			{
-				$result = $commande->dispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"));
+				$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'));
 				if ($result < 0)
 				{
 					setEventMessages($commande->error, $commande->errors, 'errors');
@@ -283,27 +284,28 @@ if ($id > 0 || ! empty($ref))
 
 			// Set $products_dispatched with qty dispatech for each product id
 			$products_dispatched = array();
-			$sql = "SELECT cfd.fk_product, sum(cfd.qty) as qty";
+			$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as l on l.rowid = cfd.fk_commandefourndet";
 			$sql.= " WHERE cfd.fk_commande = ".$commande->id;
-			$sql.= " GROUP BY cfd.fk_product";
+			$sql.= " GROUP BY l.rowid, cfd.fk_product";
 
 			$resql = $db->query($sql);
 			if ($resql)
 			{
 				while ($row = $db->fetch_row($resql))
 				{
-					$products_dispatched[$row[0]] = $row[1];
+					$products_dispatched[$row[0]] = $row[2];
 				}
 				$db->free($resql);
 			}
 
-			$sql = "SELECT l.fk_product, l.subprice, l.remise_percent, SUM(l.qty) as qty,";
-			$sql.= " p.ref, p.label,  p.tobatch";
+			$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, SUM(l.qty) as qty,";
+			$sql.= " p.ref, p.label, p.tobatch";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
 			$sql.= " WHERE l.fk_commande = ".$commande->id;
-			$sql.= " GROUP BY p.ref, p.label, p.tobatch, l.fk_product, l.subprice, l.remise_percent";	// Calculation of amount dispatched is done per fk_product so we must group by fk_product
+			$sql.= " GROUP BY p.ref, p.label, p.tobatch, l.rowid, l.fk_product, l.subprice, l.remise_percent";	// Calculation of amount dispatched is done per fk_product so we must group by fk_product
 			$sql.= " ORDER BY p.ref, p.label";
 
 			$resql = $db->query($sql);
@@ -354,7 +356,7 @@ if ($id > 0 || ! empty($ref))
 					}
 					else
 					{
-						$remaintodispatch=($objp->qty - (empty($products_dispatched[$objp->fk_product])?0:$products_dispatched[$objp->fk_product]));	// Calculation of dispatched
+						$remaintodispatch=($objp->qty - ((int) $products_dispatched[$objp->rowid]));	// Calculation of dispatched
 						if ($remaintodispatch < 0) $remaintodispatch=0;
 
 						if ($remaintodispatch || empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
@@ -409,7 +411,7 @@ if ($id > 0 || ! empty($ref))
 							print '<td align="right">'.$objp->qty.'</td>';
 
 							// Already dispatched
-							print '<td align="right">'.$products_dispatched[$objp->fk_product].'</td>';
+							print '<td align="right">'.$products_dispatched[$objp->rowid].'</td>';
 
 							if (! empty($conf->productbatch->enabled) && $objp->tobatch==1)
 							{
@@ -422,6 +424,7 @@ if ($id > 0 || ! empty($ref))
 								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
 								print '</td>';
+
 								print '<td>';
 								print '<input type="text" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" size="40" value="">';
 								print '</td>';
@@ -439,6 +442,7 @@ if ($id > 0 || ! empty($ref))
 							if (empty($conf->productbatch->enabled) || $objp->tobatch!=1)
 							{
 								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
+								print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
 							}
 							print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" size="8" value="'.($remaintodispatch).'">';
