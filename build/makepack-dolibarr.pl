@@ -204,6 +204,9 @@ else {
 	my $NUM_SCRIPT;
 	my $cpt=0;
 	while (! $found) {
+		$cpt=-1;
+		printf(" %2d - %-14s  (%s)\n",$cpt,"XML Filecheck","Done in all case");
+		$cpt=0;
 		printf(" %2d - %-14s  (%s)\n",$cpt,"ALL (1..9)","Need ".join(",",values %REQUIREMENTTARGET));
 		foreach my $target (@LISTETARGET) {
 			$cpt++;
@@ -297,7 +300,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
 
 print "\n";
 
-# Check if there is at least on target to build
+# Check if there is at least one target to build
 #----------------------------------------------
 $nboftargetok=0;
 $nboftargetneedbuildroot=0;
@@ -318,6 +321,12 @@ foreach my $target (keys %CHOOSEDPUBLISH) {
 }
 
 if ($nboftargetok) {
+
+	# Build xml check file
+	#-----------------------
+    print 'Create xml check file with md5 checksum'."\n";
+    $FULLDIRECTORY = cwd();
+    $ret=`php $FULLDIRECTORY/generate_filecheck_xml.php release=$MAJOR.$MINOR.$BUILD`;
 
 	# Update CVS if required
 	#-----------------------
