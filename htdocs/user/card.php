@@ -8,7 +8,7 @@
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -980,6 +980,12 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
     print '</td>';
     print "</tr>\n";
+	
+	// Accountancy code
+	print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+	print '<td>';
+	print '<input size="30" type="text" name="accountancy_code" value="'.GETPOST('accountancy_code').'">';
+	print '</td></tr>';
 
 	// User color
 	if (! empty($conf->agenda->enabled))
@@ -1123,7 +1129,7 @@ else
          */
         if ($action != 'edit')
         {
-            $rowspan=17;
+            $rowspan=19;
 
             print '<table class="border" width="100%">';
 
@@ -1319,7 +1325,6 @@ else
 		    print "</tr>\n";
 
 			// Accountancy code
-			$rowspan++;
             print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
             print '<td colspan="2">'.$object->accountancy_code.'</td>';
 
@@ -1651,7 +1656,7 @@ else
          */
         if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id)))
         {
-            $rowspan=15;
+            $rowspan=16;
             if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
