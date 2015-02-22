@@ -125,38 +125,40 @@ function getEntity($element=false, $shared=false)
 /**
  * Return information about user browser
  *
+ * @param string $user_agent Content of $_SERVER["HTTP_USER_AGENT"] variable
  * @return	array		Array of information ('browsername'=>,'browseros'=>,'browserversion'=>,'layout'=>(classic|phone|tablet))
  */
-function getBrowserInfo()
+function getBrowserInfo($user_agent)
 {
 	$name='unknown'; $version=''; $os='unknown'; $phone=''; $tablet='';
 
 	// If phone/smartphone, we set phone os name.
-	if (preg_match('/android/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os=$phone='android'; }
-	elseif (preg_match('/blackberry/i',$_SERVER["HTTP_USER_AGENT"]))	{ $os=$phone='blackberry'; }
-	elseif (preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"]))		{ $os='ios'; $phone='iphone'; }
-	elseif (preg_match('/ipod/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os='ios'; $phone='iphone'; }
-	elseif (preg_match('/palm/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os=$phone='palm'; }
-	elseif (preg_match('/symbian/i',$_SERVER["HTTP_USER_AGENT"]))		{ $os='symbian'; $phone='unknown'; }
-	elseif (preg_match('/webos/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os='webos'; $phone='unknown'; }
-	elseif (preg_match('/maemo/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os='maemo'; $phone='unknown'; }
+	if (preg_match('/android/i', $user_agent))			{ $os=$phone='android'; }
+	elseif (preg_match('/blackberry/i', $user_agent))	{ $os=$phone='blackberry'; }
+	elseif (preg_match('/iphone/i', $user_agent))		{ $os='ios'; $phone='iphone'; }
+	elseif (preg_match('/ipod/i', $user_agent))			{ $os='ios'; $phone='iphone'; }
+	elseif (preg_match('/palm/i', $user_agent))			{ $os=$phone='palm'; }
+	elseif (preg_match('/symbian/i', $user_agent))		{ $os='symbian'; $phone='unknown'; }
+	elseif (preg_match('/webos/i', $user_agent))			{ $os='webos'; $phone='unknown'; }
+	elseif (preg_match('/maemo/i', $user_agent))			{ $os='maemo'; $phone='unknown'; }
 	// MS products at end
-	elseif (preg_match('/iemobile/i',$_SERVER["HTTP_USER_AGENT"]))		{ $os='windows'; $phone='unkown'; }
-	elseif (preg_match('/windows ce/i',$_SERVER["HTTP_USER_AGENT"]))	{ $os='windows'; $phone='unkown'; }
+	elseif (preg_match('/iemobile/i', $user_agent))		{ $os='windows'; $phone='unkown'; }
+	elseif (preg_match('/windows ce/i', $user_agent))	{ $os='windows'; $phone='unkown'; }
 
 	// OS
-	if (preg_match('/android/i',$_SERVER["HTTP_USER_AGENT"]))	{ $os='android'; }
-	elseif (preg_match('/linux/i',$_SERVER["HTTP_USER_AGENT"]))	{ $os='linux'; }
+	if (preg_match('/android/i', $user_agent))	{ $os='android'; }
+	elseif (preg_match('/linux/i', $user_agent))	{ $os='linux'; }
 
 	// Name
-	if (preg_match('/firefox(\/|\s)([\d\.]*)/i',    $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='firefox';   $version=$reg[2]; }
-	elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='chrome';    $version=$reg[2]; }    // we can have 'chrome (Mozilla...) chrome x.y' in one string
-	elseif (preg_match('/chrome/i',                 $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='chrome'; }
-	elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"]))                      { $name='iceweasel'; $version=$reg[2]; }
-	elseif (preg_match('/epiphany/i',$_SERVER["HTTP_USER_AGENT"]))                       { $name='epiphany';  $version=$reg[2]; }
-	elseif ((empty($phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari(\/|\s)([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"], $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
-	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i',  $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='opera';     $version=$reg[2]; }
-	elseif (preg_match('/msie(\/|\s)([\d\.]*)/i',   $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='ie';        $version=$reg[2]; }    // MS products at end
+	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg))  { $name='firefox';   $version=$reg[2]; }
+	elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg))  { $name='chrome';    $version=$reg[2]; }    // we can have 'chrome (Mozilla...) chrome x.y' in one string
+	elseif (preg_match('/chrome/i', $user_agent, $reg))  { $name='chrome'; }
+	elseif (preg_match('/iceweasel/i', $user_agent))                      { $name='iceweasel'; $version=$reg[2]; }
+	elseif (preg_match('/epiphany/i', $user_agent))                       { $name='epiphany';  $version=$reg[2]; }
+	elseif ((empty($phone) || preg_match('/iphone/i', $user_agent)) && preg_match('/safari(\/|\s)([\d\.]*)/i',
+			$user_agent, $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
+	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg))  { $name='opera';     $version=$reg[2]; }
+	elseif (preg_match('/msie(\/|\s)([\d\.]*)/i', $user_agent, $reg))  { $name='ie';        $version=$reg[2]; }    // MS products at end
 	// Other
 	$firefox=0;
 	if (in_array($name,array('firefox','iceweasel'))) $firefox=1;
@@ -167,7 +169,15 @@ function getBrowserInfo()
 	$tablet=$detectmobile->isTablet();
 	unset($detectmobile);	// free memory
 
-	return array('browsername'=>$name, 'browserversion'=>$version, 'browseros'=>$os, 'browserfirefox'=>$firefox, 'layout'=> ($tablet?'tablet':($phone?'phone':'classic')), 'phone'=>$phone, 'tablet'=>$tablet);
+	return array(
+		'browsername' => $name,
+		'browserversion' => $version,
+		'browseros' => $os,
+		'browserfirefox' => $firefox,
+		'layout' => ($tablet ? 'tablet' : ($phone ? 'phone' : 'classic')),
+		'phone' => $phone,
+		'tablet' => $tablet
+	);
 }
 
 /**
