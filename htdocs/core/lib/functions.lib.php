@@ -130,24 +130,34 @@ function getEntity($element=false, $shared=false)
  */
 function getBrowserInfo($user_agent)
 {
-	$name='unknown'; $version=''; $os='unknown'; $phone=''; $tablet='';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/mobiledetect.class.php';
 
-	// If phone/smartphone, we set phone os name.
-	if (preg_match('/android/i', $user_agent))			{ $os=$phone='android'; }
-	elseif (preg_match('/blackberry/i', $user_agent))	{ $os=$phone='blackberry'; }
-	elseif (preg_match('/iphone/i', $user_agent))		{ $os='ios'; $phone='iphone'; }
-	elseif (preg_match('/ipod/i', $user_agent))			{ $os='ios'; $phone='iphone'; }
-	elseif (preg_match('/palm/i', $user_agent))			{ $os=$phone='palm'; }
-	elseif (preg_match('/symbian/i', $user_agent))		{ $os='symbian'; $phone='unknown'; }
-	elseif (preg_match('/webos/i', $user_agent))			{ $os='webos'; $phone='unknown'; }
-	elseif (preg_match('/maemo/i', $user_agent))			{ $os='maemo'; $phone='unknown'; }
-	// MS products at end
-	elseif (preg_match('/iemobile/i', $user_agent))		{ $os='windows'; $phone='unkown'; }
-	elseif (preg_match('/windows ce/i', $user_agent))	{ $os='windows'; $phone='unkown'; }
+	$name='unknown';
+	$version='';
+	$os='unknown';
+
+	$detectmobile = new MobileDetect(null, $user_agent);
+	$phone = '';
+	$tablet = $detectmobile->isTablet();
+
+	if ($detectmobile->isMobile()) {
+
+		// If phone/smartphone, we set phone os name.
+		if ($detectmobile->is('AndroidOS'))			{ $os=$phone='android'; }
+		elseif ($detectmobile->is('BlackBerryOS'))	{ $os=$phone='blackberry'; }
+		elseif ($detectmobile->is('iOS'))   		{ $os='ios'; $phone='iphone'; }
+		elseif ($detectmobile->is('PalmOS'))		{ $os=$phone='palm'; }
+		elseif ($detectmobile->is('SymbianOS'))		{ $os='symbian'; $phone='unknown'; }
+		elseif ($detectmobile->is('webOS'))			{ $os='webos'; $phone='unknown'; }
+		elseif ($detectmobile->is('MaemoOS'))		{ $os='maemo'; $phone='unknown'; }
+		// MS products at end
+		elseif ($detectmobile->is('WindowsMobileOS') || $detectmobile->is('WindowsPhoneOS')) {
+			$os='windows'; $phone='unkown';
+		}
+	}
 
 	// OS
-	if (preg_match('/android/i', $user_agent))	{ $os='android'; }
-	elseif (preg_match('/linux/i', $user_agent))	{ $os='linux'; }
+	if (preg_match('/linux/i', $user_agent))	{ $os='linux'; }
 
 	// Name
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg))  { $name='firefox';   $version=$reg[2]; }
@@ -159,22 +169,20 @@ function getBrowserInfo($user_agent)
 			$user_agent, $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
 	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg))  { $name='opera';     $version=$reg[2]; }
 	elseif (preg_match('/msie(\/|\s)([\d\.]*)/i', $user_agent, $reg))  { $name='ie';        $version=$reg[2]; }    // MS products at end
-	// Other
-	$firefox=0;
-	if (in_array($name,array('firefox','iceweasel'))) $firefox=1;
 
-	include_once DOL_DOCUMENT_ROOT.'/core/class/mobiledetect.class.php';
-	$detectmobile=new MobileDetect();
-	$phone=$detectmobile->isMobile();
-	$tablet=$detectmobile->isTablet();
-	unset($detectmobile);	// free memory
+	if ($tablet) {
+		$layout = 'tablet';
+	} elseif ($phone) {
+		$layout = 'phone';
+	} else {
+		$layout = 'classic';
+	}
 
 	return array(
 		'browsername' => $name,
 		'browserversion' => $version,
 		'browseros' => $os,
-		'browserfirefox' => $firefox,
-		'layout' => ($tablet ? 'tablet' : ($phone ? 'phone' : 'classic')),
+		'layout' => $layout,
 		'phone' => $phone,
 		'tablet' => $tablet
 	);
