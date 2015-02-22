@@ -354,6 +354,7 @@ class ImportCsv extends ModeleImports
 		}
 		else
 		{
+			$last_insert_id_array = array(); // store the last inserted auto_increment id for each table, so that dependent tables can be inserted with the appropriate id (eg: extrafields fk_object will be set with the last inserted object's id)
 			// For each table to insert, me make a separate insert
 			foreach($objimport->array_import_tables[0] as $alias => $tablename)
 			{
@@ -581,7 +582,7 @@ class ImportCsv extends ModeleImports
     				    elseif (preg_match('/^lastrowid-/',$val))
     				    {
     				        $tmp=explode('-',$val);
-                            $lastinsertid=$this->db->last_insert_id($tmp[1]);
+    				        $lastinsertid=(isset($last_insert_id_array[$tmp[1]]))?$last_insert_id_array[$tmp[1]]:0;
     				        $listfields.=preg_replace('/^'.preg_quote($alias).'\./','',$key);
                             $listvalues.=$lastinsertid;
     				        //print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
@@ -623,6 +624,7 @@ class ImportCsv extends ModeleImports
 						if ($sql)
 						{
 							$resql=$this->db->query($sql);
+							$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that dependent tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
 							if ($resql)
 							{
 								//print '.';
