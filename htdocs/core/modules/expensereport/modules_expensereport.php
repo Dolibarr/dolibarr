@@ -54,13 +54,13 @@ class ModeleExpenseReport extends CommonDocGenerator
  *
  *  @param	    DoliDB		$db  			Database handler
  *  @param	    Object		$object			Object order
+ *  @param		string		$message		Message
  *  @param	    string		$modele			Force le modele a utiliser ('' to not force)
  *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @param      int			$hidedetails    Hide details of lines
  *  @param      int			$hidedesc       Hide description
  *  @param      int			$hideref        Hide ref
  *  @return     int         				0 if KO, 1 if OK
- *  @return number
  */
 function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
