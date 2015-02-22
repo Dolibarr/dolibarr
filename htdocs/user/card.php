@@ -1319,12 +1319,9 @@ else
 		    print "</tr>\n";
 
 			// Accountancy code
-			if (! empty($conf->global->USER_ENABLE_ACCOUNTANCY_CODE))	// For the moment field is not used so must not appeared.
-			{
-				$rowspan++;
-            	print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
-            	print '<td colspan="2">'.$object->accountancy_code.'</td>';
-			}
+			$rowspan++;
+            print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+            print '<td colspan="2">'.$object->accountancy_code.'</td>';
 
 			// Color user
 			if (! empty($conf->agenda->enabled))
