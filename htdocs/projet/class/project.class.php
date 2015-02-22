@@ -56,7 +56,7 @@ class Project extends CommonObject
     var $note_private;
     var $note_public;
     var $statuts_short;
-    var $statuts;
+    var $statuts;			// 0=draft, 1=opened, 2=closed
     var $oldcopy;
 
 
