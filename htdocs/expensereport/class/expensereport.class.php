@@ -24,7 +24,8 @@ class ExpenseReport extends CommonObject
 	var $date_fin;
 
 	var $fk_user_validator;
-	var $fk_c_expensereport_statuts;		// -- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
+	var $status;
+	var $fk_c_expensereport_statuts;		// -- 1=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
 	var $fk_c_paiement;
 
 	var $user_author_infos;
@@ -466,6 +467,67 @@ class ExpenseReport extends CommonObject
 		}
 	}
 
+
+
+	/**
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs,$conf;
+
+		$now=dol_now();
+
+		// Initialise parametres
+		$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+		$this->date_create = $now;
+		$this->date_debut = $now;
+		$this->date_fin = $now;
+		$this->date_approve = $now;
+
+		$this->status = 5;
+		$this->fk_c_expensereport_statuts = 5;
+
+		$this->fk_user_author = $user->id;
+		$this->fk_user_valid = $user->id;
+		$this->fk_user_approve = $user->id;
+		$this->fk_user_validator = $user->id;
+
+		$this->note_private='Private note';
+		$this->note_public='SPECIMEN';
+		$nbp = 5;
+		$xnbp = 0;
+		while ($xnbp < $nbp)
+		{
+			$line=new ExpenseReportLine($this->db);
+			$line->comments=$langs->trans("Comment")." ".$xnbp;
+			$line->date=($now-3600*(1+$xnbp));
+			$line->total_ht=100;
+			$line->total_tva=20;
+			$line->total_ttc=120;
+			$line->qty=1;
+			$line->fk_c_tva=20;
+			$line->tva_taux=20;
+			$line->value_unit=120;
+			$line->fk_expensereport=0;
+			$line->type_fees_code='TRA';
+
+			$line->projet_ref = 'ABC';
+
+			$this->lines[$xnbp]=$line;
+			$xnbp++;
+
+			$this->total_ht+=$line->total_ht;
+			$this->total_tva+=$line->total_tva;
+			$this->total_ttc+=$line->total_ttc;
+		}
+	}
 
 	/**
 	 * fetch_line_by_project
@@ -1302,6 +1364,41 @@ class ExpenseReport extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 *  Create a document onto disk accordign to template module.
+	 *
+	 *  @param	    string		$modele			Force le mnodele a utiliser ('' to not force)
+	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$langs;
+
+		$langs->load("trips");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->EXPENSEREPORT_ADDON_PDF))
+			{
+				$modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'standard';
+			}
+		}
+
+		$modelpath = "core/modules/expensereport/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
 }
 
 

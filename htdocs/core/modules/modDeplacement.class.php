@@ -124,7 +124,7 @@ class modDeplacement extends DolibarrModules
 		$this->export_sql_end[$r] .=', '.MAIN_DB_PREFIX.'deplacement as d';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON d.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' WHERE d.fk_user = u.rowid';
-		$this->export_sql_end[$r] .=' AND d.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('deplacement',1).')';
 	}
 
 

@@ -297,7 +297,7 @@ class modFournisseur extends DolibarrModules
             $this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'facture_fourn_det as fd';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
             $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
-            $this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
+            $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_invoice',1).')';
 
             $r++;
             $this->export_code[$r]=$this->rights_class.'_'.$r;
@@ -351,7 +351,7 @@ class modFournisseur extends DolibarrModules
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn as p ON pf.fk_paiementfourn = p.rowid';
             $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
-            $this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
+            $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_invoice',1).')';
 
             $r++;
             $this->export_code[$r]=$this->rights_class.'_'.$r;
@@ -369,7 +369,7 @@ class modFournisseur extends DolibarrModules
             $this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'commande_fournisseur as f, '.MAIN_DB_PREFIX.'commande_fournisseurdet as fd';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
             $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';
-            $this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
+            $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_order',1).')';
 
 	}
 

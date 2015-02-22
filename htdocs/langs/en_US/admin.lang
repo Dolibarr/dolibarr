@@ -1581,3 +1581,5 @@ SortOrder=Sort order
 Format=Format
 TypePaymentDesc=0:Customer payment type, 1:Supplier payment type, 2:Both customers and suppliers payment type 
 IncludePath=Include path (defined into variable %s)
+ExpenseReportsSetup=Setup of module Expense Reports
+TemplatePDFExpenseReports=Document templates to generate expense report document

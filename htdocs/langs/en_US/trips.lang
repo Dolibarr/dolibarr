@@ -27,10 +27,10 @@ AnyOtherInThisListCanValidate=Person to inform for validation.
 TripSociete=Information company
 TripSalarie=Informations user
 TripNDF=Informations expense report
-
 DeleteLine=Delete a ligne of the expense report
 ConfirmDeleteLine=Are you sure you want to delete this line ?
-
+PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
+ExpenseReportLine=Expense report line
 TF_OTHER=Other
 TF_TRANSPORTATION=Transportation
 TF_LUNCH=Lunch
@@ -67,10 +67,11 @@ MOTIF_REFUS=Reason
 MOTIF_CANCEL=Reason
 
 DATE_REFUS=Deny date
-DATE_CANCEL=Cancelation date
+DATE_SAVE=Validation date
 DATE_VALIDE=Validation date
+DateApprove=Approving date
+DATE_CANCEL=Cancelation date
 DATE_PAIEMENT=Payment date
-DATE_SAVE=Recording date
 
 Deny=Deny
 TO_PAID=Pay

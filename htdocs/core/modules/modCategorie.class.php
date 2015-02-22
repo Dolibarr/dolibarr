@@ -122,7 +122,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_fournisseur as cf, '.MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_societe = s.rowid';
-		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('category',1).')';
 		$this->export_sql_end[$r] .=' AND u.type = 1';	// Supplier categories
 
 		$r++;
@@ -137,7 +137,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_societe as cf, '.MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_societe = s.rowid';
-		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('category',1).')';
 		$this->export_sql_end[$r] .=' AND u.type = 2';	// Customer/Prospect categories
 
 		$r++;
@@ -152,7 +152,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_product as cp, '.MAIN_DB_PREFIX.'product as p';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_product = p.rowid';
-		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('category',1).')';
 		$this->export_sql_end[$r] .=' AND u.type = 0';	// Supplier categories
 
 		$r++;
@@ -167,8 +167,8 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_member as cp, '.MAIN_DB_PREFIX.'adherent as p';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_member = p.rowid';
-		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
-		$this->export_sql_end[$r] .=' AND u.type = 3';	// Supplier categories
+		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('category',1).')';
+		$this->export_sql_end[$r] .=' AND u.type = 3';	// Member categories
 
 		$r++;
 		$this->export_code[$r]='category_'.$r;
@@ -232,7 +232,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM ' . MAIN_DB_PREFIX . 'categorie as u, '.MAIN_DB_PREFIX . 'categorie_contact as cp, '.MAIN_DB_PREFIX . 'socpeople as p';
 		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_country as country ON p.fk_pays = country.rowid';
-		$this->export_sql_end[$r] .= ' WHERE u.rowid = cp.fk_categorie AND cp.fk_socpeople = p.rowid AND u.entity = ' . $conf->entity;
+		$this->export_sql_end[$r] .= ' WHERE u.rowid = cp.fk_categorie AND cp.fk_socpeople = p.rowid AND u.entity IN ('.getEntity('category',1).')';
 		$this->export_sql_end[$r] .= ' AND u.type = 4'; // contact categories
 
 		// Imports

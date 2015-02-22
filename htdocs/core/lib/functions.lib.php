@@ -95,13 +95,13 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 }
 
 /**
- * 	Get entity to use
+ * 	Get list of entity id to use
  *
  * 	@param	string	$element	Current element
- * 	@param	int		$shared		1=Return shared entities
+ * 	@param	int		$shared		0=Return id of entity, 1=Return id entity + shared entities
  * 	@return	mixed				Entity id(s) to use
  */
-function getEntity($element=false, $shared=false)
+function getEntity($element=false, $shared=0)
 {
 	global $conf, $mc;
 
@@ -112,12 +112,9 @@ function getEntity($element=false, $shared=false)
 	else
 	{
 		$out='';
-
 		$addzero = array('user', 'usergroup');
 		if (in_array($element, $addzero)) $out.= '0,';
-
 		$out.= $conf->entity;
-
 		return $out;
 	}
 }
