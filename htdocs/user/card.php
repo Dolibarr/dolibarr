@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
@@ -213,25 +213,25 @@ if ($action == 'add' && $canadduser)
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
         // If multicompany is off, admin users must all be on entity 0.
+        $entity=GETPOST('entity','int');
         if (! empty($conf->multicompany->enabled))
         {
-        	$entity=GETPOST('entity','int');
         	if (! empty($_POST["superadmin"]))
         	{
         		$object->entity = 0;
         	}
         	else if ($conf->multicompany->transverse_mode)
         	{
-        		$object->entity = 1; // all users in master entity
+        		$object->entity = 1; // all users are forced into master entity
         	}
         	else
         	{
-        		$object->entity = (empty($entity) ? 0 : $entity);
+        		$object->entity = ($entity == '' ? 1 : $entity);
         	}
         }
         else
         {
-        	$object->entity = (empty($entity) ? 0 : $entity);
+        	$object->entity = ($entity == '' ? 1 : $entity);
         }
 
         $db->begin();

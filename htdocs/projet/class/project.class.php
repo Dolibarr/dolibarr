@@ -58,7 +58,7 @@ class Project extends CommonObject
     var $budget_amount;
 
     var $statuts_short;
-    var $statuts;
+    var $statuts;			// 0=draft, 1=opened, 2=closed
 
     var $oldcopy;
 
