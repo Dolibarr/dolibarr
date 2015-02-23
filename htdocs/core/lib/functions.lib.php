@@ -165,8 +165,7 @@ function getBrowserInfo($user_agent)
 	elseif (preg_match('/chrome/i', $user_agent, $reg))  { $name='chrome'; }
 	elseif (preg_match('/iceweasel/i', $user_agent))                      { $name='iceweasel'; $version=$reg[2]; }
 	elseif (preg_match('/epiphany/i', $user_agent))                       { $name='epiphany';  $version=$reg[2]; }
-	elseif ((empty($phone) || preg_match('/iphone/i', $user_agent)) && preg_match('/safari(\/|\s)([\d\.]*)/i',
-			$user_agent, $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
+	elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
 	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg))  { $name='opera';     $version=$reg[2]; }
 	elseif (preg_match('/msie(\/|\s)([\d\.]*)/i', $user_agent, $reg))  { $name='ie';        $version=$reg[2]; }    // MS products at end
 
