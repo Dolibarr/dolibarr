@@ -131,44 +131,69 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('ie',$tmp['browsername']);
         $this->assertEquals('5.0',$tmp['browserversion']);
+	    $this->assertFalse($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
 
 		// Firefox 0.9.1
         $user_agent ='Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.5a) Gecko/20030728 Mozilla Firefox/0.9.1';
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('firefox',$tmp['browsername']);
         $this->assertEquals('0.9.1',$tmp['browserversion']);
+	    $this->assertFalse($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
 
         $user_agent ='Mozilla/3.0 (Windows 98; U) Opera 6.03  [en]';
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('opera',$tmp['browsername']);
         $this->assertEquals('6.03',$tmp['browserversion']);
+	    $this->assertFalse($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
 
         $user_agent ='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21';
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('chrome',$tmp['browsername']);
         $this->assertEquals('19.0.1042.0',$tmp['browserversion']);
+	    $this->assertFalse($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
 
         $user_agent ='chrome (Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11)';
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('chrome',$tmp['browsername']);
         $this->assertEquals('17.0.963.56',$tmp['browserversion']);
+	    $this->assertFalse($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
 
         $user_agent ='Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1';
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('safari',$tmp['browsername']);
         $this->assertEquals('533.21.1',$tmp['browserversion']);
+	    $this->assertFalse($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
 
 	    //Internet Explorer 11
 	    $user_agent = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko';
 	    $tmp=getBrowserInfo($user_agent);
 	    $this->assertEquals('ie',$tmp['browsername']);
 	    $this->assertEquals('11.0',$tmp['browserversion']);
+	    $this->assertFalse($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
 
 	    //iPad
 	    $user_agent = 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25';
 	    $tmp=getBrowserInfo($user_agent);
-	    $this->assertEquals('ie',$tmp['browsername']);
-	    $this->assertEquals('11.0',$tmp['browserversion']);
+	    $this->assertEquals('safari',$tmp['browsername']);
+	    $this->assertEquals('8536.25',$tmp['browserversion']);
+	    $this->assertEquals('ios',$tmp['browseros']);
+	    $this->assertEquals('tablet',$tmp['layout']);
+	    $this->assertEquals('iphone',$tmp['phone']);
+	    $this->assertTrue($tmp['phone']);
     }
 
 
