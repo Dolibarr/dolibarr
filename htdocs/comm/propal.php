@@ -998,7 +998,7 @@ if (empty($reshook))
 		if (GETPOST('model')) {
 			$object->setDocModel($user, GETPOST('model'));
 		}
-
+		
 		// Define output language
 		$outputlangs = $langs;
 		if (! empty($conf->global->MAIN_MULTILANGS)) {

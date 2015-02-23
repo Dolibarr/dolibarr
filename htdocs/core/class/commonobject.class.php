@@ -2380,7 +2380,7 @@ abstract class CommonObject
 	/**
      *    Return incoterms informations
      *
-     *    @return	string		Bank number
+     *    @return	string	incoterms info
      */
     function display_incoterms()
     {
@@ -2401,6 +2401,26 @@ abstract class CommonObject
 		
 		return $out;
     }
+	
+	/**
+     *    Return incoterms informations for pdf display
+     *
+     *    @return	string		incoterms info
+     */
+	function getIncotermsForPDF()
+	{
+		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int)$this->fk_incoterms;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$res = $this->db->fetch_object($resql);
+			return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+		}
+		else 
+		{
+			return false;	
+		}
+	}
 	
 	/**
      *    Define incoterms values of current object
