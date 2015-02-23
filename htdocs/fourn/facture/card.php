@@ -52,6 +52,7 @@ $langs->load('suppliers');
 $langs->load('companies');
 $langs->load('products');
 $langs->load('banks');
+if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
@@ -224,6 +225,12 @@ else if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
 
+// Set incoterm
+elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+{
+	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+}
+	
 // bank account
 else if ($action == 'setbankaccount' && $user->rights->fournisseur->facture->creer) {
     $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
@@ -328,6 +335,8 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         $object->mode_reglement_id = GETPOST('mode_reglement_id');
         $object->fk_account        = GETPOST('fk_account', 'int');
         $object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
+		$object->fk_incoterms 		= GETPOST('incoterm_id', 'int');
+		$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 		// Auto calculation of date due if not filled by user
 		if(empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
@@ -1404,6 +1413,16 @@ if ($action == 'create')
 		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1'), $projectid, 'projectid', 0);
 		print '</td></tr>';
 	}
+	
+	// Incoterms
+	if (!empty($conf->incoterm->enabled))
+	{
+		print '<tr>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
+        print '<td colspan="3" class="maxwidthonsmartphone">';
+        print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
+		print '</td></tr>';
+	}
 
     // Bank Account
     print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
@@ -1950,6 +1969,29 @@ else
             print '</tr>';
         }
 
+		// Incoterms
+		if (!empty($conf->incoterm->enabled))
+		{			
+			print '<tr><td>';
+	        print '<table width="100%" class="nobordernopadding"><tr><td>';
+	        print $langs->trans('IncotermLabel');
+	        print '<td><td align="right">';
+	        if ($user->rights->fournisseur->facture->creer) print '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+	        else print '&nbsp;';
+	        print '</td></tr></table>';
+	        print '</td>';
+	        print '<td colspan="3">';
+			if ($action != 'editincoterm')
+			{
+				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			}
+			else 
+			{
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?id='.$object->id);
+			}
+	        print '</td></tr>';
+		}
+	
         // Other attributes
         $cols = 4;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';

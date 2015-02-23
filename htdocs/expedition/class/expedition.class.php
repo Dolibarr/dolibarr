@@ -90,6 +90,10 @@ class Expedition extends CommonObject
 
 	var $listmeths;			// List of carriers
 
+	//Incorterms
+	var $fk_incoterms;
+	var $location_incoterms;
+	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 *	Constructor
@@ -214,6 +218,7 @@ class Expedition extends CommonObject
 		$sql.= ", note_private";
 		$sql.= ", note_public";
 		$sql.= ", model_pdf";
+		$sql.= ", fk_incoterms, location_incoterms";
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
@@ -236,6 +241,8 @@ class Expedition extends CommonObject
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
+        $sql.= ", ".(int) $this->fk_incoterms;
+        $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -414,8 +421,11 @@ class Expedition extends CommonObject
 		$sql.= ", e.fk_shipping_method, e.tracking_number";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= ", e.note_private, e.note_public";
+        $sql.= ', e.fk_incoterms, e.location_incoterms';
+        $sql.= ', i.libelle as libelle_incoterms';
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->element."'";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 		$sql.= " WHERE e.entity = ".$conf->entity;
 		if ($id)   	  $sql.= " AND e.rowid=".$id;
         if ($ref)     $sql.= " AND e.ref='".$this->db->escape($ref)."'";
@@ -468,6 +478,11 @@ class Expedition extends CommonObject
 				$this->trueSize           	= $obj->size."x".$obj->width."x".$obj->height;
 				$this->size_units           = $obj->size_units;
 
+				//Incoterms
+				$this->fk_incoterms = $obj->fk_incoterms;
+				$this->location_incoterms = $obj->location_incoterms;									
+				$this->libelle_incoterms = $obj->libelle_incoterms;
+			
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;

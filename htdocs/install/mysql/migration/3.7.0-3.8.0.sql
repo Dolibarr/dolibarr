@@ -101,7 +101,12 @@ ALTER TABLE llx_contratdet_extrafields ADD INDEX idx_contratdet_extrafields (fk_
 --
 -- Module incoterm 
 --
-ALTER TABLE llx_facture ADD COLUMN (
+ALTER TABLE llx_societe ADD COLUMN (
+	fk_incoterms integer,
+	location_incoterms varchar(255)
+);
+
+ALTER TABLE llx_propal ADD COLUMN (
 	fk_incoterms integer,
 	location_incoterms varchar(255)
 );
@@ -111,7 +116,17 @@ ALTER TABLE llx_commande ADD COLUMN (
 	location_incoterms varchar(255)
 );
 
-ALTER TABLE llx_propal ADD COLUMN (
+ALTER TABLE llx_commande_fournisseur ADD COLUMN (
+	fk_incoterms integer,
+	location_incoterms varchar(255)
+);
+
+ALTER TABLE llx_facture ADD COLUMN (
+	fk_incoterms integer,
+	location_incoterms varchar(255)
+);
+
+ALTER TABLE llx_facture_fourn ADD COLUMN (
 	fk_incoterms integer,
 	location_incoterms varchar(255)
 );
@@ -122,16 +137,6 @@ ALTER TABLE llx_expedition ADD COLUMN (
 );
 
 ALTER TABLE llx_livraison ADD COLUMN (
-	fk_incoterms integer,
-	location_incoterms varchar(255)
-);
-
-ALTER TABLE llx_societe ADD COLUMN (
-	fk_incoterms integer,
-	location_incoterms varchar(255)
-);
-
-ALTER TABLE llx_commande_fournisseur ADD COLUMN (
 	fk_incoterms integer,
 	location_incoterms varchar(255)
 );

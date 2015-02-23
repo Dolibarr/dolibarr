@@ -1976,7 +1976,7 @@ if ($action == 'create')
         print '<table width="100%" class="nobordernopadding"><tr><td>';
         print $langs->trans('IncotermLabel');
         print '<td><td align="right">';
-        if ($user->rights->commande->creer) print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+        if ($user->rights->propal->creer) print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
         else print '&nbsp;';
         print '</td></tr></table>';
         print '</td>';

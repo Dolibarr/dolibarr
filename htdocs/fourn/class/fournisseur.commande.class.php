@@ -86,6 +86,11 @@ class CommandeFournisseur extends CommonOrder
     var $user_valid_id;
     var $user_approve_id;
 
+	//Incorterms
+	var $fk_incoterms;
+	var $location_incoterms;
+	var $libelle_incoterms;  //Used into tooltip
+	
     var $extraparams=array();
 
 
@@ -137,10 +142,13 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " cm.libelle as methode_commande,";
         $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
+        $sql.= ', c.fk_incoterms, c.location_incoterms';
+        $sql.= ', i.libelle as libelle_incoterms';
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (c.fk_mode_reglement = p.id)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
         $sql.= " WHERE c.entity = ".$conf->entity;
         if ($ref) $sql.= " AND c.ref='".$this->db->escape($ref)."'";
         else $sql.= " AND c.rowid=".$id;
@@ -196,6 +204,11 @@ class CommandeFournisseur extends CommonOrder
             $this->note_public			= $obj->note_public;
             $this->modelpdf				= $obj->model_pdf;
 
+			//Incoterms
+			$this->fk_incoterms = $obj->fk_incoterms;
+			$this->location_incoterms = $obj->location_incoterms;									
+			$this->libelle_incoterms = $obj->libelle_incoterms;
+				
             $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
             $this->db->free($resql);
@@ -906,6 +919,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", fk_mode_reglement";
 		$sql.= ", fk_cond_reglement";
         $sql.= ", fk_account";
+		$sql.= ", fk_incoterms, location_incoterms";
         $sql.= ") ";
         $sql.= " VALUES (";
         $sql.= "''";
@@ -923,6 +937,8 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
         $sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
+        $sql.= ", ".(int) $this->fk_incoterms;
+        $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -2203,7 +2219,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
             $this->date_start       = $this->db->jdate($objp->date_start);
             $this->date_end         = $this->db->jdate($objp->date_end);
-
+			
             $this->db->free($result);
             return 1;
         }
