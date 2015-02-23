@@ -25,16 +25,17 @@
 
 $res=0;
 require '../main.inc.php';
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formmail.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formprojet.class.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/expensereport.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/price.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/expensereport/modules_expensereport.php");
-require_once(DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php");
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/modules/expensereport/modules_expensereport.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 
 $langs->load("trips");
 
@@ -1161,7 +1162,7 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div align=center">';
+	print '<div align="center">';
 	print '<input type="submit" value="'.$langs->trans("AddTrip").'" name="bouton" class="button" />';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
 	print '</div>';
