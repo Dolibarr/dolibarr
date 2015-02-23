@@ -561,11 +561,14 @@ class Form
 	/**
      *  Return select list of incoterms
      *
-     *  @param	string	$selected       Id or Code of preselected incoterm
-     *  @param  string	$htmlname       Name of html select object
-     *  @param  string	$htmloption     Options html on select object
-     *  @param	string	$maxlength		Max length for labels (0=no limit)
-     *  @return string           		HTML string with select
+     *  @param	string	$selected       		Id or Code of preselected incoterm
+     *  @param	string	$location_incoterms     Value of input location
+     *  @param	string	$page       			Defined the form action
+     *  @param  string	$htmlname       		Name of html select object
+     *  @param  string	$htmloption     		Options html on select object
+     * 	@param	int		$forcecombo				Force to use combo box
+     *  @param	array	$events					Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @return string           				HTML string with select and input
      */
     function select_incoterms($selected='', $location_incoterms='', $page='',$htmlname='incoterm_id',$htmloption='', $forcecombo=0, $events=array())
     {
