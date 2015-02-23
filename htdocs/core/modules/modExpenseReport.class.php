@@ -223,10 +223,10 @@ class modExpenseReport extends DolibarrModules
 		$r=0;
 
 		// Example to declare a Left Menu entry: fk_mainmenu=home,fk_leftmenu=modulesadmintools
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'TripsAndExpenses',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport',
 									'url'=>'/expensereport/index.php',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -237,10 +237,10 @@ class modExpenseReport extends DolibarrModules
 									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'New',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detailnew',
 									'url'=>'/expensereport/card.php?action=create',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -251,10 +251,10 @@ class modExpenseReport extends DolibarrModules
 									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'List',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detaillist',
 									'url'=>'/expensereport/list.php',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -265,10 +265,10 @@ class modExpenseReport extends DolibarrModules
 									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport_detaillist',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport_detaillist',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'ListToApprove',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detaillist_approve',
 									'url'=>'/expensereport/list.php?search_state=2',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -279,10 +279,10 @@ class modExpenseReport extends DolibarrModules
 									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'Statistics',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detail',
 									'url'=>'/expensereport/stats/index.php',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -295,10 +295,10 @@ class modExpenseReport extends DolibarrModules
 
 
 		// Disabled, not yet stable
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'ExportTripCSV',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detail',
 									'url'=>'/expensereport/export_csv.php',
 									'langs'=>'expensereport',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -309,10 +309,10 @@ class modExpenseReport extends DolibarrModules
 									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'Synchro_Compta',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detail',
 									'url'=>'/expensereport/synchro_compta.php',
 									'langs'=>'expensereport',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
