@@ -212,7 +212,7 @@ if ($action == 'add' && $canadduser)
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
-        // If multicompany is off, admin users must all be on entity 0.
+        // Set entity of new user
         $entity=GETPOST('entity','int');
         if (! empty($conf->multicompany->enabled))
         {
@@ -230,8 +230,11 @@ if ($action == 'add' && $canadduser)
         	}
         }
         else
-        {
+		{
         	$object->entity = ($entity == '' ? 1 : $entity);
+        	/*if ($user->admin && $user->entity == 0 && GETPOST("admin",'alpha'))
+        	{
+        	}*/
         }
 
         $db->begin();
