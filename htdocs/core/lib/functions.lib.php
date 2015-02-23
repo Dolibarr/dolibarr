@@ -135,24 +135,31 @@ function getBrowserInfo($user_agent)
 	$name='unknown';
 	$version='';
 	$os='unknown';
+	$phone = 'unknown';
 
 	$detectmobile = new MobileDetect(null, $user_agent);
-	$phone = '';
 	$tablet = $detectmobile->isTablet();
 
 	if ($detectmobile->isMobile()) {
 
 		// If phone/smartphone, we set phone os name.
-		if ($detectmobile->is('AndroidOS'))			{ $os=$phone='android'; }
-		elseif ($detectmobile->is('BlackBerryOS'))	{ $os=$phone='blackberry'; }
-		elseif ($detectmobile->is('iOS'))   		{ $os='ios'; $phone='iphone'; }
-		elseif ($detectmobile->is('PalmOS'))		{ $os=$phone='palm'; }
-		elseif ($detectmobile->is('SymbianOS'))		{ $os='symbian'; $phone='unknown'; }
-		elseif ($detectmobile->is('webOS'))			{ $os='webos'; $phone='unknown'; }
-		elseif ($detectmobile->is('MaemoOS'))		{ $os='maemo'; $phone='unknown'; }
-		// MS products at end
-		elseif ($detectmobile->is('WindowsMobileOS') || $detectmobile->is('WindowsPhoneOS')) {
-			$os='windows'; $phone='unkown';
+		if ($detectmobile->is('AndroidOS')) {
+			$os = $phone = 'android';
+		} elseif ($detectmobile->is('BlackBerryOS')) {
+			$os = $phone = 'blackberry';
+		} elseif ($detectmobile->is('iOS')) {
+			$os = 'ios';
+			$phone = 'iphone';
+		} elseif ($detectmobile->is('PalmOS')) {
+			$os = $phone = 'palm';
+		} elseif ($detectmobile->is('SymbianOS')) {
+			$os = 'symbian';
+		} elseif ($detectmobile->is('webOS')) {
+			$os = 'webos';
+		} elseif ($detectmobile->is('MaemoOS')) {
+			$os = 'maemo';
+		} elseif ($detectmobile->is('WindowsMobileOS') || $detectmobile->is('WindowsPhoneOS')) {
+			$os = 'windows';
 		}
 	}
 
