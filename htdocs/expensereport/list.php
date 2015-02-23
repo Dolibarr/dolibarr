@@ -37,8 +37,24 @@ $socid = $_GET["socid"]?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport','','');
 
-$search_ref=GETPOST('search_ref');
+$search_ref   = GETPOST('search_ref');
+$search_user  = GETPOST('search_user','int');
+$search_state = GETPOST('search_state','int');
+$month_start  = GETPOST("month_start","int");
+$year_start   = GETPOST("year_start","int");
+$month_end    = GETPOST("month_end","int");
+$year_end     = GETPOST("year_end","int");
 
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
+{
+	$search_ref="";
+	$search_user="";
+	$search_state="";
+	$month_start="";
+	$year_start="";
+	$month_end="";
+	$year_end="";
+}
 
 /*
  * View
@@ -52,15 +68,6 @@ llxHeader('', $langs->trans("ListOfExpenseReports"));
 
 $max_year = 5;
 $min_year = 5;
-
-$month_start   = $_GET['month_start'];
-$year_start    = $_GET['year_start'];
-$month_end     = $_GET['month_end'];
-$year_end      = $_GET['year_end'];
-
-$search_ref = GETPOST('search_ref');
-$search_user = GETPOST('search_user','int');
-$search_state = GETPOST('search_state','int');
 
 $sortorder     = $_GET["sortorder"];
 $sortfield     = $_GET["sortfield"];
@@ -183,10 +190,10 @@ if ($resql)
 	print_liste_field_titre($langs->trans("TotalVAT"),$_SERVER["PHP_SELF"],"d.total_tva","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("TotalTTC"),$_SERVER["PHP_SELF"],"d.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Statut"),$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre();
+	print '<td class="liste_titre">&nbsp;</td>';
 	print "</tr>\n";
 
-	// FILTRES
+	// Filters
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" size="15" type="text" name="search_ref" value="'.$search_ref.'">';
@@ -224,9 +231,11 @@ if ($resql)
 	print '<td class="liste_titre" align="right">';
 	select_expensereport_statut($search_state,'search_state');
 	print '</td>';
-	print '<td class="liste_titre" align="right" width="20px">';
-	print ' <input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
-	print "</td>";
+
+	print '<td class="liste_titre" align="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
 
 	print "</tr>\n";
 
