@@ -109,6 +109,19 @@ $cancel <> $langs->trans("Cancel") &&
 		exit;
 	}
 }
+else if($action==='save_composed_product') {
+	
+	$TProduct = GETPOST('TProduct', 'array');
+	if(!empty($TProduct)) {
+		
+		foreach ($TProduct as $id_product => $row) {
+			$product->update_sousproduit($id, $id_product,$row['qty'], isset($row['incdec']) ? 1 : 0 );
+		}
+		
+	}
+	
+	
+}
 
 if ($cancel == $langs->trans("Cancel"))
 {
@@ -215,7 +228,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				print '<tr><td colspan="2">';
 				print '<b>'.$langs->trans("ProductAssociationList").'</b><br>';
-				print '<table class="nobordernopadding">';
+				print '<ta$idble class="nobordernopadding">';
 				foreach($prods_arbo as $value)
 				{
 					$productstatic->id=$value['id'];
@@ -246,7 +259,7 @@ if ($id > 0 || ! empty($ref))
 				print '<tr><td colspan="2">';
 				print '<b>'.$langs->trans("ProductParentList").'</b><br>';
 				print '<table class="nobordernopadding">';
-				foreach($prodsfather as $value)
+				foreach($prodnbsfather as $value)
 				{
 					$idprod= $value["id"];
 					$productstatic->id=$idprod;// $value["id"];
@@ -333,20 +346,43 @@ if ($id > 0 || ! empty($ref))
 			$atleastonenotdefined=0;
 			print '<tr><td colspan="2">';
 			print $langs->trans("ProductAssociationList").'<br>';
-			print '<table class="nobordernopadding centpercent">';
+			
+			print '<form name="formComposedProduct" action="'.$_SERVER['PHP_SELF'].'" method="post" ">';
+			print '<input type="hidden" name="action" value="save_composed_product" />';
+			print '<input type="hidden" name="id" value="'.$id.'" />';
+			
+			print '<table class="centpercent nobordernopadding">';
+			
+			print '<tr class="liste_titre"><td>'.$langs->trans('ComposedProduct').'</td><td>'.$langs->trans('Qty').'</td><td>'.$langs->trans('ComposedProductDecreaseStock').'</td><td>'.$langs->trans('MinSupplierPrice').'</td><td>'.$langs->trans('Price').'</td><td>'.$langs->trans('Stock').'</td></tr>';
+			
 			foreach($prods_arbo as $value)
 			{
 				$productstatic->id=$value['id'];
 				$productstatic->type=$value['type'];
-				//print '<pre>'.$productstatic->ref.'</pre>';
-				//print $productstatic->getNomUrl(1).'<br>';
-				//var_dump($value);
-				print '<tr>';
+				
+				$class=($class=='impair')?'pair':'impair';
+				
+				print '<tr class="'.$class.'">';
 				if ($value['level'] <= 1)
 				{
 					$notdefined=0;
 					$productstatic->ref=$value['fullpath'];
-					print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].')</td>';
+					$nb_of_subproduct = $value['nb'];
+					
+					print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';
+					
+					if($user->rights->produit->creer || $user->rights->service->creer) {
+						print '<td><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';	
+						print '<td><input type="checkbox"  name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked="checked"':''  ).' /></td>';
+					
+					}
+					else{
+						print '<td>'.$nb_of_subproduct.'</td>';
+						print '<td>'.($value['incdec']==1?'x':''  ).'</td>';
+					}
+					
+					
+					
 					print '<td align="right">';
 					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0)
 					{
@@ -367,26 +403,35 @@ if ($id > 0 || ! empty($ref))
 					{
 						print ' &nbsp; &nbsp; ';
 					}
-					print $productstatic->getNomUrl(1,'composition').' ('.$value['nb'].')</td>';
-					print '<td><td>';
-					print '<td><td>';
+					print $productstatic->getNomUrl(1,'composition').'</td>';
+					print '<td>'.$value['nb'].'</td>';
+					print '<td>&nbsp;</td>';
+					print '<td>&nbsp;<td>';
+					print '<td>&nbsp;<td>';
 					if (! empty($conf->stock->enabled)) print '<td align="right"></td>';	// Real stock
 				}
 				print '</tr>';
 			}
-			print '<tr>';
-			print '<td colspan="2">'.$langs->trans("TotalBuyingPriceMin").': ';
+			print '<tr class="liste_total">';
+			print '<td colspan="3" align="right">'.$langs->trans("TotalBuyingPriceMin").': ';
 			if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			print '</td>';
-			print '<td align="right">'.($atleastonenotdefined?'':price($total,'','',0,0,-1,$conf->currency)).'</td>';
+			print '<td align="right" class="liste_total">'.($atleastonenotdefined?'':price($total,'','',0,0,-1,$conf->currency)).'</td>';
 			if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
 			print '</tr>';
 			print '</table>';
+			
+			if($user->rights->produit->creer || $user->rights->service->creer) {
+				print '<div class="tabsAction"><input type="submit" value="'.$langs->trans('Save').'" /></div>';
+			}
+			
+			print '</form>';
+			
 			print '</td></tr>';
 		}
 
 		// Number of parent virtual products
-		print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>';
+		print '<tr class="pair"><td>'.$langs->trans("ParentProductsNumber").'</td><td>';
 		print $form->textwithpicto(count($prodsfather), $langs->trans('IfZeroItIsNotUsedByVirtualProduct'));
 		print '</td>';
 
