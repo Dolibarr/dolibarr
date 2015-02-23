@@ -106,10 +106,6 @@ class Commande extends CommonOrder
 
     var $lines = array();
 
-    // Pour board
-    var $nbtodo;
-    var $nbtodolate;
-
 	//Incorterms
 	var $fk_incoterms;
 	var $location_incoterms;
