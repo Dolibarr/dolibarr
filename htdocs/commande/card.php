@@ -138,8 +138,10 @@ if (empty($reshook))
 	}
 
 	// Reopen a closed order
-	else if ($action == 'reopen' && $user->rights->commande->creer) {
-		if ($object->statut == 3) {
+	else if ($action == 'reopen' && $user->rights->commande->creer)
+	{
+		if ($object->statut == 3)
+		{
 			$result = $object->set_reopen($user);
 			if ($result > 0)
 			{
@@ -154,21 +156,26 @@ if (empty($reshook))
 	}
 
 	// Suppression de la commande
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->commande->supprimer) {
+	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->commande->supprimer)
+	{
 		$result = $object->delete($user);
-		if ($result > 0) {
+		if ($result > 0)
+		{
 			header('Location: index.php');
 			exit;
 		}
-		else {
+		else
+		{
 			setEventMessage($object->error, 'errors');
 		}
 	}
 
 	// Remove a product line
-	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->commande->creer) {
+	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->commande->creer)
+	{
 		$result = $object->deleteline($lineid);
-		if ($result > 0) {
+		if ($result > 0)
+		{
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -195,12 +202,14 @@ if (empty($reshook))
 	}
 
 	// Categorisation dans projet
-	else if ($action == 'classin' && $user->rights->commande->creer) {
+	else if ($action == 'classin' && $user->rights->commande->creer)
+	{
 		$object->setProject(GETPOST('projectid'));
 	}
 
 	// Add order
-	else if ($action == 'add' && $user->rights->commande->creer) {
+	else if ($action == 'add' && $user->rights->commande->creer)
+	{
 		$datecommande = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$datelivraison = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
 
@@ -242,7 +251,8 @@ if (empty($reshook))
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			
 			// If creation from another object of another module (Example: origin=propal, originid=1)
-			if (! empty($origin) && ! empty($originid)) {
+			if (! empty($origin) && ! empty($originid))
+			{
 				// Parse element/subelement (ex: project_task)
 				$element = $subelement = $origin;
 				if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
@@ -304,37 +314,37 @@ if (empty($reshook))
 
 							for($i = 0; $i < $num; $i ++)
 							{
-								$label = (! empty($lines [$i]->label) ? $lines [$i]->label : '');
-								$desc = (! empty($lines [$i]->desc) ? $lines [$i]->desc : $lines [$i]->libelle);
-								$product_type = (! empty($lines [$i]->product_type) ? $lines [$i]->product_type : 0);
+								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
+								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
 
 								// Dates
 								// TODO mutualiser
-								$date_start = $lines [$i]->date_debut_prevue;
-								if ($lines [$i]->date_debut_reel)
-									$date_start = $lines [$i]->date_debut_reel;
-								if ($lines [$i]->date_start)
-									$date_start = $lines [$i]->date_start;
-								$date_end = $lines [$i]->date_fin_prevue;
-								if ($lines [$i]->date_fin_reel)
-									$date_end = $lines [$i]->date_fin_reel;
-								if ($lines [$i]->date_end)
-									$date_end = $lines [$i]->date_end;
+								$date_start = $lines[$i]->date_debut_prevue;
+								if ($lines[$i]->date_debut_reel)
+									$date_start = $lines[$i]->date_debut_reel;
+								if ($lines[$i]->date_start)
+									$date_start = $lines[$i]->date_start;
+								$date_end = $lines[$i]->date_fin_prevue;
+								if ($lines[$i]->date_fin_reel)
+									$date_end = $lines[$i]->date_fin_reel;
+								if ($lines[$i]->date_end)
+									$date_end = $lines[$i]->date_end;
 
 									// Reset fk_parent_line for no child products and special product
-								if (($lines [$i]->product_type != 9 && empty($lines [$i]->fk_parent_line)) || $lines [$i]->product_type == 9) {
+								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines [$i], 'fetch_optionals')) 							// For avoid conflicts if
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
 								                                                                                                      // trigger used
 								{
-									$lines [$i]->fetch_optionals($lines [$i]->rowid);
-									$array_option = $lines [$i]->array_options;
+									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$array_option = $lines[$i]->array_options;
 								}
 
-								$result = $object->addline($desc, $lines [$i]->subprice, $lines [$i]->qty, $lines [$i]->tva_tx, $lines [$i]->localtax1_tx, $lines [$i]->localtax2_tx, $lines [$i]->fk_product, $lines [$i]->remise_percent, $lines [$i]->info_bits, $lines [$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines [$i]->rang, $lines [$i]->special_code, $fk_parent_line, $lines [$i]->fk_fournprice, $lines [$i]->pa_ht, $label, $array_option);
+								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_option);
 
 								if ($result < 0) {
 									$error ++;
@@ -342,7 +352,7 @@ if (empty($reshook))
 								}
 
 								// Defined the new fk_parent_line
-								if ($result > 0 && $lines [$i]->product_type == 9) {
+								if ($result > 0 && $lines[$i]->product_type == 9) {
 									$fk_parent_line = $result;
 								}
 							}
@@ -388,8 +398,10 @@ if (empty($reshook))
 			}
 
 			// Insert default contacts if defined
-			if ($object_id > 0) {
-				if (GETPOST('contactid')) {
+			if ($object_id > 0)
+			{
+				if (GETPOST('contactid'))
+				{
 					$result = $object->add_contact(GETPOST('contactid'), 'CUSTOMER', 'external');
 					if ($result < 0) {
 						setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
@@ -402,7 +414,8 @@ if (empty($reshook))
 			}
 
 			// End of object creation, we show it
-			if ($object_id > 0 && ! $error) {
+			if ($object_id > 0 && ! $error)
+			{
 				$db->commit();
 				header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object_id);
 				exit();
@@ -1164,7 +1177,7 @@ if (empty($reshook))
 			$action = 'edit_extras';
 	}
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_printipp.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 
 	/*
@@ -1241,14 +1254,16 @@ $formorder = new FormOrder($db);
  *
  * *******************************************************************
  */
-if ($action == 'create' && $user->rights->commande->creer) {
+if ($action == 'create' && $user->rights->commande->creer)
+{
 	print_fiche_titre($langs->trans('CreateOrder'));
 
 	$soc = new Societe($db);
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
-	if (! empty($origin) && ! empty($originid)) {
+	if (! empty($origin) && ! empty($originid))
+	{
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
@@ -1362,7 +1377,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 	/*
 	 * Contact de la commande
-	*/
+	 */
 	if ($socid > 0) {
 		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td colspan="2">';
 		$form->select_contacts($soc->id, $setcontact, 'contactid', 1, $srccontactslist);
@@ -1611,7 +1626,8 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		/*
 		 * Confirmation de la validation
 		*/
-		if ($action == 'validate') {
+		if ($action == 'validate')
+		{
 			// on verifie si l'objet est en numerotation provisoire
 			$ref = substr($object->ref, 1, 4);
 			if ($ref == 'PROV') {
@@ -1621,7 +1637,8 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			}
 
 			$text = $langs->trans('ConfirmValidateOrder', $numref);
-			if (! empty($conf->notification->enabled)) {
+			if (! empty($conf->notification->enabled))
+			{
 				require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 				$notify = new Notify($db);
 				$text .= '<br>';

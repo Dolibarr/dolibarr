@@ -14,8 +14,8 @@ URLToLaunchCronJobs=URL che lancia i job di cron
 OrToLaunchASpecificJob=O per lanciare un job specifico
 KeyForCronAccess=Chiave di sicurezza per l'URL che lancia i job di cron
 FileToLaunchCronJobs=Comando per lanciare i job di cron
-CronExplainHowToRunUnix=In ambienti Unix dovresti usare crontab per lanciare il comando ogni minuto
-CronExplainHowToRunWin=In ambienti Microsoft(tm) Windows dovresti usare Operazioni Pianificate per lanciare il comando ogni minuto
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Azioni pianificate
 CronListActive=List of active/scheduled jobs

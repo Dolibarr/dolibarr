@@ -58,8 +58,9 @@ OrderSentByEMail=客戶訂單通過電子郵件發送%s
 InvoiceSentByEMail=客戶發票通過電子郵件發送%s
 SupplierOrderSentByEMail=供應商的訂單通過電子郵件發送%s
 SupplierInvoiceSentByEMail=供應商的發票通過電子郵件發送%s
-ShippingSentByEMail=通過電子郵件發送的航運%s
-ShippingValidated= Shipping %s validated
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= 第三方創建
 DateActionPlannedStart= 計劃開始日期
 DateActionPlannedEnd= 計劃結束日期
@@ -68,7 +69,7 @@ DateActionDoneEnd= 真正的結束日期
 DateActionStart= 開始日期
 DateActionEnd= 結束日期
 AgendaUrlOptions1=您還可以添加以下參數來篩選輸出：
-AgendaUrlOptions2=<b>login=%s</b>到限制產量以行動來創造，受影響或將使用者 與所做<b>%</b>。
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b>到限制輸出到行動<b>使用者與受影響<b>%</b>。
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.

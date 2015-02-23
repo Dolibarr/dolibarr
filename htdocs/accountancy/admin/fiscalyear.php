@@ -94,7 +94,6 @@ if ($result)
 		while ($i < $num && $i < $max)
         {
             $obj = $db->fetch_object($result);
-            $fiscalyearstatic->ref=$obj->rowid;
             $fiscalyearstatic->id=$obj->rowid;
             print '<tr '.$bc[$var].'>';
 			print '<td><a href="fiscalyear_card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowFiscalYear"),"technic").' '.$obj->rowid.'</a></td>';

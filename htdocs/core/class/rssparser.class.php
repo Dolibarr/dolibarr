@@ -550,7 +550,7 @@ class RssParser
         //
         elseif ($this->_format == 'atom' and $el == 'link' )
         {
-            if ( isset($attrs['rel']) and $attrs['rel'] == 'alternate' )
+            if ( isset($attrs['rel']) && $attrs['rel'] == 'alternate' )
             {
                 $link_el = 'link';
             }

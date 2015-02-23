@@ -175,7 +175,7 @@ if (! $error)
                 }
                 else
                 {
-                    $databasefortest='mssql';
+                    $databasefortest='master';
                 }
             }
             //print $_POST["db_type"].",".$_POST["db_host"].",$userroot,$passroot,$databasefortest,".$_POST["db_port"];
@@ -486,7 +486,7 @@ if (! $error && $db->connected && $action == "set")
             }
             else if ($conf->db->type == 'mssql')
             {
-                $databasefortest='mssql';
+                $databasefortest='master';
             }
 
             // Creation handler de base, verification du support et connexion

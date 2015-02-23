@@ -192,8 +192,10 @@ abstract class DolibarrModules
 	 * Enables a module.
 	 * Inserts all informations into database
 	 *
-	 * @param   string[]|array  $array_sql  SQL requests to be executed when enabling module
-	 * @param   string          $options    String with options when disabling module ('newboxdefonly|noboxes')
+	 * @param   array  		$array_sql  SQL requests to be executed when enabling module
+	 * @param   string      $options    String with options when disabling module:
+	 *                                    'noboxes' = Do not insert boxes
+	 *                                    'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
 	 *
 	 * @return  int                         1 if OK, 0 if KO
 	 */
@@ -279,7 +281,8 @@ abstract class DolibarrModules
      * Disable function. Deletes the module constant and boxes from the database.
      *
      * @param   string[]    $array_sql  SQL requests to be executed when module is disabled
-     * @param   string      $options	Options when disabling module ('newboxdefonly|noboxes')
+     * @param   string      $options	Options when disabling module:
+     *                                    'newboxdefonly|noboxes' = We don't remove boxes.
      *
      * @return  int                     1 if OK, 0 if KO
      */
@@ -416,11 +419,17 @@ abstract class DolibarrModules
         global $langs;
         $langs->load("admin");
 
-        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-        elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
-        elseif ($this->version == 'dolibarr') return DOL_VERSION;
-        elseif ($this->version) return $this->version;
-        else return $langs->trans("VersionUnknown");
+        $ret='';
+
+        $newversion=preg_replace('/_deprecated/','',$this->version);
+        if ($newversion == 'experimental') $ret=$langs->trans("VersionExperimental");
+        elseif ($newversion == 'development') $ret=$langs->trans("VersionDevelopment");
+        elseif ($newversion == 'dolibarr') $ret=DOL_VERSION;
+        elseif ($newversion) $ret=$newversion;
+        else $ret=$langs->trans("VersionUnknown");
+
+        if (preg_match('/_deprecated/',$this->version)) $ret.=' ('.$langs->trans("Deprecated").')';
+		return $ret;
     }
 
 
@@ -431,7 +440,7 @@ abstract class DolibarrModules
      */
     function isCoreOrExternalModule()
     {
-        if ($this->version == 'dolibarr') return 'core';
+        if ($this->version == 'dolibarr' || $this->version == 'dolibarr_deprecated') return 'core';
         if (! empty($this->version) && ! in_array($this->version,array('experimental','development'))) return 'external';
         if (! empty($this->editor_name) || ! empty($this->editor_web)) return 'external';
         return 'unknown';

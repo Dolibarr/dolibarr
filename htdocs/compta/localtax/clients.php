@@ -104,7 +104,7 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
 $fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
-$calc=MAIN_INFO_LOCALTAX_CALC.$local;
+$calc=$conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
 // Affiche en-tete du rapport
 if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice for goods and services
 {

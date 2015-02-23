@@ -7,7 +7,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1437,15 +1437,12 @@ class FactureFournisseur extends CommonInvoice
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param      User	$user       Object user
-     *	@return     int                 <0 if KO, >0 if OK
+     *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
-        global $conf, $user;
+        global $conf, $user, $langs;
 
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
         $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1458,13 +1455,24 @@ class FactureFournisseur extends CommonInvoice
         $resql=$this->db->query($sql);
         if ($resql)
         {
+	        $langs->load("bills");
+	        $now=dol_now();
+
+	        $response = new WorkboardResponse();
+	        $response->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
+	        $response->label=$langs->trans("SupplierBillsToPay");
+	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=paye:0';
+	        $response->img=img_object($langs->trans("Bills"),"bill");
+
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
-                if (! empty($obj->datefin) && $this->db->jdate($obj->datefin) < ($now - $conf->facture->fournisseur->warning_delay)) $this->nbtodolate++;
+                $response->nbtodo++;
+                if (! empty($obj->datefin) && $this->db->jdate($obj->datefin) < ($now - $conf->facture->fournisseur->warning_delay)) {
+	                $response->nbtodolate++;
+                }
             }
             $this->db->free($resql);
-            return 1;
+            return $response;
         }
         else
         {

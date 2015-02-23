@@ -591,8 +591,7 @@ class FactureRec extends Facture
 
 		parent::initAsSpecimen($option);
 
-		$this->usenewprice = 1;		
-		
+		$this->usenewprice = 1;
 	}
 		
 }

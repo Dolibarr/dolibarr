@@ -19,6 +19,19 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
+
+-- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INT(11) NOT NULL DEFAULT '0' AFTER fk_product;
+
+
+-- Remove menu entries of removed or renamed modules
+DELETE FROM llx_menu where module = 'printipp';
+
+
+ALTER TABLE llx_bank ADD INDEX idx_bank_num_releve(num_releve);
+
+
 --create table for price expressions and add column in product supplier
 create table llx_c_price_expression
 (
@@ -97,10 +110,93 @@ create table llx_contratdet_extrafields
 
 ALTER TABLE llx_contratdet_extrafields ADD INDEX idx_contratdet_extrafields (fk_object);
 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN delivery_time_days integer;
 
---
--- Module incoterm 
---
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN comment	varchar(255);
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN status integer;
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN tms timestamp;
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN batch varchar(30) DEFAULT NULL;
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN eatby date DEFAULT NULL;
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN sellby date DEFAULT NULL;
+ALTER TABLE llx_stock_mouvement ADD COLUMN batch varchar(30) DEFAULT NULL;
+ALTER TABLE llx_stock_mouvement ADD COLUMN eatby date DEFAULT NULL;
+ALTER TABLE llx_stock_mouvement ADD COLUMN sellby date DEFAULT NULL;
+
+
+
+CREATE TABLE llx_expensereport (
+  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  ref        		varchar(50) NOT NULL,
+  entity 			integer DEFAULT 1 NOT NULL,		-- multi company id
+  ref_number_int 	integer DEFAULT NULL,
+  ref_ext 			integer,
+  total_ht 			double(24,8) DEFAULT 0,
+  total_tva 		double(24,8) DEFAULT 0,
+  localtax1			double(24,8) DEFAULT 0,				-- amount total localtax1
+  localtax2			double(24,8) DEFAULT 0,				-- amount total localtax2	
+  total_ttc 		double(24,8) DEFAULT 0,
+  date_debut 		date NOT NULL,
+  date_fin 			date NOT NULL,
+  date_create 		datetime NOT NULL,
+  date_valid 		datetime,
+  date_approve		datetime,
+  date_refuse 		datetime,
+  date_cancel 		datetime,
+  date_paiement 	datetime,
+  tms 		 		timestamp,
+  fk_user_author 	integer NOT NULL,
+  fk_user_modif 	integer DEFAULT NULL,
+  fk_user_valid 	integer DEFAULT NULL,
+  fk_user_validator integer DEFAULT NULL,
+  fk_user_approve   integer DEFAULT NULL,
+  fk_user_refuse 	integer DEFAULT NULL,
+  fk_user_cancel 	integer DEFAULT NULL,
+  fk_user_paid 		integer DEFAULT NULL,
+  fk_c_expensereport_statuts integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
+  fk_c_paiement 	integer DEFAULT NULL,
+  note_public		text,
+  note_private 		text,
+  detail_refuse 	varchar(255) DEFAULT NULL,
+  detail_cancel 	varchar(255) DEFAULT NULL,
+  integration_compta integer DEFAULT NULL,		-- not used
+  fk_bank_account 	integer DEFAULT NULL,
+  model_pdf 		varchar(50) DEFAULT NULL
+) ENGINE=innodb;
+
+
+CREATE TABLE llx_expensereport_det
+(
+   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   fk_expensereport integer NOT NULL,
+   fk_c_type_fees integer NOT NULL,
+   fk_projet integer NOT NULL,
+   fk_c_tva integer NOT NULL,
+   comments text NOT NULL,
+   product_type integer DEFAULT -1,
+   qty real NOT NULL,
+   value_unit real NOT NULL,
+   remise_percent real,
+   tva_tx						double(6,3),						    -- Vat rat
+   localtax1_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax1 rate
+   localtax1_type			 	varchar(10)	  	 NULL, 				 	-- localtax1 type
+   localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate
+   localtax2_type			 	varchar(10)	  	 NULL, 				 	-- localtax2 type
+   total_ht double(24,8) DEFAULT 0 NOT NULL,
+   total_tva double(24,8) DEFAULT 0 NOT NULL,
+   total_localtax1				double(24,8)  	DEFAULT 0,		-- Total LocalTax1 for total quantity of line
+   total_localtax2				double(24,8)	DEFAULT 0,		-- total LocalTax2 for total quantity of line
+   total_ttc double(24,8) DEFAULT 0 NOT NULL,
+   date date NOT NULL,
+   info_bits					integer DEFAULT 0,				-- TVA NPR ou non
+   special_code					integer DEFAULT 0,			    -- code pour les lignes speciales
+   rang							integer DEFAULT 0,				-- position of line
+   import_key					varchar(14)
+) ENGINE=innodb;
+
+
+ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
+
+
 ALTER TABLE llx_societe ADD COLUMN (
 	fk_incoterms integer,
 	location_incoterms varchar(255)
@@ -149,9 +245,6 @@ CREATE TABLE IF NOT EXISTS llx_c_incoterms (
   PRIMARY KEY (rowid)
 ) ENGINE=InnoDB;
 
---
--- Content of llx_c_incoterms table
---
 
 INSERT INTO llx_c_incoterms (rowid, code, libelle, active) VALUES
 (1, 'EXW', 'Ex Works, au départ non chargé, non dédouané sortie d''usine (uniquement adapté aux flux domestiques, nationaux)', 1),

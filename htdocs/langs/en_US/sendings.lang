@@ -23,7 +23,7 @@ QtyOrdered=Qty ordered
 QtyShipped=Qty shipped
 QtyToShip=Qty to ship
 QtyReceived=Qty received
-KeepToShip=Keep to ship
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Other shipments for this order
 DateSending=Date sending order
 DateSendingShort=Date sending order
@@ -62,8 +62,12 @@ ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is do
 RelatedShippings=Related shipments
 ShipmentLine=Shipment line
 CarrierList=List of transporters
-SendingRunning=Product from customer order already sent
-SuppliersReceiptRunning=Product from supplier order already received
+SendingRunning=Product from ordered customer orders
+SuppliersReceiptRunning=Product from ordered supplier orders
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Catch by customer

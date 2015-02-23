@@ -154,6 +154,8 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("orders");
 		$outputlangs->load("deliveries");
 
+		$nblignes = count($object->lines);
+
 		if ($conf->commande->dir_output)
 		{
             $object->fetch_thirdparty();
@@ -194,8 +196,6 @@ class pdf_einstein extends ModelePDFCommandes
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
-				$nblignes = count($object->lines);
 
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
@@ -351,6 +351,7 @@ class pdf_einstein extends ModelePDFCommandes
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc);
+						$pageposafter=$pdf->getPage();
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
@@ -534,11 +535,6 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->Output($file,'F');
 
 				// Add pdfgeneration hook
-				if (! is_object($hookmanager))
-				{
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-					$hookmanager=new HookManager($this->db);
-				}
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
@@ -820,7 +816,7 @@ class pdf_einstein extends ModelePDFCommandes
 				//{
 					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
 					{
-						if (in_array((string) $localtax_type, array('1','3','5','7'))) continue;
+						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
 							if ($tvakey!=0)    // On affiche pas taux 0
@@ -851,7 +847,7 @@ class pdf_einstein extends ModelePDFCommandes
 				//{
 					foreach( $this->localtax2 as $localtax_type => $localtax_rate )
 					{
-						if (in_array((string) $localtax_type, array('1','3','5','7'))) continue;
+						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
 							if ($tvakey!=0)    // On affiche pas taux 0

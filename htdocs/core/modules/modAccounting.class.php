@@ -129,7 +129,7 @@ class modAccounting extends DolibarrModules
 		$this->const[9] = array(
 				"ACCOUNTING_EXPORT_MODELCSV",
 				"chaine",
-				"0"
+				"1"
 		);
 		$this->const[10] = array(
 				"ACCOUNTING_LENGTH_GACCOUNT",

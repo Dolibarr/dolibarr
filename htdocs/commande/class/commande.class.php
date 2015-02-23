@@ -7,7 +7,7 @@
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,6 +115,7 @@ class Commande extends CommonOrder
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
 
+
     /**
      *	Constructor
      *
@@ -166,7 +167,6 @@ class Commande extends CommonOrder
             }
 
             $obj = new $classname();
-            $numref = "";
             $numref = $obj->getNextValue($soc,$this);
 
             if ($numref != "")
@@ -1089,19 +1089,19 @@ class Commande extends CommonOrder
      *	Add an order line into database (linked to product/service or not)
      *
      *	@param      string			$desc            	Description of line
-     *	@param      double			$pu_ht    	        Unit price (without tax)
-     *	@param      double			$qty             	Quantite
-     *	@param      double			$txtva           	Taux de tva force, sinon -1
-     *	@param      double			$txlocaltax1		Local tax 1 rate
-     *	@param      double			$txlocaltax2		Local tax 2 rate
+     *	@param      float			$pu_ht    	        Unit price (without tax)
+     *	@param      float			$qty             	Quantite
+     *	@param      float			$txtva           	Taux de tva force, sinon -1
+     *	@param      float			$txlocaltax1		Local tax 1 rate
+     *	@param      float			$txlocaltax2		Local tax 2 rate
      *	@param      int				$fk_product      	Id du produit/service predefini
-     *	@param      double			$remise_percent  	Pourcentage de remise de la ligne
+     *	@param      float			$remise_percent  	Pourcentage de remise de la ligne
      *	@param      int				$info_bits			Bits de type de lignes
      *	@param      int				$fk_remise_except	Id remise
      *	@param      string			$price_base_type	HT or TTC
-     *	@param      double			$pu_ttc    		    Prix unitaire TTC
-     *	@param      timestamp		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     *	@param      timestamp		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      float			$pu_ttc    		    Prix unitaire TTC
+     *	@param      int		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      int		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      *	@param      int				$type				Type of line (0=product, 1=service)
      *	@param      int				$rang             	Position of line
      *	@param		int				$special_code		Special code (also used by externals modules!)
@@ -1295,16 +1295,16 @@ class Commande extends CommonOrder
      *	$this->client must be loaded
      *
      *	@param		int				$idproduct			Product Id
-     *	@param		double			$qty				Quantity
-     *	@param		double			$remise_percent		Product discount relative
-     * 	@param    	timestamp		$date_start         Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     * 	@param    	timestamp		$date_end           End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param		float			$qty				Quantity
+     *	@param		float			$remise_percent		Product discount relative
+     * 	@param    	int		$date_start         Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     * 	@param    	int		$date_end           End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      * 	@return    	void
      *
      *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
      *			insere dans tableau $this->products
      */
-    function add_product($idproduct, $qty, $remise_percent=0, $date_start='', $date_end='')
+    function add_product($idproduct, $qty, $remise_percent=0.0, $date_start='', $date_end='')
     {
         global $conf, $mysoc;
 
@@ -1710,7 +1710,6 @@ class Commande extends CommonOrder
      */
     function loadExpeditions($filtre_statut=-1)
     {
-        $num=0;
         $this->expeditions = array();
 
         $sql = 'SELECT cd.rowid, cd.fk_product,';
@@ -1979,7 +1978,7 @@ class Commande extends CommonOrder
      *	Set the order date
      *
      *	@param      User		$user       Object user making change
-     *	@param      timestamp	$date		Date
+     *	@param      int	$date		Date
      *	@return     int         			<0 if KO, >0 if OK
      */
     function set_date($user, $date)
@@ -2013,7 +2012,7 @@ class Commande extends CommonOrder
      *	Set the planned delivery date
      *
      *	@param      User			$user        		Objet utilisateur qui modifie
-     *	@param      timestamp		$date_livraison     Date de livraison
+     *	@param      int		$date_livraison     Date de livraison
      *	@return     int         						<0 si ko, >0 si ok
      */
     function set_date_livraison($user, $date_livraison)
@@ -2342,16 +2341,16 @@ class Commande extends CommonOrder
      *
      *  @param    	int				$rowid            	Id of line to update
      *  @param    	string			$desc             	Description de la ligne
-     *  @param    	double			$pu               	Prix unitaire
-     *  @param    	double			$qty              	Quantity
-     *  @param    	double			$remise_percent   	Pourcentage de remise de la ligne
-     *  @param    	double			$txtva           	Taux TVA
-     * 	@param		double			$txlocaltax1		Local tax 1 rate
-     *  @param		double			$txlocaltax2		Local tax 2 rate
+     *  @param    	float			$pu               	Prix unitaire
+     *  @param    	float			$qty              	Quantity
+     *  @param    	float			$remise_percent   	Pourcentage de remise de la ligne
+     *  @param    	float			$txtva           	Taux TVA
+     * 	@param		float			$txlocaltax1		Local tax 1 rate
+     *  @param		float			$txlocaltax2		Local tax 2 rate
      *  @param    	string			$price_base_type	HT or TTC
      *  @param    	int				$info_bits        	Miscellaneous informations on line
-     *  @param    	timestamp		$date_start        	Start date of the line
-     *  @param    	timestamp		$date_end          	End date of the line
+     *  @param    	int		$date_start        	Start date of the line
+     *  @param    	int		$date_end          	End date of the line
      * 	@param		int				$type				Type of line (0=product, 1=service)
      * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
      * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
@@ -2362,7 +2361,7 @@ class Commande extends CommonOrder
 	 *  @param		array			$array_option		extrafields array
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)
     {
         global $conf, $mysoc;
 
@@ -2596,6 +2595,8 @@ class Commande extends CommonOrder
      */
     function update_extrafields($user)
     {
+        global $hookmanager, $conf;
+
     	$action='create';
 
     	// Actions on extra fields (by external module or standard code)
@@ -2744,15 +2745,12 @@ class Commande extends CommonOrder
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param		User	$user   Object user
-     *	@return     int     		<0 if KO, >0 if OK
+     *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
-        global $conf, $user;
+        global $conf, $user, $langs;
 
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
         $clause = " WHERE";
 
         $sql = "SELECT c.rowid, c.date_creation as datec, c.date_livraison as delivery_date, c.fk_statut";
@@ -2771,14 +2769,26 @@ class Commande extends CommonOrder
         $resql=$this->db->query($sql);
         if ($resql)
         {
+	        $now=dol_now();
+
+	        $response = new WorkboardResponse();
+	        $response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
+	        $response->label=$langs->trans("OrdersToProcess");
+	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
+	        $response->img=img_object($langs->trans("Orders"),"order");
+
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
+	            $response->nbtodo++;
 
 				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
-                if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->client->warning_delay)) $this->nbtodolate++;
+
+	            if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->client->warning_delay)) {
+		            $response->nbtodolate++;
+	            }
             }
-            return 1;
+
+            return $response;
         }
         else
         {
@@ -3197,7 +3207,7 @@ class Commande extends CommonOrder
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs,$hookmanager;
+		global $conf,$langs;
 
 		$langs->load("orders");
 

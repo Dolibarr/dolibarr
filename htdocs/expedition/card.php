@@ -99,7 +99,7 @@ if (($action == 'create') || ($action == 'add'))
 		{
 			$langs->load("errors");
 			setEventMessage($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
-			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$id);
+			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$origin_id);
 			exit;
 		}
 	}
@@ -153,45 +153,59 @@ if (empty($reshook))
 		$object->fk_incoterms 			= GETPOST('incoterm_id', 'int');
 		$object->location_incoterms 	= GETPOST('location_incoterms', 'alpha');
 
+	    $batch_line = array();
+
 	    $num=count($objectsrc->lines);
 	    $totalqty=0;
 	    for ($i = 0; $i < $num; $i++)
 	    {
-	        $qty = "qtyl".$i;
-			$j=0;
+			$idl="idl".$i;
+
 			$sub_qty=array();
 			$subtotalqty=0;
-			$idl="idl".$i;
+
+			$j=0;
 			$batch="batchl".$i."_0";
-			if (isset($_POST[$batch])) {
+	    	$qty = "qtyl".$i;
+
+			if (isset($_POST[$batch]))
+			{
 				//shipment line with batch-enable product
 				$qty .= '_'.$j;
-				while (isset($_POST[$batch])) {
+				while (isset($_POST[$batch]))
+				{
+					// save line of detail into sub_qty
 					$sub_qty[$j]['q']=GETPOST($qty,'int');
 					$sub_qty[$j]['id_batch']=GETPOST($batch,'int');
+
 					$subtotalqty+=$sub_qty[$j]['q'];
+
 					$j++;
 					$batch="batchl".$i."_".$j;
 					$qty = "qtyl".$i.'_'.$j;
-
 				}
-				$batch_line[$i]['detail']=$sub_qty;
+
+				$batch_line[$i]['detail']=$sub_qty;		// array of details
 				$batch_line[$i]['qty']=$subtotalqty;
 				$batch_line[$i]['ix_l']=GETPOST($idl,'int');
+
 				$totalqty+=$subtotalqty;
-			} else {
-				//Standard product
+			}
+			else
+			{
+				//shipment line for product with no batch management
 				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 			}
 	    }
 
-	    if ($totalqty > 0)
+	    if ($totalqty > 0)		// There is at least one thing to ship
 	    {
 	        //var_dump($_POST);exit;
 	        for ($i = 0; $i < $num; $i++)
 	        {
 	            $qty = "qtyl".$i;
-				if (! isset($batch_line[$i])) {
+				if (! isset($batch_line[$i]))
+				{	// not batch mode
 					if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 					{
 						$ent = "entl".$i;
@@ -206,8 +220,11 @@ if (empty($reshook))
 							$error++;
 						}
 					}
-				} else {
-					if ($batch_line[$i]['qty']>0) {
+				}
+				else
+				{	// batch mode
+					if ($batch_line[$i]['qty']>0)
+					{
 						$ret=$object->addline_batch($batch_line[$i]);
 						if ($ret < 0)
 						{
@@ -220,7 +237,7 @@ if (empty($reshook))
 
 	        if (! $error)
 	        {
-	            $ret=$object->create($user);
+	            $ret=$object->create($user);		// This create shipment (like Odoo picking) and line of shipments. Stock movement will when validating shipment.
 	            if ($ret <= 0)
 	            {
 	                $mesg='<div class="error">'.$object->error.'</div>';
@@ -466,7 +483,6 @@ if ($action == 'create')
         $classname = ucfirst($origin);
 
         $object = new $classname($db);
-
         if ($object->fetch($origin_id))	// This include the fetch_lines
         {
             //var_dump($object);
@@ -750,7 +766,7 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-                if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() and is_object($product->stock_warehouse[$warehouse_id])))
+                if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() && is_object($product->stock_warehouse[$warehouse_id])))
 				{
 	                // Quantity to send
 	                print '<td align="center">';
@@ -856,7 +872,7 @@ if ($action == 'create')
             print '<br>';
         }
         else
-        {
+		{
             dol_print_error($db);
         }
     }

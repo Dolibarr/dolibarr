@@ -42,7 +42,7 @@ class modContrat extends DolibarrModules
 	function __construct($db)
 	{
 		global $conf;
-		
+
 		$this->db = $db;
 		$this->numero = 54;
 
@@ -160,9 +160,9 @@ class modContrat extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'contrat as co,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'contratdet as cod';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cod.fk_product = p.rowid)';	
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cod.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE co.fk_soc = s.rowid and co.rowid = cod.fk_contrat';
-		$this->export_sql_end[$r] .=' AND co.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND co.entity IN ('.getEntity('contract',1).')';
 	}
 
 

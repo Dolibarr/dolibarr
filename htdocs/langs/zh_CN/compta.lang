@@ -29,6 +29,7 @@ ReportTurnover=营业额
 PaymentsNotLinkedToInvoice=付款不链接到任何发票，所以无法与任何第三方关联
 PaymentsNotLinkedToUser=付款不链接到任何用户
 Profit=利润
+AccountingResult=Accounting result
 Balance=平衡
 Debit=借方
 Credit=贷方

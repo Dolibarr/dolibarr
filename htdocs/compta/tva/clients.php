@@ -35,6 +35,7 @@ $langs->load("bills");
 $langs->load("compta");
 $langs->load("companies");
 $langs->load("products");
+$langs->load("other");
 
 // Date range
 $year=GETPOST("year");

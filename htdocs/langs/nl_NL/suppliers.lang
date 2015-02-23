@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Leveranciers
 Supplier=Leverancier
-AddSupplier=Voeg een leverancier toe
+AddSupplier=Create a supplier
 SupplierRemoved=Leverancier verwijderd
 SuppliersInvoice=Leveranciersfactuur
 NewSupplier=Nieuwe leverancier
@@ -42,3 +42,5 @@ NoneOrBatchFileNeverRan=Geen of bundel (batch) <b>%s</b> niet recentelijk gedraa
 SentToSuppliers=Stuur naar leveranciers
 ListOfSupplierOrders=List of supplier orders
 MenuOrdersSupplierToBill=Supplier orders to invoice
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list

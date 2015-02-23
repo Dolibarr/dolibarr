@@ -242,16 +242,19 @@ if ($action == 'writebookkeeping') {
 
 $companystatic = new Fournisseur($db);
 
-// export csv
+// Export
 if ($action == 'export_csv')
 {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	$purchase_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=journal_achats.csv');
 
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) 	// Modèle Export Cegid Expert
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 	// Model Cegid Expert Export
 	{
+		$sep = ";";
+		
 		foreach ( $tabfac as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
@@ -263,7 +266,7 @@ if ($action == 'export_csv')
 
 				if ($mt) {
 					print $date . $sep;
-					print $conf->global->ACCOUNTING_PURCHASE_JOURNAL . $sep;
+					print $purchase_journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'C' : 'D') . $sep;
@@ -275,11 +278,10 @@ if ($action == 'export_csv')
 			}
 
 			// VAT
-			// var_dump($tabtva);
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
 					print $date . $sep;
-					print $conf->global->ACCOUNTING_PURCHASE_JOURNAL . $sep;
+					print $purchase_journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'C' : 'D') . $sep;
@@ -289,20 +291,20 @@ if ($action == 'export_csv')
 					print "\n";
 				}
 			}
-			print $date . $sep;
-			print $conf->global->ACCOUNTING_PURCHASE_JOURNAL . $sep;
-			print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
 
 			foreach ( $tabttc[$key] as $k => $mt ) {
+				print $date . $sep;
+				print $purchase_journal . $sep;
+				print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
 				print length_accounta(html_entity_decode($k)) . $sep;
 				print ($mt < 0 ? 'D' : 'C') . $sep;
 				print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
 				print utf8_decode($companystatic->name) . $sep;
 				print $val["ref"];
+				print "\n";
 			}
-			print "\n";
 		}
-	} else 	// Modèle Export Classique
+	} else 	// Model Classic Export
 	{
 		foreach ( $tabfac as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), 'day');
@@ -326,7 +328,6 @@ if ($action == 'export_csv')
 				}
 			}
 			// VAT
-			// var_dump($tabtva);
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
 					print '"' . $date . '"' . $sep;
@@ -340,9 +341,9 @@ if ($action == 'export_csv')
 			}
 
 			// Third party
-			print '"' . $date . '"' . $sep;
-			print '"' . $val["ref"] . '"' . $sep;
 			foreach ( $tabttc[$key] as $k => $mt ) {
+				print '"' . $date . '"' . $sep;
+				print '"' . $val["ref"] . '"' . $sep;
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 				print '"' . utf8_decode($companystatic->name) . '"' . $sep;
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
@@ -370,7 +371,7 @@ if ($action == 'export_csv')
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
 
-	print '<input type="button" class="button" style="float: right;" value="Export CSV" onclick="launch_export();" />';
+	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 
 	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 
@@ -433,7 +434,6 @@ if ($action == 'export_csv')
 			}
 		}
 		// VAT
-		// var_dump($tabtva);
 		foreach ( $tabtva[$key] as $k => $mt ) {
 			if ($mt) {
 				print "<tr " . $bc[$var] . " >";
@@ -448,13 +448,11 @@ if ($action == 'export_csv')
 		print "<tr " . $bc[$var] . ">";
 
 		// Third party
-		print "<td>" . $date . "</td>";
-		print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-
 		foreach ( $tabttc[$key] as $k => $mt ) {
+			print "<td>" . $date . "</td>";
+			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
-
 			print "<td>" . length_accounta($k);
 			print "</td><td>" . $langs->trans("ThirdParty");
 			print ' (' . $companystatic->getNomUrl(0, 'supplier', 16) . ')';

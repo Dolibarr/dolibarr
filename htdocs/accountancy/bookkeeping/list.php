@@ -75,7 +75,7 @@ if ($action == 'delbookkeeping') {
 			setEventMessage($object->errors, 'errors');
 		}
 	}
-} // export csv
+} // Export
 else if ($action == 'export_csv') {
 	
 	header('Content-Type: text/csv');
@@ -160,7 +160,7 @@ else {
 		print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="export_csv">';
-		print '<input type="submit" class="button" style="float: right;" value="Export CSV" />';
+		print '<input type="submit" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 		print '</form>';
 		
 		print '<table class="noborder" width="100%">';

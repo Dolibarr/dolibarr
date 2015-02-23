@@ -36,6 +36,13 @@ class AdherentType extends CommonObject
     public $element = 'adherent_type';
 
     var $id;
+
+    /**
+     * @var int
+     * @deprecated Use rowid
+     */
+    public $ref;
+
     var $libelle;
     var $statut;
     var $cotisation;  // Soumis a la cotisation

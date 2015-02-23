@@ -8,6 +8,7 @@ FinancialAccount=Rekening
 FinancialAccounts=Rekeningen
 BankAccount=Bankrekening
 BankAccounts=Bankrekeningen
+ShowAccount=Show Account
 AccountRef=Financiële rekening referentie
 AccountLabel=Financiële rekening label
 CashAccount=Kasrekening

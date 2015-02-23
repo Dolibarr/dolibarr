@@ -42,3 +42,5 @@ NoneOrBatchFileNeverRan=Không có hoặc hàng <b>loạt% s</b> không chạy g
 SentToSuppliers=Gửi đến nhà cung cấp
 ListOfSupplierOrders=Danh sách các đơn đặt hàng nhà cung cấp
 MenuOrdersSupplierToBill=Đơn đặt hàng nhà cung cấp cho hóa đơn
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list

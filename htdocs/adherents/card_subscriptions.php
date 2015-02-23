@@ -674,13 +674,13 @@ if ($rowid)
          {
          $include=array($object->user_id,$user->id);
          }*/
-        print $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'userid','');
+        $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'userid','');
     }
     else
     {
         if ($object->user_id)
         {
-            print $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
+            $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
         }
         else print $langs->trans("NoDolibarrAccess");
     }

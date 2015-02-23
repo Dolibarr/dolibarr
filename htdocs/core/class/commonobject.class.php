@@ -175,8 +175,8 @@ abstract class CommonObject
     /**
      *  Add a link between element $this->element and a contact
      *
-     *  @param	int		$fk_socpeople       Id of contact to link
-     *  @param 	int		$type_contact 		Type of contact (code or id). For example: SALESREPFOLL
+     *  @param	int		$fk_socpeople       Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
+     *  @param 	int		$type_contact 		Type of contact (code or id). Must be if or code found into table llx_c_type_contact. For example: SALESREPFOLL
      *  @param  int		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
      *  @param  int		$notrigger			Disable all triggers
      *  @return int                 		<0 if KO, >0 if OK
@@ -833,7 +833,7 @@ abstract class CommonObject
      *	Update a specific field into database
      *
      *	@param	string	$field		Field to update
-     *	@param	mixte	$value		New value
+     *	@param	mixed	$value		New value
      *	@param	string	$table		To force other table element or element line (should not be used)
      *	@param	int		$id			To force other object id (should not be used)
      *	@param	string	$format		Data format ('text', 'date'). 'text' is used if not defined
@@ -1656,6 +1656,10 @@ abstract class CommonObject
         	$fieldtva='tva';
         	$fieldup='pu_ht';
         }
+        if ($this->element == 'expensereport')
+        {
+        	$fieldup='value_unit';
+        }
 
         $sql = 'SELECT rowid, qty, '.$fieldup.' as up, remise_percent, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
         $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
@@ -1770,6 +1774,7 @@ abstract class CommonObject
             if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldht='total';
             if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
             if ($this->element == 'propal')                                                $fieldttc='total';
+            if ($this->element == 'expensereport')                                         $fieldtva='total_tva';
 
             if (empty($nodatabaseupdate))
             {
@@ -1787,7 +1792,8 @@ abstract class CommonObject
                 if (! $resql)
                 {
                     $error++;
-                    $this->error=$this->db->error();
+                    $this->error=$this->db->lasterror();
+                    $this->error[]=$this->db->lasterror();
                 }
             }
 
@@ -2115,7 +2121,7 @@ abstract class CommonObject
      *
      *      @param	int		$status			Status to set
      *      @param	int		$elementId		Id of element to force (use this->id by default)
-     *      @param	string	$elementType	Type of element to force (use ->this->element by default)
+     *      @param	string	$elementType	Type of element to force (use this->table_element by default)
      *      @return int						<0 if KO, >0 if OK
      */
     function setStatut($status,$elementId='',$elementType='')
@@ -2129,9 +2135,12 @@ abstract class CommonObject
 
         $fieldstatus="fk_statut";
         if ($elementTable == 'user') $fieldstatus="statut";
-
+        if ($elementTable == 'expensereport') $fieldstatus="fk_c_expensereport_statuts";
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
         $sql.= " SET ".$fieldstatus." = ".$status;
+        // If status = 1 = validated, update also fk_user_valid
+        if ($status == 1 && $elementTable == 'expensereport') $sql.=", fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid=".$elementId;
 
         dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
@@ -2521,7 +2530,7 @@ abstract class CommonObject
      *  TODO Move this into html.class.php
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *
-     *  @return	void
+     *  @return	int
      */
     function showLinkedObjectBlock()
     {
@@ -2559,12 +2568,13 @@ abstract class CommonObject
         			$tplpath = 'comm/'.$element;
         			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
         		}
-        		else if ($objecttype == 'shipping')         {
+        		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
         			$tplpath = 'expedition';
         			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'delivery')         {
         			$tplpath = 'livraison';
+        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'invoice_supplier') {
         			$tplpath = 'fourn/facture';

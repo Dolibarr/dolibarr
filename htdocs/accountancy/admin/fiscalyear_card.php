@@ -229,7 +229,7 @@ else if ($id)
             // Ref
             print "<tr>";
             print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
-            print $object->ref;
+            print $object->rowid;
             print '</td></tr>';
 
             // Label
@@ -283,7 +283,7 @@ else if ($id)
 
             // Ref
             print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td width="50%">';
-            print $object->ref;
+            print $object->rowid;
 			print '</td><td width="25%">';
 			print $linkback;
             print '</td></tr>';

@@ -299,7 +299,7 @@ if ($action == 'create')
     // Handler
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuHandler').'</td>';
     print '<td>';
-    print $formadmin->select_menu_families($menu_handler,'menu_handler',$dirmenu);
+    $formadmin->select_menu_families($menu_handler,'menu_handler',$dirmenu);
     print '</td>';
     print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 

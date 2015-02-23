@@ -506,7 +506,7 @@ if ($resql)
 }
 else
 {
-	print dol_print_error($db);
+	dol_print_error($db);
 }
 
 llxFooter();

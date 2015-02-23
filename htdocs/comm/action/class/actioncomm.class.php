@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,27 +38,67 @@ class ActionComm extends CommonObject
     public $table_rowid = 'id';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    /**
+     * Id of the event
+     * @var int
+     */
     var $id;
+
+    /**
+     * Id of the event. Use $id as possible
+     * @var int
+     */
+    public $ref;
 
     var $type_id;		// Id into parent table llx_c_actioncomm (used only if option to use type is set)
     var $type_code;		// Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
     var $type;			// Label into parent table llx_c_actioncomm (used only if option to use type is set)
     var $type_color;	// Color into parent table llx_c_actioncomm (used only if option to use type is set)
     var $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
+
     var $label;
+
+    /**
+     * @var string
+     * @deprecated Use $label
+     */
+    public $libelle;
 
     var $datec;			// Date creation record (datec)
     var $datem;			// Date modification record (tms)
-    var $author;		// Object user that create action 	//deprecated
-    var $usermod;		// Object user that modified action	// deprecated
+
+    /**
+     * Object user that create action
+     * @var User
+     * @deprecated
+     */
+    var $author;
+
+    /**
+     * Object user that modified action
+     * @var User
+     * @deprecated
+     */
+    var $usermod;
     var $authorid;		// Id user that create action
     var $usermodid;		// Id user that modified action
 
     var $datep;			// Date action start (datep)
     var $datef;			// Date action end (datep2)
-    var $durationp = -1;      // -1=Unkown duration			// deprecated
+
+    /**
+     * @var int -1=Unkown duration
+     * @deprecated
+     */
+    var $durationp = -1;
     var $fulldayevent = 0;    // 1=Event on full day
-    var $punctual = 1;        // Milestone					// deprecated. Milestone is already event with end date = start date
+
+    /**
+     * Milestone
+     * @var int
+     * @deprecated Milestone is already event with end date = start date
+     */
+    var $punctual = 1;
     var $percentage;    // Percentage
     var $location;      // Location
 
@@ -68,14 +109,41 @@ class ActionComm extends CommonObject
 	var $userassigned = array();	// Array of user ids
     var $userownerid;		// Id of user owner
     var $userdoneid;	// Id of user done
-    var $usertodo;		// Object user of owner				// deprecated
-    var $userdone;	 	// Object user that did action		// deprecated
+
+    /**
+     * Object user of owner
+     * @var User
+     * @deprecated
+     */
+    var $usertodo;
+
+    /**
+     * Object user that did action
+     * @var User
+     * @deprecated
+     */
+    var $userdone;
 
     var $socid;
     var $contactid;
-    var $societe;		// Company linked to action (optional)
-    var $contact;		// Contact linked to action (optional)
-    var $fk_project;	// Id of project (optional)
+
+    /**
+     * Company linked to action (optional)
+     * @var Societe|null
+     */
+    var $societe;
+
+    /**
+     * Contact linked to action (optional)
+     * @var Contact|null
+     */
+    var $contact;
+
+    /**
+     * Id of project (optional)
+     * @var int
+     */
+    var $fk_project;
 
     // Properties for links to other objects
     var $fk_element;    // Id of record
@@ -95,8 +163,6 @@ class ActionComm extends CommonObject
      */
     function __construct($db)
     {
-    	global $langs;
-
         $this->db = $db;
 
         $this->societe = new stdClass();	// deprecated
@@ -246,7 +312,6 @@ class ActionComm extends CommonObject
 				{
 			        if (! is_array($val))	// For backward compatibility when val=id
 			        {
-			        	$tmpid=$val;
 			        	$val=array('id'=>$val);
 			        }
 					
@@ -344,12 +409,13 @@ class ActionComm extends CommonObject
         $sql.= " c.id as type_id, c.code as type_code, c.libelle,";
         $sql.= " s.nom as socname,";
         $sql.= " u.firstname, u.lastname as lastname";
-        $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
-        $sql.= " WHERE a.fk_action=c.id";
-        if ($ref) $sql.= " AND a.id=".$ref;		// No field ref, we use id
-        else $sql.= " AND a.id=".$id;
+        $sql.= " WHERE ";
+        if ($ref) $sql.= " a.id=".$ref;		// No field ref, we use id
+        else $sql.= " a.id=".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -428,9 +494,7 @@ class ActionComm extends CommonObject
      */
     function fetch_userassigned()
     {
-        global $langs;
-
-        $sql.="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
+        $sql ="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
 		$sql.=" FROM ".MAIN_DB_PREFIX."actioncomm_resources";
 		$sql.=" WHERE element_type = 'user' AND fk_actioncomm = ".$this->id;
 		$resql2=$this->db->query($sql);
@@ -712,18 +776,14 @@ class ActionComm extends CommonObject
     }
 
     /**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
-     *      @param	User	$user   Objet user
-     *      @return int     		<0 if KO, >0 if OK
+     * @param	User	$user   Objet user
+     * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
-        global $conf, $user;
-
-        $now=dol_now();
-
-        $this->nbtodo=$this->nbtodolate=0;
+        global $conf, $user, $langs;
 
         $sql = "SELECT a.id, a.datep as dp";
         $sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
@@ -739,13 +799,25 @@ class ActionComm extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+	        $now = dol_now();
+
+	        $response = new WorkboardResponse();
+	        $response->warning_delay = $conf->actions->warning_delay/60/60/24;
+	        $response->label = $langs->trans("ActionsToDo");
+	        $response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
+	        $response->img = img_object($langs->trans("Actions"),"action");
+
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
-                if (isset($obj->dp) && $this->db->jdate($obj->dp) < ($now - $conf->actions->warning_delay)) $this->nbtodolate++;
+	            $response->nbtodo++;
+
+                if (isset($obj->dp) && $this->db->jdate($obj->dp) < ($now - $conf->actions->warning_delay)) {
+	                $response->nbtodolate++;
+                }
             }
-            return 1;
+
+            return $response;
         }
         else
         {
@@ -892,7 +964,7 @@ class ActionComm extends CommonObject
      * 		@param	int		$overwritepicto		1=Overwrite picto
      *		@return	string						Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto='')
+    function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0)
     {
         global $conf,$langs;
 
@@ -1155,7 +1227,7 @@ class ActionComm extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf,$user;
+        global $user;
 
         $now=dol_now();
 
@@ -1172,6 +1244,7 @@ class ActionComm extends CommonObject
         $this->datef=$now;
         $this->author=$user;
         $this->usermod=$user;
+        $this->usertodo=$user;
         $this->fulldayevent=0;
         $this->punctual=0;
         $this->percentage=0;

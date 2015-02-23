@@ -192,8 +192,8 @@ if (count($tasksarray)>0)
 
 	// Show Gant diagram from $taskarray using JSGantt
 
-	$dateformat=$langs->trans("FormatDateShort");				// Used by include ganttchart.inc.php later
 	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.inc.php later
+	$datehourformat=$langs->trans("FormatDateShortJQuery").' '.$langs->trans("FormatHourShortJQuery");	// Used by include ganttchart.inc.php later
 	$array_contacts=array();
 	$tasks=array();
 	$project_dependencies=array();
@@ -241,6 +241,7 @@ if (count($tasksarray)>0)
 			}
 		}
 		if ($s) $tasks[$taskcursor]['task_resources']='<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'&withproject=1" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
+		/* For JSGanttImproved if ($s) $tasks[$taskcursor]['task_resources']=join(',',$idofusers); */
 		//print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
 		$taskcursor++;
 	}

@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Source and targets bank accounts must be differen
 ErrorBadThirdPartyName=Bad value for third party name
 ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
-ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Customer code required
 ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=Customer code already used
@@ -158,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

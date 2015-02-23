@@ -14,8 +14,8 @@ URLToLaunchCronJobs=URL برای بررسی و راه اندازی کارهای 
 OrToLaunchASpecificJob=و یا برای بررسی و راه اندازی یک کار خاص
 KeyForCronAccess=کلید امنیتی برای URL برای راه اندازی کارهای cron
 FileToLaunchCronJobs=خط فرمان برای راه اندازی کارهای cron
-CronExplainHowToRunUnix=در محیط یونیکس شما باید crontab کاربر برای اجرای خط فرمان در هر دقیقه استفاده
-CronExplainHowToRunWin=در مایکروسافت، محصول محیط ویندوز شما می توانید ابزار کار برنامه ریزی شده برای اجرای خط فرمان در هر دقیقه استفاده
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=شغل برنامه ریزی
 CronListActive=List of active/scheduled jobs

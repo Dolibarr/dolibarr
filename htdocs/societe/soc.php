@@ -249,30 +249,34 @@ if (empty($reshook))
             }
 
             // Check for duplicate or mandatory prof id
-        	for ($i = 1; $i < 5; $i++)
+            // Only for companies
+	        if (!($object->particulier || $private))
         	{
-        	    $slabel="idprof".$i;
-    			$_POST[$slabel]=trim($_POST[$slabel]);
-        	    $vallabel=$_POST[$slabel];
-        		if ($vallabel && $object->id_prof_verifiable($i))
-				{
-					if($object->id_prof_exists($i,$vallabel,$object->id))
+	        	for ($i = 1; $i < 5; $i++)
+	        	{
+	        	    $slabel="idprof".$i;
+	    			$_POST[$slabel]=trim($_POST[$slabel]);
+	        	    $vallabel=$_POST[$slabel];
+	        		if ($vallabel && $object->id_prof_verifiable($i))
+					{
+						if($object->id_prof_exists($i,$vallabel,$object->id))
+						{
+							$langs->load("errors");
+	                		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel);
+	                		$action = (($action=='add'||$action=='create')?'create':'edit');
+						}
+					}
+	
+					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+	
+					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
 					{
 						$langs->load("errors");
-                		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel);
-                		$action = (($action=='add'||$action=='create')?'create':'edit');
+						$error++;
+						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
+						$action = (($action=='add'||$action=='create')?'create':'edit');
 					}
-				}
-
-				$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-
-				if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
-				{
-					$langs->load("errors");
-					$error++;
-					$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-					$action = (($action=='add'||$action=='create')?'create':'edit');
-				}
+	        	}
         	}
         }
 

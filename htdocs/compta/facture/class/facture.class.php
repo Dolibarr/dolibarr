@@ -9,7 +9,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012-2014 Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2012-2014 Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2015 Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
@@ -61,6 +61,11 @@ class Facture extends CommonInvoice
 	//! Id client
 	var $socid;
 	//! Objet societe client (to load with fetch_client method)
+
+	/**
+	 * Customer
+	 * @var Societe
+	 */
 	var $client;
 	var $author;
 	var $fk_user_author;
@@ -84,7 +89,10 @@ class Facture extends CommonInvoice
 	var $total_tva=0;
 	var $total_ttc=0;
 	var $revenuestamp;
-	var $note;			// deprecated
+	/**
+	 * @deprecated
+	 */
+	var $note;
 	var $note_private;
 	var $note_public;
 	//! 0=draft,
@@ -113,13 +121,13 @@ class Facture extends CommonInvoice
     var $fk_account;                // Id of bank account
 	var $fk_bank;					// Field to store bank id to use when payment mode is withdraw
 	var $modelpdf;
-	var $products=array();	// deprecated
+	/**
+	 * @deprecated
+	 */
+	var $products=array();
 	var $lines=array();
 	var $line;
 	var $extraparams=array();
-	//! Pour board
-	var $nbtodo;
-	var $nbtodolate;
 	var $specimen;
 
 	var $fac_rec;
@@ -2024,8 +2032,8 @@ class Facture extends CommonInvoice
 	 *  	@param		double		$txlocaltax2		Local tax 2 rate
 	 *		@param    	int			$fk_product      	Id of predefined product/service
 	 * 		@param    	double		$remise_percent  	Percent of discount on line
-	 * 		@param    	timestamp	$date_start      	Date start of service
-	 * 		@param    	timestamp	$date_end        	Date end of service
+	 * 		@param    	int	$date_start      	Date start of service
+	 * 		@param    	int	$date_end        	Date end of service
 	 * 		@param    	int			$ventil          	Code of dispatching into accountancy
 	 * 		@param    	int			$info_bits			Bits de type de lignes
 	 *		@param    	int			$fk_remise_except	Id discount used
@@ -2206,8 +2214,8 @@ class Facture extends CommonInvoice
 	 *  @param     	double		$pu              	Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
 	 *  @param     	double		$qty             	Quantity
 	 *  @param     	double		$remise_percent  	Pourcentage de remise de la ligne
-	 *  @param     	date		$date_start      	Date de debut de validite du service
-	 *  @param     	date		$date_end        	Date de fin de validite du service
+	 *  @param     	int		$date_start      	Date de debut de validite du service
+	 *  @param     	int		$date_end        	Date de fin de validite du service
 	 *  @param     	double		$txtva          	VAT Rate
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate
 	 *  @param		double		$txlocaltax2		Local tax 2 rate
@@ -3080,7 +3088,7 @@ class Facture extends CommonInvoice
 	/**
 	 *  Supprime une demande de prelevement
 	 *
-	 *  @param  Use		$user       utilisateur creant la demande
+	 *  @param  User		$user       utilisateur creant la demande
 	 *  @param  int		$did        id de la demande a supprimer
 	 *  @return	int					<0 if OK, >0 if KO
 	 */
@@ -3106,15 +3114,12 @@ class Facture extends CommonInvoice
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param      User	$user    	Object user
-	 *	@return     int                 <0 if KO, >0 if OK
+	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	function load_board($user)
 	{
-		global $conf, $user;
+		global $conf, $user, $langs;
 
-		$now=dol_now();
-
-		$this->nbtodo=$this->nbtodolate=0;
 		$clause = " WHERE";
 
 		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin";
@@ -3133,12 +3138,25 @@ class Facture extends CommonInvoice
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$langs->load("bills");
+			$now=dol_now();
+
+			$response = new WorkboardResponse();
+			$response->warning_delay=$conf->facture->client->warning_delay/60/60/24;
+			$response->label=$langs->trans("CustomerBillsUnpaid");
+			$response->url=DOL_URL_ROOT.'/compta/facture/impayees.php';
+			$response->img=img_object($langs->trans("Bills"),"bill");
+
 			while ($obj=$this->db->fetch_object($resql))
 			{
-				$this->nbtodo++;
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->facture->client->warning_delay)) $this->nbtodolate++;
+				$response->nbtodo++;
+
+				if ($this->db->jdate($obj->datefin) < ($now - $conf->facture->client->warning_delay)) {
+					$response->nbtodolate++;
+				}
 			}
-			return 1;
+
+			return $response;
 		}
 		else
 		{

@@ -1318,13 +1318,13 @@ class Form
             {
            		// Enhance with select2
            		$nodatarole='';
-		        /*if ($conf->use_javascript_ajax)
+		        if ($conf->use_javascript_ajax)
 		        {
-					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+		            include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 		            $comboenhancement = ajax_combobox($htmlname);
-                    $out.= $comboenhancement;
-                    $nodatarole=($comboenhancement?' data-role="none"':'');
-	            }*/
+		            $out.=$comboenhancement;
+		            $nodatarole=($comboenhancement?' data-role="none"':'');
+		        }
 
                 $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
                 if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected="selected"':'').'>&nbsp;</option>'."\n";
@@ -2925,7 +2925,7 @@ class Form
      *    @param    string	$htmlname			HTML field name
      *    @param    int		$maxlength      	Maximum length for labels
      *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
-     *    @return	void
+     *    @return	string
      *    @see select_categories
      */
     function select_all_categories($type, $selected='', $htmlname="parent", $maxlength=64, $excludeafterid=0)
@@ -3131,7 +3131,7 @@ class Form
             if (! empty($more)) {
             	$formconfirm.= '<div>'.$more.'</div>';
             }
-            $formconfirm.= img_help('','').' '.$question;
+            $formconfirm.= ($question ? img_help('','').' '.$question : '');
             $formconfirm.= '</div>'."\n";
 
             $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
@@ -3704,7 +3704,7 @@ class Form
      *
      *  @param	string	$selected    preselected currency code
      *  @param  string	$htmlname    name of HTML select list
-     * 	@return	void
+     * 	@return	string
      */
     function selectCurrency($selected='',$htmlname='currency_id')
     {
@@ -3803,7 +3803,7 @@ class Form
 	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
      *                  					Sinon la TVA proposee par defaut=0. Fin de regle.
      *  @param	bool	$options_only		Return options only (for ajax treatment)
-     *  @return	void
+     *  @return	string
      */
     function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false)
     {
@@ -3891,7 +3891,7 @@ class Form
         	if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
         	{
         		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS)) $defaulttx = $this->cache_vatrates[$num-1]['txtva'];
-        		else $defaulttx=$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+        		else $defaulttx=($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS == 'none' ? '' : $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS);
         	}
 
         	// Disabled if seller is not subject to VAT
@@ -4591,7 +4591,7 @@ class Form
      *    	Return HTML code to output a photo
      *
      *    	@param	string		$modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-     *     	@param  Object		$object			Object containing data to retrieve file name
+     *     	@param  object		$object			Object containing data to retrieve file name
      * 		@param	int			$width			Width of photo
      * 	  	@return string    					HTML code to output photo
      */
