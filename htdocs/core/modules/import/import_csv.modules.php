@@ -414,21 +414,34 @@ class ImportCsv extends ModeleImports
 						    if (! empty($objimport->array_import_convertvalue[0][$val]))
 						    {
                                 //print 'Must convert '.$newval.' with rule '.join(',',$objimport->array_import_convertvalue[0][$val]).'. ';
-                                if ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeid' || $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromref')
+                                if ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeid'
+                                	|| $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromref'
+                                	|| $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel'
+                                	)
                                 {
                                     if (! is_numeric($newval) && $newval != '')    // If value into input import file is not a numeric, we apply the function defined into descriptor
                                     {
                                         $file=$objimport->array_import_convertvalue[0][$val]['classfile'];
                                         $class=$objimport->array_import_convertvalue[0][$val]['class'];
                                         $method=$objimport->array_import_convertvalue[0][$val]['method'];
-                                        if (empty($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval]))
+                                        if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] != '')
                                         {
+                                        	$newval=$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval];
+                                        }
+                                        else
+										{
                                             dol_include_once($file);
                                             $classinstance=new $class($this->db);
+                                            // Try the fetch from code or ref
                                             call_user_func_array(array($classinstance, $method),array('', $newval));
+                                            // If not found, try the fetch from label
+                                            if (! ($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel')
+                                            {
+												call_user_func_array(array($classinstance, $method),array('', '', $newval));
+                                            }
                                             $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval]=$classinstance->id;
                                             //print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
-                                            if (! empty($classinstance->id))
+                                            if ($classinstance->id != '')	// id may be 0, it is a found value
                                             {
                                                 $newval=$classinstance->id;
                                             }
@@ -441,10 +454,6 @@ class ImportCsv extends ModeleImports
                                                 $errorforthistable++;
                                                 $error++;
                                             }
-                                        }
-                                        else
-                                        {
-                                            $newval=$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval];
                                         }
                                     }
 
