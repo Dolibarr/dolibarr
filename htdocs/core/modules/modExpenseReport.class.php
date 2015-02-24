@@ -336,13 +336,12 @@ class modExpenseReport extends DolibarrModules
 	{
 		global $conf;
 
+		// Remove permissions and default values
 		$this->remove($options);
 
-		$result=$this->_load_tables('/deplacement/sql/');
-
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'teclib' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('teclib','deplacement',".$conf->entity.")"
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND entity = ".$conf->entity,
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','deplacement',".$conf->entity.")"
 		);
 
 		return $this->_init($sql,$options);
@@ -362,6 +361,4 @@ class modExpenseReport extends DolibarrModules
 
 		return $this->_remove($sql,$options);
 	}
-
 }
-
