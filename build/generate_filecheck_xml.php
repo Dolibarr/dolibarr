@@ -35,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Main
 parse_str($argv[1]);
-#$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
+//$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
 $outputfile=dirname(__FILE__).'/../htdocs/install/filelist.xml';
 $fp = fopen($outputfile,'w');
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
