@@ -2253,18 +2253,20 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Lie un produit associe au produit/service
+	 *  Link a product/service to a parent product/service
 	 *
-	 *  @param      int	$id_pere    Id du produit auquel sera lie le produit a lier
-	 *  @param      int	$id_fils    Id du produit a lier
+	 *  @param      int	$id_pere    Id of parent product/service
+	 *  @param      int	$id_fils    Id of child product/service
 	 *  @param		int	$qty		Quantity
+	 *  @param		int	$incdec		1=Increase/decrease stock of child when parent stock increase/decrease
 	 *  @return     int        		< 0 if KO, > 0 if OK
 	 */
-	function add_sousproduit($id_pere, $id_fils,$qty)
+	function add_sousproduit($id_pere, $id_fils, $qty, $incdec=1)
 	{
 		// Clean parameters
 		if (! is_numeric($id_pere)) $id_pere=0;
 		if (! is_numeric($id_fils)) $id_fils=0;
+		if (! is_numeric($incdec)) $incdec=0;
 
 		$result=$this->del_sousproduit($id_pere, $id_fils);
 		if ($result < 0) return $result;
@@ -2290,8 +2292,8 @@ class Product extends CommonObject
 				}
 				else
 				{
-					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
-					$sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$qty.')';
+					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty,incdec)';
+					$sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$qty.', '.$incdec.')';
 					if (! $this->db->query($sql))
 					{
 						dol_print_error($this->db);
@@ -2309,25 +2311,25 @@ class Product extends CommonObject
 	/**
 	 *  Modify composed product
 	 *
-	 *  @param      int	$id_pere    Id of master product
-	 *  @param      int	$id_fils    Id of linked product
+	 *  @param      int	$id_pere    Id of parent product/service
+	 *  @param      int	$id_fils    Id of child product/service
 	 *  @param		int	$qty		Quantity
-	 *  @param		int	$incdec		increase/descrease stock or not
-	 * 	 *  @return     int        		< 0 if KO, > 0 if OK
+	 *  @param		int	$incdec		1=Increase/decrease stock of child when parent stock increase/decrease
+	 * 	@return     int        		< 0 if KO, > 0 if OK
 	 */
-	function update_sousproduit($id_pere, $id_fils,$qty, $incdec=1)
+	function update_sousproduit($id_pere, $id_fils, $qty, $incdec=1)
 	{
 		// Clean parameters
 		if (! is_numeric($id_pere)) $id_pere=0;
 		if (! is_numeric($id_fils)) $id_fils=0;
 		if (! is_numeric($incdec)) $incdec=1;
 		if (! is_numeric($qty)) $qty=1;
-		
+
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_association SET ';
 		$sql.= 'qty='.$qty;
 		$sql.= ',incdec='.$incdec;
 		$sql .= ' WHERE fk_product_pere='.$id_pere.' AND fk_product_fils='.$id_fils;
-		
+
 		if (!$this->db->query($sql))
 		{
 			dol_print_error($this->db);
@@ -2337,7 +2339,7 @@ class Product extends CommonObject
 		{
 			return 1;
 		}
-		
+
 	}
 
 	/**
@@ -2375,7 +2377,7 @@ class Product extends CommonObject
 	 */
 	function is_sousproduit($fk_parent, $fk_child)
 	{
-		$sql = "SELECT fk_product_pere, qty";
+		$sql = "SELECT fk_product_pere, qty, incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere  = '".$fk_parent."'";
 		$sql.= " AND fk_product_fils = '".$fk_child."'";
@@ -2389,6 +2391,7 @@ class Product extends CommonObject
 			{
 				$obj = $this->db->fetch_object($result);
 				$this->is_sousproduit_qty = $obj->qty;
+				$this->is_sousproduit_incdec = $obj->incdec;
 
 				return true;
 			}
@@ -2668,7 +2671,7 @@ class Product extends CommonObject
 				$type=(! empty($desc_pere[2]) ? $desc_pere[2] :'');
 				$label=(! empty($desc_pere[3]) ? $desc_pere[3] :'');
 				$incdec=!empty($desc_pere[4]) ? $desc_pere[4] : 0;
-				
+
 				if ($multiply < 1) $multiply=1;
 
 				//print "XXX We add id=".$id." - label=".$label." - nb=".$nb." - multiply=".$multiply." fullpath=".$compl_path.$label."\n";

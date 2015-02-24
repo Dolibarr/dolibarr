@@ -251,6 +251,6 @@ PriceExpressionEditorHelp4=In product/service price only: <b>#supplier_min_price
 PriceMode=Price mode
 PriceNumeric=Number
 DefaultPrice=Default price
-ComposedProductDecreaseStock=Decrease Stock for sub-product
+ComposedProductDIncDecStock=Increase/Decrease stock on parent change
 ComposedProduct=Sub-product
 MinSupplierPrice=Minimun supplier price
