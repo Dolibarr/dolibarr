@@ -19,7 +19,8 @@ class ExpenseReport extends CommonObject
 	var $total_ht;
 	var $total_tva;
 	var $total_ttc;
-	var $note;
+	var $note_public;
+	var $note_private;
 	var $date_debut;
 	var $date_fin;
 
@@ -134,7 +135,8 @@ class ExpenseReport extends CommonObject
 		$sql.= ",fk_user_validator";
 		$sql.= ",fk_c_expensereport_statuts";
 		$sql.= ",fk_c_paiement";
-		$sql.= ",note";
+		$sql.= ",note_public";
+		$sql.= ",note_private";
 		$sql.= ") VALUES(";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$this->total_ht;
@@ -147,7 +149,8 @@ class ExpenseReport extends CommonObject
 		$sql.= ", ".($this->fk_user_validator > 0 ? $this->fk_user_validator:"null");
 		$sql.= ", ".($this->fk_c_expensereport_statuts > 1 ? $this->fk_c_expensereport_statuts:0);
 		$sql.= ", ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement:"null");
-		$sql.= ", ".($this->note?"'".$this->db->escape($this->note)."'":"null");
+		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
@@ -230,7 +233,8 @@ class ExpenseReport extends CommonObject
 		$sql.= " , fk_user_paid = ".($this->fk_user_paid > 0 ? $this->fk_user_paid:"null");
 		$sql.= " , fk_c_expensereport_statuts = ".($this->fk_c_expensereport_statuts >= 0 ? $this->fk_c_expensereport_statuts:'0');
 		$sql.= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement:"null");
-		$sql.= " , note = ".(!empty($this->note)?"'".$this->db->escape($this->note)."'":"''");
+		$sql.= " , note_public = ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"''");
+		$sql.= " , note_private = ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"''");
 		$sql.= " , detail_refuse = ".(!empty($this->detail_refuse)?"'".$this->db->escape($this->detail_refuse)."'":"''");
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -258,7 +262,7 @@ class ExpenseReport extends CommonObject
 	{
 		global $conf,$db;
 
-		$sql = "SELECT d.rowid, d.ref, d.note,"; 												// DEFAULT
+		$sql = "SELECT d.rowid, d.ref, d.note_public, d.note_private,";									// DEFAULT
 		$sql.= " d.detail_refuse, d.detail_cancel, d.fk_user_refuse, d.fk_user_cancel,"; 				// ACTIONS
 		$sql.= " d.date_refuse, d.date_cancel,";														// ACTIONS
 		$sql.= " d.total_ht, d.total_ttc, d.total_tva,"; 												// TOTAUX (int)
@@ -283,7 +287,8 @@ class ExpenseReport extends CommonObject
 				$this->total_ht 	= $obj->total_ht;
 				$this->total_tva 	= $obj->total_tva;
 				$this->total_ttc 	= $obj->total_ttc;
-				$this->note 		= $obj->note;
+				$this->note_public	= $obj->note_public;
+				$this->note_private	= $obj->note_private;
 				$this->detail_refuse = $obj->detail_refuse;
 				$this->detail_cancel = $obj->detail_cancel;
 

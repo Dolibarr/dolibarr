@@ -24,16 +24,17 @@
 
 $res=0;
 require '../main.inc.php';
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formmail.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formprojet.class.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/expensereport.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/price.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/expensereport/modules_expensereport.php");
-require_once(DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php");
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/modules/expensereport/modules_expensereport.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 
 $langs->load("trips");
 
@@ -111,7 +112,8 @@ if ($action == 'add' && $user->rights->expensereport->creer)
 	$object->fk_c_expensereport_statuts = 1;
 	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
 	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
-	$object->note						= GETPOST('note');
+	$object->note_public				= GETPOST('note_public');
+	$object->note_private				= GETPOST('note_private');
 
 	if ($object->periode_existe($user,$object->date_debut,$object->date_fin))
 	{
@@ -155,7 +157,8 @@ if ($action == 'update' && $user->rights->expensereport->creer)
 	}
 
 	$object->fk_c_paiement = GETPOST('fk_c_paiement','int');
-	$object->note = GETPOST('note');
+	$object->note_public = GETPOST('note_public');
+	$object->note_private = GETPOST('note_private');
 
 	$result = $object->update($user);
 	if ($result > 0)
@@ -1132,21 +1135,36 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
+	
+	// Public note
 	print '<tr>';
-	print '<td>'.$langs->trans("Note").'</td>';
-	print '<td>';
-	print '<textarea name="note" class="flat" rows="'.ROWS_3.'" cols="100">'.GETPOST('note').'</textarea>';
-	print '</td>';
-	print '</tr>';
+	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+	print '<td valign="top" colspan="2">';
+
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+	print $doleditor->Create(1);
+	print '</td></tr>';
+
+	// Private note
+	if (empty($user->societe_id)) {
+		print '<tr>';
+		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td valign="top" colspan="2">';
+
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+		print $doleditor->Create(1);
+		print '</td></tr>';
+	}
+	
 	print '<tbody>';
 	print '</table>';
 
 	dol_fiche_end();
 
-	print '<center>';
+	print '<div align="center">';
 	print '<input type="submit" value="'.$langs->trans("AddTrip").'" name="bouton" class="button" />';
-	print ' &nbsp; &nbsp; <input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
-	print '</center>';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
+	print '</div>';
 
 	print '</form>';
 }
@@ -1195,8 +1213,6 @@ else
 				{
 					print '<input type="hidden" name="action" value="update">';
 				}
-
-
 
 				print '<table class="border" style="width:100%;">';
 
@@ -1270,19 +1286,34 @@ else
 					print '</td></tr>';
 
 				}
+				
+				// Public note
 				print '<tr>';
-				print '<td>'.$langs->trans("Note").'</td>';
-				print '<td>';
-				print '<textarea name="note" class="flat" rows="'.ROWS_2.'" cols="70">'.$object->note.'</textarea>';
-				print '</td>';
-				print '</tr>';
+				print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+				print '<td valign="top" colspan="2">';
+
+				$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+				print $doleditor->Create(1);
+				print '</td></tr>';
+				
+				// Private note
+				if (empty($user->societe_id)) {
+					print '<tr>';
+					print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+					print '<td valign="top" colspan="2">';
+
+					$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+					print $doleditor->Create(1);
+					print '</td></tr>';
+				}
+				
 				print '</table>';
 
 				dol_fiche_end();
 
 				print '<div class="center">';
-				print '<input type="submit" value="'.$langs->trans("Modify").'" name="bouton" class="button"> &nbsp; &nbsp; ';
-				print '<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
+				print '<input type="submit" value="'.$langs->trans("Modify").'" name="bouton" class="button">';
+				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
 				print '</div>';
 
 				print '</form>';
@@ -1369,8 +1400,12 @@ else
 				print '<td>'.$object->getLibStatut(4).'</td>';
 				print '</tr>';
 				print '<tr>';
-				print '<td>'.$langs->trans("Note").'</td>';
-				print '<td>'.$object->note.'</td>';
+				print '<td>'.$langs->trans("NotePublic").'</td>';
+				print '<td>'.$object->note_public.'</td>';
+				print '</tr>';
+				print '<tr>';
+				print '<td>'.$langs->trans("NotePrivate").'</td>';
+				print '<td>'.$object->note_private.'</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountHT").'</td>';
