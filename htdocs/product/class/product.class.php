@@ -2307,6 +2307,40 @@ class Product extends CommonObject
 	}
 
 	/**
+	 *  Modify composed product
+	 *
+	 *  @param      int	$id_pere    Id of master product
+	 *  @param      int	$id_fils    Id of linked product
+	 *  @param		int	$qty		Quantity
+	 *  @param		int	$incdec		increase/descrease stock or not
+	 * 	 *  @return     int        		< 0 if KO, > 0 if OK
+	 */
+	function update_sousproduit($id_pere, $id_fils,$qty, $incdec=1)
+	{
+		// Clean parameters
+		if (! is_numeric($id_pere)) $id_pere=0;
+		if (! is_numeric($id_fils)) $id_fils=0;
+		if (! is_numeric($incdec)) $incdec=1;
+		if (! is_numeric($qty)) $qty=1;
+		
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_association SET ';
+		$sql.= 'qty='.$qty;
+		$sql.= ',incdec='.$incdec;
+		$sql .= ' WHERE fk_product_pere='.$id_pere.' AND fk_product_fils='.$id_fils;
+		
+		if (!$this->db->query($sql))
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+		else
+		{
+			return 1;
+		}
+		
+	}
+
+	/**
 	 *  Retire le lien entre un sousproduit et un produit/service
 	 *
 	 *  @param      int	$fk_parent		Id du produit auquel ne sera plus lie le produit lie
@@ -2633,6 +2667,8 @@ class Product extends CommonObject
 				$nb=(! empty($desc_pere[1]) ? $desc_pere[1] :'');
 				$type=(! empty($desc_pere[2]) ? $desc_pere[2] :'');
 				$label=(! empty($desc_pere[3]) ? $desc_pere[3] :'');
+				$incdec=!empty($desc_pere[4]) ? $desc_pere[4] : 0;
+				
 				if ($multiply < 1) $multiply=1;
 
 				//print "XXX We add id=".$id." - label=".$label." - nb=".$nb." - multiply=".$multiply." fullpath=".$compl_path.$label."\n";
@@ -2649,7 +2685,8 @@ class Product extends CommonObject
 					'fullpath'=>$compl_path.$label,			// Label
 					'type'=>$type,				// Nb of units that compose parent product
 					'desiredstock'=>$this->desiredstock,
-					'level'=>$level
+					'level'=>$level,
+					'incdec'=>$incdec
 				);
 
 				// Recursive call if there is childs to child
@@ -2798,7 +2835,7 @@ class Product extends CommonObject
 	 */
 	function getChildsArbo($id)
 	{
-		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type";
+		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type, pa.incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= ", ".MAIN_DB_PREFIX."product_association as pa";
 		$sql.= " WHERE p.rowid = pa.fk_product_fils";
@@ -2812,7 +2849,13 @@ class Product extends CommonObject
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
-				$prods[$rec['rowid']]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type'],3=>$this->db->escape($rec['label']));
+				$prods[$rec['rowid']]= array(
+					0=>$rec['id'],
+					1=>$rec['qty'],
+					2=>$rec['fk_product_type'],
+					3=>$this->db->escape($rec['label']),
+					4=>$rec['incdec']
+				);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				$listofchilds=$this->getChildsArbo($rec['id']);
