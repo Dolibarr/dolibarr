@@ -204,10 +204,10 @@ else {
 	my $NUM_SCRIPT;
 	my $cpt=0;
 	while (! $found) {
-		$cpt=-1;
-		printf(" %2d - %-14s  (%s)\n",$cpt,"XML Filecheck","Done in all case");
 		$cpt=0;
-		printf(" %2d - %-14s  (%s)\n",$cpt,"ALL (1..9)","Need ".join(",",values %REQUIREMENTTARGET));
+		printf(" %2d - %-14s  (%s)\n",$cpt,"ALL (1..10)","Need ".join(",",values %REQUIREMENTTARGET));
+		$cpt++;
+		printf(" %2d - %-14s\n",$cpt,"Generate check file");
 		foreach my $target (@LISTETARGET) {
 			$cpt++;
 			printf(" %2d - %-14s  (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
@@ -218,7 +218,7 @@ else {
 		printf(" %2d - %-14s  (%s)\n",$cpt,"SF (publish)","Need ".join(",",values %REQUIREMENTPUBLISH));
 	
 		# Ask which target to build
-		print "Choose one package number or several separated with space (0 - ".$cpt."): ";
+		print "Choose one target number or several separated with space (0 - ".$cpt."): ";
 		$NUM_SCRIPT=<STDIN>; 
 		chomp($NUM_SCRIPT);
 		if ($NUM_SCRIPT !~ /^[0-9\s]+$/)
@@ -235,30 +235,30 @@ else {
 	if ($NUM_SCRIPT eq "98") {
 		$CHOOSEDPUBLISH{"ASSO"}=1;
 	}
-	else 
-	{
-		if ($NUM_SCRIPT eq "99") {
-			$CHOOSEDPUBLISH{"SF"}=1;
+	elsif ($NUM_SCRIPT eq "99") {
+		$CHOOSEDPUBLISH{"SF"}=1;
+	}
+	elsif ($NUM_SCRIPT eq "0") {
+		$CHOOSEDTARGET{"-CHKSUM"}=1;
+		foreach my $key (@LISTETARGET) {
+			if ($key ne 'SNAPSHOT' && $key ne 'ASSO' && $key ne 'SF') { $CHOOSEDTARGET{$key}=1; }
 		}
-		else {
-			if ($NUM_SCRIPT eq "0") {
-				foreach my $key (@LISTETARGET) {
-					if ($key ne 'SNAPSHOT' && $key ne 'ASSO' && $key ne 'SF') { $CHOOSEDTARGET{$key}=1; }
-				}
-			}
-			else {
-				foreach my $num (split(/\s+/,$NUM_SCRIPT)) {
-					$CHOOSEDTARGET{$LISTETARGET[$num-1]}=1;
-				}
-			}
+	}
+	elsif ($NUM_SCRIPT eq "1") {
+		$CHOOSEDTARGET{"-CHKSUM"}=1
+	}
+	else {
+		foreach my $num (split(/\s+/,$NUM_SCRIPT)) {
+			$CHOOSEDTARGET{$LISTETARGET[$num-2]}=1;
 		}
 	}
 }
 
+
 # Test if requirement is ok
 #--------------------------
 $atleastonerpm=0;
-foreach my $target (keys %CHOOSEDTARGET) {
+foreach my $target (sort keys %CHOOSEDTARGET) {
 	if ($target =~ /RPM/i)
 	{
 		if ($atleastonerpm && ($DESTI eq "$SOURCE/build"))
@@ -300,20 +300,32 @@ foreach my $target (keys %CHOOSEDTARGET) {
 
 print "\n";
 
+# Build xml check file
+#-----------------------
+if ($CHOOSEDTARGET{'-CHKSUM'})
+{
+   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filecheck_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
+  	$ret=`php $SOURCE/build/generate_filecheck_xml.php release=$MAJOR.$MINOR.$BUILD`;
+  	print $ret."\n";
+}
+
+
+#print join(',',sort keys %CHOOSEDTARGET)."\n";
+
 # Check if there is at least one target to build
 #----------------------------------------------
 $nboftargetok=0;
 $nboftargetneedbuildroot=0;
 $nbofpublishneedtag=0;
-foreach my $target (keys %CHOOSEDTARGET) {
+foreach my $target (sort keys %CHOOSEDTARGET) {
 	if ($CHOOSEDTARGET{$target} < 0) { next; }
-	if ($target ne 'EXE' && $target ne 'EXEDOLIWAMP') 
+	if ($target ne 'EXE' && $target ne 'EXEDOLIWAMP' && $target ne '-CHKSUM') 
 	{
 		$nboftargetneedbuildroot++;
 	}
 	$nboftargetok++;
 }
-foreach my $target (keys %CHOOSEDPUBLISH) {
+foreach my $target (sort keys %CHOOSEDPUBLISH) {
 	if ($CHOOSEDPUBLISH{$target} < 0) { next; }
 	if ($target eq 'ASSO') { $nbofpublishneedtag++; }
 	if ($target eq 'SF') { $nbofpublishneedtag++; }
@@ -321,12 +333,6 @@ foreach my $target (keys %CHOOSEDPUBLISH) {
 }
 
 if ($nboftargetok) {
-
-	# Build xml check file
-	#-----------------------
-    print 'Create xml check file with md5 checksum'."\n";
-    $FULLDIRECTORY = cwd();
-    $ret=`php $FULLDIRECTORY/generate_filecheck_xml.php release=$MAJOR.$MINOR.$BUILD`;
 
 	# Update CVS if required
 	#-----------------------
@@ -483,10 +489,11 @@ if ($nboftargetok) {
 
 	# Build package for each target
 	#------------------------------
-	foreach my $target (keys %CHOOSEDTARGET) 
+	foreach my $target (sort keys %CHOOSEDTARGET) 
 	{
 		if ($CHOOSEDTARGET{$target} < 0) { next; }
-	
+		if ($target eq '-CHKSUM') { next; }
+		
 		print "\nBuild package for target $target\n";
 
 		if ($target eq 'SNAPSHOT') 
@@ -988,7 +995,7 @@ if ($nboftargetok) {
 
 	# Publish package for each target
 	#--------------------------------
-	foreach my $target (keys %CHOOSEDPUBLISH) 
+	foreach my $target (sort keys %CHOOSEDPUBLISH) 
 	{
 		if ($CHOOSEDPUBLISH{$target} < 0) { next; }
 	
@@ -1071,7 +1078,8 @@ if ($nboftargetok) {
 }
 
 print "\n----- Summary -----\n";
-foreach my $target (keys %CHOOSEDTARGET) {
+foreach my $target (sort keys %CHOOSEDTARGET) {
+	if ($target eq '-CHKSUM') { print "Checksum was generated"; next; }
 	if ($CHOOSEDTARGET{$target} < 0) {
 		print "Package $target not built (bad requirement).\n";
 	} else {
