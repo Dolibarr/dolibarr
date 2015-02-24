@@ -143,10 +143,10 @@ if (empty($reshook))
 	}
 
 	// update outstandng limit
-	if ($action == 'setOutstandingBill')
+	if ($action == 'setoutstanding_limit')
 	{
 		$object->fetch($id);
-		$object->outstanding_limit=GETPOST('OutstandingBill');
+		$object->outstanding_limit=GETPOST('setoutstanding_limit');
 		$result=$object->set_OutstandingBill($user);
 		if ($result < 0) setEventMessage($object->error,'errors');
 	}
@@ -393,9 +393,10 @@ if ($id > 0)
 	{
 		print '<tr>';
 		print '<td>';
-		print $form->editfieldkey("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer);
+		print $form->editfieldkey("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer);
 		print '</td><td colspan="3">';
-		print $form->editfieldval("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer,'amount',($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
+		$limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
+		print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
 		print '</td>';
 		print '</tr>';
 	}
