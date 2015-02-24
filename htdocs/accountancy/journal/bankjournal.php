@@ -103,9 +103,7 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "bank as b";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "bank_account as ba on b.fk_account=ba.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as soc on bu1.url_id=soc.rowid";
-// To isolate the cash of the other accounts
-$sql .= " WHERE ba.courant <> 2";
-$sql .= " AND ba.rowid=".$id_accountancy_journal;
+$sql .= " WHERE ba.rowid=".$id_accountancy_journal;
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND ba.entity = " . $conf->entity;
 }
@@ -218,6 +216,7 @@ if ($result) {
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_url as bkurl ON  bkurl.url_id=paycharg.rowid";
 				$sqlmid .= " WHERE bkurl.fk_bank=" . $obj->rowid;
 
+
 				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
 				$resultmid = $db->query($sqlmid);
 				if ($resultmid)
@@ -237,6 +236,7 @@ if ($result) {
 			{
 				$paymentsalstatic->id = $links[$key]['url_id'];
 				$paymentsalstatic->ref = $links[$key]['url_id'];
+				$paymentsalstatic->label = $links[$key]['label'];
 				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
 				$tabtp[$obj->rowid][$accountancy_account_salary] += $obj->amount;
 			}
@@ -421,6 +421,7 @@ if ($action == 'export_csv')
 		foreach ( $tabpay as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
+
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 
@@ -438,21 +439,44 @@ if ($action == 'export_csv')
 			}
 
 			// Third party
-			foreach ( $tabtp[$key] as $k => $mt ) {
-				if ($mt) {
-					print $date . $sep;
-					print $bank_journal . $sep;
-					if ($val["lib"] == '(SupplierInvoicePayment)') {
-						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
-					} else {
-						print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
+			if (is_array ( $tabtp[$key]))
+			{
+				foreach ( $tabtp[$key] as $k => $mt )
+				{
+					if ($mt)
+					{
+						print $date . $sep;
+						print $bank_journal . $sep;
+						if ($val["lib"] == '(SupplierInvoicePayment)') {
+							print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
+						} else {
+							print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
+						}
+						print length_accounta(html_entity_decode($k)) . $sep;
+						print ($mt < 0 ? 'D' : 'C') . $sep;
+						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
+						print $val["type_payment"] . $sep;
+						print $val["ref"] . $sep;
+						print "\n";
 					}
-					print length_accounta(html_entity_decode($k)) . $sep;
-					print ($mt < 0 ? 'D' : 'C') . $sep;
-					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-					print $val["type_payment"] . $sep;
-					print $val["ref"] . $sep;
-					print "\n";
+				}
+			}
+			else
+			{
+				foreach ( $tabbq[$key] as $k => $mt )
+				{
+					if (1)
+					{
+						print $date . $sep;
+						print $bank_journal . $sep;
+						print $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE . $sep;
+						print $sep;
+						print ($mt < 0 ? 'D' : 'C') . $sep;
+						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
+						print $val["type_payment"] . $sep;
+						print $val["ref"] . $sep;
+						print "\n";
+					}
 				}
 			}
 		}
@@ -476,15 +500,35 @@ if ($action == 'export_csv')
 			}
 
 			// Third party
-			foreach ( $tabtp[$key] as $k => $mt ) {
-				if ($mt) {
-					print '"' . $date . '"' . $sep;
-					print '"' . $val["type_payment"] . '"' . $sep;
-					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-					print '"' . $companystatic->name . '"' . $sep;
-					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-					print '"' . ($mt >= 0 ? price($mt) : '') . '"';
-					print "\n";
+			if (is_array ( $tabtp[$key]))
+			{
+				foreach ( $tabtp[$key] as $k => $mt ) 
+				{
+					if ($mt) {
+						print '"' . $date . '"' . $sep;
+						print '"' . $val["type_payment"] . '"' . $sep;
+						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+						print '"' . $companystatic->name . '"' . $sep;
+						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+						print '"' . ($mt >= 0 ? price($mt) : '') . '"';
+						print "\n";
+					}
+				}
+			}
+			else
+			{				
+				foreach ( $tabbq[$key] as $k => $mt )
+				{
+					if (1)
+					{
+						print '"' . $date . '"' . $sep;
+						print '"' . $val["ref"] . '"' . $sep;
+						print '"' . $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE . '"' . $sep;
+						print '"' . $langs->trans("Bank") . '"' . $sep;
+						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+						print '"' . ($mt >= 0 ? price($mt) : '') . '"';
+						print "\n";
+					}
 				}
 			}
 		}
@@ -498,14 +542,54 @@ else
 	llxHeader('', $langs->trans("BankJournal"));
 
 	$namereport = $langs->trans("BankJournal");
-	$namelink = '';
-	$periodlink = '';
-	$exportlink = '';
-	$builddate = time();
-	$description = $langs->trans("DescBankJournal") . '<br>';
+	$description = $langs->trans("DescBankJournal");
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
-	report_header($namereport, $namelink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
 
+	// Report
+	$h=0;
+	$head[$h][0] = $_SERVER["PHP_SELF"].'?id_account='.$id_accountancy_journal;
+	$head[$h][1] = $langs->trans("Report");
+	$head[$h][2] = 'report';
+
+	dol_fiche_head($head, $hselected);
+
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id_account='.$id_accountancy_journal.'">';
+	print '<table width="100%" class="border">';
+
+	// Title
+	print '<tr>';
+	print '<td valign="top" width="110">'.$langs->trans("ReportName").'</td>';
+	print '<td colspan="3">'.$namereport.'</td>';
+	print '</td>';
+	print '</tr>';
+
+	// Period report
+	print '<tr>';
+	print '<td>'.$langs->trans("ReportPeriod").'</td>';
+	if (! $periodlink) print '<td colspan="3">';
+	else print '<td>';
+	if ($period) print $period;
+	if ($periodlink) print '</td><td colspan="2">'.$periodlink;
+	print '</td>';
+	print '</tr>';
+
+	// Description
+	print '<tr>';
+	print '<td valign="top">'.$langs->trans("ReportDescription").'</td>';
+	print '<td colspan="3">'.$description.'</td>';
+	print '</tr>';
+
+	print '<tr>';
+	print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></td>';
+	print '</tr>';
+
+	print '</table>';
+
+	print '</form>';
+
+	print '</div>';
+	// End report
+	
 	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 
 	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writeBookKeeping();" />';
@@ -565,20 +649,36 @@ else
 		}
 
 		// Third party
-		foreach ( $tabtp[$key] as $k => $mt ) {
-			if ($k != 'type') {
+		if (is_array ( $tabtp[$key]))
+		{
+			foreach ( $tabtp[$key] as $k => $mt ) {
+				if ($k != 'type') {
+					print "<tr " . $bc[$var] . ">";
+					print "<td>" . $date . "</td>";
+					print "<td>" . $val["soclib"] . "</td>";
+					print "<td>" . length_accounta($k) . "</td>";
+					print "<td>" . $langs->trans('ThirdParty') . " (" . $val['soclib'] . ")</td>";
+					print "<td>" . $val["type_payment"] . "</td>";
+					print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print "</tr>";
+				}
+			}
+		}
+		else
+		{
+			foreach ( $tabbq[$key] as $k => $mt )
+			{
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
-				print "<td>" . $val["soclib"] . "</td>";
-				print "<td>" . length_accounta($k) . "</td>";
-				print "<td>" . $langs->trans('ThirdParty') . " (" . $val['soclib'] . ")</td>";
-				print "<td>" . $val["type_payment"] . "</td>";
+				print "<td>" . $reflabel . "</td>";
+				print "<td>" . $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE . "</td>";
+				print "<td>" . $langs->trans('ThirdParty') . "</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";
 			}
 		}
-
 		$var = ! $var;
 	}
 
