@@ -344,7 +344,7 @@ class DoliDBSqlite extends DoliDB
      */
     function getVersion()
     {
-		return $this->db->version();
+		return $this->db->version()['versionString'];
     }
 
     /**
@@ -446,7 +446,9 @@ class DoliDBSqlite extends DoliDB
         try {
             //$ret = $this->db->exec($query);
             $ret = $this->db->query($query);        // $ret is a PDO object
-			$ret->queryString = $query;
+			if ($ret) {
+				$ret->queryString = $query;
+			}
         }
         catch(Exception $e)
         {
@@ -1201,6 +1203,12 @@ class DoliDBSqlite extends DoliDB
         return $result;
     }
 
+	/**
+	 * Permet le chargement d'une fonction personnalisee dans le moteur de base de donnees.
+	 * Note: le nom de la fonction personnalisee est prefixee par 'db_'. La fonction doit être
+	 * statique et publique. Le nombre de parametres est determine automatiquement.
+	 * @param string $name Le nom de la fonction a definir dans Sqlite
+	 */
 	private function addCustomFunction($name) {
 		if ($this->db) {
 			$localname = __CLASS__ . '::' . 'db_' . $name;
@@ -1211,13 +1219,24 @@ class DoliDBSqlite extends DoliDB
 				$this->error = "unable to create custom function '$name'";
 			}
 		}
-		return 0;
 	}
 
+	/**
+	 * Cette fonction est l'equivalent de la fonction MONTH de MySql.
+	 * @param string $date
+	 * @return integer
+	 */
 	public static function db_MONTH($date) {
 		return date('n', strtotime($date));
 	}
 
+	/**
+	 * Cette fonction est l'equivelent de la fonction date_format de MySQL.
+	 * @staticvar string $mysql_replacement	Les symboles formatage a remplacer
+	 * @param string $date la date dans un format ISO
+	 * @param string $format la chaine de formatage
+	 * @return string La date formatee.
+	 */
 	public static function db_date_format($date, $format) {
 		static $mysql_replacement;
 		if (! isset($mysql_replacement)) {
@@ -1281,6 +1300,13 @@ class DoliDBSqlite extends DoliDB
 		return date($fmt, strtotime($date));
 	}
 
+	/**
+	 * Equivalent de la fonction MySQL IF
+	 * @param boolean $test Le resultat du test
+	 * @param mixed $true_part Partie a retourner si vrai
+	 * @param mixed $false_part Partie a retourner si faux
+	 * @return mixed Partie selectionnee en fonction du test
+	 */
 	public static function db_IF($test, $true_part, $false_part) {
 		return ( $test ) ? $true_part : $false_part;
 	}
