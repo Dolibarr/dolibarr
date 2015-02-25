@@ -44,6 +44,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
  * @param	string 	$class		Class name
  * @param 	string 	$member		Name of property
  * @return 	mixed				Return value of static property
+ * @deprecated Dolibarr now requires 5.3.0+
  */
 function getStaticMember($class, $member)
 {
