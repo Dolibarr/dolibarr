@@ -583,11 +583,14 @@ class Task extends CommonObject
         }
         if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$filteronprojref."%'";
         if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut = ".$filteronprojstatus;
-        if ($filter_delay) {
-            $range = dol_now() - $conf->projet->tasks->warning_delay;
-
-            $sql .= ' AND '.$this->db->ifsql('t.fk_task_parent = 0', "t.datee < '".$this->db->idate($range)."'", '1=1');
-        }
+		if ($filter_delay) {
+			$range = dol_now() - $conf->projet->tasks->warning_delay;
+			$sql .= ' AND t.progress < 100'; // Finished tasks are not late
+			$sql .= ' AND ' . $this->db->ifsql(
+					't.fk_task_parent = 0',
+					"t.datee < '" . $this->db->idate( $range ) . "'", '1=1'
+				);
+		}
 
         if ($filter_progress !== false) {
             $sql .= ' AND t.progress < '.(int)$filter_progress;
@@ -1453,13 +1456,19 @@ class Task extends CommonObject
 	{
 		global $conf;
 
-		if (!$this->date_end) {
+		// Fucking Dolibarr with its partial objects. Get screwed!
+		$this->fetch( $this->id );
+
+		if (
+			! $this->date_end // Can't be late
+			|| 100 <= $this->progress // Task finished
+		) {
 			return false;
 		}
 
 		$now = dol_now();
 
-		if ($this->date_end < ($now - $conf->projet->tasks->warning_delay)) {
+		if ($this->date_end < ( $now - $conf->projet->tasks->warning_delay )) {
 			return true;
 		}
 
@@ -1492,7 +1501,7 @@ class Task extends CommonObject
 
 		$this->nbtodo=$this->nbtodolate=0;
 
-		$sql = "SELECT t.fk_statut, t.datee";
+		$sql = "SELECT t.rowid, t.fk_statut, t.datee";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t,";
 		$sql.= " ".MAIN_DB_PREFIX."projet as p";
 		$sql.= " WHERE p.rowid = t.fk_projet AND t.entity = ".$conf->entity;
@@ -1504,6 +1513,8 @@ class Task extends CommonObject
 			$num=$this->db->num_rows($resql);
 			while ($obj=$this->db->fetch_object($resql))
 			{
+				$this->id = $obj->rowid;
+
 				$this->nbtodo++;
 
 				$this->date_end = $obj->datee;
