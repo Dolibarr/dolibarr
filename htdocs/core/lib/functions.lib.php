@@ -3195,7 +3195,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 {
 	global $db;
 
-	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local." thirdparty id=".(is_object($thirdparty)?$thirdparty->id:''));
+	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local);
 
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
@@ -3253,30 +3253,6 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 				}
 			}
-
-			if(! isOnlyOneLocalTax(2))
-			{
-				if(! isOnlyOneLocalTax(1))
-				{
-					return array($obj->localtax2_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller),$obj->accountancy_code_sell,$obj->accountancy_code_buy);
-				}
-				else
-				{
-					return array($obj->localtax2_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
-				}
-			}
-			else
-			{
-				if(! isOnlyOneLocalTax(1))
-				{
-					return array($obj->localtax2_type, $obj->localtax2, $obj->localtax1_type,get_localtax($vatrate, 1, $buyer, $seller) ,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
-				}
-				else
-				{
-					return array($obj->localtax2_type, $obj->localtax2, $obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
-				}
-			}
-
 		}
 	}
 
