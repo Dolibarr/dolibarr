@@ -131,7 +131,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('ie',$tmp['browsername']);
         $this->assertEquals('5.0',$tmp['browserversion']);
-	    $this->assertFalse($tmp['phone']);
+	    $this->assertEmpty($tmp['phone']);
 	    $this->assertFalse($tmp['tablet']);
 	    $this->assertEquals('classic', $tmp['layout']);
 
@@ -140,7 +140,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('firefox',$tmp['browsername']);
         $this->assertEquals('0.9.1',$tmp['browserversion']);
-	    $this->assertFalse($tmp['phone']);
+	    $this->assertEmpty($tmp['phone']);
 	    $this->assertFalse($tmp['tablet']);
 	    $this->assertEquals('classic', $tmp['layout']);
 
@@ -148,7 +148,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('opera',$tmp['browsername']);
         $this->assertEquals('6.03',$tmp['browserversion']);
-	    $this->assertFalse($tmp['phone']);
+	    $this->assertEmpty($tmp['phone']);
 	    $this->assertFalse($tmp['tablet']);
 	    $this->assertEquals('classic', $tmp['layout']);
 
@@ -156,7 +156,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('chrome',$tmp['browsername']);
         $this->assertEquals('19.0.1042.0',$tmp['browserversion']);
-	    $this->assertFalse($tmp['phone']);
+	    $this->assertEmpty($tmp['phone']);
 	    $this->assertFalse($tmp['tablet']);
 	    $this->assertEquals('classic', $tmp['layout']);
 
@@ -164,7 +164,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('chrome',$tmp['browsername']);
         $this->assertEquals('17.0.963.56',$tmp['browserversion']);
-	    $this->assertFalse($tmp['phone']);
+	    $this->assertEmpty($tmp['phone']);
 	    $this->assertFalse($tmp['tablet']);
 	    $this->assertEquals('classic', $tmp['layout']);
 
@@ -172,7 +172,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('safari',$tmp['browsername']);
         $this->assertEquals('533.21.1',$tmp['browserversion']);
-	    $this->assertFalse($tmp['phone']);
+	    $this->assertEmpty($tmp['phone']);
 	    $this->assertFalse($tmp['tablet']);
 	    $this->assertEquals('classic', $tmp['layout']);
 
@@ -181,7 +181,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 	    $tmp=getBrowserInfo($user_agent);
 	    $this->assertEquals('ie',$tmp['browsername']);
 	    $this->assertEquals('11.0',$tmp['browserversion']);
-	    $this->assertFalse($tmp['phone']);
+	    $this->assertEmpty($tmp['phone']);
 	    $this->assertFalse($tmp['tablet']);
 	    $this->assertEquals('classic', $tmp['layout']);
 
