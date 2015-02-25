@@ -306,7 +306,7 @@ if (! empty($force_install_message))
                     $class='DoliDB'.ucfirst($type);
                     include_once $dir."/".$file;
 
-                    if ($type == 'sqlite') continue;    // We hide sqlite because support can't be complete unti sqlit does not manage foreign key creation after table creation
+                    //if ($type == 'sqlite') continue;    // We hide sqlite because support can't be complete unti sqlit does not manage foreign key creation after table creation
 
 		            // Version min of database
                     $versionbasemin=explode('.',$class::VERSIONMIN);

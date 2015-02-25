@@ -40,6 +40,12 @@ class DoliDBSqlite extends DoliDB
 	//! Resultset of last query
 	private $_results;
 
+	/**
+	 * Indique que les fonctions personnalisées sont définies
+	 * @var boolean
+	 */
+	private static $customFunctionsDefined = false;
+
     /**
 	 *	Constructor.
 	 *	This create an opened connexion to a database server and eventually to a database
@@ -153,7 +159,7 @@ class DoliDBSqlite extends DoliDB
 
     			// Process case: "CREATE TABLE llx_mytable(rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,code..."
     			if (preg_match('/[\s\t\(]*(\w*)[\s\t]+int.*auto_increment/i',$line,$reg)) {
-    				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i','\\1 \\2 SERIAL PRIMARY KEY',$line);
+    				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i','\\1 \\2 integer PRIMARY KEY AUTOINCREMENT',$line);
                     //$line = "-- ".$line." replaced by --\n".$newline;
                     $line=$newline;
     			}
@@ -242,10 +248,17 @@ class DoliDBSqlite extends DoliDB
     				$line = "-- ".$line." replaced by --\n";
     				$line.= "CREATE ".(preg_match('/UNIQUE/',$reg[2])?'UNIQUE ':'')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
     			}
-            }
+				if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i',$line, $reg)) {
+					// Pour l'instant les contraintes ne sont pas créées
+					dol_syslog(get_class().'::query line emptied');
+					$line = 'SELECT 0;';
 
-            // To have postgresql case sensitive
-            $line=str_replace(' LIKE \'',' ILIKE \'',$line);
+				}
+
+				//if (preg_match('/rowid\s+.*\s+PRIMARY\s+KEY,/i', $line)) {
+					//preg_replace('/(rowid\s+.*\s+PRIMARY\s+KEY\s*,)/i', '/* \\1 */', $line);
+				//}
+            }
 
 			// Delete using criteria on other table must not declare twice the deleted table
 			// DELETE FROM tabletodelete USING tabletodelete, othertable -> DELETE FROM tabletodelete USING othertable
@@ -387,7 +400,53 @@ class DoliDBSqlite extends DoliDB
         $this->error = 0;
 
 		// Convert MySQL syntax to SQLite syntax
-		$query=$this->convertSQLFromMysql($query,$type);
+		if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i',$query, $reg)) {
+			// Ajout d'une clef étrangère à la table
+			// procédure de remplacement de la table pour ajouter la contrainte
+			// Exemple : ALTER TABLE llx_adherent ADD CONSTRAINT adherent_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid)
+			// -> CREATE TABLE ( ... ,CONSTRAINT adherent_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid))
+			$foreignFields = $reg[5];
+			$foreignTable = $reg[4];
+			$localfields = $reg[3];
+			$constraintname=trim($reg[2]);
+			$tablename=trim($reg[1]);
+
+			$res = $this->db->query("SELECT sql FROM sqlite_master WHERE name='" . $tablename . "'");
+			$descTable = $res->fetchColumn();
+			$res->closeCursor();
+
+			// 1- Renommer la table avec un nom temporaire
+			$res = $this->query('ALTER TABLE ' . $tablename . ' RENAME TO tmp_' . $tablename);
+			$res->closeCursor();
+
+			// 2- Recréer la table avec la contrainte ajoutée
+
+			// on bricole la requete pour ajouter la contrainte
+			$descTable = substr($descTable, 0, strlen($descTable) - 1);
+			$descTable .= ", CONSTRAINT " . $constraintname . " FOREIGN KEY (" . $localfields . ") REFERENCES " .$foreignTable . "(" . $foreignFields . ")";
+
+			// fermeture de l'instruction
+			$descTable .= ')';
+
+			// Création proprement dite de la table
+			$res = $this->query($descTable);
+			$res->closeCursor();
+
+			// 3- Transférer les données
+			$res = $this->query('INSERT INTO ' . $tablename . ' SELECT * FROM tmp_' . $tablename);
+			$res->closeCursor();
+
+
+			// 4- Supprimer la table temporaire
+			$res = $this->query('DROP TABLE tmp_' . $tablename);
+			$res->closeCursor();
+
+			// dummy statement
+			$query="SELECT 0";
+
+		} else {
+			$query=$this->convertSQLFromMysql($query,$type);
+		}
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
 	    dol_syslog('sql='.$query, LOG_DEBUG);
@@ -487,7 +546,11 @@ class DoliDBSqlite extends DoliDB
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
-        return $resultset->rowCount();
+		if (preg_match("/^SELECT/i", $resultset->queryString)) {
+			$res = $this->db->query("SELECT count(*) FROM (" . $resultset->queryString . ") q");
+			return $res->fetchColumn();
+		}
+		return $resultset->rowCount();
     }
 
     /**
@@ -529,7 +592,12 @@ class DoliDBSqlite extends DoliDB
 	 */
     function escape($stringtoencode)
     {
-        return $this->db->quote($stringtoencode);
+		$ret = $this->db->quote($stringtoencode);
+		$l = strlen($ret);
+		if ($l >= 2) {
+			return substr($ret, 1, $l -2);
+		}
+		return '';
     }
 
     /**
@@ -1135,5 +1203,6 @@ class DoliDBSqlite extends DoliDB
 
         return $result;
     }
+
 }
 

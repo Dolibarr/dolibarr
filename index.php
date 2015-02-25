@@ -1,0 +1,2 @@
+<?php
+	header('Location: htdocs');
