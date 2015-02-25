@@ -125,8 +125,18 @@ function getEntity($element=false, $shared=false)
 /**
  * Return information about user browser
  *
+ * Returns array with the following format:
+ * array(
+ *  'browsername' => Browser name (firefox|chrome|iceweasel|epiphany|safari|opera|ie|unknown)
+ *  'browserversion' => Browser version. Empty if unknown
+ *  'browseros' => Set with mobile OS (android|blackberry|ios|palm|symbian|webos|maemo|windows|unknown)
+ *  'layout' => (tablet|phone|classic)
+ *  'phone' => empty if not mobile, (android|blackberry|ios|palm|unknown) if mobile
+ *  'tablet' => true/false
+ * )
+ *
  * @param string $user_agent Content of $_SERVER["HTTP_USER_AGENT"] variable
- * @return	array		Array of information ('browsername'=>,'browseros'=>,'browserversion'=>,'layout'=>(classic|phone|tablet))
+ * @return	array Check function documentation
  */
 function getBrowserInfo($user_agent)
 {
