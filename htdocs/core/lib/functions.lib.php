@@ -517,7 +517,7 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
 	$tmp=dol_html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
 	if ($keepb) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
 	else $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
-	return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
+	return htmlentities($tmp,ENT_COMPAT,'UTF-8');
 }
 
 
@@ -2473,8 +2473,8 @@ function dol_print_error($db='',$error='')
 		}
 		$out.="<b>".$langs->trans("UserAgent").":</b> ".$_SERVER["HTTP_USER_AGENT"]."<br>\n";
 		$out.="<br>\n";
-		$out.="<b>".$langs->trans("RequestedUrl").":</b> ".dol_htmlentities($_SERVER["REQUEST_URI"],ENT_COMPAT,'UTF-8')."<br>\n";
-		$out.="<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"])?dol_htmlentities($_SERVER["HTTP_REFERER"],ENT_COMPAT,'UTF-8'):'')."<br>\n";
+		$out.="<b>".$langs->trans("RequestedUrl").":</b> ".htmlentities($_SERVER["REQUEST_URI"],ENT_COMPAT,'UTF-8')."<br>\n";
+		$out.="<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"])?htmlentities($_SERVER["HTTP_REFERER"],ENT_COMPAT,'UTF-8'):'')."<br>\n";
 		$out.="<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu)?$conf->standard_menu:'')."<br>\n";
 		$out.="<br>\n";
 		$syslog.="url=".$_SERVER["REQUEST_URI"];
@@ -3859,13 +3859,13 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8',$
 		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		if ($removelasteolbr) $newstring=preg_replace('/<br>$/i','',$newstring);	// Remove last <br> (remove only last one)
 		$newstring=strtr($newstring,array('&'=>'__and__','<'=>'__lt__','>'=>'__gt__','"'=>'__dquot__'));
-		$newstring=dol_htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
+		$newstring=htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
 		$newstring=strtr($newstring,array('__and__'=>'&','__lt__'=>'<','__gt__'=>'>','__dquot__'=>'"'));
 	}
 	else
 	{
 		if ($removelasteolbr) $newstring=preg_replace('/(\r\n|\r|\n)$/i','',$newstring);	// Remove last \n (may remove several)
-		$newstring=dol_nl2br(dol_htmlentities($newstring,ENT_COMPAT,$pagecodefrom),$nl2brmode);
+		$newstring=dol_nl2br(htmlentities($newstring,ENT_COMPAT,$pagecodefrom),$nl2brmode);
 	}
 	// Other substitutions that htmlentities does not do
 	//$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.     // Seems useles with TCPDF. Make bug with UTF8 languages
