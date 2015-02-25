@@ -261,7 +261,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="right" colspan="2">'.$langs->trans('MinSupplierPrice').'</td>';
 			if (! empty($conf->stock->enabled)) print '<td align="right">'.$langs->trans('Stock').'</td>';
 			print '<td align="center">'.$langs->trans('Qty').'</td>';
-			print '<td align="center">'.$langs->trans('ComposedProductDIncDecStock').'</td>';
+			print '<td align="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
 			print '</tr>';
 
 			foreach($prods_arbo as $value)
@@ -446,7 +446,7 @@ if ($id > 0 || ! empty($ref))
 			print '<th class="liste_titre">'.$langs->trans("Label").'</td>';
 			//print '<th class="liste_titre" align="center">'.$langs->trans("IsInPackage").'</td>';
 			print '<th class="liste_titre" align="right">'.$langs->trans("Qty").'</td>';
-			print '<th align="center">'.$langs->trans('ComposedProductDIncDecStock').'</th>';
+			print '<th align="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
 			print '</tr>';
 			if ($resql)
 			{
