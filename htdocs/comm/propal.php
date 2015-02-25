@@ -172,6 +172,50 @@ if (empty($reshook))
 		exit();
 	}
 
+
+	// Removing some services
+	else if ($action == 'ask_multipledeleteline') {
+		// Removing useless submit datas in order to avoid problems
+		$useless_submit_data_names = array(
+			'remise_percent',
+			'qty',
+			'price_ht',
+			'tva_tx',
+			'dp_desc',
+			'idprod',
+			'multiple_delete_select_all'
+		);
+		
+		foreach ($useless_submit_data_names as $useless) {
+			unset($_POST[$useless]);
+		}
+	}
+	else if ($action == 'confirm_multipledeleteline' AND $confirm == 'yes' AND $user->rights->propal->supprimer) {
+		$line_ids = isset($_GET['line_ids']) ? explode(',', $_GET['line_ids']) : array();
+		foreach ($line_ids as $line_id) {
+			$result = $object->deleteline($line_id);
+		}
+		
+		// reorder lines
+		$object->line_order(true);
+
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			// Define output language
+			$outputlangs = $langs;
+			if (! empty($conf->global->MAIN_MULTILANGS)) {
+				$outputlangs = new Translate("", $conf);
+				$newlang = (GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$ret = $object->fetch($id); // Reload to get new records
+			propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+		
+		header('Location: ' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id);
+		exit();
+		
+	}
+
 	// Validation
 	else if ($action == 'confirm_validate' && $confirm == 'yes' &&
         ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
@@ -1611,6 +1655,21 @@ if ($action == 'create')
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
+	// Confirmation multiple delete product/service line
+	else if ($action == 'ask_multipledeleteline') {
+		$line_ids = isset($_POST['multiple_delete_lines']) ? $_POST['multiple_delete_lines'] : array();
+		$formconfirm_url = sprintf("%s?id=%d&line_ids=%s",
+			$_SERVER["PHP_SELF"], intval($object->id), implode(',', $line_ids)
+		);
+		$formconfirm = $form->formconfirm(
+			$formconfirm_url,
+			$langs->trans('MultipleDeleteLine'),
+			$langs->trans('ConfirmMultipleDeleteLine'),
+			'confirm_multipledeleteline',
+			'', 0, 1
+		);
+	}
+
 	// Confirm validate proposal
 	else if ($action == 'validate') {
 		$error = 0;
@@ -2026,8 +2085,12 @@ if ($action == 'create')
 
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
-	if (! empty($object->lines))
+	if (!empty($object->lines)) {
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+		if ($object->statut == 0 AND $user->rights->propal->supprimer AND count($object->lines) > 0) {
+			$ret = $object->printMultipleDeleteLinesLine();
+		}
+	}
 
 	// Form to add new line
 	if ($object->statut == 0 && $user->rights->propal->creer)

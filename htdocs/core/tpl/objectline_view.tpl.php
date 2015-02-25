@@ -30,7 +30,7 @@
  *
  * $type, $text, $description, $line
  */
-
+ 
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
 
@@ -40,10 +40,26 @@ if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
+// Checked checkboxes
+if (isset($_POST['multiple_delete_lines'])) {
+	$checked_cbs = $_POST['multiple_delete_lines'];
+}
+elseif (isset($_GET['line_ids'])) {
+	$checked_cbs = explode(',', $_GET['line_ids']);
+}
+else {
+	$checked_cbs = array();
+}
+
+$coldisplay=0;
 ?>
-<?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
+	<?php if ($user->rights->$element->supprimer AND $this->statut == 0): ?>
+	<td width="10" align="center">
+		<input type="checkbox" name="multiple_delete_lines[]" value="<?php echo $line->id; ?>" <?php if (in_array($line->id, $checked_cbs)): ?>checked="checked"<?php endif; ?>/>
+	</td>
+	<?php endif; ?>
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>

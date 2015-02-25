@@ -49,9 +49,26 @@ if (in_array($object->element,array('propal','facture','invoice','commande','ord
 <!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->
 
 <?php
+
+// Checked checkboxes
+if (isset($_POST['multiple_delete_lines'])) {
+	$checked_cbs = $_POST['multiple_delete_lines'];
+}
+elseif (isset($_GET['line_ids'])) {
+	$checked_cbs = explode(',', $_GET['line_ids']);
+}
+else {
+	$checked_cbs = array();
+}
+
 $coldisplay=-1; // We remove first td
 ?>
 <tr <?php echo $bc[$var]; ?>>
+	<?php if ($user->rights->$element->supprimer AND $this->statut == 0): ?>
+	<td width="10" align="center">
+		<input type="checkbox" name="multiple_delete_lines[]" value="<?php echo $line->id; ?>" <?php if (in_array($line->id, $checked_cbs)): ?>checked="checked"<?php endif; ?>/>
+	</td>
+	<?php endif; ?>
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>><?php $coldisplay+=(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))?2:1; ?>
 	<div id="line_<?php echo $line->id; ?>"></div>
 

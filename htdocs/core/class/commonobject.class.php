@@ -2577,6 +2577,12 @@ abstract class CommonObject
 
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td align="center" width="5">&nbsp;</td>';
 
+		// Checkbox for multiple delete
+		$element = $this->element;
+		if ($user->rights->$element->supprimer AND $this->statut == 0) {
+			echo '<td  width="10" align="center"></td>';
+		}
+
 		// Description
 		print '<td><label for="">'.$langs->trans('Description').'</label></td>';
 
@@ -2777,6 +2783,23 @@ abstract class CommonObject
 				if ($res) break;
 			}
 		}
+	}
+	
+	/**
+	 * Displays the line for deleting several lines in one click.
+	 */
+	function printMultipleDeleteLinesLine() {
+		global $conf;
+		
+		// Output template part (modules that overwrite templates must declare this into descriptor)
+        $dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+        foreach($dirtpls as $reldir)
+        {
+            $tpl = dol_buildpath($reldir.'/objectline_multipledeletelines.tpl.php');
+			// 2nd for debug
+			$res = empty($conf->file->strict_mode) ? @include $tpl : include $tpl;
+			if ($res) {break;}
+        }
 	}
 
 
