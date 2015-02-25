@@ -165,10 +165,7 @@ if ($action == 'setdoc')
 
 	$db->begin();
 
-	if (dolibarr_set_const($db, "COMPANY_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
-	{
-		$conf->global->COMPANY_ADDON_PDF = $value;
-	}
+	dolibarr_set_const($db, "COMPANY_ADDON_PDF",$value,'chaine',0,'',$conf->entity);
 
 	// On active le modele
 	$type='company';
