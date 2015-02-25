@@ -303,7 +303,9 @@ else
 					{
 						print "&nbsp; &nbsp; &nbsp;";
 					}
-					print $lines[$i]->label;
+					global $db;
+					$form = new Form($db);
+					echo $form->textwithtooltip($lines[$i]->label, $lines[$i]->description);
 					if ($showlineingray) print '</i>';
 					else print '</a>';
 					print "</td>\n";
